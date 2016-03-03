@@ -19,7 +19,6 @@ package org.apache.camel.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,8 +39,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.naming.Context;
@@ -75,6 +72,7 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StatefulService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
@@ -100,6 +98,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Debug;
@@ -130,6 +129,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -172,7 +172,7 @@ import org.slf4j.LoggerFactory;
  * @version
  */
 @SuppressWarnings("deprecation")
-public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, SuspendableService {
+public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, Suspendable {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private JAXBContext jaxbContext;
     private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
@@ -243,6 +243,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ServicePool<Endpoint, PollingConsumer> pollingConsumerServicePool = new SharedPollingConsumerServicePool(100);
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
     private ProcessorFactory processorFactory;
+    private MessageHistoryFactory messageHistoryFactory = new DefaultMessageHistoryFactory();
     private InterceptStrategy defaultTracer;
     private InterceptStrategy defaultBacklogTracer;
     private InterceptStrategy defaultBacklogDebugger;
@@ -869,6 +870,35 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return answer;
     }
 
+    public synchronized RestsDefinition loadRestsDefinition(InputStream is) throws Exception {
+        // load routes using JAXB
+        if (jaxbContext == null) {
+            // must use classloader from CamelContext to have JAXB working
+            jaxbContext = getModelJAXBContextFactory().newJAXBContext();
+        }
+
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        Object result = unmarshaller.unmarshal(is);
+
+        if (result == null) {
+            throw new IOException("Cannot unmarshal to rests using JAXB from input stream: " + is);
+        }
+
+        // can either be routes or a single route
+        RestsDefinition answer;
+        if (result instanceof RestDefinition) {
+            RestDefinition rest = (RestDefinition) result;
+            answer = new RestsDefinition();
+            answer.getRests().add(rest);
+        } else if (result instanceof RestsDefinition) {
+            answer = (RestsDefinition) result;
+        } else {
+            throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
+        }
+
+        return answer;
+    }
+    
     public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         if (routeDefinitions == null || routeDefinitions.isEmpty()) {
             return;
@@ -1140,7 +1170,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // must suspend route service as well
             suspendRouteService(routeService);
             // must suspend the route as well
-            ServiceHelper.suspendService(route);
+            if (route instanceof SuspendableService) {
+                ((SuspendableService) route).suspend();
+            }
         }
     }
 
@@ -1161,7 +1193,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // must suspend route service as well
             suspendRouteService(routeService);
             // must suspend the route as well
-            ServiceHelper.suspendService(route);
+            if (route instanceof SuspendableService) {
+                ((SuspendableService) route).suspend();
+            }
         }
     }
 
@@ -1836,6 +1870,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // find type and description from the json schema
                 String type = null;
                 String kind = null;
+                String group = null;
                 String label = null;
                 String required = null;
                 String javaType = null;
@@ -1846,6 +1881,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     if (name.equals(row.get("name"))) {
                         type = row.get("type");
                         kind = row.get("kind");
+                        group = row.get("group");
                         label = row.get("label");
                         required = row.get("required");
                         javaType = row.get("javaType");
@@ -1857,13 +1893,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
 
                 // add as selected row
-                selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
             }
 
             // include other rows
             for (Map<String, String> row : rows) {
                 String name = row.get("name");
                 String kind = row.get("kind");
+                String group = row.get("group");
                 String label = row.get("label");
                 String required = row.get("required");
                 String value = row.get("value");
@@ -1878,7 +1915,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 if (includeAllOptions) {
                     // add as selected row
                     if (!selected.containsKey(name)) {
-                        selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                        selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
                     }
                 }
             }
@@ -1898,20 +1935,24 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
                 String name = row[0];
                 String kind = row[1];
-                String label = row[2];
-                String required = row[3];
-                String type = row[4];
-                String javaType = row[5];
-                String deprecated = row[6];
-                String value = row[7];
-                String defaultValue = row[8];
-                String description = row[9];
+                String group = row[2];
+                String label = row[3];
+                String required = row[4];
+                String type = row[5];
+                String javaType = row[6];
+                String deprecated = row[7];
+                String value = row[8];
+                String defaultValue = row[9];
+                String description = row[10];
 
                 // add json of the option
                 buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
                 CollectionStringBuffer csb = new CollectionStringBuffer();
                 if (kind != null) {
                     csb.append("\"kind\": \"" + kind + "\"");
+                }
+                if (group != null) {
+                    csb.append("\"group\": \"" + group + "\"");
                 }
                 if (label != null) {
                     csb.append("\"label\": \"" + label + "\"");
@@ -1989,6 +2030,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // find type and description from the json schema
                 String type = null;
                 String kind = null;
+                String group = null;
                 String label = null;
                 String required = null;
                 String javaType = null;
@@ -1999,6 +2041,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     if (name.equals(row.get("name"))) {
                         type = row.get("type");
                         kind = row.get("kind");
+                        group = row.get("group");
                         label = row.get("label");
                         required = row.get("required");
                         javaType = row.get("javaType");
@@ -2010,13 +2053,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
 
                 // remember this option from the uri
-                uriOptions.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                uriOptions.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
             }
 
             // include other rows
             for (Map<String, String> row : rows) {
                 String name = row.get("name");
                 String kind = row.get("kind");
+                String group = row.get("group");
                 String label = row.get("label");
                 String required = row.get("required");
                 String value = row.get("value");
@@ -2036,7 +2080,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         if (isUriOption) {
                             selected.put(name, uriOptions.get(name));
                         } else {
-                            selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                            selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
                         }
                     }
                 }
@@ -2059,20 +2103,24 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
                 String name = row[0];
                 String kind = row[1];
-                String label = row[2];
-                String required = row[3];
-                String type = row[4];
-                String javaType = row[5];
-                String deprecated = row[6];
-                String value = row[7];
-                String defaultValue = row[8];
-                String description = row[9];
+                String group = row[2];
+                String label = row[3];
+                String required = row[4];
+                String type = row[5];
+                String javaType = row[6];
+                String deprecated = row[7];
+                String value = row[8];
+                String defaultValue = row[9];
+                String description = row[10];
 
                 // add json of the option
                 buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
                 CollectionStringBuffer csb = new CollectionStringBuffer();
                 if (kind != null) {
                     csb.append("\"kind\": \"" + kind + "\"");
+                }
+                if (group != null) {
+                    csb.append("\"group\": \"" + group + "\"");
                 }
                 if (label != null) {
                     csb.append("\"label\": \"" + label + "\"");
@@ -2482,7 +2530,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         RestConfiguration config = restConfigurations.get(component);
         if (config == null && defaultIfNotExist) {
             config = getRestConfiguration();
-            if (config != null && config.getComponent() != null && !component.equals(component)) {
+            if (config != null && config.getComponent() != null && !config.getComponent().equals(component)) {
                 config = new RestConfiguration();
                 restConfigurations.put(component, config);
             }
@@ -2781,7 +2829,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     started++;
                 }
             }
-            log.info("Total " + getRoutes().size() + " routes, of which " + started + " is started.");
+            log.info("Total " + getRoutes().size() + " routes, of which " + started + " are started.");
             log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") started in " + TimeUtils.printDuration(stopWatch.taken()));
         }
         EventHelper.notifyCamelContextStarted(this);
@@ -2939,6 +2987,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         addService(shutdownStrategy);
         addService(packageScanClassResolver);
         addService(restRegistry);
+        addService(messageHistoryFactory);
 
         if (runtimeEndpointRegistry != null) {
             if (runtimeEndpointRegistry instanceof EventNotifier) {
@@ -3996,6 +4045,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setProcessorFactory(ProcessorFactory processorFactory) {
         this.processorFactory = processorFactory;
+    }
+
+    public MessageHistoryFactory getMessageHistoryFactory() {
+        return messageHistoryFactory;
+    }
+
+    public void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory) {
+        this.messageHistoryFactory = messageHistoryFactory;
     }
 
     public Debugger getDebugger() {

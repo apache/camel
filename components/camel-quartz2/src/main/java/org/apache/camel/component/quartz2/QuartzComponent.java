@@ -258,7 +258,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
             LOG.info("Loading Quartz properties file from: {}", getPropertiesFile());
             InputStream is = null;
             try {
-                is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), getPropertiesFile());
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
                 answer = new Properties();
                 answer.load(is);
             } catch (IOException e) {
@@ -321,6 +321,15 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         result.setTriggerKey(triggerKey);
         result.setTriggerParameters(triggerParameters);
         result.setJobParameters(jobParameters);
+        if (startDelayedSeconds != null) {
+            result.setStartDelayedSeconds(startDelayedSeconds);
+        }
+        if (autoStartScheduler != null) {
+            result.setAutoStartScheduler(autoStartScheduler);
+        }
+        if (prefixJobNameWithEndpointId != null) {
+            result.setPrefixJobNameWithEndpointId(prefixJobNameWithEndpointId);
+        }
         return result;
     }
 

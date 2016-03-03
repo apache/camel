@@ -45,6 +45,7 @@ import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SearchResults;
 import org.apache.camel.component.salesforce.api.dto.Versions;
+import org.apache.camel.component.salesforce.internal.client.XStreamUtils;
 import org.eclipse.jetty.util.StringUtil;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_NAME;
@@ -68,6 +69,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                     }
 
                 });
+                XStreamUtils.addDefaultPermissions(result);
                 result.registerConverter(new JodaTimeConverter());
                 return result;
             }

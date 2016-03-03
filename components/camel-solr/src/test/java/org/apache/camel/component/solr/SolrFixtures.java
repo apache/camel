@@ -19,9 +19,10 @@ package org.apache.camel.component.solr;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 
 
@@ -30,8 +31,8 @@ public class SolrFixtures {
 
     private static JettySolrRunner solrRunner;
     private static JettySolrRunner solrHttpsRunner;
-    private static HttpSolrServer solrServer;
-    private static HttpSolrServer solrHttpsServer;
+    private static HttpSolrClient solrServer;
+    private static HttpSolrClient solrHttpsServer;
     private static SolrCloudFixture cloudFixture;
 
     private static int port;
@@ -59,7 +60,7 @@ public class SolrFixtures {
         }
     }
 
-    SolrServer getServer() {
+    SolrClient getServer() {
         if (serverType == TestServerType.USE_HTTPS) {
             return solrHttpsServer;
         } else if (serverType == TestServerType.USE_CLOUD) {

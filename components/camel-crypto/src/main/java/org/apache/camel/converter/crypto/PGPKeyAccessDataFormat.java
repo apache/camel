@@ -17,7 +17,6 @@
 package org.apache.camel.converter.crypto;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.stream.CachedOutputStream;
+import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
@@ -367,10 +366,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         InputStream encData = null;
         InputStream uncompressedData = null;
         InputStream litData = null;
-
-        CachedOutputStream cos;
-        ByteArrayOutputStream bos;
-        OutputStream os = null;
+        OutputStreamBuilder osb = null;
 
         try {
             in = PGPUtil.getDecoderStream(encryptedStream);
@@ -405,37 +401,23 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
                 throw getFormatException();
             }
             litData = ld.getInputStream();
-
-            // enable streaming via OutputStreamCache
-            if (exchange.getContext().getStreamCachingStrategy().isEnabled()) {
-                cos = new CachedOutputStream(exchange);
-                bos = null;
-                os = cos;
-            } else {
-                cos = null;
-                bos = new ByteArrayOutputStream();
-                os = bos;
-            }
+            osb = OutputStreamBuilder.withExchange(exchange);
 
             byte[] buffer = new byte[BUFFER_SIZE];
             int bytesRead;
             while ((bytesRead = litData.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
+                osb.write(buffer, 0, bytesRead);
                 if (signature != null) {
                     signature.update(buffer, 0, bytesRead);
                 }
-                os.flush();
+                osb.flush();
             }
             verifySignature(pgpFactory, signature);
         } finally {
-            IOHelper.close(os, litData, uncompressedData, encData, in, encryptedStream);
+            IOHelper.close(osb, litData, uncompressedData, encData, in, encryptedStream);
         }
 
-        if (cos != null) {
-            return cos.newStreamCache();
-        } else {
-            return bos.toByteArray();
-        }
+        return osb.build();
     }
 
     private InputStream getDecryptedData(Exchange exchange, InputStream encryptedStream) throws Exception, PGPException {
@@ -741,8 +723,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
      * 
      * @param signatureVerificationOption
      *            signature verification option
-     * @throws IllegalArgument
-     *             exception if an invalid value is entered
+     * @throws IllegalArgumentException
+     *            if an invalid value is entered
      */
     public void setSignatureVerificationOption(String signatureVerificationOption) {
         if (SIGNATURE_VERIFICATION_OPTIONS.contains(signatureVerificationOption)) {

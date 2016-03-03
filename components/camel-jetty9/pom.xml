@@ -26,8 +26,8 @@
 
   <artifactId>camel-jetty9</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: Jetty</name>
-  <description>Camel Jetty support</description>
+  <name>Camel :: Jetty9</name>
+  <description>Camel Jetty9 support</description>
 
   <properties>
     <camel.osgi.import.before.defaults>
@@ -126,6 +126,11 @@
       <scope>test</scope>
     </dependency>
     <!-- for testing rest-dsl -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-swagger-java</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jackson</artifactId>

@@ -46,7 +46,7 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
                 context.addComponent("github", new GitHubComponent());
                 from(PULL_REQUEST_PRODUCER_ENDPOINT)
                         .process(new ClosePullRequestProducerProcessor())
-                        .to("github://closePullRequest?" + GITHUB_CREDENTIALS_STRING);
+                        .to("github://closePullRequest?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
 
 

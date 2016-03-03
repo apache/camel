@@ -66,7 +66,6 @@ public class UndertowProducerTest extends BaseUndertowTest {
 
     @Test
     public void testHttpSimpleHeaderAndBody() throws Exception {
-
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 

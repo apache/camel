@@ -34,6 +34,9 @@ import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.SecurityLevel;
 
+/**
+ * The snmp component gives you the ability to poll SNMP capable devices or receiving traps.
+ */
 @UriEndpoint(scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", consumerOnly = true, label = "monitoring")
 public class SnmpEndpoint extends DefaultPollingEndpoint {
 
@@ -43,8 +46,6 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     public static final int DEFAULT_SNMP_TIMEOUT = 1500;
 
     private static final Logger LOG = LoggerFactory.getLogger(SnmpEndpoint.class);
-
-    private OIDList oids = new OIDList();
 
     private transient String address;
 
@@ -82,6 +83,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private String snmpContextName;
     @UriParam
     private String snmpContextEngineId;
+    @UriParam(javaType = "java.lang.String")
+    private OIDList oids = new OIDList();
+
     /**
      * creates a snmp endpoint
      *

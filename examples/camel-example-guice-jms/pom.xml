@@ -25,17 +25,8 @@
     </parent>
 
     <artifactId>camel-example-guice-jms</artifactId>
-    <packaging>bundle</packaging>
     <name>Camel :: Example :: Guice :: JMS</name>
     <description>An example showing how to work with Camel, Guice and JMS</description>
-
-    <properties>
-        <camel.osgi.export.pkg>org.apache.camel.example.guice.jms.*</camel.osgi.export.pkg>
-        <camel.osgi.import.additional>
-            org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
-        </camel.osgi.import.additional>
-        <camel.osgi.activator>org.apache.camel.example.guice.jms.MyActivator</camel.osgi.activator>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -62,18 +53,6 @@
             <artifactId>activemq-client</artifactId>
         </dependency>
 
-        <!-- osgi -->
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.osgi</groupId>
-            <artifactId>spring-osgi-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- lets use log4j -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -95,28 +74,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-artifacts</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attach-artifact</goal>
-                        </goals>
-                        <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <file>target/classes/features.xml</file>
-                                    <type>xml</type>
-                                    <classifier>features</classifier>
-                                </artifact>
-                            </artifacts>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
             <!-- Allows the example to be run via 'mvn compile exec:java' -->
             <plugin>

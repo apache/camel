@@ -43,6 +43,9 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     private String dataSourceRef;
     @UriParam(description = "Sets the DataSource to use to communicate with the database.")
     private DataSource dataSource;
+    @UriParam(label = "consumer", description = "Enables or disables transaction. If enabled then if processing an exchange failed then the consumer"
+            + "break out processing any further exchanges to cause a rollback eager.")
+    private boolean transacted;
     @UriParam(label = "producer", description = "Enables or disables batch mode")
     private boolean batch;
     @UriParam(label = "consumer", description = "Sets the maximum number of messages to poll")
@@ -54,7 +57,8 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
             description = "Allows to plugin to use a custom org.apache.camel.component.sql.SqlPrepareStatementStrategy to control preparation of the query and prepared statement.")
     private SqlPrepareStatementStrategy prepareStatementStrategy;
     @UriParam(label = "consumer",
-            description = "After processing each row then this query can be executed, if the Exchange was processed successfully, for example to mark the row as processed. The query can have parameter.")
+            description = "After processing each row then this query can be executed, if the Exchange was processed successfully, for example to mark the row as processed. The query can have"
+                    + " parameter.")
     private String onConsume;
     @UriParam(label = "consumer",
             description = "After processing each row then this query can be executed, if the Exchange failed, for example to mark the row as failed. The query can have parameter.")
@@ -81,7 +85,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     private boolean alwaysPopulateStatement;
     @UriParam(defaultValue = ",",
             description = "The separator to use when parameter values is taken from message body (if the body is a String type), to be inserted at # placeholders."
-            + "Notice if you use named parameters, then a Map type is used instead. The default value is ,")
+            + "Notice if you use named parameters, then a Map type is used instead. The default value is comma")
     private char separator = ',';
     @UriParam(defaultValue = "SelectList", description = "Make the output of consumer or producer to SelectList as List of Map, or SelectOne as single Java object in the following way:"
             + "a) If the query has only single column, then that JDBC Column object is returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long object."
@@ -103,6 +107,14 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     private String outputHeader;
     @UriParam(label = "producer", description = "Whether to use the message body as the SQL and then headers for parameters. If this option is enabled then the SQL in the uri is not used.")
     private boolean useMessageBodyForSql;
+    @UriParam(label = "advanced", defaultValue = "#", description = "Specifies a character that will be replaced to ? in SQL query."
+            + " Notice, that it is simple String.replaceAll() operation and no SQL parsing is involved (quoted strings will also change).")
+    private String placeholder = "#";
+    @UriParam(label = "advanced", defaultValue = "true", description = "Sets whether to use placeholder and replace all placeholder characters with ? sign in the SQL queries.")
+    private boolean usePlaceholder = true;
+    @UriParam(label = "advanced", prefix = "template.", multiValue = true,
+            description = "Configures the Spring JdbcTemplate with the key/values from the Map")
+    private Map<String, Object> templateOptions;
 
     public DefaultSqlEndpoint() {
     }
@@ -122,6 +134,18 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public boolean isTransacted() {
+        return transacted;
+    }
+
+    /**
+     * Enables or disables transaction. If enabled then if processing an exchange failed then the consumer
+     + break out processing any further exchanges to cause a rollback eager
+     */
+    public void setTransacted(boolean transacted) {
+        this.transacted = transacted;
     }
 
     public boolean isBatch() {
@@ -233,7 +257,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
      * The separator to use when parameter values is taken from message body (if the body is a String type), to be inserted at # placeholders.
      * Notice if you use named parameters, then a Map type is used instead.
      * <p/>
-     * The default value is ,
+     * The default value is comma.
      */
     public void setSeparator(char separator) {
         this.separator = separator;
@@ -382,6 +406,42 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
      */
     public void setBreakBatchOnConsumeFail(boolean breakBatchOnConsumeFail) {
         this.breakBatchOnConsumeFail = breakBatchOnConsumeFail;
+    }
+
+    public String getPlaceholder() {
+        return placeholder;
+    }
+
+    /**
+     * Specifies a character that will be replaced to ? in SQL query.
+     * Notice, that it is simple String.replaceAll() operation and no SQL parsing is involved (quoted strings will also change).
+     */
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
+    }
+
+    public boolean isUsePlaceholder() {
+        return usePlaceholder;
+    }
+
+    /**
+     * Sets whether to use placeholder and replace all placeholder characters with ? sign in the SQL queries.
+     * <p/>
+     * This option is default <tt>true</tt>
+     */
+    public void setUsePlaceholder(boolean usePlaceholder) {
+        this.usePlaceholder = usePlaceholder;
+    }
+
+    public Map<String, Object> getTemplateOptions() {
+        return templateOptions;
+    }
+
+    /**
+     * Configures the Spring JdbcTemplate with the key/values from the Map
+     */
+    public void setTemplateOptions(Map<String, Object> templateOptions) {
+        this.templateOptions = templateOptions;
     }
 
     @SuppressWarnings("unchecked")

@@ -73,7 +73,7 @@
     </onException>
 
     <route>
-      <from uri="servlet:///user"/>
+      <from uri="servlet:user"/>
       <!-- wrap the route in the policy which enforces security check -->
       <policy ref="user">
         <transform>
@@ -83,7 +83,7 @@
     </route>
 
     <route>
-      <from uri="servlet:///admin"/>
+      <from uri="servlet:admin"/>
       <!-- wrap the route in the policy which enforces security check -->
       <policy ref="admin">
         <transform>

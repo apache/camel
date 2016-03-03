@@ -63,9 +63,9 @@ public class HdfsConfiguration {
     @UriParam(defaultValue = "HDFS")
     private HdfsFileSystemType fileSystemType = HdfsFileSystemType.HDFS;
     @UriParam(defaultValue = "NULL")
-    private HdfsWritableFactories.WritableType keyType = HdfsWritableFactories.WritableType.NULL;
+    private WritableType keyType = WritableType.NULL;
     @UriParam(defaultValue = "BYTES")
-    private HdfsWritableFactories.WritableType valueType = HdfsWritableFactories.WritableType.BYTES;
+    private WritableType valueType = WritableType.BYTES;
     @UriParam(defaultValue = HdfsConstants.DEFAULT_OPENED_SUFFIX)
     private String openedSuffix = HdfsConstants.DEFAULT_OPENED_SUFFIX;
     @UriParam(defaultValue = HdfsConstants.DEFAULT_READ_SUFFIX)
@@ -138,10 +138,10 @@ public class HdfsConfiguration {
         }
     }
 
-    private HdfsWritableFactories.WritableType getWritableType(Map<String, Object> hdfsSettings, String param, HdfsWritableFactories.WritableType dflt) {
+    private WritableType getWritableType(Map<String, Object> hdfsSettings, String param, WritableType dflt) {
         String eit = (String) hdfsSettings.get(param);
         if (eit != null) {
-            return HdfsWritableFactories.WritableType.valueOf(eit);
+            return WritableType.valueOf(eit);
         } else {
             return dflt;
         }
@@ -388,25 +388,25 @@ public class HdfsConfiguration {
         return fileSystemType;
     }
 
-    public HdfsWritableFactories.WritableType getKeyType() {
+    public WritableType getKeyType() {
         return keyType;
     }
 
     /**
      * The type for the key in case of sequence or map files.
      */
-    public void setKeyType(HdfsWritableFactories.WritableType keyType) {
+    public void setKeyType(WritableType keyType) {
         this.keyType = keyType;
     }
 
-    public HdfsWritableFactories.WritableType getValueType() {
+    public WritableType getValueType() {
         return valueType;
     }
 
     /**
      * The type for the key in case of sequence or map files
      */
-    public void setValueType(HdfsWritableFactories.WritableType valueType) {
+    public void setValueType(WritableType valueType) {
         this.valueType = valueType;
     }
 

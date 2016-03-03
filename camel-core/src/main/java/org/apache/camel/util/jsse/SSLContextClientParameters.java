@@ -77,7 +77,7 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("SSLContextClientParameters [getCipherSuites()=");
+        builder.append("SSLContextClientParameters[getCipherSuites()=");
         builder.append(getCipherSuites());
         builder.append(", getCipherSuitesFilter()=");
         builder.append(getCipherSuitesFilter());
@@ -87,8 +87,6 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
         builder.append(getSecureSocketProtocolsFilter());
         builder.append(", getSessionTimeout()=");
         builder.append(getSessionTimeout());
-        builder.append(", getContext()=");
-        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

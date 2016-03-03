@@ -135,12 +135,12 @@ public class XmppBinding {
         Map<String, Object> answer = new HashMap<String, Object>();
 
         PacketExtension jpe = xmppPacket.getExtension(JivePropertiesExtension.NAMESPACE);
-        if (jpe !=null && jpe instanceof JivePropertiesExtension) {
+        if (jpe != null && jpe instanceof JivePropertiesExtension) {
             extractHeadersFrom((JivePropertiesExtension)jpe, exchange, answer);
         }
-        if (jpe !=null && jpe instanceof DefaultPacketExtension) {
+        if (jpe != null && jpe instanceof DefaultPacketExtension) {
             extractHeadersFrom((DefaultPacketExtension)jpe, exchange, answer);
-    }
+        }
 
         if (xmppPacket instanceof Message) {
             Message xmppMessage = (Message) xmppPacket;

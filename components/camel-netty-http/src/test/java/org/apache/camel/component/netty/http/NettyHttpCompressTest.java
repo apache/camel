@@ -48,7 +48,7 @@ public class NettyHttpCompressTest extends BaseNettyTest {
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("content-type", "text/plain; charset=\"UTF-8\"");
         headers.put("Accept-Encoding", "compress, gzip");
-        String out = template.requestBodyAndHeaders("netty-http:http://0.0.0.0:9001/foo?decoders=#myDecoders", data,
+        String out = template.requestBodyAndHeaders("netty-http:http://localhost:9001/foo?decoders=#myDecoders", data,
                 headers, String.class);
         // The decoded out has some space to clean up.
         assertEquals("Bye World", out.trim());

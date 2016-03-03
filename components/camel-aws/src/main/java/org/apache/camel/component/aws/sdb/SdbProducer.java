@@ -27,6 +27,8 @@ import org.apache.camel.util.URISupport;
  */
 public class SdbProducer extends DefaultProducer {
     
+    private transient String sdbProducerToString;
+    
     public SdbProducer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -79,7 +81,10 @@ public class SdbProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        return "SdbProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (sdbProducerToString == null) {
+            sdbProducerToString = "SdbProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return sdbProducerToString;
     }
 
     @Override

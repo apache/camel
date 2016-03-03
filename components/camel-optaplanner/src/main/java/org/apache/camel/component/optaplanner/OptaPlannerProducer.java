@@ -92,7 +92,7 @@ public class OptaPlannerProducer extends DefaultProducer {
             solver.addProblemFactChange((ProblemFactChange)body);
             if (!isAsync(exchange)) {
                 while (!solver.isEveryProblemFactChangeProcessed()) {
-                    Thread.currentThread().sleep(100);
+                    Thread.sleep(100);
                 }
             }
             populateResult(exchange, solver);

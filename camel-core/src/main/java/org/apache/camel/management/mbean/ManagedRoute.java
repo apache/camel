@@ -48,10 +48,16 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Managed Route")
 public class ManagedRoute extends ManagedPerformanceCounter implements TimerListener, ManagedRouteMBean {
+
     public static final String VALUE_UNKNOWN = "Unknown";
+
+    private static final Logger LOG = LoggerFactory.getLogger(ManagedRoute.class);
+
     protected final Route route;
     protected final String description;
     protected final ModelCamelContext context;
@@ -275,8 +281,17 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                     + getRouteId() + ", routeId from XML: " + def.getId());
         }
 
-        // add will remove existing route first
-        context.addRouteDefinition(def);
+        LOG.debug("Updating route: {} from xml: {}", def.getId(), xml);
+
+        try {
+            // add will remove existing route first
+            context.addRouteDefinition(def);
+        } catch (Exception e) {
+            // log the error as warn as the management api may be invoked remotely over JMX which does not propagate such exception
+            String msg = "Error updating route: " + def.getId() + " from xml: " + xml + " due: " + e.getMessage();
+            LOG.warn(msg, e);
+            throw e;
+        }
     }
 
     public String dumpRouteStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception {

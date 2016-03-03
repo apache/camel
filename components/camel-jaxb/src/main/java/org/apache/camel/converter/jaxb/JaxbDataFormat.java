@@ -45,7 +45,6 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.apache.camel.spi.DataFormatName;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.CamelContext;
@@ -55,6 +54,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IOHelper;

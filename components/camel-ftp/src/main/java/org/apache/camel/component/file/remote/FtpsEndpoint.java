@@ -37,19 +37,20 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPSClient;
 
 /**
- * FTP Secure (FTP over SSL/TLS) endpoint
- * 
- * @version 
+ * The ftps (FTP secure SSL/TLS) component is used for uploading or downloading files from FTP servers.
  */
 @UriEndpoint(scheme = "ftps", extendsScheme = "file", title = "FTPS",
-        syntax = "ftps:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
+        syntax = "ftps:host:port/directoryName", alternativeSyntax = "ftps:username:password@host:port/directoryName",
+        consumerClass = FtpConsumer.class, label = "file")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
-    protected Map<String, Object> ftpClientKeyStoreParameters;
-    protected Map<String, Object> ftpClientTrustStoreParameters;
     @UriParam
     protected FtpsConfiguration configuration;
     @UriParam(label = "security")
     protected SSLContextParameters sslContextParameters;
+    @UriParam(label = "security", prefix = "ftpClient.keyStore.", multiValue = true)
+    protected Map<String, Object> ftpClientKeyStoreParameters;
+    @UriParam(label = "security", prefix = "ftpClient.trustStore.", multiValue = true)
+    protected Map<String, Object> ftpClientTrustStoreParameters;
 
     public FtpsEndpoint() {
     }

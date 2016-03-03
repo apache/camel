@@ -32,6 +32,13 @@ public class LogDebugBodyMaxCharsOffTest extends ContextTestSupport {
         context.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "-1");
     }
 
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("logFormatter", new TraceExchangeFormatter());
+        return jndi;
+    }
+
     public void testLogBodyMaxLengthTest() throws Exception {
         // create a big body
         StringBuilder sb = new StringBuilder();
@@ -49,8 +56,9 @@ public class LogDebugBodyMaxCharsOffTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be empty body as toString on the message will return an empty body
-        String msg = mock.getReceivedExchanges().get(0).getIn().toString();
-        assertEquals("Message: [Body is not logged]", msg);
+        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        String msg = myFormatter.getMessage();
+        assertTrue(msg.endsWith("Body: [Body is not logged]]"));
 
         // but body and clipped should not be the same
         assertNotSame("clipped log and real body should not be the same", msg, mock.getReceivedExchanges().get(0).getIn().getBody(String.class));

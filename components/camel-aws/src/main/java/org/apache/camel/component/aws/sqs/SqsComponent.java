@@ -22,10 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS Component</a> 
- * 
- */
 public class SqsComponent extends UriEndpointComponent {
     
     public SqsComponent() {
@@ -52,7 +48,7 @@ public class SqsComponent extends UriEndpointComponent {
         
         // Verify that visibilityTimeout is set if extendMessageVisibility is set to true.
         if (configuration.isExtendMessageVisibility() && (configuration.getVisibilityTimeout() == null)) {
-            throw new IllegalArgumentException("Extending message visibilty (extendMessageVisibility) requires visibilityTimeout to be set on the Endpoint.");
+            throw new IllegalArgumentException("Extending message visibility (extendMessageVisibility) requires visibilityTimeout to be set on the Endpoint.");
         }
         
         SqsEndpoint sqsEndpoint = new SqsEndpoint(uri, this, configuration);

@@ -26,8 +26,19 @@ import org.apache.camel.impl.ActiveMQUuidGenerator;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.util.CamelContextHelper;
 
 public class DummyRestConsumerFactory implements RestConsumerFactory, RestApiConsumerFactory {
+
+    private Object dummy;
+
+    public Object getDummy() {
+        return dummy;
+    }
+
+    public void setDummy(Object dummy) {
+        this.dummy = dummy;
+    }
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
@@ -43,6 +54,14 @@ public class DummyRestConsumerFactory implements RestConsumerFactory, RestApiCon
         if (id.startsWith("-")) {
             id = id.substring(1);
         }
+
+        if (configuration.getConsumerProperties() != null) {
+            String ref = (String) configuration.getConsumerProperties().get("dummy");
+            if (ref != null) {
+                dummy = CamelContextHelper.mandatoryLookup(camelContext, ref.substring(1));
+            }
+        }
+
         SedaEndpoint seda = camelContext.getEndpoint("seda:" + verb + "-" + id, SedaEndpoint.class);
         return seda.createConsumer(processor);
     }

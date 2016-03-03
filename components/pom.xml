@@ -74,6 +74,7 @@
     <module>camel-bindy</module>
     <module>camel-boon</module>
     <module>camel-box</module>
+    <module>camel-braintree</module>
     <module>camel-cache</module>
     <module>camel-cassandraql</module>
     <module>camel-castor</module>
@@ -95,6 +96,7 @@
     <module>camel-ejb</module>
     <module>camel-elasticsearch</module>
     <module>camel-elsql</module>
+    <module>camel-etcd</module>
     <module>camel-eventadmin</module>
     <module>camel-exec</module>
     <module>camel-facebook</module>
@@ -112,6 +114,7 @@
     <module>camel-google-mail</module>
     <module>camel-gora</module>
     <module>camel-grape</module>
+    <module>camel-gridfs</module>
     <module>camel-gson</module>
     <module>camel-guava-eventbus</module>
     <module>camel-guice</module>
@@ -124,14 +127,17 @@
     <module>camel-hl7</module>
     <module>camel-ibatis</module>
     <module>camel-ical</module>
+    <module>camel-ignite</module>
     <module>camel-infinispan</module>
     <module>camel-irc</module>
+    <module>camel-ironmq</module>
     <module>camel-jackson</module>
     <module>camel-jacksonxml</module>
     <module>camel-javaspace</module>
     <module>camel-jaxb</module>
     <module>camel-jasypt</module>
     <module>camel-jbpm</module>
+    <module>camel-jcache</module>
     <module>camel-jclouds</module>
     <module>camel-jcr</module>
     <module>camel-jdbc</module>
@@ -152,15 +158,18 @@
     <module>camel-kafka</module>
     <module>camel-kestrel</module>
     <module>camel-krati</module>
+    <module>camel-kubernetes</module>
     <module>camel-kura</module>
     <module>camel-ldap</module>
     <module>camel-leveldb</module>
     <module>camel-linkedin</module>
     <module>camel-lucene</module>
+    <module>camel-lzf</module>
     <module>camel-mail</module>
     <module>camel-metrics</module>
     <module>camel-mina</module>
     <module>camel-mina2</module>
+    <module>camel-mllp</module>
     <module>camel-mongodb</module>
     <module>camel-mqtt</module>
     <module>camel-msv</module>
@@ -168,6 +177,7 @@
     <module>camel-mvel</module>
     <module>camel-mybatis</module>
     <module>camel-nagios</module>
+    <module>camel-nats</module>
     <module>camel-netty</module>
     <module>camel-netty4</module>
     <module>camel-netty-http</module>
@@ -208,6 +218,7 @@
     <module>camel-slack</module>
     <module>camel-soap</module>
     <module>camel-solr</module>
+    <module>camel-spark</module>
     <module>camel-spark-rest</module>
     <module>camel-splunk</module>
     <module>camel-spring-batch</module>
@@ -270,6 +281,13 @@
             </goals>
             <phase>prepare-package</phase>
          </execution>
+         <execution>
+            <id>readme</id>
+            <goals>
+              <goal>update-readme</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
         </executions>
       </plugin>
     </plugins>

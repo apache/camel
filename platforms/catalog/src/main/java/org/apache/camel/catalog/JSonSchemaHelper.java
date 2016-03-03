@@ -18,8 +18,10 @@ package org.apache.camel.catalog;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,6 +114,15 @@ public final class JSonSchemaHelper {
         return value;
     }
 
+    public static boolean isComponentLenientProperties(List<Map<String, String>> rows) {
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("lenientProperties")) {
+                return "true".equals(row.get("lenientProperties"));
+            }
+        }
+        return false;
+    }
+
     public static boolean isPropertyRequired(List<Map<String, String>> rows, String name) {
         for (Map<String, String> row : rows) {
             boolean required = false;
@@ -124,6 +135,91 @@ public final class JSonSchemaHelper {
             }
             if (found) {
                 return required;
+            }
+        }
+        return false;
+    }
+
+    public static String getPropertyKind(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String kind = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("kind")) {
+                kind = row.get("kind");
+            }
+            if (found) {
+                return kind;
+            }
+        }
+        return null;
+    }
+
+    public static boolean isPropertyBoolean(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String type = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("type")) {
+                type = row.get("type");
+            }
+            if (found) {
+                return "boolean".equals(type);
+            }
+        }
+        return false;
+    }
+
+    public static boolean isPropertyInteger(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String type = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("type")) {
+                type = row.get("type");
+            }
+            if (found) {
+                return "integer".equals(type);
+            }
+        }
+        return false;
+    }
+
+    public static boolean isPropertyNumber(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String type = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("type")) {
+                type = row.get("type");
+            }
+            if (found) {
+                return "number".equals(type);
+            }
+        }
+        return false;
+    }
+
+    public static boolean isPropertyObject(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String type = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("type")) {
+                type = row.get("type");
+            }
+            if (found) {
+                return "object".equals(type);
             }
         }
         return false;
@@ -144,6 +240,117 @@ public final class JSonSchemaHelper {
             }
         }
         return null;
+    }
+
+    public static String stripOptionalPrefixFromName(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String optionalPrefix = null;
+            boolean found = false;
+            if (row.containsKey("optionalPrefix")) {
+                optionalPrefix = row.get("optionalPrefix");
+            }
+            if (row.containsKey("name")) {
+                if (optionalPrefix != null && name.startsWith(optionalPrefix)) {
+                    name = name.substring(optionalPrefix.length());
+                    // try again
+                    return stripOptionalPrefixFromName(rows, name);
+                } else {
+                    found = name.equals(row.get("name"));
+                }
+            }
+            if (found) {
+                return name;
+            }
+        }
+        return name;
+    }
+
+    public static String getPropertyEnum(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String enums = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("enum")) {
+                enums = row.get("enum");
+            }
+            if (found) {
+                return enums;
+            }
+        }
+        return null;
+    }
+
+    public static String getPropertyPrefix(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String prefix = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("prefix")) {
+                prefix = row.get("prefix");
+            }
+            if (found) {
+                return prefix;
+            }
+        }
+        return null;
+    }
+
+    public static boolean isPropertyMultiValue(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            boolean multiValue = false;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("multiValue")) {
+                multiValue = "true".equals(row.get("multiValue"));
+            }
+            if (found) {
+                return multiValue;
+            }
+        }
+        return false;
+    }
+
+    public static String getPropertyNameFromNameWithPrefix(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String propertyName = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                propertyName = row.get("name");
+            }
+            if (row.containsKey("prefix")) {
+                String preifx = row.get("prefix");
+                found = name.startsWith(preifx);
+            }
+            if (found) {
+                return propertyName;
+            }
+        }
+        return null;
+    }
+
+    public static Map<String, String> getRow(List<Map<String, String>> rows, String key) {
+        for (Map<String, String> row : rows) {
+            if (key.equals(row.get("name"))) {
+                return row;
+            }
+        }
+        return null;
+    }
+
+    public static Set<String> getNames(List<Map<String, String>> rows) {
+        Set<String> answer = new LinkedHashSet<String>();
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("name")) {
+                answer.add(row.get("name"));
+            }
+        }
+        return answer;
     }
 
 }

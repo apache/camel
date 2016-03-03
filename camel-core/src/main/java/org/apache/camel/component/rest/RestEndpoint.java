@@ -35,7 +35,10 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", consumerOnly = true, label = "core,rest")
+/**
+ * The rest component is used for hosting REST services which has been defined using the rest-dsl in Camel.
+ */
+@UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", consumerOnly = true, label = "core,rest", lenientProperties = true)
 public class RestEndpoint extends DefaultEndpoint {
 
     @UriPath(enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = "true")
@@ -266,7 +269,9 @@ public class RestEndpoint extends DefaultEndpoint {
 
             // if no explicit hostname set then resolve the hostname
             if (ObjectHelper.isEmpty(host)) {
-                if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                    host = "0.0.0.0";
+                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                     host = HostUtils.getLocalHostName();
                 } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                     host = HostUtils.getLocalIp();
@@ -280,7 +285,7 @@ public class RestEndpoint extends DefaultEndpoint {
             }
 
             // there may be an optional context path configured to help Camel calculate the correct urls for the REST services
-            // this may be needed when using camel-serlvet where we cannot get the actual context-path or port number of the servlet engine
+            // this may be needed when using camel-servlet where we cannot get the actual context-path or port number of the servlet engine
             // during init of the servlet
             String contextPath = config.getContextPath();
             if (contextPath != null) {

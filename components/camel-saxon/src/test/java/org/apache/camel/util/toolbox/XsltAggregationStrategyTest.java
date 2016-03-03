@@ -24,26 +24,30 @@ import org.junit.Test;
 /**
  * Unit test for the {@link XsltAggregationStrategy}.
  * <p>
- * Need to use Saxon to get a predictable result: we cannot rely on the JDK's XSLT processor as it can vary across
+ * Need to use Saxon to get a predictable result: We cannot rely on the JDK's XSLT processor as it can vary across
  * platforms and JDK versions. Also, Xalan does not handle node-set properties well.
  */
 public class XsltAggregationStrategyTest extends CamelTestSupport {
 
     @Test
     public void testXsltAggregationDefaultProperty() throws Exception {
-        context.startRoute("route1");
         MockEndpoint mock = getMockEndpoint("mock:transformed");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><item>ABC</item>");
+
+        context.startRoute("route1");
+
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testXsltAggregationUserProperty() throws Exception {
-        context.startRoute("route2");
         MockEndpoint mock = getMockEndpoint("mock:transformed");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><item>ABC</item>");
+
+        context.startRoute("route2");
+
         assertMockEndpointsSatisfied();
     }
 
@@ -51,7 +55,7 @@ public class XsltAggregationStrategyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:src/test/resources/org/apache/camel/util/toolbox?noop=true&antInclude=*.xml")
+                from("file:src/test/resources/org/apache/camel/util/toolbox?noop=true&sortBy=file:name&antInclude=*.xml")
                         .routeId("route1").noAutoStartup()
                         .aggregate(new XsltAggregationStrategy("org/apache/camel/util/toolbox/aggregate.xsl")
                                 .withSaxon())
@@ -60,7 +64,7 @@ public class XsltAggregationStrategyTest extends CamelTestSupport {
                         .log("after aggregate body: ${body}")
                         .to("mock:transformed");
 
-                from("file:src/test/resources/org/apache/camel/util/toolbox?noop=true&antInclude=*.xml")
+                from("file:src/test/resources/org/apache/camel/util/toolbox?noop=true&sortBy=file:name&antInclude=*.xml")
                         .routeId("route2").noAutoStartup()
                         .aggregate(new XsltAggregationStrategy("org/apache/camel/util/toolbox/aggregate-user-property.xsl")
                                 .withSaxon().withPropertyName("user-property"))

@@ -77,7 +77,7 @@ public class ElSqlDataSourceTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:simple")
-                        .to("elsql:projectsById:elsql/projects.elsql?dataSource=dataSource")
+                        .to("elsql:projectsById:elsql/projects.elsql?dataSource=#dataSource")
                         .to("mock:result");
             }
         };

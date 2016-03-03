@@ -30,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -55,7 +56,7 @@ public class DockerEventsConsumerTest extends CamelTestSupport {
     private DockerClient dockerClient;
     
     public void setupMocks() {
-        Mockito.when(dockerClient.eventsCmd(Mockito.any(EventCallback.class))).thenAnswer(new Answer<EventsCmd>() {
+        Mockito.when(dockerClient.eventsCmd(Matchers.any(EventCallback.class))).thenAnswer(new Answer<EventsCmd>() {
             public EventsCmd answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
                 callback = (EventCallback)args[0];

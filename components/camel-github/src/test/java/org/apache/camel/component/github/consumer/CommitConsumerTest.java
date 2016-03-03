@@ -34,7 +34,7 @@ public class CommitConsumerTest extends GitHubComponentTestBase {
             @Override
             public void configure() throws Exception {
                 context.addComponent("github", new GitHubComponent());
-                from("github://commit/master?" + GITHUB_CREDENTIALS_STRING).
+                from("github://commit/master?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo").
                         process(new GitHubCommitProcessor())
                         .to(mockResultEndpoint);
             }

@@ -36,11 +36,10 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.data.Method;
 
 /**
- * Represents a <a href="http://www.restlet.org/"> endpoint</a>
- *
- * @version 
+ * Component for consuming and producing Restful resources using Restlet.
  */
-@UriEndpoint(scheme = "restlet", title = "Restlet", syntax = "restlet:protocol:host:port/uriPattern", consumerClass = RestletConsumer.class, label = "rest")
+@UriEndpoint(scheme = "restlet", title = "Restlet", syntax = "restlet:protocol:host:port/uriPattern",
+        consumerClass = RestletConsumer.class, label = "rest", lenientProperties = true)
 public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final int DEFAULT_PORT = 80;
@@ -55,15 +54,15 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private String host = DEFAULT_HOST;
     @UriPath(defaultValue = "80") @Metadata(required = "true")
     private int port = DEFAULT_PORT;
-    @UriPath @Metadata(required = "true")
+    @UriPath
     private String uriPattern;
     @UriParam(label = "producer", defaultValue = "" + DEFAULT_SOCKET_TIMEOUT)
     private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
     @UriParam(label = "producer", defaultValue = "" + DEFAULT_CONNECT_TIMEOUT)
     private int connectTimeout = DEFAULT_CONNECT_TIMEOUT;
-    @UriParam(defaultValue = "GET")
+    @UriParam(defaultValue = "GET", enums = "ALL,CONNECT,DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT,TRACE")
     private Method restletMethod = Method.GET;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", javaType = "java.lang.String")
     private Method[] restletMethods;
     @UriParam(label = "consumer")
     private List<String> restletUriPatterns;
@@ -244,6 +243,7 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     /**
      * Specify one or more methods separated by commas (e.g. restletMethods=post,put) to be serviced by a restlet consumer endpoint.
      * If both restletMethod and restletMethods options are specified, the restletMethod setting is ignored.
+     * The possible methods are: ALL,CONNECT,DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT,TRACE
      */
     public void setRestletMethods(Method[] restletMethods) {
         this.restletMethods = restletMethods;

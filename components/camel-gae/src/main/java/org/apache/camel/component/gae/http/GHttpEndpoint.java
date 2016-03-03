@@ -42,11 +42,10 @@ import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
- * Represents a <a href="http://camel.apache.org/ghttp.html">Google App Engine
- * HTTP endpoint</a>.
+ * The ghttp component provides HTTP connectivity to the GAE.
  */
 @UriEndpoint(scheme = "ghttp", extendsScheme = "servlet", title = "Google HTTP",
-        syntax = "ghttp:httpUri", producerOnly = true, label = "cloud")
+        syntax = "ghttp:httpUri", producerOnly = true, label = "cloud,paas", lenientProperties = true)
 public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSupport<GHttpEndpoint, HTTPRequest, HTTPResponse> {
 
     public static final String GHTTP_SCHEME = "ghttp";

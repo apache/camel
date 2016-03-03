@@ -41,9 +41,10 @@ public class FileComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"doneFileName\": { \"kind\": \"parameter\", \"label\": \"producer\", \"type\": \"string\""));
-        assertTrue(json.contains("\"exclude\": { \"kind\": \"parameter\", \"label\": \"consumer,filter\", \"type\": \"string\""));
-        assertTrue(json.contains("\"delete\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"directoryName\": { \"kind\": \"path\", \"group\": \"common\", \"required\": \"true\""));
+        assertTrue(json.contains("\"doneFileName\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"string\""));
+        assertTrue(json.contains("\"autoCreate\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"readLockMinAge\": { \"kind\": \"parameter\", \"group\": \"lock\", \"label\": \"consumer,lock\""));
     }
 
     @Test

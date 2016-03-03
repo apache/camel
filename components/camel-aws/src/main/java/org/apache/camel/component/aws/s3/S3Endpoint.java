@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.s3;
 
+import java.io.IOException;
+
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
@@ -35,7 +37,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -44,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS S3 Endpoint</a>.
+ * The aws-s3 component is used for storing and retrieving objetc from Amazon S3 Storage Service.
  */
 @UriEndpoint(scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3:bucketName", consumerClass = S3Consumer.class, label = "cloud,file")
 public class S3Endpoint extends ScheduledPollEndpoint {
@@ -152,7 +153,13 @@ public class S3Endpoint extends ScheduledPollEndpoint {
 
         Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
-        message.setBody(s3Object.getObjectContent());
+
+        if (configuration.isIncludeBody()) {
+            message.setBody(s3Object.getObjectContent());
+        } else {
+            message.setBody(null);
+        }
+
         message.setHeader(S3Constants.KEY, s3Object.getKey());
         message.setHeader(S3Constants.BUCKET_NAME, s3Object.getBucketName());
         message.setHeader(S3Constants.E_TAG, objectMetadata.getETag());
@@ -166,6 +173,18 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         message.setHeader(S3Constants.CACHE_CONTROL, objectMetadata.getCacheControl());
         message.setHeader(S3Constants.S3_HEADERS, objectMetadata.getRawMetadata());
         message.setHeader(S3Constants.SERVER_SIDE_ENCRYPTION, objectMetadata.getSSEAlgorithm());
+
+        /**
+         * If includeBody != true, it is safe to close the object here.  If includeBody == true,
+         * the caller is responsible for closing the stream and object once the body has been fully consumed.
+         * As of 2.17, the consumer does not close the stream or object on commit.
+         */
+        if (!configuration.isIncludeBody()) {
+            try {
+                s3Object.close();
+            } catch (IOException e) {
+            }
+        }
 
         return exchange;
     }

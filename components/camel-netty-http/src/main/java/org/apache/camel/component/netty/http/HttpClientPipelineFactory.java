@@ -24,7 +24,6 @@ import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.ChannelHandlerFactory;
 import org.apache.camel.component.netty.ClientPipelineFactory;
-import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyProducer;
 import org.apache.camel.component.netty.http.handlers.HttpClientChannelHandler;

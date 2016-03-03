@@ -38,6 +38,9 @@ import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * To exchange data with external Websocket servers using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
+ */
 @UriEndpoint(scheme = "ahc-ws,ahc-wss", extendsScheme = "ahc,ahc", title = "AHC Websocket,AHC Secure Websocket",
         syntax = "ahc-ws:httpUri", consumerClass = WsConsumer.class, label = "websocket")
 public class WsEndpoint extends AhcEndpoint {
@@ -47,7 +50,7 @@ public class WsEndpoint extends AhcEndpoint {
     private static final boolean GRIZZLY_AVAILABLE = 
         probeClass("com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider");
 
-    private final Set<WsConsumer> consumers  = new HashSet<WsConsumer>();
+    private final Set<WsConsumer> consumers = new HashSet<WsConsumer>();
 
     private WebSocket websocket;
     @UriParam

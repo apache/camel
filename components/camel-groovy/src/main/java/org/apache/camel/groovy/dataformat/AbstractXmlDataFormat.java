@@ -19,13 +19,14 @@ package org.apache.camel.groovy.dataformat;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.camel.support.ServiceSupport;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import groovy.xml.FactorySupport;
+
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

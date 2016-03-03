@@ -19,6 +19,7 @@ package org.apache.camel.commands.jolokia;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +28,7 @@ import javax.management.InstanceNotFoundException;
 import javax.management.ObjectName;
 
 import org.apache.camel.commands.AbstractCamelController;
-import org.apache.camel.util.LRUCache;
-import org.apache.camel.util.StringHelper;
+
 import org.jolokia.client.J4pClient;
 import org.jolokia.client.exception.J4pException;
 import org.jolokia.client.exception.J4pRemoteException;
@@ -48,7 +48,7 @@ import org.json.simple.JSONObject;
  */
 public class DefaultJolokiaCamelController extends AbstractCamelController implements JolokiaCamelController {
 
-    private Map<String, ObjectName> cache = new LRUCache<String, ObjectName>(1000);
+    private Map<String, ObjectName> cache = new HashMap<String, ObjectName>(100);
 
     private J4pClient jolokia;
     private String url;
@@ -61,7 +61,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             if (sr != null) {
                 for (ObjectName name : sr.getObjectNames()) {
                     String id = name.getKeyProperty("name");
-                    id = StringHelper.removeLeadingAndEndingQuotes(id);
+                    id = removeLeadingAndEndingQuotes(id);
                     if (camelContextName.equals(id)) {
                         found = name;
                         break;
@@ -74,6 +74,12 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             }
         }
         return on;
+    }
+
+    @Override
+    public void using(J4pClient client) {
+        this.jolokia = client;
+        this.url = null;
     }
 
     @Override
@@ -764,6 +770,23 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
         } else {
             return basePath.toString();
         }
+    }
+
+    private static String removeLeadingAndEndingQuotes(String s) {
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+
+        String copy = s.trim();
+        if (copy.startsWith("'") && copy.endsWith("'")) {
+            return copy.substring(1, copy.length() - 1);
+        }
+        if (copy.startsWith("\"") && copy.endsWith("\"")) {
+            return copy.substring(1, copy.length() - 1);
+        }
+
+        // no quotes, so return as-is
+        return s;
     }
 
 }

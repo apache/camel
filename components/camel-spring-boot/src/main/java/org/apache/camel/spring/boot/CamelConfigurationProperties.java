@@ -48,6 +48,18 @@ public class CamelConfigurationProperties {
      */
     private String name;
 
+    /**
+     * Directory to scan for adding additional XML routes.
+     * You can turn this off by setting the value to <tt>false</tt>
+     */
+    private String xmlRoutes = "classpath:camel/*.xml";
+
+    /**
+     * Directory to scan for adding additional XML rests.
+     * You can turn this off by setting the value to <tt>false</tt>
+     */
+    private String xmlRests = "classpath:camel-rest/*.xml";
+
     // Getters & setters
 
     public boolean isJmxEnabled() {
@@ -88,6 +100,22 @@ public class CamelConfigurationProperties {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getXmlRoutes() {
+        return xmlRoutes;
+    }
+
+    public void setXmlRoutes(String xmlRoutes) {
+        this.xmlRoutes = xmlRoutes;
+    }
+
+    public String getXmlRests() {
+        return xmlRests;
+    }
+
+    public void setXmlRests(String xmlRests) {
+        this.xmlRests = xmlRests;
     }
 
 }

@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * Encoder for unsafe URI characters.
  * <p/>
@@ -125,7 +124,7 @@ public final class UnsafeUriCharactersEncoder {
     private static class Pair {
         int left;
         int right;
-        public Pair(int left, int right) {
+        Pair(int left, int right) {
             this.left = left;
             this.right = right;
         }

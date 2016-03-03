@@ -61,7 +61,7 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
 
         Object marshalled = template.requestBody("direct:inPretty", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
-        String expected = "<HashMap>\n  <name>Camel</name>\n</HashMap>";
+        String expected = "<HashMap>\n  <name>Camel</name>\n</HashMap>\n";
         assertEquals(expected, marshalledAsString);
 
         template.sendBody("direct:back", marshalled);
@@ -108,7 +108,7 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jackson/SpringJacksonJsonDataFormatTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jacksonxml/SpringJacksonJsonDataFormatTest.xml");
     }
 
 }

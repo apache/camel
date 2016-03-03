@@ -31,13 +31,6 @@
     <description>Camel JBPM support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            org.apache.camel;version="[2.15,3)",
-            org.apache.camel.impl;version="[2.15,3)",
-            org.apache.camel.spi;version="[2.15,3)",
-            org.apache.camel.util;version="[2.15,3)",
-            *
-        </camel.osgi.import.before.defaults>
         <camel.osgi.export.pkg>org.apache.camel.component.jbpm.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=jbpm</camel.osgi.export.service>
     </properties>

@@ -23,28 +23,35 @@ public class MyRouteConfig extends RouteBuilder {
 
     @Override
     public void configure() {
-        from("restlet:/persons?restletMethod=POST")
-                .setBody(simple("insert into person(firstName, lastName) values('${header.firstName}','${header.lastName}')"))
-                .to("jdbc:dataSource")
-                .setBody(simple("select * from person where id in (select max(id) from person)"))
-                .to("jdbc:dataSource");
 
-        from("restlet:/persons/{personId}?restletMethods=GET,PUT,DELETE")
-                .choice()
-                    .when(simple("${header.CamelHttpMethod} == 'GET'"))
-                        .setBody(simple("select * from person where id = ${header.personId}"))
-                    .when(simple("${header.CamelHttpMethod} == 'PUT'"))
-                        .setBody(simple("update person set firstName='${header.firstName}', lastName='${header.lastName}' where id = ${header.personId}"))
-                    .when(simple("${header.CamelHttpMethod} == 'DELETE'"))
-                        .setBody(simple("delete from person where id = ${header.personId}"))
-                    .otherwise()
-                        .stop()
-                .end()
-                .to("jdbc:dataSource");
+        rest("/persons")
+            .post().to("direct:postPersons")
+            .get().to("direct:getPersons")
+            .get("/{personId}").to("direct:getPersonId")
+            .put("/{personId}").to("direct:putPersonId")
+            .delete("/{personId}").to("direct:deletePersonId");
+        
+        from("direct:postPersons")
+            .setBody(simple("insert into person(firstName, lastName) values('${header.firstName}','${header.lastName}')"))
+            .to("jdbc:dataSource")
+            .setBody(simple("select * from person where id in (select max(id) from person)"))
+            .to("jdbc:dataSource");
 
-        from("restlet:/persons?restletMethod=GET")
-                .setBody(simple("select * from person"))
-                .to("jdbc:dataSource");
+        from("direct:getPersons")
+            .setBody(simple("select * from person"))
+            .to("jdbc:dataSource");
+        
+        from("direct:getPersonId")
+            .setBody(simple("select * from person where id = ${header.personId}"))  
+            .to("jdbc:dataSource");
+        
+        from("direct:putPersonId")            
+            .setBody(simple("update person set firstName='${header.firstName}', lastName='${header.lastName}' where id = ${header.personId}"))              
+            .to("jdbc:dataSource");
+
+        from("direct:deletePersonId")
+            .setBody(simple("delete from person where id = ${header.personId}"))
+            .to("jdbc:dataSource");
+        
     }
 }
-

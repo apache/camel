@@ -80,7 +80,7 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Da
      * @see org.apache.camel.spi.DataFormat#marshal(org.apache.camel.Exchange,
      * java.lang.Object, java.io.OutputStream)
      */
-    public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
+    public void marshal(final Exchange exchange, final Object graph, final OutputStream outputStream) throws Exception {
         ((Message)graph).writeTo(outputStream);
     }
 
@@ -89,7 +89,7 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Da
      * @see org.apache.camel.spi.DataFormat#unmarshal(org.apache.camel.Exchange,
      * java.io.InputStream)
      */
-    public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
+    public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
         ObjectHelper.notNull(defaultInstance, "defaultInstance or instanceClassName must be set", this);
 
         Builder builder = defaultInstance.newBuilderForType().mergeFrom(inputStream);
@@ -101,13 +101,13 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Da
         return builder.build();
     }
 
-    protected Message loadDefaultInstance(String className, CamelContext context) throws CamelException, ClassNotFoundException {
+    protected Message loadDefaultInstance(final String className, final CamelContext context) throws CamelException, ClassNotFoundException {
         Class<?> instanceClass = context.getClassResolver().resolveMandatoryClass(className);
         if (Message.class.isAssignableFrom(instanceClass)) {
             try {
                 Method method = instanceClass.getMethod("getDefaultInstance");
-                return (Message) method.invoke(null, new Object[0]);
-            } catch (Exception ex) {
+                return (Message) method.invoke(null);
+            } catch (final Exception ex) {
                 throw new CamelException("Can't set the defaultInstance of ProtobufferDataFormat with "
                         + className + ", caused by " + ex);
             }

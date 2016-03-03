@@ -60,7 +60,7 @@ public class SpringBase64DataFormatLineLengthTest extends SpringBase64DataFormat
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                "org/apache/camel/dataFormat/base64/SpringBase64DataFormatLineLengthTest.xml");
+                "org/apache/camel/dataformat/base64/SpringBase64DataFormatLineLengthTest.xml");
     }
 
 }

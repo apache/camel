@@ -34,6 +34,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -53,6 +54,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -625,6 +627,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception;
 
+    /**
+     * Loads a collection of rest definitions from the given {@link java.io.InputStream}.
+     *
+     * @param is input stream with the rest(s) definition to add
+     * @throws Exception if the rest definitions could not be loaded for whatever reason
+     * @return the rest definitions
+     */
+    RestsDefinition loadRestsDefinition(InputStream is) throws Exception;
+    
     /**
      * Adds a collection of route definitions to the context
      *
@@ -1377,6 +1388,20 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param processorFactory the custom factory
      */
     void setProcessorFactory(ProcessorFactory processorFactory);
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.MessageHistoryFactory}
+     *
+     * @return the factory
+     */
+    MessageHistoryFactory getMessageHistoryFactory();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.MessageHistoryFactory}
+     *
+     * @param messageHistoryFactory the custom factory
+     */
+    void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory);
 
     /**
      * Gets the current {@link Debugger}

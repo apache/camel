@@ -41,8 +41,9 @@ public class XsltComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"contentCache\": { \"kind\": \"parameter\", \"type\": \"boolean\", \"javaType\": \"boolean\", \"deprecated\": \"false\", \"defaultValue\": \"true\""));
-        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"label\": \"advanced\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"resourceUri\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
+        assertTrue(json.contains("\"allowStAX\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"transformerFactoryClass\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\""));
     }
 
     @Test

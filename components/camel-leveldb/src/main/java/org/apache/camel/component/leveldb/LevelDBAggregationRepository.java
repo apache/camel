@@ -54,6 +54,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     private boolean useRecovery = true;
     private int maximumRedeliveries;
     private String deadLetterUri;
+    private boolean allowSerializedHeaders;
 
     /**
      * Creates an aggregation repository
@@ -102,7 +103,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         LOG.debug("Adding key [{}] -> {}", key, exchange);
         try {
             byte[] lDbKey = keyBuilder(repositoryName, key);
-            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange);
+            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
 
             byte[] rc = null;
             if (isReturnOldExchange()) {
@@ -153,7 +154,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         try {
             byte[] lDbKey = keyBuilder(repositoryName, key);
             final String exchangeId = exchange.getExchangeId();
-            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange);
+            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
 
             // remove the exchange
             byte[] rc = levelDBFile.getDb().get(lDbKey);
@@ -173,8 +174,6 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 } finally {
                     batch.close();
                 }
-            } else {
-                LOG.warn("Unable to remove key {} from repository {}: Not Found", key, repositoryName);
             }
 
         } catch (IOException e) {
@@ -192,8 +191,6 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         if (rc != null) {
             levelDBFile.getDb().delete(confirmedLDBKey);
             LOG.trace("Removed confirm index {} -> {}", exchangeId, new Buffer(rc));
-        } else {
-            LOG.warn("Unable to confirm exchangeId [{}]", exchangeId + " from repository " + repositoryName + ": Not Found");
         }
     }
 
@@ -207,7 +204,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
         DBIterator it = levelDBFile.getDb().iterator();
 
-        String keyBuffer = null;
+        String keyBuffer;
         try {
             String prefix = repositoryName + '\0';
             for (it.seek(keyBuilder(repositoryName, "")); it.hasNext(); it.next()) {
@@ -222,10 +219,8 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
                 String key = keyBuffer.substring(prefix.length());
 
-                if (key != null) {
-                    LOG.trace("getKey [{}]", key);
-                    keys.add(key);
-                }
+                LOG.trace("getKey [{}]", key);
+                keys.add(key);
             }
         } finally {
             // Make sure you close the iterator to avoid resource leaks.
@@ -244,7 +239,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
         DBIterator it = levelDBFile.getDb().iterator();
 
-        String keyBuffer = null;
+        String keyBuffer;
         try {
             String prefix = getRepositoryNameCompleted() + '\0';
 
@@ -256,11 +251,8 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 }
                 String exchangeId = keyBuffer.substring(prefix.length());
 
-                if (exchangeId != null) {
-                    LOG.trace("Scan exchangeId [{}]", exchangeId);
-                    answer.add(exchangeId);
-                }
-
+                LOG.trace("Scan exchangeId [{}]", exchangeId);
+                answer.add(exchangeId);
             }
         } finally {
             // Make sure you close the iterator to avoid resource leaks.
@@ -398,6 +390,13 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         this.persistentFileName = persistentFileName;
     }
 
+    public boolean isAllowSerializedHeaders() {
+        return allowSerializedHeaders;
+    }
+
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        this.allowSerializedHeaders = allowSerializedHeaders;
+    }
 
     @Override
     protected void doStart() throws Exception {

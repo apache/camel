@@ -119,7 +119,7 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpmime</artifactId>
-      <version>${httpcore4-version}</version>
+      <version>${httpclient4-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>

@@ -50,6 +50,8 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
+
 /**
  * A Producer which sends messages to the Amazon EC2 Service
  * <a href="http://aws.amazon.com/ec2/">AWS EC2</a>
@@ -58,6 +60,8 @@ public class EC2Producer extends DefaultProducer {
     
     private static final Logger LOG = LoggerFactory.getLogger(EC2Producer.class);
     
+    private transient String ec2ProducerToString;
+
     public EC2Producer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -110,21 +114,15 @@ public class EC2Producer extends DefaultProducer {
 
     @Override
     public String toString() {
-        return "EC2Producer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (ec2ProducerToString == null) {
+            ec2ProducerToString = "EC2Producer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return ec2ProducerToString;
     }
 
     @Override
     public EC2Endpoint getEndpoint() {
         return (EC2Endpoint) super.getEndpoint();
-    }
-
-    private Message getMessageForResponse(final Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
     }
     
     private void createAndRunInstance(AmazonEC2Client ec2Client, Exchange exchange) {

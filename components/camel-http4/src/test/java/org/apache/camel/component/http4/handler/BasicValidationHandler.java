@@ -58,14 +58,9 @@ public class BasicValidationHandler implements HttpRequestHandler {
             return;
         }
 
-        try {
-            String query = new URI(request.getRequestLine().getUri()).getQuery();            
-            if (expectedQuery != null && !expectedQuery.equals(query)) {
-                response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
-                return;
-            }
-        } catch (URISyntaxException e) {
-            throw new IOException(e);
+        if (!validateQuery(request)) {
+            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+            return;
         }
 
         if (expectedContent != null) {
@@ -84,4 +79,15 @@ public class BasicValidationHandler implements HttpRequestHandler {
         }
     }
 
+    protected boolean validateQuery(HttpRequest request) throws IOException {
+        try {
+            String query = new URI(request.getRequestLine().getUri()).getQuery();
+            if (expectedQuery != null && !expectedQuery.equals(query)) {
+                return false;
+            }
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
+        return true;
+    }
 }

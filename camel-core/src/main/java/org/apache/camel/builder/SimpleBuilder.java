@@ -29,7 +29,7 @@ import org.apache.camel.util.ResourceHelper;
  * This builder is available in the Java DSL from the {@link RouteBuilder} which means that using
  * simple language for {@link Expression}s or {@link Predicate}s is very easy with the help of this builder.
  *
- * @version 
+ * @version
  */
 public class SimpleBuilder implements Predicate, Expression {
 
@@ -51,6 +51,14 @@ public class SimpleBuilder implements Predicate, Expression {
         SimpleBuilder answer = simple(text);
         answer.setResultType(resultType);
         return answer;
+    }
+
+    public static SimpleBuilder simpleF(String formatText, Object...values) {
+        return simple(String.format(formatText, values));
+    }
+
+    public static SimpleBuilder simpleF(String formatText, Class<?> resultType, Object...values) {
+        return simple(String.format(formatText, values), resultType);
     }
 
     public String getText() {

@@ -25,7 +25,7 @@
 
 	<artifactId>camel-netty</artifactId>
 	<packaging>bundle</packaging>
-	<name>Camel :: Netty</name>
+	<name>Camel :: Netty (deprecated)</name>
 	<description>Camel Netty NIO based socket communication component</description>
 
 	<properties>

@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import facebook4j.Facebook;
-import facebook4j.Reading;
 import facebook4j.json.DataObjectFactory;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;

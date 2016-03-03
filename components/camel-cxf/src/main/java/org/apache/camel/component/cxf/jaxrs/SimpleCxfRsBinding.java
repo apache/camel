@@ -191,15 +191,17 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
      * <p />
      * The {@link DefaultCxfRsBinding} doesn't filter the response headers according to the {@link HeaderFilterStrategy}, 
      * so we handle this task in this binding.
-     * @param headers
-     * @param camelExchange
-     * @return
      */
     protected Map<String, String> filterCamelHeadersForResponseHeaders(Map<String, Object> headers,
                                                                      org.apache.camel.Exchange camelExchange) {
         Map<String, String> answer = new HashMap<String, String>();
         for (Map.Entry<String, Object> entry : headers.entrySet()) {
             if (getHeaderFilterStrategy().applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange)) {
+                continue;
+            }
+            // skip content-length as the simple binding with Response will set correct content-length based
+            // on the entity set as the Response
+            if ("content-length".equalsIgnoreCase(entry.getKey())) {
                 continue;
             }
             answer.put(entry.getKey(), entry.getValue().toString());

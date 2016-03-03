@@ -63,9 +63,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ErrorHandler;
 
 /**
- * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
+ * The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
  *
- * @version
+ * This component uses Spring JMS.
  */
 @ManagedResource(description = "Managed JMS Endpoint")
 @UriEndpoint(scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")
@@ -74,15 +74,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private final AtomicInteger runningMessageListeners = new AtomicInteger();
     private boolean pubSubDomain;
     private JmsBinding binding;
-    @UriPath(defaultValue = "queue", enums = "queue,topic,temp:queue,temp:topic")
+    @UriPath(defaultValue = "queue", enums = "queue,topic,temp:queue,temp:topic", description = "The kind of destination to use")
     private String destinationType;
-    @UriPath @Metadata(required = "true")
+    @UriPath(description = "Name of the queue or topic to use as destination")
+    @Metadata(required = "true")
     private String destinationName;
     private Destination destination;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam(label = "consumer")
-    private String selector;
     @UriParam
     private JmsConfiguration configuration;
 
@@ -228,7 +227,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         } else {
             // do nothing, as we're working with a DefaultJmsMessageListenerContainer with an explicit DefaultTaskExecutorType,
             // so DefaultJmsMessageListenerContainer#createDefaultTaskExecutor will handle the creation
-            log.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}", 
+            log.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}",
                     listenerContainer, configuration.getDefaultTaskExecutorType());
         }
 
@@ -319,7 +318,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public String getThreadName() {
         return "JmsConsumer[" + getEndpointConfiguredDestinationName() + "]";
     }
-    
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -403,17 +402,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setConfiguration(JmsConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getSelector() {
-        return selector;
-    }
-
-    /**
-     * Sets the JMS selector to use
-     */
-    public void setSelector(String selector) {
-        this.selector = selector;
     }
 
     public boolean isSingleton() {
@@ -572,11 +560,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public ErrorHandler getErrorHandler() {
         return getConfiguration().getErrorHandler();
     }
-    
+
     public LoggingLevel getErrorHandlerLoggingLevel() {
         return getConfiguration().getErrorHandlerLoggingLevel();
     }
-   
+
     @ManagedAttribute
     public boolean isErrorHandlerLogStackTrace() {
         return getConfiguration().isErrorHandlerLogStackTrace();
@@ -1112,6 +1100,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public void setTransferFault(boolean transferFault) {
+        getConfiguration().setTransferFault(transferFault);
+    }
+
+    @ManagedAttribute
+    public boolean isTransferFault() {
+        return getConfiguration().isTransferFault();
+    }
+
+    @ManagedAttribute
     public boolean isTestConnectionOnStartup() {
         return configuration.isTestConnectionOnStartup();
     }
@@ -1237,6 +1235,15 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute(description = "Number of running message listeners")
     public int getRunningMessageListeners() {
         return runningMessageListeners.get();
+    }
+
+    @ManagedAttribute
+    public String getSelector() {
+        return configuration.getSelector();
+    }
+
+    public void setSelector(String selector) {
+        configuration.setSelector(selector);
     }
 
     // Implementation methods

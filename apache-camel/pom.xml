@@ -121,6 +121,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-braintree</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-blueprint</artifactId>
     </dependency>
     <dependency>
@@ -214,6 +218,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-elsql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-etcd</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -345,11 +353,19 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ignite</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-infinispan</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-irc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ironmq</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -374,6 +390,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jbpm</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jcache</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -480,6 +500,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-kubernetes</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-kura</artifactId>
     </dependency>
     <dependency>
@@ -504,6 +528,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-lzf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-mail</artifactId>
     </dependency>
     <dependency>
@@ -517,6 +545,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mina2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mllp</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -894,6 +926,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog-lucene</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-commands-core</artifactId>
     </dependency>
     <dependency>
@@ -904,61 +940,10 @@
       <groupId>org.apache.camel.karaf</groupId>
       <artifactId>camel-karaf-commands</artifactId>
     </dependency>
-
-    <!-- camel examples -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-aggregate</artifactId>
+      <artifactId>camel-commands-spring-boot</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-bam</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-cxf</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-etl</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-ftp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-loan-broker</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-management</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-jms-file</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-osgi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-osgi-rmi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-spring-xquery</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-sql</artifactId>
-    </dependency>
-
 
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
@@ -993,7 +978,7 @@
 
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
-	  <artifactId>geronimo-jta_1.1_spec</artifactId>
+	    <artifactId>geronimo-jta_1.1_spec</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>

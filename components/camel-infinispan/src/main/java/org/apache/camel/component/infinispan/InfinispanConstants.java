@@ -23,7 +23,7 @@ public interface InfinispanConstants {
     String KEY = "CamelInfinispanKey";
     String VALUE = "CamelInfinispanValue";
     String OLD_VALUE = "CamelInfinispanOldValue";
-    String MAP = "CamelInfinispanMap";    
+    String MAP = "CamelInfinispanMap";
     String OPERATION = "CamelInfinispanOperation";
     String PUT = "CamelInfinispanOperationPut";
     String PUT_ASYNC = "CamelInfinispanOperationPutAsync";
@@ -46,4 +46,8 @@ public interface InfinispanConstants {
     String LIFESPAN_TIME_UNIT = "CamelInfinispanTimeUnit";
     String MAX_IDLE_TIME = "CamelInfinispanMaxIdleTime";
     String MAX_IDLE_TIME_UNIT = "CamelInfinispanMaxIdleTimeUnit";
+    String IGNORE_RETURN_VALUES = "CamelInfinispanIgnoreReturnValues";
+    String EVENT_DATA = "CamelInfinispanEventData";
+    String QUERY = "CamelInfinispanOperationQuery";
+    String QUERY_BUILDER = "CamelInfinispanQueryBuilder";
 }

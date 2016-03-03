@@ -47,14 +47,14 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         try {
             super.doStart();
             if (endpoint.isAutoCreate()) {
-                log.debug("Auto creating \"" + endpoint.getConfiguration().getDirectory());
+                log.debug("Auto creating directory: {}", endpoint.getConfiguration().getDirectory());
                 try {
                     connectIfNecessary();
                     operations.buildDirectory(endpoint.getConfiguration().getDirectory(), true);
                 } catch (GenericFileOperationFailedException e) {
-                    if (getEndpoint().getConfiguration().isThrowExceptionOnConnectFailed()) {
-                        throw e;
-                    }
+                    // log a WARN as we want to start the consumer.
+                    log.warn("Error auto creating directory: " + endpoint.getConfiguration().getDirectory()
+                            + " due " + e.getMessage() + ". This exception is ignored.", e);
                 }
             }
         } finally {

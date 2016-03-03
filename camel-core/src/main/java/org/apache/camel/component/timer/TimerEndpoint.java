@@ -34,27 +34,29 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Represents a timer endpoint that can generate periodic inbound exchanges triggered by a timer.
+ * The timer component is used for generating message exchanges when a timer fires.
  *
- * @version 
+ * This component is similar to the scheduler component, but has much less functionality.
  */
 @ManagedResource(description = "Managed TimerEndpoint")
 @UriEndpoint(scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true, consumerClass = TimerConsumer.class, label = "core,scheduling")
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath @Metadata(required = "true")
     private String timerName;
-    @UriParam(label = "advanced")
-    private Date time;
     @UriParam(defaultValue = "1000")
     private long period = 1000;
     @UriParam(defaultValue = "1000")
     private long delay = 1000;
+    @UriParam(defaultValue = "0")
+    private long repeatCount;
     @UriParam
     private boolean fixedRate;
     @UriParam(defaultValue = "true", label = "advanced")
     private boolean daemon = true;
-    @UriParam(defaultValue = "0")
-    private long repeatCount;
+    @UriParam(label = "advanced")
+    private Date time;
+    @UriParam(label = "advanced")
+    private String pattern;
     @UriParam(label = "advanced")
     private Timer timer;
 
@@ -206,6 +208,17 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
      */
     public void setTime(Date time) {
         this.time = time;
+    }
+
+    public String getPattern() {
+        return pattern;
+    }
+
+    /**
+     * Allows you to specify a custom Date pattern to use for setting the time option using URI syntax.
+     */
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
     }
 
     public Timer getTimer(TimerConsumer consumer) {

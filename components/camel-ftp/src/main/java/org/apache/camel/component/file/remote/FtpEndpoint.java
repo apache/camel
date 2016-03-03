@@ -34,19 +34,25 @@ import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
- * FTP endpoint
+ * The ftp component is used for uploading or downloading files from FTP servers.
  */
 @UriEndpoint(scheme = "ftp", extendsScheme = "file", title = "FTP",
-        syntax = "ftp:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
+        syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName",
+        consumerClass = FtpConsumer.class, label = "file")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
-    protected FTPClient ftpClient;
-    protected FTPClientConfig ftpClientConfig;
-    protected Map<String, Object> ftpClientParameters;
-    protected Map<String, Object> ftpClientConfigParameters;
     protected int soTimeout;
     protected int dataTimeout;
+
     @UriParam
     protected FtpConfiguration configuration;
+    @UriParam(label = "advanced")
+    protected FTPClientConfig ftpClientConfig;
+    @UriParam(label = "advanced", prefix = "ftpClientConfig.", multiValue = true)
+    protected Map<String, Object> ftpClientConfigParameters;
+    @UriParam(label = "advanced", prefix = "ftpClient.", multiValue = true)
+    protected Map<String, Object> ftpClientParameters;
+    @UriParam(label = "advanced")
+    protected FTPClient ftpClient;
 
     public FtpEndpoint() {
     }
@@ -180,6 +186,9 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         return ftpClient;
     }
 
+    /**
+     * To use a custom instance of FTPClient
+     */
     public void setFtpClient(FTPClient ftpClient) {
         this.ftpClient = ftpClient;
     }
@@ -188,6 +197,9 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         return ftpClientConfig;
     }
 
+    /**
+     * To use a custom instance of FTPClientConfig to configure the FTP client the endpoint should use.
+     */
     public void setFtpClientConfig(FTPClientConfig ftpClientConfig) {
         this.ftpClientConfig = ftpClientConfig;
     }

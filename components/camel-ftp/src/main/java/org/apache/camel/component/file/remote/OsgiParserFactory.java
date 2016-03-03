@@ -54,7 +54,6 @@ public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
     private ClassResolver ocr;
     
     public OsgiParserFactory(ClassResolver ocr) {
-        super();
         this.ocr = ocr;
     }
     

@@ -25,7 +25,6 @@ import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-
 public class DropboxConsumerSearchTest extends DropboxTestSupport {
 
     public DropboxConsumerSearchTest() throws Exception { }
@@ -49,7 +48,7 @@ public class DropboxConsumerSearchTest extends DropboxTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("dropbox://search?" + getAuthParams() + "&remotePath=/XXX")
+                from("dropbox://search?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/XXX")
                         .to("mock:result");
             }
         };

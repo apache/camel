@@ -30,6 +30,9 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
+/**
+ * The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
+ */
 @UriEndpoint(scheme = "kafka", title = "Kafka", syntax = "kafka:brokers", consumerClass = KafkaConsumer.class, label = "messaging")
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
@@ -491,4 +494,21 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     public void setBridgeEndpoint(boolean bridgeEndpoint) {
         this.bridgeEndpoint = bridgeEndpoint;
     }
+
+    public String getOffsetsStorage() {
+        return configuration.getOffsetsStorage();
+    }
+
+    public void setOffsetsStorage(String offsetsStorage) {
+        configuration.setOffsetsStorage(offsetsStorage);
+    }
+
+    public Boolean isDualCommitEnabled() {
+        return configuration.isDualCommitEnabled();
+    }
+
+    public void setDualCommitEnabled(boolean dualCommitEnabled) {
+        configuration.setDualCommitEnabled(dualCommitEnabled);
+    }
+
 }

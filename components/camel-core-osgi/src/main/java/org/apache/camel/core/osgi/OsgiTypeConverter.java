@@ -62,19 +62,8 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     }
 
     public Object addingService(ServiceReference<TypeConverterLoader> serviceReference) {
-        LOG.trace("AddingService: {}", serviceReference);
+        LOG.trace("AddingService: {}, Bundle: {}", serviceReference, serviceReference.getBundle());        
         TypeConverterLoader loader = bundleContext.getService(serviceReference);
-        // just make sure we don't load the bundle converter this time
-        if (delegate != null) {
-            try {
-                ServiceHelper.stopService(this.delegate);
-            } catch (Exception e) {
-                // ignore
-                LOG.debug("Error stopping service due: " + e.getMessage() + ". This exception will be ignored.", e);
-            }
-            // It can force camel to reload the type converter again
-            this.delegate = null;
-        }
         return loader;
     }
 
@@ -82,7 +71,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     }
 
     public void removedService(ServiceReference<TypeConverterLoader> serviceReference, Object o) {
-        LOG.trace("RemovedService: {}", serviceReference);
+        LOG.trace("RemovedService: {}, Bundle: {}", serviceReference, serviceReference.getBundle());  
         try {
             ServiceHelper.stopService(this.delegate);
         } catch (Exception e) {
@@ -91,6 +80,8 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         }
         // It can force camel to reload the type converter again
         this.delegate = null;
+        
+        // TODO: reloading all type converters when one service is removed is suboptimal...
     }
 
     @Override

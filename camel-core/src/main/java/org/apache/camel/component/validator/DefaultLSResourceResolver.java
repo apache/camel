@@ -105,7 +105,7 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
             // find the xsd with relative path
             if (ObjectHelper.isNotEmpty(relatedURI)) {
                 try {
-                    ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), relatedURI);
+                    ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, relatedURI);
                     return relatedURI;
                 } catch (IOException e) {
                    // ignore the exception
@@ -128,7 +128,7 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
         @Override
         public InputStream getByteStream() {
             try {
-                return ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), uri);
+                return ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, uri);
             } catch (IOException e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }

@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS EC2 Endpoint</a>.  
+ * The aws-ec2 is used for managing Amazon EC2 instances.
  */
 @UriEndpoint(scheme = "aws-ec2", title = "AWS EC2", syntax = "aws-ec2:label", producerOnly = true, label = "cloud,management")
 public class EC2Endpoint extends ScheduledPollEndpoint {

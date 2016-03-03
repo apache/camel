@@ -54,7 +54,7 @@ class RestSwaggerReader {
       resourcePath = "/" + resourcePath
     }
 
-    LOG.debug("Reading rest path: {} -> {}", resourcePath, rest)
+    LOG.debug("Reading rest path: " + resourcePath + " -> " + rest)
 
     // create a list of apis
     val apis = new ListBuffer[ApiDescription]
@@ -107,7 +107,7 @@ class RestSwaggerReader {
         summary = ""
       }
 
-      LOG.debug("Adding operation {} {}", method, nickName)
+      LOG.debug("Adding operation " + method + " " + nickName)
 
       operations += Operation(
         method,
@@ -202,7 +202,7 @@ class RestSwaggerReader {
         Some( param.getDescription ),
         Some( param.getDefaultValue),
         if (param.getRequired != null) param.getRequired.booleanValue() else false,
-        if (param.getAllowMultiple != null) param.getAllowMultiple.booleanValue() else false,
+        false,
         param.getDataType,
         allowValues,
         param.getType.toString,

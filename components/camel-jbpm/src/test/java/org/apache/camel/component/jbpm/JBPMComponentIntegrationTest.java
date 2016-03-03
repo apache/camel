@@ -28,7 +28,7 @@ public class JBPMComponentIntegrationTest extends CamelTestSupport {
     @Test
     public void interactsOverRest() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        template.sendBodyAndHeader("direct:rest", null, JBPMConstants.PROCESS_ID, "project1.integration-test");
+        template.sendBodyAndHeader("direct:start", null, JBPMConstants.PROCESS_ID, "project1.integration-test");
         assertMockEndpointsSatisfied();
 
         assertNotNull(getMockEndpoint("mock:result").getExchanges().get(0).getIn().getBody());
@@ -39,7 +39,7 @@ public class JBPMComponentIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:rest")
+                from("direct:start")
                         .to("jbpm:http://localhost:8080/business-central?userName=bpmsAdmin&password=pa$word1"
                             + "&deploymentId=org.kie.example:project1:1.0.0-SNAPSHOT")
                         .to("mock:result");

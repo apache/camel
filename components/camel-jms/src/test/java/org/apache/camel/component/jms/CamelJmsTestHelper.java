@@ -68,6 +68,7 @@ public final class CamelJmsTestHelper {
         if (maximumRedeliveries != null) {
             connectionFactory.getRedeliveryPolicy().setMaximumRedeliveries(maximumRedeliveries);
         }
+        connectionFactory.setTrustAllPackages(true);
         return connectionFactory;
     }
 
@@ -95,6 +96,7 @@ public final class CamelJmsTestHelper {
         connectionFactory.setOptimizeAcknowledge(true);
         connectionFactory.setOptimizedMessageDispatch(true);
         connectionFactory.setAlwaysSessionAsync(false);
+        connectionFactory.setTrustAllPackages(true);
         return connectionFactory;
     }
 }

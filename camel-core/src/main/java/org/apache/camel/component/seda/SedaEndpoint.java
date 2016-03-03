@@ -48,15 +48,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of the <a
- * href="http://camel.apache.org/queue.html">Queue components</a> for
- * asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
+ * The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
  */
 @ManagedResource(description = "Managed SedaEndpoint")
 @UriEndpoint(scheme = "seda", title = "SEDA", syntax = "seda:name", consumerClass = SedaConsumer.class, label = "core,endpoint")
 public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, MultipleConsumersSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);
-    private volatile BlockingQueue<Exchange> queue;
     private final Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
     private final Set<SedaConsumer> consumers = new CopyOnWriteArraySet<SedaConsumer>();
     private volatile MulticastProcessor consumerMulticastProcessor;
@@ -65,6 +62,8 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     @UriPath(description = "Name of queue") @Metadata(required = "true")
     private String name;
+    @UriParam(label = "advanced", description = "Define the queue instance which will be used by the endpoint")
+    private BlockingQueue queue;
     @UriParam(defaultValue = "" + Integer.MAX_VALUE)
     private int size = Integer.MAX_VALUE;
 
@@ -241,7 +240,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
-     * Define the queue instance which will be used by seda endpoint.
+     * Define the queue instance which will be used by the endpoint.
      * <p/>
      * This option is only for rare use-cases where you want to use a custom queue instance.
      */

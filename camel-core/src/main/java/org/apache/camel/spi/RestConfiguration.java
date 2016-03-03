@@ -34,7 +34,7 @@ public class RestConfiguration {
     }
 
     public enum RestHostNameResolver {
-        localIp, localHostName
+        allLocalIp, localIp, localHostName
     }
 
     private String component;
@@ -44,9 +44,10 @@ public class RestConfiguration {
     private int port;
     private String contextPath;
     private String apiContextPath;
+    private String apiContextRouteId;
     private String apiContextIdPattern;
     private boolean apiContextListing;
-    private RestHostNameResolver restHostNameResolver = RestHostNameResolver.localHostName;
+    private RestHostNameResolver restHostNameResolver = RestHostNameResolver.allLocalIp;
     private RestBindingMode bindingMode = RestBindingMode.off;
     private boolean skipBindingOnErrorCode = true;
     private boolean enableCORS;
@@ -185,6 +186,21 @@ public class RestConfiguration {
      */
     public void setApiContextPath(String contextPath) {
         this.apiContextPath = contextPath;
+    }
+
+    public String getApiContextRouteId() {
+        return apiContextRouteId;
+    }
+
+    /**
+     * Sets the route id to use for the route that services the REST API.
+     * <p/>
+     * The route will by default use an auto assigned route id.
+     *
+     * @param apiContextRouteId  the route id
+     */
+    public void setApiContextRouteId(String apiContextRouteId) {
+        this.apiContextRouteId = apiContextRouteId;
     }
 
     public String getApiContextIdPattern() {

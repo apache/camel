@@ -40,7 +40,6 @@ import java.util.regex.Pattern;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.slf4j.Logger;
@@ -444,6 +443,21 @@ public final class IntrospectionSupport {
                 rc.put(name, value);
                 it.remove();
             }
+        }
+
+        return rc;
+    }
+
+    public static Map<String, String> extractStringProperties(Map<String, Object> properties) {
+        ObjectHelper.notNull(properties, "properties");
+
+        Map<String, String> rc = new LinkedHashMap<String, String>(properties.size());
+
+        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, Object> entry = it.next();
+            String name = entry.getKey();
+            String value = entry.getValue().toString();
+            rc.put(name, value);
         }
 
         return rc;

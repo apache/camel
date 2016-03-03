@@ -39,7 +39,7 @@ public class PullRequestCommentConsumerTest extends GitHubComponentTestBase {
             @Override
             public void configure() throws Exception {
                 context.addComponent("github", new GitHubComponent());
-                from("github://pullRequestComment?" + GITHUB_CREDENTIALS_STRING)
+                from("github://pullRequestComment?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo")
                         .process(new PullRequestCommentProcessor())
                         .to(mockResultEndpoint);
             }

@@ -31,6 +31,9 @@ import org.apache.camel.util.CamelContextHelper;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.launch.JobLauncher;
 
+/**
+ * The spring-batch component allows to send messages to Spring Batch for further processing.
+ */
 @UriEndpoint(scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName", producerOnly = true, label = "spring,batch,scheduling")
 public class SpringBatchEndpoint extends DefaultEndpoint {
 

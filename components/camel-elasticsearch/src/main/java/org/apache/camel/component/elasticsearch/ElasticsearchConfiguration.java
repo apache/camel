@@ -16,24 +16,14 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.elasticsearch.action.WriteConsistencyLevel;
-import org.elasticsearch.action.support.replication.ReplicationType;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
-
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 @UriParams
 public class ElasticsearchConfiguration {
@@ -43,7 +33,7 @@ public class ElasticsearchConfiguration {
 
     @UriPath @Metadata(required = "true")
     private String clusterName;
-    @UriParam(enums = "INDEX,BULK,BULK_INDEX,GET_BY_ID,DELETE") @Metadata(required = "true")
+    @UriParam(enums = "INDEX,UPDATE,BULK,BULK_INDEX,GET_BY_ID,MULTIGET,DELETE,EXISTS,SEARCH,MULTISEARCH")
     private String operation;
     @UriParam
     private String indexName;
@@ -51,8 +41,6 @@ public class ElasticsearchConfiguration {
     private String indexType;
     @UriParam(defaultValue = "DEFAULT")
     private WriteConsistencyLevel consistencyLevel = ElasticsearchConstants.DEFAULT_CONSISTENCY_LEVEL;
-    @UriParam(defaultValue = "DEFAULT")
-    private ReplicationType replicationType = ElasticsearchConstants.DEFAULT_REPLICATION_TYPE;
     @UriParam
     private Boolean data;
     @UriParam
@@ -61,6 +49,8 @@ public class ElasticsearchConfiguration {
     private String transportAddresses;
     @UriParam(defaultValue = "9300")
     private int port = ElasticsearchConstants.DEFAULT_PORT;
+    @UriParam(defaultValue = "true")
+    private Boolean clientTransportSniff = true;
 
     /**
      * Name of cluster or use local for local mode
@@ -116,17 +106,6 @@ public class ElasticsearchConfiguration {
     public void setConsistencyLevel(WriteConsistencyLevel consistencyLevel) {
         this.consistencyLevel = consistencyLevel;
     }
-
-    /**
-     * The replication type to use with INDEX and BULK operations (can be any of SYNC, ASYNC or DEFAULT)
-     */
-    public ReplicationType getReplicationType() {
-        return replicationType;
-    }
-
-    public void setReplicationType(ReplicationType replicationType) {
-        this.replicationType = replicationType;
-    }
     
     /**
      * Is the node going to be allowed to allocate data (shards) to it or not. This setting map to the <tt>node.data</tt> setting.
@@ -172,7 +151,18 @@ public class ElasticsearchConfiguration {
     public void setPort(int port) {
         this.port = port;
     }
-       
+
+    /**
+     * Is the client allowed to sniff the rest of the cluster or not (default true). This setting map to the <tt>client.transport.sniff</tt> setting.
+     */
+    public Boolean getClientTransportSniff() {
+        return clientTransportSniff;
+    }
+
+    public void setClientTransportSniff(Boolean clientTransportSniff) {
+        this.clientTransportSniff = clientTransportSniff;
+    }
+
     public boolean isLocal() {
         return local;
     }

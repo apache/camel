@@ -37,11 +37,17 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * Socket level networking using TCP or UDP with the Netty 4.x library.
+ */
 @UriEndpoint(scheme = "netty4", title = "Netty4", syntax = "netty4:protocol:host:port", consumerClass = NettyConsumer.class, label = "networking,tcp,udp")
 public class NettyEndpoint extends DefaultEndpoint {
     @UriParam
     private NettyConfiguration configuration;
-    
+    @UriParam(label = "advanced", javaType = "org.apache.camel.component.netty4.NettyServerBootstrapConfiguration",
+            description = "To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint.")
+    private Object bootstrapConfiguration; // to include in component docs as NettyServerBootstrapConfiguration is a @UriParams class
+
     public NettyEndpoint(String endpointUri, NettyComponent component, NettyConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;

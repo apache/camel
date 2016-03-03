@@ -35,14 +35,17 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private String knownHostsFile;
     @UriParam(label = "security")
     private String knownHostsUri;
+    @UriParam(label = "security")
     private byte[] knownHosts;
     @UriParam(label = "security")
     private String privateKeyFile;
     @UriParam(label = "security")
     private String privateKeyUri;
+    @UriParam(label = "security")
     private byte[] privateKey;
     @UriParam(label = "security")
     private String privateKeyPassphrase;
+    @UriParam(label = "security")
     private KeyPair keyPair;
     @UriParam(defaultValue = "no", enums = "no,yes", label = "security")
     private String strictHostKeyChecking = "no";
@@ -102,6 +105,9 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return knownHosts;
     }
 
+    /**
+     * Sets the known_hosts from the byte array, so that the SFTP endpoint can do host key verification.
+     */
     public void setKnownHosts(byte[] knownHosts) {
         this.knownHosts = knownHosts;
     }
@@ -111,7 +117,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key file to that the SFTP endpoint can do private key verification.
+     * Set the private key file so that the SFTP endpoint can do private key verification.
      */
     public void setPrivateKeyFile(String privateKeyFile) {
         this.privateKeyFile = privateKeyFile;
@@ -122,7 +128,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key file (loaded from classpath by default) to that the SFTP endpoint can do private key verification.
+     * Set the private key file (loaded from classpath by default) so that the SFTP endpoint can do private key verification.
      */
     public void setPrivateKeyUri(String privateKeyUri) {
         this.privateKeyUri = privateKeyUri;
@@ -133,7 +139,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key as byte[] to that the SFTP endpoint can do private key verification.
+     * Set the private key as byte[] so that the SFTP endpoint can do private key verification.
      */
     public void setPrivateKey(byte[] privateKey) {
         this.privateKey = privateKey;
@@ -144,7 +150,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key file passphrase to that the SFTP endpoint can do private key verification.
+     * Set the private key file passphrase so that the SFTP endpoint can do private key verification.
      */
     public void setPrivateKeyPassphrase(String privateKeyFilePassphrase) {
         this.privateKeyPassphrase = privateKeyFilePassphrase;
@@ -164,6 +170,9 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return keyPair;
     }
 
+    /**
+     * Sets a key pair of the public and private key so to that the SFTP endpoint can do public/private key verification.
+     */
     public void setKeyPair(KeyPair keyPair) {
         this.keyPair = keyPair;
     }

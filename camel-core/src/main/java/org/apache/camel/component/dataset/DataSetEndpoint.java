@@ -38,25 +38,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Endpoint for DataSet.
+ * The dataset component provides a mechanism to easily perform load & soak testing of your system.
  *
- * @version 
+ * It works by allowing you to create DataSet instances both as a source of messages and as a way to assert that the data set is received.
+ * Camel will use the throughput logger when sending dataset's.
  */
-@UriEndpoint(scheme = "dataset", title = "Dataset", syntax = "dataset:name", consumerClass = DataSetConsumer.class, label = "core,testing")
+@UriEndpoint(scheme = "dataset", title = "Dataset", syntax = "dataset:name", consumerClass = DataSetConsumer.class, label = "core,testing", lenientProperties = true)
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private final AtomicInteger receivedCounter = new AtomicInteger();
     @UriPath(name = "name", description = "Name of DataSet to lookup in the registry") @Metadata(required = "true")
     private volatile DataSet dataSet;
-    @UriParam(defaultValue = "0")
+    @UriParam(label = "consumer", defaultValue = "0")
     private int minRate;
-    @UriParam(defaultValue = "3")
+    @UriParam(label = "consumer", defaultValue = "3")
     private long produceDelay = 3;
-    @UriParam(defaultValue = "0")
+    @UriParam(label = "producer", defaultValue = "0")
     private long consumeDelay;
-    @UriParam(defaultValue = "0")
+    @UriParam(label = "consumer", defaultValue = "0")
     private long preloadSize;
-    @UriParam(defaultValue = "1000")
+    @UriParam(label = "consumer", defaultValue = "1000")
     private long initialDelay = 1000;
 
     @Deprecated
@@ -163,7 +164,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     /**
-     * Allows a delay to be specified which causes consumers to pause - to simulate slow consumers
+     * Allows a delay to be specified which causes a delay when a message is consumed by the producer (to simulate slow processing)
      */
     public void setConsumeDelay(long consumeDelay) {
         this.consumeDelay = consumeDelay;
@@ -174,7 +175,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     /**
-     * Allows a delay to be specified which causes producers to pause - to simulate slow producers
+     * Allows a delay to be specified which causes a delay when a message is sent by the consumer (to simulate slow processing)
      */
     public void setProduceDelay(long produceDelay) {
         this.produceDelay = produceDelay;

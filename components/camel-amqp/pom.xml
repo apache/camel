@@ -30,6 +30,13 @@
   <description>Camel AMQP component which is based on the Apache Qid project</description>
 
   <properties>
+    <!-- Wrapped qpid-jms-client requires invalid version of the package.
+    Remove this after migration to ServiceMix bundles. -->
+    <camel.osgi.import>
+      org.apache.qpid.jms,
+      ${camel.osgi.import.defaults},
+      *
+    </camel.osgi.import>
     <camel.osgi.export.pkg>org.apache.camel.component.amqp.*</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=amqp</camel.osgi.export.service>
   </properties>
@@ -46,8 +53,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.qpid</groupId>
-      <artifactId>qpid-amqp-1-0-client-jms</artifactId>
-      <version>${qpid-version}</version>
+      <artifactId>qpid-jms-client</artifactId>
+      <version>${qpid-jms-client-version}</version>
     </dependency>
     <dependency>
         <groupId>org.apache.qpid</groupId>
@@ -57,9 +64,14 @@
 
     <!-- testing -->
     <dependency>
-      <groupId>org.apache.qpid</groupId>
-      <artifactId>qpid-broker</artifactId>
-      <version>${qpid-version}</version>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-broker</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-amqp</artifactId>
+      <version>${activemq-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -32,6 +32,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -43,10 +44,10 @@ import org.xnio.OptionMap;
 import org.xnio.Options;
 
 /**
- * Represents an Undertow endpoint.
+ * The undertow component provides HTTP-based endpoints for consuming and producing HTTP requests.
  */
 @UriEndpoint(scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
-        consumerClass = UndertowConsumer.class, label = "http")
+        consumerClass = UndertowConsumer.class, label = "http", lenientProperties = true)
 public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
@@ -54,13 +55,13 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     private SSLContext sslContext;
     private OptionMap optionMap;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private URI httpURI;
-    @UriParam
+    @UriParam(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;
-    @UriParam
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "consumer")
     private String httpMethodRestrict;
@@ -76,7 +77,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     private Boolean tcpNoDelay = Boolean.TRUE;
     @UriPath(label = "producer", defaultValue = "true")
     private Boolean reuseAddresses = Boolean.TRUE;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", prefix = "option.", multiValue = true)
     private Map<String, Object> options;
 
     public UndertowEndpoint(String uri, UndertowComponent component) throws URISyntaxException {

@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * @version 
+ * Sending and receiving messages through JavaSpace.
  */
 @UriEndpoint(scheme = "javaspace", title = "JavaSpace", syntax = "javaspace:url", consumerClass = JavaSpaceConsumer.class, label = "messaging")
 public class JavaSpaceEndpoint extends DefaultEndpoint {

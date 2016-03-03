@@ -62,11 +62,11 @@ public class MailToMultipleEndpointsTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").to("smtp://localhost?username=james2&password=secret&To=a@a.com&From=me@me.com");
+                from("direct:a").to("smtp://localhost?username=james2&password=secret&to=a@a.com&from=me@me.com");
 
-                from("direct:b").to("smtp://localhost?username=james&password=secret&To=b@b.com&From=you@you.com");
+                from("direct:b").to("smtp://localhost?username=james&password=secret&to=b@b.com&from=you@you.com");
 
-                from("direct:c").to("smtp://localhost?username=admin&password=secret&To=c@c.com&From=me@me.com&CC=you@you.com,them@them.com");
+                from("direct:c").to("smtp://localhost?username=admin&password=secret&to=c@c.com&from=me@me.com&cc=you@you.com,them@them.com");
             }
         };
     }

@@ -39,9 +39,7 @@ public class ConfigAdminNoReloadLoadConfigurationFileTest extends CamelBlueprint
 
     @Test
     public void testConfigAdmin() throws Exception {
-        // Even if we update config admin configuration, update-strategy="none" won't cause reload of BP
-        // container and reinjection of bean properties
-        getMockEndpoint("mock:result").expectedBodiesReceived("${greeting} World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         template.sendBody("direct:start", "World");
 

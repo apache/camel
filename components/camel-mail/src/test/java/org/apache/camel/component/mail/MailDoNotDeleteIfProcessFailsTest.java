@@ -68,9 +68,11 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
         Message[] msg = new Message[2];
         msg[0] = new MimeMessage(sender.getSession());
         msg[0].setText("Message 1");
+        msg[0].setHeader("Message-ID", "0");
         msg[0].setFlag(Flags.Flag.SEEN, false);
         msg[1] = new MimeMessage(sender.getSession());
         msg[1].setText("Message 2");
+        msg[0].setHeader("Message-ID", "1");
         msg[1].setFlag(Flags.Flag.SEEN, true);
         folder.appendMessages(msg);
         folder.close(true);

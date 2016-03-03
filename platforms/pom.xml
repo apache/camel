@@ -33,6 +33,7 @@
 
   <modules>
     <module>catalog</module>
+    <module>catalog-lucene</module>
     <module>commands</module>
     <module>karaf</module>
   </modules>

@@ -59,9 +59,8 @@ public class TarSplitterRouteIssueTest extends CamelTestSupport {
                 
                 from("seda:decompressFiles")
                     .split(new TarSplitter()).streaming().shareUnitOfWork()
-                        .log("we are splitting")
+                        .to("log:entry")
                         .to("mock:entry");
-                        //.to("file:target/tar/?fileName=decompressed.txt&fileExist=Append");
             }
         };
     }

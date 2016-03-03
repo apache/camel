@@ -25,6 +25,7 @@ import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -57,7 +58,7 @@ public class AuthCmdHeaderTest extends BaseDockerHeaderTest<AuthCmd> {
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).authCmd();
-        Mockito.verify(mockObject, Mockito.times(1)).withAuthConfig((AuthConfig) Mockito.anyObject());
+        Mockito.verify(mockObject, Mockito.times(1)).withAuthConfig((AuthConfig) Matchers.anyObject());
 
     }
 

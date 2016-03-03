@@ -39,7 +39,7 @@ public class LoggingErrorHandler extends DefaultErrorHandler {
      */
     public LoggingErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
                                RedeliveryPolicy redeliveryPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        super(camelContext, output, logger, null, redeliveryPolicy, exceptionPolicyStrategy, null, null, null);
+        super(camelContext, output, logger, null, redeliveryPolicy, exceptionPolicyStrategy, null, null, null, null);
     }
 
     @Override

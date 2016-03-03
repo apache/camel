@@ -33,6 +33,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -55,16 +56,24 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
-        // TODO we need to remove the Ref in Camel 3.0
-        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
-        if (binding == null) {
-            // just check the httpBinding parameter
-            binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
-        }
+        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         String servletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+
+        if (lenientContextPath()) {
+            // the uri must have a leading slash for the context-path matching to work with servlet, and it can be something people
+            // forget to add and then the servlet consumer cannot match the context-path as would have been expected
+            String scheme = ObjectHelper.before(uri, ":");
+            String after = ObjectHelper.after(uri, ":");
+            // rebuild uri to have exactly one leading slash
+            while (after.startsWith("/")) {
+                after = after.substring(1);
+            }
+            after = "/" + after;
+            uri = scheme + ":" + after;
+        }
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encodeHttpURI(uri)), parameters);
@@ -105,6 +114,13 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    /**
+     * Whether defining the context-path is lenient and do not require an exact leading slash.
+     */
+    protected boolean lenientContextPath() {
+        return true;
     }
 
     /**
@@ -233,5 +249,16 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         }
 
         return consumer;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        RestConfiguration config = getCamelContext().getRestConfiguration("servlet", true);
+        // configure additional options on jetty configuration
+        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+            setProperties(this, config.getComponentProperties());
+        }
     }
 }

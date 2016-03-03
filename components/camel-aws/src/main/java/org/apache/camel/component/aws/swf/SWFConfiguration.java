@@ -32,10 +32,6 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class SWFConfiguration {
 
-    private Map<String, Object> clientConfigurationParameters;
-    private Map<String, Object> sWClientParameters;
-    private Map<String, Object> startWorkflowOptionsParameters;
-
     @UriPath(enums = "activity,workflow") @Metadata(required = "true")
     private String type;
     @UriParam
@@ -82,6 +78,13 @@ public class SWFConfiguration {
     private WorkflowTypeRegistrationOptions workflowTypeRegistrationOptions;
     @UriParam(label = "consumer,activity", defaultValue = "100")
     private int activityThreadPoolSize = 100; // aws-sdk default
+
+    @UriParam(label = "advanced", prefix = "clientConfiguration.", multiValue = true)
+    private Map<String, Object> clientConfigurationParameters;
+    @UriParam(label = "advanced", prefix = "sWClient.", multiValue = true)
+    private Map<String, Object> sWClientParameters;
+    @UriParam(label = "advanced", prefix = "startWorkflowOptions.", multiValue = true)
+    private Map<String, Object> startWorkflowOptionsParameters;
 
     public String getAccessKey() {
         return accessKey;
@@ -175,15 +178,21 @@ public class SWFConfiguration {
         return clientConfigurationParameters;
     }
 
+    /**
+     * To configure the ClientConfiguration using the key/values from the Map.
+     */
     public void setClientConfigurationParameters(Map<String, Object> clientConfigurationParameters) {
         this.clientConfigurationParameters = clientConfigurationParameters;
     }
 
-    public Map<String, Object> getsWClientParameters() {
+    public Map<String, Object> getSWClientParameters() {
         return sWClientParameters;
     }
 
-    public void setsWClientParameters(Map<String, Object> sWClientParameters) {
+    /**
+     * To configure the AmazonSimpleWorkflowClient using the key/values from the Map.
+     */
+    public void setSWClientParameters(Map<String, Object> sWClientParameters) {
         this.sWClientParameters = sWClientParameters;
     }
 
@@ -202,6 +211,10 @@ public class SWFConfiguration {
         return startWorkflowOptionsParameters;
     }
 
+    /**
+     * To configure the StartWorkflowOptions using the key/values from the Map.
+     * @param startWorkflowOptionsParameters
+     */
     public void setStartWorkflowOptionsParameters(Map<String, Object> startWorkflowOptionsParameters) {
         this.startWorkflowOptionsParameters = startWorkflowOptionsParameters;
     }

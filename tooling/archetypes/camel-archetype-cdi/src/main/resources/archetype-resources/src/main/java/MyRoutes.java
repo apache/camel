@@ -26,7 +26,6 @@ import org.apache.camel.cdi.Uri;
 /**
  * Configures all our Camel routes, components, endpoints and beans
  */
-@ContextName("myCdiCamelContext")
 public class MyRoutes extends RouteBuilder {
 
     @Inject
@@ -37,15 +36,12 @@ public class MyRoutes extends RouteBuilder {
     @Uri("log:output")
     private Endpoint resultEndpoint;
 
-    @Inject
-    private SomeBean someBean;
-
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         // you can configure the route rule with Java DSL here
 
         from(inputEndpoint)
-            .bean(someBean)
+            .to("bean:counterBean")
             .to(resultEndpoint);
     }
 

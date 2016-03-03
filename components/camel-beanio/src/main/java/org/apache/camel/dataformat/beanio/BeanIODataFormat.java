@@ -87,7 +87,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
             factory = StreamFactory.newInstance();
 
             // Load the mapping file using the resource helper to ensure it can be loaded in OSGi and other environments
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), mapping);
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), mapping);
             try {
                 if (properties != null) {
                     factory.load(is, properties);

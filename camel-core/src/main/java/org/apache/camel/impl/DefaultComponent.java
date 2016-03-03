@@ -196,12 +196,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
      */
     protected void validateURI(String uri, String path, Map<String, Object> parameters) {
-        // check for uri containing & but no ? marker
-        if (uri.contains("&") && !uri.contains("?")) {
-            throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: no ? marker however the uri "
-                + "has & parameter separators. Check the uri if its missing a ? marker.");
-        }
-
         // check for uri containing double && markers without include by RAW
         if (uri.contains("&&")) {
             Pattern pattern = Pattern.compile("RAW(.*&&.*)");

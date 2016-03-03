@@ -61,6 +61,9 @@ public class RestConfigurationDefinition {
     private String apiContextPath;
 
     @XmlAttribute
+    private String apiContextRouteId;
+
+    @XmlAttribute
     private String apiContextIdPattern;
 
     @XmlAttribute
@@ -197,6 +200,21 @@ public class RestConfigurationDefinition {
      */
     public void setApiContextPath(String contextPath) {
         this.apiContextPath = contextPath;
+    }
+
+    public String getApiContextRouteId() {
+        return apiContextRouteId;
+    }
+
+    /**
+     * Sets the route id to use for the route that services the REST API.
+     * <p/>
+     * The route will by default use an auto assigned route id.
+     *
+     * @param apiContextRouteId  the route id
+     */
+    public void setApiContextRouteId(String apiContextRouteId) {
+        this.apiContextRouteId = apiContextRouteId;
     }
 
     public String getApiContextIdPattern() {
@@ -444,6 +462,14 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * Sets the route id to use for the route that services the REST API.
+     */
+    public RestConfigurationDefinition apiContextRouteId(String routeId) {
+        setApiContextRouteId(routeId);
+        return this;
+    }
+
+    /**
      * Sets an CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
      * <p/>
      * The pattern uses the rules from {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)}
@@ -531,6 +557,8 @@ public class RestConfigurationDefinition {
 
     /**
      * For additional configuration options on component level
+     * <p/>
+     * The value can use <tt>#</tt> to refer to a bean to lookup in the registry.
      */
     public RestConfigurationDefinition componentProperty(String key, String value) {
         RestPropertyDefinition prop = new RestPropertyDefinition();
@@ -542,6 +570,8 @@ public class RestConfigurationDefinition {
 
     /**
      * For additional configuration options on endpoint level
+     * <p/>
+     * The value can use <tt>#</tt> to refer to a bean to lookup in the registry.
      */
     public RestConfigurationDefinition endpointProperty(String key, String value) {
         RestPropertyDefinition prop = new RestPropertyDefinition();
@@ -553,6 +583,8 @@ public class RestConfigurationDefinition {
 
     /**
      * For additional configuration options on consumer level
+     * <p/>
+     * The value can use <tt>#</tt> to refer to a bean to lookup in the registry.
      */
     public RestConfigurationDefinition consumerProperty(String key, String value) {
         RestPropertyDefinition prop = new RestPropertyDefinition();
@@ -564,6 +596,8 @@ public class RestConfigurationDefinition {
 
     /**
      * For additional configuration options on data format level
+     * <p/>
+     * The value can use <tt>#</tt> to refer to a bean to lookup in the registry.
      */
     public RestConfigurationDefinition dataFormatProperty(String key, String value) {
         RestPropertyDefinition prop = new RestPropertyDefinition();
@@ -574,7 +608,7 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * For additional configuration options on data format level
+     * For configuring an api property, such as <tt>api.title</tt>, or <tt>api.version</tt>.
      */
     public RestConfigurationDefinition apiProperty(String key, String value) {
         RestPropertyDefinition prop = new RestPropertyDefinition();
@@ -624,6 +658,9 @@ public class RestConfigurationDefinition {
         }
         if (apiContextPath != null) {
             answer.setApiContextPath(CamelContextHelper.parseText(context, apiContextPath));
+        }
+        if (apiContextRouteId != null) {
+            answer.setApiContextRouteId(CamelContextHelper.parseText(context, apiContextRouteId));
         }
         if (apiContextIdPattern != null) {
             // special to allow #name# to refer to itself

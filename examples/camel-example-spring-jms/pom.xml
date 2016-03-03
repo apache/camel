@@ -27,9 +27,7 @@
     <artifactId>camel-example-spring-jms</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: Example :: Spring :: JMS</name>
-    <description>An example using Spring XML to talk to the JMS server from different kind of client techniques
-        and having AOP aspect to perform audit trails in the Camel Server
-    </description>
+    <description>An example using Spring XML to talk to the JMS server from different kind of client techniques</description>
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.example.server.*</camel.osgi.export.pkg>
         <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool</camel.osgi.import.additional>

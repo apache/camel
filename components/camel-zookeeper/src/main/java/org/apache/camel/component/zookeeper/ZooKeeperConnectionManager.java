@@ -50,7 +50,7 @@ public class ZooKeeperConnectionManager {
 
         public DefaultZookeeperConnectionStrategy(ZooKeeperEndpoint endpoint) {
             this.configuration = endpoint.getConfiguration();
-            LOG.debug("Creating connection with static configuration of {}", configuration);
+            LOG.debug("Creating connection to ZooKeeper: {}", configuration);
             holder = new ConnectionHolder(configuration);
         }
 
@@ -59,6 +59,7 @@ public class ZooKeeperConnectionManager {
         }
 
         public void shutdown() {
+            LOG.debug("Shutting down connection to ZooKeeper: {}", configuration);
             holder.closeConnection();
         }
     }

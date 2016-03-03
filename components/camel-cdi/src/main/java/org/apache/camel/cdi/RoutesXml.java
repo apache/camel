@@ -32,8 +32,9 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A helper class for loading route definitions from a file, URL or the classpath
  */
+@Vetoed
 public final class RoutesXml {
-    
+
     private RoutesXml() {
         //The helper class
     }

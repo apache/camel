@@ -46,7 +46,7 @@
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-annotations</artifactId>
-      <version>${swagger-version}</version>
+      <version>${swagger-scala-version}</version>
     </dependency>
 
     <!-- To override the scala-library version of swagger-jaxrs-2.10 for supporting Java8 -->
@@ -59,13 +59,13 @@
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-jaxrs_2.10</artifactId>
-      <version>${swagger-version}</version>
+      <version>${swagger-scala-version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-servlet_2.10</artifactId>
-      <version>${swagger-version}</version>
+      <version>${swagger-scala-version}</version>
     </dependency>
 
     <dependency>

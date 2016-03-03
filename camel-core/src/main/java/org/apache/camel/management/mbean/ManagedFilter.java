@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedFilterMBean;
 import org.apache.camel.model.FilterDefinition;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.FilterProcessor;
 
 /**

@@ -42,7 +42,7 @@ import static org.apache.camel.component.schematron.constant.Constants.LINE_NUMB
 import static org.apache.camel.component.schematron.constant.Constants.SAXON_TRANSFORMER_FACTORY_CLASS_NAME;
 
 /**
- * Schematron Endpoint.
+ *  Validates the payload of a message using the Schematron Library.
  */
 @UriEndpoint(scheme = "schematron", title = "Schematron", syntax = "schematron:path", producerOnly = true, label = "validation")
 public class SchematronEndpoint extends DefaultEndpoint {
@@ -127,7 +127,7 @@ public class SchematronEndpoint extends DefaultEndpoint {
             try {
                 // Attempt to read the schematron rules  from the class path first.
                 LOG.debug("Reading schematron rules from class path {}", path);
-                InputStream schRules = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), path);
+                InputStream schRules = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), path);
                 rules = TemplatesFactory.newInstance().getTemplates(schRules, transformerFactory);
             } catch (Exception e) {
                 // Attempts from the file system.

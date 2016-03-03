@@ -25,6 +25,7 @@ import io.undertow.client.ClientConnection;
 import io.undertow.client.ClientExchange;
 import io.undertow.client.ClientRequest;
 import io.undertow.client.UndertowClient;
+import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Protocols;
@@ -37,8 +38,6 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xnio.BufferAllocator;
-import org.xnio.ByteBufferSlicePool;
 import org.xnio.IoFuture;
 import org.xnio.OptionMap;
 import org.xnio.Xnio;
@@ -55,7 +54,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowProducer.class);
     private UndertowEndpoint endpoint;
     private XnioWorker worker;
-    private ByteBufferSlicePool pool;
+    private DefaultByteBufferPool pool;
     private OptionMap options;
 
     public UndertowProducer(UndertowEndpoint endpoint, OptionMap options) {
@@ -126,7 +125,8 @@ public class UndertowProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        pool = new ByteBufferSlicePool(BufferAllocator.DIRECT_BYTE_BUFFER_ALLOCATOR, 8192, 8192 * 8192);
+        pool = new DefaultByteBufferPool(true, 8192);
+
         worker = Xnio.getInstance().createWorker(options);
 
         LOG.debug("Created worker: {} with options: {}", worker, options);

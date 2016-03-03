@@ -28,11 +28,8 @@ import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.eclipse.egit.github.core.CommitStatus;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PullRequestStateProducerTest extends GitHubComponentTestBase {
-    protected static final Logger LOG = LoggerFactory.getLogger(PullRequestStateProducerTest.class);
     private String commitsha;
 
     @Override
@@ -44,13 +41,12 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
                 context.addComponent("github", new GitHubComponent());
                 from("direct:validPullRequest")
                         .process(new MockPullRequestStateProducerProcessor())
-                        .to("github://pullRequestState?state=success&" + GITHUB_CREDENTIALS_STRING);
+                        .to("github://pullRequestState?state=success&username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
 
 
         };
     }
-
 
     @Test
     public void testPullRequestStateProducer() throws Exception {

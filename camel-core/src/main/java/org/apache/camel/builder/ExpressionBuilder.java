@@ -54,9 +54,12 @@ import org.apache.camel.support.XMLTokenExpressionIterator;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.GroupIterator;
+import org.apache.camel.util.GroupTokenIterator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
+import org.apache.camel.util.StringHelper;
+
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
@@ -1271,6 +1274,30 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression that skips the first element
+     */
+    public static Expression skipFirstExpression(final Expression expression) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Object value = expression.evaluate(exchange, Object.class);
+                Iterator it = exchange.getContext().getTypeConverter().tryConvertTo(Iterator.class, exchange, value);
+                if (it != null) {
+                    // skip first
+                    it.next();
+                    return it;
+                } else {
+                    return value;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "skipFirst(" + expression + ")";
+            }
+        };
+    }
+
+    /**
      * Returns an {@link TokenPairExpressionIterator} expression
      */
     public static Expression tokenizePairExpression(String startToken, String endToken, boolean includeTokens) {
@@ -1336,13 +1363,34 @@ public final class ExpressionBuilder {
         };
     }
 
-    public static Expression groupIteratorExpression(final Expression expression, final String token, final int group) {
+    public static Expression groupXmlIteratorExpression(final Expression expression, final int group) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
                 ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
-                return new GroupIterator(exchange, it, token, group);
+                // must use GroupTokenIterator in xml mode as we want to concat the xml parts into a single message
+                return new GroupTokenIterator(exchange, it, null, group, false);
+            }
+
+            @Override
+            public String toString() {
+                return "group " + expression + " " + group + " times";
+            }
+        };
+    }
+
+    public static Expression groupIteratorExpression(final Expression expression, final String token, final int group, final boolean skipFirst) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // evaluate expression as iterator
+                Iterator<?> it = expression.evaluate(exchange, Iterator.class);
+                ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
+                if (token != null) {
+                    return new GroupTokenIterator(exchange, it, token, group, skipFirst);
+                } else {
+                    return new GroupIterator(exchange, it, group, skipFirst);
+                }
             }
 
             @Override
@@ -1876,6 +1924,16 @@ public final class ExpressionBuilder {
         };
     }
 
+    /**
+     * Returns Simple expression or fallback to Constant expression if expression str is not Simple expression.
+     */
+    public static Expression parseSimpleOrFallbackToConstantExpression(String str, CamelContext camelContext) {
+        if (StringHelper.hasStartToken(str, "simple")) {
+            return camelContext.resolveLanguage("simple").createExpression(str);
+        }
+        return constantExpression(str);
+    }
+
     public static Expression propertiesComponentExpression(final String key, final String locations) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -1950,6 +2008,24 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns an iterator to collate (iterate) the given expression
+     */
+    public static Expression collateExpression(final String expression, final int group) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // use simple language
+                Expression exp = exchange.getContext().resolveLanguage("simple").createExpression(expression);
+                return ExpressionBuilder.groupIteratorExpression(exp, null, group, false).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "collate(" + expression + "," + group + ")";
+            }
+        };
+    }
+
+    /**
      * Expression adapter for OGNL expression from Message Header or Exchange property
      */
     private static class KeyedOgnlExpressionAdapter extends ExpressionAdapter {
@@ -1957,8 +2033,8 @@ public final class ExpressionBuilder {
         private final String toStringValue;
         private final KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy;
 
-        public KeyedOgnlExpressionAdapter(String ognl, String toStringValue, 
-                                          KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy) {
+        KeyedOgnlExpressionAdapter(String ognl, String toStringValue, 
+                                   KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy) {
             this.ognl = ognl;
             this.toStringValue = toStringValue;
             this.keyedEntityRetrievalStrategy = keyedEntityRetrievalStrategy;

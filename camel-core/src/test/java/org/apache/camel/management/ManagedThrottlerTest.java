@@ -135,19 +135,10 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         }
 
         assertTrue(notifier.matches(2, TimeUnit.SECONDS));
-        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-
-        // we are expecting this to be > 0
-        assertTrue(throttledMessages.intValue() > 0);
-
         assertMockEndpointsSatisfied();
-
-        throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer) 0, throttledMessages);
 
         Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
         assertEquals(10, completed.longValue());
-
     }
 
     public void testThrottleAsyncVisableViaJmx() throws Exception {
@@ -183,19 +174,10 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         }
 
         assertTrue(notifier.matches(2, TimeUnit.SECONDS));
-        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-
-        // we are expecting this to be > 0
-        assertTrue(throttledMessages.intValue() > 0);
-
         assertMockEndpointsSatisfied();
-
-        throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer)0, throttledMessages);
 
         Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
         assertEquals(10, completed.longValue());
-
     }
 
     public void testThrottleAsyncExceptionVisableViaJmx() throws Exception {
@@ -229,23 +211,14 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         }
 
         assertTrue(notifier.matches(2, TimeUnit.SECONDS));
-        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-
-        // we are expecting this to be > 0
-        assertTrue(throttledMessages.intValue() > 0);
-
         assertMockEndpointsSatisfied();
 
         // give a sec for exception handling to finish..
         Thread.sleep(500);
 
-        throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer)0, throttledMessages);
-
         // since all exchanges ended w/ exception, they are not completed
         Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
         assertEquals(0, completed.longValue());
-
     }
 
     public void testRejectedExecution() throws Exception {
@@ -276,17 +249,11 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         MockEndpoint exceptionMock = getMockEndpoint("mock:rejectedExceptionEndpoint1");
         exceptionMock.expectedMessageCount(9);
 
-
         for (int i = 0; i < 10; i++) {
             template.sendBody("seda:throttleCountRejectExecution", "Message " + i);
         }
 
         assertMockEndpointsSatisfied();
-
-        // we shouldn't have ane leaked throttler counts
-        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer) 0, throttledMessages);
-
     }
 
     public void testRejectedExecutionCallerRuns() throws Exception {
@@ -317,16 +284,11 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         MockEndpoint exceptionMock = getMockEndpoint("mock:rejectedExceptionEndpoint");
         exceptionMock.expectedMessageCount(0);
 
-
         for (int i = 0; i < 10; i++) {
             template.sendBody("seda:throttleCountRejectExecutionCallerRuns", "Message " + i);
         }
 
         assertMockEndpointsSatisfied();
-
-        // we shouldn't have ane leaked throttler counts
-        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer) 0, throttledMessages);
     }
 
     @Override

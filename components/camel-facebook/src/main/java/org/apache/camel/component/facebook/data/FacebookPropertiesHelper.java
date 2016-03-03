@@ -69,7 +69,6 @@ public final class FacebookPropertiesHelper {
             options, FacebookConstants.READING_PREFIX);
         if (!readingProperties.isEmpty()) {
             try {
-
                 // add to an existing reading reference?
                 // NOTE Reading class does not support overwriting properties!!!
                 Reading reading = configuration.getReading();
@@ -77,19 +76,16 @@ public final class FacebookPropertiesHelper {
                 if (reading != null) {
                     Reading readingUpdate = new Reading();
                     ReadingBuilder.setProperties(readingUpdate, readingProperties);
-
                     reading = ReadingBuilder.merge(reading, readingUpdate);
                 } else {
                     reading = new Reading();
                     ReadingBuilder.setProperties(reading, readingProperties);
                 }
                 // set properties
-                ReadingBuilder.setProperties(reading,
-                    readingProperties);
+                ReadingBuilder.setProperties(reading, readingProperties);
 
                 // update reading in configuration
                 configuration.setReading(reading);
-
             } catch (Exception e) {
                 throw new IllegalArgumentException(readingProperties.toString(), e);
             }
@@ -111,8 +107,7 @@ public final class FacebookPropertiesHelper {
         int nProperties = 0;
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
             if (entry.getKey().startsWith(FacebookConstants.FACEBOOK_PROPERTY_PREFIX)) {
-                properties.put(entry.getKey().substring(FacebookConstants.FACEBOOK_PROPERTY_PREFIX.length()),
-                    entry.getValue());
+                properties.put(entry.getKey().substring(FacebookConstants.FACEBOOK_PROPERTY_PREFIX.length()), entry.getValue());
                 nProperties++;
             }
         }

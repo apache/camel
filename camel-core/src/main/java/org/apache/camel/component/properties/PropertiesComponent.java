@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
@@ -34,10 +34,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/properties">Properties Component</a> allows you to use property placeholders when defining Endpoint URIs
- *
- * @version 
  */
-public class PropertiesComponent extends DefaultComponent {
+public class PropertiesComponent extends UriEndpointComponent {
 
     /**
      * The default prefix token.
@@ -92,6 +90,7 @@ public class PropertiesComponent extends DefaultComponent {
     private final Map<String, PropertiesFunction> functions = new HashMap<String, PropertiesFunction>();
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
+    private boolean isDefaultCreated;
     private String[] locations;
     private boolean ignoreMissingLocation;
     private String encoding;
@@ -108,12 +107,20 @@ public class PropertiesComponent extends DefaultComponent {
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
 
     public PropertiesComponent() {
+        super(PropertiesEndpoint.class);
         // include out of the box functions
         addFunction(new EnvPropertiesFunction());
         addFunction(new SysPropertiesFunction());
         addFunction(new ServicePropertiesFunction());
+        addFunction(new ServiceHostPropertiesFunction());
+        addFunction(new ServicePortPropertiesFunction());
     }
-    
+
+    public PropertiesComponent(boolean isDefaultCreated) {
+        this();
+        this.isDefaultCreated = isDefaultCreated;
+    }
+
     public PropertiesComponent(String location) {
         this();
         setLocation(location);
@@ -141,7 +148,12 @@ public class PropertiesComponent extends DefaultComponent {
 
         String endpointUri = parseUri(remaining, paths);
         LOG.debug("Endpoint uri parsed as: {}", endpointUri);
-        return getCamelContext().getEndpoint(endpointUri);
+
+        Endpoint delegate = getCamelContext().getEndpoint(endpointUri);
+        PropertiesEndpoint answer = new PropertiesEndpoint(uri, delegate, this);
+
+        setProperties(answer, parameters);
+        return answer;
     }
 
     public String parseUri(String uri) throws Exception {
@@ -205,13 +217,17 @@ public class PropertiesComponent extends DefaultComponent {
      * Is this component created as a default by {@link org.apache.camel.CamelContext} during starting up Camel.
      */
     public boolean isDefaultCreated() {
-        return locations == null;
+        return isDefaultCreated;
     }
 
     public String[] getLocations() {
         return locations;
     }
 
+    /**
+     * A list of locations to load properties. You can use comma to separate multiple locations.
+     * This option will override any default locations and only use the locations from this option.
+     */
     public void setLocations(String[] locations) {
         // make sure to trim as people may use new lines when configuring using XML
         // and do this in the setter as Spring/Blueprint resolves placeholders before Camel is being started
@@ -225,6 +241,10 @@ public class PropertiesComponent extends DefaultComponent {
         this.locations = locations;
     }
 
+    /**
+     * A list of locations to load properties. You can use comma to separate multiple locations.
+     * This option will override any default locations and only use the locations from this option.
+     */
     public void setLocation(String location) {
         setLocations(location.split(","));
     }
@@ -247,6 +267,9 @@ public class PropertiesComponent extends DefaultComponent {
         return propertiesResolver;
     }
 
+    /**
+     * To use a custom PropertiesResolver
+     */
     public void setPropertiesResolver(PropertiesResolver propertiesResolver) {
         this.propertiesResolver = propertiesResolver;
     }
@@ -255,6 +278,9 @@ public class PropertiesComponent extends DefaultComponent {
         return propertiesParser;
     }
 
+    /**
+     * To use a custom PropertiesParser
+     */
     public void setPropertiesParser(PropertiesParser propertiesParser) {
         this.propertiesParser = propertiesParser;
     }
@@ -263,6 +289,9 @@ public class PropertiesComponent extends DefaultComponent {
         return cache;
     }
 
+    /**
+     * Whether or not to cache loaded properties. The default value is true.
+     */
     public void setCache(boolean cache) {
         this.cache = cache;
     }
@@ -271,6 +300,9 @@ public class PropertiesComponent extends DefaultComponent {
         return propertyPrefix;
     }
 
+    /**
+     * Optional prefix prepended to property names before resolution.
+     */
     public void setPropertyPrefix(String propertyPrefix) {
         this.propertyPrefix = propertyPrefix;
         this.propertyPrefixResolved = propertyPrefix;
@@ -283,6 +315,9 @@ public class PropertiesComponent extends DefaultComponent {
         return propertySuffix;
     }
 
+    /**
+     * Optional suffix appended to property names before resolution.
+     */
     public void setPropertySuffix(String propertySuffix) {
         this.propertySuffix = propertySuffix;
         this.propertySuffixResolved = propertySuffix;
@@ -295,6 +330,10 @@ public class PropertiesComponent extends DefaultComponent {
         return fallbackToUnaugmentedProperty;
     }
 
+    /**
+     * If true, first attempt resolution of property name augmented with propertyPrefix and propertySuffix
+     * before falling back the plain property name specified. If false, only the augmented property name is searched.
+     */
     public void setFallbackToUnaugmentedProperty(boolean fallbackToUnaugmentedProperty) {
         this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
     }
@@ -303,6 +342,9 @@ public class PropertiesComponent extends DefaultComponent {
         return ignoreMissingLocation;
     }
 
+    /**
+     * Whether to silently ignore if a location cannot be located, such as a properties file not found.
+     */
     public void setIgnoreMissingLocation(boolean ignoreMissingLocation) {
         this.ignoreMissingLocation = ignoreMissingLocation;
     }

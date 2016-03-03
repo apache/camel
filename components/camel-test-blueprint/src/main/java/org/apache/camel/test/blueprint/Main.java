@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
@@ -77,7 +76,6 @@ public class Main extends MainSupport {
 
     public static void main(String... args) throws Exception {
         Main main = new Main();
-        main.enableHangupSupport();
         main.run(args);
     }
 
@@ -99,11 +97,16 @@ public class Main extends MainSupport {
                 throw new IllegalArgumentException("Descriptors must be provided, with the name of the blueprint XML file");
             }
             LOG.debug("Starting Blueprint XML file: " + descriptors);
-            bundleContext = createBundleContext(bundleName);
+            if (configAdminPid != null && configAdminFileName != null) {
+                // pid/file is used to set INITIAL content of ConfigAdmin to be used when blueprint container is started
+                bundleContext = createBundleContext(bundleName, new String[] {configAdminFileName, configAdminPid});
+            } else {
+                bundleContext = createBundleContext(bundleName);
+            }
             Set<Long> eventHistory = new HashSet<>();
+
             CamelBlueprintHelper.waitForBlueprintContainer(eventHistory, bundleContext, bundleName, BlueprintEvent.CREATED, null);
-            CamelBlueprintHelper.setPersistentFileForConfigAdmin(bundleContext, configAdminPid, configAdminFileName, new Properties(),
-                                                                 bundleName, eventHistory, true);
+
             camelContext = CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class);
             if (camelContext == null) {
                 throw new IllegalArgumentException("Cannot find CamelContext in blueprint XML file: " + descriptors);
@@ -137,8 +140,9 @@ public class Main extends MainSupport {
         return createBundleContext(getClass().getSimpleName());
     }
 
-    protected BundleContext createBundleContext(String name) throws Exception {
-        return CamelBlueprintHelper.createBundleContext(name, descriptors, isIncludeSelfAsBundle());
+    protected BundleContext createBundleContext(String name, String[] ... configAdminPidFiles) throws Exception {
+        return CamelBlueprintHelper.createBundleContext(name, descriptors, isIncludeSelfAsBundle(),
+                CamelBlueprintHelper.BUNDLE_FILTER, CamelBlueprintHelper.BUNDLE_VERSION, null, configAdminPidFiles);
     }
 
     @Override

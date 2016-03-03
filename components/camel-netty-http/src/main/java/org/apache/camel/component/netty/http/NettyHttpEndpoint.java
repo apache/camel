@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.Map;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -37,15 +39,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * HTTP based {@link NettyEndpoint}
+ * Netty HTTP server and client using the Netty 3.x library.
  */
 @UriEndpoint(scheme = "netty-http", extendsScheme = "netty", title = "Netty HTTP",
-        syntax = "netty-http:host:port/path", consumerClass = NettyHttpConsumer.class, label = "http")
+        syntax = "netty-http:protocol:host:port/path", consumerClass = NettyHttpConsumer.class, label = "http", lenientProperties = true,
+        excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
+                + ",clientMode,reconnect,reconnectInterval,broadcast")
 public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
     @UriParam
     private NettyHttpConfiguration configuration;
+    @UriParam(label = "advanced", name = "configuration", javaType = "org.apache.camel.component.netty.http.NettyHttpConfiguration",
+              description = "To use a custom configured NettyHttpConfiguration for configuring this endpoint.")
+    private Object httpConfiguration; // to include in component docs as NettyHttpConfiguration is a @UriParams class
     @UriParam(label = "advanced")
     private NettyHttpBinding nettyHttpBinding;
     @UriParam(label = "advanced")
@@ -58,6 +65,8 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     private NettySharedHttpServer nettySharedHttpServer;
     @UriParam(label = "consumer,security")
     private NettyHttpSecurityConfiguration securityConfiguration;
+    @UriParam(label = "consumer,security", prefix = "securityConfiguration.", multiValue = true)
+    private Map<String, Object> securityOptions; // to include in component docs
 
     public NettyHttpEndpoint(String endpointUri, NettyHttpComponent component, NettyConfiguration configuration) {
         super(endpointUri, component, configuration);
@@ -206,6 +215,17 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
      */
     public void setSecurityConfiguration(NettyHttpSecurityConfiguration securityConfiguration) {
         this.securityConfiguration = securityConfiguration;
+    }
+
+    public Map<String, Object> getSecurityOptions() {
+        return securityOptions;
+    }
+
+    /**
+     * To configure NettyHttpSecurityConfiguration using key/value pairs from the map
+     */
+    public void setSecurityOptions(Map<String, Object> securityOptions) {
+        this.securityOptions = securityOptions;
     }
 
     @Override

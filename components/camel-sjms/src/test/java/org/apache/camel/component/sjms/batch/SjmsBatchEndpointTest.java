@@ -78,11 +78,11 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
         return true;
     }
 
-    @Test(expected = FailedToCreateProducerException.class)
+    @Test(expected = FailedToCreateRouteException.class)
     public void testProducerFailure() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in").to("sjms-batch:testQueue");
+                from("direct:in").to("sjms-batch:testQueue?aggregationStrategy=#unknown");
             }
         });
         context.start();

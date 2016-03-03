@@ -34,7 +34,13 @@ import org.jboss.netty.handler.codec.frame.TooLongFrameException;
 @UriParams
 public class NettyHttpConfiguration extends NettyConfiguration {
 
+    @UriPath(enums = "http,https") @Metadata(required = "true")
+    private String protocol;
     @UriPath @Metadata(required = "true")
+    private String host;
+    @UriPath
+    private int port;
+    @UriPath
     private String path;
     @UriParam(label = "consumer,advanced")
     private boolean urlDecodeHeaders;
@@ -87,6 +93,48 @@ public class NettyHttpConfiguration extends NettyConfiguration {
         }
     }
 
+    public String getProtocol() {
+        return protocol;
+    }
+
+    /**
+     * The protocol to use which is either http or https
+     */
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    @Override
+    public String getHost() {
+        // override to setup better documentation for netty-http
+        return super.getHost();
+    }
+
+    /**
+     * The local hostname such as localhost, or 0.0.0.0 when being a consumer.
+     * The remote HTTP server hostname when using producer.
+     */
+    @Override
+    public void setHost(String host) {
+        // override to setup better documentation for netty-http
+        super.setHost(host);
+    }
+
+    @Override
+    public int getPort() {
+        // override to setup better documentation for netty-http
+        return super.getPort();
+    }
+
+    /**
+     * The port number. Is default 80 for http and 443 for https.
+     */
+    @Override
+    public void setPort(int port) {
+        // override to setup better documentation for netty-http
+        super.setPort(port);
+    }
+
     public boolean isCompression() {
         return compression;
     }
@@ -119,6 +167,9 @@ public class NettyHttpConfiguration extends NettyConfiguration {
      * in the response as a application/x-java-serialized-object content type.
      * On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException.
      * The caused exception is required to be serialized.
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;

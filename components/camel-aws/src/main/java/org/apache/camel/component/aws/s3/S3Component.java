@@ -22,9 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * Defines the <a href="http://aws.amazon.com/s3/">AWS S3 Component</a> 
- */
 public class S3Component extends UriEndpointComponent {
     
     public S3Component() {

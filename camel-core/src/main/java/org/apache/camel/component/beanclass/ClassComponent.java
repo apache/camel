@@ -19,11 +19,10 @@ package org.apache.camel.component.beanclass;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
 import org.apache.camel.component.bean.BeanComponent;
-import org.apache.camel.component.bean.BeanEndpoint;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.ConstantBeanHolder;
+import org.apache.camel.util.IntrospectionSupport;
 
 /**
  * The <a href="http://camel.apache.org/class.html">Class Component</a> is for binding JavaBeans to Camel message exchanges based on class name.
@@ -48,8 +47,13 @@ public class ClassComponent extends BeanComponent {
         // create bean
         Object bean = getCamelContext().getInjector().newInstance(clazz);
 
+        // the bean.xxx options is for the bean
+        Map<String, Object> options = IntrospectionSupport.extractProperties(parameters, "bean.");
+        endpoint.setParameters(options);
+
         // now set additional properties on it
-        setProperties(bean, parameters);
+        setProperties(bean, options);
+        validateParameters(uri, options, null);
 
         // and register the bean as a holder on the endpoint
         BeanHolder holder = new ConstantBeanHolder(bean, getCamelContext());

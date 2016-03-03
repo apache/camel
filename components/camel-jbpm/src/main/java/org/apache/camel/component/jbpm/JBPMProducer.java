@@ -407,7 +407,7 @@ public class JBPMProducer extends DefaultProducer {
         }
 
         Object getEvent(JBPMConfiguration configuration, Exchange exchange) {
-            String event = exchange.getIn().getHeader(JBPMConstants.EVENT, String.class);
+            Object event = exchange.getIn().getHeader(JBPMConstants.EVENT);
             if (event == null) {
                 event = configuration.getEvent();
             }

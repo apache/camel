@@ -26,7 +26,7 @@ import javax.activation.MimetypesFileTypeMap;
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
 import org.apache.solr.client.solrj.request.DirectXmlRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
@@ -37,18 +37,18 @@ import org.apache.solr.common.SolrInputDocument;
  * The Solr producer.
  */
 public class SolrProducer extends DefaultProducer {
-    private SolrServer httpServer;
-    private SolrServer concSolrServer;
-    private SolrServer cloudSolrServer;
+    private SolrClient httpServer;
+    private SolrClient concSolrServer;
+    private SolrClient cloudSolrServer;
 
-    public SolrProducer(SolrEndpoint endpoint, SolrServer solrServer, SolrServer concSolrServer, SolrServer cloudSolrServer) {
+    public SolrProducer(SolrEndpoint endpoint, SolrClient solrServer, SolrClient concSolrServer, SolrClient cloudSolrServer) {
         super(endpoint);
         this.httpServer = solrServer;
         this.concSolrServer = concSolrServer;
         this.cloudSolrServer = cloudSolrServer;
     }
     
-    private SolrServer getBestSolrServer(String operation) {
+    private SolrClient getBestSolrServer(String operation) {
         if (this.cloudSolrServer != null) {
             return this.cloudSolrServer;
         } else if (SolrConstants.OPERATION_INSERT_STREAMING.equals(operation)) {
@@ -67,7 +67,7 @@ public class SolrProducer extends DefaultProducer {
             throw new IllegalArgumentException(SolrConstants.OPERATION + " header is missing");
         }
         
-        SolrServer serverToUse = getBestSolrServer(operation);
+        SolrClient serverToUse = getBestSolrServer(operation);
 
         if (operation.equalsIgnoreCase(SolrConstants.OPERATION_INSERT)) {
             insert(exchange, serverToUse);
@@ -92,7 +92,7 @@ public class SolrProducer extends DefaultProducer {
         }
     }
 
-    private void insert(Exchange exchange, SolrServer solrServer) throws Exception {
+    private void insert(Exchange exchange, SolrClient solrServer) throws Exception {
         Object body = exchange.getIn().getBody();
         boolean invalid = false;
         if (body instanceof WrappedFile) {

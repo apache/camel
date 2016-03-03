@@ -48,7 +48,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A JMS Endpoint
+ * The sjms component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic.
+ *
+ * This component uses plain JMS API where as the jms component uses Spring JMS.
  */
 @UriEndpoint(scheme = "sjms", title = "Simple JMS", syntax = "sjms:destinationType:destinationName", consumerClass = SjmsConsumer.class, label = "messaging")
 public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, HeaderFilterStrategyAware {

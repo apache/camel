@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ServiceSupport;
@@ -55,10 +56,19 @@ import org.slf4j.LoggerFactory;
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultEndpoint.class);
+    private transient String endpointUriToString;
     private String endpointUri;
     private EndpointConfiguration endpointConfiguration;
     private CamelContext camelContext;
     private Component component;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.", description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
+                    + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
+                    + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN/ERROR level and ignored.")
+    private boolean bridgeErrorHandler;
+    @UriParam(label = "consumer,advanced", optionalPrefix = "consumer.", description = "To let the consumer use a custom ExceptionHandler."
+            + " Notice if the option bridgeErrorHandler is enabled then this options is not in use."
+            + " By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored.")
+    private ExceptionHandler exceptionHandler;
     @UriParam(defaultValue = "InOnly", label = "advanced",
             description = "Sets the default exchange pattern when creating an exchange")
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
@@ -144,13 +154,16 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public String toString() {
-        String value = null;
-        try {
-            value = getEndpointUri();
-        } catch (RuntimeException e) {
-            // ignore any exception and use null for building the string value
+        if (endpointUriToString == null) {
+            String value = null;
+            try {
+                value = getEndpointUri();
+            } catch (RuntimeException e) {
+                // ignore any exception and use null for building the string value
+            }
+            endpointUriToString = String.format("Endpoint[%s]", URISupport.sanitizeUri(value));
         }
-        return String.format("Endpoint[%s]", URISupport.sanitizeUri(value));
+        return endpointUriToString;
     }
 
     /**
@@ -275,6 +288,35 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      */
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
+    }
+
+    public boolean isBridgeErrorHandler() {
+        return bridgeErrorHandler;
+    }
+
+    /**
+     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while
+     * the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and
+     * handled by the routing Error Handler.
+     * <p/>
+     * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions,
+     * that will be logged at WARN/ERROR level and ignored.
+     */
+    public void setBridgeErrorHandler(boolean bridgeErrorHandler) {
+        this.bridgeErrorHandler = bridgeErrorHandler;
+    }
+
+    public ExceptionHandler getExceptionHandler() {
+        return exceptionHandler;
+    }
+
+    /**
+     * To let the consumer use a custom ExceptionHandler.
+     + Notice if the option bridgeErrorHandler is enabled then this options is not in use.
+     + By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored.
+     */
+    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
     }
 
     /**
@@ -476,7 +518,14 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        // the bridgeErrorHandler/exceptionHandler was originally configured with consumer. prefix, such as consumer.bridgeErrorHandler=true
+        // so if they have been configured on the endpoint then map to the old naming style
+        if (bridgeErrorHandler) {
+            getConsumerProperties().put("bridgeErrorHandler", "true");
+        }
+        if (exceptionHandler != null) {
+            getConsumerProperties().put("exceptionHandler", exceptionHandler);
+        }
     }
 
     @Override

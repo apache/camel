@@ -38,9 +38,7 @@ public class MainExample {
     public void boot() throws Exception {
         // create a Main instance
         main = new Main();
-        // enable hangup support so you can press ctrl + c to terminate the JVM
-        main.enableHangupSupport();
-        // bind MyBean into the registery
+        // bind MyBean into the registry
         main.bind("foo", new MyBean());
         // add routes
         main.addRouteBuilder(new MyRouteBuilder());
@@ -67,7 +65,7 @@ public class MainExample {
 
     public static class MyBean {
         public void callMe() {
-            System.out.println("MyBean.calleMe method has been called");
+            System.out.println("MyBean.callMe method has been called");
         }
     }
 

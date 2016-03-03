@@ -555,6 +555,18 @@ public class ExpressionClauseSupport<T> {
      * Evaluates a token expression on the message body
      *
      * @param token the token
+     * @param group to group by the given number
+     * @param skipFirst whether to skip the very first element
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, int group, boolean skipFirst) {
+        return tokenize(token, null, false, group, skipFirst);
+    }
+
+    /**
+     * Evaluates a token expression on the message body
+     *
+     * @param token the token
      * @param regex whether the token is a regular expression or not
      * @return the builder to continue processing the DSL
      */
@@ -612,11 +624,45 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T tokenize(String token, String headerName, boolean regex, int group) {
+        return tokenize(token, headerName, regex, group, false);
+    }
+
+    /**
+     * Evaluates a token expression on the given header
+     *
+     * @param token the token
+     * @param headerName name of header to tokenize
+     * @param regex whether the token is a regular expression or not
+     * @param skipFirst whether to skip the very first element
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, String headerName, boolean regex, boolean skipFirst) {
+        TokenizerExpression expression = new TokenizerExpression();
+        expression.setToken(token);
+        expression.setHeaderName(headerName);
+        expression.setRegex(regex);
+        expression.setSkipFirst(skipFirst);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates a token expression on the given header
+     *
+     * @param token the token
+     * @param headerName name of header to tokenize
+     * @param regex whether the token is a regular expression or not
+     * @param group to group by number of parts
+     * @param skipFirst whether to skip the very first element
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, String headerName, boolean regex, int group, boolean skipFirst) {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(token);
         expression.setHeaderName(headerName);
         expression.setRegex(regex);
         expression.setGroup(group);
+        expression.setSkipFirst(skipFirst);
         setExpressionType(expression);
         return result;
     }

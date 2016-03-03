@@ -38,7 +38,7 @@ public class SpringJacksonEnableFeatureTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jackson/SpringJacksonEnableFeatureTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jacksonxml/SpringJacksonEnableFeatureTest.xml");
     }
 
 }

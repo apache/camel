@@ -23,6 +23,7 @@ import java.util.Map;
 
 import facebook4j.AlbumUpdate;
 import facebook4j.CheckinUpdate;
+import facebook4j.CommentUpdate;
 import facebook4j.EventUpdate;
 import facebook4j.GeoLocation;
 import facebook4j.Media;
@@ -55,6 +56,8 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     private String checkinId;
     @UriParam
     private String commentId;
+    @UriParam
+    private CommentUpdate commentUpdate;
     @UriParam
     private String description;
     @UriParam
@@ -125,6 +128,8 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     private String questionId;
     @UriParam
     private Reading reading;
+    @UriParam(prefix = "reading.", multiValue = true)
+    private Map<String, Object> readingOptions;
     @UriParam
     private Integer scoreValue;
     @UriParam
@@ -268,6 +273,17 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
 
     public String getDescription() {
         return description;
+    }
+
+    public CommentUpdate getCommentUpdate() {
+        return commentUpdate;
+    }
+
+    /**
+     * The facebook Comment to be created or updated
+     */
+    public void setCommentUpdate(CommentUpdate commentUpdate) {
+        this.commentUpdate = commentUpdate;
     }
 
     /**
@@ -649,6 +665,17 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
      */
     public void setReading(Reading reading) {
         this.reading = reading;
+    }
+
+    public Map<String, Object> getReadingOptions() {
+        return readingOptions;
+    }
+
+    /**
+     * To configure {@link Reading} using key/value pairs from the Map.
+     */
+    public void setReadingOptions(Map<String, Object> readingOptions) {
+        this.readingOptions = readingOptions;
     }
 
     public Integer getScoreValue() {

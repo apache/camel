@@ -16,12 +16,17 @@
  */
 package org.apache.camel.example.cdi;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 @Singleton
+@Named("counterBean")
 public class SomeBean {
 
-    public void someMethod(String body) {
-        System.out.println("Received: " + body);
+    private int counter;
+
+    public String someMethod(String body) {
+        return "Saying Hello World " + ++counter + " times";
     }
+
 }

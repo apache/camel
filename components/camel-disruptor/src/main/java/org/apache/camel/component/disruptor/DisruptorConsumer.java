@@ -25,7 +25,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.SuspendableService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.Synchronization;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A Consumer for the Disruptor component.
  */
-public class DisruptorConsumer extends ServiceSupport implements Consumer, SuspendableService, ShutdownAware {
+public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspendable, ShutdownAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorConsumer.class);
 

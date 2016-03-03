@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty4;
 
-
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.util.concurrent.ThreadFactory;
@@ -33,6 +32,7 @@ import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Suspendable;
 import org.apache.camel.component.netty4.util.SubnetUtils;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link NettyServerBootstrapFactory} which is used by a single consumer (not shared).
  */
-public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
+public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory, Suspendable {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SingleUDPNettyServerBootstrapFactory.class);
     private static final String LOOPBACK_INTERFACE = "lo";
@@ -161,8 +161,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         SubnetUtils multicastSubnet = new SubnetUtils(MULTICAST_SUBNET);
 
         if (multicastSubnet.getInfo().isInRange(configuration.getHost())) {
-            ChannelFuture channelFuture = bootstrap.bind(configuration.getPort());
-            channelFuture.awaitUninterruptibly();
+            ChannelFuture channelFuture = bootstrap.bind(configuration.getPort()).sync();
             channel = channelFuture.channel();
             DatagramChannel datagramChannel = (DatagramChannel) channel;
             String networkInterface = configuration.getNetworkInterface() == null ? LOOPBACK_INTERFACE : configuration.getNetworkInterface();
@@ -173,8 +172,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
             allChannels.add(datagramChannel);
         } else {
             LOG.info("ConnectionlessBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
-            ChannelFuture channelFuture = bootstrap.bind(hostAddress);
-            channelFuture.awaitUninterruptibly();
+            ChannelFuture channelFuture = bootstrap.bind(hostAddress).sync();
             channel = channelFuture.channel();
             allChannels.add(channel);
         }

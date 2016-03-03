@@ -41,7 +41,6 @@ import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -83,7 +82,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
      */
     static final class PreparedErrorHandler extends KeyValueHolder<RouteContext, Processor> {
 
-        public PreparedErrorHandler(RouteContext key, Processor value) {
+        PreparedErrorHandler(RouteContext key, Processor value) {
             super(key, value);
         }
 
@@ -183,25 +182,25 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
             return true;
         }
 
-        return doRoutingSlip(exchange, callback);
+        return doRoutingSlipWithExpression(exchange, this.expression, callback);
     }
 
     public boolean doRoutingSlip(Exchange exchange, Object routingSlip, AsyncCallback callback) {
         if (routingSlip instanceof Expression) {
-            this.expression = (Expression) routingSlip;
+            return doRoutingSlipWithExpression(exchange, (Expression) routingSlip, callback);
         } else {
-            this.expression = ExpressionBuilder.constantExpression(routingSlip);
+            return doRoutingSlipWithExpression(exchange, ExpressionBuilder.constantExpression(routingSlip), callback);
         }
-        return doRoutingSlip(exchange, callback);
     }
 
     /**
      * Creates the route slip iterator to be used.
      *
      * @param exchange the exchange
+     * @param expression the expression
      * @return the iterator, should never be <tt>null</tt>
      */
-    protected RoutingSlipIterator createRoutingSlipIterator(final Exchange exchange) throws Exception {
+    protected RoutingSlipIterator createRoutingSlipIterator(final Exchange exchange, final Expression expression) throws Exception {
         Object slip = expression.evaluate(exchange, Object.class);
         if (exchange.getException() != null) {
             // force any exceptions occurred during evaluation to be thrown
@@ -221,11 +220,11 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
         };
     }
 
-    private boolean doRoutingSlip(final Exchange exchange, final AsyncCallback callback) {
+    private boolean doRoutingSlipWithExpression(final Exchange exchange, final Expression expression, final AsyncCallback callback) {
         Exchange current = exchange;
         RoutingSlipIterator iter;
         try {
-            iter = createRoutingSlipIterator(exchange);
+            iter = createRoutingSlipIterator(exchange, expression);
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);

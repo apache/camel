@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.http4;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
@@ -27,6 +29,7 @@ import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
@@ -40,22 +43,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a <a href="http://camel.apache.org/http.html">HTTP endpoint</a>
- *
- * @version 
+ * For calling out to external HTTP servers using Apache HTTP Client 4.x.
  */
-@UriEndpoint(scheme = "http4,http4s", title = "HTTP4,HTTP4S", syntax = "http4:httpUri", producerOnly = true, label = "http")
+@UriEndpoint(scheme = "http4,http4s", title = "HTTP4,HTTP4S", syntax = "http4:httpUri", producerOnly = true, label = "http", lenientProperties = true)
 public class HttpEndpoint extends HttpCommonEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
 
-    // Note: all options must be documented with description in annotations so extended components can access the documentation
-
+    @UriParam(label = "advanced")
     private HttpContext httpContext;
+    @UriParam(label = "advanced")
     private HttpClientConfigurer httpClientConfigurer;
+    @UriParam(label = "advanced", prefix = "httpClient.", multiValue = true)
+    private Map<String, Object> httpClientOptions;
+    @UriParam(label = "advanced")
     private HttpClientConnectionManager clientConnectionManager;
+    @UriParam(label = "advanced")
     private HttpClientBuilder clientBuilder;
-    private  HttpClient httpClient;
+    @UriParam(label = "advanced")
+    private HttpClient httpClient;
 
     @UriParam(label = "producer")
     private CookieStore cookieStore = new BasicCookieStore();
@@ -130,6 +136,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         clientBuilder.setDefaultCookieStore(cookieStore);
         // setup the httpConnectionManager
         clientBuilder.setConnectionManager(clientConnectionManager);
+        if (getComponent() != null && getComponent().getClientConnectionManager() == getClientConnectionManager()) {
+            clientBuilder.setConnectionManagerShared(true);
+        }
 
         // configure http proxy from camelContext
         if (ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyPort"))) {
@@ -175,6 +184,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             // need to shutdown the ConnectionManager
             clientConnectionManager.shutdown();
         }
+        if (httpClient != null && httpClient instanceof Closeable) {
+            IOHelper.close((Closeable)httpClient);
+        }
     }
 
     // Properties
@@ -212,6 +224,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.httpClientConfigurer = httpClientConfigurer;
     }
 
+    /**
+     * To use a custom HttpContext instance
+     */
     public void setHttpContext(HttpContext httpContext) {
         this.httpContext = httpContext;
     }
@@ -262,6 +277,17 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      */
     public void setAuthenticationPreemptive(boolean authenticationPreemptive) {
         this.authenticationPreemptive = authenticationPreemptive;
+    }
+
+    public Map<String, Object> getHttpClientOptions() {
+        return httpClientOptions;
+    }
+
+    /**
+     * To configure the HttpClient using the key/values from the Map.
+     */
+    public void setHttpClientOptions(Map<String, Object> httpClientOptions) {
+        this.httpClientOptions = httpClientOptions;
     }
 
 }

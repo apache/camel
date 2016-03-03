@@ -28,6 +28,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelContextHelper;
 
+/**
+ * The ref component is used for lookup of existing endpoints bound in the Registry.
+ */
 @UriEndpoint(scheme = "ref", title = "Ref", syntax = "ref:name", label = "core,endpoint")
 public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 

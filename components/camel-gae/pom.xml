@@ -67,9 +67,72 @@
       <version>${google-app-engine-version}</version>
     </dependency>
     <dependency>
+      <groupId>com.google.gdata</groupId>
+      <artifactId>core</artifactId>
+      <version>1.47.1</version>
+    </dependency>
+
+    <!-- need to exclude dependencies as they are not in maven central -->
+    <dependency>
       <groupId>org.openengsb.wrapped</groupId>
       <artifactId>com.google.gdata</artifactId>
       <version>${google-gdata-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.gdata</groupId>
+          <artifactId>gdata-contacts-3.0</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.gdata</groupId>
+          <artifactId>gdata-calendar-2.0</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.gdata</groupId>
+          <artifactId>gdata-client-1.0</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.gdata</groupId>
+          <artifactId>gdata-core-1.0</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.wrapped</groupId>
+      <artifactId>com.google.gdata-contacts</artifactId>
+      <version>${google-gdata-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.gdata</groupId>
+          <artifactId>gdata-contacts-3.0</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.gdata</groupId>
+          <artifactId>gdata-client-1.0</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.gdata</groupId>
+          <artifactId>gdata-core-1.0</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.wrapped</groupId>
+      <artifactId>com.google.gdata-calendar</artifactId>
+      <version>${google-gdata-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.gdata</groupId>
+          <artifactId>gdata-client-1.0</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.gdata</groupId>
+          <artifactId>gdata-calendar-2.0</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.gdata</groupId>
+          <artifactId>gdata-core-1.0</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- testing -->

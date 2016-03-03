@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * EventAdmin endpoint
+ * The eventadmin component can be used in an OSGi environment to receive OSGi EventAdmin events and process them.
  */
 @UriEndpoint(scheme = "eventadmin", title = "OSGi EventAdmin", syntax = "eventadmin:topic", consumerClass = EventAdminConsumer.class, label = "eventbus")
 public class EventAdminEndpoint extends DefaultEndpoint {

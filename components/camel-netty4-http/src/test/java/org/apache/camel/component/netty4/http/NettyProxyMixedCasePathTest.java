@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty4.http;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -24,10 +23,10 @@ public class NettyProxyMixedCasePathTest extends BaseNettyTest {
 
     @Test
     public void testMixedCase() throws Exception {
-        String out = template.requestBody("netty4-http:http://0.0.0.0:{{port}}/Shopping", "Camel", String.class);
+        String out = template.requestBody("netty4-http:http://localhost:{{port}}/Shopping", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        out = template.requestBody("netty4-http:http://0.0.0.0:{{port}}/shopping", "World", String.class);
+        out = template.requestBody("netty4-http:http://localhost:{{port}}/shopping", "World", String.class);
         assertEquals("Bye World", out);
     }
 
@@ -36,7 +35,7 @@ public class NettyProxyMixedCasePathTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4-http:http://0.0.0.0:{{port}}/Shopping").to("netty4-http:http://0.0.0.0:{{port}}/ws/svc/Shopping");
+                from("netty4-http:http://0.0.0.0:{{port}}/Shopping").to("netty4-http:http://localhost:{{port}}/ws/svc/Shopping");
 
                 from("netty4-http:http://0.0.0.0:{{port}}/ws/svc/Shopping").transform(body().prepend("Bye "));
             }

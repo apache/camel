@@ -30,6 +30,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.lightcouch.CouchDbClient;
 
+/**
+ * The couchdb component is used for integrate with CouchDB databases.
+ */
 @UriEndpoint(scheme = "couchdb", title = "CouchDB", syntax = "couchdb:protocol:hostname:port/database", consumerClass = CouchDbConsumer.class, label = "database,nosql")
 public class CouchDbEndpoint extends DefaultEndpoint {
 

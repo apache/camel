@@ -55,7 +55,7 @@
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
 
-    <!-- Operations- -->
+    <!-- operations -->
     <dependency>
       <groupId>org.jolokia</groupId>
       <artifactId>jolokia-core</artifactId>
@@ -65,7 +65,17 @@
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
 
-    <!-- Testing -->
+    <!-- remote shell -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-remote-shell</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-commands-spring-boot</artifactId>
+    </dependency>
+
+    <!-- testing -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
@@ -88,6 +98,7 @@
           <attachClasses>true</attachClasses>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>

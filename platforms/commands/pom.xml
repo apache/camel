@@ -31,6 +31,7 @@
   <modules>
     <module>commands-core</module>
     <module>commands-jolokia</module>
+    <module>commands-spring-boot</module>
   </modules>
 
 </project>

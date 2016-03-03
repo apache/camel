@@ -28,7 +28,6 @@ import org.fusesource.hawtdispatch.DispatchQueue;
 import org.fusesource.hawtdispatch.transport.TcpTransport;
 import org.fusesource.mqtt.client.MQTT;
 import org.fusesource.mqtt.client.QoS;
-import org.fusesource.mqtt.client.Tracer;
 
 @UriParams
 public class MQTTConfiguration extends MQTT {
@@ -76,7 +75,7 @@ public class MQTTConfiguration extends MQTT {
     String willTopic;
     @UriParam
     String willMessage;
-    @UriParam(defaultValue = "AT_MOST_ONCE")
+    @UriParam(enums = "AtMostOnce,AtLeastOne,ExactlyOnce", defaultValue = "AtMostOnce")
     QoS willQos = QoS.AT_MOST_ONCE;
     @UriParam
     QoS willRetain;
@@ -111,7 +110,7 @@ public class MQTTConfiguration extends MQTT {
     private int sendWaitInSeconds = 5;
     @UriParam
     private boolean byDefaultRetain;
-    @UriParam(enums = "AT_MOST_ONCE,AT_LEAST_ONCE,EXACTLY_ONCE", defaultValue = "AT_LEAST_ONCE")
+    @UriParam(enums = "AtMostOnce,AtLeastOne,ExactlyOnce", defaultValue = "AtLeastOnce")
     private String qualityOfService = QoS.AT_LEAST_ONCE.name();
     private QoS qos = QoS.AT_LEAST_ONCE;
 

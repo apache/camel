@@ -31,14 +31,13 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     // Note: all options must be documented with description in annotations so extended components can access the documentation
 
     HttpCommonComponent component;
-    UrlRewrite urlRewrite;
 
     @UriPath(label = "producer", description = "The url of the HTTP endpoint to call.") @Metadata(required = "true")
     URI httpUri;
     @UriParam(description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     @UriParam(description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
-    HttpBinding binding;
+    HttpBinding httpBinding;
     @UriParam(label = "producer", defaultValue = "true",
             description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
                     + " This allows you to get all responses regardless of the HTTP status code.")
@@ -52,7 +51,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     boolean matchOnUriPrefix;
     @UriParam(defaultValue = "true", description = "If this option is false Jetty servlet will disable the HTTP streaming and set the content-length header on the response")
     boolean chunked = true;
-    @UriParam(label = "consumer",
+    @UriParam(label = "common",
             description = "Determines whether or not the raw input stream from Jetty is cached or not"
                     + " (Camel will read the stream into a in memory/overflow to file, Stream caching) cache."
                     + " By default Camel will cache the Jetty input stream to support reading it multiple times to ensure it Camel"
@@ -61,7 +60,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
                     + " DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body"
                     + " if this option is false to support reading the stream multiple times."
                     + " If you use Jetty to bridge/proxy an endpoint then consider enabling this option to improve performance,"
-                    + " in case you do not need to read the message payload multiple times.")
+                    + " in case you do not need to read the message payload multiple times."
+                    + " The http/http4 producer will by default cache the response body stream. If setting this option to true,"
+                    + " then the producers will not cache the response body stream but use the response stream as-is as the message body.")
     boolean disableStreamCache;
     @UriParam(label = "producer", description = "The proxy host name")
     String proxyHost;
@@ -69,8 +70,12 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     int proxyPort;
     @UriParam(label = "producer", enums = "Basic,Digest,NTLM", description = "Authentication method for proxy, either as Basic, Digest or NTLM.")
     String authMethodPriority;
-    @UriParam(description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
-            + " This allows you to get all responses regardless of the HTTP status code.")
+    @UriParam(description = "If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized"
+            + " in the response as a application/x-java-serialized-object content type."
+            + " On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException."
+            + " The caused exception is required to be serialized."
+            + " This is by default turned off. If you enable this then be aware that Java will deserialize the incoming"
+            + " data from the request to Java and that can be a potential security risk.")
     boolean transferException;
     @UriParam(label = "consumer",
             description = "Specifies whether to enable HTTP TRACE for this Jetty consumer. By default TRACE is turned off.")
@@ -95,6 +100,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     @UriParam(label = "producer", defaultValue = "200-299",
             description = "The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.")
     private String okStatusCodeRange = "200-299";
+    @UriParam(label = "producer,advanced",
+            description = "Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints."
+                    + " See more details at http://camel.apache.org/urlrewrite.html")
+    private UrlRewrite urlRewrite;
 
     public HttpCommonEndpoint() {
     }
@@ -113,6 +122,11 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         component.disconnect(consumer);
     }
 
+    @Override
+    public HttpCommonComponent getComponent() {
+        return (HttpCommonComponent) super.getComponent();
+    }
+
     public boolean isLenientProperties() {
         // true to allow dynamic URI options to be configured and passed to external system for eg. the HttpProducer
         return true;
@@ -126,22 +140,41 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     // Properties
     //-------------------------------------------------------------------------
 
+    /**
+     * @deprecated use {@link #getHttpBinding()}
+     */
+    @Deprecated
     public HttpBinding getBinding() {
-        if (binding == null) {
+        return httpBinding;
+    }
+
+    /**
+     * @deprecated use {@link #setHttpBinding(HttpBinding)}
+     */
+    @Deprecated
+    public void setBinding(HttpBinding httpBinding) {
+        setHttpBinding(httpBinding);
+    }
+
+    public HttpBinding getHttpBinding() {
+        if (httpBinding == null) {
             // create a new binding and use the options from this endpoint
-            binding = new DefaultHttpBinding();
-            binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
-            binding.setTransferException(isTransferException());
-            binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
+            httpBinding = new DefaultHttpBinding();
+            httpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            httpBinding.setTransferException(isTransferException());
+            if (getComponent() != null) {
+                httpBinding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
+            }
+            httpBinding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
         }
-        return binding;
+        return httpBinding;
     }
 
     /**
      * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
      */
-    public void setBinding(HttpBinding binding) {
-        this.binding = binding;
+    public void setHttpBinding(HttpBinding httpBinding) {
+        this.httpBinding = httpBinding;
     }
 
     public String getPath() {
@@ -237,6 +270,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      * if this option is false to support reading the stream multiple times.
      * If you use Jetty to bridge/proxy an endpoint then consider enabling this option to improve performance,
      * in case you do not need to read the message payload multiple times.
+     + The http/http4 producer will by default cache the response body stream. If setting this option to true,
+     + then the producers will not cache the response body stream but use the response stream as-is as the message body.
      */
     public void setDisableStreamCache(boolean disable) {
         this.disableStreamCache = disable;
@@ -291,8 +326,13 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server.
-     * This allows you to get all responses regardless of the HTTP status code.
+     * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized
+     * in the response as a application/x-java-serialized-object content type.
+     * On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException.
+     * The caused exception is required to be serialized.
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
@@ -391,4 +431,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     public void setOkStatusCodeRange(String okStatusCodeRange) {
         this.okStatusCodeRange = okStatusCodeRange;
     }
+
+
 }

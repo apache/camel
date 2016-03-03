@@ -20,8 +20,6 @@ import java.util.UUID;
 
 import com.rabbitmq.client.Connection;
 
-
-
 /**
  * Callback to be used when using the option <tt>useMessageIDAsCorrelationID</tt>.
  * <p/>

@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Map;
 
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.ssl.SslHandler;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -63,6 +64,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected ServerInitializerFactory serverInitializerFactory;
     @UriParam(label = "consumer,advanced")
     protected NettyServerBootstrapFactory nettyServerBootstrapFactory;
+    @UriParam(label = "advanced", prefix = "option.", multiValue = true)
     protected Map<String, Object> options;
     // SSL options is also part of the server bootstrap as the server listener on port X is either plain or SSL
     @UriParam(label = "security")
@@ -95,6 +97,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected EventLoopGroup bossGroup;
     @UriParam(label = "consumer,advanced")
     protected EventLoopGroup workerGroup;
+    @UriParam(label = "consumer,advanced")
+    protected ChannelGroup channelGroup;
     @UriParam(label = "consumer,advanced")
     protected String networkInterface;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -482,6 +486,17 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
      */
     public void setWorkerGroup(EventLoopGroup workerGroup) {
         this.workerGroup = workerGroup;
+    }
+
+    public ChannelGroup getChannelGroup() {
+        return channelGroup;
+    }
+
+    /**
+     * To use a explicit ChannelGroup.
+     */
+    public void setChannelGroup(ChannelGroup channelGroup) {
+        this.channelGroup = channelGroup;
     }
 
     public String getNetworkInterface() {

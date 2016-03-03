@@ -25,7 +25,7 @@
 	</parent>
 
 	<artifactId>camel-routebox</artifactId>
-	<name>Camel :: Routebox </name>
+	<name>Camel :: Routebox (deprecated)</name>
 	<description>Camel Routebox component to encapsulate routes</description>
 	<packaging>bundle</packaging>
 

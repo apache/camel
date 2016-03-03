@@ -318,6 +318,15 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition params(List<RestOperationParamDefinition> params) {
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.getParams().addAll(params);
+        return this;
+    }
+
     public RestOperationParamDefinition param(VerbDefinition verb) {
         return new RestOperationParamDefinition(verb);
     }
@@ -341,6 +350,15 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public RestOperationResponseMsgDefinition responseMessage(VerbDefinition verb) {
         return new RestOperationResponseMsgDefinition(verb);
+    }
+
+    public RestDefinition responseMessages(List<RestOperationResponseMsgDefinition> msgs) {
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.getResponseMsgs().addAll(msgs);
+        return this;
     }
 
     public RestDefinition produces(String mediaType) {
@@ -533,15 +551,16 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
         for (RestConfiguration config : camelContext.getRestConfigurations()) {
             addRouteDefinition(camelContext, answer, config.getComponent());
-            if (config.getApiContextPath() != null) {
-                addApiRouteDefinition(camelContext, answer, config);
-            }
         }
         return answer;
     }
 
-    private void addApiRouteDefinition(CamelContext camelContext, List<RouteDefinition> answer, RestConfiguration configuration) {
-        RouteDefinition route = new RouteDefinition();
+    /**
+     * Transforms the rest api configuration into a {@link org.apache.camel.model.RouteDefinition} which
+     * Camel routing engine uses to service the rest api docs.
+     */
+    public static RouteDefinition asRouteApiDefinition(CamelContext camelContext, RestConfiguration configuration) {
+        RouteDefinition answer = new RouteDefinition();
 
         // create the from endpoint uri which is using the rest-api component
         String from = "rest-api:" + configuration.getApiContextPath();
@@ -549,7 +568,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         // append options
         Map<String, Object> options = new HashMap<String, Object>();
 
-        String routeId = "rest-api-" + route.idOrCreate(camelContext.getNodeIdFactory());
+        String routeId = configuration.getApiContextRouteId();
+        if (routeId == null) {
+            routeId = answer.idOrCreate(camelContext.getNodeIdFactory());
+        }
         options.put("routeId", routeId);
         if (configuration.getComponent() != null && !configuration.getComponent().isEmpty()) {
             options.put("componentName", configuration.getComponent());
@@ -570,12 +592,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
         // we use the same uri as the producer (so we have a little route for the rest api)
         String to = from;
+        answer.fromRest(from);
+        answer.id(routeId);
+        answer.to(to);
 
-        // the route should be from this rest endpoint
-        route.fromRest(from);
-        route.to(to);
-        route.setRestDefinition(this);
-        answer.add(route);
+        return answer;
     }
 
     private void addRouteDefinition(CamelContext camelContext, List<RouteDefinition> answer, String component) {
@@ -621,6 +642,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             } else {
                 binding.setEnableCORS(getEnableCORS());
             }
+            // register all the default values for the query parameters
+            for (RestOperationParamDefinition param : verb.getParams()) {
+                if (RestParamType.query == param.getType() && param.getDefaultValue() != null) {
+                    binding.addDefaultValue(param.getName(), param.getDefaultValue());
+                }
+            }
+
             route.getOutputs().add(0, binding);
 
             // create the from endpoint uri which is using the rest component
@@ -738,6 +766,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
             // the route should be from this rest endpoint
             route.fromRest(from);
+            route.id(routeId);
             route.setRestDefinition(this);
             answer.add(route);
         }

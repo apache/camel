@@ -80,7 +80,7 @@ public class ElSqlConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("elsql:allProjects:elsql/projects.elsql?dataSource=dataSource")
+                from("elsql:allProjects:elsql/projects.elsql?dataSource=#dataSource")
                         .to("mock:result");
             }
         };

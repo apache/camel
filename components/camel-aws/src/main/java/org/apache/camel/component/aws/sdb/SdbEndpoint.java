@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS SDB Endpoint</a>.  
+ * The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
  */
 @UriEndpoint(scheme = "aws-sdb", title = "AWS SimpleDB", syntax = "aws-sdb:domainName", producerOnly = true, label = "cloud,database,nosql")
 public class SdbEndpoint extends ScheduledPollEndpoint {

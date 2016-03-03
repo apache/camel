@@ -58,7 +58,8 @@ public class RouteListCommand extends AbstractCamelCommand {
         final String rowFormat = buildFormatString(columnWidths, false);
 
         if (routes.size() > 0) {
-            out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, ROUTE_COLUMN_LABEL, STATUS_COLUMN_LABEL, TOTAL_COLUMN_LABEL, FAILED_COLUMN_LABEL, INFLIGHT_COLUMN_LABEL, UPTIME_COLUMN_LABEL));
+            out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, ROUTE_COLUMN_LABEL, STATUS_COLUMN_LABEL, TOTAL_COLUMN_LABEL, FAILED_COLUMN_LABEL, INFLIGHT_COLUMN_LABEL,
+                    UPTIME_COLUMN_LABEL));
             out.println(String.format(headerFormat, "-------", "-----", "------", "-------", "--------", "----------", "------"));
             for (Map<String, String> row : routes) {
                 String contextId = row.get("camelContextName");

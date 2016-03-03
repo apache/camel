@@ -14,5 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ * OSGi with Spring-DM (deprecated)
+ */
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/osgi", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.osgi;

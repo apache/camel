@@ -24,6 +24,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.socket.nio.BossPool;
 import org.jboss.netty.channel.socket.nio.WorkerPool;
 import org.jboss.netty.handler.ssl.SslHandler;
@@ -65,6 +66,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected ServerPipelineFactory serverPipelineFactory;
     @UriParam(label = "consumer,advanced")
     protected NettyServerBootstrapFactory nettyServerBootstrapFactory;
+    @UriParam(label = "advanced", prefix = "option.", multiValue = true)
     protected Map<String, Object> options;
     // SSL options is also part of the server bootstrap as the server listener on port X is either plain or SSL
     @UriParam(label = "security")
@@ -97,6 +99,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected BossPool bossPool;
     @UriParam(label = "consumer,advanced")
     protected WorkerPool workerPool;
+    @UriParam(label = "consumer,advanced")
+    protected ChannelGroup channelGroup;
     @UriParam(label = "consumer,advanced")
     protected String networkInterface;
     
@@ -465,6 +469,17 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
      */
     public void setWorkerPool(WorkerPool workerPool) {
         this.workerPool = workerPool;
+    }
+
+    public ChannelGroup getChannelGroup() {
+        return channelGroup;
+    }
+
+    /**
+     * To use a explicit ChannelGroup.
+     */
+    public void setChannelGroup(ChannelGroup channelGroup) {
+        this.channelGroup = channelGroup;
     }
 
     public String getNetworkInterface() {

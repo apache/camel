@@ -88,7 +88,7 @@ public class GAuthJksLoader implements GAuthKeyLoader {
      * Loads a private key from a Java keystore depending on this loader's properties.
      */
     public PrivateKey loadPrivateKey() throws Exception {
-        InputStream input = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), keyStoreLocation);
+        InputStream input = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), keyStoreLocation);
         try {
             return loadPrivateKey(input);
         } finally {
