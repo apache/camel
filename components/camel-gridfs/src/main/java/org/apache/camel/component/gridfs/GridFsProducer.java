@@ -118,7 +118,7 @@ public class GridFsProducer extends DefaultProducer {
             }
             while (cursor.hasNext() && current.length() < 4000) {
                 DBObject o = cursor.next();
-                current.append(o.get("filename")).append("\n");
+                current.append(o.get("filename")).append("\t").append(o.get("_id")).append("\n");
             }
         }
         @Override
