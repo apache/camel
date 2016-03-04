@@ -221,6 +221,7 @@
         <include>org.apache.camel:camel-tagsoup</include>
         <include>org.apache.camel:camel-test</include>
         <include>org.apache.camel:camel-test-blueprint</include>
+        <include>org.apache.camel:camel-test-cdi</include>
         <include>org.apache.camel:camel-test-spring</include>
         <include>org.apache.camel:camel-test-spring3</include>
         <include>org.apache.camel:camel-test-spring40</include>
