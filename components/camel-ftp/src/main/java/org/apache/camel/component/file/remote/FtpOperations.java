@@ -175,10 +175,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
             log.trace("User {} logged in: {}", username != null ? username : "anonymous", login);
             if (!login) {
-                // store replyString, because disconnect() will reset ist
+                // store replyString, because disconnect() will reset it
                 String replyString = client.getReplyString();
                 int replyCode = client.getReplyCode();
-
                 // disconnect to prevent connection leaks
                 client.disconnect();
                 throw new GenericFileOperationFailedException(replyCode, replyString);
