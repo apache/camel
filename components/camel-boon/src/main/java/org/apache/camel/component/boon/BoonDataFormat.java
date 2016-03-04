@@ -94,7 +94,7 @@ public class BoonDataFormat extends ServiceSupport implements DataFormat, DataFo
     @Override
     protected void doStart() throws Exception {
         if (useList) {
-        	useList();
+            useList();
         }
     }
 
