@@ -114,7 +114,6 @@
     <module>camel-google-mail</module>
     <module>camel-gora</module>
     <module>camel-grape</module>
-    <module>camel-gridfs</module>
     <module>camel-gson</module>
     <module>camel-guava-eventbus</module>
     <module>camel-guice</module>
@@ -171,6 +170,7 @@
     <module>camel-mina2</module>
     <module>camel-mllp</module>
     <module>camel-mongodb</module>
+    <module>camel-mongodb-gridfs</module>
     <module>camel-mqtt</module>
     <module>camel-msv</module>
     <module>camel-mustache</module>
