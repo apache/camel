@@ -33,12 +33,12 @@ import org.junit.Test;
 
 import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
-
 public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
-    String mllpHost = "localhost";
 
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource(mllpHost, AvailablePortFinder.getNextAvailable());
+
+    String mllpHost = "localhost";
 
     @EndpointInject(uri = "direct://source")
     ProducerTemplate source;
