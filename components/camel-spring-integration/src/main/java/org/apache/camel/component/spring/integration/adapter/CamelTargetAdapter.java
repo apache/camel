@@ -26,8 +26,8 @@ import org.apache.camel.impl.DefaultExchange;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageDeliveryException;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.MessageHeaders;
 
 /**
  * CamelTargetAdapter will redirect the Spring Integration message to the Camel context.

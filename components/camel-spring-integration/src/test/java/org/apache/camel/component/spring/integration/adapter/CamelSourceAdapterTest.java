@@ -22,8 +22,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.messaging.Message;
 import org.springframework.integration.channel.DirectChannel;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
 
 public class CamelSourceAdapterTest extends CamelSpringTestSupport {
