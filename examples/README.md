@@ -46,6 +46,7 @@ All examples have been sort by type/category
 * [camel-example-cdi-metrics](camel-example-cdi-metrics/README.md)
 * [camel-example-cdi-properties](camel-example-cdi-properties/README.md)
 * [camel-example-cdi-rest-servlet](camel-example-cdi-rest-servlet/README.md)
+* [camel-example-cdi-test](camel-example-cdi-test/README.md)
 * [camel-example-widget-gadget-java](camel-example-widget-gadget-cdi/README.md)
 
 ##### OSGi
