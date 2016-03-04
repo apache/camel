@@ -17,39 +17,42 @@
 package org.apache.camel.processor.enricher;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class PollEnrichFileDefaultAggregationStrategyTest extends ContextTestSupport {
 
+    @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/enrich");
+        deleteDirectory("target/enrichdata");
+        super.setUp();
+    }
+    
     @Test
     public void testPollEnrichDefaultAggregationStrategyBody() throws Exception {
 
-        Thread.sleep(2000);
-        String enrichFilename = "target/pollEnrich/enrich.txt";
-        String msgText = "Hello Camel";
-        FileWriter enrichFile = new FileWriter(enrichFilename);
-        enrichFile.write(msgText);
-        enrichFile.close();
+        getMockEndpoint("mock:start").expectedBodiesReceived("Start");
 
-        getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Big file");
+        mock.expectedFileExists("target/enrich/.done/AAA.fin");
+        mock.expectedFileExists("target/enrichdata/.done/AAA.dat");
+
+        template.sendBodyAndHeader("file://target/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
+
+        log.info("Sleeping for 1 sec before writing enrichdata file");
+        Thread.sleep(1000);
+        template.sendBodyAndHeader("file://target/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
+        log.info("... write done");
 
         assertMockEndpointsSatisfied();
-
-        List<Exchange> exchanges = getMockEndpoint("mock:result").getExchanges();
-        assertEquals(1, exchanges.size());
-        Exchange ex = (Exchange) exchanges.get(0);
-        assertEquals(msgText, ex.getIn().getBody().toString());
-
-        // assert Camel markerFile got deleted
-        Thread.sleep(300);
-        File markerFile = new File(enrichFilename + ".camelLock");
-        assertFalse("Camel markerFile " + enrichFilename + ".camelLock did not get deleted after file consumption.", markerFile.exists());
+        
+        assertFileDoesNotExists("target/enrichdata/AAA.dat.camelLock");
     }
 
     @Override
@@ -57,13 +60,16 @@ public class PollEnrichFileDefaultAggregationStrategyTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:foo?period=1000&repeatCount=1")
-                    .setBody().constant("Hello from Camel.")
-                    .pollEnrich("file:target/pollEnrich?fileName=enrich.txt&readLock=markerFile")
-                    .convertBodyTo(String.class)
-                    .log("The body is ${body}")
+                from("file://target/enrich?move=.done")
+                    .to("mock:start")
+                    .pollEnrich("file://target/enrichdata?readLock=markerFile&move=.done", 10000)
                     .to("mock:result");
             }
         };
+    }
+    
+    private static void assertFileDoesNotExists(String filename) {
+        File file = new File(filename);
+        assertFalse("File " + filename + " should not exist, it should have been deleted after being processed", file.exists());
     }
 }

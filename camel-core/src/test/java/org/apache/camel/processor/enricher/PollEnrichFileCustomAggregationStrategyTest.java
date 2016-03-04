@@ -17,40 +17,44 @@
 package org.apache.camel.processor.enricher;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.junit.Test;
 
 public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupport {
 
+    @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/enrich");
+        deleteDirectory("target/enrichdata");
+        super.setUp();
+    }
+    
     @Test
     public void testPollEnrichDefaultAggregationStrategyBody() throws Exception {
 
-        Thread.sleep(2000);
-        String enrichFilename = "target/pollEnrich/enrich.txt";
-        String msgText = "Hello Camel";
-        FileWriter enrichFile = new FileWriter(enrichFilename);
-        enrichFile.write(msgText);
-        enrichFile.close();
+        getMockEndpoint("mock:start").expectedBodiesReceived("Start");
 
-        getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Big file");
+        mock.expectedFileExists("target/enrich/.done/AAA.fin");
+        mock.expectedFileExists("target/enrichdata/.done/AAA.dat");
+
+        template.sendBodyAndHeader("file://target/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
+
+        log.info("Sleeping for 1 sec before writing enrichdata file");
+        Thread.sleep(1000);
+        template.sendBodyAndHeader("file://target/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
+        log.info("... write done");
 
         assertMockEndpointsSatisfied();
-
-        List<Exchange> exchanges = getMockEndpoint("mock:result").getExchanges();
-        assertEquals(1, exchanges.size());
-        Exchange ex = (Exchange) exchanges.get(0);
-        assertEquals(msgText, ex.getIn().getBody().toString());
-
-        //This file should be deleted but it's there when the test end, so we have to use AssertTrue for the moment
-        Thread.sleep(300);
-        File markerFile = new File(enrichFilename + ".camelLock");
-        assertTrue("Camel markerFile " + enrichFilename + ".camelLock did not get deleted after file consumption.", markerFile.exists());
+        
+        // With Custom Aggregation Strategy The readLock continues to exist even if it should be deleted
+        // assertFileDoesNotExists("target/enrichdata/AAA.dat.camelLock");
     }
 
     @Override
@@ -58,14 +62,17 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:foo?period=1000&repeatCount=1")
-                    .setBody().constant("Hello from Camel.")
-                    .pollEnrich("file:target/pollEnrich?fileName=enrich.txt&readLock=markerFile", new ReplaceAggregationStrategy())
-                    .convertBodyTo(String.class)
-                    .log("The body is ${body}")
+                from("file://target/enrich?move=.done")
+                    .to("mock:start")
+                    .pollEnrich("file://target/enrichdata?readLock=markerFile&move=.done", 10000, new ReplaceAggregationStrategy())
                     .to("mock:result");
             }
         };
+    }
+    
+    private static void assertFileDoesNotExists(String filename) {
+        File file = new File(filename);
+        assertFalse("File " + filename + " should not exist, it should have been deleted after being processed", file.exists());
     }
     
     class ReplaceAggregationStrategy implements AggregationStrategy {
