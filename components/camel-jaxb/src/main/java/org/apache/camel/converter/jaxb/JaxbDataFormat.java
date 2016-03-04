@@ -82,6 +82,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     private String contextPath;
     private String schema;
     private String schemaLocation;
+    private String noNamespaceSchemaLocation;
 
     private boolean prettyPrint = true;
     private boolean ignoreJAXBElement = true;
@@ -137,6 +138,9 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             }
             if (ObjectHelper.isNotEmpty(schemaLocation)) {
                 marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, schemaLocation);
+            }
+            if (ObjectHelper.isNotEmpty(noNamespaceSchemaLocation)) {
+                marshaller.setProperty(Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION, noNamespaceSchemaLocation);
             }
             if (namespacePrefixMapper != null) {
                 marshaller.setProperty(namespacePrefixMapper.getRegistrationKey(), namespacePrefixMapper);
@@ -361,6 +365,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     public void setSchemaLocation(String schemaLocation) {
         this.schemaLocation = schemaLocation;
+    }
+
+    public String getNoNamespaceSchemaLocation() {
+        return schemaLocation;
+    }
+
+    public void setNoNamespaceSchemaLocation(String schemaLocation) {
+        this.noNamespaceSchemaLocation = schemaLocation;
     }
 
     @Override
