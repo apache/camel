@@ -23,7 +23,12 @@ import org.apache.activemq.camel.component.ActiveMQComponent;
 /**
  * To configure the widget-gadget application
  */
-public class WidgetApplication {
+public final class WidgetApplication {
+
+    private WidgetApplication() {
+
+        // to comply with checkstyle
+    }
 
     /**
      * Factory to create the {@link ActiveMQComponent} which is used in this application
