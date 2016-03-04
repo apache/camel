@@ -279,7 +279,6 @@ public class BeanExpression implements Expression, Predicate {
             // and we would like to keep the dots within the key name
             List<String> methods = OgnlHelper.splitOgnl(ognl);
 
-            String methodChain = "";
             for (String methodName : methods) {
                 BeanHolder holder;
                 if (beanToCall != null) {
@@ -323,7 +322,6 @@ public class BeanExpression implements Expression, Predicate {
                     }
 
                     result = invoke.getResult();
-                    methodChain += "." + methodName;
                 }
 
                 // if there was a key then we need to lookup using the key
