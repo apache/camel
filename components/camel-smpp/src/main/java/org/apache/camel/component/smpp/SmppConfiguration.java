@@ -19,6 +19,7 @@ package org.apache.camel.component.smpp;
 import java.net.URI;
 import java.nio.charset.Charset;
 
+import java.util.Map;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -97,18 +98,20 @@ public class SmppConfiguration implements Cloneable {
     private long reconnectDelay = 5000;
     @UriParam
     private boolean lazySessionCreation;
-    @UriParam
+    @UriParam(label = "proxy")
     private String httpProxyHost;
-    @UriParam(defaultValue = "3128")
+    @UriParam(label = "proxy", defaultValue = "3128")
     private Integer httpProxyPort = 3128;
-    @UriParam
+    @UriParam(label = "proxy")
     private String httpProxyUsername;
-    @UriParam
+    @UriParam(label = "proxy")
     private String httpProxyPassword;
-    @UriParam
+    @UriParam(label = "advanced")
     private SessionStateListener sessionStateListener;
     @UriParam(defaultValue = "ALLOW")
     private SmppSplittingPolicy splittingPolicy = SmppSplittingPolicy.ALLOW;
+    @UriParam(label = "proxy")
+    private Map<String, String> proxyHeaders;
 
     
     /**
@@ -637,6 +640,17 @@ public class SmppConfiguration implements Cloneable {
         this.splittingPolicy = splittingPolicy;
     }
 
+    /**
+     * These headers will be passed to the proxy server while establishing the connection.
+     */
+    public void setProxyHeaders(Map<String, String> proxyHeaders) {
+        this.proxyHeaders = proxyHeaders;
+    }
+
+    public Map<String, String> getProxyHeaders() {
+        return proxyHeaders;
+    }
+
     @Override
     public String toString() {
         return "SmppConfiguration[usingSSL=" + usingSSL 
@@ -672,6 +686,7 @@ public class SmppConfiguration implements Cloneable {
             + ", httpProxyUsername=" + httpProxyUsername
             + ", httpProxyPassword=" + httpProxyPassword
             + ", splittingPolicy=" + splittingPolicy
+            + ", proxyHeaders=" + proxyHeaders
             + "]";
     }
 }
