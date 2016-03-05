@@ -150,6 +150,7 @@
         <include>org.apache.camel:camel-mina2</include>
         <include>org.apache.camel:camel-mllp</include>
         <include>org.apache.camel:camel-mongodb</include>
+        <include>org.apache.camel:camel-mongodb-gridfs</include>
         <include>org.apache.camel:camel-mqtt</include>
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-mustache</include>
