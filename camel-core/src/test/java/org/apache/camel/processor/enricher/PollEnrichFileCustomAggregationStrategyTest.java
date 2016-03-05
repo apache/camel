@@ -35,7 +35,7 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
     }
     
     @Test
-    public void testPollEnrichDefaultAggregationStrategyBody() throws Exception {
+    public void testPollEnrichCustomAggregationStrategyBody() throws Exception {
 
         getMockEndpoint("mock:start").expectedBodiesReceived("Start");
 
@@ -53,8 +53,7 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
 
         assertMockEndpointsSatisfied();
         
-        // With Custom Aggregation Strategy The readLock continues to exist even if it should be deleted
-        // assertFileDoesNotExists("target/enrichdata/AAA.dat.camelLock");
+        assertFileDoesNotExists("target/enrichdata/AAA.dat.camelLock");
     }
 
     @Override
@@ -81,8 +80,10 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
             Object resourceResponse = resource.getIn().getBody();
             if (original.getPattern().isOutCapable()) {
                 original.getOut().setBody(resourceResponse);
+                original.getProperties().putAll(resource.getProperties());
             } else {
                 original.getIn().setBody(resourceResponse);
+                original.getProperties().putAll(resource.getProperties());
             }
             return original;
         }
