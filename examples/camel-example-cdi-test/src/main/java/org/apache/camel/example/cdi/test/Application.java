@@ -26,7 +26,10 @@ import org.apache.camel.cdi.Uri;
 import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.management.event.CamelContextStoppingEvent;
 
-class Application {
+/**
+ * Our CDI Camel application
+ */
+public class Application {
 
     @ContextName("camel-test-cdi")
     static class Hello extends RouteBuilder {
