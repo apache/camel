@@ -121,6 +121,7 @@
 	* [Docker](docker.adoc)
 	* [Dozer](dozer.adoc)
 	* [Dropbox](dropbox.adoc)
+	* [Eclipse](eclipse.adoc)
 	* [Ironmq](ironmq.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
