@@ -123,6 +123,7 @@
 	* [Dropbox](dropbox.adoc)
 	* [Eclipse](eclipse.adoc)
 	* [ElasticSearch](elasticsearch.adoc)
+	* [Elsql](elsql.adoc)
 	* [Ironmq](ironmq.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
