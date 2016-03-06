@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
@@ -44,6 +45,8 @@ import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.model.language.MethodCallExpression;
+import org.apache.camel.processor.DefaultExchangeFormatter;
+import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
@@ -51,11 +54,13 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.TokenPairExpressionIterator;
 import org.apache.camel.support.TokenXMLExpressionIterator;
 import org.apache.camel.support.XMLTokenExpressionIterator;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.GroupIterator;
 import org.apache.camel.util.GroupTokenIterator;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.StringHelper;
@@ -2021,6 +2026,56 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "collate(" + expression + "," + group + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the message history (including exchange details or not)
+     */
+    public static Expression messageHistoryExpression(final boolean detailed) {
+        return new ExpressionAdapter() {
+
+            private ExchangeFormatter formatter;
+
+            public Object evaluate(Exchange exchange) {
+                ExchangeFormatter ef = null;
+                if (detailed) {
+                    // use the exchange formatter to log exchange details
+                    ef = getOrCreateExchangeFormatter(exchange.getContext());
+                }
+                return MessageHelper.dumpMessageHistoryStacktrace(exchange, ef, false);
+            }
+
+            private ExchangeFormatter getOrCreateExchangeFormatter(CamelContext camelContext) {
+                if (formatter == null) {
+                    Set<ExchangeFormatter> formatters = camelContext.getRegistry().findByType(ExchangeFormatter.class);
+                    if (formatters != null && formatters.size() == 1) {
+                        formatter = formatters.iterator().next();
+                    } else {
+                        // setup exchange formatter to be used for message history dump
+                        DefaultExchangeFormatter def = new DefaultExchangeFormatter();
+                        def.setShowExchangeId(true);
+                        def.setMultiline(true);
+                        def.setShowHeaders(true);
+                        def.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
+                        try {
+                            Integer maxChars = CamelContextHelper.parseInteger(camelContext, camelContext.getProperty(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
+                            if (maxChars != null) {
+                                def.setMaxChars(maxChars);
+                            }
+                        } catch (Exception e) {
+                            throw ObjectHelper.wrapRuntimeCamelException(e);
+                        }
+                        formatter = def;
+                    }
+                }
+                return formatter;
+            }
+
+            @Override
+            public String toString() {
+                return "messageHistory(" + detailed + ")";
             }
         };
     }

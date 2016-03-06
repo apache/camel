@@ -206,37 +206,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.cacheExpression(exp);
         }
 
-        // random
-        remainder = ifStartsWithReturnRemainder("random", function);
-        if (remainder != null) {
-            String values = ObjectHelper.between(remainder, "(", ")");
-            if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
-            }
-            if (values.contains(",")) {
-                String[] tokens = values.split(",", -1);
-                if (tokens.length > 2) {
-                    throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
-                }
-                int min = Integer.parseInt(tokens[0].trim());
-                int max = Integer.parseInt(tokens[1].trim());
-                return ExpressionBuilder.randomExpression(min, max);
-            } else {
-                int max = Integer.parseInt(values.trim());
-                return ExpressionBuilder.randomExpression(max);
-            }
-        }
-
-        // collate function
-        remainder = ifStartsWithReturnRemainder("collate", function);
-        if (remainder != null) {
-            String values = ObjectHelper.between(remainder, "(", ")");
-            if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException("Valid syntax: ${collate(group)} was: " + function, token.getIndex());
-            }
-            String exp = "${body}";
-            int num = Integer.parseInt(values.trim());
-            return ExpressionBuilder.collateExpression(exp, num);
+        // miscellaneous functions
+        Expression misc = createSimpleExpressionMisc(function);
+        if (misc != null) {
+            return misc;
         }
 
         if (strict) {
@@ -420,6 +393,59 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
         if (strict) {
             throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());
+        }
+        return null;
+    }
+
+    private Expression createSimpleExpressionMisc(String function) {
+        String remainder;
+
+        // random function
+        remainder = ifStartsWithReturnRemainder("random", function);
+        if (remainder != null) {
+            String values = ObjectHelper.between(remainder, "(", ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = values.split(",", -1);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
+                }
+                int min = Integer.parseInt(tokens[0].trim());
+                int max = Integer.parseInt(tokens[1].trim());
+                return ExpressionBuilder.randomExpression(min, max);
+            } else {
+                int max = Integer.parseInt(values.trim());
+                return ExpressionBuilder.randomExpression(max);
+            }
+        }
+
+        // collate function
+        remainder = ifStartsWithReturnRemainder("collate", function);
+        if (remainder != null) {
+            String values = ObjectHelper.between(remainder, "(", ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException("Valid syntax: ${collate(group)} was: " + function, token.getIndex());
+            }
+            String exp = "${body}";
+            int num = Integer.parseInt(values.trim());
+            return ExpressionBuilder.collateExpression(exp, num);
+        }
+
+        // messageHistory function
+        remainder = ifStartsWithReturnRemainder("messageHistory", function);
+        if (remainder != null) {
+            boolean detailed;
+            String values = ObjectHelper.between(remainder, "(", ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                detailed = true;
+            } else {
+                detailed = Boolean.valueOf(values);
+            }
+            return ExpressionBuilder.messageHistoryExpression(detailed);
+        } else if (ObjectHelper.equal(function, "messageHistory")) {
+            return ExpressionBuilder.messageHistoryExpression(true);
         }
         return null;
     }
