@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.ahc.ws;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
@@ -47,7 +45,7 @@ public class WsEndpoint extends AhcEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(WsEndpoint.class);
 
     // for using websocket streaming/fragments
-    private static final boolean GRIZZLY_AVAILABLE = 
+    private static final boolean GRIZZLY_AVAILABLE =
         probeClass("com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider");
 
     private final Set<WsConsumer> consumers = new HashSet<WsConsumer>();
@@ -55,7 +53,7 @@ public class WsEndpoint extends AhcEndpoint {
     private WebSocket websocket;
     @UriParam
     private boolean useStreaming;
-    
+
     public WsEndpoint(String endpointUri, WsComponent component) {
         super(endpointUri, component, null);
     }
@@ -68,7 +66,7 @@ public class WsEndpoint extends AhcEndpoint {
             return false;
         }
     }
-    
+
     @Override
     public WsComponent getComponent() {
         return (WsComponent) super.getComponent();
@@ -120,34 +118,44 @@ public class WsEndpoint extends AhcEndpoint {
         } else {
             client = new AsyncHttpClient(ahp, config);
         }
-        return client; 
+        return client;
     }
 
-    public void connect() throws InterruptedException, ExecutionException, IOException {
-        websocket = getClient().prepareGet(getHttpUri().toASCIIString()).execute(
+    public void connect() throws Exception {
+        String uri = getHttpUri().toASCIIString();
+
+        LOG.debug("Connecting to {}", uri);
+        websocket = getClient().prepareGet(uri).execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(new WsListener()).build()).get();
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         if (websocket != null && websocket.isOpen()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Disconnecting from {}", getHttpUri().toASCIIString());
+            }
             websocket.close();
             websocket = null;
         }
         super.doStop();
     }
 
-    void connect(WsConsumer wsConsumer) {
+    void connect(WsConsumer wsConsumer) throws Exception {
         consumers.add(wsConsumer);
+
+        if (websocket == null || !websocket.isOpen()) {
+            connect();
+        }
     }
 
     void disconnect(WsConsumer wsConsumer) {
         consumers.remove(wsConsumer);
     }
-    
+
     class WsListener implements WebSocketTextListener, WebSocketByteListener {
-                
+
         @Override
         public void onOpen(WebSocket websocket) {
             LOG.debug("websocket opened");
@@ -165,7 +173,7 @@ public class WsEndpoint extends AhcEndpoint {
 
         @Override
         public void onMessage(byte[] message) {
-            LOG.debug("received message --> {}", message);
+            LOG.debug("Received message --> {}", message);
             for (WsConsumer consumer : consumers) {
                 consumer.sendMessage(message);
             }
@@ -173,14 +181,14 @@ public class WsEndpoint extends AhcEndpoint {
 
         @Override
         public void onMessage(String message) {
-            LOG.debug("received message --> {}", message);
+            LOG.debug("Received message --> {}", message);
             for (WsConsumer consumer : consumers) {
                 consumer.sendMessage(message);
             }
         }
 
     }
-    
+
     protected AsyncHttpProvider getAsyncHttpProvider(AsyncHttpClientConfig config) {
         if (GRIZZLY_AVAILABLE) {
             return new GrizzlyAsyncHttpProvider(config);

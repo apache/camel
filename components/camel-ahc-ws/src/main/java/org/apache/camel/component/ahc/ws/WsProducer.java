@@ -46,8 +46,8 @@ public class WsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
         Object message = in.getBody();
-        log.debug("Sending out {}", message);
         if (message != null) {
+            log.debug("Sending out {}", message);
             if (message instanceof String) {
                 sendMessage(getWebSocket(), (String)message, getEndpoint().isUseStreaming());
             } else if (message instanceof byte[]) {
