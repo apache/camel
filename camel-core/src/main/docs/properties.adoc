@@ -65,13 +65,10 @@ The Properties component supports 7 endpoint options which are listed below:
 // endpoint options: END
 
 
-[Tip]
-====
-**Resolving property from Java code**
-
+[TIP]
+**Resolving property from Java code** +
 You can use the method `resolvePropertyPlaceholders` on the
 `CamelContext` to resolve a property from any Java code.
-====
 
 [[Properties-UsingPropertyPlaceholder]]
 Using PropertyPlaceholder
@@ -90,13 +87,10 @@ to the fullest. See more at
 link:how-do-i-use-spring-property-placeholder-with-camel-xml.html[How do
 I use Spring Property Placeholder with Camel XML].
 
-[Tip]
-====
-**Bridging Spring and Camel property placeholders**
-
+[TIP]
+**Bridging Spring and Camel property placeholders** +
 From Camel 2.10 onwards, you can bridge the Spring property placeholder
 with Camel, see further below for more details.
-====
 
 The property placeholder is generally in use when doing:
 
@@ -277,13 +271,10 @@ fresh such as:
 </camelContext>
 ----
 
-[Tip]
-====
-**Specifying the cache option inside XML**
-
+[TIP]
+**Specifying the cache option inside XML** +
 Camel 2.10 onwards supports specifying a value for the cache option both
 inside the Spring as well as the Blueprint XML.
-====
 
 [[Properties-UsingaPropertiesfromthe]]
 Using a Properties from the link:registry.html[Registry]
