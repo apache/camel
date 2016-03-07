@@ -64,6 +64,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
     private String xmlStreamWriterWrapper;
     @XmlAttribute
     private String schemaLocation;
+    @XmlAttribute
+    private String noNamespaceSchemaLocation;
 
     public JaxbDataFormat() {
         super("jaxb");
@@ -232,6 +234,17 @@ public class JaxbDataFormat extends DataFormatDefinition {
         this.schemaLocation = schemaLocation;
     }
 
+    public String getNoNamespaceSchemaLocation() {
+        return noNamespaceSchemaLocation;
+    }
+
+    /**
+     * To define the location of the namespaceless schema
+     */
+    public void setNoNamespaceSchemaLocation(String schemaLocation) {
+        this.noNamespaceSchemaLocation = schemaLocation;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
@@ -285,6 +298,9 @@ public class JaxbDataFormat extends DataFormatDefinition {
         }
         if (schemaLocation != null) {
             setProperty(camelContext, dataFormat, "schemaLocation", schemaLocation);
+        }
+        if (noNamespaceSchemaLocation != null) {
+            setProperty(camelContext, dataFormat, "noNamespaceSchemaLocation", noNamespaceSchemaLocation);
         }
     }
 }
