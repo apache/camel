@@ -36,7 +36,7 @@
         </camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
             !org.apache.camel.component.atmosphere.websocket.*,
-            javax.servlet*;version="2.5",
+            javax.servlet*;version="3.1.0",
             org.atmosphere.*;version="${atmosphere-version-range}",
             org.apache.catalina;resolution:=optional,
             org.apache.catalina.comet;resolution:=optional,
@@ -60,8 +60,9 @@
           <artifactId>camel-servlet</artifactId>
         </dependency>
         <dependency>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-servlet_3.0_spec</artifactId>
+          <groupId>javax.servlet</groupId>
+          <artifactId>javax.servlet-api</artifactId>
+          <version>${javax.servlet-api-version}</version>
         </dependency>
 
         <!--  atmosphere -->

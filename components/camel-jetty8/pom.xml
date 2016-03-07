@@ -52,8 +52,9 @@
       <artifactId>camel-jetty-common</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-servlet_3.0_spec</artifactId>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${javax.servlet-api-version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>

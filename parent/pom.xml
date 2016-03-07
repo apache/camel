@@ -2062,9 +2062,9 @@
         <version>${geronimo-jta-spec-version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-servlet_3.0_spec</artifactId>
-        <version>${geronimo-servlet-spec-version}</version>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${javax.servlet-api-version}</version>
       </dependency>
       <!-- Optional Spring Support -->
       <dependency>
