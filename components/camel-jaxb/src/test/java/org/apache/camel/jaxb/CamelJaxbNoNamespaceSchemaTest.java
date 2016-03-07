@@ -38,7 +38,7 @@ public class CamelJaxbNoNamespaceSchemaTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        assertTrue("We should get the schemaLocation here", body
+        assertTrue("We should get the noNamespaceSchemaLocation here", body
                 .contains("noNamespaceSchemaLocation=\"person-no-namespace.xsd\""));
     }
 
