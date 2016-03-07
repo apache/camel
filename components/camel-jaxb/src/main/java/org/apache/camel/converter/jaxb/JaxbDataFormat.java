@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
@@ -62,7 +63,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
@@ -156,13 +156,13 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     void marshal(Exchange exchange, Object graph, OutputStream stream, Marshaller marshaller)
         throws XMLStreamException, JAXBException, NoTypeConversionAvailableException, IOException, InvalidPayloadException {
 
-        Object e = graph;
+        Object element = graph;
         if (partialClass != null && getPartNamespace() != null) {
-            e = new JAXBElement<Object>(getPartNamespace(), partialClass, graph);
+            element = new JAXBElement<Object>(getPartNamespace(), partialClass, graph);
         }
 
         // only marshal if its possible
-        if (introspector.isElement(e)) {
+        if (introspector.isElement(element)) {
             if (asXmlStreamWriter(exchange)) {
                 XMLStreamWriter writer = typeConverter.convertTo(XMLStreamWriter.class, stream);
                 if (needFiltering(exchange)) {
@@ -171,11 +171,35 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
                 if (xmlStreamWriterWrapper != null) {
                     writer = xmlStreamWriterWrapper.wrapWriter(writer);
                 }
-                marshaller.marshal(e, writer);
+                marshaller.marshal(element, writer);
             } else {
-                marshaller.marshal(e, stream);
+                marshaller.marshal(element, stream);
             }
-        } else if (!mustBeJAXBElement) {
+            return;
+        } else if (element != null) {
+            Method m = JaxbHelper.getJaxbElementFactoryMethod(camelContext, element.getClass());
+            try {
+                Object toMarshall = m.invoke(JaxbHelper.getObjectFactory(camelContext, element.getClass()).newInstance(), element);
+                if (asXmlStreamWriter(exchange)) {
+                    XMLStreamWriter writer = typeConverter.convertTo(XMLStreamWriter.class, stream);
+                    if (needFiltering(exchange)) {
+                        writer = new FilteringXmlStreamWriter(writer);
+                    }
+                    if (xmlStreamWriterWrapper != null) {
+                        writer = xmlStreamWriterWrapper.wrapWriter(writer);
+                    }
+                    marshaller.marshal(toMarshall, writer);
+                } else {
+                    marshaller.marshal(toMarshall, stream);
+                }
+                return;
+            } catch (Exception e) {
+                LOG.debug("Unable to create JAXBElement object for type {} due to {}", element.getClass().getName(), e);
+            }
+        }
+
+        // cannot marshal
+        if (!mustBeJAXBElement) {
             // write the graph as is to the output stream
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Attempt to marshalling non JAXBElement with type {} as InputStream", ObjectHelper.classCanonicalName(graph));

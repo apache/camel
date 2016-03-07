@@ -34,7 +34,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -165,7 +164,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
     }
 
     protected <T> boolean isJaxbType(Class<T> type) {
-        return hasXmlRootElement(type) || (getJaxbElementFactoryMethod(type) != null);
+        return hasXmlRootElement(type) || JaxbHelper.getJaxbElementFactoryMethod(camelContext, type) != null;
     }
 
     private <T> T castJaxbType(Object o, Class<T> type) {
@@ -262,9 +261,9 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
             }
             Object toMarshall = value;
             if (!hasXmlRootElement(value.getClass())) {
-                Method m = getJaxbElementFactoryMethod(value.getClass());
+                Method m = JaxbHelper.getJaxbElementFactoryMethod(camelContext, value.getClass());
                 try {
-                    toMarshall = m.invoke(getObjectFactory(value.getClass()).newInstance(), value);
+                    toMarshall = m.invoke(JaxbHelper.getObjectFactory(camelContext, value.getClass()).newInstance(), value);
                 } catch (Exception e) {
                     LOG.error("Unable to create JAXBElement object for type {} due to {}", value.getClass().getName(), e);
                 }
@@ -342,42 +341,6 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
 
     private static <T> boolean isNotStreamCacheType(Class<T> type) {
         return !StreamCache.class.isAssignableFrom(type);
-    }
-
-    private <T> Class getObjectFactory(Class<T> type) throws ClassNotFoundException {
-        Class<?> c = null;
-        if (type.getPackage() != null) {
-            String objectFactoryClassName = type.getPackage().getName() + ".ObjectFactory";
-            c = camelContext.getClassResolver().resolveClass(objectFactoryClassName);
-        }
-        if (c == null) {
-            throw new ClassNotFoundException(String.format("ObjectFactory for type %s was not found", type.getName()));
-        } else {
-            return c;
-        }
-    }
-
-    private <T> Method getJaxbElementFactoryMethod(Class<T> type) {
-        Method factoryMethod = null;
-        try {
-            for (Method m : getObjectFactory(type).getMethods()) {
-                final XmlElementDecl a = m.getAnnotation(XmlElementDecl.class);
-                if (a == null) {
-                    continue;
-                }
-                final Class<?>[] parameters = m.getParameterTypes();
-                if (parameters.length == 1 && parameters[0].isAssignableFrom(type)) {
-                    if (factoryMethod != null) {
-                        throw new IllegalStateException("There are several possible XML schema mappings for class " + type.getName());
-                    } else {
-                        factoryMethod = m;
-                    }
-                }
-            }
-        } catch (ClassNotFoundException e) {
-            LOG.debug(e.getMessage(), e);
-        }
-        return factoryMethod;
     }
 
 }
