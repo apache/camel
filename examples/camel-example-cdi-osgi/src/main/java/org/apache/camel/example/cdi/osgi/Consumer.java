@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 
 @ContextName("osgi-example")
-class Consumer extends RouteBuilder {
+public class Consumer extends RouteBuilder {
 
     @Override
     public void configure() {

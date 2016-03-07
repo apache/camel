@@ -22,13 +22,11 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
-import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Rule;
 import org.junit.Test;
@@ -96,7 +94,7 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
                     Thread.sleep(15000);
                     tmpSocket.close();
                 } catch (Exception ex) {
-                    throw new RuntimeException( "Exception caught in dummy listener", ex);
+                    throw new RuntimeException("Exception caught in dummy listener", ex);
                 }
             }
 

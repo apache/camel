@@ -87,9 +87,9 @@ public final class MllpUtil {
             } catch (SocketTimeoutException normaTimeoutEx) {
                 // Just pass this on - the caller will wrap it in a MllpTimeoutException
                 throw normaTimeoutEx;
-            } catch (SocketException socketEx ) {
+            } catch (SocketException socketEx) {
                 if (socket.isClosed()) {
-                    LOG.debug( "Socket closed while opening MLLP frame - ignoring exception", socketEx);
+                    LOG.debug("Socket closed while opening MLLP frame - ignoring exception", socketEx);
                     return false;
                 } else {
                     LOG.error("Unexpected Exception occurred opening MLLP frame - resetting the connection");

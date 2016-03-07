@@ -110,7 +110,7 @@ public class CamelCommandsFacade {
 
         if (contextNames.size() != 1) {
             StringBuffer error = new StringBuffer();
-            error.append("Cannot infer Camel Context. Please provide manually.");
+            error.append("Cannot infer CamelContext. Please provide manually.");
 
             if (contextNames.size() > 1) {
                 error.append(" Contexts : " + contextNames.toString());
@@ -123,9 +123,8 @@ public class CamelCommandsFacade {
     }
 
     private String getFirstCamelContextName() throws Exception {
-        if (null == camelController.getLocalCamelContexts() ||
-                camelController.getLocalCamelContexts().size() == 0) {
-            throw new org.crsh.cli.impl.SyntaxException("No camel contexts available");
+        if (camelController.getLocalCamelContexts() == null || camelController.getLocalCamelContexts().size() == 0) {
+            throw new org.crsh.cli.impl.SyntaxException("No CamelContexts available");
         }
 
         return camelController.getLocalCamelContexts().get(0).getName();

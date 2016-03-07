@@ -20,15 +20,9 @@ import javax.inject.Inject;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.annotation.Metric;
-import io.astefanutti.metrics.cdi.MetricsExtension;
 import org.apache.camel.CamelContext;
-import org.apache.camel.cdi.CdiCamelExtension;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.apache.camel.test.cdi.CamelCdiRunner;
+import org.apache.camel.test.cdi.Order;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -36,7 +30,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-@RunWith(Arquillian.class)
+@RunWith(CamelCdiRunner.class)
 public class CdiMetricsTest {
 
     @Inject
@@ -54,35 +48,18 @@ public class CdiMetricsTest {
     @Metric(name = "success-ratio")
     private Gauge<Double> ratio;
 
-    @Inject
-    private CamelContext context;
-
-    @Deployment
-    public static Archive<?> deployment() {
-        return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Metrics CDI
-            .addPackage(MetricsExtension.class.getPackage())
-            // Test classes
-            .addPackage(Application.class.getPackage())
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
-
     @Test
-    public void testContextName() {
-        assertThat("Context name is incorrect!", context.getName(), is(equalTo("camel-example-metrics-cdi")));
-    }
-
-    @Test
-    public void testMetricsValues() throws Exception {
+    @Order(1)
+    public void stopCamelContext(CamelContext context) throws Exception {
         // Wait a while so that the timer can kick in
         Thread.sleep(5000);
-
         // And stop the Camel context so that inflight exchanges get completed
         context.stop();
+    }
 
+    @Test
+    @Order(2)
+    public void testMetricsValues() {
         assertThat("Meter counts are not consistent!",
             attempt.getCount() - redelivery.getCount() - success.getCount() - error.getCount(),
             is(equalTo(0L)));

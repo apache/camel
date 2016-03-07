@@ -22,10 +22,14 @@ import org.apache.camel.main.Main;
 /**
  * A plain Java Main to start the widget and gadget example.
  */
-public class WidgetMain {
+public final class WidgetMain {
 
     // use Camel Main to setup and run Camel
     private static Main main = new Main();
+
+    private WidgetMain() {
+        // to comply with checkstyle
+    }
 
     public static void main(String[] args) throws Exception {
         // create the ActiveMQ component

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.xslt.extensions;
 
 import net.sf.saxon.expr.XPathContext;
@@ -33,11 +32,11 @@ import org.slf4j.LoggerFactory;
 
 public class MyExtensionFunction2 extends ExtensionFunctionDefinition {
 
-	private static final long serialVersionUID = 1L;
-	
-	private static final Logger LOG = LoggerFactory.getLogger(MyExtensionFunction2.class);
+    private static final long serialVersionUID = 1L;
 
-	@Override
+    private static final Logger LOG = LoggerFactory.getLogger(MyExtensionFunction2.class);
+
+    @Override
     public StructuredQName getFunctionQName() {
         return new StructuredQName("", "http://mytest/", "myExtensionFunction2");
     }
@@ -54,40 +53,40 @@ public class MyExtensionFunction2 extends ExtensionFunctionDefinition {
 
     @Override
     public SequenceType[] getArgumentTypes() {
-        return new SequenceType[] { SequenceType.SINGLE_STRING, SequenceType.OPTIONAL_STRING };
+        return new SequenceType[]{SequenceType.SINGLE_STRING, SequenceType.OPTIONAL_STRING};
     }
 
     @Override
     public SequenceType getResultType(SequenceType[] suppliedArgumentTypes) {
-    	int resultCardinality = 1;
-    	return SequenceType.makeSequenceType(SequenceType.SINGLE_STRING.getPrimaryType(), resultCardinality);
+        int resultCardinality = 1;
+        return SequenceType.makeSequenceType(SequenceType.SINGLE_STRING.getPrimaryType(), resultCardinality);
     }
 
     @Override
     public ExtensionFunctionCall makeCallExpression() {
-    	return new ExtensionFunctionCall() {
-			private static final long serialVersionUID = 1L;
+        return new ExtensionFunctionCall() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-	        public Sequence call(XPathContext xPathContext, Sequence[] arguments) throws XPathException {
-				// 1st argument (mandatory, index 0)
-	            StringValue arg1 = (StringValue) arguments[0].iterate().next();
-	            String arg1Str = arg1.getStringValue();
-	
-	            // 2nd argument (optional, index 1)
-	            String arg2Str = ""; 
-        		if ( arguments.length > 1 ) {
-        			StringValue arg2 = (StringValue) arguments[1].iterate().next();
-        			arg2Str = arg2.getStringValue();
-        		}
-	            
-	            // Functionality goes here
-	            String resultStr = arg1Str + arg2Str;
-	
-	            Item result = new StringValue(resultStr);
-	            return SequenceTool.toLazySequence(SingletonIterator.makeIterator(result));
-	        }
-		};
+            @Override
+            public Sequence call(XPathContext xPathContext, Sequence[] arguments) throws XPathException {
+                // 1st argument (mandatory, index 0)
+                StringValue arg1 = (StringValue) arguments[0].iterate().next();
+                String arg1Str = arg1.getStringValue();
+
+                // 2nd argument (optional, index 1)
+                String arg2Str = "";
+                if (arguments.length > 1) {
+                    StringValue arg2 = (StringValue) arguments[1].iterate().next();
+                    arg2Str = arg2.getStringValue();
+                }
+
+                // Functionality goes here
+                String resultStr = arg1Str + arg2Str;
+
+                Item result = new StringValue(resultStr);
+                return SequenceTool.toLazySequence(SingletonIterator.makeIterator(result));
+            }
+        };
     }
-	
+
 }

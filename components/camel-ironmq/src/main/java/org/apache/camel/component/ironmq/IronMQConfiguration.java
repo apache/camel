@@ -36,8 +36,8 @@ public class IronMQConfiguration {
     @UriPath @Metadata(required = "true")
     private String queueName;
     
-    @UriParam(defaultValue = "https://mq-aws-us-east-1.iron.io")
-    private String ironMQCloud = "https://mq-aws-us-east-1.iron.io";
+    @UriParam(defaultValue = "https://mq-aws-us-east-1-1.iron.io")
+    private String ironMQCloud = "https://mq-aws-us-east-1-1.iron.io";
     
     @UriParam
     private boolean preserveHeaders;
@@ -121,7 +121,7 @@ public class IronMQConfiguration {
     }
 
     /**
-     * IronMq Cloud url. See http://dev.iron.io/mq/reference/clouds/ for valid options
+     * IronMq Cloud url. Urls for public clusters: mq-aws-us-east-1-1.iron.io (US), mq-aws-eu-west-1-1.iron.io (EU)
      */
     public void setIronMQCloud(String ironMQCloud) {
         this.ironMQCloud = ironMQCloud;

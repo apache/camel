@@ -24,7 +24,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.component.sjms.SjmsComponent;
 
-class Jms {
+public class Jms {
 
     @PropertyInject("jms.maxConnections")
     int maxConnections;

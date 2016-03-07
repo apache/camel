@@ -107,14 +107,14 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 serverSocket.bind(socketAddress, endpoint.backlog);
             } catch (BindException bindException) {
                 if (System.currentTimeMillis() > startTicks + endpoint.getBindTimeout()) {
-                    log.error( "Failed to bind to address {} within timeout {}", socketAddress, endpoint.getBindTimeout());
+                    log.error("Failed to bind to address {} within timeout {}", socketAddress, endpoint.getBindTimeout());
                     throw bindException;
                 } else {
-                    log.warn( "Failed to bind to address {} - retrying in {} milliseconds", socketAddress, endpoint.getBindRetryInterval());
+                    log.warn("Failed to bind to address {} - retrying in {} milliseconds", socketAddress, endpoint.getBindRetryInterval());
                     Thread.sleep(endpoint.getBindRetryInterval());
                 }
             }
-        } while ( !serverSocket.isBound() );
+        } while (!serverSocket.isBound());
 
         serverSocketThread = new ServerSocketThread(serverSocket);
         serverSocketThread.start();

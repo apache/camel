@@ -151,6 +151,10 @@ public class RestSwaggerReader {
             appendModels(clazz, swagger);
         }
 
+        doParseVerbs(swagger, rest, camelContextId, verbs, pathAsTag);
+    }
+
+    private void doParseVerbs(Swagger swagger, RestDefinition rest, String camelContextId, List<VerbDefinition> verbs, String pathAsTag) {
         // used during gathering of apis
         List<Path> paths = new ArrayList<>();
 
@@ -291,128 +295,132 @@ public class RestSwaggerReader {
             }
 
             // enrich with configured response messages from the rest-dsl
-            for (RestOperationResponseMsgDefinition msg : verb.getResponseMsgs()) {
-                Response response = null;
-                if (op.getResponses() != null) {
-                    response = op.getResponses().get(msg.getCode());
-                }
-                if (response == null) {
-                    response = new Response();
-                }
-                if (ObjectHelper.isNotEmpty(msg.getResponseModel())) {
-                    Property prop = modelTypeAsProperty(msg.getResponseModel(), swagger);
-                    response.setSchema(prop);
-                }
-                response.setDescription(msg.getMessage());
-
-                // add headers
-                if (msg.getHeaders() != null) {
-                    for (RestOperationResponseHeaderDefinition header : msg.getHeaders()) {
-                        String name = header.getName();
-                        String type = header.getDataType();
-                        if ("string".equals(type)) {
-                            StringProperty sp = new StringProperty();
-                            sp.setName(name);
-                            sp.setDescription(header.getDescription());
-                            if (header.getAllowableValues() != null) {
-                                sp.setEnum(header.getAllowableValues());
-                            }
-                            response.addHeader(name, sp);
-                        } else if ("int".equals(type) || "integer".equals(type)) {
-                            IntegerProperty ip = new IntegerProperty();
-                            ip.setName(name);
-                            ip.setDescription(header.getDescription());
-
-                            List<Integer> values;
-                            if (!header.getAllowableValues().isEmpty()) {
-                                values = new ArrayList<Integer>();
-                                for (String text : header.getAllowableValues()) {
-                                    values.add(Integer.valueOf(text));
-                                }
-                                ip.setEnum(values);
-                            }
-                            response.addHeader(name, ip);
-                        } else if ("long".equals(type)) {
-                            LongProperty lp = new LongProperty();
-                            lp.setName(name);
-                            lp.setDescription(header.getDescription());
-
-                            List<Long> values;
-                            if (!header.getAllowableValues().isEmpty()) {
-                                values = new ArrayList<Long>();
-                                for (String text : header.getAllowableValues()) {
-                                    values.add(Long.valueOf(text));
-                                }
-                                lp.setEnum(values);
-                            }
-                            response.addHeader(name, lp);
-                        } else if ("float".equals(type)) {
-                            FloatProperty lp = new FloatProperty();
-                            lp.setName(name);
-                            lp.setDescription(header.getDescription());
-
-                            List<Float> values;
-                            if (!header.getAllowableValues().isEmpty()) {
-                                values = new ArrayList<Float>();
-                                for (String text : header.getAllowableValues()) {
-                                    values.add(Float.valueOf(text));
-                                }
-                                lp.setEnum(values);
-                            }
-                            response.addHeader(name, lp);
-                        } else if ("double".equals(type)) {
-                            DoubleProperty dp = new DoubleProperty();
-                            dp.setName(name);
-                            dp.setDescription(header.getDescription());
-
-                            List<Double> values;
-                            if (!header.getAllowableValues().isEmpty()) {
-                                values = new ArrayList<Double>();
-                                for (String text : header.getAllowableValues()) {
-                                    values.add(Double.valueOf(text));
-                                }
-                                dp.setEnum(values);
-                            }
-                            response.addHeader(name, dp);
-                        } else if ("boolean".equals(type)) {
-                            BooleanProperty bp = new BooleanProperty();
-                            bp.setName(name);
-                            bp.setDescription(header.getDescription());
-                            response.addHeader(name, bp);
-                        } else if ("array".equals(type)) {
-                            ArrayProperty ap = new ArrayProperty();
-                            ap.setName(name);
-                            ap.setDescription(header.getDescription());
-                            if (header.getArrayType() != null) {
-                                if (header.getArrayType().equalsIgnoreCase("string")) {
-                                    ap.setItems(new StringProperty());
-                                }
-                                if (header.getArrayType().equalsIgnoreCase("int") || header.getArrayType().equalsIgnoreCase("integer")) {
-                                    ap.setItems(new IntegerProperty());
-                                }
-                                if (header.getArrayType().equalsIgnoreCase("long")) {
-                                    ap.setItems(new LongProperty());
-                                }
-                                if (header.getArrayType().equalsIgnoreCase("float")) {
-                                    ap.setItems(new FloatProperty());
-                                }
-                                if (header.getArrayType().equalsIgnoreCase("double")) {
-                                    ap.setItems(new DoubleProperty());
-                                }
-                                if (header.getArrayType().equalsIgnoreCase("boolean")) {
-                                    ap.setItems(new BooleanProperty());
-                                }
-                            }
-                            response.addHeader(name, ap);
-                        }
-                    }
-                }
-
-                op.addResponse(msg.getCode(), response);
-            }
+            doParseResponseMessages(swagger, verb, op);
 
             // add path
             swagger.path(opPath, path);
+        }
+    }
+
+    private void doParseResponseMessages(Swagger swagger, VerbDefinition verb, Operation op) {
+        for (RestOperationResponseMsgDefinition msg : verb.getResponseMsgs()) {
+            Response response = null;
+            if (op.getResponses() != null) {
+                response = op.getResponses().get(msg.getCode());
+            }
+            if (response == null) {
+                response = new Response();
+            }
+            if (ObjectHelper.isNotEmpty(msg.getResponseModel())) {
+                Property prop = modelTypeAsProperty(msg.getResponseModel(), swagger);
+                response.setSchema(prop);
+            }
+            response.setDescription(msg.getMessage());
+
+            // add headers
+            if (msg.getHeaders() != null) {
+                for (RestOperationResponseHeaderDefinition header : msg.getHeaders()) {
+                    String name = header.getName();
+                    String type = header.getDataType();
+                    if ("string".equals(type)) {
+                        StringProperty sp = new StringProperty();
+                        sp.setName(name);
+                        sp.setDescription(header.getDescription());
+                        if (header.getAllowableValues() != null) {
+                            sp.setEnum(header.getAllowableValues());
+                        }
+                        response.addHeader(name, sp);
+                    } else if ("int".equals(type) || "integer".equals(type)) {
+                        IntegerProperty ip = new IntegerProperty();
+                        ip.setName(name);
+                        ip.setDescription(header.getDescription());
+
+                        List<Integer> values;
+                        if (!header.getAllowableValues().isEmpty()) {
+                            values = new ArrayList<Integer>();
+                            for (String text : header.getAllowableValues()) {
+                                values.add(Integer.valueOf(text));
+                            }
+                            ip.setEnum(values);
+                        }
+                        response.addHeader(name, ip);
+                    } else if ("long".equals(type)) {
+                        LongProperty lp = new LongProperty();
+                        lp.setName(name);
+                        lp.setDescription(header.getDescription());
+
+                        List<Long> values;
+                        if (!header.getAllowableValues().isEmpty()) {
+                            values = new ArrayList<Long>();
+                            for (String text : header.getAllowableValues()) {
+                                values.add(Long.valueOf(text));
+                            }
+                            lp.setEnum(values);
+                        }
+                        response.addHeader(name, lp);
+                    } else if ("float".equals(type)) {
+                        FloatProperty lp = new FloatProperty();
+                        lp.setName(name);
+                        lp.setDescription(header.getDescription());
+
+                        List<Float> values;
+                        if (!header.getAllowableValues().isEmpty()) {
+                            values = new ArrayList<Float>();
+                            for (String text : header.getAllowableValues()) {
+                                values.add(Float.valueOf(text));
+                            }
+                            lp.setEnum(values);
+                        }
+                        response.addHeader(name, lp);
+                    } else if ("double".equals(type)) {
+                        DoubleProperty dp = new DoubleProperty();
+                        dp.setName(name);
+                        dp.setDescription(header.getDescription());
+
+                        List<Double> values;
+                        if (!header.getAllowableValues().isEmpty()) {
+                            values = new ArrayList<Double>();
+                            for (String text : header.getAllowableValues()) {
+                                values.add(Double.valueOf(text));
+                            }
+                            dp.setEnum(values);
+                        }
+                        response.addHeader(name, dp);
+                    } else if ("boolean".equals(type)) {
+                        BooleanProperty bp = new BooleanProperty();
+                        bp.setName(name);
+                        bp.setDescription(header.getDescription());
+                        response.addHeader(name, bp);
+                    } else if ("array".equals(type)) {
+                        ArrayProperty ap = new ArrayProperty();
+                        ap.setName(name);
+                        ap.setDescription(header.getDescription());
+                        if (header.getArrayType() != null) {
+                            if (header.getArrayType().equalsIgnoreCase("string")) {
+                                ap.setItems(new StringProperty());
+                            }
+                            if (header.getArrayType().equalsIgnoreCase("int") || header.getArrayType().equalsIgnoreCase("integer")) {
+                                ap.setItems(new IntegerProperty());
+                            }
+                            if (header.getArrayType().equalsIgnoreCase("long")) {
+                                ap.setItems(new LongProperty());
+                            }
+                            if (header.getArrayType().equalsIgnoreCase("float")) {
+                                ap.setItems(new FloatProperty());
+                            }
+                            if (header.getArrayType().equalsIgnoreCase("double")) {
+                                ap.setItems(new DoubleProperty());
+                            }
+                            if (header.getArrayType().equalsIgnoreCase("boolean")) {
+                                ap.setItems(new BooleanProperty());
+                            }
+                        }
+                        response.addHeader(name, ap);
+                    }
+                }
+            }
+
+            op.addResponse(msg.getCode(), response);
         }
     }
 

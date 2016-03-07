@@ -22,10 +22,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
+import org.springframework.integration.support.channel.BeanFactoryChannelResolver;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.SubscribableChannel;
-import org.springframework.integration.support.channel.BeanFactoryChannelResolver;
 import org.springframework.messaging.core.DestinationResolver;
 
 /**

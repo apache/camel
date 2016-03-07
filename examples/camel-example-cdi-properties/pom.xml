@@ -57,6 +57,7 @@
       <groupId>org.apache.deltaspike.core</groupId>
       <artifactId>deltaspike-core-impl</artifactId>
       <version>${deltaspike-version}</version>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- logging -->
@@ -73,8 +74,8 @@
 
     <!-- test -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-cdi</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -83,31 +84,7 @@
       <version>${hamcrest-version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.arquillian.junit</groupId>
-      <artifactId>arquillian-junit-container</artifactId>
-      <version>${arquillian-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-      <artifactId>shrinkwrap-descriptors-depchain</artifactId>
-      <version>${shrinkwrap-descriptors-version}</version>
-      <type>pom</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.arquillian.container</groupId>
-      <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
-      <version>${arquillian-weld-se-embedded-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.weld</groupId>
-      <artifactId>weld-core</artifactId>
-      <version>${weld2-version}</version>
-      <scope>test</scope>
-    </dependency>
+
   </dependencies>
 
   <build>

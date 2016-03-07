@@ -15,14 +15,17 @@ The example is implemented in Java with CDI dependency injection.
 It uses JBoss Weld as the minimal CDI container to run the application,
 though you can run the application in any CDI compliant container.
 
+The `camel-cdi` and `camel-core` components are used in this example.
+The `camel-test-cdi` module is used for the JUnit test runner.
+
 [DeltaSpike configuration mechanism]: http://deltaspike.apache.org/documentation/configuration.html
 
 ### Build
 
-You will need to build this example first:
+You can build this example using:
 
 ```sh
-$ mvn install
+$ mvn package
 ```
 
 ### Run
@@ -30,7 +33,7 @@ $ mvn install
 You can run this example using:
 
 ```sh
-$ mvn compile camel:run
+$ mvn camel:run
 ```
 
 When the Camel application runs, you should see the following messages

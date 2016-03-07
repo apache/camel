@@ -19,17 +19,12 @@ package org.apache.camel.example.cdi.properties;
 import javax.enterprise.event.Observes;
 
 import org.apache.camel.builder.AdviceWithRouteBuilder;
-import org.apache.camel.cdi.CdiCamelExtension;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.management.event.CamelContextStartingEvent;
 import org.apache.camel.model.ModelCamelContext;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.apache.camel.test.cdi.CamelCdiRunner;
+import org.apache.deltaspike.core.api.config.ConfigProperty;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -38,23 +33,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
-@RunWith(Arquillian.class)
+@RunWith(CamelCdiRunner.class)
 public class CdiPropertiesTest {
 
-    @Deployment
-    public static Archive deployment() {
-        return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // DeltaSpike
-            .addPackages(true, "org.apache.deltaspike.core.impl")
-            // Test classes
-            .addPackage(Application.class.getPackage())
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
-
-    static void advice(@Observes CamelContextStartingEvent event, ModelCamelContext context) throws Exception {
+    static void advice(@Observes CamelContextStartingEvent event,
+                       ModelCamelContext context) throws Exception {
         // Add a mock endpoint to the end of the route
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
@@ -65,9 +48,23 @@ public class CdiPropertiesTest {
     }
 
     @Test
-    public void testMessage(@Uri("mock:outbound") MockEndpoint outbound) {
-        assertThat("Exchange count is incorrect!", outbound.getExchanges(), hasSize(1));
+    public void testRouteMessage(@Uri("mock:outbound") MockEndpoint outbound) {
+        assertThat("Exchange count is incorrect!",
+            outbound.getExchanges(),
+            hasSize(1));
         assertThat("Exchange body is incorrect!",
-            outbound.getExchanges().get(0).getIn().getBody(String.class), is(equalTo("Hello")));
+            outbound.getExchanges().get(0).getIn().getBody(String.class),
+            is(equalTo("Hello")));
+    }
+
+    @Test
+    public void testProperties(@ConfigProperty(name = "destination") String destination,
+                               @ConfigProperty(name = "message") String message) {
+        assertThat("Property 'destination' value is incorrect!",
+            destination,
+            is(equalTo("direct:hello")));
+        assertThat("Property 'message' value is incorrect!",
+            message,
+            is(equalTo("Hello")));
     }
 }
