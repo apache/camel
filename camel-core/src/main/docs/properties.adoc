@@ -19,58 +19,51 @@ Where *key* is the key for the property to lookup
 Options
 ^^^^^^^
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+
+// component options: START
+The Properties component supports 15 options which are listed below.
+
+
+
+[width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
-|Name |Type |Default |Description
-|`cache` |`boolean` |`true` |Whether or not to cache loaded properties.
-
-|`locations` |`String` |`null` |A list of locations to load properties.
-You can use comma to separate multiple locations. This option will
-override any default locations and *only* use the locations from this
-option.
-
-|`encoding` |`String` |`null` |*Camel 2.14.3/2.15.1:* To use a specific
-charset to load the properties, such as UTF-8. By default ISO-8859-1
-(latin1) is used.
-
-|`ignoreMissingLocation` |`boolean` |`false` |*Camel 2.10:* Whether to
-silently ignore if a location cannot be located, such as a properties
-file not found.
-
-|`propertyPrefix` |`String` |`null` |*Camel 2.9* Optional prefix
-prepended to property names before resolution.
-
-|`propertySuffix` |`String` |`null` |*Camel 2.9* Optional suffix
-appended to property names before resolution.
-
-|`fallbackToUnaugmentedProperty` |`boolean` |`true` |*Camel 2.9* If
-true, first attempt resolution of property name augmented with
-`propertyPrefix` and `propertySuffix` before falling back the plain
-property name specified. If false, only the augmented property name is
-searched.
-
-|`prefixToken` |`String` |`{{` |*Camel 2.9* The token to indicate the
-beginning of a property token.
-
-|`suffixToken` |`String` |`}}` |*Camel 2.9* The token to indicate the end
-of a property token.
-
-|`systemPropertiesMode` |`int` |`2` a|
-*Camel 2.16:* The mode to use for whether to resolve and use system
-properties
-
-0 = never (JVM system properties is never used) +
-1 = fallback (JVM system properties is only used as fallback if no
-regular property with the key exists) +
-2 = override  (JVM system properties is used if exists, otherwise a the
-regular property will be used)
-
-Notice when bridging this to Spring's property placeholder with
-`org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer` then
-the configuration on `BridgePropertyPlaceholderConfigurer` takes
-precedence over the configuration on the `PropertiesComponent`. 
-
+| Name | Java Type | Description
+| locations | String[] | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option.
+| location | String | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option.
+| encoding | String | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by link java.util.Propertiesload(java.io.InputStream)
+| propertiesResolver | PropertiesResolver | To use a custom PropertiesResolver
+| propertiesParser | PropertiesParser | To use a custom PropertiesParser
+| cache | boolean | Whether or not to cache loaded properties. The default value is true.
+| propertyPrefix | String | Optional prefix prepended to property names before resolution.
+| propertySuffix | String | Optional suffix appended to property names before resolution.
+| fallbackToUnaugmentedProperty | boolean | If true first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false only the augmented property name is searched.
+| ignoreMissingLocation | boolean | Whether to silently ignore if a location cannot be located such as a properties file not found.
+| prefixToken | String | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_PREFIX_TOKEN).
+| suffixToken | String | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_SUFFIX_TOKEN).
+| initialProperties | Properties | Sets initial properties which will be used before any locations are resolved.
+| overrideProperties | Properties | Sets a special list of override properties that take precedence and will use first if a property exist.
+| systemPropertiesMode | int | Sets the system property mode.
 |=======================================================================
+// component options: END
+
+
+
+// endpoint options: START
+The Properties component supports 7 endpoint options which are listed below:
+
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| key | common |  | String | *Required* Property key to use as placeholder
+| ignoreMissingLocation | common | false | boolean | Whether to silently ignore if a location cannot be located such as a properties file not found.
+| locations | common |  | String | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange.
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+// endpoint options: END
+
 
 [Tip]
 ====
