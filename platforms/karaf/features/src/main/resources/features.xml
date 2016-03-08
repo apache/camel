@@ -697,6 +697,11 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-hipchat/${project.version}</bundle>
   </feature>
+  <feature name='camel-hessian' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:com.caucho/hessian/${hessian-version}}</bundle>
+    <bundle>mvn:org.apache.camel/camel-hessian/${project.version}</bundle>
+  </feature>
   <feature name='camel-hl7' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-netty4</feature>

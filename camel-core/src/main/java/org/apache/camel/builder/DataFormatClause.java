@@ -34,6 +34,7 @@ import org.apache.camel.model.dataformat.CastorDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
+import org.apache.camel.model.dataformat.HessianDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
@@ -239,6 +240,13 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T gzip() {
         GzipDataFormat gzdf = new GzipDataFormat();
         return dataFormat(gzdf);
+    }
+
+    /**
+     * Uses the Hessian data format
+     */
+    public T hessian() {
+        return dataFormat(new HessianDataFormat());
     }
 
     /**
