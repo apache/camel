@@ -46,8 +46,6 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.xml.sax.SAXException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -63,6 +61,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
@@ -177,24 +176,29 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             }
             return;
         } else if (element != null) {
-            Method m = JaxbHelper.getJaxbElementFactoryMethod(camelContext, element.getClass());
-            try {
-                Object toMarshall = m.invoke(JaxbHelper.getObjectFactory(camelContext, element.getClass()).newInstance(), element);
-                if (asXmlStreamWriter(exchange)) {
-                    XMLStreamWriter writer = typeConverter.convertTo(XMLStreamWriter.class, stream);
-                    if (needFiltering(exchange)) {
-                        writer = new FilteringXmlStreamWriter(writer);
+            Method objectFactoryMethod = JaxbHelper.getJaxbElementFactoryMethod(camelContext, element.getClass());
+            if (objectFactoryMethod != null) {
+                try {
+                    Object instance = objectFactoryMethod.getDeclaringClass().newInstance();
+                    if (instance != null) {
+                        Object toMarshall = objectFactoryMethod.invoke(instance, element);
+                        if (asXmlStreamWriter(exchange)) {
+                            XMLStreamWriter writer = typeConverter.convertTo(XMLStreamWriter.class, stream);
+                            if (needFiltering(exchange)) {
+                                writer = new FilteringXmlStreamWriter(writer);
+                            }
+                            if (xmlStreamWriterWrapper != null) {
+                                writer = xmlStreamWriterWrapper.wrapWriter(writer);
+                            }
+                            marshaller.marshal(toMarshall, writer);
+                        } else {
+                            marshaller.marshal(toMarshall, stream);
+                        }
+                        return;
                     }
-                    if (xmlStreamWriterWrapper != null) {
-                        writer = xmlStreamWriterWrapper.wrapWriter(writer);
-                    }
-                    marshaller.marshal(toMarshall, writer);
-                } else {
-                    marshaller.marshal(toMarshall, stream);
+                } catch (Exception e) {
+                    LOG.debug("Unable to create JAXBElement object for type " + element.getClass() + " due to " + e.getMessage(), e);
                 }
-                return;
-            } catch (Exception e) {
-                LOG.debug("Unable to create JAXBElement object for type {} due to {}", element.getClass().getName(), e);
             }
         }
 
