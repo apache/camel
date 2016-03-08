@@ -26,6 +26,7 @@ CustomDataFormat
 DataFormatsDefinition
 FlatpackDataFormat
 GzipDataFormat
+HessianDataFormat
 HL7DataFormat
 IcalDataFormat
 JaxbDataFormat

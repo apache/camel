@@ -28,7 +28,7 @@ import java.util.*;
 /**
  * Test for {@link HessianDataFormat}.
  */
-public class HessianDataFormatTest extends CamelTestSupport {
+public class HessianDataFormatMarshallingTest extends CamelTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalNull() throws Exception {
