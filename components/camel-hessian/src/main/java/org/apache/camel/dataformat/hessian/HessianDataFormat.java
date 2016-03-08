@@ -31,6 +31,7 @@ import org.apache.camel.support.ServiceSupport;
 /**
  * The <a href="http://camel.apache.org/data-format.html">data format</a>
  * using <a href="http://hessian.caucho.com/doc/hessian-serialization.html">Hessian Serialization</a>.
+ *
  * @since 2.17
  */
 public class HessianDataFormat extends ServiceSupport implements DataFormat, DataFormatName {

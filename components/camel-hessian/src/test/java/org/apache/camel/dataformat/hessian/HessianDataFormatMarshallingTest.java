@@ -16,14 +16,17 @@
  */
 package org.apache.camel.dataformat.hessian;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import java.util.*;
 
 /**
  * Test for {@link HessianDataFormat}.
@@ -62,7 +65,7 @@ public class HessianDataFormatMarshallingTest extends CamelTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalDate() throws Exception {
-        testMarshalAndUnmarshal(new Date()) ;
+        testMarshalAndUnmarshal(new Date());
     }
 
 
