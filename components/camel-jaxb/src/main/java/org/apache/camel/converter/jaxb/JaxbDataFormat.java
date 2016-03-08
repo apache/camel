@@ -85,6 +85,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     private String noNamespaceSchemaLocation;
 
     private boolean prettyPrint = true;
+    private boolean objectFactory = true;
     private boolean ignoreJAXBElement = true;
     private boolean mustBeJAXBElement = true;
     private boolean filterNonXmlChars;
@@ -176,7 +177,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
                 marshaller.marshal(element, stream);
             }
             return;
-        } else if (element != null) {
+        } else if (objectFactory && element != null) {
             Method objectFactoryMethod = JaxbHelper.getJaxbElementFactoryMethod(camelContext, element.getClass());
             if (objectFactoryMethod != null) {
                 try {
@@ -316,6 +317,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         this.prettyPrint = prettyPrint;
     }
 
+    public boolean isObjectFactory() {
+        return objectFactory;
+    }
+
+    public void setObjectFactory(boolean objectFactory) {
+        this.objectFactory = objectFactory;
+    }
+
     public boolean isFragment() {
         return fragment;
     }
@@ -428,6 +437,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         if (schema != null) {
             cachedSchema = createSchema(getSources());
         }
+
+        LOG.debug("JaxbDataFormat [prettyPrint={}, objectFactory={}]", prettyPrint, objectFactory);
     }
 
     @Override
