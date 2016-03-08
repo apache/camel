@@ -3646,6 +3646,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         } else {
             answer = new DefaultTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder());
         }
+        answer.setCamelContext(this);
         setTypeConverterRegistry(answer);
         return answer;
     }
