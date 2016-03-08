@@ -19,7 +19,7 @@ package org.apache.camel.dataformat.hessian;
 import java.io.Serializable;
 import java.util.Objects;
 
-/** A simple object used used by {@link HessianDataFormatTest}. */
+/** A simple object used used by {@link HessianDataFormatMarshallingTest}. */
 class TestObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
