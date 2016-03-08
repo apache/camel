@@ -43,8 +43,10 @@ Component options
 The Yammer component can be configured with the Yammer account settings
 which are mandatory to configure before using.
 
+
 // component options: START
 The Yammer component supports 4 options which are listed below.
+
 
 
 [width="100%",cols="2s,1m,8",options="header"]
@@ -56,6 +58,7 @@ The Yammer component supports 4 options which are listed below.
 | config | YammerConfiguration | To use a shared yammer configuration
 |=======================================================================
 // component options: END
+
 
 You can also configure these options directly in the endpoint.
 

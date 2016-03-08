@@ -19,13 +19,9 @@ The JCache component supports 5 endpoint options which are listed below:
 
 
 
+
 // component options: START
 The JCache component has no options.
-
-
-[width="100%",cols="2s,1m,8",options="header"]
-|=======================================================================
-| Name | Java Type | Description
-|=======================================================================
 // component options: END
+
 
