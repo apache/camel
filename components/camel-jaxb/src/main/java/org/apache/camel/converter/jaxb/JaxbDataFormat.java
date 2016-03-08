@@ -443,14 +443,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             // load the the class which has been JAXB annotated
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl != null) {
-                LOG.info("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);
+                LOG.debug("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);
                 return JAXBContext.newInstance(contextPath, cl);
             } else {
-                LOG.info("Creating JAXBContext with contextPath: " + contextPath);
+                LOG.debug("Creating JAXBContext with contextPath: " + contextPath);
                 return JAXBContext.newInstance(contextPath);
             }
         } else {
-            LOG.info("Creating JAXBContext");
+            LOG.debug("Creating JAXBContext");
             return JAXBContext.newInstance();
         }
     }
