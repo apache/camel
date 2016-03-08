@@ -88,6 +88,8 @@ public class JCacheConfiguration {
     @UriParam(label = "producer")
     private String action;
 
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean createCacheIfNotExists = true;
 
     private final CamelContext camelContext;
 
@@ -298,5 +300,17 @@ public class JCacheConfiguration {
      */
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public boolean isCreateCacheIfNotExists() {
+        return createCacheIfNotExists;
+    }
+
+    /**
+     * Configure if a cache need to be created if it does exist or can't be
+     * pre-configured.
+     */
+    public void setCreateCacheIfNotExists(boolean createCacheIfNotExists) {
+        this.createCacheIfNotExists = createCacheIfNotExists;
     }
 }

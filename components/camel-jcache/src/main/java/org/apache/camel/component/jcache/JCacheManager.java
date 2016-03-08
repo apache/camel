@@ -96,6 +96,11 @@ public class JCacheManager<K, V> implements Closeable {
 
             cache = manager.getCache(cacheName);
             if (cache == null) {
+                if (!configuration.isCreateCacheIfNotExists()) {
+                    throw new IllegalStateException(
+                        "Cache " + cacheName + " does not exist and should not be created (createCacheIfNotExists=false)");
+                }
+
                 cache = manager.createCache(
                     cacheName,
                     getOrCreateCacheConfiguration());
