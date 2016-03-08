@@ -95,6 +95,7 @@
         <include>org.apache.camel:camel-hbase</include>
         <include>org.apache.camel:camel-hdfs</include>
         <include>org.apache.camel:camel-hdfs2</include>
+        <include>org.apache.camel:camel-hessian</include>
         <include>org.apache.camel:camel-hipchat</include>
         <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-http-common</include>
