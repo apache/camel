@@ -20,17 +20,17 @@ import java.lang.reflect.Method;
 import javax.xml.bind.annotation.XmlElementDecl;
 
 import org.apache.camel.CamelContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class JaxbHelper {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JaxbHelper.class);
 
     private JaxbHelper() {
     }
 
     public static <T> Method getJaxbElementFactoryMethod(CamelContext camelContext, Class<T> type) {
+        if (camelContext == null) {
+            return null;
+        }
+
         // find the first method that has @XmlElementDecl with one parameter that matches the type
         Class factory = getObjectFactory(camelContext, type);
         if (factory != null) {
@@ -50,6 +50,10 @@ public final class JaxbHelper {
     }
 
     public static <T> Class getObjectFactory(CamelContext camelContext, Class<T> type) {
+        if (camelContext == null) {
+            return null;
+        }
+
         if (type.getPackage() != null) {
             String objectFactoryClassName = type.getPackage().getName() + ".ObjectFactory";
             return camelContext.getClassResolver().resolveClass(objectFactoryClassName);
