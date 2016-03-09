@@ -127,6 +127,7 @@
 	* [Ironmq](ironmq.adoc)
 	* [JMS](jms.adoc)
 	* [Metrics](metrics.adoc)
+	* [Mock](mock.adoc)
 	* [Properties](properties.adoc)
 	* [Quickfix](quickfix.adoc)
 	* [SJMS](sjms.adoc)
