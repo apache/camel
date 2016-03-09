@@ -33,6 +33,7 @@ final class CamelCdiDeployment implements TestRule {
 
     CamelCdiDeployment(TestClass test, CamelCdiContext context) {
         this.context = context;
+
         weld = new Weld()
             // TODO: check parallel execution
             .containerId("camel-context-cdi")
@@ -41,6 +42,15 @@ final class CamelCdiDeployment implements TestRule {
             .beanClasses(test.getJavaClass().getDeclaredClasses())
             .addBeanClass(test.getJavaClass())
             .addExtension(new CdiCamelExtension());
+
+        if (test.getJavaClass().isAnnotationPresent(Beans.class)) {
+            Beans beans = test.getJavaClass().getAnnotation(Beans.class);
+            weld.addExtension(new CamelCdiTestExtension(beans));
+            for (Class<?> alternative : beans.alternatives()) {
+                weld.addBeanClass(alternative)
+                    .addAlternative(alternative);
+            }
+        }
     }
 
     @Override
