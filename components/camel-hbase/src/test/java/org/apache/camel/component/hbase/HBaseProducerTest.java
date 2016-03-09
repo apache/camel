@@ -275,9 +275,31 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             Object result1 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(1));
             Object result2 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(2));
             Object result3 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(3));
-
+            System.err.println(resp.getOut().getHeaders().toString());
             List<?> bodies = Arrays.asList(body[0][0][0], body[1][0][0], body[2][0][0]);
             assertTrue(bodies.contains(result1) && bodies.contains(result2) && bodies.contains(result3));
+        }
+    }
+    
+    @Test
+    public void testPutMultiRowsAndScanWithStop() throws Exception {
+        testPutMultiRows();
+        if (systemReady) {
+            Exchange resp = template.request("direct:scan", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
+                    exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
+                    exchange.getIn().setHeader(HBaseConstants.FROM_ROW, key[0]);
+                    exchange.getIn().setHeader(HBaseConstants.STOP_ROW, key[1]);
+                }
+            });
+
+            Object result1 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(1));
+            Object result2 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(2));
+            Object result3 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(3));
+
+            List<?> bodies = Arrays.asList(body[0][0][0], body[1][0][0], body[2][0][0]);
+            assertTrue(bodies.contains(result1) && !bodies.contains(result2) && !bodies.contains(result3));
         }
     }
 

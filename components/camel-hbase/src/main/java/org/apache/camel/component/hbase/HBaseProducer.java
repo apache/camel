@@ -63,6 +63,7 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
 
             Integer maxScanResult = exchange.getIn().getHeader(HBaseConstants.HBASE_MAX_SCAN_RESULTS, Integer.class);
             String fromRowId = (String) exchange.getIn().getHeader(HBaseConstants.FROM_ROW);
+            String stopRowId = (String) exchange.getIn().getHeader(HBaseConstants.STOP_ROW);
             CellMappingStrategy mappingStrategy = endpoint.getCellMappingStrategyFactory().getStrategy(exchange.getIn());
 
             HBaseData data = mappingStrategy.resolveModel(exchange.getIn());
@@ -82,7 +83,7 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
                 } else if (HBaseConstants.DELETE.equals(operation)) {
                     deleteOperations.add(createDeleteRow(hRow));
                 } else if (HBaseConstants.SCAN.equals(operation)) {
-                    scanOperationResult = scanCells(table, hRow, fromRowId, maxScanResult, endpoint.getFilters());
+                    scanOperationResult = scanCells(table, hRow, fromRowId, stopRowId, maxScanResult, endpoint.getFilters());
                 }
             }
 
@@ -189,7 +190,7 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
      * Performs an HBase {@link Get} on a specific row, using a collection of values (family/column/value pairs).
      * The result is <p>the most recent entry</p> for each column.
      */
-    private List<HBaseRow> scanCells(Table table, HBaseRow model, String start, Integer maxRowScan, List<Filter> filters)
+    private List<HBaseRow> scanCells(Table table, HBaseRow model, String start, String stop, Integer maxRowScan, List<Filter> filters)
             throws Exception {
         List<HBaseRow> rowSet = new LinkedList<>();
 
@@ -201,6 +202,10 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
             scan = new Scan(Bytes.toBytes(start));
         } else {
             scan = new Scan();
+        }
+        
+        if (ObjectHelper.isNotEmpty(stop)) {
+            scan.setStopRow(Bytes.toBytes(stop));
         }
 
         if (filters != null && !filters.isEmpty()) {
