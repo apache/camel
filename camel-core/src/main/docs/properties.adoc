@@ -20,9 +20,9 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The Properties component supports 15 options which are listed below.
-
 
 
 [width="100%",cols="2s,1m,8",options="header"]
@@ -45,6 +45,7 @@ The Properties component supports 15 options which are listed below.
 | systemPropertiesMode | int | Sets the system property mode.
 |=======================================================================
 // component options: END
+
 
 
 
