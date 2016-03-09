@@ -123,6 +123,7 @@ public class RestSwaggerSupport {
 
     public List<RestDefinition> getRestDefinitions(String camelId) throws Exception {
         ObjectName found = null;
+        boolean supportResolvePlaceholder = false;
 
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> names = server.queryNames(new ObjectName("org.apache.camel:type=context,*"), null);
@@ -137,11 +138,19 @@ public class RestSwaggerSupport {
                 if (CamelVersionHelper.isGE("2.15.0", version)) {
                     found = on;
                 }
+                if (CamelVersionHelper.isGE("2.15.3", version)) {
+                    supportResolvePlaceholder = true;
+                }
             }
         }
 
         if (found != null) {
-            String xml = (String) server.invoke(found, "dumpRestsAsXml", null, null);
+            String xml;
+            if (supportResolvePlaceholder) {
+                xml = (String) server.invoke(found, "dumpRestsAsXml", new Object[]{true}, new String[]{"boolean"});
+            } else {
+                xml = (String) server.invoke(found, "dumpRestsAsXml", null, null);
+            }
             if (xml != null) {
                 RestsDefinition rests = ModelHelper.createModelFromXml(null, xml, RestsDefinition.class);
                 if (rests != null) {

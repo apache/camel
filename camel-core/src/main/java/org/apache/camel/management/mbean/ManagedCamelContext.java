@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
@@ -63,7 +64,7 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
-
+import org.apache.camel.util.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -348,6 +349,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public String dumpRestsAsXml() throws Exception {
+        return dumpRestsAsXml(false);
+    }
+
+    @Override
+    public String dumpRestsAsXml(boolean resolvePlaceholders) throws Exception {
         List<RestDefinition> rests = context.getRestDefinitions();
         if (rests.isEmpty()) {
             return null;
@@ -356,10 +362,43 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // use a routes definition to dump the rests
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
-        return ModelHelper.dumpModelAsXml(context, def);
+        String xml = ModelHelper.dumpModelAsXml(context, def);
+
+        if (resolvePlaceholders) {
+            final AtomicBoolean changed = new AtomicBoolean();
+            InputStream is = new ByteArrayInputStream(xml.getBytes());
+            Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
+                @Override
+                public String transform(String text) {
+                    try {
+                        String after = getContext().resolvePropertyPlaceholders(text);
+                        if (!changed.get()) {
+                            changed.set(!text.equals(after));
+                        }
+                        return after;
+                    } catch (Exception e) {
+                        // ignore
+                        return text;
+                    }
+                }
+            });
+            // okay there were some property placeholder replaced so re-create the model
+            if (changed.get()) {
+                xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
+                RestsDefinition copy = ModelHelper.createModelFromXml(context, xml, RestsDefinition.class);
+                xml = ModelHelper.dumpModelAsXml(context, copy);
+            }
+        }
+
+        return xml;
     }
 
     public String dumpRoutesAsXml() throws Exception {
+        return dumpRoutesAsXml(false);
+    }
+
+    @Override
+    public String dumpRoutesAsXml(boolean resolvePlaceholders) throws Exception {
         List<RouteDefinition> routes = context.getRouteDefinitions();
         if (routes.isEmpty()) {
             return null;
@@ -368,7 +407,35 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // use a routes definition to dump the routes
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
-        return ModelHelper.dumpModelAsXml(context, def);
+        String xml = ModelHelper.dumpModelAsXml(context, def);
+
+        if (resolvePlaceholders) {
+            final AtomicBoolean changed = new AtomicBoolean();
+            InputStream is = new ByteArrayInputStream(xml.getBytes());
+            Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
+                @Override
+                public String transform(String text) {
+                    try {
+                        String after = getContext().resolvePropertyPlaceholders(text);
+                        if (!changed.get()) {
+                            changed.set(!text.equals(after));
+                        }
+                        return after;
+                    } catch (Exception e) {
+                        // ignore
+                        return text;
+                    }
+                }
+            });
+            // okay there were some property placeholder replaced so re-create the model
+            if (changed.get()) {
+                xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
+                RoutesDefinition copy = ModelHelper.createModelFromXml(context, xml, RoutesDefinition.class);
+                xml = ModelHelper.dumpModelAsXml(context, copy);
+            }
+        }
+
+        return xml;
     }
 
     public void addOrUpdateRoutesFromXml(String xml) throws Exception {
