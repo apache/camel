@@ -24,6 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import org.infinispan.commons.api.BasicCacheContainer;
 
 @UriParams
@@ -45,6 +46,8 @@ public class InfinispanConfiguration {
     private InfinispanCustomListener customListener;
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean clustered;
+    @UriParam(label = "advanced")
+    private InfinispanQueryBuilder queryBuilder;
 
     public String getCommand() {
         return command;
@@ -55,6 +58,10 @@ public class InfinispanConfiguration {
      */
     public void setCommand(String command) {
         this.command = command;
+    }
+
+    public boolean hasCommand() {
+        return ObjectHelper.isNotEmpty(command);
     }
 
     /**
@@ -149,7 +156,22 @@ public class InfinispanConfiguration {
         this.customListener = customListener;
     }
 
-    public boolean isCustom() {
+    public boolean hasCustomListener() {
         return customListener != null;
+    }
+
+    public InfinispanQueryBuilder getQueryBuilder() {
+        return queryBuilder;
+    }
+
+    /**
+     * Specifies the query builder.
+     */
+    public void setQueryBuilder(InfinispanQueryBuilder queryBuilder) {
+        this.queryBuilder = queryBuilder;
+    }
+
+    public boolean hasQueryBuilder() {
+        return queryBuilder != null;
     }
 }

@@ -17,9 +17,10 @@
 package org.apache.camel.component.infinispan.remote;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.infinispan.InfinispanConfiguration;
 import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
-import org.infinispan.client.hotrod.RemoteCache;
+import org.apache.camel.component.infinispan.InfinispanUtil;
 import org.infinispan.client.hotrod.Search;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.query.dsl.Query;
@@ -28,13 +29,20 @@ public final class InfinispanRemoteOperation {
     private InfinispanRemoteOperation() {
     }
 
-    public static Query buildQuery(BasicCache<Object, Object> cache, Exchange exchange) {
-        InfinispanQueryBuilder queryBuilder = (InfinispanQueryBuilder) exchange
-                .getIn().getHeader(InfinispanConstants.QUERY_BUILDER);
+    public static Query buildQuery(InfinispanConfiguration configuration, BasicCache<Object, Object> cache, Exchange exchange) {
+        InfinispanQueryBuilder queryBuilder = exchange.getIn().getHeader(InfinispanConstants.QUERY_BUILDER, InfinispanQueryBuilder.class);
         if (queryBuilder == null) {
-            return null;
+            queryBuilder = configuration.getQueryBuilder();
         }
-        RemoteCache<Object, Object> remoteCache = (RemoteCache<Object, Object>) cache;
-        return queryBuilder.build(Search.getQueryFactory(remoteCache));
+
+        return buildQuery(queryBuilder, cache);
+    }
+
+    public static Query buildQuery(InfinispanConfiguration configuration, BasicCache<Object, Object> cache) {
+        return buildQuery(configuration.getQueryBuilder(), cache);
+    }
+
+    public static Query buildQuery(InfinispanQueryBuilder queryBuilder, BasicCache<Object, Object> cache) {
+        return queryBuilder != null ? queryBuilder.build(Search.getQueryFactory(InfinispanUtil.asRemote(cache))) : null;
     }
 }
