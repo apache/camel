@@ -16,53 +16,47 @@
  */
 package org.apache.camel.example.cdi.test;
 
-import javax.enterprise.event.Observes;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
-import javax.inject.Named;
 
-import org.apache.camel.Body;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Uri;
-import org.apache.camel.management.event.CamelContextStartedEvent;
-import org.apache.camel.management.event.CamelContextStoppingEvent;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.cdi.Beans;
+import org.apache.camel.test.cdi.CamelCdiRunner;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-/**
- * Our CDI Camel application
- */
-public class Application {
+import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
-    @ContextName("camel-test-cdi")
-    static class Hello extends RouteBuilder {
+@RunWith(CamelCdiRunner.class)
+@Beans(alternatives = AlternativeBean.class)
+public class AlternativeTest {
+
+    @Inject
+    @Uri("mock:out")
+    MockEndpoint mock;
+
+    @Inject
+    @Uri("direct:in")
+    ProducerTemplate producer;
+
+    @Test
+    public void testAlternativeBean() throws InterruptedException {
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("test with alternative bean!");
+
+        producer.sendBody("test");
+
+        assertIsSatisfied(1L, TimeUnit.SECONDS, mock);
+    }
+
+    static class TestRoute extends RouteBuilder {
 
         @Override
         public void configure() {
-            from("direct:message")
-                .routeId("route")
-                .log("${body} from ${camelContext.name} at ${date:now:hh:mm:ss a}!");
-
-            from("direct:in").routeId("in»out").bean("bean").to("direct:out");
-        }
-    }
-
-    @Inject
-    @Uri("direct:message")
-    ProducerTemplate producer;
-
-    void hello(@Observes CamelContextStartedEvent event) {
-        producer.sendBody("Hello");
-    }
-
-    void bye(@Observes CamelContextStoppingEvent event) {
-        producer.sendBody("Bye");
-    }
-
-    @Named("bean")
-    public static class Bean {
-
-        public String process(@Body String body) {
-            return body;
+            from("direct:out").routeId("test").to("mock:out");
         }
     }
 }

@@ -12,14 +12,16 @@ in any CDI compliant container.
 This example comes with a series of test classes that each demonstrates particular
 features provided by the `camel-test-cdi` module: 
 
-| Test class                  | Description                                           |
-| --------------------------- | ----------------------------------------------------- |
-| [`AdviceTest`][]            | Adds a test route using Camel advice API              |
-| [`ApplicationScopedTest`][] | A stateful `@ApplicationScoped` test class            |
-| [`CustomContextTest`][]     | Declares a custom Camel context bean for test purpose |
-| [`OrderTest`][]             | Orders the test methods execution with `@Order`       |
+| Test class                  | Description                                               |
+| --------------------------- | --------------------------------------------------------- |
+| [`AdviceTest`][]            | Adds a test route using Camel advice API                  |
+| [`AlternativeTest`][]       | Mocks a bean used in a Camel route with a CDI alternative |
+| [`ApplicationScopedTest`][] | A stateful `@ApplicationScoped` test class                |
+| [`CustomContextTest`][]     | Declares a custom Camel context bean for test purpose     |
+| [`OrderTest`][]             | Orders the test methods execution with `@Order`           |
 
 [`AdviceTest`]: src/test/java/org/apache/camel/example/cdi/test/AdviceTest.java
+[`AlternativeTest`]: src/test/java/org/apache/camel/example/cdi/test/AlternativeTest.java
 [`ApplicationScopedTest`]: src/test/java/org/apache/camel/example/cdi/test/ApplicationScopedTest.java
 [`CustomContextTest`]: src/test/java/org/apache/camel/example/cdi/test/CustomContextTest.java
 [`OrderTest`]: src/test/java/org/apache/camel/example/cdi/test/OrderTest.java
