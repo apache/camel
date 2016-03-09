@@ -19,13 +19,16 @@ package org.apache.camel.test.cdi;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.Priority;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.spi.AnnotatedMethod;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
-import javax.interceptor.Interceptor.Priority;
+
+import static javax.interceptor.Interceptor.Priority.APPLICATION;
 
 final class CamelCdiTestExtension implements Extension {
 
@@ -47,25 +50,24 @@ final class CamelCdiTestExtension implements Extension {
      * @see Beans
      */
     private <T> void alternatives(@Observes @WithAnnotations(Alternative.class) ProcessAnnotatedType<T> pat) {
-        if (!Arrays.asList(beans.alternatives()).contains(pat.getAnnotatedType().getJavaClass())) {
+        AnnotatedType<T> type = pat.getAnnotatedType();
+
+        if (!Arrays.asList(beans.alternatives()).contains(type.getJavaClass())) {
             // Only select globally the alternatives that are declared with @Beans
             return;
         }
 
         Set<AnnotatedMethod<? super T>> methods = new HashSet<>();
-        for (AnnotatedMethod<? super T> am : pat.getAnnotatedType().getMethods()) {
-            if (am.isAnnotationPresent(Alternative.class)) {
-                methods.add(new AnnotatedMethodDecorator<>(am, PriorityLiteral.of(Priority.APPLICATION)));
+        for (AnnotatedMethod<? super T> method : type.getMethods()) {
+            if (method.isAnnotationPresent(Alternative.class) && !method.isAnnotationPresent(Priority.class)) {
+                methods.add(new AnnotatedMethodDecorator<>(method, PriorityLiteral.of(APPLICATION)));
             }
         }
 
-        if (pat.getAnnotatedType().isAnnotationPresent(Alternative.class)) {
-            pat.setAnnotatedType(new AnnotatedTypeDecorator<>(pat.getAnnotatedType(),
-                PriorityLiteral.of(Priority.APPLICATION),
-                methods));
+        if (type.isAnnotationPresent(Alternative.class) && !type.isAnnotationPresent(Priority.class)) {
+            pat.setAnnotatedType(new AnnotatedTypeDecorator<>(type, PriorityLiteral.of(APPLICATION), methods));
         } else if (!methods.isEmpty()) {
-            pat.setAnnotatedType(new AnnotatedTypeDecorator<>(pat.getAnnotatedType(),
-                methods));
+            pat.setAnnotatedType(new AnnotatedTypeDecorator<>(type, methods));
         }
     }
 }
