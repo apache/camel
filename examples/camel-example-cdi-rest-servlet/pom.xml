@@ -86,6 +86,7 @@
       <groupId>org.jboss.arquillian.testenricher</groupId>
       <artifactId>arquillian-testenricher-resource</artifactId>
       <version>${arquillian-version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.shrinkwrap.descriptors</groupId>
@@ -114,16 +115,19 @@
           <groupId>org.eclipse.jetty</groupId>
           <artifactId>jetty-webapp</artifactId>
           <version>${jetty9-version}</version>
+          <scope>runtime</scope>
         </dependency>
         <dependency>
           <groupId>org.eclipse.jetty</groupId>
           <artifactId>jetty-annotations</artifactId>
           <version>${jetty9-version}</version>
+          <scope>runtime</scope>
         </dependency>
         <dependency>
           <groupId>org.jboss.arquillian.container</groupId>
           <artifactId>arquillian-jetty-embedded-9</artifactId>
           <version>1.0.0.CR2</version>
+          <scope>test</scope>
           <exclusions>
             <exclusion>
               <groupId>org.jboss.arquillian.container</groupId>
