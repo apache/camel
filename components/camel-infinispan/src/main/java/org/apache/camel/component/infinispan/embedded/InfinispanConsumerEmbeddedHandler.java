@@ -34,7 +34,7 @@ public final class InfinispanConsumerEmbeddedHandler implements InfinispanConsum
         Cache<?, ?> embeddedCache = (Cache<?, ?>) consumer.getCache();
         InfinispanConfiguration configuration = consumer.getConfiguration();
         InfinispanEventListener listener;
-        if (configuration.isCustom()) {
+        if (configuration.hasCustomListener()) {
             listener = configuration.getCustomListener();
             ((InfinispanCustomListener)listener).setInfinispanConsumer(consumer);
         } else if (configuration.isClustered()) {

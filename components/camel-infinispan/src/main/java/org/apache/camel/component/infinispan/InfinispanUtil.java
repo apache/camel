@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.infinispan;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.util.ObjectHelper;
 import org.infinispan.Cache;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
@@ -52,12 +54,22 @@ public final class InfinispanUtil {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static RemoteCacheManager asRemote(BasicCacheContainer container) {
+        return RemoteCacheManager.class.cast(container);
+    }
+
     public static <K, V> boolean isRemote(BasicCache<K, V> cache) {
         try {
             return cache instanceof RemoteCache;
         } catch (Throwable e) {
             return false;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <K, V>  RemoteCache<K, V> asRemote(BasicCache<K, V> cache) {
+        return RemoteCache.class.cast(cache);
     }
 
     public static <K, V> BasicCache<K, V> ignoreReturnValuesCache(BasicCache<K, V> cache) {
@@ -68,4 +80,7 @@ public final class InfinispanUtil {
         }
     }
 
+    public static boolean isInHeaderEmpty(Exchange exchange, String header) {
+        return ObjectHelper.isEmpty(exchange.getIn().getHeader(header));
+    }
 }
