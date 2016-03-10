@@ -38,11 +38,11 @@ The following mechanisms are supported
 |Name |Component |Description
 |link:camel-test.html[Camel Test] |camel-test |Is a standalone Java
 library letting you easily create Camel test cases using a single Java
-class for all your configuration and routing without using
+class for all your configuration and routing without using link:cdi.html[CDI],
 link:spring.html[Spring] or link:guice.html[Guice] for
 link:dependency-injection.html[Dependency Injection] which does not
-require an in-depth knowledge of Spring + Spring Test or Guice.
- Supports JUnit 3.x (deprecated) and JUnit 4.x based tests.
+require an in-depth knowledge of CDI, Spring + Spring Test or Guice.
+Supports JUnit 3.x (deprecated) and JUnit 4.x based tests.
 
 |link:camel-test-cdi.html[CDI Testing] |camel-test-cdi | Provides a JUnit 4
 runner that bootstraps a test environment using CDI so that you don't have
@@ -60,7 +60,7 @@ Test. The  plain JUnit 3.x/4.x based tests work very similar to the
 test support classes in `camel-test`. Also supports Spring Test based
 tests that use the declarative style of test configuration and injection
 common in Spring Test. The Spring Test based tests provide feature
-parity with the plain JUnit 3.x/4.x based testing approach.  Notice
+parity with the plain JUnit 3.x/4.x based testing approach. Notice
 `camel-test-spring` is a new component in *Camel 2.10* onwards. For
 older Camel release use `camel-test` which has built-in
 link:spring-testing.html[Spring Testing].
@@ -73,12 +73,13 @@ configurations
 dependency inject your test classes
 
 |Camel TestNG |camel-testng |Supports plain TestNG based tests with or
-without link:spring.html[Spring] or link:guice.html[Guice] for link:dependency-injection.html[Dependency
-Injection] which does not require an in-depth knowledge of Spring +
-Spring Test or Guice. Also from *Camel 2.10* onwards, this component
-supports Spring Test based tests that use the declarative style of test
-configuration and injection common in Spring Test and described in more
-detail under link:spring-testing.html[Spring Testing].
+without link:cdi.html[CDI], link:spring.html[Spring] or link:guice.html[Guice]
+for link:dependency-injection.html[Dependency Injection] which does not
+require an in-depth knowledge of CDI, Spring + Spring Test or Guice.
+Also from *Camel 2.10* onwards, this component supports Spring Test based tests
+that use the declarative style of test configuration and injection common
+in Spring Test and described in more detail under
+link:spring-testing.html[Spring Testing].
 |=======================================================================
 
 In all approaches the test classes look pretty much the same in that
@@ -98,8 +99,23 @@ include::../../../components/camel-test/src/test/java/org/apache/camel/test/patt
 ----
 
 Notice how it derives from the Camel helper class `CamelTestSupport` but
-has no Spring or Guice dependency injection configuration but instead
+has no CDI, Spring or Guice dependency injection configuration but instead
 overrides the `createRouteBuilder()` method.
+
+[[Testing-CdiTestExample]]
+CDI Test Example
+++++++++++++++++
+
+Here is the link:cdi-testing.html[CDI Testing]
+link:../../../components/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[example]:
+
+[source,java]
+----
+include::../../../components/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[tags=example]
+----
+
+You can find more testing patterns illustrated in the `camel-example-cdi-test` example
+and the test classes that come with it.
 
 [[Testing-SpringTestwithXMLConfigExample]]
 Spring Test with XML Config Example
