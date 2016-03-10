@@ -20,26 +20,32 @@ import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version 
  */
-public class DataSetConsumeTest extends ContextTestSupport {
+public class DataSetProducerTest extends ContextTestSupport {
+    static final String dataSetName = "foo";
+    static final String dataSetUri = "dataset://" + dataSetName;
+    static final String resultUri = "mock://result";
+
     protected SimpleDataSet dataSet = new SimpleDataSet(20);
+
+    @Override
+    protected Context createJndiContext() throws Exception {
+        Context context = super.createJndiContext();
+        context.bind(dataSetName, dataSet);
+        return context;
+    }
 
     public void testSendingMessagesExplicitlyToDataSetEndpoint() throws Exception {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
-            template.sendBodyAndHeader("dataset:foo", "<hello>world!</hello>", Exchange.DATASET_INDEX, i);
+            template.sendBodyAndHeader(dataSetUri, "<hello>world!</hello>", Exchange.DATASET_INDEX, i);
         }
 
         assertMockEndpointsSatisfied();
     }
 
-    @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("foo", dataSet);
-        return context;
-    }
 }
