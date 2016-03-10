@@ -70,4 +70,22 @@ public @interface Beans {
      * @see javax.enterprise.inject.Alternative
      */
     Class<?>[] alternatives() default {};
+
+    /**
+     * Returns the list of classes to be added as beans in the application.
+     *
+     * That can be used to add classes to the deployment for test purpose
+     * in addition to the test class which is automatically added as bean.
+     *
+     */
+    Class<?>[] classes() default {};
+
+    /**
+     * Returns the list of classes whose packages are to be added for beans
+     * discovery.
+     *
+     * That can be used to add packages to the deployment for test purpose
+     * in addition to the test class which is automatically added as bean.
+     */
+    Class<?>[] packages() default {};
 }

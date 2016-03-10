@@ -43,6 +43,8 @@ final class CamelCdiDeployment implements TestRule {
             .addBeanClass(test.getJavaClass())
             .addExtension(new CdiCamelExtension());
 
+        // Apply deployment customization provided by the @Beans annotation
+        // if present on the test class
         if (test.getJavaClass().isAnnotationPresent(Beans.class)) {
             Beans beans = test.getJavaClass().getAnnotation(Beans.class);
             weld.addExtension(new CamelCdiTestExtension(beans));
@@ -50,12 +52,17 @@ final class CamelCdiDeployment implements TestRule {
                 weld.addBeanClass(alternative)
                     .addAlternative(alternative);
             }
+            for (Class<?> clazz : beans.classes()) {
+                weld.addBeanClass(clazz);
+            }
+            weld.addPackages(false, beans.packages());
         }
     }
 
     @Override
     public Statement apply(final Statement base, Description description) {
         return new Statement() {
+
             @Override
             public void evaluate() throws Throwable {
                 WeldContainer container = weld.initialize();

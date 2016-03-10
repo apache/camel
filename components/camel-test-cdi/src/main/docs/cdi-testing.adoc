@@ -96,7 +96,7 @@ Here is a simple unit test using the `CamelCdiRunner`:
 [source,java]
 ----
 @RunWith(CamelCdiRunner.class)
-public class CamelCdiRunnerTest {
+public class CamelCdiTest {
 
     @Inject
     CamelContext context;
@@ -115,7 +115,7 @@ CDI injection is also available for test method parameters, e.g.:
 [source,java]
 ----
 @RunWith(CamelCdiRunner.class)
-public class CamelCdiRunnerTest {
+public class CamelCdiTest {
 
     @Test
     public void test(@Uri("direct:foo") ProducerTemplate producer) {
@@ -130,7 +130,7 @@ execute the test methods in a particular sequence, e.g.:
 [source,java]
 ----
 @RunWith(CamelCdiRunner.class)
-public class CamelCdiRunnerTest {
+public class CamelCdiTest {
 
     @Test
     @Order(1)
@@ -157,7 +157,7 @@ entire test class execution using the `@ApplicationScoped` scope, e.g.:
 ----
 @ApplicationScoped
 @RunWith(CamelCdiRunner.class)
-public class CamelCdiRunnerTest {
+public class CamelCdiTest {
 
     int counter;
 
@@ -172,6 +172,33 @@ public class CamelCdiRunnerTest {
     public void secondTestMethod() {
         assertEquals(counter, 1);
     }
+}
+----
+
+In case you need to add additional test beans, you can use the `@Beans`
+annotation provided by Camel CDI test. For example, if you need to add
+a route to your Camel context, instead of declaring a `RouteBuilder` bean
+with a nested class, you can declare a managed bean, e.g.:
+
+[source,java]
+----
+class TestRoute extends RouteBuilder {
+
+    @Override
+    public void configure() {
+        from("direct:foo").to("mock:bar");
+    }
+}
+----
+
+And add it with the `@Beans` annotation, e.g.:
+
+[source,java]
+----
+@RunWith(CamelCdiRunner.class)
+@Beans(classes = TestRoute.class)
+public class CamelCdiTest {
+
 }
 ----
 

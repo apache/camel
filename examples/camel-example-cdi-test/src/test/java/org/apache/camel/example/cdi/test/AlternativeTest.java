@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.cdi.Beans;
@@ -31,7 +30,10 @@ import org.junit.runner.RunWith;
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 @RunWith(CamelCdiRunner.class)
-@Beans(alternatives = AlternativeBean.class)
+@Beans(
+    alternatives = AlternativeBean.class,
+    classes = TestRoute.class
+)
 public class AlternativeTest {
 
     @Inject
@@ -50,13 +52,5 @@ public class AlternativeTest {
         producer.sendBody("test");
 
         assertIsSatisfied(1L, TimeUnit.SECONDS, mock);
-    }
-
-    static class TestRoute extends RouteBuilder {
-
-        @Override
-        public void configure() {
-            from("direct:out").routeId("test").to("mock:out");
-        }
     }
 }
