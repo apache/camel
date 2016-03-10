@@ -19,18 +19,17 @@ package org.apache.camel.component.dataset;
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version 
  */
 public class DataSetConsumerTest extends ContextTestSupport {
-    static final String dataSetName = "foo";
-    static final String dataSetUri = "dataset://" + dataSetName;
-    static final String resultUri = "mock://result";
-
     protected SimpleDataSet dataSet = new SimpleDataSet(20);
+
+    final String dataSetName = "foo";
+    final String dataSetUri = "dataset://" + dataSetName;
+    final String resultUri = "mock://result";
 
     @Override
     protected Context createJndiContext() throws Exception {
@@ -53,7 +52,7 @@ public class DataSetConsumerTest extends ContextTestSupport {
         });
         context.start();
 
-        assertEquals( "expectedMessageCount should be -1 for a consumer-only endpoint", -1, getMockEndpoint(dataSetUri).getExpectedCount());
+        assertEquals("expectedMessageCount should be -1 for a consumer-only endpoint", -1, getMockEndpoint(dataSetUri).getExpectedCount());
 
         getMockEndpoint(resultUri).expectedMessageCount((int)dataSet.getSize());
 
@@ -74,7 +73,7 @@ public class DataSetConsumerTest extends ContextTestSupport {
         });
         context.start();
 
-        assertEquals( "expectedMessageCount should be the same as the DataSet size for a consumer-producer endpoint", dataSet.getSize(), getMockEndpoint(dataSetUri).getExpectedCount());
+        assertEquals("expectedMessageCount should be the same as the DataSet size for a consumer-producer endpoint", dataSet.getSize(), getMockEndpoint(dataSetUri).getExpectedCount());
 
         getMockEndpoint(resultUri).expectedMessageCount((int)dataSet.getSize());
 

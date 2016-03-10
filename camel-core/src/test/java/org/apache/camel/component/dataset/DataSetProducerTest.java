@@ -20,17 +20,16 @@ import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version 
  */
 public class DataSetProducerTest extends ContextTestSupport {
-    static final String dataSetName = "foo";
-    static final String dataSetUri = "dataset://" + dataSetName;
-    static final String resultUri = "mock://result";
-
     protected SimpleDataSet dataSet = new SimpleDataSet(20);
+
+    final String dataSetName = "foo";
+    final String dataSetUri = "dataset://" + dataSetName;
+    final String resultUri = "mock://result";
 
     @Override
     protected Context createJndiContext() throws Exception {
