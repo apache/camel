@@ -125,7 +125,7 @@ public class CamelCdiTest {
 ----
 
 Camel CDI test provides the `@Order` annotation that you can use to
-execute the test methods in a particular sequence, e.g.: 
+execute the test methods in a particular sequence, e.g.:
 
 [source,java]
 ----
@@ -145,7 +145,7 @@ public class CamelCdiTest {
 ----
 
 One CDI container is bootstrapped for the entire execution of the test
-class. 
+class.
 
 Besides, the test class is deployed as a CDI bean, so that you can
 control how the runner instantiate the test class, either one test class
@@ -435,6 +435,10 @@ You can see the tests in the `camel-example-cdi-test` example for a
 thorough overview of the following testing patterns for Camel CDI
 applications.
 
+NOTE: While the patterns above are illustrated using the Camel CDI test
+module, they should equally work with Arquillian and PAX Exam unless
+otherwise stated or illustrated with a specific example.
+
 [[CDITesting-Testroutes]]
 Test routes
 +++++++++++
@@ -467,6 +471,21 @@ public class CamelCdiTest {
 
 You can find more information in <<cdi.adoc#CDI-Auto-detectingCamelroutes,auto-detecting Camel
 routes>>.
+
+In case you prefer declaring the `RouteBuilder` bean in a separate class,
+for example to share it more easily across multiple test classes, you can use
+the `@Beans` annotation to instruct Camel CDI test to deploy that class as a
+CDI bean, e.g.:
+
+[source,java]
+----
+@RunWith(CamelCdiRunner.class)
+@Beans(classes = TestRoute.class)
+public class CamelCdiTest {
+
+    // ...
+}
+----
 
 [[CDITesting-Beanalternatives]]
 Bean alternatives
@@ -553,7 +572,7 @@ public class CamelCdiTest {
 }
 ----
 
-If your using Arquillian as testing framework, you need to activate the
+If you're using Arquillian as testing framework, you need to activate the
 alternative in your deployment method, e.g.:
 
 [source,java]
@@ -582,7 +601,7 @@ public class CamelCdiTest {
 }
 ----
 
-[[CDITesting-Camelcontextcustomisation]]
+[[CDITesting-Camelcontextcustomization]]
 Camel context customization
 +++++++++++++++++++++++++++
 
