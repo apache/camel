@@ -50,4 +50,7 @@ public interface InfinispanConstants {
     String EVENT_DATA = "CamelInfinispanEventData";
     String QUERY = "CamelInfinispanOperationQuery";
     String QUERY_BUILDER = "CamelInfinispanQueryBuilder";
+
+    String CACHE_ENTRY_JOINING = "CacheEntryJoining";
+    String CACHE_ENTRY_LEAVING = "CacheEntryLeaving";
 }
