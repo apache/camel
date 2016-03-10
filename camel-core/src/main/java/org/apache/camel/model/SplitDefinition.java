@@ -120,12 +120,6 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         Splitter answer = new Splitter(routeContext.getCamelContext(), exp, childProcessor, aggregationStrategy,
                             isParallelProcessing, threadPool, shutdownThreadPool, isStreaming, isStopOnException(),
                             timeout, onPrepare, isShareUnitOfWork, isParallelAggregate);
-//        if (isShareUnitOfWork) {
-            // wrap answer in a sub unit of work, since we share the unit of work
-//            CamelInternalProcessor internalProcessor = new CamelInternalProcessor(answer);
-//            internalProcessor.addAdvice(new CamelInternalProcessor.SubUnitOfWorkProcessorAdvice());
-//            return internalProcessor;
-//        }
         return answer;
     }
 
