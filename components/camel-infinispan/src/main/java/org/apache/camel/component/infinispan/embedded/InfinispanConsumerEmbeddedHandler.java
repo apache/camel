@@ -19,7 +19,6 @@ package org.apache.camel.component.infinispan.embedded;
 import org.apache.camel.component.infinispan.InfinispanConfiguration;
 import org.apache.camel.component.infinispan.InfinispanConsumer;
 import org.apache.camel.component.infinispan.InfinispanConsumerHandler;
-import org.apache.camel.component.infinispan.InfinispanCustomListener;
 import org.apache.camel.component.infinispan.InfinispanEventListener;
 import org.infinispan.Cache;
 
@@ -36,8 +35,8 @@ public final class InfinispanConsumerEmbeddedHandler implements InfinispanConsum
         InfinispanEventListener listener;
         if (configuration.hasCustomListener()) {
             listener = configuration.getCustomListener();
-            ((InfinispanCustomListener)listener).setInfinispanConsumer(consumer);
-        } else if (configuration.isClustered()) {
+            listener.setInfinispanConsumer(consumer);
+        } else if (configuration.isClusteredListener()) {
             if (configuration.isSync()) {
                 listener = new InfinispanSyncClusteredEventListener(consumer, configuration.getEventTypes());
             } else {
