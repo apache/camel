@@ -23,6 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.ThroughputLogger;
@@ -85,6 +86,19 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     public Consumer createConsumer(Processor processor) throws Exception {
         Consumer answer = new DataSetConsumer(this, processor);
         configureConsumer(answer);
+
+        // expectedMessageCount((int) size);
+
+        return answer;
+    }
+
+    @Override
+    public Producer createProducer() throws Exception {
+        Producer answer = super.createProducer();
+
+        long size = getDataSet().getSize();
+        expectedMessageCount((int) size);
+
         return answer;
     }
 
@@ -234,12 +248,11 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     protected void doStart() throws Exception {
         super.doStart();
 
-        long size = getDataSet().getSize();
-        expectedMessageCount((int) size);
         if (reporter == null) {
             reporter = createReporter();
         }
-        log.info(this + " expecting " + size + " messages");
+
+        log.info(this + " expecting " + getExpectedCount() + " messages");
     }
 
 }
