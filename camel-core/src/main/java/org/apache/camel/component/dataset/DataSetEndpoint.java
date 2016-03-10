@@ -217,8 +217,13 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
         // now let's assert that they are the same
         if (log.isDebugEnabled()) {
-            log.debug("Received message: {} (DataSet index={}) = {}",
-                    new Object[]{index, copy.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class), copy});
+            if (null != copy.getIn().getHeader(Exchange.DATASET_INDEX)) {
+                log.debug("Received message: {} (DataSet index={}) = {}",
+                        new Object[]{index, copy.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class), copy});
+            } else {
+                log.debug("Received message: {} = {}",
+                        new Object[]{index, copy});
+            }
         }
 
         assertMessageExpected(index, expected, copy);
@@ -229,8 +234,10 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     protected void assertMessageExpected(long index, Exchange expected, Exchange actual) throws Exception {
-        long actualCounter = ExchangeHelper.getMandatoryHeader(actual, Exchange.DATASET_INDEX, Long.class);
-        assertEquals("Header: " + Exchange.DATASET_INDEX, index, actualCounter, actual);
+        if ( null != actual.getIn().getHeader(Exchange.DATASET_INDEX)) {
+            long actualCounter = ExchangeHelper.getMandatoryHeader(actual, Exchange.DATASET_INDEX, Long.class);
+            assertEquals("Header: " + Exchange.DATASET_INDEX, index, actualCounter, actual);
+        }
 
         getDataSet().assertMessageExpected(this, expected, actual, index);
     }
