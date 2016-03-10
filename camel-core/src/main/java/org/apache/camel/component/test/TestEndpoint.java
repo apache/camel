@@ -23,6 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -42,14 +43,17 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "test", title = "Test", syntax = "test:name", producerOnly = true, label = "core,testing", lenientProperties = true)
 public class TestEndpoint extends MockEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(TestEndpoint.class);
-    private final Endpoint expectedMessageEndpoint;
+    private Endpoint expectedMessageEndpoint;
     @UriPath(description = "Name of endpoint to lookup in the registry to use for polling messages used for testing") @Metadata(required = "true")
     private String name;
     @UriParam(label = "producer", defaultValue = "2000")
     private long timeout = 2000L;
 
-    public TestEndpoint(String endpointUri, Component component, Endpoint expectedMessageEndpoint) {
+    public TestEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
+    }
+
+    public void setExpectedMessageEndpoint(Endpoint expectedMessageEndpoint) {
         this.expectedMessageEndpoint = expectedMessageEndpoint;
     }
 
@@ -60,7 +64,11 @@ public class TestEndpoint extends MockEndpoint {
         final List<Object> expectedBodies = new ArrayList<Object>();
         EndpointHelper.pollEndpoint(expectedMessageEndpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
+                // if file based we need to load the file into memory as the file may be deleted/moved afterwards
                 Object body = getInBody(exchange);
+                if (body instanceof WrappedFile) {
+                    body = exchange.getIn().getBody(byte[].class);
+                }
                 LOG.trace("Received message body {}", body);
                 expectedBodies.add(body);
             }
