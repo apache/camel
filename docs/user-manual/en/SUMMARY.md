@@ -149,5 +149,5 @@
 
 * User Guide
     * [Karaf](karaf.adoc)
-    * Testing
+    * [Testing](testing.adoc)
         * [CDI Testing](cdi-testing.adoc)
