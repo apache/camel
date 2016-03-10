@@ -15,12 +15,13 @@ bridges Camel events (e.g. `RouteAddedEvent`,
 and provides a CDI events endpoint that can be used to consume / produce
 CDI events from / to Camel routes.
 
-
 NOTE: While the Camel CDI component is available as of **Camel 2.10**, it's
 been rewritten in *Camel 2.17* to better fit into the CDI programming
 model. Hence some of the features like the Camel events to CDI events
 bridge and the CDI events endpoint only apply starting Camel 2.17.
 
+NOTE: More details on how to test Camel CDI applications are available in
+link:cdi-testing.html[Camel CDI testing].
 
 [[CDI-Auto-configuredCamelcontext]]
 Auto-configured Camel context
@@ -911,15 +912,18 @@ that can be executed inside an OSGi container using PAX CDI,
 * `camel-example-cdi-rest-servlet` - illustrates the Camel REST DSL
 being used in a Web application that uses CDI as dependency injection
 framework,
-* `camel-example-widget-gadget-cdi` - the Widget and Gadget use-case
-from the EIP book implemented in Java with CDI dependency Injection,
+* `camel-example-cdi-test` - demonstrates the testing features that are
+provided as part of the integration between Camel and CDI,
 * `camel-example-swagger-cdi` - an example using REST DSL and Swagger
 Java with CDI.
+* `camel-example-widget-gadget-cdi` - the Widget and Gadget use-case
+from the EIP book implemented in Java with CDI dependency Injection,
 
 [[CDI-SeeAlso]]
 See Also
 ^^^^^^^^
 
+* link:cdi-testing.html[Camel CDI testing]
 * http://www.cdi-spec.org[CDI specification Web site]
 * http://www.cdi-spec.org/ecosystem/[CDI ecosystem]
 * http://weld.cdi-spec.org[Weld home page]
