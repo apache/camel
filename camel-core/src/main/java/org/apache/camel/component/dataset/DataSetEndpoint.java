@@ -234,7 +234,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     protected void assertMessageExpected(long index, Exchange expected, Exchange actual) throws Exception {
-        if ( null != actual.getIn().getHeader(Exchange.DATASET_INDEX)) {
+        if (null != actual.getIn().getHeader(Exchange.DATASET_INDEX)) {
             long actualCounter = ExchangeHelper.getMandatoryHeader(actual, Exchange.DATASET_INDEX, Long.class);
             assertEquals("Header: " + Exchange.DATASET_INDEX, index, actualCounter, actual);
         }
