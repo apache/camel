@@ -2,14 +2,14 @@
 CDI Testing
 ~~~~~~~~~~~
 
-http://camel.apache.org/testing.html[Testing] is a crucial part of any
+http://camel.apache.org/testing.html[Testing] is a crucial part of any
 development or integration work. In case you're using the Camel CDI
 integration for your applications, you have a number of options to ease
 testing.
 
 You can use CDI for IoC and the Camel testing endpoints like
-`DataSet`, `Mock`, `Test` and testing API like `AdviceWith`
-and `NotifyBuilder` to create sophisticated integration/unit tests that
+`DataSet`, `Mock`, `Test` and testing API like `AdviceWith`
+and `NotifyBuilder` to create sophisticated integration/unit tests that
 are easy to run and debug inside your IDE.
 
 There are a number of supported approaches for testing with CDI in
@@ -78,7 +78,7 @@ It deploys the test class as a CDI bean so that dependency injection and
 any CDI features is available within the test class.
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component:
+their `pom.xml` for this component:
 
 [source,xml]
 ----
@@ -91,7 +91,7 @@ their `pom.xml` for this component:
 </dependency>
 ----
 
-Here is a simple unit test using the `CamelCdiRunner`:
+Here is a simple unit test using the `CamelCdiRunner`:
 
 [source,java]
 ----
@@ -124,19 +124,19 @@ public class CamelCdiRunnerTest {
 }
 ----
 
-Camel CDI test provides the `@Order` annotation that you can use to
-execute the test methods in a particular sequence, e.g.: 
+Camel CDI test provides the `@Order` annotation that you can use to
+execute the test methods in a particular sequence, e.g.: 
 
 [source,java]
 ----
 @RunWith(CamelCdiRunner.class)
 public class CamelCdiRunnerTest {
- 
+
     @Test
     @Order(1)
     public void firstTestMethod() {
     }
- 
+
     @Test
     @Order(2)
     public void secondTestMethod() {
@@ -145,20 +145,20 @@ public class CamelCdiRunnerTest {
 ----
 
 One CDI container is bootstrapped for the entire execution of the test
-class. 
+class. 
 
 Besides, the test class is deployed as a CDI bean, so that you can
 control how the runner instantiate the test class, either one test class
 instance for each test method (the default, depending on the _built-in_
-default `@Dependent` CDI scope), or one test class instance for the
-entire test class execution using the `@ApplicationScoped` scope, e.g.:
+default `@Dependent` CDI scope), or one test class instance for the
+entire test class execution using the `@ApplicationScoped` scope, e.g.:
 
 [source,java]
 ----
 @ApplicationScoped
 @RunWith(CamelCdiRunner.class)
 public class CamelCdiRunnerTest {
- 
+
     int counter;
 
     @Test
@@ -166,7 +166,7 @@ public class CamelCdiRunnerTest {
     public void firstTestMethod() {
         counter++;
     }
- 
+
     @Test
     @Order(2)
     public void secondTestMethod() {
@@ -181,7 +181,7 @@ Arquillian
 
 With this approach, you use the JUnit runner or TestNG support provided
 by Arquillian to delegate the bootstrap of the CDI container. You need
-to declare a `@Deployment` method to create your application
+to declare a `@Deployment` method to create your application
 configuration to be deployed in the container using
 http://arquillian.org/guides/shrinkwrap_introduction/[ShrinkWrap
 descriptors], e.g.:
@@ -201,7 +201,7 @@ public class CamelCdiJavaSeTest {
             // Bean archive deployment descriptor
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
- 
+
     @Inject
     CamelContext context;
 
@@ -281,16 +281,16 @@ public class CamelCdiWebTest {
 }
 ----
 
-In the example above, you can use any Arquillian Web container adapter,
+In the example above, you can use any Arquillian Web container adapter,
 like
-the http://arquillian.org/modules/arquillian-jetty-embedded-9-container-adapter/[Jetty
-embedded container adapter] e.g. with Maven you need the
-complete following set of dependencies:
+the http://arquillian.org/modules/arquillian-jetty-embedded-9-container-adapter/[Jetty
+embedded container adapter] e.g. with Maven you need the
+complete following set of dependencies:
 
 [source,xml]
 ----
 </dependencies>
- 
+
   <dependency>
     <groupId>org.jboss.arquillian.junit</groupId>
     <artifactId>arquillian-junit-container</artifactId>
@@ -315,7 +315,7 @@ complete following set of dependencies:
     <artifactId>weld-servlet</artifactId>
     <scope>test</scope>
   </dependency>
- 
+
   <dependency>
     <groupId>org.eclipse.jetty</groupId>
     <artifactId>jetty-webapp</artifactId>
@@ -337,7 +337,7 @@ complete following set of dependencies:
 </dependencies>
 ----
 
-You can see the tests in the `camel-example-cdi-rest-servlet` example
+You can see the tests in the `camel-example-cdi-rest-servlet` example
 for a complete working example of testing a Camel CDI application using
 the REST DSL and deployed as a WAR in Jetty.
 
@@ -384,7 +384,7 @@ public class PaxCdiOsgiTest {
                 .versionAsInProject()
         );
     }
- 
+
     @Inject
     private CamelContext context;
 
@@ -396,7 +396,7 @@ public class PaxCdiOsgiTest {
 }
 ----
 
-You can see the tests in the `camel-example-cdi-osgi` example for a
+You can see the tests in the `camel-example-cdi-osgi` example for a
 complete working example of testing a Camel CDI application deployed in
 an OSGi container using PAX Exam.
 
@@ -404,7 +404,7 @@ an OSGi container using PAX Exam.
 Testing Patterns
 ^^^^^^^^^^^^^^^^
 
-You can see the tests in the `camel-example-cdi-test` example for a
+You can see the tests in the `camel-example-cdi-test` example for a
 thorough overview of the following testing patterns for Camel CDI
 applications.
 
@@ -421,7 +421,7 @@ test class as you would normally do in your application code, e.g.:
 ----
 @RunWith(CamelCdiRunner.class)
 public class CamelCdiTest {
- 
+
     // Declare a RouteBuilder bean for testing purpose
     // that is automatically added to the Camel context
     static class TestRoute extends RouteBuilder {
@@ -430,7 +430,7 @@ public class CamelCdiTest {
     public void configure() {
         from("direct:out").routeId("test").to("mock:out");
     }
- 
+
     // And retrieve the MockEndpoint for further assertions
     @Inject
     @Uri("mock:out")
@@ -480,7 +480,7 @@ public class Bean {
 ----
 
 Then you can replace the bean above in your tests by declaring an
-_alternative_ bean, annotated with `@Alternative`, e.g.:
+_alternative_ bean, annotated with `@Alternative`, e.g.:
 
 [source,java]
 ----
@@ -539,7 +539,7 @@ class, e.g.:
 ----
 @RunWith(CamelCdiRunner.class)
 public class CamelCdiTest {
- 
+
     @Default
     @ContextName("camel-test-cdi")
     @ApplicationScoped
@@ -555,20 +555,20 @@ public class CamelCdiTest {
 
 In that example, the custom Camel context bean declared in the test
 class will be used during the test execution instead of the default
-Camel context bean provided by the link:cdi.html[Camel CDI component].
+Camel context bean provided by the link:cdi.html[Camel CDI component].
 
 [[CDITesting-RoutesadvisingwithadviceWith]]
 Routes advising with `adviceWith`
 +++++++++++++++++++++++++++++++++
 
 `AdviceWith` is used for testing Camel routes where you
-can _advice_ an existing route before its being tested. It allows to
-add http://camel.apache.org/intercept.html[Intercept] or _weave_ routes
+can _advice_ an existing route before its being tested. It allows to
+add http://camel.apache.org/intercept.html[Intercept] or _weave_ routes
 for testing purpose, for example using
-the link:mock.html[Mock] component.
+the link:mock.html[Mock] component.
 
 It is recommended to only advice routes which are not started already.
-To meet that requirement, you can use the `CamelContextStartingEvent`
+To meet that requirement, you can use the `CamelContextStartingEvent`
 event by declaring an observer method in which you use `adviceWith` to
 add a `mock` endpoint at the end of your Camel route, e.g.:
 
@@ -603,13 +603,13 @@ That way, you can use JUnit class rules to initialize (resp. clean-up)
 resources that your test classes would require during their execution
 before the container initializes (resp. after the container has
 shutdown). For example, you could use an embedded JMS broker
-like https://activemq.apache.org/artemis/[ActiveMQ Artemis] to test your
+like https://activemq.apache.org/artemis/[ActiveMQ Artemis] to test your
 Camel JMS application, e.g.:
 
 [source,java]
 ----
 import org.apache.activemq.artemis.jms.server.embedded.EmbeddedJMS;
- 
+
 @RunWith(CamelCdiRunner.class)
 public class CamelCdiTest {
 
@@ -632,7 +632,7 @@ public class CamelCdiTest {
     @Inject
     @Uri("jms:destination")
     private ProducerTemplate producer;
- 
+
     @Test
     public void sendMessage() {
         producer.sendBody("message");
@@ -640,19 +640,19 @@ public class CamelCdiTest {
 }
 ----
 
-Another use case is to assert the behavior of your application after it
-has shutdown. In that case, you can use the `Verifier` rule, e.g.:
+Another use case is to assert the behavior of your application after it
+has shutdown. In that case, you can use the `Verifier` rule, e.g.:
 
 [source,java]
 ----
 import org.junit.rules.Verifier;
- 
+
 @RunWith(CamelCdiRunner.class)
 public class CamelCdiTest {
- 
+
     @ClassRule
     public static Verifier verifier = new Verifier() {
- 
+
         @Override
         protected void verify() {
             // Executes after the CDI container has shutdown
