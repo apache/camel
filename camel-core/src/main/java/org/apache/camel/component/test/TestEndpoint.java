@@ -45,10 +45,14 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "test", title = "Test", syntax = "test:name", producerOnly = true, label = "core,testing", lenientProperties = true)
 public class TestEndpoint extends MockEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(TestEndpoint.class);
+
     private Endpoint expectedMessageEndpoint;
+
     @UriPath(description = "Name of endpoint to lookup in the registry to use for polling messages used for testing") @Metadata(required = "true")
     private String name;
-    @UriParam(label = "producer", defaultValue = "2000")
+    @UriPath
+    private boolean anyOrder;
+    @UriParam(defaultValue = "2000")
     private long timeout = 2000L;
 
     public TestEndpoint(String endpointUri, Component component) {
@@ -76,8 +80,12 @@ public class TestEndpoint extends MockEndpoint {
             }
         }, timeout);
 
-        LOG.debug("Received: {} expected message(s) from: {}", expectedBodies.size(), expectedMessageEndpoint);
-        expectedBodiesReceived(expectedBodies);
+        LOG.info("Received: {} expected message(s) from: {}", expectedBodies.size(), expectedMessageEndpoint);
+        if (anyOrder) {
+            expectedBodiesReceivedInAnyOrder(expectedBodies);
+        } else {
+            expectedBodiesReceived(expectedBodies);
+        }
     }
 
     /**
@@ -96,5 +104,16 @@ public class TestEndpoint extends MockEndpoint {
      */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public boolean isAnyOrder() {
+        return anyOrder;
+    }
+
+    /**
+     * Whether the expected messages should arrive in the same order or can be in any order.
+     */
+    public void setAnyOrder(boolean anyOrder) {
+        this.anyOrder = anyOrder;
     }
 }
