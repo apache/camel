@@ -553,6 +553,35 @@ public class CamelCdiTest {
 }
 ----
 
+If your using Arquillian as testing framework, you need to activate the
+alternative in your deployment method, e.g.:
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class CamelCdiTest {
+
+    @Deployment
+    public static Archive deployment() {
+        return ShrinkWrap.create(JavaArchive.class)
+            // Camel CDI
+            .addPackage(CdiCamelExtension.class.getPackage())
+            // Test classes
+            .addPackage(Application.class.getPackage())
+            // Bean archive deployment descriptor
+            .addAsManifestResource(
+                new StringAsset(
+                    Descriptors.create(BeansDescriptor.class)
+                        .getOrCreateAlternatives()
+                            .stereotype(MockAlternative.class.getName()).up()
+                        .exportAsString()),
+                "beans.xml");
+    }
+
+    //...
+}
+----
+
 [[CDITesting-Camelcontextcustomisation]]
 Camel context customization
 +++++++++++++++++++++++++++
