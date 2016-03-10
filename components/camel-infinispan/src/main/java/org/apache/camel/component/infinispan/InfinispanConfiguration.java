@@ -35,8 +35,15 @@ public class InfinispanConfiguration {
     private BasicCacheContainer cacheContainer;
     @UriParam
     private String cacheName;
-    @UriParam(label = "producer", defaultValue = "put", enums = "put,putAll,putIfAbsent,putAsync,putAllAsync,putIfAbsentAsync,get,containsKey,containsValue,remove,removeAsync,"
-           + "replace,replaceAsync,clear,clearAsync,size")
+    @UriParam(label = "producer", defaultValue = "put", enums =
+             "put,putAll,putIfAbsent,putAsync,putAllAsync,putIfAbsentAsync,"
+           + "get,"
+           + "containsKey,containsValue,"
+           + "remove,removeAsync,"
+           + "replace,replaceAsync,"
+           + "size,"
+           + "clear,clearAsync,"
+           + "query")
     private String command;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean sync = true;
@@ -45,8 +52,8 @@ public class InfinispanConfiguration {
     @UriParam(label = "consumer")
     private InfinispanCustomListener customListener;
     @UriParam(label = "consumer", defaultValue = "false")
-    private boolean clustered;
-    @UriParam(label = "advanced")
+    private boolean clusteredListener;
+    @UriParam
     private InfinispanQueryBuilder queryBuilder;
 
     public String getCommand() {
@@ -111,12 +118,12 @@ public class InfinispanConfiguration {
     /**
      * If true, the listener will be installed for the entire cluster
      */
-    public boolean isClustered() {
-        return clustered;
+    public boolean isClusteredListener() {
+        return clusteredListener;
     }
 
-    public void setClustered(boolean clustered) {
-        this.clustered = clustered;
+    public void setClusteredListener(boolean clusteredListener) {
+        this.clusteredListener = clusteredListener;
     }
 
     public Set<String> getEventTypes() {
