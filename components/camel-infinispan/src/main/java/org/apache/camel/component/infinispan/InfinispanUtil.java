@@ -83,4 +83,8 @@ public final class InfinispanUtil {
     public static boolean isInHeaderEmpty(Exchange exchange, String header) {
         return ObjectHelper.isEmpty(exchange.getIn().getHeader(header));
     }
+
+    public static BasicCache<Object, Object> getCache(BasicCacheContainer cacheContainer, String cacheName) {
+        return ObjectHelper.isEmpty(cacheName) ? cacheContainer.getCache() : cacheContainer.getCache(cacheName);
+    }
 }

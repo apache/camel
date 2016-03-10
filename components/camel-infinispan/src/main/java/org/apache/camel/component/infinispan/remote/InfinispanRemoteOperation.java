@@ -21,6 +21,7 @@ import org.apache.camel.component.infinispan.InfinispanConfiguration;
 import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
 import org.apache.camel.component.infinispan.InfinispanUtil;
+import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.Search;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.query.dsl.Query;
@@ -43,6 +44,10 @@ public final class InfinispanRemoteOperation {
     }
 
     public static Query buildQuery(InfinispanQueryBuilder queryBuilder, BasicCache<Object, Object> cache) {
-        return queryBuilder != null ? queryBuilder.build(Search.getQueryFactory(InfinispanUtil.asRemote(cache))) : null;
+        return buildQuery(queryBuilder, InfinispanUtil.asRemote(cache));
+    }
+
+    public static Query buildQuery(InfinispanQueryBuilder queryBuilder, RemoteCache<Object, Object> cache) {
+        return queryBuilder != null ? queryBuilder.build(Search.getQueryFactory(cache)) : null;
     }
 }
