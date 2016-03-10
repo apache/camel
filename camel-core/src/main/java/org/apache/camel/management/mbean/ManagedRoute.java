@@ -272,6 +272,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         if (def != null) {
             String xml = ModelHelper.dumpModelAsXml(context, def);
 
+            // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
             if (resolvePlaceholders) {
                 final AtomicBoolean changed = new AtomicBoolean();
                 InputStream is = new ByteArrayInputStream(xml.getBytes());

@@ -364,6 +364,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         def.setRests(rests);
         String xml = ModelHelper.dumpModelAsXml(context, def);
 
+        // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
         if (resolvePlaceholders) {
             final AtomicBoolean changed = new AtomicBoolean();
             InputStream is = new ByteArrayInputStream(xml.getBytes());
@@ -409,6 +410,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         def.setRoutes(routes);
         String xml = ModelHelper.dumpModelAsXml(context, def);
 
+        // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
         if (resolvePlaceholders) {
             final AtomicBoolean changed = new AtomicBoolean();
             InputStream is = new ByteArrayInputStream(xml.getBytes());
