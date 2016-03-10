@@ -48,4 +48,13 @@ public class DataSetProducerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndex() throws Exception {
+        long size = dataSet.getSize();
+        for (long i = 0; i < size; i++) {
+            template.sendBody(dataSetUri, "<hello>world!</hello>");
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
 }
