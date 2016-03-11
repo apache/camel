@@ -26,6 +26,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.commons.api.BasicCacheContainer;
+import org.infinispan.context.Flag;
 
 @UriParams
 public class InfinispanConfiguration {
@@ -55,6 +56,11 @@ public class InfinispanConfiguration {
     private boolean clusteredListener;
     @UriParam
     private InfinispanQueryBuilder queryBuilder;
+    @UriParam(label = "advanced", javaType = "java.lang.String")
+    private Flag[] flags;
+    @UriParam(label = "advanced")
+    private String configurationUri;
+
 
     public String getCommand() {
         return command;
@@ -149,7 +155,7 @@ public class InfinispanConfiguration {
      * TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED
      */
     public void setEventTypes(String eventTypes) {
-        this.eventTypes = new HashSet<String>(Arrays.asList(eventTypes.split(",")));
+        this.eventTypes = new HashSet<>(Arrays.asList(eventTypes.split(",")));
     }
 
     /**
@@ -180,5 +186,41 @@ public class InfinispanConfiguration {
 
     public boolean hasQueryBuilder() {
         return queryBuilder != null;
+    }
+
+    public Flag[] getFlags() {
+        return flags;
+    }
+
+    /**
+     * A comma separated list of Flag to be applied by default on each cache
+     * invocation, not applicable to remote caches.
+     */
+    public void setFlags(String flagsAsString) {
+        String[] flagsArray = flagsAsString.split(",");
+        this.flags = new Flag[flagsArray.length];
+
+        for (int i = 0; i < flagsArray.length; i++) {
+            this.flags[i] = Flag.valueOf(flagsArray[i]);
+        }
+    }
+
+    public void setFlags(Flag... flags) {
+        this.flags = flags;
+    }
+
+    public boolean hasFlags() {
+        return flags != null && flags.length > 0;
+    }
+
+    /**
+     * An implementation specific URI for the CacheManager
+     */
+    public String getConfigurationUri() {
+        return configurationUri;
+    }
+
+    public void setConfigurationUri(String configurationUri) {
+        this.configurationUri = configurationUri;
     }
 }

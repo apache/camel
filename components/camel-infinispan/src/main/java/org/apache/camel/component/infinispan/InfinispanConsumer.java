@@ -25,7 +25,6 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.Search;
 import org.infinispan.commons.api.BasicCache;
-import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.query.api.continuous.ContinuousQuery;
 import org.infinispan.query.api.continuous.ContinuousQueryListener;
 import org.infinispan.query.dsl.Query;
@@ -35,6 +34,7 @@ import org.slf4j.LoggerFactory;
 public class InfinispanConsumer extends DefaultConsumer {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(InfinispanProducer.class);
     private final InfinispanConfiguration configuration;
+    private final InfinispanManager manager;
     private InfinispanEventListener listener;
     private InfinispanConsumerHandler consumerHandler;
     private BasicCache<Object, Object> cache;
@@ -43,6 +43,7 @@ public class InfinispanConsumer extends DefaultConsumer {
     public InfinispanConsumer(InfinispanEndpoint endpoint, Processor processor, InfinispanConfiguration configuration) {
         super(endpoint, processor);
         this.configuration = configuration;
+        this.manager = new InfinispanManager(endpoint.getCamelContext(), configuration);
     }
 
     public void processEvent(String eventType, boolean isPre, String cacheName, Object key) {
@@ -69,10 +70,9 @@ public class InfinispanConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        manager.start();
 
-        BasicCacheContainer cacheContainer = configuration.getCacheContainer();
-        cache = InfinispanUtil.getCache(configuration.getCacheContainer(), configuration.getCacheName());
-
+        cache = manager.getCache();
         if (configuration.hasQueryBuilder()) {
             if (InfinispanUtil.isRemote(cache)) {
                 RemoteCache<Object, Object> remoteCache = InfinispanUtil.asRemote(cache);
@@ -81,15 +81,17 @@ public class InfinispanConsumer extends DefaultConsumer {
                 continuousQuery = Search.getContinuousQuery(remoteCache);
                 continuousQuery.addContinuousQueryListener(query, new ContinuousQueryEventListener(cache.getName()));
             } else {
-                throw new IllegalArgumentException("Can't run continuous queries against embedded cache (" + cache.getName() + ")");
+                throw new IllegalArgumentException(
+                    "Can't run continuous queries against embedded cache (" + cache.getName() + ")");
             }
         } else {
-            if (InfinispanUtil.isEmbedded(cacheContainer)) {
+            if (manager.isCacheContainerEmbedded()) {
                 consumerHandler = InfinispanConsumerEmbeddedHandler.INSTANCE;
-            } else if (InfinispanUtil.isRemote(cacheContainer)) {
+            } else if (manager.isCacheContainerRemote()) {
                 consumerHandler = InfinispanConsumerRemoteHandler.INSTANCE;
             } else {
-                throw new UnsupportedOperationException("Consumer not support for CacheContainer: " + cacheContainer);
+                throw new UnsupportedOperationException(
+                    "Unsupported CacheContainer type " + manager.getCacheContainer().getClass().getName());
             }
 
             listener = consumerHandler.start(this);
@@ -106,6 +108,7 @@ public class InfinispanConsumer extends DefaultConsumer {
             consumerHandler.stop(this);
         }
 
+        manager.stop();
         super.doStop();
     }
 
