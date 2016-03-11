@@ -243,6 +243,12 @@
                 <exclude>**/src/main/resources/META-INF/cxf/bus-extensions.txt</exclude>
                 <!-- ignore the api signatures files -->
                 <exclude>**/src/signatures/*.txt</exclude>
+                <!-- camel website and user-manual -->
+                <exclude>**/node/**</exclude>
+                <exclude>**/node_modules/**</exclude>
+                <exclude>**/npm-shrinkwrap.json</exclude>
+                <exclude>**/package.json</exclude>
+                <exclude>**/user-manual/**</exclude>
                 <!-- generated files -->
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
