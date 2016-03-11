@@ -231,8 +231,13 @@
                 <exclude>.gitignore</exclude>
                 <exclude>.git/**/*</exclude>
                 <exclude>**/*.adoc</exclude>
+                <exclude>**/*.md</exclude>
                 <!-- tooling/camel-manual/src/styles/print.css use a different license -->
                 <exclude>**/src/styles/print.css</exclude>
+                <!-- tooling for component docs -->
+                <exclude>**/component-header.mvel</exclude>
+                <exclude>**/component-options.mvel</exclude>
+                <exclude>**/endpoint-options.mvel</exclude>
                 <!-- cxf does not handle comments here -->
                 <exclude>**/src/main/resources/META-INF/cxf/cxf.extension</exclude>
                 <exclude>**/src/main/resources/META-INF/cxf/bus-extensions.txt</exclude>
