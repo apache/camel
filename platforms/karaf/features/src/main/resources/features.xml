@@ -1390,6 +1390,7 @@
   </feature>
   <feature name='camel-servlet' version='${project.version}' resolver='(obr)' start-level='50'>
     <details> camel-servlet need to access the http OSGi services </details>
+    <feature version='${project.version}'>camel-core</feature>
     <feature>http</feature>
     <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-servlet/${project.version}</bundle>
