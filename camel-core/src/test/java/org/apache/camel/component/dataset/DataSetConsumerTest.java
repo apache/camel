@@ -19,16 +19,21 @@ package org.apache.camel.component.dataset;
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class DataSetConsumerTest extends ContextTestSupport {
-    protected SimpleDataSet dataSet = new SimpleDataSet(20);
+    protected SimpleDataSet dataSet = new SimpleDataSet(5);
 
     final String dataSetName = "foo";
     final String dataSetUri = "dataset://" + dataSetName;
+    final String dataSetUriWithDisableDataSetIndexSetToFalse = dataSetUri + "?disableDataSetIndex=false";
+    final String dataSetUriWithDisableDataSetIndexSetToTrue = dataSetUri + "?disableDataSetIndex=true";
     final String resultUri = "mock://result";
 
     @Override
@@ -41,6 +46,7 @@ public class DataSetConsumerTest extends ContextTestSupport {
     /**
      * Ensure the expected message count for a consumer-only endpoint defaults to zero
      */
+    @Test
     public void testConsumerOnlyEndpoint() throws Exception {
 
         context.addRoutes(new RouteBuilder() {
@@ -52,9 +58,11 @@ public class DataSetConsumerTest extends ContextTestSupport {
         });
         context.start();
 
-        assertEquals("expectedMessageCount should be -1 for a consumer-only endpoint", -1, getMockEndpoint(dataSetUri).getExpectedCount());
+        assertEquals("expectedMessageCount should be unset(i.e. -1) for a consumer-only endpoint", -1, getMockEndpoint(dataSetUri).getExpectedCount());
 
-        getMockEndpoint(resultUri).expectedMessageCount((int)dataSet.getSize());
+        MockEndpoint result = getMockEndpoint(resultUri);
+        result.expectedMessageCount((int) dataSet.getSize());
+        result.assertMessagesAscending(header(Exchange.DATASET_INDEX));
 
         assertMockEndpointsSatisfied();
     }
@@ -62,6 +70,7 @@ public class DataSetConsumerTest extends ContextTestSupport {
     /**
      * Ensure the expected message count for a consumer-producer endpoint defaults to the size of the dataset
      */
+    @Test
     public void testConsumerWithProducer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -75,7 +84,66 @@ public class DataSetConsumerTest extends ContextTestSupport {
 
         assertEquals("expectedMessageCount should be the same as the DataSet size for a consumer-producer endpoint", dataSet.getSize(), getMockEndpoint(dataSetUri).getExpectedCount());
 
-        getMockEndpoint(resultUri).expectedMessageCount((int)dataSet.getSize());
+        MockEndpoint result = getMockEndpoint(resultUri);
+        result.expectedMessageCount((int) dataSet.getSize());
+        result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
+
+        assertMockEndpointsSatisfied();
+    }
+
+    // TODO:  Add tests for dataSetIndex URI parameters
+    @Test
+    public void testWithDisableDataSetIndexUriParameterUnset() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(dataSetUri)
+                        .to(resultUri);
+            }
+        });
+        context.start();
+
+        MockEndpoint result = getMockEndpoint(resultUri);
+        result.expectedMessageCount((int) dataSet.getSize());
+        result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
+        result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testWithDisableDataSetIndexUriParameterSetToFalse() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(dataSetUriWithDisableDataSetIndexSetToFalse)
+                        .to(resultUri);
+            }
+        });
+        context.start();
+
+        MockEndpoint result = getMockEndpoint(resultUri);
+        result.expectedMessageCount((int) dataSet.getSize());
+        result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
+        result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testWithDisableDataSetIndexUriParameterSetToTrue() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(dataSetUriWithDisableDataSetIndexSetToTrue)
+                        .to(resultUri);
+            }
+        });
+        context.start();
+
+        MockEndpoint result = getMockEndpoint(resultUri);
+        result.expectedMessageCount((int) dataSet.getSize());
+        result.allMessages().header(Exchange.DATASET_INDEX).isNull();
 
         assertMockEndpointsSatisfied();
     }

@@ -60,6 +60,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private long preloadSize;
     @UriParam(label = "consumer", defaultValue = "1000")
     private long initialDelay = 1000;
+    @UriParam(label = "consumer,producer", defaultValue = "null")
+    private Boolean disableDataSetIndex;
 
     @Deprecated
     public DataSetEndpoint() {
@@ -120,8 +122,10 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         Exchange exchange = createExchange();
         getDataSet().populateMessage(exchange, messageIndex);
 
-        Message in = exchange.getIn();
-        in.setHeader(Exchange.DATASET_INDEX, messageIndex);
+        if (null == disableDataSetIndex || !disableDataSetIndex) {
+            Message in = exchange.getIn();
+            in.setHeader(Exchange.DATASET_INDEX, messageIndex);
+        }
 
         return exchange;
     }
@@ -206,6 +210,24 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         this.initialDelay = initialDelay;
     }
 
+    /**
+     * Flag to disable setting the CamelDataSetIndex header.
+     * For Consumers:
+     * - true => the header will not be set
+     * - false/null/unset => the header will be set
+     * For Producers:
+     * - true => the header value will not be verified, and will not be set if it is not present
+     * = false => the header value must be present and will be verified
+     * = null/unset => the header value will be verified if it is present, and will be set if it is not present
+     */
+    public void setDisableDataSetIndex(boolean disableDataSetIndex) {
+        this.disableDataSetIndex = disableDataSetIndex;
+    }
+
+    public boolean getDisableDataSetIndex() {
+        return disableDataSetIndex;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
@@ -234,7 +256,14 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     protected void assertMessageExpected(long index, Exchange expected, Exchange actual) throws Exception {
-        if (null != actual.getIn().getHeader(Exchange.DATASET_INDEX)) {
+        if (null == disableDataSetIndex) {
+            Long dataSetIndexHeaderValue = actual.getIn().getHeader(Exchange.DATASET_INDEX, Long.class);
+            if (null != dataSetIndexHeaderValue) {
+                assertEquals("Header: " + Exchange.DATASET_INDEX, index, dataSetIndexHeaderValue, actual);
+            } else {
+                actual.getIn().setHeader(Exchange.DATASET_INDEX, index);
+            }
+        } else if (!disableDataSetIndex) {
             long actualCounter = ExchangeHelper.getMandatoryHeader(actual, Exchange.DATASET_INDEX, Long.class);
             assertEquals("Header: " + Exchange.DATASET_INDEX, index, actualCounter, actual);
         }
