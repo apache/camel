@@ -29,17 +29,19 @@ import org.infinispan.manager.DefaultCacheManager;
 public class InfinispanIdempotentRepository extends ServiceSupport implements IdempotentRepository<Object> {
     private final String cacheName;
     private final BasicCacheContainer cacheContainer;
-    private boolean isManagedCacheContainer;
+    private final boolean isManagedCacheContainer;
+    private BasicCache<Object, Boolean> cache;
 
     public InfinispanIdempotentRepository(BasicCacheContainer cacheContainer, String cacheName) {
         this.cacheContainer = cacheContainer;
         this.cacheName = cacheName;
+        this.isManagedCacheContainer = false;
     }
 
     public InfinispanIdempotentRepository(String cacheName) {
-        cacheContainer = new DefaultCacheManager();
+        this.cacheContainer = new DefaultCacheManager();
         this.cacheName = cacheName;
-        isManagedCacheContainer = true;
+        this.isManagedCacheContainer = true;
     }
 
     public InfinispanIdempotentRepository() {
@@ -106,16 +108,21 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
 
     @Override
     protected void doShutdown() throws Exception {
-        super.doShutdown();
         if (isManagedCacheContainer) {
             cacheContainer.stop();
         }
+
+        super.doShutdown();
     }
 
     private BasicCache<Object, Boolean> getCache() {
-        return cacheName != null
+        if (cache == null) {
+            cache = cacheName != null
                 ? cacheContainer.<Object, Boolean>getCache(cacheName)
                 : cacheContainer.<Object, Boolean>getCache();
+        }
+
+        return cache;
     }
 }
 

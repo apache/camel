@@ -17,6 +17,7 @@
 package org.apache.camel.component.infinispan;
 
 import java.util.List;
+
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.infinispan.Cache;
@@ -90,15 +91,18 @@ public class InfinispanClusterTestSupport extends CamelTestSupport {
         } catch (Throwable ex) {
             throw new Exception(ex);
         }
+
         super.setUp();
     }
 
     @Override
     public void tearDown() throws Exception {
+        super.tearDown();
+
+        // Has to be done later, maybe CamelTestSupport should
         for (BasicCacheContainer container: clusteredCacheContainers) {
             container.stop();
         }
-        super.tearDown();
     }
 
     @Override

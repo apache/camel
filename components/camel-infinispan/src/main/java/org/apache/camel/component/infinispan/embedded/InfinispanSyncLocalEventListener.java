@@ -17,6 +17,7 @@
 package org.apache.camel.component.infinispan.embedded;
 
 import java.util.Set;
+
 import org.apache.camel.component.infinispan.InfinispanConsumer;
 import org.apache.camel.component.infinispan.InfinispanEventListener;
 import org.infinispan.notifications.Listener;
@@ -30,13 +31,9 @@ import org.infinispan.notifications.cachelistener.annotation.CacheEntryPassivate
 import org.infinispan.notifications.cachelistener.annotation.CacheEntryRemoved;
 import org.infinispan.notifications.cachelistener.annotation.CacheEntryVisited;
 import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Listener(clustered = false, sync = true)
 public class InfinispanSyncLocalEventListener extends InfinispanEventListener {
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
     public InfinispanSyncLocalEventListener(InfinispanConsumer infinispanConsumer, Set<String> eventTypes) {
         super(infinispanConsumer, eventTypes);
     }
@@ -51,8 +48,6 @@ public class InfinispanSyncLocalEventListener extends InfinispanEventListener {
     @CacheEntryVisited
     @CacheEntryExpired
     public void processEvent(CacheEntryEvent<Object, Object> event) {
-        logger.trace("Received CacheEntryEvent [{}]", event);
-
         dispatch(event.getType().toString(), event.isPre(), event.getCache().getName(), event.getKey());
     }
 

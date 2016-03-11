@@ -17,6 +17,7 @@
 package org.apache.camel.component.infinispan.embedded;
 
 import java.util.Set;
+
 import org.apache.camel.component.infinispan.InfinispanConsumer;
 import org.apache.camel.component.infinispan.InfinispanEventListener;
 import org.infinispan.notifications.Listener;
@@ -25,15 +26,11 @@ import org.infinispan.notifications.cachelistener.annotation.CacheEntryExpired;
 import org.infinispan.notifications.cachelistener.annotation.CacheEntryModified;
 import org.infinispan.notifications.cachelistener.annotation.CacheEntryRemoved;
 import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Listener(clustered = true, sync = true)
 public class InfinispanSyncClusteredEventListener extends InfinispanEventListener {
-    /*clustered listeners only listen for post events*/
+    // clustered listeners only listen for post events
     private static final boolean IS_PRE = false;
-
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public InfinispanSyncClusteredEventListener(InfinispanConsumer infinispanConsumer, Set<String> eventTypes) {
         super(infinispanConsumer, eventTypes);
@@ -44,8 +41,6 @@ public class InfinispanSyncClusteredEventListener extends InfinispanEventListene
     @CacheEntryRemoved
     @CacheEntryExpired
     public void processEvent(CacheEntryEvent<Object, Object> event) {
-        logger.trace("Received CacheEntryEvent [{}]", event);
-
         if (isAccepted(event.getType().toString())) {
             infinispanConsumer.processEvent(event.getType().toString(), IS_PRE, event.getCache().getName(), event.getKey());
         }
