@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
-import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.component.infinispan.InfinispanConfiguration;
 import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
@@ -30,8 +30,8 @@ public final class InfinispanRemoteOperation {
     private InfinispanRemoteOperation() {
     }
 
-    public static Query buildQuery(InfinispanConfiguration configuration, BasicCache<Object, Object> cache, Exchange exchange) {
-        InfinispanQueryBuilder queryBuilder = exchange.getIn().getHeader(InfinispanConstants.QUERY_BUILDER, InfinispanQueryBuilder.class);
+    public static Query buildQuery(InfinispanConfiguration configuration, BasicCache<Object, Object> cache, Message message) {
+        InfinispanQueryBuilder queryBuilder = message.getHeader(InfinispanConstants.QUERY_BUILDER, InfinispanQueryBuilder.class);
         if (queryBuilder == null) {
             queryBuilder = configuration.getQueryBuilder();
         }
