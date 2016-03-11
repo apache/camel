@@ -23,11 +23,9 @@ import java.util.List;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -60,6 +58,8 @@ public class TestEndpoint extends MockEndpoint {
     private long timeout = 2000L;
     @UriParam
     private boolean split;
+    @UriParam
+    private String delimiter = "\\n|\\r";
 
     public TestEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -83,7 +83,7 @@ public class TestEndpoint extends MockEndpoint {
                 }
                 if (split) {
                     // use new lines in both styles
-                    Iterator it = ObjectHelper.createIterator(body, "\\n|\\r", false, true);
+                    Iterator it = ObjectHelper.createIterator(body, delimiter, false, true);
                     while (it.hasNext()) {
                         Object line = it.next();
                         LOG.trace("Received message body {}", line);
@@ -144,5 +144,18 @@ public class TestEndpoint extends MockEndpoint {
      */
     public void setSplit(boolean split) {
         this.split = split;
+    }
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    /**
+     * The split delimiter to use when split is enabled.
+     * By default the delimiter is new line based.
+     * The delimiter can be a regular expression.
+     */
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
     }
 }

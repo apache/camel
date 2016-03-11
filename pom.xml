@@ -230,14 +230,25 @@
                 <exclude>**/test/data*/**/*</exclude>
                 <exclude>.gitignore</exclude>
                 <exclude>.git/**/*</exclude>
-                <!-- tooling/camel-manual/src/styles/print.css use a different
-                  license -->
+                <exclude>**/*.adoc</exclude>
+                <exclude>**/*.md</exclude>
+                <!-- tooling/camel-manual/src/styles/print.css use a different license -->
                 <exclude>**/src/styles/print.css</exclude>
+                <!-- tooling for component docs -->
+                <exclude>**/component-header.mvel</exclude>
+                <exclude>**/component-options.mvel</exclude>
+                <exclude>**/endpoint-options.mvel</exclude>
                 <!-- cxf does not handle comments here -->
                 <exclude>**/src/main/resources/META-INF/cxf/cxf.extension</exclude>
                 <exclude>**/src/main/resources/META-INF/cxf/bus-extensions.txt</exclude>
                 <!-- ignore the api signatures files -->
                 <exclude>**/src/signatures/*.txt</exclude>
+                <!-- camel website and user-manual -->
+                <exclude>**/node/**</exclude>
+                <exclude>**/node_modules/**</exclude>
+                <exclude>**/npm-shrinkwrap.json</exclude>
+                <exclude>**/package.json</exclude>
+                <exclude>**/user-manual/**</exclude>
                 <!-- generated files -->
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>

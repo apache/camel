@@ -24,6 +24,11 @@
         <property name="camelController" ref="camelController"/>
       </action>
     </command>
+    <command name="camel-catalog/component-info">
+      <action class="org.apache.camel.karaf.commands.catalog.CatalogComponentInfo">
+        <property name="camelController" ref="camelController"/>
+      </action>
+    </command>
     <command name="camel-catalog/dataformat-list">
       <action class="org.apache.camel.karaf.commands.catalog.CatalogDataFormatList">
         <property name="camelController" ref="camelController"/>

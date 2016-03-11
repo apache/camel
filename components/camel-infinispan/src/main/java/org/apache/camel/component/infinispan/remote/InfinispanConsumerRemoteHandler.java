@@ -50,8 +50,7 @@ public final class InfinispanConsumerRemoteHandler implements InfinispanConsumer
 
     @Override
     public void stop(InfinispanConsumer consumer) {
-        RemoteCache<?, ?> remoteCache = (RemoteCache<?, ?>) consumer.getCache();
-        remoteCache.removeClientListener(consumer.getListener());
+        InfinispanUtil.asRemote(consumer.getCache()).removeClientListener(consumer.getListener());
     }
 
 }
