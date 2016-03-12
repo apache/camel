@@ -289,7 +289,8 @@
       <bundle>mvn:org.apache.camel/camel-coap/${project.version}</bundle>
   </feature>
   <feature name='camel-cometd' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature>jetty</feature>
+    <!-- camel-cometd currently requries jetty 8 -->
+    <feature version="[8,9)">jetty</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cometd-java-server/${cometd-java-server-bundle-version}</bundle>
