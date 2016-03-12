@@ -23,17 +23,14 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.osgi.CamelContextFactory;
-
 import org.junit.After;
 import org.junit.Before;
-
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
@@ -44,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNotNull;
-
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.vmOption;
@@ -130,10 +126,8 @@ public abstract class AbstractFeatureTest {
     protected CamelContext createCamelContext() throws Exception {
         LOG.info("Creating the CamelContext ...");
         setThreadContextClassLoader();
-        CamelContextFactory factory = new CamelContextFactory();
-        factory.setBundleContext(bundleContext);
-        LOG.info("Get the bundleContext is " + bundleContext);
-        return factory.createContext();
+        OsgiDefaultCamelContext camel = new OsgiDefaultCamelContext(bundleContext);
+        return camel;
     }
 
     protected void setThreadContextClassLoader() {
@@ -248,7 +242,6 @@ public abstract class AbstractFeatureTest {
 
             // we need INFO logging otherwise we cannot see what happens
             new LogLevelOption(LogLevelOption.LogLevel.INFO),
-
 
             // install the cxf jaxb spec as the karaf doesn't provide it by default
             KarafDistributionOption.features(getCamelKarafFeatureUrl(), features)

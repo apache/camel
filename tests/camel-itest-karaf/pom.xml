@@ -180,7 +180,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkCount>1</forkCount>
-		    <reuseForks>false</reuseForks>
+		            <reuseForks>false</reuseForks>
                     <systemPropertyVariables>
                         <karafVersion>${karaf-version}</karafVersion>
                     </systemPropertyVariables>
@@ -222,6 +222,12 @@
         <id>karaf3</id>
             <properties>
                 <karaf-version>${karaf3-version}</karaf-version>
+            </properties>
+        </profile>
+        <profile>
+        <id>karaf4</id>
+            <properties>
+                <karaf-version>${karaf4-version}</karaf-version>
             </properties>
         </profile>
     </profiles>
