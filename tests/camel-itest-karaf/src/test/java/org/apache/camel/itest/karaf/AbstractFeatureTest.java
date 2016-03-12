@@ -60,14 +60,13 @@ public abstract class AbstractFeatureTest {
 
     @Before
     public void setUp() throws Exception {
-        LOG.info("Calling the setUp method ");
-        LOG.info("The BundleContext is " + bundleContext);
+        LOG.info("setUp() using BundleContext: {}", bundleContext);
         Thread.sleep(3000);
     }
 
     @After
     public void tearDown() throws Exception {
-        LOG.info("Calling the tearDown method ");
+        LOG.info("tearDown()");
     }
 
     protected void testComponent(String component) throws Exception {
@@ -162,15 +161,6 @@ public abstract class AbstractFeatureTest {
                 versionAsInProject().type("xml/features");
     }
     
-    public static UrlReference getKarafFeatureUrl() {
-        String karafVersion = System.getProperty("karafVersion");
-        LOG.info("*** The karaf version is " + karafVersion + " ***");
-
-        String type = "xml/features";
-        return mavenBundle().groupId("org.apache.karaf.assemblies.features").
-            artifactId("standard").version(karafVersion).type(type);
-    }
-
     private static void switchPlatformEncodingToUTF8() {
         try {
             System.setProperty("file.encoding", "UTF-8");
@@ -188,7 +178,7 @@ public abstract class AbstractFeatureTest {
         try {
             p.load(ins);
         } catch (Throwable t) {
-            //
+            // ignore
         }
         String karafVersion = p.getProperty("org.apache.karaf/apache-karaf/version");
         if (karafVersion == null) {
@@ -210,7 +200,7 @@ public abstract class AbstractFeatureTest {
     public static Option[] configure(String mainFeature, String... extraFeatures) {
         switchPlatformEncodingToUTF8();
         String karafVersion = getKarafVersion();
-        LOG.info("*** The karaf version is " + karafVersion + " ***");
+        LOG.info("*** Apache Karaf version is " + karafVersion + " ***");
 
         List<String> list = new ArrayList<String>();
         list.add("camel-core");
@@ -243,7 +233,7 @@ public abstract class AbstractFeatureTest {
 
             vmOption("-Dfile.encoding=UTF-8"),
 
-            // install the unit test
+            // install junit
             getJUnitBundle(),
 
             // install the features
