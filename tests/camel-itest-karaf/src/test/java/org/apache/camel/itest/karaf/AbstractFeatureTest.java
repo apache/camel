@@ -61,6 +61,9 @@ public abstract class AbstractFeatureTest {
     @Before
     public void setUp() throws Exception {
         LOG.info("setUp() using BundleContext: {}", bundleContext);
+
+        // give time for karaf to install
+        Thread.sleep(3000);
     }
 
     @After
