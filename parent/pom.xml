@@ -506,7 +506,10 @@
     <spring-version-range>[3.2,5)</spring-version-range>
     <!-- However, spring-dm does not support spring 4.x so import-range must be 3.x for the -->
     <!-- Karaf features file. -->
+    <!-- TODO: rename to spring-dm-version-range-karaf -->
     <spring-version-range-karaf>[3.2,4)</spring-version-range-karaf>
+    <!-- for spring 4.x in karaf -->
+    <spring4-version-range-karaf>[4,5)</spring4-version-range-karaf>
     <spring-version>${spring4-version}</spring-version>
     <spring32-version>3.2.15.RELEASE</spring32-version>
     <spring40-version>4.0.9.RELEASE</spring40-version>
@@ -515,8 +518,8 @@
     <spring4-version>4.2.5.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.2.8.RELEASE</spring-security-version>
-    <spring-ws-bundle-version>2.2.2.RELEASE_1</spring-ws-bundle-version>
-    <spring-ws-version>2.2.2.RELEASE</spring-ws-version>
+    <spring-ws-bundle-version>2.2.4.RELEASE_1</spring-ws-bundle-version>
+    <spring-ws-version>2.2.4.RELEASE</spring-ws-version>
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.12.0</spymemcached-version>
     <squareup-okhttp-version>2.7.5</squareup-okhttp-version>
