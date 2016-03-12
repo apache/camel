@@ -1504,10 +1504,10 @@
     <bundle>mvn:org.apache.camel/camel-spring-ldap/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-redis' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>spring-data-redis doesn't support importing spring version which is above 4.0.5 </details>
+    <details>camel-spring-redis only works with Spring 4.2.x</details>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version='${spring-version-range}'>spring</feature>
-    <feature version='${spring-version-range}'>spring-tx</feature>
+    <feature version='${spring42-version-range}'>spring</feature>
+    <feature version='${spring42-version-range}'>spring-tx</feature>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.data/spring-data-redis/${spring-data-redis-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jedis/${jedis-client-bundle-version}</bundle>
