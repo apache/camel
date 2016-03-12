@@ -26,9 +26,9 @@ import java.util.Properties;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.osgi.CamelContextFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.ops4j.pax.exam.Option;
@@ -38,6 +38,7 @@ import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.rbc.Constants;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,9 @@ public abstract class AbstractFeatureTest {
 
     @Inject
     protected BundleContext bundleContext;
+
+    @Inject
+    protected BlueprintContainer blueprintContainer;
 
     @Before
     public void setUp() throws Exception {
@@ -125,12 +129,10 @@ public abstract class AbstractFeatureTest {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        LOG.info("Creating the CamelContext ...");
+        LOG.info("Creating CamelContext using BundleContext: {} and BlueprintContainer: {}", bundleContext, blueprintContainer);
         setThreadContextClassLoader();
-        CamelContextFactory factory = new CamelContextFactory();
-        factory.setBundleContext(bundleContext);
-        LOG.info("Get the bundleContext is " + bundleContext);
-        return factory.createContext();
+        BlueprintCamelContext context = new BlueprintCamelContext(bundleContext, blueprintContainer);
+        return context;
     }
 
     protected void setThreadContextClassLoader() {
@@ -212,7 +214,7 @@ public abstract class AbstractFeatureTest {
 
         List<String> list = new ArrayList<String>();
         list.add("camel-core");
-        list.add("camel-spring");
+        list.add("camel-blueprint");
         list.add("camel-" + mainFeature);
         for (String extra : extraFeatures) {
             list.add("camel-" + extra);
