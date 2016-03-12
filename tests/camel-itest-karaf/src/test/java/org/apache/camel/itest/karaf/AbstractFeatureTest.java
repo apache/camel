@@ -61,7 +61,6 @@ public abstract class AbstractFeatureTest {
     @Before
     public void setUp() throws Exception {
         LOG.info("setUp() using BundleContext: {}", bundleContext);
-        Thread.sleep(3000);
     }
 
     @After
@@ -75,7 +74,7 @@ public abstract class AbstractFeatureTest {
             try {
                 assertNotNull("Cannot get component with name: " + component, createCamelContext().getComponent(component));
                 return;
-            } catch (Exception t) {
+            } catch (Throwable t) {
                 if (System.currentTimeMillis() < max) {
                     Thread.sleep(1000);
                 } else {
@@ -97,7 +96,7 @@ public abstract class AbstractFeatureTest {
                 assertNotNull(dataFormatDefinition);
                 assertNotNull(dataFormatDefinition.getDataFormat(new DefaultRouteContext(createCamelContext())));
                 return;
-            } catch (Exception t) {
+            } catch (Throwable t) {
                 if (System.currentTimeMillis() < max) {
                     Thread.sleep(1000);
                 } else {
@@ -117,7 +116,7 @@ public abstract class AbstractFeatureTest {
             try {
                 assertNotNull(createCamelContext().resolveLanguage(lang));
                 return;
-            } catch (Exception t) {
+            } catch (Throwable t) {
                 if (System.currentTimeMillis() < max) {
                     Thread.sleep(1000);
                 } else {
@@ -218,9 +217,6 @@ public abstract class AbstractFeatureTest {
 
             // we need INFO logging otherwise we cannot see what happens
             new LogLevelOption(LogLevelOption.LogLevel.INFO),
-
-            // to allow rbac to connect to localhost
-            org.ops4j.pax.exam.CoreOptions.systemProperty(Constants.RMI_HOST_PROPERTY).value("localhost"),
 
             KarafDistributionOption.karafDistributionConfiguration()
                     .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
