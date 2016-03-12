@@ -30,7 +30,6 @@
   </feature>
   <feature name='camel' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version='${project.version}'>camel-spring</feature>
     <feature version='${project.version}'>camel-blueprint</feature>
   </feature>
   <feature name='camel-core' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -53,9 +52,9 @@
   </feature>
   <feature name='camel-spring' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
-    <feature version='${spring-version-range-karaf}'>spring</feature>
+    <feature version='${spring-dm-version-range-karaf}'>spring</feature>
     <feature version='[1.2,2)'>spring-dm</feature>
-    <feature version='${spring-version-range-karaf}'>spring-tx</feature>
+    <feature version='${spring-dm-version-range-karaf}'>spring-tx</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-spring/${project.version}</bundle>
   </feature>
@@ -894,10 +893,10 @@
   <feature name='camel-jms' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${spring-version-range-karaf}'>spring</feature>
+    <feature version='${spring-version-range-karaf}'>spring-jms</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
-    <feature version='${spring-version-range-karaf}'>spring-jms</feature>
     <bundle>mvn:org.apache.camel/camel-jms/${project.version}</bundle>
   </feature>
   <feature name='camel-jmx' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -1515,8 +1514,8 @@
   <feature name='camel-spring-security' version='${project.version}' resolver='(obr)' start-level='50'>
     <details>spring-security doesn't support importing spring 4.x </details>
     <feature>http</feature>
-    <feature>spring</feature>
-    <feature>spring-web</feature>
+    <feature version='${spring-version-range-karaf}'>spring</feature>
+    <feature version='${spring-version-range-karaf}'>spring-web</feature>
     <bundle dependency='true'>mvn:org.springframework.security/spring-security-core/${spring-security-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.security/spring-security-config/${spring-security-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.security/spring-security-web/${spring-security-version}</bundle>
@@ -1525,10 +1524,10 @@
   <feature name='camel-spring-ws' version='${project.version}' resolver='(obr)' start-level='50'>
     <details>camel-spring-ws requires spring 4.x</details>
     <feature>http</feature>
-    <feature>spring</feature>
-    <feature>spring-jms</feature>
-    <feature>spring-oxm</feature>
-    <feature>spring-web</feature>
+    <feature version='${spring4-version-range-karaf}'>spring</feature>
+    <feature version='${spring4-version-range-karaf}'>spring-jms</feature>
+    <feature version='${spring4-version-range-karaf}'>spring-oxm</feature>
+    <feature version='${spring4-version-range-karaf}'>spring-web</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.wsdl4j/${wsdl4j-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-ws-core/${spring-ws-bundle-version}</bundle>

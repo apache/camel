@@ -502,14 +502,12 @@
     <spring-ldap-bundle-version>2.0.3.RELEASE_1</spring-ldap-bundle-version>
     <!-- spring 1.1.0 is not OSGi bundle any more -->
     <spring-retry-version>1.0.3.RELEASE</spring-retry-version>
-    <!-- Spring 4 can be used in OSGi, but not with spring-dm.  Allow Spring 4 for the bundle imports. -->
-    <spring-version-range>[3.2,5)</spring-version-range>
-    <!-- However, spring-dm does not support spring 4.x so import-range must be 3.x for the -->
-    <!-- Karaf features file. -->
-    <!-- TODO: rename to spring-dm-version-range-karaf -->
-    <spring-version-range-karaf>[3.2,4)</spring-version-range-karaf>
-    <!-- for spring 4.x in karaf -->
-    <spring4-version-range-karaf>[4,5)</spring4-version-range-karaf>
+    <!-- spring-dm only supports spring 3.x -->
+    <spring-dm-version-range-karaf>[3.2,4)</spring-dm-version-range-karaf>
+    <!-- karaf 2.x supports spring 4.1 onwards -->
+    <spring-version-range-karaf>[4.1,5)</spring-version-range-karaf>
+    <!-- and for spring 4.2.x onwards-->
+    <spring42-version-range-karaf>[4.2,5)</spring42-version-range-karaf>
     <spring-version>${spring4-version}</spring-version>
     <spring32-version>3.2.15.RELEASE</spring32-version>
     <spring40-version>4.0.9.RELEASE</spring40-version>
