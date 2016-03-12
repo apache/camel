@@ -36,13 +36,13 @@
         </camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
             !org.apache.camel.component.atmosphere.websocket.*,
-            javax.servlet*;version="3.1.0",
+            javax.servlet.*;version="${servlet-version-range}",
             org.atmosphere.*;version="${atmosphere-version-range}",
             org.apache.catalina;resolution:=optional,
             org.apache.catalina.comet;resolution:=optional,
-            org.eclipse.jetty.continuation;version="[7.6,8.2)";resolution:=optional,
-            org.eclipse.jetty.server;version="[7.6,8.2)";resolution:=optional,
-            org.eclipse.jetty.util.ssl;version="[7.6,8.2)";resolution:=optional,
+            org.eclipse.jetty.continuation;version="[8,10)";resolution:=optional,
+            org.eclipse.jetty.server;version="[8,10)";resolution:=optional,
+            org.eclipse.jetty.util.ssl;version="[8,10)";resolution:=optional,
             ${camel.osgi.import.defaults},
             *
         </camel.osgi.import.pkg>

@@ -31,7 +31,7 @@
 
   <properties>
     <camel.osgi.import.before.defaults>
-      javax.servlet.*;version="${servlet-version-range}"
+      org.eclipse.jetty.*;version="[8,9)"
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.jetty8</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=jetty</camel.osgi.export.service>
