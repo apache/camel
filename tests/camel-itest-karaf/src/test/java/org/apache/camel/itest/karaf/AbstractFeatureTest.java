@@ -26,9 +26,9 @@ import java.util.Properties;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.osgi.CamelContextFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.ops4j.pax.exam.Option;
@@ -36,6 +36,7 @@ import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
+import org.ops4j.pax.exam.rbc.Constants;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,8 +127,10 @@ public abstract class AbstractFeatureTest {
     protected CamelContext createCamelContext() throws Exception {
         LOG.info("Creating the CamelContext ...");
         setThreadContextClassLoader();
-        OsgiDefaultCamelContext camel = new OsgiDefaultCamelContext(bundleContext);
-        return camel;
+        CamelContextFactory factory = new CamelContextFactory();
+        factory.setBundleContext(bundleContext);
+        LOG.info("Get the bundleContext is " + bundleContext);
+        return factory.createContext();
     }
 
     protected void setThreadContextClassLoader() {
@@ -191,7 +194,7 @@ public abstract class AbstractFeatureTest {
         }
         if (karafVersion == null) {
             // setup the default version of it
-            karafVersion = "2.4.0";
+            karafVersion = "2.4.4";
         }
         return karafVersion;
     }
@@ -208,7 +211,6 @@ public abstract class AbstractFeatureTest {
         LOG.info("*** The karaf version is " + karafVersion + " ***");
 
         List<String> list = new ArrayList<String>();
-        list.add("cxf-jaxb");
         list.add("camel-core");
         list.add("camel-spring");
         list.add("camel-" + mainFeature);
@@ -221,29 +223,28 @@ public abstract class AbstractFeatureTest {
             // for remote debugging
             //org.ops4j.pax.exam.CoreOptions.vmOption("-Xdebug"),
             //org.ops4j.pax.exam.CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
-            
+
+            // we need INFO logging otherwise we cannot see what happens
+            new LogLevelOption(LogLevelOption.LogLevel.INFO),
+
+            // to allow rbac to connect to localhost
+            org.ops4j.pax.exam.CoreOptions.systemProperty(Constants.RMI_HOST_PROPERTY).value("localhost"),
+
             KarafDistributionOption.karafDistributionConfiguration()
                     .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
                     .karafVersion(karafVersion)
                     .name("Apache Karaf")
                     .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
 
+            // keep the folder so we can look inside when something fails
+            KarafDistributionOption.keepRuntimeFolder(),
+
             vmOption("-Dfile.encoding=UTF-8"),
 
-            //KarafDistributionOption.keepRuntimeFolder(),
-            // override the config.properties (to fix pax-exam bug)
-            //KarafDistributionOption.replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
-            // Update the jre.properties to export the sun.misc package
-            KarafDistributionOption.replaceConfigurationFile("etc/jre.properties", new File("src/test/resources/org/apache/camel/itest/karaf/jre.properties")),
-            KarafDistributionOption.replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
-            KarafDistributionOption.replaceConfigurationFile("etc/org.ops4j.pax.url.mvn.cfg", new File("src/test/resources/org/apache/camel/itest/karaf/org.ops4j.pax.url.mvn.cfg")),
-            
+            // install the unit test
             getJUnitBundle(),
 
-            // we need INFO logging otherwise we cannot see what happens
-            new LogLevelOption(LogLevelOption.LogLevel.INFO),
-
-            // install the cxf jaxb spec as the karaf doesn't provide it by default
+            // install the features
             KarafDistributionOption.features(getCamelKarafFeatureUrl(), features)
         };
 
