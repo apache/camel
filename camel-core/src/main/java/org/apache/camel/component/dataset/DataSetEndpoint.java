@@ -122,7 +122,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         Exchange exchange = createExchange();
         getDataSet().populateMessage(exchange, messageIndex);
 
-        if (null == disableDataSetIndex || !disableDataSetIndex) {
+        if (disableDataSetIndex == null || !disableDataSetIndex) {
             Message in = exchange.getIn();
             in.setHeader(Exchange.DATASET_INDEX, messageIndex);
         }
@@ -239,7 +239,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
         // now let's assert that they are the same
         if (log.isDebugEnabled()) {
-            if (null != copy.getIn().getHeader(Exchange.DATASET_INDEX)) {
+            if (copy.getIn().getHeader(Exchange.DATASET_INDEX) != null) {
                 log.debug("Received message: {} (DataSet index={}) = {}",
                         new Object[]{index, copy.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class), copy});
             } else {
@@ -256,9 +256,9 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     protected void assertMessageExpected(long index, Exchange expected, Exchange actual) throws Exception {
-        if (null == disableDataSetIndex) {
+        if (disableDataSetIndex == null) {
             Long dataSetIndexHeaderValue = actual.getIn().getHeader(Exchange.DATASET_INDEX, Long.class);
-            if (null != dataSetIndexHeaderValue) {
+            if (dataSetIndexHeaderValue != null) {
                 assertEquals("Header: " + Exchange.DATASET_INDEX, index, dataSetIndexHeaderValue, actual);
             } else {
                 actual.getIn().setHeader(Exchange.DATASET_INDEX, index);
