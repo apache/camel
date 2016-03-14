@@ -91,13 +91,13 @@ public class HttpRouteTest extends BaseJettyTest {
     @Test
     public void testEchoEndpoint() throws Exception {
         String out = template.requestBody("http://localhost:" + port1 + "/echo", "HelloWorld", String.class);
-        assertEquals("Get a wrong output " , "HelloWorld", out);
+        assertEquals("Get a wrong output ", "HelloWorld", out);
     }
     
     @Test
     public void testEchoEndpointWithIgnoreResponseBody() throws Exception {
         String out = template.requestBody("http://localhost:" + port1 + "/echo?ignoreResponseBody=true", "HelloWorld", String.class);
-        assertNull("Get a wrong output " , out);
+        assertNull("Get a wrong output ", out);
     }
 
     @Test
@@ -110,7 +110,7 @@ public class HttpRouteTest extends BaseJettyTest {
         client.executeMethod(post);
         InputStream response = post.getResponseBodyAsStream();
         String out = context.getTypeConverter().convertTo(String.class, response);
-        assertEquals("Get a wrong output " , "PostParameter", out);
+        assertEquals("Get a wrong output ", "PostParameter", out);
     }
 
     @Test
@@ -122,7 +122,7 @@ public class HttpRouteTest extends BaseJettyTest {
         client.executeMethod(post);
         InputStream response = post.getResponseBodyAsStream();
         String out = context.getTypeConverter().convertTo(String.class, response);
-        assertEquals("Get a wrong output " , "OK", out);
+        assertEquals("Get a wrong output ", "OK", out);
     }
 
     @Test
@@ -134,7 +134,7 @@ public class HttpRouteTest extends BaseJettyTest {
         client.executeMethod(post);
         InputStream response = post.getResponseBodyAsStream();
         String out = context.getTypeConverter().convertTo(String.class, response);
-        assertEquals("Get a wrong output " , "PostParameter", out);
+        assertEquals("Get a wrong output ", "PostParameter", out);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class HttpRouteTest extends BaseJettyTest {
         client.executeMethod(put);
         InputStream response = put.getResponseBodyAsStream();
         String out = context.getTypeConverter().convertTo(String.class, response);
-        assertEquals("Get a wrong output " , "PutParameter", out);
+        assertEquals("Get a wrong output ", "PutParameter", out);
     }
     
     @Test

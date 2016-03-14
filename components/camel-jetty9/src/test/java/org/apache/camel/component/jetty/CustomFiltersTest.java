@@ -46,7 +46,7 @@ public class CustomFiltersTest extends BaseJettyTest {
             // set a marker attribute to show that this filter class was used
             ((HttpServletResponse)response).addHeader("MyTestFilter", "true");
             ((HttpServletResponse)response).setHeader("KeyWord", keyWord);
-            chain.doFilter(request , response);
+            chain.doFilter(request, response);
         }
 
         @Override
