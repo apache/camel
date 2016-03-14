@@ -99,7 +99,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     @XmlAttribute
     private String routeId;
     @XmlAttribute
-    private Boolean excludeFromDocs;
+    private Boolean apiDocs;
 
     @Override
     public String getLabel() {
@@ -371,12 +371,16 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         return rest.verb(verb, uri);
     }
 
-    public Boolean getExcludeFromDocs() {
-        return excludeFromDocs;
+    public Boolean getApiDocs() {
+        return apiDocs;
     }
 
-    public void setExcludeFromDocs(Boolean excludeFromDocs) {
-        this.excludeFromDocs = excludeFromDocs;
+    /**
+     * Whether to include or exclude the VerbDefinition in API documentation.
+     * The default value is true.
+     */
+    public void setApiDocs(Boolean apiDocs) {
+        this.apiDocs = apiDocs;
     }
 
     public String asVerb() {

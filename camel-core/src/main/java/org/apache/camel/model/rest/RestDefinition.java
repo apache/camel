@@ -501,9 +501,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
-    public RestDefinition excludeFromDocs() {
+    /**
+     * Include or exclude the current Rest Definition in API documentation
+     */
+    public RestDefinition apiDocs(Boolean apiDocs) {
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setExcludeFromDocs(true);
+        verb.setApiDocs(apiDocs);
         return this;
     }
 
