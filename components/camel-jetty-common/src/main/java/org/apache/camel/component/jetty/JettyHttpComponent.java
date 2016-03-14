@@ -1058,6 +1058,12 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             }
         }
 
+        boolean cors = config.isEnableCORS();
+        if (cors) {
+            // allow HTTP Options as we want to handle CORS in rest-dsl
+            map.put("optionsEnabled", "true");
+        }
+
         String query = URISupport.createQueryString(map);
 
         String url;
@@ -1069,6 +1075,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
+        if (cors) {
+            restrict += ",OPTIONS";
+        }
         // get the endpoint
         url = String.format(url, scheme, host, port, path, restrict);
 

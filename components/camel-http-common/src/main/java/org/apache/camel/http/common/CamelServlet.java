@@ -48,7 +48,7 @@ public class CamelServlet extends HttpServlet {
 
     private ServletResolveConsumerStrategy servletResolveConsumerStrategy = new HttpServletResolveConsumerStrategy();
     private final ConcurrentMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
-   
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -75,7 +75,7 @@ public class CamelServlet extends HttpServlet {
         }
 
         // if its an OPTIONS request then return which method is allowed
-        if ("OPTIONS".equals(request.getMethod())) {
+        if ("OPTIONS".equals(request.getMethod()) && !consumer.isOptionsEnabled()) {
             String s;
             if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
                 s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
@@ -208,8 +208,6 @@ public class CamelServlet extends HttpServlet {
 
     /**
      * Override the Thread Context ClassLoader if need be.
-     *
-     * @param exchange
      * @return old classloader if overridden; otherwise returns null
      */
     protected ClassLoader overrideTccl(final Exchange exchange) {

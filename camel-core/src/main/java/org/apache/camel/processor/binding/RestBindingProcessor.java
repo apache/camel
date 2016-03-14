@@ -115,6 +115,14 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             exchange.addOnCompletion(new RestBindingCORSOnCompletion(corsHeaders));
         }
 
+        String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
+        if ("OPTIONS".equalsIgnoreCase(method)) {
+            // for OPTIONS methods then we should not route at all as its part of CORS
+            exchange.setProperty(Exchange.ROUTE_STOP, true);
+            callback.done(true);
+            return true;
+        }
+
         boolean isXml = false;
         boolean isJson = false;
 

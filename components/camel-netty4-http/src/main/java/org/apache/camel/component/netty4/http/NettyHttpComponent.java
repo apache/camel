@@ -342,6 +342,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             }
         }
 
+        // allow HTTP Options as we want to handle CORS in rest-dsl
+        boolean cors = config.isEnableCORS();
+
         String query = URISupport.createQueryString(map);
 
         String url;
@@ -352,6 +355,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         }
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
+        if (cors) {
+            restrict += ",OPTIONS";
+        }
         // get the endpoint
         url = String.format(url, scheme, host, port, path, restrict);
         

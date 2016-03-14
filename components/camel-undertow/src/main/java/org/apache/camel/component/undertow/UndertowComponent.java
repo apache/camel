@@ -178,6 +178,12 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
             }
         }
 
+        boolean cors = config.isEnableCORS();
+        if (cors) {
+            // allow HTTP Options as we want to handle CORS in rest-dsl
+            map.put("optionsEnabled", "true");
+        }
+
         String query = URISupport.createQueryString(map);
 
         String url;
@@ -187,8 +193,12 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
             url = "undertow:%s://%s:%s/%s?httpMethodRestrict=%s";
         }
 
+        // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
-
+        if (cors) {
+            restrict += ",OPTIONS";
+        }
+        // get the endpoint
         url = String.format(url, scheme, host, port, path, restrict);
 
         if (!query.isEmpty()) {

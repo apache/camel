@@ -58,10 +58,10 @@ public class HttpCamelHandler implements HttpHandler {
 
         HttpString requestMethod = httpExchange.getRequestMethod();
 
-        if (Methods.OPTIONS.equals(requestMethod)) {
+        if (Methods.OPTIONS.equals(requestMethod) && !consumer.getEndpoint().isOptionsEnabled()) {
             String allowedMethods;
             if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
-                allowedMethods = "OPTIONS" + consumer.getEndpoint().getHttpMethodRestrict();
+                allowedMethods = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
             } else {
                 allowedMethods = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
             }

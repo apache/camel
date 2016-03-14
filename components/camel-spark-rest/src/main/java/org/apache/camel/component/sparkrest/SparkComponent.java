@@ -333,10 +333,16 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
+        if (config.isEnableCORS()) {
+            // if CORS is enabled then configure that on the spark consumer
+            if (config.getConsumerProperties() == null) {
+                config.setConsumerProperties(new HashMap<String, Object>());
+            }
+            config.getConsumerProperties().put("enableCors", true);
+        }
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
             setProperties(consumer, config.getConsumerProperties());
         }
-
         return consumer;
     }
 }

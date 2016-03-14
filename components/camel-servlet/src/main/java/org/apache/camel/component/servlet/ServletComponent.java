@@ -208,9 +208,18 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         }
 
         Map<String, Object> map = new HashMap<String, Object>();
-        // setup endpoint options
-        if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
-            map.putAll(config.getEndpointProperties());
+        // build query string, and append any endpoint configuration properties
+        if (config.getComponent() == null || config.getComponent().equals("servlet")) {
+            // setup endpoint options
+            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+                map.putAll(config.getEndpointProperties());
+            }
+        }
+
+        boolean cors = config.isEnableCORS();
+        if (cors) {
+            // allow HTTP Options as we want to handle CORS in rest-dsl
+            map.put("optionsEnabled", "true");
         }
 
         // do not append with context-path as the servlet path should be without context-path
@@ -223,24 +232,30 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         } else {
             url = "servlet:///%s?httpMethodRestrict=%s";
         }
+
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
-
+        if (cors) {
+            restrict += ",OPTIONS";
+        }
         // get the endpoint
         url = String.format(url, path, restrict);
         
         if (!query.isEmpty()) {
             url = url + "&" + query;
         }       
+
         ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
         setProperties(endpoint, parameters);
 
-        // use the rest binding
-        HttpBinding binding = new ServletRestHttpBinding();
-        binding.setHeaderFilterStrategy(endpoint.getHeaderFilterStrategy());
-        binding.setTransferException(endpoint.isTransferException());
-        binding.setEagerCheckContentAvailable(endpoint.isEagerCheckContentAvailable());
-        endpoint.setBinding(binding);
+        if (!map.containsKey("httpBindingRef")) {
+            // use the rest binding, if not using a custom http binding
+            HttpBinding binding = new ServletRestHttpBinding();
+            binding.setHeaderFilterStrategy(endpoint.getHeaderFilterStrategy());
+            binding.setTransferException(endpoint.isTransferException());
+            binding.setEagerCheckContentAvailable(endpoint.isEagerCheckContentAvailable());
+            endpoint.setHttpBinding(binding);
+        }
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);

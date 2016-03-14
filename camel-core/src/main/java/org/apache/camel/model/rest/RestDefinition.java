@@ -234,10 +234,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return addVerb("head", uri);
     }
 
+    @Deprecated
     public RestDefinition options() {
         return addVerb("options", null);
     }
 
+    @Deprecated
     public RestDefinition options(String uri) {
         return addVerb("options", uri);
     }

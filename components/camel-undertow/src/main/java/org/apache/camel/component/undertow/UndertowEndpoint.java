@@ -79,6 +79,9 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     private Boolean reuseAddresses = Boolean.TRUE;
     @UriParam(label = "producer", prefix = "option.", multiValue = true)
     private Map<String, Object> options;
+    @UriParam(label = "consumer",
+            description = "Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.")
+    boolean optionsEnabled;
 
     public UndertowEndpoint(String uri, UndertowComponent component) throws URISyntaxException {
         super(uri, component);
@@ -267,6 +270,17 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
      */
     public void setOptions(Map<String, Object> options) {
         this.options = options;
+    }
+
+    public boolean isOptionsEnabled() {
+        return optionsEnabled;
+    }
+
+    /**
+     * Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.
+     */
+    public void setOptionsEnabled(boolean optionsEnabled) {
+        this.optionsEnabled = optionsEnabled;
     }
 
     @Override

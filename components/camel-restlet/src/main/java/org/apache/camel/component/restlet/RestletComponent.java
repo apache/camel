@@ -729,18 +729,24 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             }
         }
 
+        // allow HTTP Options as we want to handle CORS in rest-dsl
+        boolean cors = config.isEnableCORS();
+
         String query = URISupport.createQueryString(map);
 
         String url;
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
+        if (cors) {
+            restrict += ",OPTIONS";
+        }
 
         if (port > 0) {
-            url = "restlet:%s://%s:%s/%s?restletMethod=%s";
+            url = "restlet:%s://%s:%s/%s?restletMethods=%s";
             url = String.format(url, scheme, host, port, path, restrict);
         } else {
             // It could use the restlet servlet transport
-            url = "restlet:/%s?restletMethod=%s";
+            url = "restlet:/%s?restletMethods=%s";
             url = String.format(url, path, restrict);
         }
         if (!query.isEmpty()) {
