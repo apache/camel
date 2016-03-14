@@ -60,8 +60,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private long preloadSize;
     @UriParam(label = "consumer", defaultValue = "1000")
     private long initialDelay = 1000;
-    @UriParam(label = "consumer,producer", defaultValue = "null")
-    private Boolean disableDataSetIndex;
+    @UriParam(enums = "strict,lenient,off", defaultValue = "lenient")
+    private String dataSetIndex = "lenient";
 
     @Deprecated
     public DataSetEndpoint() {
@@ -120,9 +120,10 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
      */
     public Exchange createExchange(long messageIndex) throws Exception {
         Exchange exchange = createExchange();
+
         getDataSet().populateMessage(exchange, messageIndex);
 
-        if (disableDataSetIndex == null || !disableDataSetIndex) {
+        if (!getDataSetIndex().equals("off")) {
             Message in = exchange.getIn();
             in.setHeader(Exchange.DATASET_INDEX, messageIndex);
         }
@@ -211,21 +212,30 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     /**
-     * Flag to disable setting the CamelDataSetIndex header.
+     * Controls the behaviour of the CamelDataSetIndex header.
      * For Consumers:
-     * - true => the header will not be set
-     * - false/null/unset => the header will be set
+     * - off => the header will not be set
+     * - strict/lenient => the header will be set
      * For Producers:
-     * - true => the header value will not be verified, and will not be set if it is not present
-     * = false => the header value must be present and will be verified
-     * = null/unset => the header value will be verified if it is present, and will be set if it is not present
+     * - off => the header value will not be verified, and will not be set if it is not present
+     * = strict => the header value must be present and will be verified
+     * = lenient => the header value will be verified if it is present, and will be set if it is not present
      */
-    public void setDisableDataSetIndex(boolean disableDataSetIndex) {
-        this.disableDataSetIndex = disableDataSetIndex;
+    public void setDataSetIndex(String dataSetIndex) {
+        switch (dataSetIndex) {
+        case "off":
+        case "lenient":
+        case "strict":
+            this.dataSetIndex = dataSetIndex;
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid value specified for the dataSetIndex URI parameter:" + dataSetIndex
+                    + "Supported values are strict, lenient and off ");
+        }
     }
 
-    public boolean getDisableDataSetIndex() {
-        return disableDataSetIndex;
+    public String getDataSetIndex() {
+        return dataSetIndex;
     }
 
     // Implementation methods
@@ -256,16 +266,24 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     protected void assertMessageExpected(long index, Exchange expected, Exchange actual) throws Exception {
-        if (disableDataSetIndex == null) {
+        switch (getDataSetIndex()) {
+        case "off":
+            break;
+        case "strict":
+            long actualCounter = ExchangeHelper.getMandatoryHeader(actual, Exchange.DATASET_INDEX, Long.class);
+            assertEquals("Header: " + Exchange.DATASET_INDEX, index, actualCounter, actual);
+            break;
+        case "lenient":
+        default:
+            // Validate the header value if it is present
             Long dataSetIndexHeaderValue = actual.getIn().getHeader(Exchange.DATASET_INDEX, Long.class);
             if (dataSetIndexHeaderValue != null) {
                 assertEquals("Header: " + Exchange.DATASET_INDEX, index, dataSetIndexHeaderValue, actual);
             } else {
+                // set the header if it isn't there
                 actual.getIn().setHeader(Exchange.DATASET_INDEX, index);
             }
-        } else if (!disableDataSetIndex) {
-            long actualCounter = ExchangeHelper.getMandatoryHeader(actual, Exchange.DATASET_INDEX, Long.class);
-            assertEquals("Header: " + Exchange.DATASET_INDEX, index, actualCounter, actual);
+            break;
         }
 
         getDataSet().assertMessageExpected(this, expected, actual, index);

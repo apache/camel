@@ -32,8 +32,9 @@ public class DataSetConsumerTest extends ContextTestSupport {
 
     final String dataSetName = "foo";
     final String dataSetUri = "dataset://" + dataSetName;
-    final String dataSetUriWithDisableDataSetIndexSetToFalse = dataSetUri + "?disableDataSetIndex=false";
-    final String dataSetUriWithDisableDataSetIndexSetToTrue = dataSetUri + "?disableDataSetIndex=true";
+    final String dataSetUriWithDataSetIndexSetToOff = dataSetUri + "?dataSetIndex=off";
+    final String dataSetUriWithDataSetIndexSetToLenient = dataSetUri + "?dataSetIndex=lenient";
+    final String dataSetUriWithDataSetIndexSetToStrict = dataSetUri + "?dataSetIndex=strict";
     final String resultUri = "mock://result";
 
     @Override
@@ -91,9 +92,8 @@ public class DataSetConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    // TODO:  Add tests for dataSetIndex URI parameters
     @Test
-    public void testWithDisableDataSetIndexUriParameterUnset() throws Exception {
+    public void testWithDataSetIndexUriParameterUnset() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -112,11 +112,29 @@ public class DataSetConsumerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testWithDisableDataSetIndexUriParameterSetToFalse() throws Exception {
+    public void testWithDataSetIndexUriParameterSetToOff() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(dataSetUriWithDisableDataSetIndexSetToFalse)
+                from(dataSetUriWithDataSetIndexSetToOff)
+                        .to(resultUri);
+            }
+        });
+        context.start();
+
+        MockEndpoint result = getMockEndpoint(resultUri);
+        result.expectedMessageCount((int) dataSet.getSize());
+        result.allMessages().header(Exchange.DATASET_INDEX).isNull();
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testWithDataSetIndexUriParameterSetToLenient() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(dataSetUriWithDataSetIndexSetToLenient)
                         .to(resultUri);
             }
         });
@@ -131,11 +149,11 @@ public class DataSetConsumerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testWithDisableDataSetIndexUriParameterSetToTrue() throws Exception {
+    public void testWithDataSetIndexUriParameterSetToStrict() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(dataSetUriWithDisableDataSetIndexSetToTrue)
+                from(dataSetUriWithDataSetIndexSetToStrict)
                         .to(resultUri);
             }
         });
@@ -143,8 +161,12 @@ public class DataSetConsumerTest extends ContextTestSupport {
 
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int) dataSet.getSize());
-        result.allMessages().header(Exchange.DATASET_INDEX).isNull();
+        result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
+        result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
 
+        Thread.sleep(100);
         assertMockEndpointsSatisfied();
+
+        System.out.println("Place for Breakpoint");
     }
 }
