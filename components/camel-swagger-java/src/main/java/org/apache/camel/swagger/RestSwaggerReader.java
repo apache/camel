@@ -116,7 +116,8 @@ public class RestSwaggerReader {
         // gather all types in use
         Set<String> types = new LinkedHashSet<>();
         for (VerbDefinition verb : verbs) {
-            if (verb.getExcludeFromDocs() != null && verb.getExcludeFromDocs()) {
+            // check if the Verb Definition must be excluded from documentation
+            if (verb.getApiDocs() != null && !verb.getApiDocs()) {
                 continue;
             }
             String type = verb.getType();
@@ -159,7 +160,8 @@ public class RestSwaggerReader {
         String basePath = rest.getPath();
 
         for (VerbDefinition verb : verbs) {
-            if (verb.getExcludeFromDocs() != null && verb.getExcludeFromDocs()) {
+            // check if the Verb Definition must be excluded from documentation
+            if (verb.getApiDocs() != null && !verb.getApiDocs()) {
                 continue;
             }
             // the method must be in lower case
