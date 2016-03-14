@@ -116,10 +116,19 @@ public class RestSwaggerReader {
         // gather all types in use
         Set<String> types = new LinkedHashSet<>();
         for (VerbDefinition verb : verbs) {
+
             // check if the Verb Definition must be excluded from documentation
-            if (verb.getApiDocs() != null && !verb.getApiDocs()) {
+            Boolean apiDocs;
+            if (verb.getApiDocs() != null) {
+                apiDocs = verb.getApiDocs();
+            } else {
+                // fallback to option on rest
+                apiDocs = rest.getApiDocs();
+            }
+            if (apiDocs != null && !apiDocs) {
                 continue;
             }
+
             String type = verb.getType();
             if (ObjectHelper.isNotEmpty(type)) {
                 if (type.endsWith("[]")) {
@@ -161,7 +170,14 @@ public class RestSwaggerReader {
 
         for (VerbDefinition verb : verbs) {
             // check if the Verb Definition must be excluded from documentation
-            if (verb.getApiDocs() != null && !verb.getApiDocs()) {
+            Boolean apiDocs;
+            if (verb.getApiDocs() != null) {
+                apiDocs = verb.getApiDocs();
+            } else {
+                // fallback to option on rest
+                apiDocs = rest.getApiDocs();
+            }
+            if (apiDocs != null && !apiDocs) {
                 continue;
             }
             // the method must be in lower case
