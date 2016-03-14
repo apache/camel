@@ -19,8 +19,10 @@ package org.apache.camel.model.rest;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -547,6 +549,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      * REST DSL and turn those into regular Camel routes.
      */
     public List<RouteDefinition> asRouteDefinition(CamelContext camelContext) {
+        // sanity check this rest definition do not have duplicates
+        validateUniquePaths();
+
         List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
         if (camelContext.getRestConfigurations().isEmpty()) {
             camelContext.getRestConfiguration();
@@ -555,6 +560,19 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             addRouteDefinition(camelContext, answer, config.getComponent());
         }
         return answer;
+    }
+
+    protected void validateUniquePaths() {
+        Set<String> paths = new HashSet<String>();
+        for (VerbDefinition verb : verbs) {
+            String path = verb.asVerb();
+            if (verb.getUri() != null) {
+                path += ":" + verb.getUri();
+            }
+            if (!paths.add(path)) {
+                throw new IllegalArgumentException("Duplicate verb detected in rest-dsl: " + path);
+            }
+        }
     }
 
     /**
