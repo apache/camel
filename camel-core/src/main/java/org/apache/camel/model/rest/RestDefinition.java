@@ -70,6 +70,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @XmlAttribute
     private Boolean enableCORS;
 
+    @XmlAttribute
+    private Boolean apiDocs;
+
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
 
@@ -176,9 +179,22 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         this.enableCORS = enableCORS;
     }
 
+    public Boolean getApiDocs() {
+        return apiDocs;
+    }
+
+    /**
+     * Whether to include or exclude the VerbDefinition in API documentation.
+     * This option will override what may be configured on a parent level
+     * <p/>
+     * The default value is true.
+     */
+    public void setApiDocs(Boolean apiDocs) {
+        this.apiDocs = apiDocs;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
-
 
     /**
      * To set the base path of this REST service
@@ -454,6 +470,23 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             // add on last verb as that is how the Java DSL works
             VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
             verb.setEnableCORS(enableCORS);
+        }
+
+        return this;
+    }
+
+    /**
+     * Include or exclude the current Rest Definition in API documentation.
+     * <p/>
+     * The default value is true.
+     */
+    public RestDefinition apiDocs(Boolean apiDocs) {
+        if (getVerbs().isEmpty()) {
+            this.apiDocs = apiDocs;
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setApiDocs(apiDocs);
         }
 
         return this;
