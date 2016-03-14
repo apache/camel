@@ -98,6 +98,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     private RestDefinition rest;
     @XmlAttribute
     private String routeId;
+    @XmlAttribute
+    private Boolean apiDocs;
 
     @Override
     public String getLabel() {
@@ -367,6 +369,18 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
 
     public RestDefinition verb(String verb, String uri) {
         return rest.verb(verb, uri);
+    }
+
+    public Boolean getApiDocs() {
+        return apiDocs;
+    }
+
+    /**
+     * Whether to include or exclude the VerbDefinition in API documentation.
+     * The default value is true.
+     */
+    public void setApiDocs(Boolean apiDocs) {
+        this.apiDocs = apiDocs;
     }
 
     public String asVerb() {
