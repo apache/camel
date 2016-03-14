@@ -33,8 +33,9 @@ public class DataSetProducerTest extends ContextTestSupport {
 
     final String dataSetName = "foo";
     final String dataSetUri = "dataset://" + dataSetName;
-    final String dataSetUriWithDisableDataSetIndexSetToFalse = dataSetUri + "?disableDataSetIndex=false";
-    final String dataSetUriWithDisableDataSetIndexSetToTrue = dataSetUri + "?disableDataSetIndex=true";
+    final String dataSetUriWithDataSetIndexSetToOff = dataSetUri + "?dataSetIndex=off";
+    final String dataSetUriWithDataSetIndexSetToLenient = dataSetUri + "?dataSetIndex=lenient";
+    final String dataSetUriWithDataSetIndexSetToStrict = dataSetUri + "?dataSetIndex=strict";
     final String sourceUri = "direct://source";
     final String resultUri = "mock://result";
 
@@ -46,7 +47,7 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSendingMessagesExplicitlyToDataSetEndpoint() throws Exception {
+    public void testSendingMessagesExplicitlyToDataSetEndpointWithDataSetIndexHeader() throws Exception {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
             template.sendBodyAndHeader(dataSetUri, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
@@ -56,7 +57,7 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndex() throws Exception {
+    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexHeader() throws Exception {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
             template.sendBody(dataSetUri, dataSet.getDefaultBody());
@@ -65,11 +66,49 @@ public class DataSetProducerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexAndDataSetIndexUriParameterSetToOff() throws Exception {
+        long size = dataSet.getSize();
+        for (long i = 0; i < size; i++) {
+            if (0 == i % 2) {
+                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
+            } else {
+                template.sendBody(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody());
+            }
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexAndDataSetIndexUriParameterSetToLenient() throws Exception {
+        long size = dataSet.getSize();
+        for (long i = 0; i < size; i++) {
+            if (0 == i % 2) {
+                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
+            } else {
+                template.sendBody(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody());
+            }
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexAndDataSetIndexUriParameterSetToStrict() throws Exception {
+        long size = dataSet.getSize();
+        for (long i = 0; i < size; i++) {
+            template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToStrict, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
     /**
-     * Verfiy that the CamelDataSetIndex header is optional when the disableDataSetIndex parameter is unset
+     * Verify that the CamelDataSetIndex header is optional when the dataSetIndex parameter is unset
      */
     @Test
-    public void testNotSettingDataSetIndexHeaderWhenDisableDataSetIndexUriParameterIsUnset() throws Exception {
+    public void testNotSettingDataSetIndexHeaderWhenDataSetIndexUriParameterIsUnset() throws Exception {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
             if (0 == (size % 2)) {
@@ -83,39 +122,54 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     /**
-     * Verfiy tha the CamelDataSetIndex header is optional when the disableDataSetIndex parameter is true
+     * Verify that the CamelDataSetIndex header is ignored when the dataSetIndex URI paramter is set to off
      */
     @Test
-    public void testNotSettingDataSetIndexHeaderWhenDisableDataSetIndexUriParameterSetToTrue() throws Exception {
+    public void testNotSettingDataSetIndexHeaderWhenDataSetIndexUriParameterSetToOff() throws Exception {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
             if (0 == (size % 2)) {
-                template.sendBodyAndHeader(dataSetUriWithDisableDataSetIndexSetToTrue, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
+                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToOff, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, size - i);
             } else {
-                template.sendBody(dataSetUriWithDisableDataSetIndexSetToTrue, dataSet.getDefaultBody());
+                template.sendBody(dataSetUriWithDataSetIndexSetToOff, dataSet.getDefaultBody());
             }
-        }
-        for (long i = 0; i < size; i++) {
         }
 
         assertMockEndpointsSatisfied();
     }
 
     /**
-     * Verify tha the CamelDataSetIndex header is required when the disableDataSetIndex parameter is false
+     * Verify that the CamelDataSetIndex header is optional when the dataSetIndex URI parameter is set to lenient
      */
     @Test
-    public void testNotSettingDataSetIndexHeaderWhenDisableDataSetIndexUriParameterSetToFalse() throws Exception {
+    public void testNotSettingDataSetIndexHeaderWhenDataSetIndexUriParameterSetToLenient() throws Exception {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
-            template.sendBody(dataSetUriWithDisableDataSetIndexSetToFalse, dataSet.getDefaultBody());
+            if (0 == (size % 2)) {
+                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
+            } else {
+                template.sendBody(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody());
+            }
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
+    /**
+     * Verify that the CamelDataSetIndex header is required when the dataSetIndex URI parameter is set to strict
+     */
+    @Test
+    public void testNotSettingDataSetIndexHeaderWhenDataSetIndexUriParameterSetToStrict() throws Exception {
+        long size = dataSet.getSize();
+        for (long i = 0; i < size; i++) {
+            template.sendBody(dataSetUriWithDataSetIndexSetToStrict, dataSet.getDefaultBody());
         }
 
         try {
-            getMockEndpoint(dataSetUriWithDisableDataSetIndexSetToFalse).assertIsSatisfied();
+            assertMockEndpointsSatisfied();
         } catch (AssertionError assertionError) {
             // Check as much of the string as possible - but the ExchangeID at the end will be unique
-            String expectedErrorString = dataSetUriWithDisableDataSetIndexSetToFalse
+            String expectedErrorString = dataSetUriWithDataSetIndexSetToStrict
                     + " Failed due to caught exception: "
                     + NoSuchHeaderException.class.getName()
                     + ": No '" + Exchange.DATASET_INDEX
@@ -133,17 +187,7 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexAndDisableDataSetIndexUriParameterSetToTrue() throws Exception {
-        long size = dataSet.getSize();
-        for (long i = 0; i < size; i++) {
-            template.sendBody(dataSetUriWithDisableDataSetIndexSetToTrue, dataSet.getDefaultBody());
-        }
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testDisableDataSetIndexUriParameterUnset() throws Exception {
+    public void testDataSetIndexUriParameterUnset() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -171,37 +215,12 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDisableDataSetIndexUriParameterSetToTrue() throws Exception {
+    public void testDataSetIndexUriParameterSetToOff() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from(sourceUri)
-                        .to(dataSetUriWithDisableDataSetIndexSetToTrue)
-                        .to(resultUri);
-            }
-        });
-        context.start();
-
-        long size = dataSet.getSize();
-
-        MockEndpoint result = getMockEndpoint(resultUri);
-        result.expectedMessageCount((int) size);
-        result.allMessages().header(Exchange.DATASET_INDEX).isNull();
-
-        for (long i = 0; i < size; i++) {
-            template.sendBody(sourceUri, dataSet.getDefaultBody());
-        }
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testDisableDataSetIndexUriParameterSetToFalse() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from(sourceUri)
-                        .to(dataSetUriWithDisableDataSetIndexSetToFalse)
+                        .to(dataSetUriWithDataSetIndexSetToOff)
                         .to(resultUri);
             }
         });
@@ -223,7 +242,60 @@ public class DataSetProducerTest extends ContextTestSupport {
 
 
     @Test
-    public void testInvalidDataSetIndexValueWithDisableDataSetIndexUriParameterUnset() throws Exception {
+    public void testDataSetIndexUriParameterSetToLenient() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(sourceUri)
+                        .to(dataSetUriWithDataSetIndexSetToLenient)
+                        .to(resultUri);
+            }
+        });
+        context.start();
+
+        long size = dataSet.getSize();
+
+        MockEndpoint result = getMockEndpoint(resultUri);
+        result.expectedMessageCount((int) size);
+        result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
+        result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
+
+        for (long i = 0; i < size; i++) {
+            template.sendBodyAndHeader(sourceUri, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
+
+    @Test
+    public void testDataSetIndexUriParameterSetToStrict() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(sourceUri)
+                        .to(dataSetUriWithDataSetIndexSetToStrict)
+                        .to(resultUri);
+            }
+        });
+        context.start();
+
+        long size = dataSet.getSize();
+
+        MockEndpoint result = getMockEndpoint(resultUri);
+        result.expectedMessageCount((int) size);
+        result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
+        result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
+
+        for (long i = 0; i < size; i++) {
+            template.sendBodyAndHeader(sourceUri, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testInvalidDataSetIndexValueWithDataSetIndexUriParameterUnset() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -269,12 +341,12 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testInvalidDataSetIndexValueWithDisableDataSetIndexUriParameterSetToTrue() throws Exception {
+    public void testInvalidDataSetIndexValueWithDataSetIndexUriParameterSetToOff() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from(sourceUri)
-                        .to(dataSetUriWithDisableDataSetIndexSetToTrue)
+                        .to(dataSetUriWithDataSetIndexSetToOff)
                         .to(resultUri);
             }
         });
@@ -297,12 +369,58 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testInvalidDataSetIndexValueWithDisableDataSetIndexUriParameterSetToFalse() throws Exception {
+    public void testInvalidDataSetIndexValueWithDataSetIndexUriParameterSetToLenient() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from(sourceUri)
-                        .to(dataSetUriWithDisableDataSetIndexSetToFalse)
+                        .to(dataSetUriWithDataSetIndexSetToLenient)
+                        .to(resultUri);
+            }
+        });
+        context.start();
+
+        long size = dataSet.getSize();
+
+        MockEndpoint result = getMockEndpoint(resultUri);
+        result.expectedMessageCount((int) size);
+        result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
+
+        for (long i = 0; i < size; i++) {
+            if (i == (size / 2)) {
+                template.sendBodyAndHeader(sourceUri, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i + 10);
+            } else {
+                template.sendBody(sourceUri, dataSet.getDefaultBody());
+            }
+        }
+
+        try {
+            assertMockEndpointsSatisfied();
+        } catch (AssertionError assertionError) {
+            // Check as much of the string as possible - but the ExchangeID at the end will be unique
+            String expectedErrorString = dataSetUriWithDataSetIndexSetToLenient + " Failed due to caught exception: "
+                    + AssertionError.class.getName()
+                    + ": Header: " + Exchange.DATASET_INDEX + " does not match. Expected: "
+                    + size / 2 + " but was: " + (size / 2 + 10) + " on Exchange";
+            String actualErrorString = assertionError.getMessage();
+            if (actualErrorString.startsWith(expectedErrorString)) {
+                // This is what we expect
+                return;
+            } else {
+                throw assertionError;
+            }
+        }
+
+        fail("AssertionError should have been generated");
+    }
+
+    @Test
+    public void testInvalidDataSetIndexValueWithDataSetIndexUriParameterSetToStrict() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(sourceUri)
+                        .to(dataSetUriWithDataSetIndexSetToStrict)
                         .to(resultUri);
             }
         });
@@ -326,7 +444,7 @@ public class DataSetProducerTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
         } catch (AssertionError assertionError) {
             // Check as much of the string as possible - but the ExchangeID at the end will be unique
-            String expectedErrorString = dataSetUriWithDisableDataSetIndexSetToFalse + " Failed due to caught exception: "
+            String expectedErrorString = dataSetUriWithDataSetIndexSetToStrict + " Failed due to caught exception: "
                     + AssertionError.class.getName() + ": Header: " + Exchange.DATASET_INDEX
                     + " does not match. Expected: " + size / 2 + " but was: " + (size / 2 + 10) + " on Exchange";
             String actualErrorString = assertionError.getMessage();
