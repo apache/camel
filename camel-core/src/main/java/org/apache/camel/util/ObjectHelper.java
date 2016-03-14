@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import org.w3c.dom.Node;
@@ -193,13 +194,13 @@ public final class ObjectHelper {
     /**
      * A helper method for comparing objects for equality while handling nulls
      */
-    public static boolean equal(Object a, Object b, boolean ignoreCase) {
+    public static boolean equal(final Object a, final Object b, final boolean ignoreCase) {
         if (a == b) {
             return true;
         }
 
-        if (a instanceof byte[] && b instanceof byte[]) {
-            return equalByteArray((byte[])a, (byte[])b);
+        if (a == null || b == null) {
+            return false;
         }
 
         if (ignoreCase) {
@@ -208,7 +209,7 @@ public final class ObjectHelper {
             }
         }
 
-        return a != null && b != null && a.equals(b);
+        return Objects.deepEquals(a, b);
     }
 
     /**
@@ -216,22 +217,7 @@ public final class ObjectHelper {
      * nulls
      */
     public static boolean equalByteArray(byte[] a, byte[] b) {
-        if (a == b) {
-            return true;
-        }
-
-        // loop and compare each byte
-        if (a != null && b != null && a.length == b.length) {
-            for (int i = 0; i < a.length; i++) {
-                if (a[i] != b[i]) {
-                    return false;
-                }
-            }
-            // all bytes are equal
-            return true;
-        }
-
-        return false;
+        return Arrays.equals(a, b);
     }
 
     /**

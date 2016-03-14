@@ -21,8 +21,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -122,31 +120,12 @@ public class HessianDataFormatMarshallingTest extends CamelTestSupport {
             mock.message(0).body().isNull();
         } else {
             mock.message(0).body().isNotNull();
-
-            if (object.getClass().isArray()) {
-                mock.message(0).body().in(arrayEqual((Object[]) object));
-            } else {
-                mock.message(0).body().isEqualTo(object);
-            }
+            mock.message(0).body().isEqualTo(object);
         }
 
         final Object marshalled = template.requestBody("direct:in", object);
         template.sendBody("direct:back", marshalled);
 
         mock.assertIsSatisfied();
-    }
-
-    /** This predicate checks is two arrays have the same content. */
-    private static Predicate arrayEqual(final Object[] array) {
-        return new Predicate() {
-            @Override
-            public boolean matches(final Exchange exchange) {
-                final Object body = exchange.getIn().getBody();
-                if (body != null && body.getClass().isArray()) {
-                    return Arrays.equals(array, (Object[]) body);
-                }
-                return false;
-            }
-        };
     }
 }
