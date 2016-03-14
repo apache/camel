@@ -49,7 +49,6 @@
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-query-dsl</artifactId>
             <version>${infinispan-version}</version>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
