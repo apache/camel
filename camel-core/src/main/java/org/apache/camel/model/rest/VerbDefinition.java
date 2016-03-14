@@ -254,6 +254,19 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         this.routeId = routeId;
     }
 
+    public Boolean getApiDocs() {
+        return apiDocs;
+    }
+
+    /**
+     * Whether to include or exclude the VerbDefinition in API documentation.
+     * <p/>
+     * The default value is true.
+     */
+    public void setApiDocs(Boolean apiDocs) {
+        this.apiDocs = apiDocs;
+    }
+
     public RestDefinition getRest() {
         return rest;
     }
@@ -369,18 +382,6 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
 
     public RestDefinition verb(String verb, String uri) {
         return rest.verb(verb, uri);
-    }
-
-    public Boolean getApiDocs() {
-        return apiDocs;
-    }
-
-    /**
-     * Whether to include or exclude the VerbDefinition in API documentation.
-     * The default value is true.
-     */
-    public void setApiDocs(Boolean apiDocs) {
-        this.apiDocs = apiDocs;
     }
 
     public String asVerb() {
