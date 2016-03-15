@@ -49,11 +49,14 @@
     </config>
   </feature>
   <feature name='camel-catalog' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-catalog requires the shell feature to be installed</details>
     <feature version='${project.version}'>camel-core</feature>
-    <feature>shell</feature>
-    <bundle>mvn:org.apache.camel/camel-commands-core/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands-catalog/${project.version}</bundle>
+    <conditional>
+      <condition>shell</condition>
+      <bundle>mvn:org.apache.camel/camel-commands-core/${project.version}</bundle>
+      <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands/${project.version}</bundle>
+      <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands-catalog/${project.version}</bundle>
+    </conditional>
   </feature>
   <feature name='camel-blueprint' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature>aries-blueprint</feature>
@@ -743,8 +746,10 @@
     <details>The camel-infinispan feature requires Java 8</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature>transaction</feature>
+    <feature>aries-blueprint</feature>
     <bundle dependency='true'>mvn:org.infinispan/infinispan-core/${infinispan-version}</bundle>
     <bundle dependency='true'>mvn:org.infinispan/infinispan-commons/${infinispan-version}</bundle>
+    <bundle dependency='true'>mvn:org.infinispan/infinispan-query-dsl/${infinispan-version}</bundle>
     <bundle dependency='true'>mvn:org.infinispan/infinispan-client-hotrod/${infinispan-version}</bundle>
     <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-version}</bundle>
     <bundle dependency='true'>mvn:org.jboss.logging/jboss-logging/${jboss-logging-version}</bundle>
@@ -1503,6 +1508,7 @@
   </feature>
   <feature name='camel-spring-ws' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature>http</feature>
+    <feature version='${project.version}'>camel-core</feature>
     <feature version='${spring-version-range}'>spring</feature>
     <feature version='${spring-version-range}'>spring-jms</feature>
     <feature version='${spring-version-range}'>spring-oxm</feature>
@@ -1571,6 +1577,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-scala-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson2-scala-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-scala-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-paranamer/${jackson2-scala-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-scala_2.10/${jackson2-scala-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-annotations/${swagger-scala-bundle-version}</bundle>
