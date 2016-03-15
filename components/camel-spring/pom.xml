@@ -30,6 +30,7 @@
   <packaging>bundle</packaging>
 
   <properties>
+      <!-- spring-dm only supports spring 3.x so we need to import that range -->
       <camel.osgi.import>
         !org.apache.camel.spring.*,
         !org.apache.camel.osgi.*,
@@ -38,6 +39,7 @@
         !org.apache.camel.language.spel,
         org.apache.camel.*;${camel.osgi.import.strict.version},
         org.springframework.osgi.*;version="[1.2,2)",
+        org.springframework*;version="${spring-dm-version-range}",
         org.osgi.service.event;resolution:=optional,
         ${camel.osgi.import.defaults},
         *
@@ -61,7 +63,7 @@
         org.apache.camel.osgi.Activator
       </camel.osgi.activator>
       <!-- do not skip any tests by default -->
-      <platform.skip.tests />
+      <platform.skip.tests/>
   </properties>
 
   <dependencies>
