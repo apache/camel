@@ -105,9 +105,9 @@ public class CustomMapper extends BaseConverter {
         }
 
         Object customObj;
-        Method method = null;
+        Method method;
         try {
-            Class<?> customClass = resolver.resolveClass(className);
+            Class<?> customClass = resolver.resolveMandatoryClass(className);
             customObj = customClass.newInstance();
 
             // If a specific mapping operation has been supplied use that
