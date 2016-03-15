@@ -210,7 +210,11 @@
                 <feature>framework</feature>
               </framework>
               <features>
-                <!-- to add multiple separate by | such as (ignite|guice) -->
+                <!-- camel-cdi requires to install a cdi provider first -->
+                <!-- camel-ignite requires to install apache ignite first -->
+                <!-- camel-guice does not work in OSGi currently -->
+                <!-- camel-lucene does not work in OSGi currently (new bundle on the way) -->
+                <!-- camel-leveldb uses some wrap magic to install which validator fails but it works -->
                 <feature>camel|camel-(?!(cdi|ignite|guice|lucene|leveldb))*</feature>
               </features>
 			        <configuration>file://${project.build.directory}/classes/config.properties</configuration>
