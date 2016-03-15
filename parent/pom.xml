@@ -406,7 +406,8 @@
     <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.9.1</mustache-java-version>
     <mustache-guava-version>16.0</mustache-guava-version>
-    <mustache-bundle-version>0.9.1_1</mustache-bundle-version>
+    <!-- 0.9.x is not working: https://issues.apache.org/jira/browse/SM-2898 -->
+    <mustache-bundle-version>0.8.18_1</mustache-bundle-version>
     <mvel-version>2.2.7.Final</mvel-version>
     <mybatis-version>3.3.0</mybatis-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
