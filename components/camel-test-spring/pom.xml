@@ -31,7 +31,13 @@
   <description>Camel Testing Library using JUnit and Spring 4.1+</description>
 
   <properties>
+    <!-- camel-spring uses spring-dm that is spring 3.x -->
+    <camel.osgi.import>
+      org.springframework*;version="${spring-dm-version-range}",
+      *
+    </camel.osgi.import>
     <camel.osgi.export.pkg>org.apache.camel.test.spring.*</camel.osgi.export.pkg>
+
     <spring-version>${spring4-version}</spring-version>
   </properties>
 
