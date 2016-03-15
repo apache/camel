@@ -37,7 +37,7 @@ public class BoonDataFormatTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Map.class);
-        mock.message(0).body().equals(in);
+        mock.message(0).body().isEqualTo(in);
 
         Object marshalled = template.requestBody("direct:in", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
@@ -56,7 +56,7 @@ public class BoonDataFormatTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reversePojo");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(TestPojo.class);
-        mock.message(0).body().equals(in);
+        mock.message(0).body().isEqualTo(in);
 
         Object marshalled = template.requestBody("direct:inPojo", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
@@ -77,7 +77,7 @@ public class BoonDataFormatTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reverseList");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(List.class);
-        mock.message(0).body().equals(in);
+        mock.message(0).body().isEqualTo(in);
 
         Object marshalled = template.requestBody("direct:inList", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
@@ -100,7 +100,7 @@ public class BoonDataFormatTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reversePojosMap");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(HashMap.class);
-        mock.message(0).body().equals(map);
+        mock.message(0).body().isEqualTo(map);
 
         Object marshalled = template.requestBody("direct:inPojosMap", map);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);

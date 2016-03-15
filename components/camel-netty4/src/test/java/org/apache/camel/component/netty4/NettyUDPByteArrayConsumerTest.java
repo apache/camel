@@ -29,7 +29,7 @@ public class NettyUDPByteArrayConsumerTest extends BaseNettyTest {
     public void testUDPInOnlyWithNettyConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).body().equals("***Camel rocks ?=)".getBytes());
+        mock.message(0).body().isEqualTo("***Camel rocks ?=)".getBytes());
 
         template.sendBody("netty4:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true", "***Camel rocks ?=)".getBytes());
 

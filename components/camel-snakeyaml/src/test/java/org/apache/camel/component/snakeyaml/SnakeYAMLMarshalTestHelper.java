@@ -70,7 +70,7 @@ public final class SnakeYAMLMarshalTestHelper  {
 
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(body.getClass());
-        mock.message(0).body().equals(body);
+        mock.message(0).body().isEqualTo(body);
 
         ProducerTemplate template = context.createProducerTemplate();
         String result = template.requestBody(directIn, body, String.class);
