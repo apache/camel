@@ -31,7 +31,7 @@ public class ${name}DataFormatTest extends CamelTestSupport {
   public void testMarshalAndUnmarshalMap() throws Exception {
       String in = "Test String";
       MockEndpoint mock = getMockEndpoint("mock:reverse");
-      mock.message(0).body().equals(in);
+      mock.message(0).body().isEqualTo(in);
 
       Object marshalled = template.requestBody("direct:in", in);
       template.sendBody("direct:back", marshalled);

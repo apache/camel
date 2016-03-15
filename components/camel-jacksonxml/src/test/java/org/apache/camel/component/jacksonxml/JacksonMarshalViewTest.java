@@ -31,7 +31,7 @@ public class JacksonMarshalViewTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reversePojoAgeView");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(TestPojoView.class);
-        mock.message(0).body().equals(in);
+        mock.message(0).body().isEqualTo(in);
 
         Object marshalled = template.requestBody("direct:inPojoAgeView", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
@@ -50,7 +50,7 @@ public class JacksonMarshalViewTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reversePojoWeightView");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(TestPojoView.class);
-        mock.message(0).body().equals(in);
+        mock.message(0).body().isEqualTo(in);
 
         Object marshalled = template.requestBody("direct:inPojoWeightView", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);

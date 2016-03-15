@@ -51,7 +51,7 @@ public class AvroGenericMarshaAndUnmarshaTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(GenericRecord.class);
-        mock.message(0).body().equals(input);
+        mock.message(0).body().isEqualTo(input);
 
         Object marshalled = template.requestBody(inURI, input);
         template.sendBody(outURI, marshalled);
