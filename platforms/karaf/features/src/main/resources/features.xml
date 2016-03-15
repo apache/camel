@@ -56,6 +56,7 @@
     <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands-catalog/${project.version}</bundle>
   </feature>
   <feature name='camel-blueprint' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature>aries-blueprint</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-blueprint/${project.version}</bundle>
   </feature>
@@ -332,13 +333,14 @@
     <bundle>mvn:org.apache.camel/camel-csv/${project.version}</bundle>
   </feature>
   <feature name='camel-cxf' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-blueprint</feature>
+    <feature version='${project.version}'>camel-spring</feature>
     <feature version='${cxf-version-range}'>cxf-core</feature>
     <feature version='${cxf-version-range}'>cxf-jaxrs</feature>
     <feature version='${cxf-version-range}'>cxf-jaxws</feature>
     <feature version='${cxf-version-range}'>cxf-http-jetty</feature>
     <feature version='${cxf-version-range}'>cxf-databinding-jaxb</feature>
     <feature version='${cxf-version-range}'>cxf-bindings-soap</feature>
-    <feature version='${project.version}'>camel-spring</feature>
     <bundle>mvn:org.apache.camel/camel-cxf-transport/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cxf/${project.version}</bundle>
   </feature>
@@ -1271,11 +1273,11 @@
   </feature>
   <feature name='camel-restlet' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:http://maven.restlet.org!org.restlet.osgi/org.restlet/${restlet-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:http://maven.restlet.org!org.restlet.osgi/org.restlet.ext.httpclient/${restlet-version}</bundle>
+    <bundle dependency='true'>mvn:http://maven.restlet.org@id=restlet!org.restlet.osgi/org.restlet/${restlet-version}</bundle>
+    <bundle dependency='true'>mvn:http://maven.restlet.org@id=restlet!org.restlet.osgi/org.restlet.ext.httpclient/${restlet-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-restlet/${project.version}</bundle>
   </feature>
   <feature name='camel-rmi' version='${project.version}' resolver='(obr)' start-level='50'>
