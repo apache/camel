@@ -73,6 +73,10 @@ public class CustomMapper extends BaseConverter {
     }
 
     Object mapCustom(Object source) {
+        if (source == null) {
+            return null;
+        }
+
         // The converter parameter is stored in a thread local variable, so
         // we need to parse the parameter on each invocation
         // ex: custom-converter-param="org.example.MyMapping,map"
