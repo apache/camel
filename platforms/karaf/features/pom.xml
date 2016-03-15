@@ -210,8 +210,9 @@
                 <feature>framework</feature>
               </framework>
               <features>
-                <feature>camel-*</feature>
+                <feature>camel|camel-(?!ignite)*</feature>
               </features>
+			  <configuration>file://${project.build.directory}/classes/config.properties</configuration>
             </configuration>
             <executions>
               <execution>
