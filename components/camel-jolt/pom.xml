@@ -44,16 +44,13 @@
       <artifactId>camel-core</artifactId>
     </dependency>
 
-    <!-- align to use versions from Camel BOM -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>${jackson2-version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson2-version}</version>
     </dependency>
 
     <dependency>
