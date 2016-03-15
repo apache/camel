@@ -81,6 +81,13 @@
       <version>${karaf-version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.karaf.features</groupId>
+      <artifactId>framework</artifactId>
+      <version>${karaf4-version}</version>
+      <type>kar</type>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -190,8 +197,21 @@
             <artifactId>karaf-maven-plugin</artifactId>
             <version>${karaf4-version}</version>
             <configuration>
-              <file>${project.build.directory}/classes/${features.file}</file>
-              <jreVersion>jre-1.8</jreVersion>
+              <descriptors>
+                <descriptor>file://${project.build.directory}/classes/${features.file}</descriptor>
+                <!-- ideally, those profiles should be referenced in the features file -->
+                <descriptor>mvn:org.apache.karaf.features/framework/${karaf4-version}/xml/features</descriptor>
+                <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf4-version}/xml/features</descriptor>
+                <descriptor>mvn:org.apache.karaf.features/spring/${karaf4-version}/xml/features</descriptor>
+              </descriptors>
+              <distribution>org.apache.karaf.features:framework</distribution>
+              <javase>1.8</javase>
+              <framework>
+                <feature>framework</feature>
+              </framework>
+              <features>
+                <feature>camel-*</feature>
+              </features>
             </configuration>
             <executions>
               <execution>
