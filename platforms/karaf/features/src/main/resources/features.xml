@@ -783,7 +783,9 @@
     <bundle>mvn:org.apache.camel/camel-jaxb/${project.version}</bundle>
   </feature>
   <feature name='camel-jbpm' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>The camel-jbpm feature can only run on a SUN JVM. You need to add the package com.sun.tools.xjc to the java platform packages in the etc/jre.properties file.</details>
     <feature version='${project.version}'>camel-core</feature>
+    <feature>transaction</feature>
     <bundle dependency='true'>mvn:org.openengsb.wrapped/com.google.protobuf/2.4.1.w1</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax-inject/${javax-inject-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-jaxrs/${jackson-version}</bundle>
