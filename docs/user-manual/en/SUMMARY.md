@@ -125,6 +125,7 @@
     * [ElasticSearch](elasticsearch.adoc)
     * [Elsql](elsql.adoc)
     * [Eventadmin](eventadmin.adoc)
+    * [Exec](exec.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [Metrics](metrics.adoc)
