@@ -581,6 +581,7 @@
     <bundle>mvn:org.apache.camel/camel-guava-eventbus/${project.version}</bundle>
   </feature>
   <feature name='camel-guice' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-guice currently do not work in OSGi</details>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.google.inject/guice/${guice-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax-inject/${javax-inject-bundle-version}</bundle>
@@ -1004,6 +1005,7 @@
     <bundle>mvn:org.apache.camel/camel-ldap/${project.version}</bundle>
   </feature>
   <feature name='camel-linkedin' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature>aries-blueprint</feature>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${cxf-version-range}'>cxf-core</feature>
     <feature version='${cxf-version-range}'>cxf-jaxrs</feature>
@@ -1036,6 +1038,7 @@
     <bundle>mvn:org.apache.camel/camel-leveldb/${project.version}</bundle>
   </feature>
   <feature name='camel-lucene' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-lucene currently do not work in OSGi</details>  <!-- https://issues.apache.org/jira/browse/SM-2899 -->
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.lucene/${lucene-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.lucene-analyzers-common/${lucene-bundle-version}</bundle>
@@ -1190,7 +1193,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-math3/${commons-math3-version}</bundle>
-    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
@@ -1199,6 +1202,7 @@
     <bundle dependency='true'>mvn:org.kie/kie-internal/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-core/${drools-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-compiler/${drools-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.reflections/${reflections-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-xjc/${jaxb-bundle-version}</bundle>
     <!-- the ecj bundle on the central is malformed as both 'META-INF' and 'META-INF/MANIFEST.MF' entries are NOT the first 2 entries inside the jar when -->
     <!-- one verifies this through 'jar -tf ecj-${eclipse-compiler-version}.jar'. one possible workaround for this is to make use of the wrap protocol. -->

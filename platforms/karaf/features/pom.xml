@@ -210,8 +210,8 @@
                 <feature>framework</feature>
               </framework>
               <features>
-                <!-- to add multiple separate by | such as (ignite|catalog) -->
-                <feature>camel|camel-(?!(ignite))*</feature>
+                <!-- to add multiple separate by | such as (ignite|guice) -->
+                <feature>camel|camel-(?!(cdi|ignite|guice|lucene|leveldb))*</feature>
               </features>
 			        <configuration>file://${project.build.directory}/classes/config.properties</configuration>
             </configuration>
