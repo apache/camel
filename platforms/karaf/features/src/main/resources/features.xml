@@ -1235,8 +1235,9 @@
     <bundle>mvn:org.apache.camel/camel-pdf/${project.version}</bundle>
   </feature>
   <feature name='camel-pgevent' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-pgevent does not currently work in OSGi</details>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle>mvn:com.impossibl.pgjdbc-ng/pgjdbc-ng/${pgjdbc-ng-driver-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.impossibl.pgjdbc-ng/pgjdbc-ng/${pgjdbc-ng-driver-version}$overwrite=merge&amp;Bundle-ManifestVersion=2</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
