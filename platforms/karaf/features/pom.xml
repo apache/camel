@@ -15,7 +15,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -134,7 +135,7 @@
       <repositories>
         <repository>
           <id>pax.snapshot.repo</id>
-          <name>PAX SNAPSHOT Deploy Repository </name>
+          <name>PAX SNAPSHOT Deploy Repository</name>
           <url>https://oss.sonatype.org/content/repositories/ops4j-snapshots/</url>
           <releases>
             <enabled>false</enabled>
@@ -172,13 +173,47 @@
               <dependency>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-http-lightweight</artifactId>
-                <version>2.6</version>
+                <version>2.8</version>
               </dependency>
-           </dependencies>
+            </dependencies>
           </plugin>
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>validate-karaf4</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.karaf.tooling</groupId>
+            <artifactId>karaf-maven-plugin</artifactId>
+            <version>${karaf4-version}</version>
+            <configuration>
+              <file>${project.build.directory}/classes/${features.file}</file>
+              <jreVersion>jre-1.8</jreVersion>
+            </configuration>
+            <executions>
+              <execution>
+                <id>validate</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-http-lightweight</artifactId>
+                <version>2.8</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
 
   <repositories>
