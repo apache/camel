@@ -41,8 +41,12 @@ import org.eclipse.jetty.server.Handler;
  */
 public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
 
-    private HttpClient client;
-
+    @UriParam(label = "producer,advanced",
+            description = "Sets a shared HttpClient to use for all producers created by this endpoint. By default each producer will"
+                    + " use a new http client, and not share. Important: Make sure to handle the lifecycle of the shared"
+                    + " client, such as stopping the client, when it is no longer in use. Camel will call the start method on the client to ensure"
+                    + " its started when this endpoint creates a producer. This options should only be used in special circumstances.")
+    private HttpClient httpClient;
     @UriParam(label = "consumer",
             description = "Specifies whether to enable the session manager on the server side of Jetty.")
     private boolean sessionSupport;
@@ -138,11 +142,11 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         JettyHttpProducer answer = new JettyHttpProducer(this);
-        if (client != null) {
+        if (httpClient != null) {
             // use shared client, and ensure its started so we can use it
-            client.start();
-            answer.setSharedClient(client);
-            answer.setBinding(getJettyBinding(client));
+            httpClient.start();
+            answer.setSharedClient(httpClient);
+            answer.setBinding(getJettyBinding(httpClient));
         } else {
             HttpClient httpClient = createJettyHttpClient();
             answer.setClient(httpClient);
@@ -213,8 +217,8 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
         this.handlers = handlers;
     }
 
-    public HttpClient getClient() throws Exception {
-        return client;
+    public HttpClient getHttpClient() throws Exception {
+        return httpClient;
     }
 
     /**
@@ -229,8 +233,8 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
      * <p/>
      * This options should only be used in special circumstances.
      */
-    public void setClient(HttpClient client) {
-        this.client = client;
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 
     public synchronized JettyHttpBinding getJettyBinding(HttpClient httpClient) {
