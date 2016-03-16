@@ -49,14 +49,11 @@
     <dependency>
       <groupId>org.apache.kafka</groupId>
       <artifactId>kafka-clients</artifactId>
-      <version>${kafka-version}</version>
     </dependency>
 
-    <!-- kafka server for testing using scala -->
     <dependency>
       <groupId>org.apache.kafka</groupId>
       <artifactId>kafka_2.11</artifactId>
-      <version>${kafka-version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
