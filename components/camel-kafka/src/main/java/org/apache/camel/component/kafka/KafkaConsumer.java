@@ -36,7 +36,7 @@ public class KafkaConsumer extends DefaultConsumer {
     protected ExecutorService executor;
     private final KafkaEndpoint endpoint;
     private final Processor processor;
-    
+
     public KafkaConsumer(KafkaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
@@ -103,6 +103,11 @@ public class KafkaConsumer extends DefaultConsumer {
             try {
                 LOG.debug("Subscribing {} to topic {}", threadId, topicName);
                 consumer.subscribe(Arrays.asList(topicName));
+
+                if (endpoint.isSeekToBeginning()) {
+                    LOG.debug("{} is seeking to the beginning on topic {}", threadId, topicName);
+                    consumer.seekToBeginning();
+                }
                 while (isRunAllowed() && !isSuspendingOrSuspended()) {
                     ConsumerRecords<Object, Object> records = consumer.poll(Long.MAX_VALUE);
                     for (ConsumerRecord<Object, Object> record : records) {
