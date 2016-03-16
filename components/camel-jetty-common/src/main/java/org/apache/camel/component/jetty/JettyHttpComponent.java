@@ -181,6 +181,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class, getProxyPort());
         Integer httpClientMinThreads = getAndRemoveParameter(parameters, "httpClientMinThreads", Integer.class, this.httpClientMinThreads);
         Integer httpClientMaxThreads = getAndRemoveParameter(parameters, "httpClientMaxThreads", Integer.class, this.httpClientMaxThreads);
+        HttpClient httpClient = resolveAndRemoveReferenceParameter(parameters, "httpClient", HttpClient.class);
 
         // extract httpClient. parameters
         Map<String, Object> httpClientParameters = IntrospectionSupport.extractProperties(parameters, "httpClient.");
@@ -208,6 +209,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         } else {
             setEndpointHeaderFilterStrategy(endpoint);
         }
+        // setup the proxy host and proxy port
         if (proxyHost != null) {
             endpoint.setProxyHost(proxyHost);
             endpoint.setProxyPort(proxyPort);
@@ -279,6 +281,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         }
         if (httpClientMaxThreads != null) {
             endpoint.setHttpClientMaxThreads(httpClientMaxThreads);
+        }
+        if (httpClient != null) {
+            endpoint.setHttpClient(httpClient);
         }
 
         setProperties(endpoint, parameters);
