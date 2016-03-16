@@ -17,7 +17,6 @@
 package org.apache.camel.component.boon;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,14 +92,15 @@ public class BoonDataFormatTest extends CamelTestSupport {
         TestPojo in = new TestPojo();
         in.setName("Camel");
         
-        HashMap<String, TestPojo> map = new LinkedHashMap<String, TestPojo>();
+        Map<String, TestPojo> map = new LinkedHashMap<String, TestPojo>();
         map.put("test1", in);
         map.put("test2", in);
 
         MockEndpoint mock = getMockEndpoint("mock:reversePojosMap");
         mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(HashMap.class);
-        mock.message(0).body().isEqualTo(map);
+        mock.message(0).body().isInstanceOf(Map.class);
+        mock.message(0).body().matches().simple("${body[test1].name} == 'Camel'");
+        mock.message(0).body().matches().simple("${body[test2].name} == 'Camel'");
 
         Object marshalled = template.requestBody("direct:inPojosMap", map);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);

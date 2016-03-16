@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -47,7 +46,7 @@ public class BoonDataFormat extends ServiceSupport implements DataFormat, DataFo
     private boolean useList;
 
     public BoonDataFormat() {
-        this(HashMap.class);
+        this(null);
     }
 
     /**
@@ -86,8 +85,16 @@ public class BoonDataFormat extends ServiceSupport implements DataFormat, DataFo
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         BufferedReader reader = IOHelper.buffered(new InputStreamReader(stream, IOHelper.getCharsetName(exchange)));
-        Object result = objectMapper.fromJson(reader, this.unmarshalType);
-        reader.close();
+        Object result;
+        try {
+            if (unmarshalType != null) {
+                result = objectMapper.fromJson(reader, unmarshalType);
+            } else {
+                result = objectMapper.fromJson(reader);
+            }
+        } finally {
+            IOHelper.close(reader);
+        }
         return result;
     }
 
