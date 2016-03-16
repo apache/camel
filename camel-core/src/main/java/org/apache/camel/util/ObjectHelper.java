@@ -209,7 +209,13 @@ public final class ObjectHelper {
             }
         }
 
-        return Objects.deepEquals(a, b);
+        if (a.getClass().isArray() && b.getClass().isArray()) {
+            // uses array based equals
+            return Objects.deepEquals(a, b);
+        } else {
+            // use regular equals
+            return a.equals(b);
+        }
     }
 
     /**
