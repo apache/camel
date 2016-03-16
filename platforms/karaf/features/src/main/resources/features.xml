@@ -1237,6 +1237,7 @@
   <feature name='camel-pgevent' version='${project.version}' resolver='(obr)' start-level='50'>
     <details>installing camel-pgevent may output an error in the log but it is installed correctly</details>
     <feature version='${project.version}'>camel-core</feature>
+    <feature>transaction</feature>
     <bundle dependency='true'>wrap:mvn:com.impossibl.pgjdbc-ng/pgjdbc-ng/${pgjdbc-ng-driver-version}$overwrite=merge&amp;Bundle-ManifestVersion=2</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
