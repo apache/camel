@@ -34,13 +34,6 @@
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.spark.*</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=spark</camel.osgi.export.service>
-
-    <!-- Spark 1.5.1 requires Jackson 2.4.4 -->
-    <jackson-version>2.4.4</jackson-version>
-
-    <hadoop.version>2.2.0</hadoop.version>
-    <mongo-hadoop-core.version>1.4.2</mongo-hadoop-core.version>
-    <spark-version>1.5.1</spark-version>
   </properties>
 
   <dependencies>
@@ -50,6 +43,7 @@
       <artifactId>camel-core</artifactId>
     </dependency>
 
+    <!-- spark -->
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_2.11</artifactId>
@@ -61,32 +55,55 @@
       <version>${spark-version}</version>
     </dependency>
 
+    <!-- jackson -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson-spark-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${jackson-spark-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson-spark-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-scala_2.11</artifactId>
+      <version>${jackson-spark-version}</version>
+    </dependency>
+
+    <!-- haddoop -->
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-client</artifactId>
-      <version>${hadoop.version}</version>
+      <version>${hadoop2-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-common</artifactId>
-      <version>${hadoop.version}</version>
+      <version>${hadoop2-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-mapreduce-client-core</artifactId>
-      <version>${hadoop.version}</version>
+      <version>${hadoop2-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
-      <version>${hadoop.version}</version>
+      <version>${hadoop2-version}</version>
     </dependency>
 
     <!-- Optional -->
     <dependency>
       <groupId>org.mongodb.mongo-hadoop</groupId>
       <artifactId>mongo-hadoop-core</artifactId>
-      <version>${mongo-hadoop-core.version}</version>
+      <version>${mongo-hadoop-version}</version>
       <optional>true</optional>
     </dependency>
 

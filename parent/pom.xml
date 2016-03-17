@@ -256,6 +256,7 @@
     <ivy-version>2.4.0</ivy-version>
     <jini-version>2.1</jini-version>
     <jackson-version>1.9.12</jackson-version>
+    <jackson-spark-version>2.4.5</jackson-spark-version>
     <jackson2-scala-version>2.6.1</jackson2-scala-version>
     <jackson2-version>2.7.2</jackson2-version>
     <jackrabbit-version>2.12.1</jackrabbit-version>
@@ -403,6 +404,7 @@
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockito-version>1.9.5</mockito-version>
     <mongo-java-driver-version>3.2.2</mongo-java-driver-version>
+    <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
     <mqtt-client-version>1.12</mqtt-client-version>
     <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.9.1</mustache-java-version>
@@ -490,6 +492,7 @@
     <solr-bundle-version>5.3.1_1</solr-bundle-version>
     <solr-version>5.3.1</solr-version>
     <solr-version-range>[5,6)</solr-version-range>
+    <spark-version>1.6.1</spark-version>
     <spark-rest-version>2.3</spark-rest-version>
     <spark-rest-bundle-version>2.3_1</spark-rest-bundle-version>
     <splunk-version>1.5.0.0_1</splunk-version>
