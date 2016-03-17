@@ -205,6 +205,8 @@
         <include>org.apache.camel:camel-splunk</include>
         <include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-batch</include>
+        <include>org.apache.camel:camel-spring-boot</include>
+        <include>org.apache.camel:camel-spring-boot-starter</include>
         <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-spring-javaconfig</include>
         <include>org.apache.camel:camel-spring-ldap</include>
