@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 @Component("myBean")
 public class SampleBean {
 
-    @Value("greeting")
+    @Value("${greeting}")
     private String say;
 
     public String saySomething() {
