@@ -87,7 +87,52 @@ public class WsProducerConsumerTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
-    
+    @Test
+    public void testTwoRoutesRestartConsumer() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived(TEST_MESSAGE);
+
+        template.sendBody("direct:input", TEST_MESSAGE);
+
+        mock.assertIsSatisfied();
+
+        resetMocks();
+
+        log.info("Restarting bar route");
+        context.stopRoute("bar");
+        Thread.sleep(500);
+        context.startRoute("bar");
+
+        mock.expectedBodiesReceived(TEST_MESSAGE);
+
+        template.sendBody("direct:input", TEST_MESSAGE);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testTwoRoutesRestartProducer() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived(TEST_MESSAGE);
+
+        template.sendBody("direct:input", TEST_MESSAGE);
+
+        mock.assertIsSatisfied();
+
+        resetMocks();
+
+        log.info("Restarting foo route");
+        context.stopRoute("foo");
+        Thread.sleep(500);
+        context.startRoute("foo");
+
+        mock.expectedBodiesReceived(TEST_MESSAGE);
+
+        template.sendBody("direct:input", TEST_MESSAGE);
+
+        mock.assertIsSatisfied();
+    }
+
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         RouteBuilder[] rbs = new RouteBuilder[2];

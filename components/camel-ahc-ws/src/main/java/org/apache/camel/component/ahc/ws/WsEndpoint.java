@@ -23,9 +23,8 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.AsyncHttpProvider;
 import com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider;
+import com.ning.http.client.ws.DefaultWebSocketListener;
 import com.ning.http.client.ws.WebSocket;
-import com.ning.http.client.ws.WebSocketByteListener;
-import com.ning.http.client.ws.WebSocketTextListener;
 import com.ning.http.client.ws.WebSocketUpgradeHandler;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -45,23 +44,17 @@ public class WsEndpoint extends AhcEndpoint {
     private static final boolean GRIZZLY_AVAILABLE =
         probeClass("com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider");
 
-    private final Set<WsConsumer> consumers  = new HashSet<WsConsumer>();
+    private final Set<WsConsumer> consumers = new HashSet<WsConsumer>();
+    private final WsListener listener = new WsListener();
+    private transient WebSocket websocket;
 
-    private WebSocket websocket;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean useStreaming;
+    @UriParam(label = "consumer")
+    private boolean sendMessageOnError;
 
     public WsEndpoint(String endpointUri, WsComponent component) {
         super(endpointUri, component, null);
-    }
-
-    private static boolean probeClass(String name) {
-        try {
-            Class.forName(name, true, WsEndpoint.class.getClassLoader());
-            return true;
-        } catch (Throwable t) {
-            return false;
-        }
     }
 
     @Override
@@ -81,9 +74,8 @@ public class WsEndpoint extends AhcEndpoint {
 
     WebSocket getWebSocket() throws Exception {
         synchronized (this) {
-            if (websocket == null) {
-                connect();
-            }
+            // ensure we are connected
+            reConnect();
         }
         return websocket;
     }
@@ -101,6 +93,17 @@ public class WsEndpoint extends AhcEndpoint {
      */
     public void setUseStreaming(boolean useStreaming) {
         this.useStreaming = useStreaming;
+    }
+
+    public boolean isSendMessageOnError() {
+        return sendMessageOnError;
+    }
+
+    /**
+     * Whether to send an message if the web-socket listener received an error.
+     */
+    public void setSendMessageOnError(boolean sendMessageOnError) {
+        this.sendMessageOnError = sendMessageOnError;
     }
 
     @Override
@@ -124,7 +127,7 @@ public class WsEndpoint extends AhcEndpoint {
         LOG.debug("Connecting to {}", uri);
         websocket = getClient().prepareGet(uri).execute(
             new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new WsListener()).build()).get();
+                .addWebSocketListener(listener).build()).get();
     }
 
     @Override
@@ -133,6 +136,7 @@ public class WsEndpoint extends AhcEndpoint {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Disconnecting from {}", getHttpUri().toASCIIString());
             }
+            websocket.removeWebSocketListener(listener);
             websocket.close();
             websocket = null;
         }
@@ -141,31 +145,46 @@ public class WsEndpoint extends AhcEndpoint {
 
     void connect(WsConsumer wsConsumer) throws Exception {
         consumers.add(wsConsumer);
-
-        if (websocket == null || !websocket.isOpen()) {
-            connect();
-        }
+        reConnect();
     }
 
     void disconnect(WsConsumer wsConsumer) {
         consumers.remove(wsConsumer);
     }
 
-    class WsListener implements WebSocketTextListener, WebSocketByteListener {
+    void reConnect() throws Exception {
+        if (websocket == null || !websocket.isOpen()) {
+            String uri = getHttpUri().toASCIIString();
+            LOG.info("Reconnecting websocket: {}", uri);
+            connect();
+        }
+    }
+
+    class WsListener extends DefaultWebSocketListener {
 
         @Override
         public void onOpen(WebSocket websocket) {
-            LOG.debug("websocket opened");
+            LOG.debug("Websocket opened");
         }
 
         @Override
         public void onClose(WebSocket websocket) {
-            LOG.debug("websocket closed");
+            LOG.debug("websocket closed - reconnecting");
+            try {
+                reConnect();
+            } catch (Exception e) {
+                LOG.warn("Error re-connecting to websocket", e);
+            }
         }
 
         @Override
         public void onError(Throwable t) {
-            LOG.error("websocket on error", t);
+            LOG.debug("websocket on error", t);
+            if (isSendMessageOnError()) {
+                for (WsConsumer consumer : consumers) {
+                    consumer.sendMessage(t);
+                }
+            }
         }
 
         @Override
@@ -192,4 +211,14 @@ public class WsEndpoint extends AhcEndpoint {
         }
         return null;
     }
+
+    private static boolean probeClass(String name) {
+        try {
+            Class.forName(name, true, WsEndpoint.class.getClassLoader());
+            return true;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
 }
