@@ -31,6 +31,7 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.jsmpp.util.DefaultComposer;
 import org.slf4j.Logger;
@@ -52,7 +53,8 @@ public class SmppProducer extends DefaultProducer {
         super(endpoint);
         this.configuration = config;
         this.internalSessionStateListener = new SessionStateListener() {
-            public void onStateChange(SessionState newState, SessionState oldState, Object source) {
+            @Override
+            public void onStateChange(SessionState newState, SessionState oldState, Session source) {
                 if (configuration.getSessionStateListener() != null) {
                     configuration.getSessionStateListener().onStateChange(newState, oldState, source);
                 }

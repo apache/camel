@@ -133,7 +133,7 @@ public class SmppBindingTest {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
         deliverSm.setShortMessage("id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!".getBytes());
-        deliverSm.setOptionalParametes(
+        deliverSm.setOptionalParameters(
             new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "OctetString"),
             new OptionalParameter.COctetString((short) 0x001D, "COctetString"),
             new OptionalParameter.Byte(Tag.DEST_ADDR_SUBUNIT, (byte) 0x01),
@@ -157,7 +157,7 @@ public class SmppBindingTest {
         Map<String, Object> optionalParameters = smppMessage.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
         assertEquals(6, optionalParameters.size());
         assertEquals("OctetString", optionalParameters.get("SOURCE_SUBADDRESS"));
-        assertEquals("COctetStrin", optionalParameters.get("ADDITIONAL_STATUS_INFO_TEXT"));
+        assertEquals("COctetString", optionalParameters.get("ADDITIONAL_STATUS_INFO_TEXT"));
         assertEquals(Byte.valueOf((byte) 0x01), optionalParameters.get("DEST_ADDR_SUBUNIT"));
         assertEquals(Short.valueOf((short) 1), optionalParameters.get("DEST_TELEMATICS_ID"));
         assertEquals(Integer.valueOf(1), optionalParameters.get("QOS_TIME_TO_LIVE"));
@@ -166,7 +166,7 @@ public class SmppBindingTest {
         Map<Short, Object> optionalParameter = smppMessage.getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
         assertEquals(6, optionalParameter.size());
         assertArrayEquals("OctetString".getBytes("UTF-8"), (byte[]) optionalParameter.get(Short.valueOf((short) 0x0202)));
-        assertEquals("COctetStrin", optionalParameter.get(Short.valueOf((short) 0x001D)));
+        assertEquals("COctetString", optionalParameter.get(Short.valueOf((short) 0x001D)));
         assertEquals(Byte.valueOf((byte) 0x01), optionalParameter.get(Short.valueOf((short) 0x0005)));
         assertEquals(Short.valueOf((short) 1), optionalParameter.get(Short.valueOf((short) 0x0008)));
         assertEquals(Integer.valueOf(1), optionalParameter.get(Short.valueOf((short) 0x0017)));
@@ -177,7 +177,7 @@ public class SmppBindingTest {
     public void createSmppMessageFromDeliveryReceiptWithPayloadInOptionalParameterShouldReturnASmppMessage() {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
-        deliverSm.setOptionalParametes(new OctetString(OptionalParameter.Tag.MESSAGE_PAYLOAD,
+        deliverSm.setOptionalParameters(new OctetString(OptionalParameter.Tag.MESSAGE_PAYLOAD,
             "id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!"));
         try {
             SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
@@ -196,10 +196,10 @@ public class SmppBindingTest {
     }
 
     @Test
-    public void createSmppMessageFromDeliveryReceiptWithoutShortMessageShouldNotThrowException() {
+    public void createSmppMessageFromDeliveryReceiptWithoutShortMessageShouldNotThrowException() throws Exception {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
-        deliverSm.setOptionalParametes(new OptionalParameter.Short((short) 0x2153, (short) 0));
+        deliverSm.setOptionalParameters(new OptionalParameter.Short((short) 0x2153, (short) 0));
 
         try {
             SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
@@ -235,7 +235,7 @@ public class SmppBindingTest {
         assertEquals((byte) 8, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_NPI));
         assertEquals((byte) 2, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_TON));
         assertEquals("1919", smppMessage.getHeader(SmppConstants.DEST_ADDR));
-        assertEquals((byte) 20, smppMessage.getHeader(SmppConstants.DEST_ADDR_NPI));
+        assertEquals((byte) 14, smppMessage.getHeader(SmppConstants.DEST_ADDR_NPI));
         assertEquals((byte) 3, smppMessage.getHeader(SmppConstants.DEST_ADDR_TON));
         assertEquals("090831230627004+", smppMessage.getHeader(SmppConstants.SCHEDULE_DELIVERY_TIME));
         assertEquals("090901230627004+", smppMessage.getHeader(SmppConstants.VALIDITY_PERIOD));
@@ -257,7 +257,7 @@ public class SmppBindingTest {
         deliverSm.setScheduleDeliveryTime("090831230627004+");
         deliverSm.setValidityPeriod("090901230627004+");
         deliverSm.setServiceType("WAP");
-        deliverSm.setOptionalParametes(new OctetString(OptionalParameter.Tag.MESSAGE_PAYLOAD, "Hello SMPP world!"));
+        deliverSm.setOptionalParameters(new OctetString(OptionalParameter.Tag.MESSAGE_PAYLOAD, "Hello SMPP world!"));
         SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
@@ -268,7 +268,7 @@ public class SmppBindingTest {
         assertEquals((byte) 8, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_NPI));
         assertEquals((byte) 2, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_TON));
         assertEquals("1919", smppMessage.getHeader(SmppConstants.DEST_ADDR));
-        assertEquals((byte) 20, smppMessage.getHeader(SmppConstants.DEST_ADDR_NPI));
+        assertEquals((byte) 14, smppMessage.getHeader(SmppConstants.DEST_ADDR_NPI));
         assertEquals((byte) 3, smppMessage.getHeader(SmppConstants.DEST_ADDR_TON));
         assertEquals("090831230627004+", smppMessage.getHeader(SmppConstants.SCHEDULE_DELIVERY_TIME));
         assertEquals("090901230627004+", smppMessage.getHeader(SmppConstants.VALIDITY_PERIOD));

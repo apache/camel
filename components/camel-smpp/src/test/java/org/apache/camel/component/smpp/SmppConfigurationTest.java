@@ -25,6 +25,7 @@ import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.SessionState;
+import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.junit.Before;
 import org.junit.Test;
@@ -233,7 +234,7 @@ public class SmppConfigurationTest {
         config.setHttpProxyUsername("user");
         config.setHttpProxyPassword("secret");
         config.setSessionStateListener(new SessionStateListener() {
-            public void onStateChange(SessionState arg0, SessionState arg1, Object arg2) {
+            public void onStateChange(SessionState arg0, SessionState arg1, Session arg2) {
             }
         });
         Map<String, String> proxyHeaders = new HashMap<String, String>();
