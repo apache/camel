@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.jsmpp.bean.Address;
-import org.jsmpp.bean.DataCoding;
+import org.jsmpp.bean.DataCodings;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.GSMSpecificFeature;
 import org.jsmpp.bean.MessageMode;
@@ -72,7 +72,7 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
                         submitMulti.getValidityPeriod(),
                         new RegisteredDelivery(submitMulti.getRegisteredDelivery()),
                         new ReplaceIfPresentFlag(submitMulti.getReplaceIfPresentFlag()),
-                        DataCoding.newInstance(submitMulti.getDataCoding()),
+                        DataCodings.newInstance(submitMulti.getDataCoding()),
                         submitMulti.getSmDefaultMsgId(),
                         submitMulti.getShortMessage(),
                         submitMulti.getOptionalParameters());
