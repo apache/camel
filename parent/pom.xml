@@ -1594,11 +1594,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-spring-boot-sample</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-integration</artifactId>
         <version>${project.version}</version>
       </dependency>

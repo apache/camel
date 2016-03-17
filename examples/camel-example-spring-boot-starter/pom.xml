@@ -19,15 +19,15 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
+ <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-spring-boot-starter-parent</artifactId>
+    <artifactId>examples</artifactId>
     <version>2.17-SNAPSHOT</version>
   </parent>
-
-  <artifactId>camel-spring-boot-sample</artifactId>
-  <name>Camel :: Spring Boot :: Sample</name>
-  <description>Spring Boot Apache Camel Sample</description>
+  
+  <artifactId>camel-example-spring-boot-starter</artifactId>
+  <name>Camel :: Example :: Spring Boot Starter</name>
+  <description>An example showing how to work with Camel and Spring Boot using Spring Boot Starter</description>
 
   <properties>
     <spring.boot-version>${spring-boot-version}</spring.boot-version>
