@@ -19,10 +19,19 @@ package sample.camel;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
+/**
+ * A sample Spring Boot application that starts the Camel routes.
+ * <p/>
+ * See the <tt>application.properties</tt> where the
+ */
 @SpringBootApplication
 public class SampleCamelApplication {
 
+    /**
+     * A main method to start this application.
+     */
     public static void main(String[] args) {
-        new SpringApplicationBuilder().sources(SampleCamelApplication.class).run(args).registerShutdownHook();
+        new SpringApplicationBuilder().sources(SampleCamelApplication.class).run(args);
     }
+
 }
