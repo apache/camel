@@ -116,6 +116,7 @@
     * [Crypto](crypto.adoc)
         * [Crypto Digital Signatures](crypto-digital-signatures.adoc)
     * [CSV](csv.adoc)
+    * [CXF](cxf.adoc)
     * [Disruptor](disruptor.adoc)
     * [DNS](dns.adoc)
     * [Docker](docker.adoc)
