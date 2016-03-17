@@ -16,22 +16,32 @@
  */
 package org.apache.camel.spring.boot;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.springframework.boot.SpringApplication;
+import org.apache.camel.CamelContext;
 import org.springframework.context.ApplicationContext;
 
-public class FatJarRouter extends RouteBuilder {
+/**
+ * Controller to keep the main running and perform graceful shutdown when the JVM is stopped.
+ */
+public class CamelMainRunController {
 
-    public static void main(String... args) {
-        ApplicationContext applicationContext = new SpringApplication(FatJarRouter.class).run(args);
-        CamelSpringBootApplicationController applicationController =
-                applicationContext.getBean(CamelSpringBootApplicationController.class);
-        applicationController.run();
+    private final CamelSpringBootApplicationController controller;
+    private final Thread daemon;
+
+    public CamelMainRunController(ApplicationContext applicationContext, CamelContext camelContext) {
+        controller = new CamelSpringBootApplicationController(applicationContext, camelContext);
+        daemon = new Thread(new DaemonTask(), "CamelMainRunController");
     }
 
-    @Override
-    public void configure() throws Exception {
+    public void start() {
+        daemon.run();
+    }
 
+    private final class DaemonTask implements Runnable {
+
+        @Override
+        public void run() {
+            controller.run();
+        }
     }
 
 }

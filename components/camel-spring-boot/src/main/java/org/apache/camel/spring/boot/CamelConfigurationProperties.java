@@ -60,6 +60,12 @@ public class CamelConfigurationProperties {
      */
     private String xmlRests = "classpath:camel-rest/*.xml";
 
+    /**
+     * Whether to use the main run controller to ensure the Spring-Boot application
+     * keeps running until being stopped or the JVM terminated.
+     */
+    private boolean mainRunController;
+
     // Getters & setters
 
     public boolean isJmxEnabled() {
@@ -118,4 +124,11 @@ public class CamelConfigurationProperties {
         this.xmlRests = xmlRests;
     }
 
+    public boolean isMainRunController() {
+        return mainRunController;
+    }
+
+    public void setMainRunController(boolean mainRunController) {
+        this.mainRunController = mainRunController;
+    }
 }

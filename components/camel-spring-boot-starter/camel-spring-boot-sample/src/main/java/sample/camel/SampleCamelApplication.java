@@ -16,19 +16,13 @@
  */
 package sample.camel;
 
-import org.apache.camel.spring.boot.CamelSpringBootApplicationController;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class SampleCamelApplication {
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext ctx = new SpringApplicationBuilder().sources(SampleCamelApplication.class).run(args);
-
-        // keep the JVM running as Camel uses only daemon threads in the sample
-        CamelSpringBootApplicationController controller = ctx.getBean(CamelSpringBootApplicationController.class);
-        controller.blockMainThread();
+        new SpringApplicationBuilder().sources(SampleCamelApplication.class).run(args).registerShutdownHook();
     }
 }

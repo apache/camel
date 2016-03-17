@@ -22,7 +22,7 @@ public class SampleCamelRouter extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("timer:{{timer.name}}?period={{timer.period}}")
+        from("timer:hello?period={{timer.period}}")
                 .transform(method("myBean", "saySomething"))
                 .to("stream:out");
     }

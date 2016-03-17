@@ -64,11 +64,13 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
     // Overridden
 
     @Override
-    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        ApplicationContext applicationContext = contextRefreshedEvent.getApplicationContext();
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        ApplicationContext applicationContext = event.getApplicationContext();
+
         // only listen to context refresh of "my" applicationContext
         if (this.applicationContext.equals(applicationContext)) {
-            CamelContext camelContext = contextRefreshedEvent.getApplicationContext().getBean(CamelContext.class);
+
+            CamelContext camelContext = event.getApplicationContext().getBean(CamelContext.class);
 
             // only add and start Camel if its stopped (initial state)
             if (camelContext.getStatus().isStopped()) {
@@ -100,15 +102,25 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                     }
 
                     for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
-                        LOG.debug("CamelContextConfiguration found. Invoking: {}", camelContextConfiguration);
+                        LOG.debug("CamelContextConfiguration found. Invoking beforeApplicationStart: {}", camelContextConfiguration);
                         camelContextConfiguration.beforeApplicationStart(camelContext);
                     }
 
-                    camelContext.start();
+                    if (configurationProperties.isMainRunController()) {
+                        LOG.info("Starting CamelMainRunController to ensure the main thread keeps running");
+                        CamelMainRunController controller = new CamelMainRunController(applicationContext, camelContext);
+                        // controller will start Camel
+                        controller.start();
+                    } else {
+                        // start camel manually
+                        camelContext.start();
+                    }
 
                     for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
+                        LOG.debug("CamelContextConfiguration found. Invoking afterApplicationStart: {}", camelContextConfiguration);
                         camelContextConfiguration.afterApplicationStart(camelContext);
                     }
+
 
                 } catch (Exception e) {
                     throw new CamelSpringBootInitializationException(e);
@@ -117,7 +129,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                 LOG.debug("Camel already started, not adding routes.");
             }
         } else {
-            LOG.debug("Ignore ContextRefreshedEvent: {}", contextRefreshedEvent);
+            LOG.debug("Ignore ContextRefreshedEvent: {}", event);
         }
     }
 
