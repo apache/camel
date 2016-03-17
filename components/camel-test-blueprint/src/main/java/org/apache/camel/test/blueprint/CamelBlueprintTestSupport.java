@@ -236,7 +236,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         // for BlueprintEvent.CREATED
 
         // start context when we are ready
-        log.debug("Staring CamelContext: {}", context.getName());
+        log.debug("Starting CamelContext: {}", context.getName());
         context.start();
     }
 
