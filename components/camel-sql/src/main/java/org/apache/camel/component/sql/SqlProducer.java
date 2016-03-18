@@ -76,7 +76,7 @@ public class SqlProducer extends DefaultProducer {
             String queryHeader = exchange.getIn().getHeader(SqlConstants.SQL_QUERY, String.class);
             sql = queryHeader != null ? queryHeader : resolvedQuery;
         }
-        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(sql, getEndpoint().isAllowNamedParameters());
+        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(sql, getEndpoint().isAllowNamedParameters(), exchange);
 
         // CAMEL-7313 - check whether to return generated keys
         final Boolean shouldRetrieveGeneratedKeys =

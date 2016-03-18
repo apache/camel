@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +43,9 @@ import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSqlPrepareStatementStrategy.class);
+    private static final Pattern REPLACE_IN_PATTERN = Pattern.compile("\\:\\?in\\:(\\w+|\\$\\{[^\\}]+\\})", Pattern.MULTILINE);
     private static final Pattern REPLACE_PATTERN = Pattern.compile("\\:\\?\\w+|\\:\\?\\$\\{[^\\}]+\\}", Pattern.MULTILINE);
+    private static final Pattern NAME_IN_PATTERN = Pattern.compile("\\:\\?(in\\:(\\w+|\\$\\{[^\\}]+\\}))", Pattern.MULTILINE);
     private static final Pattern NAME_PATTERN = Pattern.compile("\\:\\?(\\w+|\\$\\{[^\\}]+\\})", Pattern.MULTILINE);
     private final char separator;
 
@@ -54,9 +58,27 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
     }
 
     @Override
-    public String prepareQuery(String query, boolean allowNamedParameters) throws SQLException {
+    public String prepareQuery(String query, boolean allowNamedParameters, final Exchange exchange) throws SQLException {
         String answer;
         if (allowNamedParameters && hasNamedParameters(query)) {
+            if (exchange != null) {
+                // replace all :?in:word with a number of placeholders for how many values are expected in the IN values
+                Matcher matcher = REPLACE_IN_PATTERN.matcher(query);
+                while (matcher.find()) {
+                    String found = matcher.group(1);
+                    Object parameter = lookupParameter(found, exchange, exchange.getIn().getBody());
+                    if (parameter != null) {
+                        Iterator it = createInParameterIterator(parameter);
+                        CollectionStringBuffer csb = new CollectionStringBuffer(",");
+                        while (it.hasNext()) {
+                            it.next();
+                            csb.append("\\?");
+                        }
+                        String replace = csb.toString();
+                        query = matcher.replaceAll(replace);
+                    }
+                }
+            }
             // replace all :?word and :?${foo} with just ?
             answer = REPLACE_PATTERN.matcher(query).replaceAll("\\?");
         } else {
@@ -104,12 +126,27 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
         while (iterator != null && iterator.hasNext()) {
             Object value = iterator.next();
-            LOG.trace("Setting parameter #{} with value: {}", argNumber, value);
-            if (argNumber <= expectedParams) {
-                args[i] = value;
+
+            // special for SQL IN where we need to set dynamic number of values
+            if (value instanceof SqlInIterator) {
+                Iterator it = (Iterator) value;
+                while (it.hasNext()) {
+                    Object val = it.next();
+                    LOG.trace("Setting parameter #{} with value: {}", argNumber, val);
+                    if (argNumber <= expectedParams) {
+                        args[i] = val;
+                    }
+                    argNumber++;
+                    i++;
+                }
+            } else {
+                LOG.trace("Setting parameter #{} with value: {}", argNumber, value);
+                if (argNumber <= expectedParams) {
+                    args[i] = value;
+                }
+                argNumber++;
+                i++;
             }
-            argNumber++;
-            i++;
         }
         if (argNumber - 1 != expectedParams) {
             throw new SQLException("Number of parameters mismatch. Expected: " + expectedParams + ", was: " + (argNumber - 1));
@@ -127,19 +164,63 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
     private static final class NamedQueryParser {
 
+        private final Matcher inMatcher;
         private final Matcher matcher;
+        // which mode are we in
+        private boolean in;
+        private boolean name;
 
         private NamedQueryParser(String query) {
+            this.inMatcher = NAME_IN_PATTERN.matcher(query);
             this.matcher = NAME_PATTERN.matcher(query);
         }
 
         public String next() {
-            if (!matcher.find()) {
-                return null;
+            if (!name && inMatcher.find()) {
+                // turn on in mode, so we only match using in matcher next time
+                in = true;
+                return inMatcher.group(1);
+            } else if (!in && matcher.find()) {
+                // turn on name mode, so we only match using name matcher next time
+                name = true;
+                return matcher.group(1);
             }
 
-            return matcher.group(1);
+            return null;
         }
+    }
+
+    protected static Object lookupParameter(String nextParam, Exchange exchange, Object body) {
+        Map<?, ?> bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, body));
+        Map<?, ?> headersMap = safeMap(exchange.getIn().getHeaders());
+
+        Object answer = null;
+        if (nextParam.startsWith("${") && nextParam.endsWith("}")) {
+            answer = SimpleLanguage.expression(nextParam).evaluate(exchange, Object.class);
+        } else if (bodyMap.containsKey(nextParam)) {
+            answer = bodyMap.get(nextParam);
+        } else if (headersMap.containsKey(nextParam)) {
+            answer = headersMap.get(nextParam);
+        }
+
+        return answer;
+    }
+
+    private static Map<?, ?> safeMap(Map<?, ?> map) {
+        return (map == null || map.isEmpty()) ? Collections.emptyMap() : map;
+    }
+
+    protected static Iterator createInParameterIterator(Object value) {
+        Iterator it;
+        // if the body is a String then honor quotes etc.
+        if (value instanceof String) {
+            String[] tokens = StringQuoteHelper.splitSafeQuote((String) value, ',', true);
+            List<String> list = Arrays.asList(tokens);
+            it = list.iterator();
+        } else {
+            it = ObjectHelper.createIterator(value, null);
+        }
+        return new SqlInIterator(it);
     }
 
     private static final class PopulateIterator implements Iterator<Object> {
@@ -148,17 +229,14 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         private final String query;
         private final NamedQueryParser parser;
         private final Exchange exchange;
-        private final Map<?, ?> bodyMap;
-        private final Map<?, ?> headersMap;
+        private final Object body;
         private String nextParam;
 
         private PopulateIterator(String query, Exchange exchange, Object body) {
             this.query = query;
-            this.parser = new NamedQueryParser(query);
             this.exchange = exchange;
-            this.bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, body));
-            this.headersMap = safeMap(exchange.getIn().getHeaders());
-
+            this.body = body;
+            this.parser = new NamedQueryParser(query);
             this.nextParam = parser.next();
         }
 
@@ -173,18 +251,26 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                 throw new NoSuchElementException();
             }
 
+            boolean in = false;
+            if (nextParam.startsWith("in:")) {
+                in = true;
+                nextParam = nextParam.substring(3);
+            }
+
+            Object next = null;
             try {
-                if (nextParam.startsWith("${") && nextParam.endsWith("}")) {
-                    return SimpleLanguage.expression(nextParam).evaluate(exchange, Object.class);
-                } else if (bodyMap.containsKey(nextParam)) {
-                    return bodyMap.get(nextParam);
-                } else if (headersMap.containsKey(nextParam)) {
-                    return headersMap.get(nextParam);
+                next = lookupParameter(nextParam, exchange, body);
+                if (in && next != null) {
+                    next = createInParameterIterator(next);
                 }
-                throw new RuntimeExchangeException(String.format(MISSING_PARAMETER_EXCEPTION, nextParam, query), exchange);
+                if (next == null) {
+                    throw new RuntimeExchangeException(String.format(MISSING_PARAMETER_EXCEPTION, nextParam, query), exchange);
+                }
             } finally {
                 nextParam = parser.next();
             }
+
+            return next;
         }
 
         @Override
@@ -192,8 +278,5 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
             throw new UnsupportedOperationException();
         }
 
-        private static Map<?, ?> safeMap(Map<?, ?> map) {
-            return (map == null || map.isEmpty()) ? Collections.emptyMap() : map;
-        }
     }
 }

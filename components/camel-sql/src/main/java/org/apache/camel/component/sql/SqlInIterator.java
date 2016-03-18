@@ -14,26 +14,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.elsql;
+package org.apache.camel.component.sql;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.function.Consumer;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.component.sql.SqlPrepareStatementStrategy;
+/**
+ * Iterator used for SQL IN query.
+ * <p/>
+ * This ensures we know the parameters is an IN parameter and the values are dynamic and must be
+ * set using this iterator.
+ */
+public class SqlInIterator implements Iterator {
 
-public class ElsqlSqlPrepareStatementStrategy implements SqlPrepareStatementStrategy {
+    private final Iterator it;
 
-    public String prepareQuery(String query, boolean allowNamedParameters, Exchange exchange) throws SQLException {
-        return query;
+    public SqlInIterator(Iterator it) {
+        this.it = it;
     }
 
-    public Iterator<?> createPopulateIterator(String query, String preparedQuery, int expectedParams, Exchange exchange, Object value) throws SQLException {
-        return null;
+    @Override
+    public boolean hasNext() {
+        return it.hasNext();
     }
 
-    public void populateStatement(PreparedStatement ps, Iterator<?> iterator, int expectedParams) throws SQLException {
-        // noop
+    @Override
+    public Object next() {
+        return it.next();
+    }
+
+    @Override
+    public void remove() {
+        it.remove();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void forEachRemaining(Consumer action) {
+        it.forEachRemaining(action);
     }
 }

@@ -14,26 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.elsql;
+package org.apache.camel.component.sql;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Iterator;
+import org.apache.camel.builder.RouteBuilder;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.component.sql.SqlPrepareStatementStrategy;
+public class SqlProducerInExpressionTest extends SqlProducerInTest {
 
-public class ElsqlSqlPrepareStatementStrategy implements SqlPrepareStatementStrategy {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // required for the sql component
+                getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-    public String prepareQuery(String query, boolean allowNamedParameters, Exchange exchange) throws SQLException {
-        return query;
-    }
-
-    public Iterator<?> createPopulateIterator(String query, String preparedQuery, int expectedParams, Exchange exchange, Object value) throws SQLException {
-        return null;
-    }
-
-    public void populateStatement(PreparedStatement ps, Iterator<?> iterator, int expectedParams) throws SQLException {
-        // noop
+                from("direct:query")
+                    .to("sql:classpath:sql/selectProjectsInExpression.sql")
+                    .to("log:query")
+                    .to("mock:query");
+            }
+        };
     }
 }
