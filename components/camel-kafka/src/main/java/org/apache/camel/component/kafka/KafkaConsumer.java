@@ -26,6 +26,7 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.common.errors.InterruptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,6 +107,8 @@ public class KafkaConsumer extends DefaultConsumer {
 
                 if (endpoint.isSeekToBeginning()) {
                     LOG.debug("{} is seeking to the beginning on topic {}", threadId, topicName);
+                    // This poll to ensures we have an assigned partition otherwise seek won't work
+                    consumer.poll(100);
                     consumer.seekToBeginning();
                 }
                 while (isRunAllowed() && !isSuspendingOrSuspended()) {
@@ -132,6 +135,10 @@ public class KafkaConsumer extends DefaultConsumer {
                 }
                 LOG.debug("Unsubscribing {} from topic {}", threadId, topicName);
                 consumer.unsubscribe();
+            } catch (InterruptException e) {
+                getExceptionHandler().handleException("Interrupted while consuming " + threadId + " from kafka topic", e);
+                consumer.unsubscribe();
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
                 getExceptionHandler().handleException("Error consuming " + threadId + " from kafka topic", e);
             }
