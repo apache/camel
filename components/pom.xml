@@ -227,6 +227,7 @@
     <module>camel-splunk</module>
     <module>camel-spring-batch</module>
     <module>camel-spring-boot</module>
+    <module>camel-spring-boot-starter</module>
     <module>camel-spring-javaconfig</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-ldap</module>
