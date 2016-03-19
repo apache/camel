@@ -48,7 +48,9 @@ public class SqlInIterator implements Iterator {
         it.remove();
     }
 
-    @Override
+    // This method should not have @Override as its a new method in Java 1.8
+    // and we need to compile for Java 1.7 also. TODO: enable again in Camel 2.18 onwards
+    // @Override
     @SuppressWarnings("unchecked")
     public void forEachRemaining(Consumer action) {
         it.forEachRemaining(action);
