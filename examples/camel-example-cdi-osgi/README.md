@@ -62,7 +62,7 @@ To run the example, from the command line:
 
     ```sh
     karaf@root()> chooseurl camel 2.17.0
-    karaf@root()> chooseurl activemq 5.12.1
+    karaf@root()> chooseurl activemq 5.13.2
     karaf@root()> features:install activemq-broker-noweb pax-cdi-weld camel-sjms camel-cdi
     ```
 
@@ -78,7 +78,7 @@ Alternatively, with the new commands introduced since Karaf 3.x:
 
     ```sh
     karaf@root()> repo-add camel 2.17.0
-    karaf@root()> repo-add activemq 5.12.1
+    karaf@root()> repo-add activemq 5.13.2
     karaf@root()> feature:install activemq-broker-noweb pax-cdi-weld camel-sjms camel-cdi
     ```
 
