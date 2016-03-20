@@ -81,7 +81,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     private Map<String, Object> options;
     @UriParam(label = "consumer",
             description = "Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.")
-    boolean optionsEnabled;
+    private boolean optionsEnabled;
 
     public UndertowEndpoint(String uri, UndertowComponent component) throws URISyntaxException {
         super(uri, component);
