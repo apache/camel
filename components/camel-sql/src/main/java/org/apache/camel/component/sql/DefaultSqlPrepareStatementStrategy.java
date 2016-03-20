@@ -36,6 +36,7 @@ import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
+import org.springframework.util.CompositeIterator;
 
 /**
  * Default {@link SqlPrepareStatementStrategy} that supports named query parameters as well index based.
@@ -128,7 +129,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
             Object value = iterator.next();
 
             // special for SQL IN where we need to set dynamic number of values
-            if (value instanceof SqlInIterator) {
+            if (value instanceof CompositeIterator) {
                 Iterator it = (Iterator) value;
                 while (it.hasNext()) {
                     Object val = it.next();
@@ -210,7 +211,8 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         return (map == null || map.isEmpty()) ? Collections.emptyMap() : map;
     }
 
-    protected static Iterator createInParameterIterator(Object value) {
+    @SuppressWarnings("unchecked")
+    protected static CompositeIterator createInParameterIterator(Object value) {
         Iterator it;
         // if the body is a String then honor quotes etc.
         if (value instanceof String) {
@@ -220,7 +222,9 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         } else {
             it = ObjectHelper.createIterator(value, null);
         }
-        return new SqlInIterator(it);
+        CompositeIterator ci = new CompositeIterator();
+        ci.add(it);
+        return ci;
     }
 
     private static final class PopulateIterator implements Iterator<Object> {
@@ -251,6 +255,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                 throw new NoSuchElementException();
             }
 
+            // is it a SQL in parameter
             boolean in = false;
             if (nextParam.startsWith("in:")) {
                 in = true;
@@ -261,6 +266,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
             try {
                 next = lookupParameter(nextParam, exchange, body);
                 if (in && next != null) {
+                    // if SQL IN we need to return an iterator that can iterate the parameter values
                     next = createInParameterIterator(next);
                 }
                 if (next == null) {
