@@ -28,6 +28,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
@@ -35,6 +36,7 @@ import io.swagger.models.Contact;
 import io.swagger.models.Info;
 import io.swagger.models.License;
 import io.swagger.models.Swagger;
+import io.swagger.util.Yaml;
 import org.apache.camel.Exchange;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.rest.RestDefinition;
@@ -187,7 +189,8 @@ public class RestSwaggerSupport {
         return answer;
     }
 
-    public void renderResourceListing(RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route, ClassResolver classResolver) throws Exception {
+    public void renderResourceListing(RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route, boolean json, boolean yaml,
+                                      ClassResolver classResolver) throws Exception {
         LOG.trace("renderResourceListing");
 
         if (cors) {
@@ -198,20 +201,41 @@ public class RestSwaggerSupport {
 
         List<RestDefinition> rests = getRestDefinitions(contextId);
         if (rests != null) {
-            response.setHeader(Exchange.CONTENT_TYPE, "application/json");
+            if (json) {
+                response.setHeader(Exchange.CONTENT_TYPE, "text/json");
 
-            // read the rest-dsl into swagger model
-            Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
+                // read the rest-dsl into swagger model
+                Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
 
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.enable(SerializationFeature.INDENT_OUTPUT);
-            mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            byte[] bytes = mapper.writeValueAsBytes(swagger);
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.enable(SerializationFeature.INDENT_OUTPUT);
+                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                byte[] bytes = mapper.writeValueAsBytes(swagger);
 
-            int len = bytes.length;
-            response.setHeader(Exchange.CONTENT_LENGTH, "" + len);
+                int len = bytes.length;
+                response.setHeader(Exchange.CONTENT_LENGTH, "" + len);
 
-            response.writeBytes(bytes);
+                response.writeBytes(bytes);
+            } else {
+                response.setHeader(Exchange.CONTENT_TYPE, "text/yaml");
+
+                // read the rest-dsl into swagger model
+                Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
+
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.enable(SerializationFeature.INDENT_OUTPUT);
+                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                byte[] jsonData = mapper.writeValueAsBytes(swagger);
+
+                // json to yaml
+                JsonNode node = mapper.readTree(jsonData);
+                byte[] bytes = Yaml.mapper().writerWithDefaultPrettyPrinter().writeValueAsBytes(node);
+
+                int len = bytes.length;
+                response.setHeader(Exchange.CONTENT_LENGTH, "" + len);
+
+                response.writeBytes(bytes);
+            }
         } else {
             response.noContent();
         }
@@ -220,7 +244,7 @@ public class RestSwaggerSupport {
     /**
      * Renders a list of available CamelContexts in the JVM
      */
-    public void renderCamelContexts(RestApiResponseAdapter response, String contextId, String contextIdPattern) throws Exception {
+    public void renderCamelContexts(RestApiResponseAdapter response, String contextId, String contextIdPattern, boolean json, boolean yaml) throws Exception {
         LOG.trace("renderCamelContexts");
 
         if (cors) {
@@ -228,10 +252,6 @@ public class RestSwaggerSupport {
             response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH");
             response.setHeader("Access-Control-Allow-Origin", "*");
         }
-
-        response.setHeader(Exchange.CONTENT_TYPE, "application/json");
-
-        StringBuffer sb = new StringBuffer();
 
         List<String> contexts = findCamelContexts();
 
@@ -253,15 +273,28 @@ public class RestSwaggerSupport {
             }
         }
 
-        sb.append("[\n");
-        for (int i = 0; i < contexts.size(); i++) {
-            String name = contexts.get(i);
-            sb.append("{\"name\": \"").append(name).append("\"}");
-            if (i < contexts.size() - 1) {
-                sb.append(",\n");
+        StringBuffer sb = new StringBuffer();
+
+        if (json) {
+            response.setHeader(Exchange.CONTENT_TYPE, "text/json");
+
+            sb.append("[\n");
+            for (int i = 0; i < contexts.size(); i++) {
+                String name = contexts.get(i);
+                sb.append("{\"name\": \"").append(name).append("\"}");
+                if (i < contexts.size() - 1) {
+                    sb.append(",\n");
+                }
+            }
+            sb.append("\n]");
+        } else {
+            response.setHeader(Exchange.CONTENT_TYPE, "text/yaml");
+
+            for (int i = 0; i < contexts.size(); i++) {
+                String name = contexts.get(i);
+                sb.append("- \"").append(name).append("\"\n");
             }
         }
-        sb.append("\n]");
 
         int len = sb.length();
         response.setHeader(Exchange.CONTENT_LENGTH, "" + len);

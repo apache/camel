@@ -53,13 +53,33 @@ public class RestSwaggerProcessor implements Processor {
 
         String contextId = exchange.getContext().getName();
         String route = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
+        String accept = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, String.class);
 
         RestApiResponseAdapter adapter = new ExchangeRestApiResponseAdapter(exchange);
+
+        // whether to use json or yaml
+        boolean json = false;
+        boolean yaml = false;
+        if (route != null && route.endsWith("/swagger.json")) {
+            json = true;
+            route = route.substring(0, route.length() - 13);
+        } else if (route != null && route.endsWith("/swagger.yaml")) {
+            yaml = true;
+            route = route.substring(0, route.length() - 13);
+        }
+        if (accept != null && !json && !yaml) {
+            json = accept.contains("json");
+            yaml = accept.contains("yaml");
+        }
+        if (!json && !yaml) {
+            // json is default
+            json = true;
+        }
 
         try {
             // render list of camel contexts as root
             if (contextIdListing && (ObjectHelper.isEmpty(route) || route.equals("/"))) {
-                support.renderCamelContexts(adapter, contextId, contextIdPattern);
+                support.renderCamelContexts(adapter, contextId, contextIdPattern, json, yaml);
             } else {
                 String name;
                 if (ObjectHelper.isNotEmpty(route)) {
@@ -92,7 +112,7 @@ public class RestSwaggerProcessor implements Processor {
                 if (!match) {
                     adapter.noContent();
                 } else {
-                    support.renderResourceListing(adapter, swaggerConfig, name, route, exchange.getContext().getClassResolver());
+                    support.renderResourceListing(adapter, swaggerConfig, name, route, json, yaml, exchange.getContext().getClassResolver());
                 }
             }
         } catch (Exception e) {
