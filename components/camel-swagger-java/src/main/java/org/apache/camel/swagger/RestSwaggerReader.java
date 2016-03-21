@@ -506,7 +506,16 @@ public class RestSwaggerReader {
         RestModelConverters converters = new RestModelConverters();
         final Map<String, Model> models = converters.readClass(clazz);
         for (Map.Entry<String, Model> entry : models.entrySet()) {
-            swagger.model(entry.getKey(), entry.getValue());
+
+            // favor keeping any existing model that has the vendor extension in the model
+            boolean oldExt = false;
+            if (swagger.getDefinitions() != null && swagger.getDefinitions().get(entry.getKey()) != null) {
+                oldExt = swagger.getDefinitions().get(entry.getKey()).getVendorExtensions().get("x-className") == null;
+            }
+
+            if (!oldExt) {
+                swagger.model(entry.getKey(), entry.getValue());
+            }
         }
     }
 
