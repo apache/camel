@@ -59,7 +59,7 @@ public class CMComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(final String uri, final String remaining,
             final Map<String, Object> parameters) throws Exception {
 
-        LOG.info("Creating CM Endpoint ... ");
+        LOG.debug("Creating CM Endpoint ... ");
 
         final String url = CMConstants.DEFAULT_SCHEME + remaining;
         if (!UrlValidator.getInstance().isValid(url)) {
@@ -68,7 +68,7 @@ public class CMComponent extends UriEndpointComponent {
                     url));
         }
 
-        LOG.info("Uri=[{}], path=[{}], parameters=[{}]",
+        LOG.debug("Uri=[{}], path=[{}], parameters=[{}]",
                 new Object[] { URISupport.sanitizeUri(uri),
                         URISupport.sanitizePath(remaining), parameters });
 
@@ -77,7 +77,7 @@ public class CMComponent extends UriEndpointComponent {
         setProperties(config, parameters);
 
         // Validate configuration
-        LOG.info("Validating uri based configuration");
+        LOG.debug("Validating uri based configuration");
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations = validator
                 .validate(config);
         if (constraintViolations.size() > 0) {
@@ -86,15 +86,14 @@ public class CMComponent extends UriEndpointComponent {
                 msg.append(String.format("- Invalid value for %s: %s",
                         cv.getPropertyPath().toString(), cv.getMessage()));
             }
-            LOG.error(msg.toString());
             throw new InvalidUriEndpointException(msg.toString());
         }
-        LOG.info("CMConfiguration - OK!");
+        LOG.debug("CMConfiguration - OK!");
 
         // Component is an Endpoint factory. So far, just one Endpoint type.
         // Endpoint construction and configuration.
 
-        LOG.info("Creating CMEndpoint");
+        LOG.debug("Creating CMEndpoint");
         final CMEndpoint endpoint = new CMEndpoint(uri, this);
         endpoint.setConfiguration(config);
         endpoint.setHost(remaining);
