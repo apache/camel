@@ -27,13 +27,17 @@ public interface CMConstants {
     int MAX_UNICODE_MESSAGE_LENGTH_PER_PART_IF_MULTIPART = 67;
     int MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART = 153;
 
-    // status code 200 - Error substrings - checkk it contains.
+    // status code 200 - Error substrings - check it contains.
     String ERROR_UNKNOWN = "Unknown error";
     String ERROR_NO_ACCOUNT = "No account found";
     String ERROR_INSUFICIENT_BALANCE = "Insufficient balance";
     String ERROR_UNROUTABLE_MESSAGE = "Message is unroutable";
     String ERROR_INVALID_PRODUCT_TOKEN = "Invalid product token";
 
-    String GSM_CHARACTERS_REGEX = "^[A-Za-z0-9 \\r\\n@£$¥èéùìòÇØøÅå\u0394_\u03A6\u0393\u039B\u03A9"
-                                  + "\u03A0\u03A8\u03A3\u0398\u039EÆæßÉ!\"#$%&amp;'()*+,\\-./:;&lt;=&gt;?¡ÄÖÑÜ§¿äöñüà^{}\\\\\\[~\\]|\u20AC]*$";
+    // TODO: Review this pattern.
+    // or it should be foundnd an alternative to jcharset to check if a message is GSM 03.38 encodable
+    // See:
+    // https://en.wikipedia.org/wiki/GSM_03.38
+    // http://frightanic.com/software-development/regex-for-gsm-03-38-7bit-character-set/
+    String GSM_0338_REGEX = "^[A-Za-z0-9 \\r\\n@£$¥èéùìòÇØøÅå\u0394_\u03A6\u0393\u039B\u03A9\u03A0\u03A8\u03A3\u0398\u039EÆæßÉ!\"#$%&amp;'()*+,\\-./:;&lt;=&gt;?¡ÄÖÑÜ§¿äöñüà^{}\\\\\\[~\\]|\u20AC]*$";
 }

@@ -22,7 +22,7 @@ public final class CMUtils {
     }
 
     public static boolean isGsm0338Encodeable(final String message) {
-        return message.matches(CMConstants.GSM_CHARACTERS_REGEX);
+        return message.matches(CMConstants.GSM_0338_REGEX);
     }
 
     // TODO: Have a look at
