@@ -37,7 +37,7 @@ $ mvn camel:run
 When the Camel application starts, you should see the following message being logged to the console, e.g.:
 
 ```
-2016-02-01 20:13:46,922 [cdi.Main.main()] INFO  DefaultCamelContext - Apache Camel 2.17-SNAPSHOT (CamelContext: osgi-example) started in 0.769 seconds
+2016-02-01 20:13:46,922 [cdi.Main.main()] INFO  DefaultCamelContext - Apache Camel 2.17.0 (CamelContext: osgi-example) started in 0.769 seconds
 2016-02-01 20:13:47,008 [ Session Task-1] INFO  consumer-route      - Received message [Sample Message] from [Producer]
 ```
 
@@ -98,7 +98,7 @@ The following messages should be displayed:
 
 ```
 2016-02-08 12:32:14,395 | INFO  | nsole user karaf | CdiCamelExtension                | 149 - org.apache.camel.camel-cdi - 2.17.0.SNAPSHOT | Camel CDI is starting Camel context [osgi-example]
-2016-02-08 12:32:14,395 | INFO  | nsole user karaf | DefaultCamelContext              | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Apache Camel 2.17-SNAPSHOT (CamelContext: osgi-example) is starting
+2016-02-08 12:32:14,395 | INFO  | nsole user karaf | DefaultCamelContext              | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Apache Camel 2.17.0 (CamelContext: osgi-example) is starting
 2016-02-08 12:32:14,395 | INFO  | nsole user karaf | ManagedManagementStrategy        | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | JMX is enabled
 2016-02-08 12:32:14,698 | INFO  | nsole user karaf | DefaultTypeConverter             | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Loaded 182 type converters
 2016-02-08 12:32:14,706 | INFO  | nsole user karaf | DefaultRuntimeEndpointRegistry   | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: 1000)
@@ -112,7 +112,7 @@ The following messages should be displayed:
 2016-02-08 12:32:14,755 | INFO  | nsole user karaf | DefaultCamelContext              | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html
 2016-02-08 12:32:14,762 | INFO  | nsole user karaf | DefaultCamelContext              | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Route: consumer-route started and consuming from: Endpoint[sjms://sample.queue]
 2016-02-08 12:32:14,763 | INFO  | nsole user karaf | DefaultCamelContext              | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Total 1 routes, of which 1 is started.
-2016-02-08 12:32:14,763 | INFO  | nsole user karaf | DefaultCamelContext              | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Apache Camel 2.17-SNAPSHOT (CamelContext: osgi-example) started in 0.368 seconds
+2016-02-08 12:32:14,763 | INFO  | nsole user karaf | DefaultCamelContext              | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Apache Camel 2.17.0 (CamelContext: osgi-example) started in 0.368 seconds
 2016-02-08 12:32:14,774 | INFO  | Q Session Task-1 | consumer-route                   | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Received message [Sample Message] from [Producer]
 ```
 
@@ -178,7 +178,7 @@ shutdown:
 
 ```
 2016-02-08 12:39:34,295 | INFO  | nsole user karaf | CamelContextProducer             | 149 - org.apache.camel.camel-cdi - 2.17.0.SNAPSHOT | Camel CDI is stopping Camel context [osgi-example]
-2016-02-08 12:39:34,295 | INFO  | nsole user karaf | DefaultCamelContext              | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Apache Camel 2.17-SNAPSHOT (CamelContext: osgi-example) is shutting down
+2016-02-08 12:39:34,295 | INFO  | nsole user karaf | DefaultCamelContext              | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Apache Camel 2.17.0 (CamelContext: osgi-example) is shutting down
 2016-02-08 12:39:34,297 | INFO  | nsole user karaf | DefaultShutdownStrategy          | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Starting to graceful shutdown 1 routes (timeout 300 seconds)
 2016-02-08 12:39:34,299 | INFO  | 1 - ShutdownTask | DefaultShutdownStrategy          | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Route: consumer-route shutdown complete, was consuming from: Endpoint[sjms://sample.queue]
 2016-02-08 12:39:34,300 | INFO  | nsole user karaf | DefaultShutdownStrategy          | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Graceful shutdown of 1 routes completed in 0 seconds
@@ -186,8 +186,8 @@ shutdown:
 2016-02-08 12:39:34,310 | INFO  | nsole user karaf | BrokerService                    | 61 - org.apache.activemq.activemq-osgi - 5.12.1 | Apache ActiveMQ 5.12.1 (broker, ID:mbp-2.local-52027-1454930701800-0:3) is shutting down
 2016-02-08 12:39:34,311 | INFO  | nsole user karaf | BrokerService                    | 61 - org.apache.activemq.activemq-osgi - 5.12.1 | Apache ActiveMQ 5.12.1 (broker, ID:mbp-2.local-52027-1454930701800-0:3) uptime 7 minutes
 2016-02-08 12:39:34,311 | INFO  | nsole user karaf | BrokerService                    | 61 - org.apache.activemq.activemq-osgi - 5.12.1 | Apache ActiveMQ 5.12.1 (broker, ID:mbp-2.local-52027-1454930701800-0:3) is shutdown
-2016-02-08 12:39:34,313 | INFO  | nsole user karaf | DefaultCamelContext              | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Apache Camel 2.17-SNAPSHOT (CamelContext: osgi-example) uptime 7 minutes
-2016-02-08 12:39:34,313 | INFO  | nsole user karaf | DefaultCamelContext              | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Apache Camel 2.17-SNAPSHOT (CamelContext: osgi-example) is shutdown in 0.018 seconds
+2016-02-08 12:39:34,313 | INFO  | nsole user karaf | DefaultCamelContext              | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Apache Camel 2.17.0 (CamelContext: osgi-example) uptime 7 minutes
+2016-02-08 12:39:34,313 | INFO  | nsole user karaf | DefaultCamelContext              | 151 - org.apache.camel.camel-core - 2.17.0.SNAPSHOT | Apache Camel 2.17.0 (CamelContext: osgi-example) is shutdown in 0.018 seconds
 ```
 
 ### Forum, Help, etc
