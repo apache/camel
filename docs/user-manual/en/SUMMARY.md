@@ -130,6 +130,7 @@
     * [Facebook](facebook.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
+    * [JMX](jmx.adoc)
     * [Metrics](metrics.adoc)
     * [Mock](mock.adoc)
     * [Properties](properties.adoc)
