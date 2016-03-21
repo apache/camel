@@ -22,9 +22,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.component.cm.client.SMSMessage;
 import org.apache.camel.component.cm.exceptions.HostUnavailableException;
-import org.apache.camel.component.cm.exceptions.InvalidPayloadException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -70,7 +70,9 @@ public class CMProducer extends DefaultProducer {
                 msg.append(String.format("- Invalid value for %s: %s",
                         cv.getPropertyPath().toString(), cv.getMessage()));
             }
-            throw new InvalidPayloadException(msg.toString());
+            log.debug(msg.toString());
+            throw new InvalidPayloadRuntimeException(exchange,
+                    SMSMessage.class);
         }
         log.trace("SMSMessage instance is valid: {}", smsMessage.toString());
 
