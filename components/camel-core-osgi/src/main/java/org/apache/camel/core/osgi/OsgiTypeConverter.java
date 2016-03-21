@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -49,13 +50,15 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     private static final Logger LOG = LoggerFactory.getLogger(OsgiTypeConverter.class);
 
     private final BundleContext bundleContext;
+    private final CamelContext camelContext;
     private final Injector injector;
     private final FactoryFinder factoryFinder;
     private final ServiceTracker<TypeConverterLoader, Object> tracker;
     private volatile DefaultTypeConverter delegate;
 
-    public OsgiTypeConverter(BundleContext bundleContext, Injector injector, FactoryFinder factoryFinder) {
+    public OsgiTypeConverter(BundleContext bundleContext, CamelContext camelContext, Injector injector, FactoryFinder factoryFinder) {
         this.bundleContext = bundleContext;
+        this.camelContext = camelContext;
         this.injector = injector;
         this.factoryFinder = factoryFinder;
         this.tracker = new ServiceTracker<TypeConverterLoader, Object>(bundleContext, TypeConverterLoader.class.getName(), this);
@@ -196,6 +199,9 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
                 return Collections.emptySet();
             }
         }, injector, factoryFinder);
+
+        // inject CamelContext
+        answer.setCamelContext(camelContext);
 
         try {
             // only load the core type converters, as OSGi activator will keep track on bundles

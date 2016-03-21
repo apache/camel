@@ -459,7 +459,9 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
         if (typeConverter instanceof CamelContextAware) {
             CamelContextAware camelContextAware = (CamelContextAware) typeConverter;
-            camelContextAware.setCamelContext(getCamelContext());
+            if (camelContext != null) {
+                camelContextAware.setCamelContext(camelContext);
+            }
         }
     }
 
