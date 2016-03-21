@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
+import java.io.Reader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
@@ -45,6 +46,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.util.CxfUtils;
+import org.apache.camel.component.cxf.util.ReaderInputStream;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ExchangeHelper;
@@ -731,6 +733,12 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 
             } else if (dataFormat.dealias() == DataFormat.RAW) {
                 answer = message.getContent(InputStream.class);
+                if (answer == null) {
+                    answer = message.getContent(Reader.class);
+                    if (answer != null) {
+                        answer = new ReaderInputStream((Reader)answer);
+                    }
+                }
                 
             } else if (dataFormat.dealias() == DataFormat.CXF_MESSAGE 
                 && message.getContent(List.class) != null) {
