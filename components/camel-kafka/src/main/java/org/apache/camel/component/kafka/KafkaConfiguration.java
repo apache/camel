@@ -89,6 +89,8 @@ public class KafkaConfiguration {
     //fetch.max.wait.ms
     @UriParam(label = "consumer", defaultValue = "500")
     private Integer fetchWaitMaxMs = 500;
+    @UriParam(label = "consumer")
+    private boolean seekToBeginning;
 
     //Consumer configuration properties
     @UriParam(label = "consumer")
@@ -1196,5 +1198,17 @@ public class KafkaConfiguration {
     public void setValueDeserializer(String valueDeserializer) {
         this.valueDeserializer = valueDeserializer;
     }
+
+    public boolean isSeekToBeginning() {
+        return seekToBeginning;
+    }
+
+    /**
+     * If the option is true, then KafkaConsumer will read from beginning on startup.
+     */
+    public void setSeekToBeginning(boolean seekToBeginning) {
+        this.seekToBeginning = seekToBeginning;
+    }
+
 
 }

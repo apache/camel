@@ -40,8 +40,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private KafkaConfiguration configuration = new KafkaConfiguration();
     @UriParam
     private boolean bridgeEndpoint;
-    @UriParam
-    private boolean seekToBeginning;
 
     public KafkaEndpoint() {
     }
@@ -665,6 +663,14 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return configuration.getSslProtocol();
     }
 
+    public boolean isSeekToBeginning() {
+        return configuration.isSeekToBeginning();
+    }
+
+    public void setSeekToBeginning(boolean seekToBeginning) {
+        configuration.setSeekToBeginning(seekToBeginning);
+    }
+
     public boolean isBridgeEndpoint() {
         return bridgeEndpoint;
     }
@@ -676,14 +682,4 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         this.bridgeEndpoint = bridgeEndpoint;
     }
 
-    public boolean isSeekToBeginning() {
-        return seekToBeginning;
-    }
-
-    /**
-     * If the option is true, then KafkaConsumer will read from beginning on startup.
-     */
-    public void setSeekToBeginning(boolean seekToBeginning) {
-        this.seekToBeginning = seekToBeginning;
-    }
 }
