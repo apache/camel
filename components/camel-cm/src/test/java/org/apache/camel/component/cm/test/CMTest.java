@@ -19,6 +19,8 @@ package org.apache.camel.component.cm.test;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.InvalidPayloadRuntimeException;
@@ -60,9 +62,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.util.Assert;
-
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {

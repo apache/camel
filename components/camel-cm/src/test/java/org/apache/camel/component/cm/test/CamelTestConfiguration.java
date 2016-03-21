@@ -27,7 +27,8 @@ import org.springframework.util.Assert;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 /**
- * Builds a SimpleRoute to send a message to CM GW and CM Uri is built based on properties in a file.
+ * Builds a SimpleRoute to send a message to CM GW and CM Uri is built based on
+ * properties in a file.
  */
 @Configuration("cmConfig")
 @PropertySource("classpath:/cm-smsgw.properties")
@@ -46,10 +47,13 @@ public class CamelTestConfiguration extends SingleRouteCamelConfiguration {
 
                 Assert.hasLength(uri);
 
-                log.info("\nCM Component is an URI based component\nCM URI: {}", uri);
+                log.debug(
+                        "\nCM Component is an URI based component\nCM URI: {}",
+                        uri);
 
                 // Route definition
-                from("direct:sms").to(uri).to("mock:test").routeId(SIMPLE_ROUTE_ID).autoStartup(true);
+                from("direct:sms").to(uri).to("mock:test")
+                        .routeId(SIMPLE_ROUTE_ID).autoStartup(true);
 
             }
         };
@@ -58,7 +62,8 @@ public class CamelTestConfiguration extends SingleRouteCamelConfiguration {
     @Bean
     public LocalValidatorFactoryBean getValidatorFactory() {
         final LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
-        localValidatorFactoryBean.getValidationPropertyMap().put("hibernate.validator.fail_fast", "true");
+        localValidatorFactoryBean.getValidationPropertyMap()
+                .put("hibernate.validator.fail_fast", "true");
         return localValidatorFactoryBean;
     }
 
@@ -66,30 +71,37 @@ public class CamelTestConfiguration extends SingleRouteCamelConfiguration {
      * Build the URI of the CM Component based on Environmental properties
      */
     @Override
-    public final void setApplicationContext(final ApplicationContext applicationContext) {
+    public final void setApplicationContext(
+            final ApplicationContext applicationContext) {
 
         super.setApplicationContext(applicationContext);
 
         final Environment env = applicationContext.getEnvironment();
 
         final String host = env.getRequiredProperty("cm.url");
-        final String productTokenString = env.getRequiredProperty("cm.product-token");
+        final String productTokenString = env
+                .getRequiredProperty("cm.product-token");
         final String sender = env.getRequiredProperty("cm.default-sender");
 
-        final StringBuffer cmUri = new StringBuffer("cm:" + host).append("?productToken=").append(productTokenString);
+        final StringBuffer cmUri = new StringBuffer("cm:" + host)
+                .append("?productToken=").append(productTokenString);
         if (sender != null && !sender.isEmpty()) {
             cmUri.append("&defaultFrom=").append(sender);
         }
 
         // Defaults to false
-        final Boolean testConnectionOnStartup = Boolean.parseBoolean(env.getProperty("cm.testConnectionOnStartup", "false"));
+        final Boolean testConnectionOnStartup = Boolean.parseBoolean(
+                env.getProperty("cm.testConnectionOnStartup", "false"));
         if (testConnectionOnStartup) {
-            cmUri.append("&testConnectionOnStartup=").append(testConnectionOnStartup.toString());
+            cmUri.append("&testConnectionOnStartup=")
+                    .append(testConnectionOnStartup.toString());
         }
 
         // Defaults to 8
-        final Integer defaultMaxNumberOfParts = Integer.parseInt(env.getProperty("defaultMaxNumberOfParts", "8"));
-        cmUri.append("&defaultMaxNumberOfParts=").append(defaultMaxNumberOfParts.toString());
+        final Integer defaultMaxNumberOfParts = Integer
+                .parseInt(env.getProperty("defaultMaxNumberOfParts", "8"));
+        cmUri.append("&defaultMaxNumberOfParts=")
+                .append(defaultMaxNumberOfParts.toString());
 
         uri = cmUri.toString();
     }
