@@ -901,23 +901,41 @@ Examples
 The following examples are available in the `examples` directory of the
 Camel project:
 
-* `camel-example-cdi` - illustrates how to work with Camel using CDI
-to configure components, endpoints and beans,
-* `camel-example-cdi-metrics` - illustrates the integration between
-Camel, Dropwizard Metrics and CDI,
-* `camel-example-cdi-properties` - illustrates the integration between
-Camel, DeltaSpike and CDI for configuration properties,
-* `camel-example-cdi-osgi` - a CDI application using the SJMS component
-that can be executed inside an OSGi container using PAX CDI,
-* `camel-example-cdi-rest-servlet` - illustrates the Camel REST DSL
-being used in a Web application that uses CDI as dependency injection
-framework,
-* `camel-example-cdi-test` - demonstrates the testing features that are
-provided as part of the integration between Camel and CDI,
-* `camel-example-swagger-cdi` - an example using REST DSL and Swagger
-Java with CDI.
-* `camel-example-widget-gadget-cdi` - the Widget and Gadget use-case
-from the EIP book implemented in Java with CDI dependency Injection,
+[width="100%",cols="1m,3",options="header",]
+|============================================
+|Example |Description
+
+|camel-example-cdi
+|Illustrates how to work with Camel using CDI to configure components,
+endpoints and beans
+
+|camel-example-cdi-metrics
+|Illustrates the integration between Camel, Dropwizard Metrics and CDI
+
+|camel-example-cdi-properties
+|Illustrates the integration between Camel, DeltaSpike and CDI for
+configuration properties
+
+|camel-example-cdi-osgi
+|A CDI application using the SJMS component that can be executed
+inside an OSGi container using PAX CDI
+
+|camel-example-cdi-rest-servlet
+|Illustrates the Camel REST DSL being used in a Web application that
+uses CDI as dependency injection framework
+
+|camel-example-cdi-test
+|Demonstrates the testing features that are provided as part of
+the integration between Camel and CDI
+
+|camel-example-swagger-cdi
+|An example using REST DSL and Swagger Java with CDI
+
+|camel-example-widget-gadget-cdi
+|The Widget and Gadget use-case from the EIP book implemented
+in Java with CDI dependency Injection
+
+|============================================
 
 [[CDI-SeeAlso]]
 See Also
