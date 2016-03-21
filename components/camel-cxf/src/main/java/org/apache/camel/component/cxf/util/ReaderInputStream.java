@@ -198,7 +198,7 @@ public class ReaderInputStream extends InputStream {
             if (c == -1) {
                 endOfInput = true;
             } else {
-                encoderIn.position(position+c);
+                encoderIn.position(position + c);
             }
             encoderIn.flip();
         }
@@ -223,8 +223,8 @@ public class ReaderInputStream extends InputStream {
             throw new NullPointerException("Byte array must not be null");
         }
         if (len < 0 || off < 0 || (off + len) > b.length) {
-            throw new IndexOutOfBoundsException("Array Size=" + b.length +
-                    ", offset=" + off + ", length=" + len);
+            throw new IndexOutOfBoundsException("Array Size=" + b.length 
+                    + ", offset=" + off + ", length=" + len);
         }
         int read = 0;
         if (len == 0) {
