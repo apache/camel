@@ -21,6 +21,7 @@ import java.security.SecureRandom;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.Produce;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
@@ -28,7 +29,6 @@ import org.apache.camel.Service;
 import org.apache.camel.component.cm.CMEndpoint;
 import org.apache.camel.component.cm.client.SMSMessage;
 import org.apache.camel.component.cm.exceptions.HostUnavailableException;
-import org.apache.camel.component.cm.exceptions.InvalidPayloadException;
 import org.apache.camel.component.cm.exceptions.InvalidURLException;
 import org.apache.camel.component.cm.exceptions.InvalidUriEndpointException;
 import org.apache.camel.component.cm.exceptions.cmresponse.CMResponseException;
@@ -354,7 +354,7 @@ public class CMTest extends AbstractJUnit4SpringContextTests {
                 .getEnvironment().getRequiredProperty("cm.url")));
     }
 
-    @Test(expected = InvalidPayloadException.class)
+    @Test(expected = InvalidPayloadRuntimeException.class)
     public void testSendInvalidPayload() throws Exception {
 
         // Body
