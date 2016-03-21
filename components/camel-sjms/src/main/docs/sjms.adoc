@@ -1,3 +1,17 @@
+ifdef::env-github[]
+:icon-smile: :smiley:
+:caution-caption: :boom:
+:important-caption: :exclamation:
+:note-caption: :information_source:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+ifndef::env-github[]
+:icons: font
+:icon-smile: icon:smile-o[fw,role=yellow]
+endif::[]
+
 [[ConfluenceContent]]
 [[SJMS-SJMSComponent]]
 SJMS Component
@@ -25,12 +39,12 @@ Additional key features include:
 * Support for Customizable Transaction Commit Strategies (Local JMS
 Transactions only)
 
-[Info]
+[NOTE]
 ====
-**Why the S in SJMS**
+*Why the S in SJMS*
 
 S stands for Simple and Standard and Springless. Also camel-jms was
-already taken. icon:smile-o[2x]
+already taken. {icon-smile}
 ====
 
 Maven users will need to add the following dependency to their `pom.xml`
