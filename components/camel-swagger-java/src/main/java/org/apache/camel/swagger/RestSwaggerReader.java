@@ -397,7 +397,10 @@ public class RestSwaggerReader {
             // favor keeping any existing model that has the vendor extension in the model
             boolean oldExt = false;
             if (swagger.getDefinitions() != null && swagger.getDefinitions().get(entry.getKey()) != null) {
-                oldExt = swagger.getDefinitions().get(entry.getKey()).getVendorExtensions().get("x-className") == null;
+                Model oldModel = swagger.getDefinitions().get(entry.getKey());
+                if (oldModel.getVendorExtensions() != null) {
+                    oldExt = oldModel.getVendorExtensions().get("x-className") == null;
+                }
             }
 
             if (!oldExt) {
