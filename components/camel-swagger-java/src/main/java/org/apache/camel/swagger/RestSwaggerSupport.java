@@ -202,7 +202,7 @@ public class RestSwaggerSupport {
         List<RestDefinition> rests = getRestDefinitions(contextId);
         if (rests != null) {
             if (json) {
-                response.setHeader(Exchange.CONTENT_TYPE, "text/json");
+                response.setHeader(Exchange.CONTENT_TYPE, "application/json");
 
                 // read the rest-dsl into swagger model
                 Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
@@ -276,7 +276,7 @@ public class RestSwaggerSupport {
         StringBuffer sb = new StringBuffer();
 
         if (json) {
-            response.setHeader(Exchange.CONTENT_TYPE, "text/json");
+            response.setHeader(Exchange.CONTENT_TYPE, "application/json");
 
             sb.append("[\n");
             for (int i = 0; i < contexts.size(); i++) {
