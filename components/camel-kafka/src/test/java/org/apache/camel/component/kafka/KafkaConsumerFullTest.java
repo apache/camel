@@ -70,7 +70,7 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
 
             @Override
             public void configure() throws Exception {
-                from(from).to(to);
+                from(from).routeId("foo").to(to);
             }
         };
     }
@@ -84,6 +84,35 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
             ProducerRecord<String, String> data = new ProducerRecord<String, String>(TOPIC, "1", msg);
             producer.send(data);
         }
+        to.assertIsSatisfied(3000);
+    }
+
+    @Test
+    @Ignore("Currently there is a bug in kafka which leads to an uninterruptable thread so a resub take too long (works manually)")
+    public void kaftMessageIsConsumedByCamelSeekedToBeginning() throws Exception {
+        to.expectedMessageCount(5);
+        to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
+        for (int k = 0; k < 5; k++) {
+            String msg = "message-" + k;
+            ProducerRecord<String, String> data = new ProducerRecord<String, String>(TOPIC, "1", msg);
+            producer.send(data);
+        }
+        to.assertIsSatisfied(3000);
+
+        to.reset();
+
+        to.expectedMessageCount(5);
+        to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
+
+        //Restart endpoint,
+        context.stopRoute("foo");
+
+        KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
+        kafkaEndpoint.setSeekToBeginning(true);
+
+        context.startRoute("foo");
+
+        // As wee set seek to beginning we should re-consume all messages
         to.assertIsSatisfied(3000);
     }
 

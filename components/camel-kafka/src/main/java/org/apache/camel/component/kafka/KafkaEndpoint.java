@@ -663,6 +663,14 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return configuration.getSslProtocol();
     }
 
+    public boolean isSeekToBeginning() {
+        return configuration.isSeekToBeginning();
+    }
+
+    public void setSeekToBeginning(boolean seekToBeginning) {
+        configuration.setSeekToBeginning(seekToBeginning);
+    }
+
     public boolean isBridgeEndpoint() {
         return bridgeEndpoint;
     }
@@ -673,4 +681,5 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     public void setBridgeEndpoint(boolean bridgeEndpoint) {
         this.bridgeEndpoint = bridgeEndpoint;
     }
+
 }
