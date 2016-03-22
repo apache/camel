@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.util.Iterator;
-import java.util.function.Consumer;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -83,9 +82,5 @@ public class SplitIteratorNullTest extends ContextTestSupport {
             // noop
         }
 
-        @Override
-        public void forEachRemaining(Consumer<? super String> action) {
-            // noop
-        }
     }
 }
