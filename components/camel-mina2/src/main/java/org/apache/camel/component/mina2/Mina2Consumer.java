@@ -141,7 +141,7 @@ public class Mina2Consumer extends DefaultConsumer {
         if (workerPool != null) {
             workerPool.shutdown();
         }
-        if (acceptor != null){
+        if (acceptor != null) {
             acceptor.dispose(true);
         }
         super.doShutdown();
@@ -375,7 +375,7 @@ public class Mina2Consumer extends DefaultConsumer {
 
         @Override
         public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-            if (cause instanceof IOException){
+            if (cause instanceof IOException) {
                 LOG.debug("IOExceptions are automatically handled by MINA");
                 return;
             }
