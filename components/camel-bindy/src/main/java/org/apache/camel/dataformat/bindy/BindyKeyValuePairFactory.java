@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.camel.dataformat.bindy.annotation.BindyConverter;
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Message;
@@ -54,7 +55,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     private String pairSeparator;
     private boolean messageOrdered;
 
-    
+
     public BindyKeyValuePairFactory(Class<?> type) throws Exception {
         super(type);
 
@@ -67,7 +68,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
      * bind the data This process will scan for classes according to the package
      * name provided, check the annotated classes and fields. Next, we retrieve
      * the parameters required like : Pair Separator & key value pair separator
-     * 
+     *
      * @throws Exception
      */
     public void initKeyValuePairModel() throws Exception {
@@ -80,6 +81,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
     }
 
+    @Override
     public void initAnnotatedFields() {
 
         for (Class<?> cl : models) {
@@ -277,7 +279,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                             if (value != null) {
 
                                 // Create format object to format the field
-                                Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), keyValuePairField);
+                                Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), keyValuePairField, field.getAnnotation(BindyConverter.class));
 
                                 // format the value of the key received
                                 result = formatField(format, value, key, line);
@@ -313,7 +315,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                     value = values.get(i);
 
                                     // Create format object to format the field
-                                    Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), keyValuePairField);
+                                    Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), keyValuePairField, field.getAnnotation(BindyConverter.class));
 
                                     // format the value of the key received
                                     Object result = formatField(format, value, key, line);
@@ -399,8 +401,9 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     }
 
     /**
-     * 
+     *
      */
+    @Override
     public String unbind(Map<String, Object> model) throws Exception {
 
         StringBuilder builder = new StringBuilder();
@@ -441,7 +444,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
             // Create format
             @SuppressWarnings("unchecked")
-            Format<Object> format = (Format<Object>)FormatFactory.getFormat(type, getLocale(), keyValuePairField);
+            Format<Object> format = (Format<Object>)FormatFactory.getFormat(type, getLocale(), keyValuePairField, field.getAnnotation(BindyConverter.class));
 
             // Get object to be formatted
             Object obj = model.get(field.getDeclaringClass().getName());
@@ -456,9 +459,9 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     // and the position of the field
                     Integer key1 = sections.get(obj.getClass().getName());
                     Integer key2 = keyValuePairField.position();
-                    
+
                     LOG.debug("Key of the section: {}, and the field: {}", key1, key2);
-                 
+
                     Integer keyGenerated = generateKey(key1, key2);
 
                     if (LOG.isDebugEnabled()) {
@@ -575,7 +578,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
     /**
      * Flag indicating if the message must be ordered
-     * 
+     *
      * @return boolean
      */
     public boolean isMessageOrdered() {
