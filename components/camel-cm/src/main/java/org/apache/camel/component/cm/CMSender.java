@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.cm;
 
-import org.apache.camel.component.cm.exceptions.MessagingException;
-
 /**
  * Sends a validated sms message to CM endpoints
  */
@@ -26,5 +24,5 @@ public interface CMSender {
     /**
      * Sends a validated sms message to CM Endpoints.
      */
-    void send(CMMessage cmMessage) throws MessagingException;
+    void send(CMMessage cmMessage);
 }

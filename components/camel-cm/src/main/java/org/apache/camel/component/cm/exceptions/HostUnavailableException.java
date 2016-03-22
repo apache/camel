@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cm.exceptions;
 
-public class HostUnavailableException extends MessagingException {
+public class HostUnavailableException extends CMDirectException {
 
     public HostUnavailableException() {
     }
@@ -33,8 +33,7 @@ public class HostUnavailableException extends MessagingException {
         super(message, cause);
     }
 
-    public HostUnavailableException(final String message, final Throwable cause,
-            final boolean enableSuppression, final boolean writableStackTrace) {
+    public HostUnavailableException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

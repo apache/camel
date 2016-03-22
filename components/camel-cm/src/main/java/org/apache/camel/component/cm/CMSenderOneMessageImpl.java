@@ -41,7 +41,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import org.apache.camel.component.cm.exceptions.CMDirectException;
-import org.apache.camel.component.cm.exceptions.MessagingException;
 import org.apache.camel.component.cm.exceptions.XMLConstructionException;
 import org.apache.camel.component.cm.exceptions.cmresponse.CMResponseException;
 import org.apache.camel.component.cm.exceptions.cmresponse.InsufficientBalanceException;
@@ -71,17 +70,17 @@ public class CMSenderOneMessageImpl implements CMSender {
     }
 
     /**
-     * Sends a previously validated SMSMessage to CM endpoint
+     * Sends a message to CM endpoints. 1. CMMessage instance is going to be marshalled to xml. 2. Post request xml string to CMEndpoint.
      */
     @Override
-    public void send(final CMMessage cmMessage) throws MessagingException {
+    public void send(final CMMessage cmMessage) {
 
         // See: Check https://dashboard.onlinesmsgateway.com/docs for responses
 
         // 1.Construct XML. Throws XMLConstructionException
         final String xml = createXml(cmMessage);
 
-        // 2. Try to send to CM SMS Provider ...Throws CMResponse
+        // 2. Try to send to CM SMS Provider ...Throws CMResponseException
         doHttpPost(url, xml);
     }
 
@@ -245,11 +244,11 @@ public class CMSenderOneMessageImpl implements CMSender {
         } catch (final IOException io) {
             throw new CMDirectException(io);
         } catch (Throwable t) {
-            if (!(t instanceof MessagingException)) {
+            if (!(t instanceof CMDirectException)) {
                 // Chain it
-                t = new MessagingException(t);
+                t = new CMDirectException(t);
             }
-            throw (MessagingException) t;
+            throw (CMDirectException) t;
         }
     }
 }

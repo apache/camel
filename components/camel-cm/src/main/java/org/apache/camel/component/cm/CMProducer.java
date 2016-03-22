@@ -47,32 +47,26 @@ public class CMProducer extends DefaultProducer {
     }
 
     /**
-     * Producer is a exchange processor. This process is built in several steps.
-     * 1. Validate message receive from client 2. Send validated message to CM
-     * endpoints. 3. Process response from CM endpoints.
+     * Producer is a exchange processor. This process is built in several steps. 1. Validate message receive from client 2. Send validated message to CM endpoints. 3. Process response from CM
+     * endpoints.
      */
     @Override
     public void process(final Exchange exchange) throws Exception {
 
         // Immutable message receive from clients. Throws camel ' s
         // InvalidPayloadException
-        final SMSMessage smsMessage = exchange.getIn()
-                .getMandatoryBody(SMSMessage.class);
+        final SMSMessage smsMessage = exchange.getIn().getMandatoryBody(SMSMessage.class);
 
         // Validates Payload - SMSMessage
-        log.trace("Validating SMSMessage instance provided: {}",
-                smsMessage.toString());
-        final Set<ConstraintViolation<SMSMessage>> constraintViolations = getValidator()
-                .validate(smsMessage);
+        log.trace("Validating SMSMessage instance provided: {}", smsMessage.toString());
+        final Set<ConstraintViolation<SMSMessage>> constraintViolations = getValidator().validate(smsMessage);
         if (constraintViolations.size() > 0) {
             final StringBuffer msg = new StringBuffer();
             for (final ConstraintViolation<SMSMessage> cv : constraintViolations) {
-                msg.append(String.format("- Invalid value for %s: %s",
-                        cv.getPropertyPath().toString(), cv.getMessage()));
+                msg.append(String.format("- Invalid value for %s: %s", cv.getPropertyPath().toString(), cv.getMessage()));
             }
             log.debug(msg.toString());
-            throw new InvalidPayloadRuntimeException(exchange,
-                    SMSMessage.class);
+            throw new InvalidPayloadRuntimeException(exchange, SMSMessage.class);
         }
         log.trace("SMSMessage instance is valid: {}", smsMessage.toString());
 
@@ -80,26 +74,23 @@ public class CMProducer extends DefaultProducer {
         // CMMessage
         // This is the instance we will use to build the XML document to be
         // sent to CM SMS GW.
-        final CMMessage cmMessage = new CMMessage(smsMessage.getPhoneNumber(),
-                smsMessage.getMessage());
+        final CMMessage cmMessage = new CMMessage(smsMessage.getPhoneNumber(), smsMessage.getMessage());
         log.debug("CMMessage instance build from valid SMSMessage instance");
 
         if (smsMessage.getFrom() == null || smsMessage.getFrom().isEmpty()) {
             String df = getConfiguration().getDefaultFrom();
             cmMessage.setSender(df);
-            log.debug("Dynamic sender is set to default dynamic sender: {}",
-                    df);
+            log.debug("Dynamic sender is set to default dynamic sender: {}", df);
         }
 
         // Remember, this can be null.
         cmMessage.setIdAsString(smsMessage.getId());
 
         // Unicode and multipart
-        cmMessage.setUnicodeAndMultipart(
-                getConfiguration().getDefaultMaxNumberOfParts());
+        cmMessage.setUnicodeAndMultipart(getConfiguration().getDefaultMaxNumberOfParts());
 
         // 2. Send a validated sms message to CM endpoints
-        // throws MessagingException for abnormal situations.
+        //  for abnormal situations.
         sender.send(cmMessage);
 
         log.debug("Request accepted by CM Host: {}", cmMessage.toString());
@@ -118,13 +109,10 @@ public class CMProducer extends DefaultProducer {
         if (configuration.isTestConnectionOnStartup()) {
             try {
                 log.debug("Checking connection - {}", getEndpoint().getCMUrl());
-                HttpClientBuilder.create().build()
-                        .execute(new HttpHead(getEndpoint().getCMUrl()));
+                HttpClientBuilder.create().build().execute(new HttpHead(getEndpoint().getCMUrl()));
                 log.debug("Connection to {}: OK", getEndpoint().getCMUrl());
             } catch (final Exception e) {
-                log.debug("Connection to {}: NOT AVAILABLE",
-                        getEndpoint().getCMUrl());
-                throw new HostUnavailableException(e);
+                throw new HostUnavailableException(String.format("Connection to %s: NOT AVAILABLE", getEndpoint().getCMUrl()), e);
             }
         }
 
