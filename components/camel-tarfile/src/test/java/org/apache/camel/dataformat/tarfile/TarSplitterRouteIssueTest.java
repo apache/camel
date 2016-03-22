@@ -20,7 +20,6 @@ import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TarSplitterRouteIssueTest extends CamelTestSupport {
@@ -32,7 +31,6 @@ public class TarSplitterRouteIssueTest extends CamelTestSupport {
     }
 
     @Test
-    @Ignore("CAMEL-9735: There are 3 files in the .tar file but the TarIterator has a bug causing +1 extra")
     public void testSplitter() throws Exception {
         getMockEndpoint("mock:entry").expectedMessageCount(3);
 
