@@ -50,8 +50,8 @@ public class TarIterator implements Iterator<Message>, Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(TarIterator.class);
 
     private final Message inputMessage;
-    private TarArchiveInputStream tarInputStream;
-    private Message parent;
+    private volatile TarArchiveInputStream tarInputStream;
+    private volatile Message parent;
 
     public TarIterator(Message inputMessage, InputStream inputStream) {
         this.inputMessage = inputMessage;
@@ -164,9 +164,7 @@ public class TarIterator implements Iterator<Message>, Closeable {
 
     @Override
     public void close() throws IOException {
-        if (tarInputStream != null) {
-            tarInputStream.close();
-            tarInputStream = null;
-        }
+        IOHelper.close(tarInputStream);
+        tarInputStream = null;
     }
 }
