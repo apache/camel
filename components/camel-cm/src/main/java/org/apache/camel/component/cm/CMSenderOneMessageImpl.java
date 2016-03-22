@@ -78,17 +78,11 @@ public class CMSenderOneMessageImpl implements CMSender {
 
         // See: Check https://dashboard.onlinesmsgateway.com/docs for responses
 
-        try {
+        // 1.Construct XML. Throws XMLConstructionException
+        final String xml = createXml(cmMessage);
 
-            // 1.Construct XML. Throws XMLConstructionException
-            final String xml = createXml(cmMessage);
-
-            // 2. Try to send to CM SMS Provider ...Throws CMResponse
-            doHttpPost(url, xml);
-        } catch (final RuntimeException e) {
-            LOG.error("Failed to send SMS: {}", cmMessage, e);
-            throw e; // XMLConstrucion o
-        }
+        // 2. Try to send to CM SMS Provider ...Throws CMResponse
+        doHttpPost(url, xml);
     }
 
     private String createXml(final CMMessage message) {
@@ -172,11 +166,9 @@ public class CMSenderOneMessageImpl implements CMSender {
             aTransformer.transform(src, dest);
             return xml.toString();
         } catch (final TransformerException e) {
-            LOG.error("Cant serialize CMMessage {}: ", message, e);
-            throw new XMLConstructionException(e);
+            throw new XMLConstructionException(String.format("Cant serialize CMMessage %s", message), e);
         } catch (final ParserConfigurationException e) {
-            LOG.error("Cant serialize CMMessage {}: ", message, e);
-            throw new XMLConstructionException(e);
+            throw new XMLConstructionException(String.format("Cant serialize CMMessage %s", message), e);
         }
     }
 
