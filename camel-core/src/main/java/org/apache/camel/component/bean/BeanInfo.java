@@ -52,6 +52,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -610,6 +611,7 @@ public class BeanInfo {
                 String parameters = ObjectHelper.between(name, "(", ")");
                 if (parameters != null) {
                     // special as we have hardcoded parameters, so we need to choose method that matches those parameters the best
+                    LOG.trace("Choosing best matching method matching parameters: {}", parameters);
                     answer = chooseMethodWithMatchingParameters(exchange, parameters, possibleOperations);
                 }
             }
@@ -659,15 +661,30 @@ public class BeanInfo {
         List<MethodInfo> candidates = new ArrayList<MethodInfo>();
         MethodInfo fallbackCandidate = null;
         for (MethodInfo info : operations) {
-            it = ObjectHelper.createIterator(parameters);
+            it = ObjectHelper.createIterator(parameters, ",", false);
             int index = 0;
             boolean matches = true;
             while (it.hasNext()) {
                 String parameter = (String) it.next();
+                if (parameter != null) {
+                    // must trim
+                    parameter = parameter.trim();
+                }
+
                 Class<?> parameterType = BeanHelper.getValidParameterType(parameter);
                 Class<?> expectedType = info.getParameters().get(index).getType();
 
                 if (parameterType != null && expectedType != null) {
+
+                    // if its a simple language then we need to evaluate the expression
+                    // so we have the result and can find out what type the parameter actually is
+                    if (StringHelper.hasStartToken(parameter, "simple")) {
+                        LOG.trace("Evaluating simple expression for parameter #{}: {} to determine the class type of the parameter", index, parameter);
+                        Object out = getCamelContext().resolveLanguage("simple").createExpression(parameter).evaluate(exchange, Object.class);
+                        if (out != null) {
+                            parameterType = out.getClass();
+                        }
+                    }
 
                     // skip java.lang.Object type, when we have multiple possible methods we want to avoid it if possible
                     if (Object.class.equals(expectedType)) {
