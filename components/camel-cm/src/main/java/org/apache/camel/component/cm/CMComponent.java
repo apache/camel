@@ -25,8 +25,7 @@ import javax.validation.Validator;
 import org.apache.camel.BeanInject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.cm.exceptions.InvalidURLException;
-import org.apache.camel.component.cm.exceptions.InvalidUriEndpointException;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -61,7 +60,7 @@ public class CMComponent extends UriEndpointComponent {
 
         final String url = CMConstants.DEFAULT_SCHEME + remaining;
         if (!UrlValidator.getInstance().isValid(url)) {
-            throw new InvalidURLException(String.format("HOST provided: %s seem to be invalid. Remember SCHEME has to be excluded.", url));
+            throw new ResolveEndpointFailedException(uri, String.format("HOST provided: %s seem to be invalid. Remember SCHEME has to be excluded.", url));
         }
 
         LOG.debug("Uri=[{}], path=[{}], parameters=[{}]", new Object[] {URISupport.sanitizeUri(uri), URISupport.sanitizePath(remaining), parameters });
@@ -78,7 +77,7 @@ public class CMComponent extends UriEndpointComponent {
             for (final ConstraintViolation<CMConfiguration> cv : constraintViolations) {
                 msg.append(String.format("- Invalid value for %s: %s", cv.getPropertyPath().toString(), cv.getMessage()));
             }
-            throw new InvalidUriEndpointException(msg.toString());
+            throw new ResolveEndpointFailedException(uri, msg.toString());
         }
         LOG.debug("CMConfiguration - OK!");
 
