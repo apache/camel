@@ -140,6 +140,9 @@ public class Mina2Consumer extends DefaultConsumer {
         if (workerPool != null) {
             workerPool.shutdown();
         }
+        if (acceptor != null){
+            acceptor.dispose(true);
+        }
         super.doShutdown();
     }
    
