@@ -44,9 +44,10 @@ import static org.apache.camel.component.infinispan.InfinispanConstants.OPERATIO
 import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY;
 import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY_BUILDER;
 import static org.apache.camel.component.infinispan.InfinispanConstants.RESULT;
-import static org.apache.camel.component.infinispan.UserUtils.USERS;
-import static org.apache.camel.component.infinispan.UserUtils.createKey;
-import static org.apache.camel.component.infinispan.UserUtils.hasUser;
+import static org.apache.camel.component.infinispan.InfinispanConstants.VALUE;
+import static org.apache.camel.component.infinispan.util.UserUtils.USERS;
+import static org.apache.camel.component.infinispan.util.UserUtils.createKey;
+import static org.apache.camel.component.infinispan.util.UserUtils.hasUser;
 
 public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
 
