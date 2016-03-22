@@ -293,6 +293,11 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
             while (it.hasNext()) {
                 final ProcessorExchangePair pair = it.next();
+                // in case the iterator returns null then continue to next
+                if (pair == null) {
+                    continue;
+                }
+
                 final Exchange subExchange = pair.getExchange();
                 updateNewExchange(subExchange, total.intValue(), pairs, it);
 
@@ -590,6 +595,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         while (it.hasNext()) {
             ProcessorExchangePair pair = it.next();
+            // in case the iterator returns null then continue to next
+            if (pair == null) {
+                continue;
+            }
             Exchange subExchange = pair.getExchange();
             updateNewExchange(subExchange, total.get(), pairs, it);
 
