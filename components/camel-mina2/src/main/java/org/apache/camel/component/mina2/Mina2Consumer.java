@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina2;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.charset.Charset;
@@ -58,7 +59,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link org.apache.camel.Consumer Consumer} implementation for Apache MINA.
  *
- * @version 
+ * @version
  */
 public class Mina2Consumer extends DefaultConsumer {
 
@@ -67,14 +68,14 @@ public class Mina2Consumer extends DefaultConsumer {
     private IoConnector connector;
     private SocketAddress address;
     private IoAcceptor acceptor;
-    private Mina2Configuration configuration;
+    private final Mina2Configuration configuration;
     private ExecutorService workerPool;
 
     public Mina2Consumer(final Mina2Endpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.configuration = endpoint.getConfiguration();
         //
-        // All mina2 endpoints are InOut. The endpoints are asynchronous. 
+        // All mina2 endpoints are InOut. The endpoints are asynchronous.
         // Endpoints can send "n" messages and receive "m" messages.
         //
         this.getEndpoint().setExchangePattern(ExchangePattern.InOut);
@@ -127,7 +128,7 @@ public class Mina2Consumer extends DefaultConsumer {
                     acceptor.unbind(acceptor.getLocalAddresses());
                 } else {
                     acceptor.unbind(address);
-                }   
+                }
             } else {
                 acceptor.unbind(address);
             }
@@ -374,6 +375,10 @@ public class Mina2Consumer extends DefaultConsumer {
 
         @Override
         public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+            if (cause instanceof IOException){
+                LOG.debug("IOExceptions are automatically handled by MINA");
+                return;
+            }
             // close invalid session
             if (session != null) {
                 LOG.warn("Closing session as an exception was thrown from MINA");
