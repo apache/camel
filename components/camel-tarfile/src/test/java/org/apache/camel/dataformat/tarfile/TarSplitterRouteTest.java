@@ -26,7 +26,9 @@ public class TarSplitterRouteTest extends CamelTestSupport {
     @Test
     public void testSplitter() throws InterruptedException {
         MockEndpoint processTarEntry = getMockEndpoint("mock:processTarEntry");
+
         processTarEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola", "hello", "greetings");
+
         assertMockEndpointsSatisfied();
     }
 
@@ -39,8 +41,8 @@ public class TarSplitterRouteTest extends CamelTestSupport {
                 from("file:src/test/resources/org/apache/camel/dataformat/tarfile/data?consumer.delay=1000&noop=true")
                     .log("Start processing big file: ${header.CamelFileName}")
                     .split(new TarSplitter()).streaming()
-                        .to("log:entry")
                         .convertBodyTo(String.class).to("mock:processTarEntry")
+                        .to("log:entry")
                     .end()
                     .log("Done processing big file: ${header.CamelFileName}");
             }
