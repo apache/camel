@@ -64,7 +64,7 @@ public class CMEndpoint extends DefaultEndpoint {
     public CMEndpoint(final String uri, final CMComponent component) {
         super(uri, component);
         setExchangePattern(ExchangePattern.InOut);
-        LOG.info("CM Endpoint created - (IN/OUT)");
+        LOG.debug("CM Endpoint created");
     }
 
     /**
