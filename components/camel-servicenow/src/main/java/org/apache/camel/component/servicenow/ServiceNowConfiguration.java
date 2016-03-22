@@ -22,10 +22,10 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
-
 
 @UriParams
 public class ServiceNowConfiguration {
@@ -38,27 +38,27 @@ public class ServiceNowConfiguration {
             JsonInclude.Include.NON_NULL
         );
 
-    @UriParam
+    @UriParam @Metadata(required = "true")
     private String userName;
-    @UriParam
+    @UriParam @Metadata(required = "true")
     private String password;
-    @UriParam
+    @UriParam(label = "security")
     private String oauthClientId;
-    @UriParam
+    @UriParam(label = "security")
     private String oauthClientSecret;
-    @UriParam(label = "advanced")
+    @UriParam(label = "security")
     private String oauthTokenUrl;
     @UriParam(label = "advanced")
     private String apiUrl;
     @UriParam
     private String table;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private Boolean excludeReferenceLink = false;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private Boolean suppressAutoSysField = false;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false", enums = "false,true,all")
     private String displayValue = "false";
-    @UriParam(defaultValue = "false")
+    @UriParam
     private Boolean inputDisplayValue = false;
     @UriParam(prefix = "model.", multiValue = true, javaType = "java.lang.String")
     private Map<String, Class<?>> models;

@@ -27,19 +27,21 @@ import org.apache.camel.component.servicenow.auth.OAuthToken;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 
 /**
  * Represents a ServiceNow endpoint.
  */
-@UriEndpoint(scheme = "servicenow", title = "ServiceNow", syntax = "servicenow:instanceName", consumerClass = ServiceNowConsumer.class, label = "api,cloud,management")
+@UriEndpoint(scheme = "servicenow", title = "ServiceNow", syntax = "servicenow:instanceName", producerOnly = true, label = "api,cloud,management")
 public class ServiceNowEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The ServiceNow instance name ")
     @Metadata(required = "true")
     private final String instanceName;
 
+    @UriParam
     private final ServiceNowConfiguration configuration;
     private final String apiUrl;
     private final String oauthUrl;
@@ -70,12 +72,12 @@ public class ServiceNowEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Consumer interface is not supported");
+        throw new UnsupportedOperationException("Consumer is not supported");
     }
 
     @Override
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     public ServiceNowConfiguration getConfiguration() {
