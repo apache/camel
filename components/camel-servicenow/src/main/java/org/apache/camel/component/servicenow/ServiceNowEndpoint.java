@@ -33,7 +33,7 @@ import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 /**
  * Represents a ServiceNow endpoint.
  */
-@UriEndpoint(scheme = "servicenow", title = "ServiceNow", syntax = "servicenow:instanceName", consumerClass = ServiceNowConsumer.class, label = "ServiceNow")
+@UriEndpoint(scheme = "servicenow", title = "ServiceNow", syntax = "servicenow:instanceName", consumerClass = ServiceNowConsumer.class, label = "api,cloud,management")
 public class ServiceNowEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The ServiceNow instance name ")
