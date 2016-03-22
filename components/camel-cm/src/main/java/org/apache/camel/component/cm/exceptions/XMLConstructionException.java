@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cm.exceptions;
 
-public class XMLConstructionException extends MessagingException {
+public class XMLConstructionException extends CMDirectException {
 
     public XMLConstructionException() {
     }

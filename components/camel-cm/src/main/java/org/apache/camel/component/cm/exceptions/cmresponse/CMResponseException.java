@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.cm.exceptions.cmresponse;
 
-import org.apache.camel.component.cm.exceptions.MessagingException;
+import org.apache.camel.component.cm.exceptions.CMDirectException;
 
-public class CMResponseException extends MessagingException {
+public class CMResponseException extends CMDirectException {
 
     public CMResponseException() {
     }
