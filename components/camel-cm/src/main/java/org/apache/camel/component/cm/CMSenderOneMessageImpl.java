@@ -40,8 +40,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
+import org.apache.camel.component.cm.exceptions.CMDirectException;
 import org.apache.camel.component.cm.exceptions.MessagingException;
-import org.apache.camel.component.cm.exceptions.ProviderException;
 import org.apache.camel.component.cm.exceptions.XMLConstructionException;
 import org.apache.camel.component.cm.exceptions.cmresponse.CMResponseException;
 import org.apache.camel.component.cm.exceptions.cmresponse.InsufficientBalanceException;
@@ -195,12 +195,12 @@ public class CMSenderOneMessageImpl implements CMSender {
             LOG.debug("Response Code : {}", statusCode);
 
             if (statusCode == 400) {
-                throw new ProviderException("CM Component and CM API show some kind of inconsistency. "
+                throw new CMDirectException("CM Component and CM API show some kind of inconsistency. "
                                             + "CM is complaining about not using a post method for the request. And this component only uses POST requests. What happens?");
             }
 
             if (statusCode != 200) {
-                throw new ProviderException("CM Component and CM API show some kind of inconsistency. The component expects the status code to be 200 or 400. New api released? ");
+                throw new CMDirectException("CM Component and CM API show some kind of inconsistency. The component expects the status code to be 200 or 400. New api released? ");
             }
 
             // So we have 200 status code...
@@ -251,7 +251,7 @@ public class CMSenderOneMessageImpl implements CMSender {
             // Ok. Line is EMPTY - successfully submitted
             LOG.debug("Result of the request processing: Successfully submited");
         } catch (final IOException io) {
-            throw new ProviderException(io);
+            throw new CMDirectException(io);
         } catch (Throwable t) {
             if (!(t instanceof MessagingException)) {
                 // Chain it
