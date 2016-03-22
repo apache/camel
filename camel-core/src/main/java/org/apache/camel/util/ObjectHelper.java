@@ -1320,7 +1320,12 @@ public final class ObjectHelper {
             }
         } else {
             if (!source.getReturnType().isAssignableFrom(target.getReturnType())) {
-                return false;
+                boolean b1 = source.isBridge();
+                boolean b2 = target.isBridge();
+                // must not be bridge methods
+                if (!b1 && !b2) {
+                    return false;
+                }
             }
         }
 
@@ -1337,7 +1342,12 @@ public final class ObjectHelper {
                 }
             } else {
                 if (!(source.getParameterTypes()[i].isAssignableFrom(target.getParameterTypes()[i]))) {
-                    return false;
+                    boolean b1 = source.isBridge();
+                    boolean b2 = target.isBridge();
+                    // must not be bridge methods
+                    if (!b1 && !b2) {
+                        return false;
+                    }
                 }
             }
         }

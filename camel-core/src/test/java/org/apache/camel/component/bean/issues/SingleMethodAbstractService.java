@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.bean.issues;
 
-public class SingleMethodServiceImpl extends SingleMethodAbstractService<String, String> {
+public abstract class SingleMethodAbstractService<S, T> implements SingleMethodService<S, T> {
 
-    @Override
-    public String doSomething(String foo) {
-        return "You said " + foo;
+    public String hello() {
+        return "Hello World";
     }
+
 }

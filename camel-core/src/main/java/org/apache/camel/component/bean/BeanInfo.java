@@ -191,9 +191,7 @@ public class BeanInfo {
         
         // find the explicit method to invoke
         if (explicitMethod != null) {
-            Iterator<List<MethodInfo>> it = operations.values().iterator();
-            while (it.hasNext()) {
-                List<MethodInfo> infos = it.next();
+            for (List<MethodInfo> infos : operations.values()) {
                 for (MethodInfo info : infos) {
                     if (explicitMethod.equals(info.getMethod())) {
                         return info.createMethodInvocation(pojo, exchange);
@@ -244,7 +242,7 @@ public class BeanInfo {
                     // only one method then choose it
                     methodInfo = methods.get(0);
 
-                    // validate that if we want an explict no-arg method, then that's what we get
+                    // validate that if we want an explicit no-arg method, then that's what we get
                     if (emptyParameters && methodInfo.hasParameters()) {
                         throw new MethodNotFoundException(exchange, pojo, methodName, "(with no parameters)");
                     }
@@ -263,7 +261,7 @@ public class BeanInfo {
                         }
                     }
 
-                    if (methodInfo == null || !name.equals(methodInfo.getMethod().getName())) {
+                    if (methodInfo == null || (name != null && !name.equals(methodInfo.getMethod().getName()))) {
                         throw new AmbiguousMethodCallException(exchange, methods);
                     }
                 } else {
@@ -318,18 +316,13 @@ public class BeanInfo {
         }
 
         Set<Method> overrides = new HashSet<Method>();
+        Set<Method> bridges = new HashSet<Method>();
 
         // do not remove duplicates form class from the Java itself as they have some "duplicates" we need
         boolean javaClass = clazz.getName().startsWith("java.") || clazz.getName().startsWith("javax.");
         if (!javaClass) {
             // it may have duplicate methods already, even from declared or from interfaces + declared
             for (Method source : methods) {
-
-                // skip bridge methods in duplicate checks (as the bridge method is inserted by the compiler due to type erasure)
-                if (source.isBridge()) {
-                    continue;
-                }
-
                 for (Method target : methods) {
                     // skip ourselves
                     if (ObjectHelper.isOverridingMethod(source, target, true)) {
@@ -400,9 +393,9 @@ public class BeanInfo {
 
         LOG.trace("Adding operation: {} for method: {}", opName, methodInfo);
 
-        if (hasMethod(opName)) {
+        List<MethodInfo> existing = getOperations(opName);
+        if (existing != null) {
             // we have an overloaded method so add the method info to the same key
-            List<MethodInfo> existing = getOperations(opName);
             existing.add(methodInfo);
         } else {
             // its a new method we have not seen before so wrap it in a list and add it
@@ -428,7 +421,6 @@ public class BeanInfo {
 
         return methodInfo;
     }
-
 
     /**
      * Returns the {@link MethodInfo} for the given method if it exists or null
@@ -1040,7 +1032,7 @@ public class BeanInfo {
         }
 
         // must match name
-        if (!name.equals(method.getName())) {
+        if (name != null && !name.equals(method.getName())) {
             return false;
         }
 
@@ -1203,7 +1195,7 @@ public class BeanInfo {
             if (IntrospectionSupport.isGetter(method)) {
                 String shorthandMethodName = IntrospectionSupport.getGetterShorthandName(method);
                 // if the two names matches then see if we can find it using that name
-                if (methodName.equals(shorthandMethodName)) {
+                if (methodName != null && methodName.equals(shorthandMethodName)) {
                     return operations.get(method.getName());
                 }
             }
