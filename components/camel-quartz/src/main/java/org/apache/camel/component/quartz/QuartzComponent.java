@@ -94,7 +94,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         String path = ObjectHelper.after(u.getPath(), "/");
         String host = u.getHost();
         String cron = getAndRemoveParameter(parameters, "cron", String.class);
-        Boolean fireNow = getAndRemoveParameter(parameters, "fireNow", Boolean.class, Boolean.FALSE);
+        boolean fireNow = getAndRemoveParameter(parameters, "fireNow", Boolean.class, Boolean.FALSE);
         Integer startDelayedSeconds = getAndRemoveParameter(parameters, "startDelayedSeconds", Integer.class);
         if (startDelayedSeconds != null) {
             if (scheduler.isStarted()) {
@@ -162,8 +162,17 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         answer.setGroupName(group);
         answer.setTimerName(name);
         answer.setCron(cron);
-
-        setProperties(answer.getJobDetail(), jobParameters);
+        answer.setFireNow(fireNow);
+        if (startDelayedSeconds != null) {
+            answer.setStartDelayedSeconds(startDelayedSeconds);
+        }
+        if (triggerParameters != null && !triggerParameters.isEmpty()) {
+            answer.setTriggerParameters(triggerParameters);
+        }
+        if (jobParameters != null && !jobParameters.isEmpty()) {
+            answer.setJobParameters(jobParameters);
+            setProperties(answer.getJobDetail(), jobParameters);
+        }
 
         // enrich job data map with trigger information
         if (cron != null) {
@@ -488,7 +497,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
             LOG.info("Loading Quartz properties file from: {}", getPropertiesFile());
             InputStream is = null;
             try {
-                is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), getPropertiesFile());
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
                 answer = new Properties();
                 answer.load(is);
             } catch (IOException e) {

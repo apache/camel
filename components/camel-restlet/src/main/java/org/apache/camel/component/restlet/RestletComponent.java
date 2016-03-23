@@ -34,6 +34,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
@@ -60,7 +61,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version
  */
-public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory {
+public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory, RestApiConsumerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
 
     private final Map<String, Server> servers = new HashMap<String, Server>();
@@ -664,7 +665,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {
@@ -683,7 +684,10 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         int port = this.getPort();
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration("restlet", true);
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration("restlet", true);
+        }
         if (config.getScheme() != null) {
             scheme = config.getScheme();
         }
@@ -695,9 +699,21 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             port = num;
         }
 
+        // prefix path with context-path if configured in rest-dsl configuration
+        String contextPath = config.getContextPath();
+        if (ObjectHelper.isNotEmpty(contextPath)) {
+            contextPath = FileUtil.stripTrailingSeparator(contextPath);
+            contextPath = FileUtil.stripLeadingSeparator(contextPath);
+            if (ObjectHelper.isNotEmpty(contextPath)) {
+                path = contextPath + "/" + path;
+            }
+        }
+
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {
-            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                host = "0.0.0.0";
+            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                 host = HostUtils.getLocalHostName();
             } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                 host = HostUtils.getLocalIp();
@@ -706,25 +722,31 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         Map<String, Object> map = new HashMap<String, Object>();
         // build query string, and append any endpoint configuration properties
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("restlet"))) {
+        if (config.getComponent() == null || config.getComponent().equals("restlet")) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
             }
         }
 
+        // allow HTTP Options as we want to handle CORS in rest-dsl
+        boolean cors = config.isEnableCORS();
+
         String query = URISupport.createQueryString(map);
 
         String url;
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
+        if (cors) {
+            restrict += ",OPTIONS";
+        }
 
         if (port > 0) {
-            url = "restlet:%s://%s:%s/%s?restletMethod=%s";
+            url = "restlet:%s://%s:%s/%s?restletMethods=%s";
             url = String.format(url, scheme, host, port, path, restrict);
         } else {
             // It could use the restlet servlet transport
-            url = "restlet:/%s?restletMethod=%s";
+            url = "restlet:/%s?restletMethods=%s";
             url = String.format(url, path, restrict);
         }
         if (!query.isEmpty()) {
@@ -736,10 +758,17 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
-        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
             setProperties(consumer, config.getConsumerProperties());
         }
 
         return consumer;
+    }
+
+    @Override
+    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath,
+                                      RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
+        return createConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters);
     }
 }

@@ -79,16 +79,19 @@ public class MailSortTermTwoTest extends CamelTestSupport {
         Message[] messages = new Message[3];
         messages[0] = new MimeMessage(sender.getSession());
         messages[0].setText("Earlier date");
+        messages[0].setHeader("Message-ID", "0");
         messages[0].setSentDate(new Date(10000));
         messages[0].setSubject("Camel");
 
         messages[1] = new MimeMessage(sender.getSession());
         messages[1].setText("Later date");
+        messages[1].setHeader("Message-ID", "1");
         messages[1].setSentDate(new Date(20000));
         messages[1].setSubject("Camel");
 
         messages[2] = new MimeMessage(sender.getSession());
         messages[2].setText("Even later date");
+        messages[2].setHeader("Message-ID", "2");
         messages[2].setSentDate(new Date(30000));
         messages[2].setSubject("Invalid");
 

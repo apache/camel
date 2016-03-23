@@ -35,6 +35,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.LongSerializationPolicy;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
@@ -42,7 +43,7 @@ import org.apache.camel.util.IOHelper;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://code.google.com/p/google-gson/">Gson</a> to marshal to and from JSON.
  */
-public class GsonDataFormat extends ServiceSupport implements DataFormat {
+public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private Gson gson;
     private Class<?> unmarshalType;
@@ -56,7 +57,7 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
     private String dateFormatPattern;
 
     public GsonDataFormat() {
-        this(Map.class);
+        this(Object.class);
     }
 
     /**
@@ -116,25 +117,28 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
     }
 
     @Override
-    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        BufferedWriter writer = IOHelper.buffered(new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange)));
-        gson.toJson(graph, writer);
-        writer.close();
+    public String getDataFormatName() {
+        return "json-gson";
     }
 
     @Override
-    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        BufferedReader reader = IOHelper.buffered(new InputStreamReader(stream, IOHelper.getCharsetName(exchange)));
-        Object result = null;
-        
-        if (this.unmarshalGenericType != null) {
-            result = gson.fromJson(reader, this.unmarshalGenericType);
-        } else {
-            result = gson.fromJson(reader, this.unmarshalType);
+    public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
+        try (final OutputStreamWriter osw = new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange));
+             final BufferedWriter writer = IOHelper.buffered(osw)) {
+            gson.toJson(graph, writer);
         }
+    }
 
-        reader.close();
-        return result;
+    @Override
+    public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
+        try (final InputStreamReader isr = new InputStreamReader(stream, IOHelper.getCharsetName(exchange));
+             final BufferedReader reader = IOHelper.buffered(isr)) {
+            if (unmarshalGenericType == null) {
+                return gson.fromJson(reader, unmarshalType);
+            } else {
+                return gson.fromJson(reader, unmarshalGenericType);
+            }
+        }
     }
 
     @Override

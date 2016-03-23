@@ -25,17 +25,42 @@ import net.fortuna.ical4j.model.Calendar;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * Bridge ICal data format to camel world.
  */
-public class ICalDataFormat implements DataFormat {
+public class ICalDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
-    /**
-     * Class responsible for writing out calendar instances.
-     */
     private CalendarOutputter outputer = new CalendarOutputter();
     private CalendarBuilder builder = new CalendarBuilder();
+
+    @Override
+    public String getDataFormatName() {
+        return "ical";
+    }
+
+    @Override
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        Calendar calendar = exchange.getContext().getTypeConverter().convertTo(Calendar.class, graph);
+        outputer.output(calendar, stream);
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        return builder.build(stream);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 
     public void setValidating(boolean validate) {
         outputer.setValidating(validate);
@@ -59,17 +84,6 @@ public class ICalDataFormat implements DataFormat {
 
     public void setBuilder(CalendarBuilder builder) {
         this.builder = builder;
-    }
-
-    @Override
-    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        Calendar calendar = exchange.getContext().getTypeConverter().convertTo(Calendar.class, graph);
-        outputer.output(calendar, stream);
-    }
-
-    @Override
-    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        return builder.build(stream);
     }
 
 }

@@ -29,6 +29,7 @@ import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
@@ -70,7 +71,7 @@ import static org.apache.camel.component.hl7.HL7Constants.*;
  *
  * @see org.apache.camel.component.hl7.HL7MLLPCodec
  */
-public class HL7DataFormat extends ServiceSupport implements DataFormat {
+public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private static final Map<String, String> HEADER_MAP = new HashMap<String, String>();
 
@@ -91,6 +92,11 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat {
         HEADER_MAP.put(HL7_PROCESSING_ID, "MSH-11");
         HEADER_MAP.put(HL7_VERSION_ID, "MSH-12");
         HEADER_MAP.put(HL7_CHARSET, "MSH-18");
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "hl7";
     }
 
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {

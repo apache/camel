@@ -31,14 +31,14 @@ import com.univocity.parsers.common.CommonWriterSettings;
 import com.univocity.parsers.common.Format;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 
 import static org.apache.camel.util.IOHelper.getCharsetName;
 
 /**
  * This abstract class contains all the common parts for all the uniVocity parsers.
  * <p/>
- * All setters methods <b>must</b> call the {@link #reset()} method in order to clear the cache for marshalling and
- * unmarshalling.
  *
  * @param <F>   uniVocity format class
  * @param <CWS> uniVocity writer settings class
@@ -48,7 +48,8 @@ import static org.apache.camel.util.IOHelper.getCharsetName;
  * @param <DF>  the data format class (for providing a fluent API)
  */
 public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends CommonWriterSettings<F>,
-        W extends AbstractWriter<CWS>, CPS extends CommonParserSettings<F>, P extends AbstractParser<CPS>, DF extends AbstractUniVocityDataFormat<F, CWS, W, CPS, P, DF>> implements DataFormat {
+        W extends AbstractWriter<CWS>, CPS extends CommonParserSettings<F>, P extends AbstractParser<CPS>, DF extends AbstractUniVocityDataFormat<F, CWS, W, CPS, P, DF>>
+        extends ServiceSupport implements DataFormat, DataFormatName {
     protected String nullValue;
     protected Boolean skipEmptyLines;
     protected Boolean ignoreTrailingWhitespaces;
@@ -147,7 +148,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      */
     public DF setNullValue(String nullValue) {
         this.nullValue = nullValue;
-        reset();
         return self();
     }
 
@@ -172,7 +172,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      */
     public DF setSkipEmptyLines(Boolean skipEmptyLines) {
         this.skipEmptyLines = skipEmptyLines;
-        reset();
         return self();
     }
 
@@ -197,7 +196,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      */
     public DF setIgnoreTrailingWhitespaces(Boolean ignoreTrailingWhitespaces) {
         this.ignoreTrailingWhitespaces = ignoreTrailingWhitespaces;
-        reset();
         return self();
     }
 
@@ -222,7 +220,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      */
     public DF setIgnoreLeadingWhitespaces(Boolean ignoreLeadingWhitespaces) {
         this.ignoreLeadingWhitespaces = ignoreLeadingWhitespaces;
-        reset();
         return self();
     }
 
@@ -249,7 +246,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      */
     public DF setHeadersDisabled(boolean headersDisabled) {
         this.headersDisabled = headersDisabled;
-        reset();
         return self();
     }
 
@@ -274,7 +270,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      */
     public DF setHeaders(String[] headers) {
         this.headers = headers;
-        reset();
         return self();
     }
 
@@ -299,7 +294,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      */
     public DF setHeaderExtractionEnabled(Boolean headerExtractionEnabled) {
         this.headerExtractionEnabled = headerExtractionEnabled;
-        reset();
         return self();
     }
 
@@ -324,7 +318,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      */
     public DF setNumberOfRecordsToRead(Integer numberOfRecordsToRead) {
         this.numberOfRecordsToRead = numberOfRecordsToRead;
-        reset();
         return self();
     }
 
@@ -349,7 +342,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      */
     public DF setEmptyValue(String emptyValue) {
         this.emptyValue = emptyValue;
-        reset();
         return self();
     }
 
@@ -374,7 +366,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      */
     public DF setLineSeparator(String lineSeparator) {
         this.lineSeparator = lineSeparator;
-        reset();
         return self();
     }
 
@@ -399,7 +390,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      */
     public DF setNormalizedLineSeparator(Character normalizedLineSeparator) {
         this.normalizedLineSeparator = normalizedLineSeparator;
-        reset();
         return self();
     }
 
@@ -424,7 +414,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      */
     public DF setComment(Character comment) {
         this.comment = comment;
-        reset();
         return self();
     }
 
@@ -445,7 +434,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      */
     public DF setLazyLoad(boolean lazyLoad) {
         this.lazyLoad = lazyLoad;
-        reset();
         return self();
     }
 
@@ -466,7 +454,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      */
     public DF setAsMap(boolean asMap) {
         this.asMap = asMap;
-        reset();
         return self();
     }
 
@@ -548,16 +535,6 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Resets the caches. It <b>must</b> be called when a setter is called.
-     */
-    protected void reset() {
-        writerSettings = null;
-        marshaller = null;
-        parserSettings = null;
-        unmarshaller = null;
-    }
-
-    /**
      * Creates and configures the writer settings.
      *
      * @return new configured instance of the writer settings
@@ -614,5 +591,18 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     @SuppressWarnings("unchecked")
     private DF self() {
         return (DF) this;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        writerSettings = null;
+        marshaller = null;
+        parserSettings = null;
+        unmarshaller = null;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

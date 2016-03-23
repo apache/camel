@@ -24,8 +24,11 @@ package org.apache.camel;
  * <p/>
  * For example this is use by the JmsConsumer which suspends the Spring JMS listener instead of stopping
  * the consumer totally.
+ * <p/>
+ * <b>Important:</b> The service should also implement the {@link Suspendable} marker interface to indicate
+ * the service supports suspension using custom code logic.
  *
- * @version 
+ * @see Suspendable
  */
 public interface SuspendableService extends Service {
 

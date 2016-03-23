@@ -39,7 +39,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.naming.Context;
@@ -73,6 +72,7 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StatefulService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
@@ -98,6 +98,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Debug;
@@ -128,6 +129,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -170,7 +172,7 @@ import org.slf4j.LoggerFactory;
  * @version
  */
 @SuppressWarnings("deprecation")
-public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, SuspendableService {
+public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, Suspendable {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private JAXBContext jaxbContext;
     private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
@@ -241,6 +243,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ServicePool<Endpoint, PollingConsumer> pollingConsumerServicePool = new SharedPollingConsumerServicePool(100);
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
     private ProcessorFactory processorFactory;
+    private MessageHistoryFactory messageHistoryFactory = new DefaultMessageHistoryFactory();
     private InterceptStrategy defaultTracer;
     private InterceptStrategy defaultBacklogTracer;
     private InterceptStrategy defaultBacklogDebugger;
@@ -292,9 +295,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
         CamelContextTrackerRegistry.INSTANCE.contextCreated(this);
-
-        // [TODO] Remove in 3.0
-        Container.Instance.manage(this);
     }
 
     /**
@@ -867,6 +867,35 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return answer;
     }
 
+    public synchronized RestsDefinition loadRestsDefinition(InputStream is) throws Exception {
+        // load routes using JAXB
+        if (jaxbContext == null) {
+            // must use classloader from CamelContext to have JAXB working
+            jaxbContext = getModelJAXBContextFactory().newJAXBContext();
+        }
+
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        Object result = unmarshaller.unmarshal(is);
+
+        if (result == null) {
+            throw new IOException("Cannot unmarshal to rests using JAXB from input stream: " + is);
+        }
+
+        // can either be routes or a single route
+        RestsDefinition answer;
+        if (result instanceof RestDefinition) {
+            RestDefinition rest = (RestDefinition) result;
+            answer = new RestsDefinition();
+            answer.getRests().add(rest);
+        } else if (result instanceof RestsDefinition) {
+            answer = (RestsDefinition) result;
+        } else {
+            throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
+        }
+
+        return answer;
+    }
+
     public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         if (routeDefinitions == null || routeDefinitions.isEmpty()) {
             return;
@@ -1138,7 +1167,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // must suspend route service as well
             suspendRouteService(routeService);
             // must suspend the route as well
-            ServiceHelper.suspendService(route);
+            if (route instanceof SuspendableService) {
+                ((SuspendableService) route).suspend();
+            }
         }
     }
 
@@ -1159,7 +1190,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // must suspend route service as well
             suspendRouteService(routeService);
             // must suspend the route as well
-            ServiceHelper.suspendService(route);
+            if (route instanceof SuspendableService) {
+                ((SuspendableService) route).suspend();
+            }
         }
     }
 
@@ -1640,31 +1673,32 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
-    public String explainComponentJson(String componentName, boolean includeAllOptions) {
+    public String explainDataFormatJson(String dataFormatName, DataFormat dataFormat, boolean includeAllOptions) {
         try {
-            String json = getComponentParameterJsonSchema(componentName);
+            String json = getDataFormatParameterJsonSchema(dataFormatName);
             if (json == null) {
-                return null;
+                // the model may be shared for multiple data formats such as bindy, json (xstream, jackson, gson)
+                if (dataFormatName.contains("-")) {
+                    dataFormatName = ObjectHelper.before(dataFormatName, "-");
+                    json = getDataFormatParameterJsonSchema(dataFormatName);
+                }
+                if (json == null) {
+                    return null;
+                }
             }
 
-            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
 
             // selected rows to use for answer
             Map<String, String[]> selected = new LinkedHashMap<String, String[]>();
+            Map<String, String[]> dataFormatOptions = new LinkedHashMap<String, String[]>();
 
-            // insert values from component
-            Component component = getComponent(componentName);
-            Map<String, Object> options = new HashMap<String, Object>();
-            IntrospectionSupport.getProperties(component, options, null);
+            // extract options from the data format
+            Map<String, Object> options = new LinkedHashMap<String, Object>();
+            IntrospectionSupport.getProperties(dataFormat, options, "", false);
 
             for (Map.Entry<String, Object> entry : options.entrySet()) {
                 String name = entry.getKey();
-
-                // skip unwanted options which is default inherited from DefaultComponent
-                if ("camelContext".equals(name) || "endpointClass".equals(name)) {
-                    continue;
-                }
-
                 String value = "";
                 if (entry.getValue() != null) {
                     value = entry.getValue().toString();
@@ -1694,8 +1728,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     }
                 }
 
-                // add as selected row
-                selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                // remember this option from the uri
+                dataFormatOptions.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
             }
 
             // include other rows
@@ -1712,18 +1746,24 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 value = URISupport.sanitizePath(value);
                 String description = row.get("description");
 
-                // always include path options
-                if (includeAllOptions) {
-                    // add as selected row
+                boolean isDataFormatOption = dataFormatOptions.containsKey(name);
+
+                // always include from uri or path options
+                if (includeAllOptions || isDataFormatOption) {
                     if (!selected.containsKey(name)) {
-                        selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                        // add as selected row, but take the value from uri options if it was from there
+                        if (isDataFormatOption) {
+                            selected.put(name, dataFormatOptions.get(name));
+                        } else {
+                            selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                        }
                     }
                 }
             }
 
-            json = ObjectHelper.before(json, "  \"componentProperties\": {");
+            json = ObjectHelper.before(json, "  \"properties\": {");
 
-            StringBuilder buffer = new StringBuilder("  \"componentProperties\": {");
+            StringBuilder buffer = new StringBuilder("  \"properties\": {");
 
             boolean first = true;
             for (String[] row : selected.values()) {
@@ -1793,6 +1833,166 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
+    public String explainComponentJson(String componentName, boolean includeAllOptions) {
+        try {
+            String json = getComponentParameterJsonSchema(componentName);
+            if (json == null) {
+                return null;
+            }
+
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+
+            // selected rows to use for answer
+            Map<String, String[]> selected = new LinkedHashMap<String, String[]>();
+
+            // insert values from component
+            Component component = getComponent(componentName);
+            Map<String, Object> options = new HashMap<String, Object>();
+            IntrospectionSupport.getProperties(component, options, null);
+
+            for (Map.Entry<String, Object> entry : options.entrySet()) {
+                String name = entry.getKey();
+
+                // skip unwanted options which is default inherited from DefaultComponent
+                if ("camelContext".equals(name) || "endpointClass".equals(name)) {
+                    continue;
+                }
+
+                String value = "";
+                if (entry.getValue() != null) {
+                    value = entry.getValue().toString();
+                }
+                value = URISupport.sanitizePath(value);
+
+                // find type and description from the json schema
+                String type = null;
+                String kind = null;
+                String group = null;
+                String label = null;
+                String required = null;
+                String javaType = null;
+                String deprecated = null;
+                String defaultValue = null;
+                String description = null;
+                for (Map<String, String> row : rows) {
+                    if (name.equals(row.get("name"))) {
+                        type = row.get("type");
+                        kind = row.get("kind");
+                        group = row.get("group");
+                        label = row.get("label");
+                        required = row.get("required");
+                        javaType = row.get("javaType");
+                        deprecated = row.get("deprecated");
+                        defaultValue = row.get("defaultValue");
+                        description = row.get("description");
+                        break;
+                    }
+                }
+
+                // add as selected row
+                selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
+            }
+
+            // include other rows
+            for (Map<String, String> row : rows) {
+                String name = row.get("name");
+                String kind = row.get("kind");
+                String group = row.get("group");
+                String label = row.get("label");
+                String required = row.get("required");
+                String value = row.get("value");
+                String defaultValue = row.get("defaultValue");
+                String type = row.get("type");
+                String javaType = row.get("javaType");
+                String deprecated = row.get("deprecated");
+                value = URISupport.sanitizePath(value);
+                String description = row.get("description");
+
+                // always include path options
+                if (includeAllOptions) {
+                    // add as selected row
+                    if (!selected.containsKey(name)) {
+                        selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
+                    }
+                }
+            }
+
+            json = ObjectHelper.before(json, "  \"componentProperties\": {");
+
+            StringBuilder buffer = new StringBuilder("  \"componentProperties\": {");
+
+            boolean first = true;
+            for (String[] row : selected.values()) {
+                if (first) {
+                    first = false;
+                } else {
+                    buffer.append(",");
+                }
+                buffer.append("\n    ");
+
+                String name = row[0];
+                String kind = row[1];
+                String group = row[2];
+                String label = row[3];
+                String required = row[4];
+                String type = row[5];
+                String javaType = row[6];
+                String deprecated = row[7];
+                String value = row[8];
+                String defaultValue = row[9];
+                String description = row[10];
+
+                // add json of the option
+                buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
+                CollectionStringBuffer csb = new CollectionStringBuffer();
+                if (kind != null) {
+                    csb.append("\"kind\": \"" + kind + "\"");
+                }
+                if (group != null) {
+                    csb.append("\"group\": \"" + group + "\"");
+                }
+                if (label != null) {
+                    csb.append("\"label\": \"" + label + "\"");
+                }
+                if (required != null) {
+                    csb.append("\"required\": \"" + required + "\"");
+                }
+                if (type != null) {
+                    csb.append("\"type\": \"" + type + "\"");
+                }
+                if (javaType != null) {
+                    csb.append("\"javaType\": \"" + javaType + "\"");
+                }
+                if (deprecated != null) {
+                    csb.append("\"deprecated\": \"" + deprecated + "\"");
+                }
+                if (value != null) {
+                    csb.append("\"value\": \"" + value + "\"");
+                }
+                if (defaultValue != null) {
+                    csb.append("\"defaultValue\": \"" + defaultValue + "\"");
+                }
+                if (description != null) {
+                    csb.append("\"description\": \"" + description + "\"");
+                }
+                if (!csb.isEmpty()) {
+                    buffer.append(csb.toString());
+                }
+                buffer.append(" }");
+            }
+
+            buffer.append("\n  }\n}\n");
+
+            // insert the original first part of the json into the start of the buffer
+            buffer.insert(0, json);
+            return buffer.toString();
+
+        } catch (Exception e) {
+            // ignore and return empty response
+            return null;
+        }
+    }
+
     public String explainEndpointJson(String uri, boolean includeAllOptions) {
         try {
             URI u = new URI(uri);
@@ -1809,7 +2009,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             Map<String, String[]> uriOptions = new LinkedHashMap<String, String[]>();
 
             // insert values from uri
-            Map<String, Object> options = URISupport.parseParameters(u);
+            Map<String, Object> options = EndpointHelper.endpointProperties(this, uri);
 
             // extract consumer. prefix options
             Map<String, Object> consumerOptions = IntrospectionSupport.extractProperties(options, "consumer.");
@@ -1827,6 +2027,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // find type and description from the json schema
                 String type = null;
                 String kind = null;
+                String group = null;
                 String label = null;
                 String required = null;
                 String javaType = null;
@@ -1837,6 +2038,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     if (name.equals(row.get("name"))) {
                         type = row.get("type");
                         kind = row.get("kind");
+                        group = row.get("group");
                         label = row.get("label");
                         required = row.get("required");
                         javaType = row.get("javaType");
@@ -1848,13 +2050,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
 
                 // remember this option from the uri
-                uriOptions.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                uriOptions.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
             }
 
             // include other rows
             for (Map<String, String> row : rows) {
                 String name = row.get("name");
                 String kind = row.get("kind");
+                String group = row.get("group");
                 String label = row.get("label");
                 String required = row.get("required");
                 String value = row.get("value");
@@ -1865,12 +2068,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 value = URISupport.sanitizePath(value);
                 String description = row.get("description");
 
-                if ("path".equals(kind)) {
-                    // if its the path option then we need to grab the actual value from the uri, which is the remainder path
-                    value = URISupport.extractRemainderPath(u, false);
-                    value = URISupport.sanitizePath(value);
-                }
-
                 boolean isUriOption = uriOptions.containsKey(name);
 
                 // always include from uri or path options
@@ -1880,14 +2077,16 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         if (isUriOption) {
                             selected.put(name, uriOptions.get(name));
                         } else {
-                            selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                            selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
                         }
                     }
                 }
             }
 
-            json = ObjectHelper.before(json, "  \"properties\": {");
+            // skip component properties
+            json = ObjectHelper.before(json, "  \"componentProperties\": {");
 
+            // and rewrite properties
             StringBuilder buffer = new StringBuilder("  \"properties\": {");
 
             boolean first = true;
@@ -1901,20 +2100,24 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
                 String name = row[0];
                 String kind = row[1];
-                String label = row[2];
-                String required = row[3];
-                String type = row[4];
-                String javaType = row[5];
-                String deprecated = row[6];
-                String value = row[7];
-                String defaultValue = row[8];
-                String description = row[9];
+                String group = row[2];
+                String label = row[3];
+                String required = row[4];
+                String type = row[5];
+                String javaType = row[6];
+                String deprecated = row[7];
+                String value = row[8];
+                String defaultValue = row[9];
+                String description = row[10];
 
                 // add json of the option
                 buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
                 CollectionStringBuffer csb = new CollectionStringBuffer();
                 if (kind != null) {
                     csb.append("\"kind\": \"" + kind + "\"");
+                }
+                if (group != null) {
+                    csb.append("\"group\": \"" + group + "\"");
                 }
                 if (label != null) {
                     csb.append("\"label\": \"" + label + "\"");
@@ -2309,13 +2512,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public void setRestConfiguration(RestConfiguration restConfiguration) {
         restConfigurations.put("", restConfiguration);
     }
+
     public Collection<RestConfiguration> getRestConfigurations() {
         return restConfigurations.values();
     }
 
-
     public void addRestConfiguration(RestConfiguration restConfiguration) {
-        restConfigurations.put(restConfiguration.getComponent(), restConfiguration);        
+        restConfigurations.put(restConfiguration.getComponent(), restConfiguration);
     }
     public RestConfiguration getRestConfiguration(String component, boolean defaultIfNotExist) {
         if (component == null) {
@@ -2324,14 +2527,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         RestConfiguration config = restConfigurations.get(component);
         if (config == null && defaultIfNotExist) {
             config = getRestConfiguration();
-            if (config != null && config.getComponent() != null && !component.equals(component)) {
+            if (config != null && config.getComponent() != null && !config.getComponent().equals(component)) {
                 config = new RestConfiguration();
                 restConfigurations.put(component, config);
             }
         }
         return config;
     }
-    
+
     public List<InterceptStrategy> getInterceptStrategies() {
         return interceptStrategies;
     }
@@ -2495,7 +2698,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public String getUptime() {
         // compute and log uptime
         if (startDate == null) {
-            return "not started";
+            return "";
         }
         long delta = new Date().getTime() - startDate.getTime();
         return TimeUtils.printDuration(delta);
@@ -2590,6 +2793,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         stopWatch.restart();
         log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is starting");
 
+        // Note: This is done on context start as we want to avoid doing it during object construction
+        // where we could be dealing with CDI proxied camel contexts which may never be started (CAMEL-9657)
+        // [TODO] Remove in 3.0
+        Container.Instance.manage(this);
+
         doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
 
         // if the context was configured with auto startup = false, and we are already started,
@@ -2623,7 +2831,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     started++;
                 }
             }
-            log.info("Total " + getRoutes().size() + " routes, of which " + started + " is started.");
+            log.info("Total " + getRoutes().size() + " routes, of which " + started + " are started.");
             log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") started in " + TimeUtils.printDuration(stopWatch.taken()));
         }
         EventHelper.notifyCamelContextStarted(this);
@@ -2663,6 +2871,23 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     private void doStartCamel() throws Exception {
+
+        // custom properties may use property placeholders so resolve those early on
+        if (properties != null && !properties.isEmpty()) {
+            for (Map.Entry<String, String> entry : properties.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (value != null) {
+                    String replaced = resolvePropertyPlaceholders(value);
+                    if (!value.equals(replaced)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Camel property with key {} replaced value from {} -> {}", new Object[]{key, value, replaced});
+                        }
+                        entry.setValue(replaced);
+                    }
+                }
+            }
+        }
 
         if (classResolver instanceof CamelContextAware) {
             ((CamelContextAware) classResolver).setCamelContext(this);
@@ -2764,6 +2989,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         addService(shutdownStrategy);
         addService(packageScanClassResolver);
         addService(restRegistry);
+        addService(messageHistoryFactory);
 
         if (runtimeEndpointRegistry != null) {
             if (runtimeEndpointRegistry instanceof EventNotifier) {
@@ -3420,6 +3646,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         } else {
             answer = new DefaultTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder());
         }
+        answer.setCamelContext(this);
         setTypeConverterRegistry(answer);
         return answer;
     }
@@ -3821,6 +4048,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setProcessorFactory(ProcessorFactory processorFactory) {
         this.processorFactory = processorFactory;
+    }
+
+    public MessageHistoryFactory getMessageHistoryFactory() {
+        return messageHistoryFactory;
+    }
+
+    public void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory) {
+        this.messageHistoryFactory = messageHistoryFactory;
     }
 
     public Debugger getDebugger() {

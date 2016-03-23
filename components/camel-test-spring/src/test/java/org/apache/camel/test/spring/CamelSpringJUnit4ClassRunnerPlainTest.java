@@ -40,6 +40,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 // START SNIPPET: e1
+// tag::example[]
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 // must tell Spring to bootstrap with Camel
 @BootstrapWith(CamelTestContextBootstrapper.class)
@@ -124,4 +125,5 @@ public class CamelSpringJUnit4ClassRunnerPlainTest {
         assertTrue(camelContext2.isLazyLoadTypeConverters());
     }
 }
+// end::example[]
 // END SNIPPET: e1

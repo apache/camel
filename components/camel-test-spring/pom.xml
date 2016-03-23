@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-test-spring</artifactId>
@@ -31,7 +31,13 @@
   <description>Camel Testing Library using JUnit and Spring 4.1+</description>
 
   <properties>
+    <!-- camel-spring uses spring-dm that is spring 3.x -->
+    <camel.osgi.import>
+      org.springframework*;version="${spring-dm-version-range}",
+      *
+    </camel.osgi.import>
     <camel.osgi.export.pkg>org.apache.camel.test.spring.*</camel.osgi.export.pkg>
+
     <spring-version>${spring4-version}</spring-version>
   </properties>
 
@@ -48,38 +54,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>${spring4-version}</version>
-    </dependency>
-    <!-- we need to override the other spring version -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>${spring4-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <version>${spring4-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-expression</artifactId>
-      <version>${spring4-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aop</artifactId>
-      <version>${spring4-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-tx</artifactId>
-      <version>${spring4-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>${spring4-version}</version>
     </dependency>
 
     <!-- test dependencies -->

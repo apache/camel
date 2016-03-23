@@ -71,7 +71,7 @@ public class MarshalDomainObjectTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(PurchaseOrder.class);
-        mock.message(0).body().equals(order);
+        mock.message(0).body().isEqualTo(order);
 
         // we get it back as byte array so type convert it to string
         Object result = template.requestBody("direct:marshal", order);
@@ -84,12 +84,12 @@ public class MarshalDomainObjectTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in").marshal().xstream().to("mock:result");
+                from("direct:in").marshal().xstream(PurchaseOrder.class).to("mock:result");
 
                 // just used for helping to marshal
-                from("direct:marshal").marshal().xstream("UTF-8");
+                from("direct:marshal").marshal().xstream("UTF-8", PurchaseOrder.class);
 
-                from("direct:reverse").unmarshal().xstream("UTF-8").to("mock:reverse");
+                from("direct:reverse").unmarshal().xstream("UTF-8", PurchaseOrder.class).to("mock:reverse");
             }
         };
     }

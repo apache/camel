@@ -27,7 +27,6 @@ import com.github.dockerjava.api.model.VolumesFrom;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -42,7 +41,6 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
     @Mock
     private CreateContainerCmd mockObject;
 
-    @Ignore
     @Test
     public void createContainerHeaderTest() {
 
@@ -52,6 +50,7 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         String name = "cameldocker";
         String workingDir = "/opt";
         boolean disableNetwork = false;
+        String domainName = "apache.org";
         String hostname = "dockerjava";
         String user = "docker";
         boolean stdInOpen = false;
@@ -101,6 +100,7 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         headers.put(DockerConstants.DOCKER_ENTRYPOINT, entrypoint);
         headers.put(DockerConstants.DOCKER_PORT_SPECS, portSpecs);
         headers.put(DockerConstants.DOCKER_DNS, dns);
+        headers.put(DockerConstants.DOCKER_DOMAIN_NAME, domainName);
 
 
         template.sendBodyAndHeaders("direct:in", "", headers);
@@ -131,6 +131,8 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         Mockito.verify(mockObject, Mockito.times(1)).withEntrypoint(entrypoint);
         Mockito.verify(mockObject, Mockito.times(1)).withPortSpecs(portSpecs);
         Mockito.verify(mockObject, Mockito.times(1)).withDns(dns);
+        Mockito.verify(mockObject, Mockito.times(1)).withDomainName(domainName);
+
 
     }
 

@@ -45,6 +45,7 @@ The following are the the primary options for communicating with the Docker serv
 | Operation | Options | Description  | Produces |
 | ------------- | ---------------- | ------------- | ---------------- |
 |events| initialRange | Amount of time in the past to begin receiving events (Long) | Event |
+|statistics| **containerId** | Statistics based on resource usage | Statistics |
 
 ## Producer Operations
 
@@ -80,7 +81,7 @@ The following producer operations are available
 | container/attach | **containerId**, followStream, logs, stdErr, stdOut, timestamps  | Attach to a container | | InputStream |
 | container/commit | **containerId**, author, attachStdErr, attachStdIn, attachStdOut, cmd, disableNetwork, env, exposedPorts, hostname, memory, memorySwap, message, openStdIn, pause, portSpecs, repository, stdInOnce, tag, tty, user, volumes, workingDir | Create a new image from a container's changes | | String |
 | container/copyfile | **containerId**, **resource**, hostPath | Copy files or folders from a container | | InputStream |
-| container/create | **image**, attachStdErr, attachStdIn, attachStdOut, capAdd, capDrop, cmd, cpuShares, disableNetwork, dns, entrypoint, env, exposedPorts, hostConfig, hostname, memoryLimit, memorySwap, name, portSpecs, stdInOnce, stdInOpen, tty, user, volumes, volumesFrom, workingDir | Create a container |  |CreateContainerResponse |
+| container/create | **image**, attachStdErr, attachStdIn, attachStdOut, capAdd, capDrop, cmd, cpuShares, disableNetwork, dns, domanName, entrypoint, env, exposedPorts, hostConfig, hostname, memoryLimit, memorySwap, name, portSpecs, stdInOnce, stdInOpen, tty, user, volumes, volumesFrom, workingDir | Create a container |  |CreateContainerResponse |
 | container/diff | **containerId**, containerIdDiff | Differences on the container filesystem | | List&lt;ChangeLog&gt; |
 | container/inspect | **containerId** | Inspect a container  | | InspectContainerResponse |
 | container/kill | **containerId**, signal | Kill a container | | |
@@ -89,7 +90,7 @@ The following producer operations are available
 | container/pause | **containerId** | Pause a container | | |
 | container/remove | **containerId**, force, removeVolumes | Remove a container | | |
 | container/restart | **containerId**, timeout | Restart a container | |
-| container/start | **containerId**, binds, capAdd, capDrop, devices, dns, dnsSearch, links, lxcConf, networkMode, portBindings, privileged, publishAllPorts, restartPolicy, volumesFrom | Start a container | | |
+| container/start | **containerId** | Start a container | | |
 | container/stop | **containerId**, timeout | Stop a container | |
 | container/top | **containerId**, psArgs | List processes running in a container | |TopContainerResponse |
 | container/unpause | **containerId** | Unpause a container | | |

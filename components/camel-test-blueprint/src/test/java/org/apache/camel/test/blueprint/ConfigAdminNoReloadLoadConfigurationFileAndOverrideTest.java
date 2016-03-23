@@ -21,11 +21,9 @@ import java.util.Dictionary;
 import org.junit.Test;
 
 // START SNIPPET: e1
-
 /**
- * This example will load a Blueprint .cfg file, and also override its property placeholders from this unit test
- * source code directly.
- * But having <code>update-strategy="none"</code> means that BP container won't be reloaded
+ * This example will load a Blueprint .cfg file (which will initialize configadmin), and also override its property
+ * placeholders from this unit test source code directly (the change won't reload blueprint container).
  */
 public class ConfigAdminNoReloadLoadConfigurationFileAndOverrideTest extends CamelBlueprintTestSupport {
 
@@ -52,8 +50,11 @@ public class ConfigAdminNoReloadLoadConfigurationFileAndOverrideTest extends Cam
 
     @Test
     public void testConfigAdmin() throws Exception {
-        // regular unit test method
-        getMockEndpoint("mock:original").expectedBodiesReceived("Hello World", "Hey Hello WorldHey Hello World");
+        // mock:original comes from <cm:default-properties>/<cm:property name="destination" value="mock:original" />
+        getMockEndpoint("mock:original").setExpectedMessageCount(0);
+        // mock:result comes from loadConfigAdminConfigurationFile()
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World", "Yay Bye WorldYay Bye World");
+        // mock:extra comes from useOverridePropertiesWithConfigAdmin(), but BP container isn't reloaded
         getMockEndpoint("mock:extra").setExpectedMessageCount(0);
 
         template.sendBody("direct:start", "World");

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hipchat.integration;
 
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -33,6 +32,7 @@ import org.junit.Test;
 
 @Ignore("Must be manually tested. Provide your own auth key, user, & room from https://www.hipchat.com/docs/apiv2/auth")
 public class HipchatProducerIntegrationTest extends CamelTestSupport {
+
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
 
@@ -81,7 +81,7 @@ public class HipchatProducerIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String hipchatEndpointUri = "hipchat://?authToken=XXXX";
+                String hipchatEndpointUri = "hipchat:http:api.hipchat.com?authToken=XXXX";
 
                 from("direct:start")
                         .to(hipchatEndpointUri)

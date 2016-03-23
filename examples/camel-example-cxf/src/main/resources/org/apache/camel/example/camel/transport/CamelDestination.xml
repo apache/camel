@@ -31,12 +31,13 @@
        to dynamically set the port number for unit testing the example.  -->
    <bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer"/>
 
-   <bean id = "roundRobinRef" class="org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer" />
+   <bean id="roundRobinRef" class="org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer" />
 
    <camelContext id="dest_context" xmlns="http://camel.apache.org/schema/spring">
        <route>
             <from uri="jetty:http://localhost:{{port}}/GreeterContext/GreeterPort"/>
-            <loadBalance ref="roundRobinRef">
+            <loadBalance>
+              <custom ref="roundRobinRef"/>
               <to uri="direct:EndpointA"/>
               <to uri="direct:EndpointB"/>
             </loadBalance>

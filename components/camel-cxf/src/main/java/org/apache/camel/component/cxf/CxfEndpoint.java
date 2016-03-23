@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -41,7 +43,6 @@ import javax.xml.ws.handler.Handler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
@@ -103,23 +104,19 @@ import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
+import org.apache.cxf.wsdl.WSDLManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
- * Defines the <a href="http://camel.apache.org/cxf.html">CXF Endpoint</a>.
- * It contains a list of properties for CXF endpoint including {@link DataFormat},
- * {@link CxfBinding}, and {@link HeaderFilterStrategy}.  The default DataFormat
- * mode is {@link DataFormat#POJO}.
+ * The cxf component is used for SOAP WebServices using Apache CXF.
  */
 @UriEndpoint(scheme = "cxf", title = "CXF", syntax = "cxf:beanId:address", consumerClass = CxfConsumer.class, label = "soap,webservice")
 public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
-    
-    @UriPath
+
+    @UriParam(label = "advanced")
     protected Bus bus;
 
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
@@ -128,7 +125,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private BindingConfiguration bindingConfig;
     private DataBinding dataBinding;
     private Object serviceFactoryBean;
-    private Map<String, Object> properties;
     private List<Interceptor<? extends Message>> in = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
     private List<Interceptor<? extends Message>> out = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
     private List<Interceptor<? extends Message>> outFault = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
@@ -140,59 +136,62 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     @UriPath(description = "To lookup an existing configured CxfEndpoint. Must used bean: as prefix.")
     private String beanId;
-    @UriPath
+    @UriParam(defaultValue = "POJO")
+    private DataFormat dataFormat = DataFormat.POJO;
+    @UriPath(label = "service")
     private String address;
-    @UriParam
+    @UriParam(label = "service")
     private String wsdlURL;
+    @UriParam(label = "service")
     private Class<?> serviceClass;
-    @UriParam(name = "portName")
+    @UriParam(label = "service", name = "portName")
     private String portNameString;
     private QName portName;
-    @UriParam(name = "serviceName")
+    @UriParam(label = "service", name = "serviceName")
     private String serviceNameString;
     private QName serviceName;
+    @UriParam(label = "service")
+    private String bindingId;
+    @UriParam(label = "service")
+    private String publishedEndpointUrl;
     @UriParam(label = "producer")
     private String defaultOperationName;
     @UriParam(label = "producer")
     private String defaultOperationNamespace;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean wrapped;
     @UriParam
     private Boolean wrappedStyle;
-    @UriParam
+    @UriParam(label = "advanced")
     private Boolean allowStreaming;
-    @UriParam(defaultValue = "POJO")
-    private DataFormat dataFormat = DataFormat.POJO;
-    @UriParam
-    private String publishedEndpointUrl;
-    @UriParam
+    @UriParam(label = "advanced")
     private CxfBinding cxfBinding;
-    @UriParam
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean defaultBus;
-    @UriParam
+    @UriParam(label = "logging")
     private boolean loggingFeatureEnabled;
-    @UriParam(defaultValue = "" + AbstractLoggingInterceptor.DEFAULT_LIMIT)
+    @UriParam(label = "logging", defaultValue = "" + AbstractLoggingInterceptor.DEFAULT_LIMIT)
     private int loggingSizeLimit;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean mtomEnabled;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean skipPayloadMessagePartCheck;
-    @UriParam
+    @UriParam(label = "logging")
     private boolean skipFaultLogging;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean mergeProtocolHeaders;
-    @UriParam
-    private String bindingId;
-    @UriParam
+    @UriParam(label = "advanced")
     private CxfEndpointConfigurer cxfEndpointConfigurer;
-    @UriParam(defaultValue = "30000")
+    @UriParam(label = "advanced", defaultValue = "30000")
     private long continuationTimeout = 30000;
-    @UriParam
+    @UriParam(label = "security")
     private String username;
-    @UriParam
+    @UriParam(label = "security")
     private String password;
+    @UriParam(label = "advanced", prefix = "properties.", multiValue = true)
+    private Map<String, Object> properties;
 
     public CxfEndpoint() {
     }
@@ -319,7 +318,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
 
         if (isLoggingFeatureEnabled()) {
-            if (getLoggingSizeLimit() > 0) {
+            if (getLoggingSizeLimit() != 0) {
                 sfb.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
             } else {
                 sfb.getFeatures().add(new LoggingFeature());
@@ -489,6 +488,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (getServiceName() != null) {
             factoryBean.setServiceName(getServiceName());
         }
+        
+        
 
         // port name qname
         if (getPortName() != null) {
@@ -510,7 +511,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
 
         if (isLoggingFeatureEnabled()) {
-            if (getLoggingSizeLimit() > 0) {
+            if (getLoggingSizeLimit() != 0) {
                 factoryBean.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
             } else {
                 factoryBean.getFeatures().add(new LoggingFeature());
@@ -792,6 +793,24 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (serviceName == null && serviceNameString != null) {
             serviceName = QName.valueOf(resolvePropertyPlaceholders(serviceNameString));
         }
+        //if not specify the service name and if the wsdlUrl is available,
+        //parse the wsdl to see if only one service in it, if so set the only service
+        //from wsdl to avoid ambiguity
+        if (serviceName == null && getWsdlURL() != null) {
+            // use wsdl manager to parse wsdl or get cached
+            // definition
+            try {
+                Definition definition = getBus().getExtension(WSDLManager.class)
+                        .getDefinition(getWsdlURL());
+                if (definition.getServices().size() == 1) {
+                    serviceName = (QName) definition.getServices().keySet()
+                        .iterator().next();
+                    
+                }
+            } catch (WSDLException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return serviceName;
     }
 
@@ -966,9 +985,12 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     /**
-     * To limit the total size of number of bytes the logger will output when logging feature has been enabled.
+     * To limit the total size of number of bytes the logger will output when logging feature has been enabled and -1 for no limit.
      */
     public void setLoggingSizeLimit(int loggingSizeLimit) {
+        if (loggingSizeLimit < -1) {
+            throw new IllegalArgumentException("LoggingSizeLimit must be greater or equal to -1.");
+        }
         this.loggingSizeLimit = loggingSizeLimit;
     }
 
@@ -1004,6 +1026,10 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
     }
 
+    /**
+     * To set additional CXF options using the key/value pairs from the Map.
+     * For example to turn on stacktraces in SOAP faults, <tt>properties.faultStackTraceEnabled=true</tt>
+     */
     public void setProperties(Map<String, Object> properties) {
         if (this.properties == null) {
             this.properties = properties;
@@ -1328,6 +1354,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public void setServiceFactoryBean(Object serviceFactoryBean) {
+        this.serviceFactoryBean = serviceFactoryBean;
+    }
+
+    public void setServiceFactory(Object serviceFactoryBean) {
+        // needed a setter with this name as the cxf namespace parser expects this name
         this.serviceFactoryBean = serviceFactoryBean;
     }
 

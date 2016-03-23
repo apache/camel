@@ -17,7 +17,10 @@
 package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.SynchronizationAdapter;
 
 /**
  * @version 
@@ -37,6 +40,29 @@ public class SedaDiscardIfNoConsumerTest extends ContextTestSupport {
         assertEquals(0, bar.getCurrentQueueSize());
     }
 
+    public void testDiscardUoW() throws Exception {
+        SedaEndpoint bar = getMandatoryEndpoint("seda:bar", SedaEndpoint.class);
+        assertEquals(0, bar.getCurrentQueueSize());
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        final MyCompletion myCompletion = new MyCompletion();
+
+        template.send("direct:start", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello World");
+                exchange.addOnCompletion(myCompletion);
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(0, bar.getCurrentQueueSize());
+
+        assertEquals(true, myCompletion.isCalled());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -45,5 +71,19 @@ public class SedaDiscardIfNoConsumerTest extends ContextTestSupport {
                 from("direct:start").to("seda:bar?discardIfNoConsumers=true").to("mock:result");
             }
         };
+    }
+
+    private static final class MyCompletion extends SynchronizationAdapter {
+
+        private boolean called;
+
+        @Override
+        public void onDone(Exchange exchange) {
+            called = true;
+        }
+
+        public boolean isCalled() {
+            return called;
+        }
     }
 }

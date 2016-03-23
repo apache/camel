@@ -120,7 +120,7 @@ public class DefaultJavaMailSender implements JavaMailSender {
                 // preserve explicitly specified message id, as it may be lost on save
                 mimeMessage.setHeader("Message-ID", messageId);
             }
-            LOG.debug("Sending MimMessage: {} using host: {}", mimeMessage, host);
+            LOG.debug("Sending MimeMessage: {} using host: {}", mimeMessage, host);
             transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
         } finally {
             try {

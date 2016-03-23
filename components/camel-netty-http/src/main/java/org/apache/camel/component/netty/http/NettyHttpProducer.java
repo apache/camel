@@ -48,7 +48,7 @@ public class NettyHttpProducer extends NettyProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        return super.process(exchange, new NettyHttpProducerCallback(exchange, callback));
+        return super.process(exchange, new NettyHttpProducerCallback(exchange, callback, getConfiguration()));
     }
 
     @Override
@@ -80,10 +80,12 @@ public class NettyHttpProducer extends NettyProducer {
 
         private final Exchange exchange;
         private final AsyncCallback callback;
+        private final NettyHttpConfiguration configuration;
 
-        private NettyHttpProducerCallback(Exchange exchange, AsyncCallback callback) {
+        private NettyHttpProducerCallback(Exchange exchange, AsyncCallback callback, NettyHttpConfiguration configuration) {
             this.exchange = exchange;
             this.callback = callback;
+            this.configuration = configuration;
         }
 
         @Override
@@ -98,8 +100,9 @@ public class NettyHttpProducer extends NettyProducer {
                         int code = response.getStatus() != null ? response.getStatus().getCode() : -1;
                         log.debug("Http responseCode: {}", code);
 
-                        // if there was a http error code (300 or higher) then check if we should throw an exception
-                        if (code >= 300 && getConfiguration().isThrowExceptionOnFailure()) {
+                        // if there was a http error code then check if we should throw an exception
+                        boolean ok = NettyHttpHelper.isStatusCodeOk(code, configuration.getOkStatusCodeRange());
+                        if (!ok && getConfiguration().isThrowExceptionOnFailure()) {
                             // operation failed so populate exception to throw
                             Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, actualUrl, response, code, getConfiguration().isTransferException());
                             exchange.setException(cause);

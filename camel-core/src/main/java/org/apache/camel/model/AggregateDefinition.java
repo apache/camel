@@ -39,12 +39,12 @@ import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**
@@ -115,6 +115,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private Boolean discardOnCompletionTimeout;
     @XmlAttribute
     private Boolean forceCompletionOnStop;
+    @XmlAttribute
+    private Boolean completeAllOnStop;
     @XmlTransient
     private AggregateController aggregateController;
     @XmlAttribute
@@ -263,6 +265,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         }
         if (getForceCompletionOnStop() != null) {
             answer.setForceCompletionOnStop(getForceCompletionOnStop());
+        }
+        if (getCompleteAllOnStop() != null) {
+            answer.setCompleteAllOnStop(getCompleteAllOnStop());
         }
         if (optimisticLockRetryPolicy == null) {
             if (getOptimisticLockRetryPolicyDefinition() != null) {
@@ -623,6 +628,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.forceCompletionOnStop = forceCompletionOnStop;
     }
 
+    public Boolean getCompleteAllOnStop() {
+        return completeAllOnStop;
+    }
+
+    public void setCompleteAllOnStop(Boolean completeAllOnStop) {
+        this.completeAllOnStop = completeAllOnStop;
+    }
+
     public AggregateController getAggregateController() {
         return aggregateController;
     }
@@ -670,7 +683,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     /**
      * Closes a correlation key when its complete. Any <i>late</i> received exchanges which has a correlation key
-     * that has been closed, it will be defined and a {@link org.apache.camel.processor.aggregate.ClosedCorrelationKeyException}
+     * that has been closed, it will be defined and a {@link ClosedCorrelationKeyException}
      * is thrown.
      *
      * @param capacity the maximum capacity of the closed correlation key cache.
@@ -863,6 +876,21 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition forceCompletionOnStop() {
         setForceCompletionOnStop(true);
+        return this;
+    }
+
+    /**
+     * Indicates to wait to complete all current and partial (pending) aggregated exchanges when the context is stopped.
+     * <p/>
+     * This also means that we will wait for all pending exchanges which are stored in the aggregation repository
+     * to complete so the repository is empty before we can stop.
+     * <p/>
+     * You may want to enable this when using the memory based aggregation repository that is memory based only,
+     * and do not store data on disk. When this option is enabled, then the aggregator is waiting to complete
+     * all those exchanges before its stopped, when stopping CamelContext or the route using it.
+     */
+    public AggregateDefinition completeAllOnStop() {
+        setCompleteAllOnStop(true);
         return this;
     }
 

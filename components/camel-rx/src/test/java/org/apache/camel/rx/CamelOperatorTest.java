@@ -21,8 +21,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import rx.Subscription;
 import rx.functions.Func1;
 import rx.observables.ConnectableObservable;
@@ -33,7 +31,6 @@ import static org.hamcrest.Matchers.containsString;
 /**
  */
 public class CamelOperatorTest extends RxTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(CamelOperatorTest.class);
 
     @Test
     public void testCamelOperator() throws Exception {

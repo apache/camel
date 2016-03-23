@@ -40,20 +40,9 @@ public class QuartzConsumer extends DefaultConsumer {
     }
 
     @Override
-    protected void doResume() throws Exception {
-        super.doResume();
-        getEndpoint().consumerStarted(this);
-    }
-
-    @Override
     protected void doStop() throws Exception {
         getEndpoint().consumerStopped(this);
         super.doStop();
     }
 
-    @Override
-    protected void doSuspend() throws Exception {
-        getEndpoint().consumerStopped(this);
-        super.doSuspend();
-    }
 }

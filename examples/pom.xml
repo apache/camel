@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -37,6 +37,11 @@
     <module>camel-example-box-osgi</module>
     <module>camel-example-cafe</module>
     <module>camel-example-cdi</module>
+    <module>camel-example-cdi-metrics</module>
+    <module>camel-example-cdi-osgi</module>
+    <module>camel-example-cdi-properties</module>
+    <module>camel-example-cdi-rest-servlet</module>
+    <module>camel-example-cdi-test</module>
     <module>camel-example-cxf</module>
     <module>camel-example-cxf-blueprint</module>
     <module>camel-example-cxf-osgi</module>
@@ -64,15 +69,15 @@
     <module>camel-example-restlet-jdbc</module>
     <module>camel-example-route-throttling</module>
     <module>camel-example-servlet-rest-blueprint</module>
-    <module>camel-example-servlet-rest-tomcat</module>
     <module>camel-example-servlet-tomcat</module>
-    <module>camel-example-servlet-tomcat-blueprintweb</module>
     <module>camel-example-servlet-tomcat-no-spring</module>
     <module>camel-example-simplejirabot</module>
-    <module>camel-example-spark-rest-tomcat</module>
+    <module>camel-example-spark-rest</module>
     <module>camel-example-splunk</module>
     <module>camel-example-spring</module>
     <module>camel-example-spring-boot</module>
+    <module>camel-example-spring-boot-metrics</module>
+    <module>camel-example-spring-boot-starter</module>
     <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
     <module>camel-example-spring-ws</module>
@@ -82,9 +87,14 @@
     <module>camel-example-ssh-security</module>
     <module>camel-example-sql</module>
     <module>camel-example-sql-blueprint</module>
+    <module>camel-example-swagger-cdi</module>
+    <module>camel-example-swagger-xml</module>
     <module>camel-example-tracer</module>
     <module>camel-example-twitter-websocket</module>
-    <module>camel-example-twitter-websocket-blueprint</module>    
+    <module>camel-example-twitter-websocket-blueprint</module>
+    <module>camel-example-widget-gadget-cdi</module>
+    <module>camel-example-widget-gadget-java</module>
+    <module>camel-example-widget-gadget-xml</module>    
   </modules>
  
   <properties>

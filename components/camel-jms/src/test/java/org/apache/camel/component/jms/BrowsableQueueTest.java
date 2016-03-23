@@ -52,7 +52,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
         assertEquals(6, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
         LOG.debug("Received: " + list);
-        assertEquals("Size of list", 6, endpoint.queueSize());
+        assertEquals("Size of list", 6, endpoint.getExchanges().size());
 
         int index = -1;
         for (Exchange exchange : list) {
@@ -77,7 +77,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
         assertEquals(10, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
         LOG.debug("Received: " + list);
-        assertEquals("Size of list", 8, endpoint.queueSize());
+        assertEquals("Size of list", 8, endpoint.getExchanges().size());
 
         int index = -1;
         for (Exchange exchange : list) {
@@ -102,7 +102,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
         assertEquals(-1, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
         LOG.debug("Received: " + list);
-        assertEquals("Size of list", 8, endpoint.queueSize());
+        assertEquals("Size of list", 8, endpoint.getExchanges().size());
 
         int index = -1;
         for (Exchange exchange : list) {

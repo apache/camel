@@ -17,11 +17,7 @@
 
 package org.apache.camel.component.cxf.converter;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;

@@ -21,11 +21,10 @@ import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryEventType;
-import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.hazelcast.listener.MapEntryListener;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -41,13 +40,13 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
     @Mock
     private IMap<Object, Object> map;
 
-    private ArgumentCaptor<EntryListener> argument;
+    private ArgumentCaptor<MapEntryListener> argument;
 
     @Override
     @SuppressWarnings("unchecked")
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.getMap("foo")).thenReturn(map);
-        argument = ArgumentCaptor.forClass(EntryListener.class);
+        argument = ArgumentCaptor.forClass(MapEntryListener.class);
         when(map.addEntryListener(argument.capture(), eq(true))).thenReturn("foo");
     }
 
@@ -55,7 +54,7 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
     @SuppressWarnings("unchecked")
     protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
         verify(hazelcastInstance).getMap("foo");
-        verify(map).addEntryListener(any(EntryListener.class), eq(true));
+        verify(map).addEntryListener(any(MapEntryListener.class), eq(true));
     }
 
     @Test

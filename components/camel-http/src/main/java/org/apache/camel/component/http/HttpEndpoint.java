@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
@@ -28,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -37,11 +39,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a <a href="http://camel.apache.org/http.html">HTTP endpoint</a>
- *
- * @version 
+ * For calling out to external HTTP servers using Apache HTTP Client 3.x.
  */
-@UriEndpoint(scheme = "http,https", title = "HTTP,HTTPS", syntax = "http:httpUri", producerOnly = true, label = "http")
+@UriEndpoint(scheme = "http,https", title = "HTTP,HTTPS", syntax = "http:httpUri", producerOnly = true, label = "http", lenientProperties = true)
 public class HttpEndpoint extends HttpCommonEndpoint {
 
     // Note: all options must be documented with description in annotations so extended components can access the documentation
@@ -49,8 +49,15 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
 
     private HttpClientParams clientParams;
+
+    @UriParam(label = "advanced")
     private HttpClientConfigurer httpClientConfigurer;
+    @UriParam(label = "advanced", prefix = "httpClient.", multiValue = true)
+    private Map<String, Object> httpClientOptions;
+    @UriParam(label = "advanced")
     private HttpConnectionManager httpConnectionManager;
+    @UriParam(label = "advanced", prefix = "httpConnectionManager.", multiValue = true)
+    private Map<String, Object> httpConnectionManagerOptions;
 
     public HttpEndpoint() {
     }
@@ -184,4 +191,25 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.httpConnectionManager = httpConnectionManager;
     }
 
+    public Map<String, Object> getHttpClientOptions() {
+        return httpClientOptions;
+    }
+
+    /**
+     * To configure the HttpClient using the key/values from the Map.
+     */
+    public void setHttpClientOptions(Map<String, Object> httpClientOptions) {
+        this.httpClientOptions = httpClientOptions;
+    }
+
+    public Map<String, Object> getHttpConnectionManagerOptions() {
+        return httpConnectionManagerOptions;
+    }
+
+    /**
+     * To configure the HttpConnectionManager using the key/values from the Map.
+     */
+    public void setHttpConnectionManagerOptions(Map<String, Object> httpConnectionManagerOptions) {
+        this.httpConnectionManagerOptions = httpConnectionManagerOptions;
+    }
 }

@@ -33,7 +33,7 @@ public class HeaderFilterStrategyComponentTest extends TestCase {
 
     private static class MyComponent extends HeaderFilterStrategyComponent {
 
-        public MyComponent(Class<? extends Endpoint> endpointClass) {
+        MyComponent(Class<? extends Endpoint> endpointClass) {
             super(endpointClass);
         }
 

@@ -71,6 +71,9 @@ public class NettyHttpBasicAuthConstraintMapperTest extends BaseNettyTest {
             assertEquals(401, cause.getStatusCode());
         }
 
+        // wait a little bit before next as the connection was closed when denied
+        Thread.sleep(500);
+
         // username:password is scott:secret
         String auth = "Basic c2NvdHQ6c2VjcmV0";
         out = template.requestBodyAndHeader("netty4-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);

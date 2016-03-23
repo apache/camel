@@ -16,12 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
-/**
- *
- */
 public final class KafkaConstants {
-
-    public static final String DEFAULT_GROUP = "group1";
 
     public static final String PARTITION_KEY = "kafka.PARTITION_KEY";
     public static final String PARTITION = "kafka.EXCHANGE_NAME";
@@ -31,6 +26,10 @@ public final class KafkaConstants {
 
     public static final String KAFKA_DEFAULT_ENCODER = "kafka.serializer.DefaultEncoder";
     public static final String KAFKA_STRING_ENCODER = "kafka.serializer.StringEncoder";
+    public static final String KAFKA_DEFAULT_SERIALIZER  = "org.apache.kafka.common.serialization.StringSerializer";
+    public static final String KAFKA_DEFAULT_DESERIALIZER  = "org.apache.kafka.common.serialization.StringDeserializer";
+    public static final String KAFKA_DEFAULT_PARTITIONER = "org.apache.kafka.clients.producer.internals.DefaultPartitioner";
+    public static final String PARTITIONER_RANGE_ASSIGNOR = "org.apache.kafka.clients.consumer.RangeAssignor";
 
     private KafkaConstants() {
         // Utility class

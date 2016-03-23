@@ -33,7 +33,7 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
  *
  * @see TokenizeLanguage
  */
-@Metadata(label = "language", title = "Tokenize")
+@Metadata(label = "language,core", title = "Tokenize")
 @XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TokenizerExpression extends ExpressionDefinition {
@@ -53,6 +53,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     private Boolean includeTokens;
     @XmlAttribute
     private Integer group;
+    @XmlAttribute
+    private Boolean skipFirst;
 
     public TokenizerExpression() {
     }
@@ -155,6 +157,17 @@ public class TokenizerExpression extends ExpressionDefinition {
         this.group = group;
     }
 
+    public Boolean getSkipFirst() {
+        return skipFirst;
+    }
+
+    /**
+     * To skip the very first element
+     */
+    public void setSkipFirst(Boolean skipFirst) {
+        this.skipFirst = skipFirst;
+    }
+
     @Override
     public Expression createExpression(CamelContext camelContext) {
         // special for new line tokens, if defined from XML then its 2 characters, so we replace that back to a single char
@@ -181,6 +194,9 @@ public class TokenizerExpression extends ExpressionDefinition {
                 throw new IllegalArgumentException("Group must be a positive number, was: " + group);
             }
             language.setGroup(group);
+        }
+        if (skipFirst != null) {
+            language.setSkipFirst(skipFirst);
         }
         return language.createExpression();
     }

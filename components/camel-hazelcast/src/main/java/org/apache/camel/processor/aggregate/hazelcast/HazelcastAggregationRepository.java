@@ -70,6 +70,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
     private String deadLetterChannel;
     private long recoveryInterval = 5000;
     private int maximumRedeliveries = 3;
+    private boolean allowSerializedHeaders;
 
     /**
      * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking
@@ -180,7 +181,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
         }
         LOG.trace("Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
         if (oldExchange == null) {
-            DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(newExchange);
+            DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
             final DefaultExchangeHolder misbehaviorHolder = cache.putIfAbsent(key, holder);
             if (misbehaviorHolder != null) {
                 Exchange misbehaviorEx = unmarshallExchange(camelContext, misbehaviorHolder);
@@ -189,8 +190,8 @@ public class HazelcastAggregationRepository extends ServiceSupport
                 throw  new OptimisticLockingException();
             }
         } else {
-            DefaultExchangeHolder oldHolder = DefaultExchangeHolder.marshal(oldExchange);
-            DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(newExchange);
+            DefaultExchangeHolder oldHolder = DefaultExchangeHolder.marshal(oldExchange, true, allowSerializedHeaders);
+            DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
             if (!cache.replace(key, oldHolder, newHolder)) {
                 LOG.error("Optimistic locking failed for exchange with key {}: IMap#replace returned no Exchanges, while it's expected to replace one",
                         key);
@@ -210,7 +211,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
         Lock l = hzInstance.getLock(mapName);
         try {
             l.lock();
-            DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange);
+            DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
             DefaultExchangeHolder oldHolder = cache.put(key, newHolder);
             return unmarshallExchange(camelContext, oldHolder);
         } finally {
@@ -288,6 +289,14 @@ public class HazelcastAggregationRepository extends ServiceSupport
     public Exchange get(CamelContext camelContext, String key) {
         return unmarshallExchange(camelContext, cache.get(key));
     }
+    
+    public boolean isAllowSerializedHeaders() {
+        return allowSerializedHeaders;
+    }
+
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        this.allowSerializedHeaders = allowSerializedHeaders;
+    }
 
     /**
      * This method performs transactional operation on removing the {@code exchange}
@@ -299,7 +308,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
      */
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
-        DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange);
+        DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
         if (optimistic) {
             LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
             if (!cache.remove(key, holder)) {
@@ -399,10 +408,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
 
     @Override
     protected void doStop() throws Exception {
-        if (useRecovery) {
-            persistedCache.clear();
-        }
-        cache.clear();
+        //noop
         if (useLocalHzInstance) {
             hzInstance.getLifecycleService().shutdown();
         }

@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-olingo2-parent</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-olingo2</artifactId>
@@ -222,14 +222,7 @@
               </sources>
             </configuration>
           </execution>
-        </executions>
-      </plugin>
-
-      <!-- add the olingo odata2 sample service source. See profile get-olingo2-sample below --> 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
+          <!-- add the olingo odata2 sample service source. See profile get-olingo2-sample below -->
           <execution>
             <id>add-test-source</id>
             <phase>generate-test-sources</phase>

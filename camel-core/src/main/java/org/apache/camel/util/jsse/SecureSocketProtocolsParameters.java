@@ -42,7 +42,7 @@ public class SecureSocketProtocolsParameters {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("SecureSocketProtocolsParameters [secureSocketProtocol=");
+        builder.append("SecureSocketProtocolsParameters[secureSocketProtocol=");
         builder.append(Arrays.toString(getSecureSocketProtocol().toArray(new String[getSecureSocketProtocol().size()])));
         builder.append("]");
         return builder.toString();

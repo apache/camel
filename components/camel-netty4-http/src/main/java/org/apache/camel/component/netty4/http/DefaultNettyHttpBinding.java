@@ -134,15 +134,16 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         headers.put(Exchange.HTTP_RAW_QUERY, uri.getRawQuery());
 
         // strip the starting endpoint path so the path is relative to the endpoint uri
-        String path = uri.getPath();
+        String path = uri.getRawPath();
         if (configuration.getPath() != null) {
             // need to match by lower case as we want to ignore case on context-path
-            path = path.toLowerCase(Locale.US);
+            String matchPath = path.toLowerCase(Locale.US);
             String match = configuration.getPath() != null ? configuration.getPath().toLowerCase(Locale.US) : null;
-            if (match != null && path.startsWith(match)) {
+            if (match != null && matchPath.startsWith(match)) {
                 path = path.substring(configuration.getPath().length());
             }
         }
+        // keep the path uri using the case the request provided (do not convert to lower case)
         headers.put(Exchange.HTTP_PATH, path);
 
         if (LOG.isTraceEnabled()) {
@@ -443,8 +444,16 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             return (HttpRequest) message.getBody();
         }
 
+        String uriForRequest = uri;
+        if (configuration.isUseRelativePath()) {
+            int indexOfPath = uri.indexOf((new URI(uri)).getPath());
+            if (indexOfPath > 0) {
+                uriForRequest = uri.substring(indexOfPath);               
+            } 
+        }
+        
         // just assume GET for now, we will later change that to the actual method to use
-        HttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri);
+        HttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uriForRequest);
         
         Object body = message.getBody();
         if (body != null) {
@@ -462,7 +471,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                 }
             }
             if (buffer != null) {
-                request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uri, buffer);
+                request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uriForRequest, buffer);
                 int len = buffer.readableBytes();
                 // set content-length
                 request.headers().set(HttpHeaders.Names.CONTENT_LENGTH, len);
@@ -527,9 +536,9 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // must include HOST header as required by HTTP 1.1
         // use URI as its faster than URL (no DNS lookup)
         URI u = new URI(uri);
-        String host = u.getHost();
-        request.headers().set(HttpHeaders.Names.HOST, host);
-        LOG.trace("Host: {}", host);
+        String hostHeader = u.getHost() + (u.getPort() == 80 ? "" : ":" + u.getPort());
+        request.headers().set(HttpHeaders.Names.HOST, hostHeader);
+        LOG.trace("Host: {}", hostHeader);
 
         // configure connection to accordingly to keep alive configuration
         // favor using the header from the message

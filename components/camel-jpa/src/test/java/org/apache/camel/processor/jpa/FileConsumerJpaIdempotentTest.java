@@ -40,8 +40,8 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/idempotent");
+        super.setUp();
         template.sendBodyAndHeader("file://target/idempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");
     }
 
@@ -49,7 +49,8 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/idempotent/?idempotent=true&idempotentRepository=#jpaStore&move=done/${file:name}").to("mock:result");
+                from("file://target/idempotent/?idempotent=true&idempotentRepository=#jpaStore&move=done/${file:name}").routeId("foo").autoStartup(false)
+                    .to("mock:result");
             }
         };
     }
@@ -77,6 +78,8 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedMessageCount(1);
+
+        context.startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

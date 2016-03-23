@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * A Camel Endpoint for working with <a href="http://vertx.io/">vert.x</a> event bus endpoints
+ * The vertx component is used for sending and receive messages from a vertx event bus.
  */
 @UriEndpoint(scheme = "vertx", title = "Vert.x", syntax = "vertx:address", consumerClass = VertxConsumer.class, label = "eventbus")
 public class VertxEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {

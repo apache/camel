@@ -315,6 +315,8 @@ public class PackageDataFormatMojo extends AbstractMojo {
         } else if ("zipfile".equals(name)) {
             // darn should have been lower case
             return "zipFile";
+        } else if ("yaml-snakeyaml".equals(name)) {
+            return "yaml";
         }
         return name;
     }
@@ -333,6 +335,8 @@ public class PackageDataFormatMojo extends AbstractMojo {
             return "Bindy Fixed Length";
         } else if ("bindy-kvp".equals(name)) {
             return "Bindy Key Value Pair";
+        } else if ("yaml-snakeyaml".equals(name)) {
+            return "YAML SnakeYAML";
         }
         return title;
     }
@@ -363,7 +367,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
     private static String createParameterJsonSchema(DataFormatModel dataFormatModel, String schema) {
         StringBuilder buffer = new StringBuilder("{");
-        // component model
+        // dataformat model
         buffer.append("\n \"dataformat\": {");
         buffer.append("\n    \"name\": \"").append(dataFormatModel.getName()).append("\",");
         buffer.append("\n    \"kind\": \"").append("dataformat").append("\",");

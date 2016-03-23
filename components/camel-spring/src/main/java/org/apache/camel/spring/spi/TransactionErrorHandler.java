@@ -61,13 +61,15 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
      * @param retryWhile              retry while
      * @param executorService         the {@link java.util.concurrent.ScheduledExecutorService} to be used for redelivery thread pool. Can be <tt>null</tt>.
      * @param rollbackLoggingLevel    logging level to use for logging transaction rollback occurred
+     * @param onExceptionOccurredProcessor  a custom {@link org.apache.camel.Processor} to process the {@link org.apache.camel.Exchange} just after an exception was thrown.
      */
     public TransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, 
             Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy,
             TransactionTemplate transactionTemplate, Predicate retryWhile, ScheduledExecutorService executorService,
-            LoggingLevel rollbackLoggingLevel) {
+            LoggingLevel rollbackLoggingLevel, Processor onExceptionOccurredProcessor) {
 
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, false, retryWhile, executorService, null);
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, false, retryWhile,
+                executorService, null, onExceptionOccurredProcessor);
         setExceptionPolicy(exceptionPolicyStrategy);
         this.transactionTemplate = transactionTemplate;
         this.rollbackLoggingLevel = rollbackLoggingLevel;

@@ -17,8 +17,15 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Processor;
 import org.apache.camel.util.FileUtil;
@@ -30,10 +37,19 @@ import org.apache.camel.util.ObjectHelper;
 public class FileConsumer extends GenericFileConsumer<File> {
 
     private String endpointPath;
+    private Set<String> extendedAttributes;
 
-    public FileConsumer(GenericFileEndpoint<File> endpoint, Processor processor, GenericFileOperations<File> operations) {
+    public FileConsumer(FileEndpoint endpoint, Processor processor, GenericFileOperations<File> operations) {
         super(endpoint, processor, operations);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
+
+        if (endpoint.getExtendedAttributes() != null) {
+            this.extendedAttributes = new HashSet<>();
+
+            for (String attribute : endpoint.getExtendedAttributes().split(",")) {
+                extendedAttributes.add(attribute);
+            }
+        }
     }
 
     @Override
@@ -67,7 +83,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
         }
         List<File> files = Arrays.asList(dirFiles);
 
-        for (File file : files) {
+        for (File file : dirFiles) {
             // check if we can continue polling in files
             if (!canPollMoreFiles(fileList)) {
                 return false;
@@ -80,7 +96,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
             }
 
             // creates a generic file
-            GenericFile<File> gf = asGenericFile(endpointPath, file, getEndpoint().getCharset());
+            GenericFile<File> gf = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
 
             if (file.isDirectory()) {
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(gf, true, files)) {
@@ -96,6 +112,40 @@ public class FileConsumer extends GenericFileConsumer<File> {
                 if (depth >= endpoint.minDepth && isValidFile(gf, false, files)) {
                     log.trace("Adding valid file: {}", file);
                     // matched file so add
+                    if (extendedAttributes != null) {
+                        Path path = file.toPath();
+                        Map<String, Object> allAttributes = new HashMap<>();
+                        for (String attribute : extendedAttributes) {
+                            try {
+                                String prefix = null;
+                                if (attribute.endsWith(":*")) {
+                                    prefix = attribute.substring(0, attribute.length() - 1);
+                                } else if (attribute.equals("*")) {
+                                    prefix = "basic:";
+                                }
+
+                                if (ObjectHelper.isNotEmpty(prefix)) {
+                                    Map<String, Object> attributes = Files.readAttributes(path, attribute);
+                                    if (attributes != null) {
+                                        for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+                                            allAttributes.put(prefix + entry.getKey(), entry.getValue());
+                                        }
+                                    }
+                                } else if (!attribute.contains(":")) {
+                                    allAttributes.put("basic:" + attribute, Files.getAttribute(path, attribute));
+                                } else {
+                                    allAttributes.put(attribute, Files.getAttribute(path, attribute));
+                                }
+                            } catch (IOException e) {
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Unable to read attribute {} on file {}", attribute, file, e);
+                                }
+                            }
+                        }
+
+                        gf.setExtendedAttributes(allAttributes);
+                    }
+
                     fileList.add(gf);
                 }
 
@@ -124,9 +174,23 @@ public class FileConsumer extends GenericFileConsumer<File> {
      * @param endpointPath the starting directory the endpoint was configured with
      * @param file the source file
      * @return wrapped as a GenericFile
+     * @deprecated use {@link #asGenericFile(String, File, String, boolean)}
      */
+    @Deprecated
     public static GenericFile<File> asGenericFile(String endpointPath, File file, String charset) {
-        GenericFile<File> answer = new GenericFile<File>();
+        return asGenericFile(endpointPath, file, charset, false);
+    }
+
+    /**
+     * Creates a new GenericFile<File> based on the given file.
+     *
+     * @param endpointPath the starting directory the endpoint was configured with
+     * @param file the source file
+     * @param probeContentType whether to probe the content type of the file or not
+     * @return wrapped as a GenericFile
+     */
+    public static GenericFile<File> asGenericFile(String endpointPath, File file, String charset, boolean probeContentType) {
+        GenericFile<File> answer = new GenericFile<File>(probeContentType);
         // use file specific binding
         answer.setBinding(new FileBinding());
 

@@ -28,21 +28,21 @@ public class KafkaConsumerTest {
     private Processor processor = mock(Processor.class);
 
     @Test(expected = IllegalArgumentException.class)
-    public void consumerRequiresZookeeperConnect() throws Exception {
+    public void consumerRequiresBootstrapServers() throws Exception {
         Mockito.when(endpoint.getGroupId()).thenReturn("groupOne");
         new KafkaConsumer(endpoint, processor);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void consumerRequiresGroupId() throws Exception {
-        Mockito.when(endpoint.getZookeeperConnect()).thenReturn("localhost:2181/chroot");
+        Mockito.when(endpoint.getBrokers()).thenReturn("localhost:1234");
         new KafkaConsumer(endpoint, processor);
     }
 
     @Test
-    public void consumerOnlyRequiresZookeeperConnectAndGroupId() throws Exception {
+    public void consumerOnlyRequiresBootstrapServersAndGroupId() throws Exception {
         Mockito.when(endpoint.getGroupId()).thenReturn("groupOne");
-        Mockito.when(endpoint.getZookeeperConnect()).thenReturn("localhost:2181/chroot");
+        Mockito.when(endpoint.getBrokers()).thenReturn("localhost:2181");
         new KafkaConsumer(endpoint, processor);
     }
 }

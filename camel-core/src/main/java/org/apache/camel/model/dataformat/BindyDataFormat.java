@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation", title = "Bindy")
+@Metadata(label = "dataformat,transformation,csv", title = "Bindy")
 @XmlRootElement(name = "bindy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BindyDataFormat extends DataFormatDefinition {

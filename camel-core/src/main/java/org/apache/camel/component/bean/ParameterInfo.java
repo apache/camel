@@ -59,6 +59,18 @@ public class ParameterInfo {
         this.expression = expression;
     }
 
+    public <T extends Annotation> T hasAnnotation(T type) {
+        if (annotations == null) {
+            return null;
+        }
+        for (Annotation ann : annotations) {
+            if (ann.annotationType().isAssignableFrom(type.annotationType())) {
+                return (T) ann;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

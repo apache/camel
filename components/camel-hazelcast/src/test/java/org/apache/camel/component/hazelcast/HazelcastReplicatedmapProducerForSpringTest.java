@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.MultiMap;
 import com.hazelcast.core.ReplicatedMap;
 
 import org.junit.After;

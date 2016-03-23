@@ -25,6 +25,7 @@ import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExchangeUtil;
 
 public abstract class AbstractDdbCommand {
     protected DdbConfiguration configuration;
@@ -43,12 +44,7 @@ public abstract class AbstractDdbCommand {
     public abstract void execute();
 
     protected Message getMessageForResponse(Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
+        return AwsExchangeUtil.getMessageForResponse(exchange);
     }
 
     protected String determineTableName() {

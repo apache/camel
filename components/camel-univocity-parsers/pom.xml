@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.16-SNAPSHOT</version>
+        <version>2.18-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-univocity-parsers</artifactId>
@@ -77,5 +77,17 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+      <plugins>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <forkCount>1</forkCount>
+            <reuseForks>false</reuseForks>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
 
 </project>

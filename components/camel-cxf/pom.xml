@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-cxf</artifactId>
@@ -188,6 +188,7 @@
 		<groupId>org.apache.cxf</groupId>
 		<artifactId>cxf-rt-features-clustering</artifactId>
 		<version>${cxf-version}</version>
+                <scope>test</scope>
 	</dependency>
     
     <dependency>
@@ -217,7 +218,7 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty9</artifactId>
+      <artifactId>camel-jetty</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -374,6 +375,9 @@
                 </wsdlOption>
                 <wsdlOption>
                   <wsdl>${basedir}/src/test/resources/person.wsdl</wsdl>
+                </wsdlOption>
+                <wsdlOption>
+                  <wsdl>${basedir}/src/test/resources/order.wsdl</wsdl>
                 </wsdlOption>
                 <wsdlOption>
                   <wsdl>${basedir}/src/test/resources/person-non-wrapper.wsdl</wsdl>

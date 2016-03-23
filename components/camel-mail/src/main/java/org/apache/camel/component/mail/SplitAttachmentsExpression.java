@@ -28,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.util.IOHelper;
 
 /**
  * A {@link org.apache.camel.Expression} which can be used to split a {@link MailMessage}
@@ -43,10 +44,10 @@ import org.apache.camel.support.ExpressionAdapter;
  *     </td>
  *   </tr>
  *   <tr>
- *     <td>As a byte[]</td>
+ *     <td>As a byte[] or String</td>
  *     <td>
  *       The attachments are split into new messages as the body. This allows the split messages to be easily used by
- *       other processors / routes, as many other camel components can work on the byte[], e.g. it can be written to disk
+ *       other processors / routes, as many other camel components can work on the byte[] or String, e.g. it can be written to disk
  *       using camel-file.
  *     </td>
  *   </tr>
@@ -112,21 +113,20 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
         if (attachment instanceof InputStream) {
             outMessage.setBody(readMimePart((InputStream) attachment));
             return outMessage;
+        } else if (attachment instanceof String || attachment instanceof byte[]) {
+            outMessage.setBody(attachment);
+            return outMessage;
+        } else {
+            return null;
         }
-        return null;
     }
 
 
     private byte[] readMimePart(InputStream mimePartStream) throws Exception {
-        //  mimePartStream could be base64 encoded, or not, but we don't need to worry about it as
-        // camel is smart enough to wrap it in a decoder stream (eg Base64DecoderStream) when required
+        // mimePartStream could be base64 encoded, or not, but we don't need to worry about it as
+        // Camel is smart enough to wrap it in a decoder stream (eg Base64DecoderStream) when required
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        int len;
-        byte[] buf = new byte[1024];
-        while ((len = mimePartStream.read(buf, 0, 1024)) != -1) {
-            bos.write(buf, 0, len);
-        }
-        mimePartStream.close();
+        IOHelper.copyAndCloseInput(mimePartStream, bos);
         return bos.toByteArray();
     }
 

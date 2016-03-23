@@ -125,6 +125,11 @@ public final class HazelcastComponentHelper {
 
         // topic
         addMapping("publish", HazelcastConstants.PUBLISH_OPERATION);
+        
+        // ringbuffer
+        addMapping("capacity", HazelcastConstants.GET_CAPACITY_OPERATION);
+        addMapping("readonceHead", HazelcastConstants.READ_ONCE_HEAD_OPERATION);
+        addMapping("readonceTail", HazelcastConstants.READ_ONCE_TAIL_OPERATION);
     }
 
     private void addMapping(String operationName, int operationNumber) {

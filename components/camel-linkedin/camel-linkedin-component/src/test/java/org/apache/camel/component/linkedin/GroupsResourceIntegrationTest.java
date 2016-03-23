@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class GroupsResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GroupsResourceIntegrationTest.class);
-    private static final String PATH_PREFIX = LinkedInApiCollection.getCollection().getApiName(GroupsResourceApiMethod.class).getName();
+    private static final String PATH_PREFIX = "groups";
 
     // TODO provide parameter values for addPost
     @Ignore

@@ -28,13 +28,13 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Represents a <a href="http://camel.apache.org/glogin.html">GLogin
- * Endpoint</a>.
+ * The glogin component is used by Camel applications outside Google App Engine (GAE) for programmatic login to GAE applications.
  */
-@UriEndpoint(scheme = "glogin", title = "Google Login", syntax = "glogin:hostName", producerOnly = true, label = "cloud")
+@UriEndpoint(scheme = "glogin", title = "Google Login", syntax = "glogin:hostName", producerOnly = true, label = "cloud,paas", excludeProperties = "httpUri")
 public class GLoginEndpoint extends DefaultEndpoint {
 
     private OutboundBinding<GLoginEndpoint, GLoginData, GLoginData> outboundBinding;
+    private GLoginService service;
 
     @UriPath @Metadata(required = "true")
     private String hostName;
@@ -50,7 +50,9 @@ public class GLoginEndpoint extends DefaultEndpoint {
     private boolean devAdmin;
     @UriParam
     private boolean devMode;
-    private GLoginService service;
+    @UriParam
+    private String serviceRef;
+
 
     /**
      * Creates a new GLoginEndpoint.
@@ -174,6 +176,20 @@ public class GLoginEndpoint extends DefaultEndpoint {
      */
     public void setService(GLoginService service) {
         this.service = service;
+    }
+
+    public String getServiceRef() {
+        return serviceRef;
+    }
+
+    /**
+     * A reference name to lookup a {@link GLoginService} from the registry.
+     * <p/>
+     * The GloginService the service that makes the remote calls to Google services or the
+     * local development server.
+     */
+    public void setServiceRef(String serviceRef) {
+        this.serviceRef = serviceRef;
     }
 
     /**

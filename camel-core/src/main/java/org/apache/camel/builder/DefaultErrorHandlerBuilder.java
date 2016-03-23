@@ -55,6 +55,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     protected String executorServiceRef;
     protected ScheduledExecutorService executorService;
     protected Processor onPrepareFailure;
+    protected Processor onExceptionOccurred;
 
     public DefaultErrorHandlerBuilder() {
     }
@@ -62,7 +63,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         DefaultErrorHandler answer = new DefaultErrorHandler(routeContext.getCamelContext(), processor, getLogger(), getOnRedelivery(), 
             getRedeliveryPolicy(), getExceptionPolicyStrategy(), getRetryWhilePolicy(routeContext.getCamelContext()),
-                getExecutorService(routeContext.getCamelContext()), getOnPrepareFailure());
+                getExecutorService(routeContext.getCamelContext()), getOnPrepareFailure(), getOnExceptionOccurred());
         // configure error handler before we can use it
         configure(routeContext, answer);
         return answer;
@@ -105,6 +106,12 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         }
         if (deadLetterUri != null) {
             other.setDeadLetterUri(deadLetterUri);
+        }
+        if (onPrepareFailure != null) {
+            other.setOnPrepareFailure(onPrepareFailure);
+        }
+        if (onExceptionOccurred != null) {
+            other.setOnExceptionOccurred(onExceptionOccurred);
         }
         other.setDeadLetterHandleNewException(deadLetterHandleNewException);
         other.setUseOriginalMessage(useOriginalMessage);
@@ -208,6 +215,11 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
     
+    public DefaultErrorHandlerBuilder logExhaustedMessageBody(boolean logExhaustedMessageBody) {
+        getRedeliveryPolicy().setLogExhaustedMessageBody(logExhaustedMessageBody);
+        return this;
+    }
+
     public DefaultErrorHandlerBuilder exchangeFormatterRef(String exchangeFormatterRef) {
         getRedeliveryPolicy().setExchangeFormatterRef(exchangeFormatterRef);
         return this;
@@ -390,6 +402,20 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    /**
+     * Sets a custom {@link org.apache.camel.Processor} to process the {@link org.apache.camel.Exchange} just after an exception was thrown.
+     * This allows to execute the processor at the same time the exception was thrown.
+     * <p/>
+     * Important: Any exception thrown from this processor will be ignored.
+     *
+     * @param processor the processor
+     * @return the builder
+     */
+    public DefaultErrorHandlerBuilder onExceptionOccurred(Processor processor) {
+        setOnExceptionOccurred(processor);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -518,6 +544,14 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public void setOnPrepareFailure(Processor onPrepareFailure) {
         this.onPrepareFailure = onPrepareFailure;
+    }
+
+    public Processor getOnExceptionOccurred() {
+        return onExceptionOccurred;
+    }
+
+    public void setOnExceptionOccurred(Processor onExceptionOccurred) {
+        this.onExceptionOccurred = onExceptionOccurred;
     }
 
     protected RedeliveryPolicy createRedeliveryPolicy() {

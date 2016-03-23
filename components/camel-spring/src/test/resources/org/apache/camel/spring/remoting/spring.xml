@@ -22,10 +22,6 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: export -->
-  <bean id="sayService" class="org.apache.camel.spring.remoting.SayService" scope="singleton"/>
-  <!-- END SNIPPET: export -->
-
   <!-- START SNIPPET: proxy -->
   <!--  Creates a proxy to the direct:say endpoint. -->
   <bean id="sayProxy" class="org.apache.camel.spring.remoting.CamelProxyFactoryBean">
@@ -38,7 +34,9 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:say"/>
-      <to uri="bean:sayService"/>
+      <transform>
+        <constant>Hello</constant>
+      </transform>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

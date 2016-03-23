@@ -26,9 +26,8 @@ import org.apache.camel.component.netty4.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty4.http.NettyHttpProducer;
 
 /**
- * Netty HTTP {@link org.apache.camel.component.netty.handlers.ClientChannelHandler} that handles the response combing
+ * Netty HTTP {@link org.apache.camel.component.netty4.handlers.ClientChannelHandler} that handles the response combing
  * back from the HTTP server, called by this client.
- *
  */
 public class HttpClientChannelHandler extends ClientChannelHandler {
     private final NettyHttpProducer producer;

@@ -24,7 +24,12 @@ public class CamelConfigurationProperties {
     // Properties
 
     /**
-     * Enable JMX support for the CamelContext.
+     * Sets the name of the CamelContext.
+     */
+    private String name;
+
+    /**
+     * Enable JMX in your Camel application.
      */
     private boolean jmxEnabled = true;
 
@@ -44,11 +49,34 @@ public class CamelConfigurationProperties {
     private boolean typeConversion = true;
 
     /**
-     * Sets the name of the this CamelContext.
+     * Directory to scan for adding additional XML routes.
+     * You can turn this off by setting the value to <tt>false</tt>
      */
-    private String name;
+    private String xmlRoutes = "classpath:camel/*.xml";
+
+    /**
+     * Directory to scan for adding additional XML rests.
+     * You can turn this off by setting the value to <tt>false</tt>
+     */
+    private String xmlRests = "classpath:camel-rest/*.xml";
+
+    /**
+     * Whether to use the main run controller to ensure the Spring-Boot application
+     * keeps running until being stopped or the JVM terminated.
+     * You typically only need this if you run Spring-Boot standalone.
+     * If you run Spring-Boot with spring-boot-starter-web then the web container keeps the JVM running.
+     */
+    private boolean mainRunController;
 
     // Getters & setters
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public boolean isJmxEnabled() {
         return jmxEnabled;
@@ -82,12 +110,27 @@ public class CamelConfigurationProperties {
         this.typeConversion = typeConversion;
     }
 
-    public String getName() {
-        return name;
+    public String getXmlRoutes() {
+        return xmlRoutes;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setXmlRoutes(String xmlRoutes) {
+        this.xmlRoutes = xmlRoutes;
     }
 
+    public String getXmlRests() {
+        return xmlRests;
+    }
+
+    public void setXmlRests(String xmlRests) {
+        this.xmlRests = xmlRests;
+    }
+
+    public boolean isMainRunController() {
+        return mainRunController;
+    }
+
+    public void setMainRunController(boolean mainRunController) {
+        this.mainRunController = mainRunController;
+    }
 }

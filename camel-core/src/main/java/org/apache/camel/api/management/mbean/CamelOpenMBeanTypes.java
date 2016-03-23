@@ -83,11 +83,24 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType explainComponentCompositeType() throws OpenDataException {
-        return new CompositeType("components", "Components", new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
+        return new CompositeType("components", "Components", new String[]{"option", "kind", "group", "label", "type", "java type", "deprecated", "value", "default value", "description"},
+                new String[]{"Option", "Kind", "Group", "Label", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
+                               SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
+    public static TabularType explainDataFormatTabularType() throws OpenDataException {
+        CompositeType ct = explainDataFormatsCompositeType();
+        return new TabularType("explainDataFormat", "Explain how this dataformat is configured", ct, new String[]{"option"});
+    }
+
+    public static CompositeType explainDataFormatsCompositeType() throws OpenDataException {
+        return new CompositeType("dataformats", "DataFormats", new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
                 new String[]{"Option", "Kind", "Label", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
                                SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
+
 
     public static TabularType explainEndpointTabularType() throws OpenDataException {
         CompositeType ct = explainEndpointsCompositeType();
@@ -95,10 +108,10 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType explainEndpointsCompositeType() throws OpenDataException {
-        return new CompositeType("endpoints", "Endpoints", new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
-                new String[]{"Option", "Kind", "Label", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
+        return new CompositeType("endpoints", "Endpoints", new String[]{"option", "kind", "group", "label", "type", "java type", "deprecated", "value", "default value", "description"},
+                new String[]{"Option", "Kind", "Group", "Label", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
-                               SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+                               SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
 
     public static TabularType explainEipTabularType() throws OpenDataException {
@@ -119,10 +132,10 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType listComponentsCompositeType() throws OpenDataException {
-        return new CompositeType("components", "Components", new String[]{"name", "title", "description", "label", "status", "type", "groupId", "artifactId", "version"},
-                new String[]{"Name", "Title", "Description", "Label", "Status", "Type", "GroupId", "ArtifactId", "Version"},
-                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
-                               SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+        return new CompositeType("components", "Components", new String[]{"name", "title", "syntax", "description", "label", "deprecated", "status", "type", "groupId", "artifactId", "version"},
+                new String[]{"Name", "Title", "Syntax", "Description", "Label", "Deprecated", "Status", "Type", "GroupId", "ArtifactId", "Version"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
+                               SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
 
     public static TabularType listAwaitThreadsTabularType() throws OpenDataException {

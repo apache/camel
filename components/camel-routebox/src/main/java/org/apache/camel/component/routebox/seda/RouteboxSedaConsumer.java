@@ -118,12 +118,15 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
     }
 
     public int getPendingExchangesSize() {
-        // TODO: Get size of queue
+        BlockingQueue<Exchange> queue = ((RouteboxSedaEndpoint)getRouteboxEndpoint()).getQueue();
+        if (queue != null) {
+            return queue.size();
+        }
         return 0;
     }
 
     @Override
-    public void prepareShutdown(boolean forced) {
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
     }
     
     public void setProcessor(AsyncProcessor processor) {

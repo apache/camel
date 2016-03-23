@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
+import java.io.Reader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
@@ -45,6 +46,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.util.CxfUtils;
+import org.apache.camel.component.cxf.util.ReaderInputStream;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ExchangeHelper;
@@ -180,8 +182,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY,  
                                                           DataFormat.class);
         boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
-        // propagate attachments if the data format is not POJO with MTOM enabled
-        if (cxfMessage.getAttachments() != null && !(DataFormat.POJO.equals(dataFormat) && isXop)) {
+        // propagate attachments
+        if (cxfMessage.getAttachments() != null) {
             // propagate attachments
             for (Attachment attachment : cxfMessage.getAttachments()) {
                 camelExchange.getOut().addAttachment(attachment.getId(), attachment.getDataHandler());
@@ -379,23 +381,23 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             return;
         }
         
-        // propagate attachments if the data format is not POJO
-        if (!DataFormat.POJO.equals(dataFormat)) {
-            Set<Attachment> attachments = null;
-            boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
-            for (Map.Entry<String, DataHandler> entry : camelExchange.getOut().getAttachments().entrySet()) {
-                if (attachments == null) {
-                    attachments = new HashSet<Attachment>();
-                }
-                AttachmentImpl attachment = new AttachmentImpl(entry.getKey(), entry.getValue());
-                attachment.setXOP(isXop); 
-                attachments.add(attachment);
+        // propagate attachments
+        
+        Set<Attachment> attachments = null;
+        boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
+        for (Map.Entry<String, DataHandler> entry : camelExchange.getOut().getAttachments().entrySet()) {
+            if (attachments == null) {
+                attachments = new HashSet<Attachment>();
             }
-            
-            if (attachments != null) {
-                outMessage.setAttachments(attachments);
-            }
+            AttachmentImpl attachment = new AttachmentImpl(entry.getKey(), entry.getValue());
+            attachment.setXOP(isXop);
+            attachments.add(attachment);
         }
+
+        if (attachments != null) {
+            outMessage.setAttachments(attachments);
+        }
+        
        
         BindingOperationInfo boi = cxfExchange.get(BindingOperationInfo.class);
         if (boi != null) {
@@ -548,12 +550,15 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                             } else {
                                 evalue = values;
                             }
-                        } else {
+                        } else if (values.size() == 1) {
                             evalue = values.get(0);
+                        } else {
+                            evalue = null;
                         }
-                        camelHeaders.put(entry.getKey(), evalue);
+                        if (evalue != null) {
+                            camelHeaders.put(entry.getKey(), evalue);
+                        }
                     }
-                    
                 }
             }
         }
@@ -728,6 +733,12 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 
             } else if (dataFormat.dealias() == DataFormat.RAW) {
                 answer = message.getContent(InputStream.class);
+                if (answer == null) {
+                    answer = message.getContent(Reader.class);
+                    if (answer != null) {
+                        answer = new ReaderInputStream((Reader)answer);
+                    }
+                }
                 
             } else if (dataFormat.dealias() == DataFormat.CXF_MESSAGE 
                 && message.getContent(List.class) != null) {

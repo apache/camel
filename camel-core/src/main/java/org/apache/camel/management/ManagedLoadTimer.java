@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import org.apache.camel.NonManagedService;
 import org.apache.camel.support.TimerListenerManager;
 
 /**
@@ -24,7 +25,7 @@ import org.apache.camel.support.TimerListenerManager;
  * From Camel 2.13 onwards the {@link ManagedLoadTimer} is only enabled if
  * {@link org.apache.camel.spi.ManagementStrategy#isLoadStatisticsEnabled()} is enabled.
  */
-public class ManagedLoadTimer extends TimerListenerManager {
+public class ManagedLoadTimer extends TimerListenerManager implements NonManagedService {
 
     // empty on purpose
 

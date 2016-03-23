@@ -23,12 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.http4.HttpEndpoint;
 import org.apache.camel.component.http4.HttpMethods;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 public final class HttpMethodHelper {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HttpMethodHelper.class);
 
     private HttpMethodHelper() {
         // Helper class
@@ -54,6 +51,8 @@ public final class HttpMethodHelper {
             throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
         }
         if (uriString != null) {
+            // in case the URI string contains unsafe characters
+            uriString = UnsafeUriCharactersEncoder.encodeHttpURI(uriString);
             URI uri = new URI(uriString);
             queryString = uri.getQuery();
         }

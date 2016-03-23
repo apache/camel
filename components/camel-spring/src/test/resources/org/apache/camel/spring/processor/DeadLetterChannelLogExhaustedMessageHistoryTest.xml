@@ -29,7 +29,7 @@
   <camelContext errorHandlerRef="eh" xmlns="http://camel.apache.org/schema/spring">
 
     <errorHandler id="eh" type="DeadLetterChannel" deadLetterUri="mock:dead">
-      <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="0" logExhaustedMessageHistory="true"/>
+      <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="0" logHandled="true" logExhausted="true" logExhaustedMessageHistory="true"/>
     </errorHandler>
 
     <route>

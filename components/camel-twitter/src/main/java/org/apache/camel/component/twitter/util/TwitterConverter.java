@@ -23,6 +23,7 @@ import twitter4j.DirectMessage;
 import twitter4j.Status;
 import twitter4j.Trend;
 import twitter4j.Trends;
+import twitter4j.UserList;
 
 /**
  * Utility for converting between Twitter4J and camel-twitter data layers.
@@ -36,18 +37,18 @@ public final class TwitterConverter {
 
     @Converter
     public static String toString(Status status) throws ParseException {
-        StringBuilder s = new StringBuilder();
-        s.append(status.getCreatedAt()).append(" (").append(status.getUser().getScreenName()).append(") ");
-        s.append(status.getText());
-        return s.toString();
+        return new StringBuilder()
+            .append(status.getCreatedAt()).append(" (").append(status.getUser().getScreenName()).append(") ")
+            .append(status.getText())
+            .toString();
     }
 
     @Converter
     public static String toString(DirectMessage dm) throws ParseException {
-        StringBuilder s = new StringBuilder();
-        s.append(dm.getCreatedAt()).append(" (").append(dm.getSenderScreenName()).append(") ");
-        s.append(dm.getText());
-        return s.toString();
+        return new StringBuilder()
+            .append(dm.getCreatedAt()).append(" (").append(dm.getSenderScreenName()).append(") ")
+            .append(dm.getText())
+            .toString();
     }
 
     @Converter
@@ -69,5 +70,16 @@ public final class TwitterConverter {
             s.append(toString(trend));
         }
         return s.toString();
+    }
+
+    @Converter
+    public static String toString(UserList userList) throws ParseException {
+        return new StringBuilder()
+             .append(userList.getCreatedAt()).append(" (").append(userList.getUser().getScreenName()).append(") ")
+             .append(userList.getFullName())
+             .append(',')
+             .append(userList.getURI())
+             .append(',')
+             .toString();
     }
 }

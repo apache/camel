@@ -35,6 +35,9 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.atmos.util.AtmosConstants.POLL_CONSUMER_DELAY;
 
+/**
+ * The atmos component is used for integrating with EMC's Atomos Storage.
+ */
 @UriEndpoint(scheme = "atmos", title = "Atmos", syntax = "atmos:name/operation", consumerClass = AtmosScheduledPollConsumer.class, label = "file,cloud")
 public class AtmosEndpoint extends DefaultEndpoint {
 

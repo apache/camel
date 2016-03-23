@@ -23,7 +23,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.component.direct.DirectEndpoint;
-import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
+import org.apache.camel.component.twitter.consumer.TwitterConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerDirect;
 import org.apache.camel.component.twitter.data.EndpointType;
 
@@ -43,7 +43,7 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        Twitter4JConsumer twitter4jConsumer = Twitter4JFactory.getConsumer(this, getEndpointUri());
+        TwitterConsumer twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri());
         TwitterConsumerDirect answer = new TwitterConsumerDirect(this, processor, twitter4jConsumer);
         configureConsumer(answer);
         return answer;
@@ -51,7 +51,7 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
 
     @Override
     public Producer createProducer() throws Exception {
-        return Twitter4JFactory.getProducer(this, getEndpointUri());
+        return TwitterHelper.createProducer(this, getEndpointUri());
     }
 
     @ManagedAttribute

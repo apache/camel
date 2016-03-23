@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Secure FTP endpoint
+ *  The sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
  */
 @UriEndpoint(scheme = "sftp", extendsScheme = "file", title = "SFTP",
         syntax = "sftp:host:port/directoryName", consumerClass = SftpConsumer.class, label = "file")
@@ -33,7 +33,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
 
     @UriParam
     protected SftpConfiguration configuration;
-    @UriParam
+    @UriParam(label = "advanced")
     protected Proxy proxy;
     
     public SftpEndpoint() {

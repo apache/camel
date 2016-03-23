@@ -33,19 +33,22 @@ public class DataSetComponentConfigurationAndDocumentationTest extends ContextTe
     @Test
     public void testComponentConfiguration() throws Exception {
         DataSetComponent comp = context.getComponent("dataset", DataSetComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("dataset:foo?minRate=3");
+        EndpointConfiguration conf = comp.createConfiguration("dataset:foo?minRate=3&produceDelay=33&consumeDelay=333&preloadSize=3333&initialDelay=33333&disableDataSetIndex=true");
 
-        assertEquals("3", conf.getParameter("minRate"));
+        assertEquals("Unexpected endpoint configuration value for minRate", "3", conf.getParameter("minRate"));
+        assertEquals("Unexpected endpoint configuration value for produceDelay", "33", conf.getParameter("produceDelay"));
+        assertEquals("Unexpected endpoint configuration value for consumeDelay", "333", conf.getParameter("consumeDelay"));
+        assertEquals("Unexpected endpoint configuration value for preloadSize", "3333", conf.getParameter("preloadSize"));
+        assertEquals("Unexpected endpoint configuration value for initialDelay", "33333", conf.getParameter("initialDelay"));
+        assertEquals("Unexpected endpoint configuration value for disableDataSetIndex", "true", conf.getParameter("disableDataSetIndex"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"preloadSize\": { \"kind\": \"parameter\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"minRate\": { \"kind\": \"parameter\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"exchangePattern\": { \"kind\": \"parameter\", \"type\": \"string\", \"javaType\": \"org.apache.camel.ExchangePattern\""
-                + ", \"enum\": [ \"InOnly\", \"RobustInOnly\", \"InOut\", \"InOptionalOut\", \"OutOnly\", \"RobustOutOnly\", \"OutIn\", \"OutOptionalIn\" ]"));
-        assertTrue(json.contains("\"InOut\""));
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"common\", \"required\": \"true\", \"type\""));
+        assertTrue(json.contains("\"kind\": \"parameter\", \"group\": \"consumer\", \"label\": \"consumer\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer"));
     }
 
     @Test

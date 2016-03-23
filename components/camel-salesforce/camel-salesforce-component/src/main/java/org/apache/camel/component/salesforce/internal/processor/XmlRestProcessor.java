@@ -45,6 +45,7 @@ import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SearchResults;
 import org.apache.camel.component.salesforce.api.dto.Versions;
+import org.apache.camel.component.salesforce.internal.client.XStreamUtils;
 import org.eclipse.jetty.util.StringUtil;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_NAME;
@@ -56,22 +57,23 @@ public class XmlRestProcessor extends AbstractRestProcessor {
     // not very efficient when both JSON and XML are used together with a single Thread pool
     // but this will do for now
     private static ThreadLocal<XStream> xStream =
-            new ThreadLocal<XStream>() {
-                @Override
-                protected XStream initialValue() {
-                    // use NoNameCoder to avoid escaping __ in custom field names
-                    // and CompactWriter to avoid pretty printing
-                    XStream result = new XStream(new XppDriver(new NoNameCoder()) {
-                        @Override
-                        public HierarchicalStreamWriter createWriter(Writer out) {
-                            return new CompactWriter(out, getNameCoder());
-                        }
+        new ThreadLocal<XStream>() {
+            @Override
+            protected XStream initialValue() {
+                // use NoNameCoder to avoid escaping __ in custom field names
+                // and CompactWriter to avoid pretty printing
+                XStream result = new XStream(new XppDriver(new NoNameCoder()) {
+                    @Override
+                    public HierarchicalStreamWriter createWriter(Writer out) {
+                        return new CompactWriter(out, getNameCoder());
+                    }
 
-                    });
-                    result.registerConverter(new JodaTimeConverter());
-                    return result;
-                }
-            };
+                });
+                XStreamUtils.addDefaultPermissions(result);
+                result.registerConverter(new JodaTimeConverter());
+                return result;
+            }
+        };
 
     private static final String RESPONSE_ALIAS = XmlRestProcessor.class.getName() + ".responseAlias";
 

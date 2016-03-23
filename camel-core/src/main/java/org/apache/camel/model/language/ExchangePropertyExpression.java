@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "language", title = "ExchangeProperty")
+@Metadata(label = "language,core", title = "ExchangeProperty")
 @XmlRootElement(name = "exchangeProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExchangePropertyExpression extends ExpressionDefinition {

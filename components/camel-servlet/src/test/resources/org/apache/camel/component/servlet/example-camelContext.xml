@@ -26,7 +26,7 @@
    <camelContext id="camel" streamCache="true" xmlns="http://camel.apache.org/schema/spring" >
     <route id="helloRoute">
       <!-- incoming requests from the servlet is routed -->
-      <from uri="servlet:///hello"/>
+      <from uri="servlet:hello"/>
       <choice>
         <when>
           <!-- is there a header with the key name? -->

@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -34,7 +35,10 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", consumerOnly = true, label = "core,rest")
+/**
+ * The rest component is used for hosting REST services which has been defined using the rest-dsl in Camel.
+ */
+@UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", consumerOnly = true, label = "core,rest", lenientProperties = true)
 public class RestEndpoint extends DefaultEndpoint {
 
     @UriPath(enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = "true")
@@ -62,6 +66,7 @@ public class RestEndpoint extends DefaultEndpoint {
 
     public RestEndpoint(String endpointUri, RestComponent component) {
         super(endpointUri, component);
+        setExchangePattern(ExchangePattern.InOut);
     }
 
     @Override
@@ -245,9 +250,6 @@ public class RestEndpoint extends DefaultEndpoint {
         }
 
         if (factory != null) {
-            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getMethod(), getPath(), getUriTemplate(), getConsumes(), getProduces(), getParameters());
-            configureConsumer(consumer);
-
             // if no explicit port/host configured, then use port from rest configuration
             String scheme = "http";
             String host = "";
@@ -267,13 +269,14 @@ public class RestEndpoint extends DefaultEndpoint {
 
             // if no explicit hostname set then resolve the hostname
             if (ObjectHelper.isEmpty(host)) {
-                if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                    host = "0.0.0.0";
+                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                     host = HostUtils.getLocalHostName();
                 } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                     host = HostUtils.getLocalIp();
                 }
             }
-
 
             // calculate the url to the rest service
             String path = getPath();
@@ -282,7 +285,7 @@ public class RestEndpoint extends DefaultEndpoint {
             }
 
             // there may be an optional context path configured to help Camel calculate the correct urls for the REST services
-            // this may be needed when using camel-serlvet where we cannot get the actual context-path or port number of the servlet engine
+            // this may be needed when using camel-servlet where we cannot get the actual context-path or port number of the servlet engine
             // during init of the servlet
             String contextPath = config.getContextPath();
             if (contextPath != null) {
@@ -304,6 +307,10 @@ public class RestEndpoint extends DefaultEndpoint {
                     url = url + "/" + uriTemplate;
                 }
             }
+
+            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getMethod(), getPath(),
+                    getUriTemplate(), getConsumes(), getProduces(), config, getParameters());
+            configureConsumer(consumer);
 
             // add to rest registry so we can keep track of them, we will remove from the registry when the consumer is removed
             // the rest registry will automatic keep track when the consumer is removed,

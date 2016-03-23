@@ -23,6 +23,8 @@ import com.amazonaws.services.simpledb.model.ListDomainsResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
+import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
+
 public class ListDomainsCommand extends AbstractSdbCommand {
 
     public ListDomainsCommand(AmazonSimpleDB sdbClient, SdbConfiguration configuration, Exchange exchange) {

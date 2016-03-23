@@ -22,7 +22,6 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -70,7 +69,21 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
      * Do something with a pooled channel (similar to Spring JDBC TransactionTemplate#execute)
      */
     private <T> T execute(ChannelCallback<T> callback) throws Exception {
-        Channel channel = channelPool.borrowObject();
+        Channel channel;
+        try {
+            channel = channelPool.borrowObject();
+        } catch (IllegalStateException e) {
+            // Since this method is not synchronized its possible the
+            // channelPool has been cleared by another thread
+            checkConnectionAndChannelPool();
+            channel = channelPool.borrowObject();
+        }
+        if (!channel.isOpen()) {
+            log.warn("Got a closed channel from the pool");
+            // Reconnect if another thread hasn't yet
+            checkConnectionAndChannelPool();
+            channel = channelPool.borrowObject();
+        }
         try {
             return callback.doWithChannel(channel);
         } finally {
@@ -80,8 +93,9 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
     /**
      * Open connection and initialize channel pool
+     * @throws Exception
      */
-    private void openConnectionAndChannelPool() throws Exception {
+    private synchronized void openConnectionAndChannelPool() throws Exception {
         log.trace("Creating connection...");
         this.conn = getEndpoint().connect(executorService);
         log.debug("Created connection: {}", conn);
@@ -100,22 +114,45 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         }
     }
 
+    /**
+     * This will reconnect only if the connection is closed.
+     * @throws Exception
+     */
+    private synchronized void checkConnectionAndChannelPool() throws Exception {
+        if (this.conn == null || !this.conn.isOpen()) {
+            log.info("Reconnecting to RabbitMQ");
+            try {
+                closeConnectionAndChannel();
+            } catch (Exception e) {
+                // no op
+            }
+            openConnectionAndChannelPool();
+        }
+    }
+
     @Override
     protected void doStart() throws Exception {
         this.executorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "CamelRabbitMQProducer[" + getEndpoint().getQueue() + "]");
-
         try {
             openConnectionAndChannelPool();
         } catch (IOException e) {
-            log.warn("Failed to create connection", e);
+            log.warn("Failed to create connection. It will attempt to connect again when publishing a message.", e);
         }
     }
 
     /**
      * If needed, close Connection and Channel
+     * @throws IOException
      */
-    private void closeConnectionAndChannel() throws Exception {
-        channelPool.close();
+    private synchronized void closeConnectionAndChannel() throws IOException {
+        if (channelPool != null) {
+            try {
+                channelPool.close();
+                channelPool = null;
+            } catch (Exception e) {
+                throw new IOException("Error closing channelPool", e);
+            }
+        }
         if (conn != null) {
             log.debug("Closing connection: {} with timeout: {} ms.", conn, closeTimeout);
             conn.close(closeTimeout);
@@ -194,8 +231,13 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         log.debug("Registering reply for {}", correlationId);
 
         replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
-
-        basicPublish(exchange, exchangeName, key);
+        try {
+            basicPublish(exchange, exchangeName, key);
+        } catch (Exception e) {
+            replyManager.cancelCorrelationId(correlationId);
+            exchange.setException(e);
+            return true;
+        }
         // continue routing asynchronously (reply will be processed async when its received)
         return false;
     }
@@ -213,25 +255,17 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         }
 
         basicPublish(exchange, exchangeName, key);
-        if (callback != null) {
-            // we are synchronous so return true
-            callback.done(true);
-        }
+        callback.done(true);
         return true;
     }
 
     /**
      * Send a message borrowing a channel from the pool.
-     *
-     * @param exchange   Target exchange
-     * @param routingKey Routing key
-     * @param properties Header properties
-     * @param body       Body content
      */
     private void basicPublish(final Exchange camelExchange, final String rabbitExchange, final String routingKey) throws Exception {
         if (channelPool == null) {
-            // Open connection and channel lazily
-            openConnectionAndChannelPool();
+            // Open connection and channel lazily if another thread hasn't
+            checkConnectionAndChannelPool();
         }
         execute(new ChannelCallback<Void>() {
             @Override

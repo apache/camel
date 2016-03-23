@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 
-public abstract class BindyAbstractDataFormat implements DataFormat {
+public abstract class BindyAbstractDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private String locale;
     private BindyAbstractFactory modelFactory;
     private Class<?> classType;
@@ -83,5 +85,15 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
         } else {
             return models;
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

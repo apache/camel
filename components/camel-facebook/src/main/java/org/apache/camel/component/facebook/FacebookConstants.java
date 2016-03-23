@@ -22,8 +22,8 @@ package org.apache.camel.component.facebook;
 public interface FacebookConstants {
 
     // reading options property name and prefix for uri property
-    String READING_PPROPERTY = "reading";
-    String READING_PREFIX = READING_PPROPERTY + ".";
+    String READING_PROPERTY = "reading";
+    String READING_PREFIX = READING_PROPERTY + ".";
 
     // property name prefix for exchange 'in' headers
     String FACEBOOK_PROPERTY_PREFIX = "CamelFacebook.";

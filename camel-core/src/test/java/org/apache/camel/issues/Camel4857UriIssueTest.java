@@ -41,7 +41,7 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
         String uri;
         String remaining;
 
-        public MyEndpoint(final String uri, final String remaining) {
+        MyEndpoint(final String uri, final String remaining) {
             this.uri = uri;
             this.remaining = remaining;
         }

@@ -35,18 +35,18 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
 
     static EmbeddedZookeeper embeddedZookeeper;
     static EmbeddedKafkaCluster embeddedKafkaCluster;
-    
+
     private static volatile int zookeeperPort;
-    
+
     private static volatile int karfkaPort;
-   
+
     @BeforeClass
     public static void beforeClass() {
         // start from somewhere in the 23xxx range
         zookeeperPort = AvailablePortFinder.getNextAvailable(23000);
         // find another ports for proxy route test
         karfkaPort = AvailablePortFinder.getNextAvailable(24000);
-        
+
         embeddedZookeeper = new EmbeddedZookeeper(zookeeperPort);
         List<Integer> kafkaPorts = new ArrayList<Integer>();
         // -1 for any available port
@@ -67,7 +67,7 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
         embeddedKafkaCluster.shutdown();
         embeddedZookeeper.shutdown();
     }
-    
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -78,7 +78,6 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
         jndi.bind("prop", prop);
         return jndi;
     }
-    
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -86,12 +85,11 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
         context.addComponent("properties", new PropertiesComponent("ref:prop"));
         return context;
     }
-    
 
     protected static int getZookeeperPort() {
         return zookeeperPort;
     }
-    
+
     protected static int getKarfkaPort() {
         return karfkaPort;
     }

@@ -16,11 +16,11 @@
  */
 package org.apache.camel.builder;
 
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.zip.Deflater;
 
 import org.w3c.dom.Node;
-
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -35,11 +35,15 @@ import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
+import org.apache.camel.model.dataformat.HessianDataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
+import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.model.dataformat.LZFDataFormat;
+import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
@@ -52,8 +56,11 @@ import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.XmlJsonDataFormat;
+import org.apache.camel.model.dataformat.YAMLDataFormat;
+import org.apache.camel.model.dataformat.YAMLLibrary;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 
 /**
@@ -236,6 +243,13 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
+     * Uses the Hessian data format
+     */
+    public T hessian() {
+        return dataFormat(new HessianDataFormat());
+    }
+
+    /**
      * Uses the HL7 data format
      */
     public T hl7() {
@@ -270,6 +284,97 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
+     * Uses the LZF deflater data format
+     */
+    public T lzf() {
+        LZFDataFormat lzfdf = new LZFDataFormat();
+        return dataFormat(lzfdf);
+    }
+
+    /**
+     * Uses the MIME Multipart data format
+     */
+    public T mimeMultipart() {
+        MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
+        return dataFormat(mm);
+    }
+
+    /**
+     * Uses the MIME Multipart data format
+     *
+     * @param multipartSubType Specifies the subtype of the MIME Multipart
+     */
+    public T mimeMultipart(String multipartSubType) {
+        MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
+        mm.setMultipartSubType(multipartSubType);
+        return dataFormat(mm);
+    }
+
+    /**
+     * Uses the MIME Multipart data format
+     *
+     * @param multipartSubType           the subtype of the MIME Multipart
+     * @param multipartWithoutAttachment defines whether a message without attachment is also marshaled
+     *                                   into a MIME Multipart (with only one body part).
+     * @param headersInline              define the MIME Multipart headers as part of the message body
+     *                                   or as Camel headers
+     * @param binaryContent              have binary encoding for binary content (true) or use Base-64
+     *                                   encoding for binary content (false)
+     */
+    public T mimeMultipart(String multipartSubType, boolean multipartWithoutAttachment, boolean headersInline,
+                           boolean binaryContent) {
+        MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
+        mm.setMultipartSubType(multipartSubType);
+        mm.setMultipartWithoutAttachment(multipartWithoutAttachment);
+        mm.setHeadersInline(headersInline);
+        mm.setBinaryContent(binaryContent);
+        return dataFormat(mm);
+    }
+
+    /**
+     * Uses the MIME Multipart data format
+     *
+     * @param multipartSubType           the subtype of the MIME Multipart
+     * @param multipartWithoutAttachment defines whether a message without attachment is also marshaled
+     *                                   into a MIME Multipart (with only one body part).
+     * @param headersInline              define the MIME Multipart headers as part of the message body
+     *                                   or as Camel headers
+     * @param includeHeadeers            if headersInline is set to true all camel headers matching this
+     *                                   regex are also stored as MIME headers on the Multipart
+     * @param binaryContent              have binary encoding for binary content (true) or use Base-64
+     *                                   encoding for binary content (false)
+     */
+    public T mimeMultipart(String multipartSubType, boolean multipartWithoutAttachment, boolean headersInline,
+                           String includeHeaders, boolean binaryContent) {
+        MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
+        mm.setMultipartSubType(multipartSubType);
+        mm.setMultipartWithoutAttachment(multipartWithoutAttachment);
+        mm.setHeadersInline(headersInline);
+        mm.setIncludeHeaders(includeHeaders);
+        mm.setBinaryContent(binaryContent);
+        return dataFormat(mm);
+    }
+
+    /**
+     * Uses the MIME Multipart data format
+     *
+     * @param multipartWithoutAttachment defines whether a message without attachment is also marshaled
+     *                                   into a MIME Multipart (with only one body part).
+     * @param headersInline              define the MIME Multipart headers as part of the message body
+     *                                   or as Camel headers
+     * @param binaryContent              have binary encoding for binary content (true) or use Base-64
+     *                                   encoding for binary content (false)
+     */
+    public T mimeMultipart(boolean multipartWithoutAttachment, boolean headersInline,
+                           boolean binaryContent) {
+        MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
+        mm.setMultipartWithoutAttachment(multipartWithoutAttachment);
+        mm.setHeadersInline(headersInline);
+        mm.setBinaryContent(binaryContent);
+        return dataFormat(mm);
+    }
+
+    /**
      * Uses the PGP data format
      */
     public T pgp(String keyFileName, String keyUserid) {
@@ -301,6 +406,125 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         pgp.setArmored(armored);
         pgp.setIntegrity(integrity);
         return dataFormat(pgp);
+    }
+    
+    /**
+     * Uses the Jackson XML data format
+     */
+    public T jacksonxml() {
+        return dataFormat(new JacksonXMLDataFormat());
+    }
+
+    /**
+     * Uses the Jackson XML data format
+     *
+     * @param unmarshalType
+     *            unmarshal type for xml jackson type
+     */
+    public T jacksonxml(Class<?> unmarshalType) {
+        JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
+        jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
+        return dataFormat(jacksonXMLDataFormat);
+    }
+
+    /**
+     * Uses the Jackson XML data format
+     *
+     * @param unmarshalType
+     *            unmarshal type for xml jackson type
+     * @param jsonView
+     *            the view type for xml jackson type
+     */
+    public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView) {
+        JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
+        jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
+        jacksonXMLDataFormat.setJsonView(jsonView);
+        return dataFormat(jacksonXMLDataFormat);
+    }
+
+    /**
+     * Uses the Jackson XML data format using the Jackson library turning pretty
+     * printing on or off
+     * 
+     * @param prettyPrint
+     *            turn pretty printing on or off
+     */
+    public T jacksonxml(boolean prettyPrint) {
+        JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
+        jacksonXMLDataFormat.setPrettyPrint(prettyPrint);
+        return dataFormat(jacksonXMLDataFormat);
+    }
+
+    /**
+     * Uses the Jackson XML data format
+     *
+     * @param unmarshalType
+     *            unmarshal type for xml jackson type
+     * @param prettyPrint
+     *            turn pretty printing on or off
+     */
+    public T jacksonxml(Class<?> unmarshalType, boolean prettyPrint) {
+        JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
+        jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
+        jacksonXMLDataFormat.setPrettyPrint(prettyPrint);
+        return dataFormat(jacksonXMLDataFormat);
+    }
+
+    /**
+     * Uses the Jackson XML data format
+     *
+     * @param unmarshalType
+     *            unmarshal type for xml jackson type
+     * @param jsonView
+     *            the view type for xml jackson type
+     * @param prettyPrint
+     *            turn pretty printing on or off
+     */
+    public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView, boolean prettyPrint) {
+        JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
+        jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
+        jacksonXMLDataFormat.setJsonView(jsonView);
+        jacksonXMLDataFormat.setPrettyPrint(prettyPrint);
+        return dataFormat(jacksonXMLDataFormat);
+    }
+
+    /**
+     * Uses the Jackson XML data format
+     *
+     * @param unmarshalType
+     *            unmarshal type for xml jackson type
+     * @param jsonView
+     *            the view type for xml jackson type
+     * @param include
+     *            include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+     */
+    public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView, String include) {
+        JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
+        jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
+        jacksonXMLDataFormat.setJsonView(jsonView);
+        jacksonXMLDataFormat.setInclude(include);
+        return dataFormat(jacksonXMLDataFormat);
+    }
+
+    /**
+     * Uses the Jackson XML data format
+     *
+     * @param unmarshalType
+     *            unmarshal type for xml jackson type
+     * @param jsonView
+     *            the view type for xml jackson type
+     * @param include
+     *            include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+     * @param prettyPrint
+     *            turn pretty printing on or off
+     */
+    public T jacksonxml(Class<?> unmarshalType, Class<?> jsonView, String include, boolean prettyPrint) {
+        JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
+        jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
+        jacksonXMLDataFormat.setJsonView(jsonView);
+        jacksonXMLDataFormat.setInclude(include);
+        jacksonXMLDataFormat.setPrettyPrint(prettyPrint);
+        return dataFormat(jacksonXMLDataFormat);
     }
 
     /**
@@ -600,17 +824,79 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Uses the XStream data format
+     * Uses the XStream data format.
+     * <p/>
+     * Favor using {@link #xstream(String)} to pass in a permission
      */
     public T xstream() {
         return dataFormat(new XStreamDataFormat());
     }
 
     /**
+     * Uses the xstream by setting the encoding or permission
+     *
+     * @param encodingOrPermission is either an encoding or permission syntax
+     */
+    public T xstream(String encodingOrPermission) {
+        // is it an encoding? if not we assume its a permission
+        if (Charset.isSupported(encodingOrPermission)) {
+            return xstream(encodingOrPermission, (String) null);
+        } else {
+            return xstream(null, encodingOrPermission);
+        }
+    }
+
+    /**
      * Uses the xstream by setting the encoding
      */
-    public T xstream(String encoding) {
-        return dataFormat(new XStreamDataFormat(encoding));
+    public T xstream(String encoding, String permission) {
+        XStreamDataFormat xdf = new XStreamDataFormat();
+        xdf.setPermissions(permission);
+        xdf.setEncoding(encoding);
+        return dataFormat(xdf);
+    }
+
+    /**
+     * Uses the xstream by permitting the java type
+     *
+     * @param type the pojo xstream should use as allowed permission
+     */
+    public T xstream(Class<?> type) {
+        return xstream(null, type);
+    }
+
+    /**
+     * Uses the xstream by permitting the java type
+     *
+     * @param encoding encoding to use
+     * @param type the pojo class(es) xstream should use as allowed permission
+     */
+    public T xstream(String encoding, Class<?>... type) {
+        CollectionStringBuffer csb = new CollectionStringBuffer(",");
+        for (Class<?> clazz : type) {
+            csb.append("+");
+            csb.append(clazz.getName());
+        }
+        return xstream(encoding, csb.toString());
+    }
+
+    /**
+     * Uses the YAML data format
+     *
+     * @param library the yaml library to use
+     */
+    public T yaml(YAMLLibrary library) {
+        return dataFormat(new YAMLDataFormat(library));
+    }
+
+    /**
+     * Uses the YAML data format
+     *
+     * @param type          the yaml type to use
+     * @param type          the type for json snakeyaml type
+     */
+    public T yaml(YAMLLibrary library, Class<?> type) {
+        return dataFormat(new YAMLDataFormat(library, type));
     }
 
     /**

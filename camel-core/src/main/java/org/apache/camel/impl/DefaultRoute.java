@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * Default implementation of {@link Route}.
@@ -42,6 +44,7 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
     private final Map<String, Object> properties = new HashMap<String, Object>();
     private final List<Service> services = new ArrayList<Service>();
     private final RouteContext routeContext;
+    private Date startDate;
 
     public DefaultRoute(RouteContext routeContext, Endpoint endpoint) {
         this.routeContext = routeContext;
@@ -62,6 +65,16 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
 
     public String getId() {
         return (String) properties.get(Route.ID_PROPERTY);
+    }
+
+    @Override
+    public String getUptime() {
+        // compute and log uptime
+        if (startDate == null) {
+            return "";
+        }
+        long delta = new Date().getTime() - startDate.getTime();
+        return TimeUtils.printDuration(delta);
     }
 
     public Endpoint getEndpoint() {
@@ -122,15 +135,18 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
     }
 
     protected void doStart() throws Exception {
-        // noop
+        startDate = new Date();
     }
 
     protected void doStop() throws Exception {
-        // noop
+        // and clear start date
+        startDate = null;
     }
 
     @Override
     protected void doShutdown() throws Exception {
+        // and clear start date
+        startDate = null;
         // clear services when shutting down
         services.clear();
     }

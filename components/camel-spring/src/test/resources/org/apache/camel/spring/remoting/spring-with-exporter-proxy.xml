@@ -25,7 +25,7 @@
 
   <bean id="sayService" class="org.apache.camel.spring.remoting.SayService"/>
 
-  <camel:proxy id="sayProxy" serviceUrl="direct:say"
+  <camel:proxy id="sayProxy" serviceUrl="direct:say" binding="false"
                      serviceInterface="org.apache.camel.spring.remoting.ISay"/>
   <camel:export id="say" uri="direct:sayImpl" serviceRef="sayService"
                          serviceInterface="org.apache.camel.spring.remoting.ISay"/>

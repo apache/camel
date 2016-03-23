@@ -18,20 +18,25 @@ package org.apache.camel.spring.boot;
 
 import java.util.Collections;
 import java.util.Map;
-
+import java.util.concurrent.CountDownLatch;
 import javax.annotation.PreDestroy;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.main.MainSupport;
+import org.apache.camel.main.Main;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 public class CamelSpringBootApplicationController {
 
-    private final MainSupport mainSupport;
+    private static final Logger LOG = LoggerFactory.getLogger(CamelSpringBootApplicationController.class);
+
+    private final Main main;
+    private final CountDownLatch latch = new CountDownLatch(1);
 
     public CamelSpringBootApplicationController(final ApplicationContext applicationContext, final CamelContext camelContext) {
-        this.mainSupport = new MainSupport() {
+        this.main = new Main() {
             @Override
             protected ProducerTemplate findOrCreateCamelTemplate() {
                 return applicationContext.getBean(ProducerTemplate.class);
@@ -41,21 +46,46 @@ public class CamelSpringBootApplicationController {
             protected Map<String, CamelContext> getCamelContextMap() {
                 return Collections.singletonMap("camelContext", camelContext);
             }
+
+            @Override
+            protected void doStop() throws Exception {
+                LOG.debug("Controller is shutting down CamelContext");
+                try {
+                    super.doStop();
+                } finally {
+                    latch.countDown();
+                }
+            }
         };
     }
 
-    public void blockMainThread() {
+    /**
+     * Runs the application and blocks the main thread and shutdown Camel graceful when the JVM is stopping.
+     */
+    public void run() {
+        LOG.debug("Controller is starting and waiting for Spring-Boot to stop or JVM to terminate");
         try {
-            mainSupport.enableHangupSupport();
-            mainSupport.run();
+            main.run();
+            // keep the daemon thread running
+            LOG.debug("Waiting for CamelContext to complete shutdown");
+            latch.await();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        LOG.debug("CamelContext shutdown complete.");
+    }
+
+    /**
+     * @deprecated use {@link #run()}
+     */
+    @Deprecated
+    public void blockMainThread() {
+        run();
     }
 
     @PreDestroy
     private void destroy() {
-        mainSupport.completed();
+        main.completed();
     }
 
 }

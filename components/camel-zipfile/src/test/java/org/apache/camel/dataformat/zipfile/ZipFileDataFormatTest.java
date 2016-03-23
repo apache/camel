@@ -29,9 +29,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
 import static org.apache.camel.Exchange.FILE_NAME;
@@ -55,6 +55,21 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     private static final File TEST_DIR = new File("target/zip");
 
     @Test
+    public void testZipAndStreamCaching() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:zipStreamCache");
+        mock.setExpectedMessageCount(1);
+
+        template.sendBody("direct:zipStreamCache", TEXT);
+
+        assertMockEndpointsSatisfied();
+
+        Exchange exchange = mock.getReceivedExchanges().get(0);
+        assertEquals(exchange.getIn().getMessageId() + ".zip", exchange.getIn().getHeader(FILE_NAME));
+        assertIsInstanceOf(InputStreamCache.class, exchange.getIn().getBody());
+        assertArrayEquals(getZippedText(exchange.getIn().getMessageId()), exchange.getIn().getMandatoryBody(byte[].class));
+    }
+
+    @Test
     public void testZipWithoutFileName() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:zip");
         mock.expectedMessageCount(1);
@@ -65,7 +80,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".zip", exchange.getIn().getHeader(FILE_NAME));
-        assertTrue(ObjectHelper.equalByteArray(getZippedText(exchange.getIn().getMessageId()), (byte[])exchange.getIn().getBody()));
+        assertArrayEquals(getZippedText(exchange.getIn().getMessageId()), (byte[])exchange.getIn().getBody());
     }
 
     @Test
@@ -122,7 +137,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         Exchange exchange = mock.getReceivedExchanges().get(0);
         File file = new File(TEST_DIR, exchange.getIn().getMessageId() + ".zip");
         assertTrue("The file should exist.", file.exists());
-        assertTrue("Get a wrong message content.", ObjectHelper.equalByteArray(getZippedText(exchange.getIn().getMessageId()), getBytes(file)));
+        assertArrayEquals("Get a wrong message content.", getZippedText(exchange.getIn().getMessageId()), getBytes(file));
     }
 
     @Test
@@ -144,7 +159,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         assertTrue("The exchange is not done in time.", notify.matches(5, TimeUnit.SECONDS));
 
         assertTrue("The file should exist.", file.exists());
-        assertTrue("Get a wrong message content.", ObjectHelper.equalByteArray(getZippedText("poem.txt"), getBytes(file)));
+        assertArrayEquals("Get a wrong message content.", getZippedText("poem.txt"), getBytes(file));
     }
 
     @Test
@@ -188,6 +203,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                 from("direct:zipToFile").marshal(zip).to("file:" + TEST_DIR.getPath()).to("mock:zipToFile");
                 from("direct:dslZip").marshal().zipFile().to("mock:dslZip");
                 from("direct:dslUnzip").unmarshal().zipFile().to("mock:dslUnzip");
+                from("direct:zipStreamCache").streamCaching().marshal().zipFile().to("mock:zipStreamCache");
             }
         };
     }

@@ -154,6 +154,11 @@ public class NotifyBuilder {
             @Override
             public boolean onExchange(Exchange exchange) {
                 String id = EndpointHelper.getRouteIdFromEndpoint(exchange.getFromEndpoint());
+
+                if (id == null) {
+                    id = exchange.getFromRouteId();
+                }
+
                 // filter non matching exchanges
                 return EndpointHelper.matchPattern(id, routeId);
             }

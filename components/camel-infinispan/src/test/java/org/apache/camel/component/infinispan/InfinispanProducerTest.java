@@ -45,9 +45,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
 
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value.toString(), VALUE_ONE);
+        assertEquals(VALUE_ONE, value.toString());
     }
-    
+
     @Test
     public void cacheSizeTest() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -60,8 +60,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Integer.class), new Integer(2));
-        assertNotEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Integer.class), new Integer(4));
+        Integer cacheSize = exchange.getIn().getHeader(InfinispanConstants.RESULT, Integer.class);
+        assertEquals(cacheSize, new Integer(2));
     }
 
     @Test
@@ -76,9 +76,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
 
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value.toString(), VALUE_ONE);
+        assertEquals(VALUE_ONE, value.toString());
     }
-    
+
     @Test
     public void publishKeyAndValueAsync() throws Exception {
         Exchange exchange = template.send("direct:putasync", new Processor() {
@@ -92,9 +92,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         Thread.sleep(10000);
         NotifyingFuture resultPutAsync = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
         assertEquals(Boolean.TRUE, resultPutAsync.isDone());
-        
+
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value.toString(), VALUE_ONE);      
+        assertEquals(VALUE_ONE, value.toString());
     }
 
     @Test
@@ -112,10 +112,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         Thread.sleep(1000);
         NotifyingFuture resultPutAsync = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
         assertEquals(Boolean.TRUE, resultPutAsync.isDone());
-        
+
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value.toString(), VALUE_ONE);  
-        
+        assertEquals(value.toString(), VALUE_ONE);
+
         Thread.sleep(6000);
         exchange = template.send("direct:get", new Processor() {
             @Override
@@ -124,9 +124,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(resultGet);
     }
-    
+
     @Test
     public void publishKeyAndValueAsyncWithLifespanAndMaxIdle() throws Exception {
         Exchange exchange = template.send("direct:putasync", new Processor() {
@@ -144,10 +144,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         Thread.sleep(1000);
         NotifyingFuture resultPutAsync = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
         assertEquals(Boolean.TRUE, resultPutAsync.isDone());
-        
+
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value.toString(), VALUE_ONE);  
-        
+        assertEquals(VALUE_ONE, value.toString());
+
         Thread.sleep(10000);
         exchange = template.send("direct:get", new Processor() {
             @Override
@@ -156,9 +156,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(resultGet);
     }
-    
+
     @Test
     public void publishMapNormal() throws Exception {
         template.send("direct:start", new Processor() {
@@ -172,13 +172,13 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(currentCache().size(), 2);
+        assertEquals(2, currentCache().size());
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value.toString(), VALUE_ONE);
+        assertEquals(VALUE_ONE, value.toString());
         value = currentCache().get(KEY_TWO);
-        assertEquals(value.toString(), VALUE_TWO);
+        assertEquals(VALUE_TWO, value.toString());
     }
-    
+
     @Test
     public void publishMapWithLifespan() throws Exception {
         template.send("direct:start", new Processor() {
@@ -194,14 +194,14 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(currentCache().size(), 2);
+        assertEquals(2, currentCache().size());
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value.toString(), VALUE_ONE);
+        assertEquals(VALUE_ONE, value.toString());
         value = currentCache().get(KEY_TWO);
-        assertEquals(value.toString(), VALUE_TWO);
-        
+        assertEquals(VALUE_TWO, value.toString());
+
         Thread.sleep(LIFESPAN_TIME * 1000);
-        
+
         Exchange exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -209,8 +209,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
-        
+        assertNull(resultGet);
+
         exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -218,9 +218,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(resultGet);
     }
-    
+
     @Test
     public void publishMapWithLifespanAndMaxIdleTime() throws Exception {
         template.send("direct:start", new Processor() {
@@ -238,10 +238,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(currentCache().size(), 2);
-        
+        assertEquals(2, currentCache().size());
+
         Thread.sleep(10000);
-        
+
         Exchange exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -249,8 +249,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
-        
+        assertNull(resultGet);
+
         exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -258,9 +258,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(null);
     }
-    
+
     @Test
     public void publishMapNormalAsync() throws Exception {
         template.send("direct:putallasync", new Processor() {
@@ -272,15 +272,15 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);
             }
         });
-        
+
         Thread.sleep(100);
-        assertEquals(currentCache().size(), 2);
+        assertEquals(2, currentCache().size());
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value.toString(), VALUE_ONE);
+        assertEquals(VALUE_ONE, value.toString());
         value = currentCache().get(KEY_TWO);
-        assertEquals(value.toString(), VALUE_TWO);
+        assertEquals(VALUE_TWO, value.toString());
     }
-    
+
     @Test
     public void publishMapWithLifespanAsync() throws Exception {
         template.send("direct:putallasync", new Processor() {
@@ -297,14 +297,14 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
 
         Thread.sleep(100);
-        assertEquals(currentCache().size(), 2);
+        assertEquals(2, currentCache().size());
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value.toString(), VALUE_ONE);
+        assertEquals(VALUE_ONE, value.toString());
         value = currentCache().get(KEY_TWO);
-        assertEquals(value.toString(), VALUE_TWO);
-        
+        assertEquals(VALUE_TWO, value.toString());
+
         Thread.sleep(LIFESPAN_TIME * 1000);
-        
+
         Exchange exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -312,8 +312,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
-        
+        assertNull(resultGet);
+
         exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -321,9 +321,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(resultGet);
     }
-    
+
     @Test
     public void publishMapWithLifespanAndMaxIdleTimeAsync() throws Exception {
         template.send("direct:putallasync", new Processor() {
@@ -340,12 +340,12 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.SECONDS.toString());
             }
         });
-        
+
         Thread.sleep(100);
-        assertEquals(currentCache().size(), 2);
-        
+        assertEquals(2, currentCache().size());
+
         Thread.sleep(10000);
-        
+
         Exchange exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -353,8 +353,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
-        
+        assertNull(resultGet);
+
         exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -362,13 +362,13 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(resultGet);
     }
-    
+
     @Test
     public void putIfAbsentAlreadyExists() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
-        
+
         template.send("direct:putifabsent", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -379,14 +379,14 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
 
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value.toString(), VALUE_ONE);
-        assertEquals(currentCache().size(), 1);
+        assertEquals(VALUE_ONE, value.toString());
+        assertEquals(1, currentCache().size());
     }
-    
+
     @Test
     public void putIfAbsentNotExists() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
-        
+
         template.send("direct:putifabsent", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -397,10 +397,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
 
         Object value = currentCache().get(KEY_TWO);
-        assertEquals(value.toString(), VALUE_TWO);
-        assertEquals(currentCache().size(), 2);
+        assertEquals(VALUE_TWO, value.toString());
+        assertEquals(2, currentCache().size());
     }
-    
+
     @Test
     public void putIfAbsentKeyAndValueAsync() throws Exception {
         Exchange exchange = template.send("direct:putifabsentasync", new Processor() {
@@ -414,9 +414,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         Thread.sleep(10000);
         NotifyingFuture resultPutAsync = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
         assertEquals(Boolean.TRUE, resultPutAsync.isDone());
-        
+
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value.toString(), VALUE_ONE);      
+        assertEquals(VALUE_ONE, value.toString());
     }
 
     @Test
@@ -434,10 +434,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         Thread.sleep(1000);
         NotifyingFuture resultPutAsync = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
         assertEquals(Boolean.TRUE, resultPutAsync.isDone());
-        
+
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value.toString(), VALUE_ONE);  
-        
+        assertEquals(VALUE_ONE, value.toString());
+
         Thread.sleep(6000);
         exchange = template.send("direct:get", new Processor() {
             @Override
@@ -446,9 +446,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(resultGet);
     }
-    
+
     @Test
     public void putIfAbsentKeyAndValueAsyncWithLifespanAndMaxIdle() throws Exception {
         Exchange exchange = template.send("direct:putifabsentasync", new Processor() {
@@ -466,10 +466,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         Thread.sleep(1000);
         NotifyingFuture resultPutAsync = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
         assertEquals(Boolean.TRUE, resultPutAsync.isDone());
-        
+
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value.toString(), VALUE_ONE);  
-        
+        assertEquals(VALUE_ONE, value.toString());
+
         Thread.sleep(10000);
         exchange = template.send("direct:get", new Processor() {
             @Override
@@ -478,13 +478,13 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(resultGet);
     }
-    
+
     @Test
     public void notContainsKeyTest() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
-        
+
         Exchange exchange = template.request("direct:containskey", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -493,13 +493,14 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), false);
+        Boolean cacheContainsKey = exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class);
+        assertFalse(cacheContainsKey);
     }
-    
+
     @Test
     public void containsKeyTest() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
-        
+
         Exchange exchange = template.request("direct:containskey", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -508,13 +509,14 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), true);
+        Boolean cacheContainsKey = exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class);
+        assertTrue(cacheContainsKey);
     }
-    
+
     @Test
     public void notContainsValueTest() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
-        
+
         Exchange exchange = template.request("direct:containsvalue", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -523,13 +525,14 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), false);
+        Boolean cacheContainsValue = exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class);
+        assertFalse(cacheContainsValue);
     }
-    
+
     @Test
     public void containsValueTest() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
-        
+
         Exchange exchange = template.request("direct:containsvalue", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -538,9 +541,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), true);
+        Boolean cacheContainsValue = exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class);
+        assertTrue(cacheContainsValue);
     }
-    
+
     @Test
     public void publishKeyAndValueWithLifespan() throws Exception {
         template.send("direct:start", new Processor() {
@@ -555,8 +559,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
 
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value.toString(), VALUE_ONE);
-        
+        assertEquals(VALUE_ONE, value.toString());
+
         Exchange exchange;
         exchange = template.send("direct:get", new Processor() {
             @Override
@@ -566,9 +570,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
         assertEquals(VALUE_ONE, resultGet);
-        
+
         Thread.sleep(LIFESPAN_TIME * 1000);
-        
+
         exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -576,7 +580,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(resultGet);
     }
 
     @Test
@@ -592,7 +596,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class), "existing value");
+        String result = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
+        assertEquals("existing value", result);
     }
 
     @Test
@@ -607,9 +612,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class), VALUE_ONE);
+        assertEquals(VALUE_ONE, exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class));
     }
-    
+
     @Test
     public void replaceAValueByKey() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -623,10 +628,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class), VALUE_ONE);
-        assertEquals(currentCache().get(KEY_ONE), VALUE_TWO);
+        assertEquals(VALUE_ONE, exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class));
+        assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
     }
-    
+
     @Test
     public void replaceAValueByKeyWithLifespan() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -642,11 +647,11 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class), VALUE_ONE);
-        assertEquals(currentCache().get(KEY_ONE), VALUE_TWO);
-        
+        assertEquals(VALUE_ONE, exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class));
+        assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
+
         Thread.sleep(LIFESPAN_TIME * 1000);
-        
+
         exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -654,9 +659,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(resultGet);
     }
-    
+
     @Test
     public void replaceAValueByKeyWithLifespanAndMaxIdleTime() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -674,11 +679,11 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class), VALUE_ONE);
-        assertEquals(currentCache().get(KEY_ONE), VALUE_TWO);
-        
+        assertEquals(VALUE_ONE, exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class));
+        assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
+
         Thread.sleep(10000);
-        
+
         exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -686,7 +691,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(resultGet);
     }
 
     @Test
@@ -703,10 +708,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), true);
-        assertEquals(currentCache().get(KEY_ONE), VALUE_TWO);
+        assertTrue(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class));
+        assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
     }
-    
+
     @Test
     public void replaceAValueByKeyWithLifespanWithOldValue() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -723,11 +728,11 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), true);
-        assertEquals(currentCache().get(KEY_ONE), VALUE_TWO);
-        
-        Thread.sleep(LIFESPAN_TIME * 1000);
-        
+        assertTrue(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class));
+        assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
+
+        Thread.sleep(LIFESPAN_TIME * 1100);
+
         exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -735,9 +740,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(resultGet);
     }
-    
+
     @Test
     public void replaceAValueByKeyWithLifespanAndMaxIdleTimeWithOldValue() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -756,11 +761,11 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), true);
-        assertEquals(currentCache().get(KEY_ONE), VALUE_TWO);
-        
+        assertTrue(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class));
+        assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
+
         Thread.sleep(10000);
-        
+
         exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -768,10 +773,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
-    }    
-    
-    
+        assertNull(resultGet);
+    }
+
+
     @Test
     public void replaceAValueByKeyAsync() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -784,10 +789,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class), VALUE_ONE);
-        assertEquals(currentCache().get(KEY_ONE), VALUE_TWO);
+        assertEquals(VALUE_ONE, exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class));
+        assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
     }
-    
+
     @Test
     public void replaceAValueByKeyWithLifespanAsync() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -804,9 +809,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
 
         assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class), VALUE_ONE);
         assertEquals(currentCache().get(KEY_ONE), VALUE_TWO);
-        
-        Thread.sleep(LIFESPAN_TIME * 1000);
-        
+
+        TimeUnit.SECONDS.sleep(LIFESPAN_TIME + 1);
+
         exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -816,7 +821,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
         assertEquals(null, resultGet);
     }
-    
+
+
     @Test
     public void replaceAValueByKeyWithLifespanAndMaxIdleTimeAsync() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -833,11 +839,11 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class), VALUE_ONE);
-        assertEquals(currentCache().get(KEY_ONE), VALUE_TWO);
-        
+        assertEquals(VALUE_ONE, exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class));
+        assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
+
         Thread.sleep(10000);
-        
+
         exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -845,9 +851,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(resultGet);
     }
-    
+
     @Test
     public void replaceAValueByKeyAsyncWithOldValue() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -861,10 +867,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), true);
-        assertEquals(currentCache().get(KEY_ONE), VALUE_TWO);
+        assertTrue(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class));
+        assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
     }
-    
+
     @Test
     public void replaceAValueByKeyWithLifespanAsyncWithOldValue() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -880,11 +886,11 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), true);
-        assertEquals(currentCache().get(KEY_ONE), VALUE_TWO);
-        
-        Thread.sleep(LIFESPAN_TIME * 1000);
-        
+        assertTrue(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class));
+        assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
+
+        Thread.sleep(LIFESPAN_TIME * 1100);
+
         exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -892,9 +898,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(resultGet);
     }
-    
+
     @Test
     public void replaceAValueByKeyWithLifespanAndMaxIdleTimeAsyncWithOldValue() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -912,11 +918,11 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), true);
-        assertEquals(currentCache().get(KEY_ONE), VALUE_TWO);
-        
+        assertTrue(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class));
+        assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
+
         Thread.sleep(10000);
-        
+
         exchange = template.send("direct:get", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -924,7 +930,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
         String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
-        assertEquals(null, resultGet);
+        assertNull(resultGet);
     }
 
     @Test
@@ -939,12 +945,12 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class), VALUE_ONE);
+        assertEquals(VALUE_ONE, exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class));
 
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value, null);
+        assertNull(value);
     }
-    
+
     @Test
     public void deletesExistingValueByKeyAsync() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -959,12 +965,12 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
 
         Thread.sleep(100);
         NotifyingFuture fut = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
-        assertEquals(fut.isDone(), Boolean.TRUE);
+        assertTrue(fut.isDone());
 
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value, null);
+        assertNull(value);
     }
-    
+
     @Test
     public void deletesExistingValueByKeyWithValue() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -978,12 +984,12 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), true);
+        assertTrue(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class));
 
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value, null);
+        assertNull(value);
     }
-    
+
     @Test
     public void deletesExistingValueByKeyAsyncWithValue() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -999,16 +1005,16 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
 
         Thread.sleep(100);
         NotifyingFuture fut = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
-        assertEquals(fut.isDone(), Boolean.TRUE);
+        assertTrue(fut.isDone());
 
         Object value = currentCache().get(KEY_ONE);
-        assertEquals(value, null);
+        assertNull(value);
     }
 
     @Test
     public void clearsAllValues() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
-        assertEquals(currentCache().isEmpty(), false);
+        assertFalse(currentCache().isEmpty());
 
         template.send("direct:start", new Processor() {
             @Override
@@ -1017,7 +1023,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(currentCache().isEmpty(), true);
+        assertTrue(currentCache().isEmpty());
     }
 
     @Test
@@ -1064,7 +1070,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
         assertTrue(currentCache().isEmpty());
     }
-    
+
     @Test
     public void clearAsyncTest() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -1079,8 +1085,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
 
         Thread.sleep(100);
         NotifyingFuture fut = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
-        assertEquals(fut.isDone(), Boolean.TRUE);
-
+        assertTrue(fut.isDone());
         assertTrue(currentCache().isEmpty());
     }
 

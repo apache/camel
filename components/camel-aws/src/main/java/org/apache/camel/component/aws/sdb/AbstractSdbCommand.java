@@ -39,15 +39,6 @@ public abstract class AbstractSdbCommand {
     }
 
     public abstract void execute();
-    
-    protected Message getMessageForResponse(Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
-    }
 
     protected String determineDomainName() {
         String domainName = exchange.getIn().getHeader(SdbConstants.DOMAIN_NAME, String.class);

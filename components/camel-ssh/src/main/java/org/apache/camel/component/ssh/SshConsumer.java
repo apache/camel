@@ -19,19 +19,40 @@ package org.apache.camel.component.ssh;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.sshd.SshClient;
 
 public class SshConsumer extends ScheduledPollConsumer {
     private final SshEndpoint endpoint;
+    
+    private SshClient client;
 
     public SshConsumer(SshEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }
+    
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        client = SshClient.setUpDefaultClient();
+        client.start();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (client != null) {
+            client.stop();
+            client = null;
+        }
+
+        super.doStop();
+    }
 
     @Override
     protected int poll() throws Exception {
         String command = endpoint.getPollCommand();
-        SshResult result = endpoint.sendExecCommand(command);
+        SshResult result = SshHelper.sendExecCommand(command, endpoint, client);
 
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(result.getStdout());

@@ -18,7 +18,7 @@ package org.apache.camel
 package scala
 package dsl.builder
 
-import org.apache.camel.model.DataFormatDefinition
+import org.apache.camel.model._
 import org.apache.camel.builder.{LoggingErrorHandlerBuilder, DeadLetterChannelBuilder, ErrorHandlerBuilder}
 
 import org.apache.camel.spi.Policy
@@ -44,6 +44,18 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
     override def configure() {
       onJavaBuilder(this)
     }
+
+    override def checkInitialized(): Unit = {
+      super.checkInitialized()
+
+      // must un-prepare the routes as they may have been eager pre-pared before scala has properly build the entire routes
+      // Camel will prepare the routes before the routes is started so it happens eventually at the right time
+      val it = getRouteCollection.getRoutes.iterator()
+      while (it.hasNext) {
+        var route = it.next()
+        route.markUnprepared()
+      }
+    }
   }
 
   val stack = new Stack[DSL]
@@ -63,7 +75,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
    */
   def onJavaBuilder(builder: org.apache.camel.builder.RouteBuilder) {}
 
-  implicit def stringToRoute(target: String) : SRouteDefinition = new SRouteDefinition(builder.from(target), this)  
+  implicit def stringToRoute(target: String) : SRouteDefinition = new SRouteDefinition(builder.from(target), this)
   implicit def unwrap[W](wrapper: Wrapper[W]) = wrapper.unwrap
   implicit def constantToExpression(value: Any) : (Exchange => Any) = (exchange: Exchange) => value 
 
@@ -199,7 +211,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def throwException(exception: Exception) = stack.top.throwException(exception)
   def throwException(exceptionType: Class[_ <: Exception], message: String) = stack.top.throwException(exceptionType, message)
   def transacted = stack.top.transacted
-  def transacted(uri: String) = stack.top.transacted
+  def transacted(uri: String) = stack.top.transacted(uri)
   def transform(expression: Exchange => Any) = stack.top.transform(expression)
 
   def unmarshal(format: DataFormatDefinition) = stack.top.unmarshal(format)

@@ -47,9 +47,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A XMPP Endpoint
+ * To send and receive messages from a XMPP (chat) server.
  */
-@UriEndpoint(scheme = "xmpp", title = "XMPP", syntax = "xmpp:host:port/participant", consumerClass = XmppConsumer.class, label = "chat,messaging")
+@UriEndpoint(scheme = "xmpp", title = "XMPP", syntax = "xmpp:host:port/participant", alternativeSyntax = "xmpp:user:password@host:port/participant",
+        consumerClass = XmppConsumer.class, label = "chat,messaging")
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
 
@@ -150,21 +151,12 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     }
 
     public synchronized XMPPConnection createConnection() throws XMPPException, SmackException, IOException {
-
         if (connection != null && connection.isConnected()) {
             return connection;
         }
 
         if (connection == null) {
-            if (port > 0) {
-                if (getServiceName() == null) {
-                    connection = new XMPPTCPConnection(new ConnectionConfiguration(host, port));
-                } else {
-                    connection = new XMPPTCPConnection(new ConnectionConfiguration(host, port, serviceName));
-                }
-            } else {
-                connection = new XMPPTCPConnection(host);
-            }
+            connection = createConnectionInternal();
         }
 
         connection.connect();
@@ -211,6 +203,15 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         }
 
         return connection;
+    }
+
+    private XMPPTCPConnection createConnectionInternal() {
+        if (port == 0) {
+            port = 5222;
+        }
+        String sName = getServiceName() == null ? host : getServiceName();
+        ConnectionConfiguration conf = new ConnectionConfiguration(host, port, sName);
+        return new XMPPTCPConnection(conf);
     }
 
     /*

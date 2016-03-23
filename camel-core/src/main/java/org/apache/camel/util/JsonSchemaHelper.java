@@ -39,15 +39,15 @@ public final class JsonSchemaHelper {
     /**
      * Gets the JSon schema type.
      *
-     * @param   type the java type
-     * @return  the json schema type, is never null, but returns <tt>object</tt> as the generic type
+     * @param type the java type
+     * @return the json schema type, is never null, but returns <tt>object</tt> as the generic type
      */
     public static String getType(Class<?> type) {
         if (type.isEnum()) {
             return "enum";
         } else if (type.isArray()) {
             return "array";
-        } 
+        }
         if (type.isAssignableFrom(URI.class) || type.isAssignableFrom(URL.class)) {
             return "sting";
         }
@@ -63,8 +63,8 @@ public final class JsonSchemaHelper {
     /**
      * Gets the JSon schema primitive type.
      *
-     * @param   type the java type
-     * @return  the json schema primitive type, or <tt>null</tt> if not a primitive
+     * @param type the java type
+     * @return the json schema primitive type, or <tt>null</tt> if not a primitive
      */
     public static String getPrimitiveType(Class<?> type) {
         String name = type.getCanonicalName();
@@ -118,7 +118,7 @@ public final class JsonSchemaHelper {
      * Parses the json schema to split it into a list or rows, where each row contains key value pairs with the metadata
      *
      * @param group the group to parse from such as <tt>component</tt>, <tt>componentProperties</tt>, or <tt>properties</tt>.
-     * @param json the json
+     * @param json  the json
      * @return a list of all the rows, where each row is a set of key value pairs with metadata
      */
     public static List<Map<String, String>> parseJsonSchema(String group, String json, boolean parseProperties) {
@@ -193,6 +193,54 @@ public final class JsonSchemaHelper {
             value = "\\";
         }
         return value;
+    }
+
+    /**
+     * Is the property required
+     *
+     * @param rows the rows of properties
+     * @param name name of the property
+     * @return <tt>true</tt> if required, or <tt>false</tt> if not
+     */
+    public static boolean isPropertyRequired(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            boolean required = false;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("required")) {
+                required = "true".equals(row.get("required"));
+            }
+            if (found) {
+                return required;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets the default value of the property
+     *
+     * @param rows the rows of properties
+     * @param name name of the property
+     * @return the default value or <tt>null</tt> if no default value exists
+     */
+    public static String getPropertyDefaultValue(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String defaultValue = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("defaultValue")) {
+                defaultValue = row.get("defaultValue");
+            }
+            if (found) {
+                return defaultValue;
+            }
+        }
+        return null;
     }
 
 }

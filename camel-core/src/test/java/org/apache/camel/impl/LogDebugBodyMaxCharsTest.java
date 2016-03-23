@@ -32,6 +32,13 @@ public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
         context.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "20");
     }
 
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("logFormatter", new TraceExchangeFormatter());
+        return jndi;
+    }
+
     public void testLogBodyMaxLengthTest() throws Exception {
         // create a big body
         StringBuilder sb = new StringBuilder();
@@ -49,8 +56,9 @@ public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be clipped after 20 chars
-        String msg = mock.getReceivedExchanges().get(0).getIn().toString();
-        assertEquals("Message: 01234567890123456789... [Body clipped after 20 chars, total length is 1000]", msg);
+        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        String msg = myFormatter.getMessage();
+        assertTrue(msg.endsWith("Body: 01234567890123456789... [Body clipped after 20 chars, total length is 1000]]"));
 
         // but body and clipped should not be the same
         assertNotSame("clipped log and real body should not be the same", msg, mock.getReceivedExchanges().get(0).getIn().getBody(String.class));
@@ -65,8 +73,9 @@ public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should not be clipped as the message is < 20 chars
-        String msg = mock.getReceivedExchanges().get(0).getIn().toString();
-        assertEquals("Message: 1234567890", msg);
+        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        String msg = myFormatter.getMessage();
+        assertTrue(msg.endsWith("Body: 1234567890]"));
 
         // but body and clipped should not be the same
         assertNotSame("clipped log and real body should not be the same", msg, mock.getReceivedExchanges().get(0).getIn().getBody(String.class));

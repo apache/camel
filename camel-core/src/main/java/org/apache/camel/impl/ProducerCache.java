@@ -60,23 +60,31 @@ public class ProducerCache extends ServiceSupport {
     private boolean eventNotifierEnabled = true;
     private boolean extendedStatistics;
     private int maxCacheSize;
+    private boolean stopServicePool;
 
     public ProducerCache(Object source, CamelContext camelContext) {
         this(source, camelContext, CamelContextHelper.getMaximumCachePoolSize(camelContext));
     }
 
     public ProducerCache(Object source, CamelContext camelContext, int cacheSize) {
-        this(source, camelContext, camelContext.getProducerServicePool(), createLRUCache(cacheSize));
+        this(source, camelContext, null, createLRUCache(cacheSize));
     }
 
     public ProducerCache(Object source, CamelContext camelContext, Map<String, Producer> cache) {
-        this(source, camelContext, camelContext.getProducerServicePool(), cache);
+        this(source, camelContext, null, cache);
     }
 
     public ProducerCache(Object source, CamelContext camelContext, ServicePool<Endpoint, Producer> producerServicePool, Map<String, Producer> cache) {
         this.source = source;
         this.camelContext = camelContext;
-        this.pool = producerServicePool;
+        if (producerServicePool == null) {
+            // use shared producer pool which lifecycle is managed by CamelContext
+            this.pool = camelContext.getProducerServicePool();
+            this.stopServicePool = false;
+        } else {
+            this.pool = producerServicePool;
+            this.stopServicePool = true;
+        }
         this.producers = cache;
         if (producers instanceof LRUCache) {
             maxCacheSize = ((LRUCache) producers).getMaxCacheSize();
@@ -372,7 +380,7 @@ public class ProducerCache extends ServiceSupport {
         return doInProducer(endpoint, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) {
                 if (exchange == null) {
-                    exchange = pattern != null ? producer.createExchange(pattern) : producer.createExchange();
+                    exchange = pattern != null ? producer.getEndpoint().createExchange(pattern) : producer.getEndpoint().createExchange();
                 }
 
                 if (processor != null) {
@@ -468,7 +476,10 @@ public class ProducerCache extends ServiceSupport {
 
     protected void doStop() throws Exception {
         // when stopping we intend to shutdown
-        ServiceHelper.stopAndShutdownServices(statistics, pool);
+        ServiceHelper.stopAndShutdownService(statistics);
+        if (stopServicePool) {
+            ServiceHelper.stopAndShutdownService(pool);
+        }
         try {
             ServiceHelper.stopAndShutdownServices(producers.values());
         } finally {

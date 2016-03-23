@@ -15,24 +15,23 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-jetty8</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: Jetty8</name>
+  <name>Camel :: Jetty8 (deprecated)</name>
   <description>Camel Jetty8 support</description>
 
   <properties>
     <camel.osgi.import.before.defaults>
-      javax.servlet.*;version="${servlet-version-range}"
+      org.eclipse.jetty.*;version="[8,9)"
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.jetty8</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=jetty</camel.osgi.export.service>
@@ -53,8 +52,9 @@
       <artifactId>camel-jetty-common</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-servlet_3.0_spec</artifactId>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${javax.servlet-api-version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
@@ -122,6 +122,11 @@
     <!-- for testing rest-dsl -->
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-swagger-java</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jackson</artifactId>
       <scope>test</scope>
     </dependency>
@@ -157,7 +162,7 @@
             <configuration>
               <target>
                 <copy todir="target/generated/src/test/java">
-                  <fileset dir="../camel-jetty9/src/test/java"/>
+                  <fileset dir="../camel-jetty9/src/test/java" />
                 </copy>
               </target>
             </configuration>

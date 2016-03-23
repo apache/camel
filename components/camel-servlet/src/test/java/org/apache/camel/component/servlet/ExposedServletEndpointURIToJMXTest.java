@@ -34,9 +34,9 @@ public class ExposedServletEndpointURIToJMXTest extends CamelTestSupport {
 
     @Test
     public void exposedEndpointURIShouldContainContextAndOptions() throws Exception {
-        checkServletEndpointURI("\"servlet:///test1\\?matchOnUriPrefix=true\"");
-        checkServletEndpointURI("\"servlet:///test2\\?servletName=test2\"");
-        checkServletEndpointURI("\"servlet:///test3\\?matchOnUriPrefix=true&servletName=test3\"");
+        checkServletEndpointURI("\"servlet:/test1\\?matchOnUriPrefix=true\"");
+        checkServletEndpointURI("\"servlet:/test2\\?servletName=test2\"");
+        checkServletEndpointURI("\"servlet:/test3\\?matchOnUriPrefix=true&servletName=test3\"");
     }
 
     private void checkServletEndpointURI(String servletEndpointURI) throws Exception {
@@ -48,14 +48,13 @@ public class ExposedServletEndpointURIToJMXTest extends CamelTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-
         return new RouteBuilder() {
 
             @Override
             public void configure() throws Exception {
-                from("servlet:///test1?matchOnUriPrefix=true").to("mock:jmx");
-                from("servlet:///test2?servletName=test2").to("mock:jmx");
-                from("servlet:///test3?matchOnUriPrefix=true&servletName=test3").to("mock:jmx");
+                from("servlet:test1?matchOnUriPrefix=true").to("mock:jmx");
+                from("servlet:test2?servletName=test2").to("mock:jmx");
+                from("servlet:test3?matchOnUriPrefix=true&servletName=test3").to("mock:jmx");
             }
 
         };

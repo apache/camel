@@ -26,28 +26,35 @@ import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.spi.UriEndpoint;
 
+/**
+ * The jetty component provides HTTP-based endpoints for consuming and producing HTTP requests.
+ */
 @UriEndpoint(scheme = "jetty", extendsScheme = "http", title = "Jetty 9",
-        syntax = "jetty:httpUri", consumerClass = HttpConsumer.class, label = "http")
+        syntax = "jetty:httpUri", consumerClass = HttpConsumer.class, label = "http", lenientProperties = true)
 public class JettyHttpEndpoint9 extends JettyHttpEndpoint {
     private HttpBinding binding;
 
     public JettyHttpEndpoint9(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(component, uri, httpURL);
     }
-    
+
     @Override
-    public HttpBinding getBinding() {
+    public HttpBinding getHttpBinding() {
+        // make sure we include jetty9 variant of the http binding
         if (this.binding == null) {
             this.binding = new AttachmentHttpBinding();
             this.binding.setTransferException(isTransferException());
+            if (getComponent() != null) {
+                this.binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
+            }
             this.binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
         return this.binding;
     }
 
     @Override
-    public void setBinding(HttpBinding binding) {
-        super.setBinding(binding);
+    public void setHttpBinding(HttpBinding binding) {
+        super.setHttpBinding(binding);
         this.binding = binding;
     }
     

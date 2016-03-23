@@ -39,7 +39,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -51,7 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS SQS Endpoint</a>.  
+ * The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
  */
 @UriEndpoint(scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueName", consumerClass = SqsConsumer.class, label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {

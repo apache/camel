@@ -19,6 +19,7 @@ package org.apache.camel.component.linkedin.api;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.util.HashMap;
@@ -131,8 +132,8 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
 
     @SuppressWarnings("deprecation")
     private String getRefreshToken() {
-        // authorize application on user's behalf
-        webClient.getOptions().setRedirectEnabled(true);
+        // disable redirect to avoid loading error redirect URL
+        webClient.getOptions().setRedirectEnabled(false);
 
         try {
             final String csrfId = String.valueOf(new SecureRandom().nextLong());
@@ -157,7 +158,24 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                 url = String.format(AUTHORIZATION_URL_WITH_SCOPE, oAuthParams.getClientId(), csrfId,
                     builder.toString(), encodedRedirectUri);
             }
-            final HtmlPage authPage = webClient.getPage(url);
+            HtmlPage authPage;
+            try {
+                authPage = webClient.getPage(url);
+            } catch (FailingHttpStatusCodeException e) {
+                // only handle errors returned with redirects
+                if (e.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
+                    final URL location = new URL(e.getResponse().getResponseHeaderValue(HttpHeaders.LOCATION));
+                    final String locationQuery = location.getQuery();
+                    if (locationQuery != null && locationQuery.contains("error=")) {
+                        throw new IOException(URLDecoder.decode(locationQuery).replaceAll("&", ", "));
+                    } else {
+                        // follow the redirect to login form
+                        authPage = webClient.getPage(location);
+                    }
+                } else {
+                    throw e;
+                }
+            }
 
             // look for <div role="alert">
             final HtmlDivision div = authPage.getFirstByXPath("//div[@role='alert']");
@@ -172,9 +190,6 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
             final HtmlPasswordInput password = loginForm.getInputByName("session_password");
             password.setText(oAuthParams.getUserPassword());
             final HtmlSubmitInput submitInput = loginForm.getInputByName("authorize");
-
-            // disable redirect to avoid loading redirect URL
-            webClient.getOptions().setRedirectEnabled(false);
 
             // validate CSRF and get authorization code
             String redirectQuery;

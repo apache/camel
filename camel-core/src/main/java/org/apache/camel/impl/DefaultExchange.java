@@ -80,7 +80,8 @@ public final class DefaultExchange implements Exchange {
 
     @Override
     public String toString() {
-        return String.format("Exchange[%s][%s]", exchangeId, out == null ? in : out);
+        // do not output information about the message as it may contain sensitive information
+        return String.format("Exchange[%s]", exchangeId == null ? "" : exchangeId);
     }
 
     public Exchange copy() {
@@ -97,6 +98,7 @@ public final class DefaultExchange implements Exchange {
 
         if (safeCopy) {
             exchange.getIn().setBody(getIn().getBody());
+            exchange.getIn().setFault(getIn().isFault());
             if (getIn().hasHeaders()) {
                 exchange.getIn().setHeaders(safeCopyHeaders(getIn().getHeaders()));
                 // just copy the attachments here
@@ -104,6 +106,7 @@ public final class DefaultExchange implements Exchange {
             }
             if (hasOut()) {
                 exchange.getOut().setBody(getOut().getBody());
+                exchange.getOut().setFault(getOut().isFault());
                 if (getOut().hasHeaders()) {
                     exchange.getOut().setHeaders(safeCopyHeaders(getOut().getHeaders()));
                 }

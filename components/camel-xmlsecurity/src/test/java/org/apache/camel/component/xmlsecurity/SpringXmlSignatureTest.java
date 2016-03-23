@@ -74,7 +74,7 @@ public class SpringXmlSignatureTest extends XmlSignatureTest {
     XmlSignerEndpoint getDetachedSignerEndpoint() {
         XmlSignerEndpoint endpoint = (XmlSignerEndpoint) context()
                 .getEndpoint(
-                        "xmlsecurity:sign://detached?keyAccessor=#accessorRsa&xpathsToIdAttributes=#xpathsToIdAttributes&"//
+                        "xmlsecurity:sign:detached?keyAccessor=#accessorRsa&xpathsToIdAttributes=#xpathsToIdAttributes&"//
                         + "schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&signatureId=&clearHeaders=false");
         return endpoint;
     }
@@ -82,28 +82,28 @@ public class SpringXmlSignatureTest extends XmlSignatureTest {
     @Override
     XmlSignerEndpoint getSignatureEncpointForSignException() {
         XmlSignerEndpoint endpoint = (XmlSignerEndpoint)context().getEndpoint(//
-            "xmlsecurity:sign://signexceptioninvalidkey?keyAccessor=#accessorRsa");
+            "xmlsecurity:sign:signexceptioninvalidkey?keyAccessor=#accessorRsa");
         return endpoint;
     }
     
     @Override
     String getVerifierEndpointURIEnveloped() {
-        return "xmlsecurity:verify://enveloped?keySelector=#selectorRsa";
+        return "xmlsecurity:verify:enveloped?keySelector=#selectorRsa";
     }
 
     @Override
     String getSignerEndpointURIEnveloped() {
-        return "xmlsecurity:sign://enveloped?keyAccessor=#accessorRsa&parentLocalName=root&parentNamespace=http://test/test";
+        return "xmlsecurity:sign:enveloped?keyAccessor=#accessorRsa&parentLocalName=root&parentNamespace=http://test/test";
     }
     
     @Override
-    String getVerifierEncpointURIEnveloping() {
-        return "xmlsecurity:verify://enveloping?keySelector=#selectorRsa";
+    String getVerifierEndpointURIEnveloping() {
+        return "xmlsecurity:verify:enveloping?keySelector=#selectorRsa";
     }
 
     @Override
     String getSignerEndpointURIEnveloping() {
-        return "xmlsecurity:sign://enveloping?keyAccessor=#accessorRsa";
+        return "xmlsecurity:sign:enveloping?keyAccessor=#accessorRsa";
     }
 
     @Test

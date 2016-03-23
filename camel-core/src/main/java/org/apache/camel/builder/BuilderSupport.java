@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * Base class for implementation inheritance for different clauses in the <a
  * href="http://camel.apache.org/dsl.html">Java DSL</a>
  *
- * @version 
+ * @version
  */
 public abstract class BuilderSupport {
     private ModelCamelContext context;
@@ -71,7 +71,7 @@ public abstract class BuilderSupport {
         Expression exp = new ExchangePropertyExpression(name);
         return new ValueBuilder(exp);
     }
-    
+
     /**
      * Returns a value builder for the given exchange property
      */
@@ -146,7 +146,7 @@ public abstract class BuilderSupport {
     public <T> ValueBuilder faultBodyAs(Class<T> type) {
         return Builder.faultBodyAs(type);
     }
-                             
+
     /**
      * Returns a value builder for the given system property
      */
@@ -181,12 +181,26 @@ public abstract class BuilderSupport {
     public SimpleBuilder simple(String value) {
         return SimpleBuilder.simple(value);
     }
-    
+
     /**
      * Returns a simple expression value builder
      */
     public SimpleBuilder simple(String value, Class<?> resultType) {
         return SimpleBuilder.simple(value, resultType);
+    }
+
+    /**
+     * Returns a simple expression value builder, using String.format style
+     */
+    public SimpleBuilder simpleF(String format, Object...values) {
+        return SimpleBuilder.simpleF(format, values);
+    }
+
+    /**
+     * Returns a simple expression value builder, using String.format style
+     */
+    public SimpleBuilder simpleF(String format, Class<?> resultType, Object...values) {
+        return SimpleBuilder.simpleF(format, resultType, values);
     }
 
     /**
@@ -197,7 +211,7 @@ public abstract class BuilderSupport {
     public XPathBuilder xpath(String value) {
         return XPathBuilder.xpath(value);
     }
-    
+
     /**
      * Returns a xpath expression value builder
      * @param value The XPath expression
@@ -222,7 +236,7 @@ public abstract class BuilderSupport {
     public ValueBuilder bean(Object beanOrBeanRef) {
         return bean(beanOrBeanRef, null);
     }
-    
+
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
      * value builder
@@ -251,7 +265,7 @@ public abstract class BuilderSupport {
     public ValueBuilder bean(Class<?> beanType) {
         return Builder.bean(beanType);
     }
-    
+
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
      * value builder
@@ -329,7 +343,7 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns an expression value builder that replaces all occurrences of the 
+     * Returns an expression value builder that replaces all occurrences of the
      * regular expression with the given replacement
      */
     public ValueBuilder regexReplaceAll(Expression content, String regex, String replacement) {
@@ -337,13 +351,13 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns an expression value builder that replaces all occurrences of the 
+     * Returns an expression value builder that replaces all occurrences of the
      * regular expression with the given replacement
      */
     public ValueBuilder regexReplaceAll(Expression content, String regex, Expression replacement) {
         return Builder.regexReplaceAll(content, regex, replacement);
-    }    
-    
+    }
+
     /**
      * Returns a exception expression value builder
      */
@@ -498,7 +512,7 @@ public abstract class BuilderSupport {
     public ModelCamelContext getContext() {
         return context;
     }
-    
+
     public void setContext(CamelContext context) {
         ObjectHelper.notNull(context, "CamelContext", this);
         this.context = context.adapt(ModelCamelContext.class);

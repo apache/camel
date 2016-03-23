@@ -31,12 +31,10 @@ public class HttpMerge extends HttpEntityEnclosingRequestBase {
     }
 
     public HttpMerge(final URI uri) {
-        super();
         setURI(uri);
     }
 
     public HttpMerge(final String uri) {
-        super();
         setURI(URI.create(uri));
     }
 

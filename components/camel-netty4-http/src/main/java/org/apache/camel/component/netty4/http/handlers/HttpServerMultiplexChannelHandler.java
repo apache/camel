@@ -18,12 +18,9 @@ package org.apache.camel.component.netty4.http.handlers;
 
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -36,10 +33,9 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.netty4.http.ContextPathMatcher;
 import org.apache.camel.component.netty4.http.HttpServerConsumerChannelFactory;
 import org.apache.camel.component.netty4.http.NettyHttpConsumer;
-import org.apache.camel.component.netty4.http.RestContextPathMatcher;
+import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +54,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
     // use NettyHttpConsumer as logger to make it easier to read the logs as this is part of the consumer
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpConsumer.class);
     private static final AttributeKey<HttpServerChannelHandler> SERVER_HANDLER_KEY = AttributeKey.valueOf("serverHandler");
-    private final ConcurrentMap<ContextPathMatcher, HttpServerChannelHandler> consumers = new ConcurrentHashMap<ContextPathMatcher, HttpServerChannelHandler>();
+    private final Set<HttpServerChannelHandler> consumers = new CopyOnWriteArraySet<HttpServerChannelHandler>();
     private int port;
     private String token;
     private int len;
@@ -74,19 +70,15 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
     }
 
     public void addConsumer(NettyHttpConsumer consumer) {
-        String rawPath = consumer.getConfiguration().getPath();
-        String path = pathAsKey(consumer.getConfiguration().getPath());
-        // use rest path matcher in case Rest DSL is in use
-        ContextPathMatcher matcher = new RestContextPathMatcher(rawPath, path, consumer.getEndpoint().getHttpMethodRestrict(), consumer.getConfiguration().isMatchOnUriPrefix());
-        consumers.put(matcher, new HttpServerChannelHandler(consumer));
+        consumers.add(new HttpServerChannelHandler(consumer));
     }
 
     public void removeConsumer(NettyHttpConsumer consumer) {
-        String rawPath = consumer.getConfiguration().getPath();
-        String path = pathAsKey(consumer.getConfiguration().getPath());
-        // use rest path matcher in case Rest DSL is in use
-        ContextPathMatcher matcher = new RestContextPathMatcher(rawPath, path, consumer.getEndpoint().getHttpMethodRestrict(), consumer.getConfiguration().isMatchOnUriPrefix());
-        consumers.remove(matcher);
+        for (HttpServerChannelHandler handler : consumers) {
+            if (handler.getConsumer() == consumer) {
+                consumers.remove(handler);
+            }
+        }
     }
 
     public int consumers() {
@@ -153,6 +145,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         }
     }
 
+    @SuppressWarnings("unchecked")
     private HttpServerChannelHandler getHandler(HttpRequest request) {
         HttpServerChannelHandler answer = null;
 
@@ -170,57 +163,40 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         // use the path as key to find the consumer handler to use
         path = pathAsKey(path);
 
-
-        List<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>> candidates = new ArrayList<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>>();
-
-        // first match by http method
-        for (Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry : consumers.entrySet()) {
-            NettyHttpConsumer consumer = entry.getValue().getConsumer();
-            String restrict = consumer.getEndpoint().getHttpMethodRestrict();
-            if (entry.getKey().matchMethod(method, restrict)) {
-                candidates.add(entry);
-            }
-        }
-
-        // then see if we got a direct match
-        List<HttpServerChannelHandler> directMatches = new LinkedList<HttpServerChannelHandler>();
-        for (Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry : candidates) {
-            if (entry.getKey().matchesRest(path, false)) {
-                directMatches.add(entry.getValue());
-            }
-        }
-        if (directMatches.size() == 1) { // Single match found, just return it without any further analysis.
-            answer = directMatches.get(0);
-        } else if (directMatches.size() > 1) { // possible if the prefix match occurred
-            List<HttpServerChannelHandler> directMatchesWithOptions = handlersWithExplicitOptionsMethod(directMatches);
-            if (!directMatchesWithOptions.isEmpty()) { // prefer options matches
-                answer = handlerWithTheLongestMatchingPrefix(directMatchesWithOptions);
-            } else {
-                answer = handlerWithTheLongestMatchingPrefix(directMatches);
-            }
-        }
-
-        // then match by non wildcard path
-        if (answer == null) {
-            Iterator<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>> it = candidates.iterator();
-            while (it.hasNext()) {
-                Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry = it.next();
-                if (!entry.getKey().matchesRest(path, true)) {
-                    it.remove();
+        List<RestConsumerContextPathMatcher.ConsumerPath> paths = new ArrayList<RestConsumerContextPathMatcher.ConsumerPath>();
+        for (final HttpServerChannelHandler handler : consumers) {
+            paths.add(new RestConsumerContextPathMatcher.ConsumerPath<HttpServerChannelHandler>() {
+                @Override
+                public String getRestrictMethod() {
+                    return handler.getConsumer().getEndpoint().getHttpMethodRestrict();
                 }
-            }
 
-            // there should only be one
-            if (candidates.size() == 1) {
-                answer = candidates.get(0).getValue();
-            }
+                @Override
+                public String getConsumerPath() {
+                    return handler.getConsumer().getConfiguration().getPath();
+                }
+
+                @Override
+                public HttpServerChannelHandler getConsumer() {
+                    return handler;
+                }
+            });
+        }
+
+        RestConsumerContextPathMatcher.ConsumerPath<HttpServerChannelHandler> best = RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
+        if (best != null) {
+            answer = best.getConsumer();
         }
 
         // fallback to regular matching
         if (answer == null) {
-            for (Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry : consumers.entrySet()) {
-                if (entry.getKey().matches(path)) {
-                    answer = entry.getValue();
+            for (final HttpServerChannelHandler handler : consumers) {
+                NettyHttpConsumer consumer = handler.getConsumer();
+                String consumerPath = consumer.getConfiguration().getPath();
+                boolean matchOnUriPrefix = consumer.getEndpoint().getConfiguration().isMatchOnUriPrefix();
+                // Just make sure the we get the right consumer path first
+                if (RestConsumerContextPathMatcher.matchPath(path, consumerPath, matchOnUriPrefix)) {
+                    answer = handler;
                     break;
                 }
             }
@@ -247,29 +223,6 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         }
 
         return UnsafeUriCharactersEncoder.encodeHttpURI(path);
-    }
-
-    private static List<HttpServerChannelHandler> handlersWithExplicitOptionsMethod(Iterable<HttpServerChannelHandler> handlers) {
-        List<HttpServerChannelHandler> handlersWithOptions = new LinkedList<HttpServerChannelHandler>();
-        for (HttpServerChannelHandler handler : handlers) {
-            String consumerMethod = handler.getConsumer().getEndpoint().getHttpMethodRestrict();
-            if (consumerMethod != null && consumerMethod.contains("OPTIONS")) {
-                handlersWithOptions.add(handler);
-            }
-        }
-        return handlersWithOptions;
-    }
-
-    private static HttpServerChannelHandler handlerWithTheLongestMatchingPrefix(Iterable<HttpServerChannelHandler> handlers) {
-        HttpServerChannelHandler handlerWithTheLongestPrefix = handlers.iterator().next();
-        for (HttpServerChannelHandler handler : handlers) {
-            String consumerPath = handler.getConsumer().getConfiguration().getPath();
-            String longestPath = handlerWithTheLongestPrefix.getConsumer().getConfiguration().getPath();
-            if (consumerPath.length() > longestPath.length()) {
-                handlerWithTheLongestPrefix = handler;
-            }
-        }
-        return handlerWithTheLongestPrefix;
     }
 
 }

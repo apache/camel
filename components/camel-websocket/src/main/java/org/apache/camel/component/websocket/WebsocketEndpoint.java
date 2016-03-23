@@ -30,15 +30,17 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.server.Handler;
 
+/**
+ * The websocket component provides websocket endpoints for communicating with clients using websocket.
+ *
+ * This component uses Jetty as the websocket implementation.
+ */
 @UriEndpoint(scheme = "websocket", title = "Jetty Websocket", syntax = "websocket:host:port/resourceUri", consumerClass = WebsocketConsumer.class, label = "websocket")
 public class WebsocketEndpoint extends DefaultEndpoint {
 
-    private NodeSynchronization sync;
-    private WebsocketStore memoryStore;
     private WebsocketComponent component;
     private URI uri;
     private List<Handler> handlers;
@@ -80,8 +82,6 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     public WebsocketEndpoint(WebsocketComponent component, String uri, String resourceUri, Map<String, Object> parameters) {
         super(uri, component);
         this.resourceUri = resourceUri;
-        this.memoryStore = new MemoryWebsocketStore();
-        this.sync = new DefaultNodeSynchronization(memoryStore);
         this.component = component;
         try {
             this.uri = new URI(uri);
@@ -106,27 +106,23 @@ public class WebsocketEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new WebsocketProducer(this, memoryStore);
+        return new WebsocketProducer(this);
     }
 
     public void connect(WebsocketConsumer consumer) throws Exception {
         component.connect(consumer);
-        component.addServlet(sync, consumer, resourceUri);
     }
 
     public void disconnect(WebsocketConsumer consumer) throws Exception {
         component.disconnect(consumer);
-        // Servlet should be removed
     }
 
     public void connect(WebsocketProducer producer) throws Exception {
         component.connect(producer);
-        component.addServlet(sync, producer, resourceUri);
     }
 
     public void disconnect(WebsocketProducer producer) throws Exception {
         component.disconnect(producer);
-        // Servlet should be removed
     }
 
     @Override
@@ -338,17 +334,5 @@ public class WebsocketEndpoint extends DefaultEndpoint {
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        ServiceHelper.startService(memoryStore);
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        ServiceHelper.stopService(memoryStore);
-        super.doStop();
     }
 }

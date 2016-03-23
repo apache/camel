@@ -137,7 +137,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      */
     static final class PreparedErrorHandler extends KeyValueHolder<RouteContext, Processor> {
 
-        public PreparedErrorHandler(RouteContext key, Processor value) {
+        PreparedErrorHandler(RouteContext key, Processor value) {
             super(key, value);
         }
 
@@ -293,6 +293,11 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
             while (it.hasNext()) {
                 final ProcessorExchangePair pair = it.next();
+                // in case the iterator returns null then continue to next
+                if (pair == null) {
+                    continue;
+                }
+
                 final Exchange subExchange = pair.getExchange();
                 updateNewExchange(subExchange, total.intValue(), pairs, it);
 
@@ -518,12 +523,18 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         @Override
         public void run() {
-            if (parallelAggregate) {
-                doAggregateInternal(getAggregationStrategy(subExchange), result, subExchange);
-            } else {
-                doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+            try {
+                if (parallelAggregate) {
+                    doAggregateInternal(getAggregationStrategy(subExchange), result, subExchange);
+                } else {
+                    doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+                }
+            } catch (Throwable e) {
+                // wrap in exception to explain where it failed
+                subExchange.setException(new CamelExchangeException("Parallel processing failed for number " + aggregated.get(), subExchange, e));
+            } finally {
+                aggregated.incrementAndGet();
             }
-            aggregated.incrementAndGet();
         }
     }
 
@@ -584,6 +595,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         while (it.hasNext()) {
             ProcessorExchangePair pair = it.next();
+            // in case the iterator returns null then continue to next
+            if (pair == null) {
+                continue;
+            }
             Exchange subExchange = pair.getExchange();
             updateNewExchange(subExchange, total.get(), pairs, it);
 
@@ -868,7 +883,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         // must copy results at this point
         if (subExchange != null) {
             if (stoppedOnException) {
-                // if we stopped due an exception then only propagte the exception
+                // if we stopped due an exception then only propagate the exception
                 original.setException(subExchange.getException());
             } else {
                 // copy the current result to original so it will contain this result of this eip

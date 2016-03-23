@@ -21,6 +21,8 @@ import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
@@ -28,7 +30,9 @@ import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.JiBXException;
 
-public class JibxDataFormat implements DataFormat {
+public class JibxDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+    public static final String UNMARSHALL_CLASS = "CamelJibxUnmarshallClass";
+
     private Class<?> unmarshallClass;
     private String bindingName;
 
@@ -44,6 +48,11 @@ public class JibxDataFormat implements DataFormat {
         this.setBindingName(bindingName);
     }
 
+    @Override
+    public String getDataFormatName() {
+        return "jibx";
+    }
+
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
         IBindingFactory bindingFactory = createBindingFactory(body.getClass(), bindingName);
         IMarshallingContext marshallingContext = bindingFactory.createMarshallingContext();
@@ -51,10 +60,27 @@ public class JibxDataFormat implements DataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        ObjectHelper.notNull(getUnmarshallClass(), "unmarshallClass");
-        IBindingFactory bindingFactory = createBindingFactory(getUnmarshallClass(), bindingName);
+        Class<?> unmarshallType = exchange.getIn().getHeader(UNMARSHALL_CLASS, Class.class);
+        if (unmarshallType == null) {
+            unmarshallType = getUnmarshallClass();
+        }
+
+        ObjectHelper.notNull(unmarshallType, "unmarshallClass or CamelJibxUnmarshallClass header");
+
+        IBindingFactory bindingFactory = createBindingFactory(unmarshallType, bindingName);
         IUnmarshallingContext unmarshallingContext = bindingFactory.createUnmarshallingContext();
         return unmarshallingContext.unmarshalDocument(stream, null);
+    }
+
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 
     public Class<?> getUnmarshallClass() {

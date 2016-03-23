@@ -36,7 +36,7 @@ public class CamelCxfTest extends AbstractFeatureTest {
 
     @Configuration
     public static Option[] configure() {
-        return configure(COMPONENT);
+        return configure(COMPONENT, "cxf-jaxb");
     }
 
 }

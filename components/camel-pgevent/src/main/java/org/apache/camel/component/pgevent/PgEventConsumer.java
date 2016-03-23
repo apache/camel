@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.pgevent;
 
+import java.sql.PreparedStatement;
+
 import com.impossibl.postgres.api.jdbc.PGConnection;
 import com.impossibl.postgres.api.jdbc.PGNotificationListener;
 import org.apache.camel.Exchange;
@@ -41,30 +43,42 @@ public class PgEventConsumer extends DefaultConsumer implements PGNotificationLi
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
         dbConnection = endpoint.initJdbc();
-        dbConnection.createStatement().execute("LISTEN " + endpoint.getChannel());
+        String sql = String.format("LISTEN %s", endpoint.getChannel());
+        try (PreparedStatement statement = dbConnection.prepareStatement(sql)) {
+            statement.execute();
+        }
         dbConnection.addNotificationListener(endpoint.getChannel(), endpoint.getChannel(), this);
     }
 
-    @Override
+
     public void notification(int processId, String channel, String payload) {
-        Exchange outOnly = endpoint.createExchange();
-        Message msg = outOnly.getOut();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Notification processId: {}, channel: {}, payload: {}", new Object[]{processId, channel, payload});
+        }
+
+        Exchange exchange = endpoint.createExchange();
+        Message msg = exchange.getIn();
         msg.setHeader("channel", channel);
         msg.setBody(payload);
-        outOnly.setOut(msg);
+
         try {
-            getProcessor().process(outOnly);
+            getProcessor().process(exchange);
         } catch (Exception ex) {
-            LOG.error("Unable to process incoming notification from PostgreSQL: processId='" + processId + "', channel='" + channel + "', payload='" + payload + "'", ex);
+            String cause = "Unable to process incoming notification from PostgreSQL: processId='" + processId + "', channel='" + channel + "', payload='" + payload + "'";
+            getExceptionHandler().handleException(cause, ex);
         }
     }
 
     @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        dbConnection.removeNotificationListener(endpoint.getChannel());
-        dbConnection.close();
+    protected void doStop() throws Exception {
+        if (dbConnection != null) {
+            dbConnection.removeNotificationListener(endpoint.getChannel());
+            String sql = String.format("UNLISTEN %s", endpoint.getChannel());
+            try (PreparedStatement statement = dbConnection.prepareStatement(sql)) {
+                statement.execute();
+            }
+            dbConnection.close();
+        }
     }
 }

@@ -1,0 +1,20 @@
+[[Registry-Registry]]
+Registry
+~~~~~~~~
+
+Camel supports a pluggable
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/Registry.html[Registry]
+plugin strategy. This allows Camel to easily work with some kind of
+registry like
+
+* http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/SimpleRegistry.html[SimpleRegistry]
+which is a simple `java.util.Map` based registry.
+* http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/JndiRegistry.html[JndiRegistry]
+which uses the link:jndi.html[JNDI] InitialContext as the registry
+* http://camel.apache.org/maven/current/camel-spring/apidocs/org/apache/camel/spring/spi/ApplicationContextRegistry.html[ApplicationContextRegistry]
+if you are using Spring, it uses the ApplicationContext as the registry
+
+You can also access the Registry from the
+link:camelcontext.html[CamelContext] via the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContext.html#getRegistry()[camelContext.getRegistry()
+method]

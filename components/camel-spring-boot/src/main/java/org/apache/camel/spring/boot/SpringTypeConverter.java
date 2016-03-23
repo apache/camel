@@ -19,6 +19,7 @@ package org.apache.camel.spring.boot;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.TypeConverterSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,11 @@ public class SpringTypeConverter extends TypeConverterSupport {
 
     @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
+        // do not attempt to convert Camel types
+        if (type.getCanonicalName().startsWith("org.apache")) {
+            return null;
+        }
+
         for (ConversionService conversionService : conversionServices) {
             if (conversionService.canConvert(value.getClass(), type)) {
                 return conversionService.convert(value, type);

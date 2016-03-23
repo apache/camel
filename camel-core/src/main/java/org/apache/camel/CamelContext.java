@@ -34,6 +34,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -53,6 +54,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -500,6 +502,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Gets the REST configuration for the given component
+     *
      * @param component the component name to get the configuration
      * @param defaultIfNotFound determine if the default configuration is returned if there isn't a 
      *        specific configuration for the given component  
@@ -508,8 +511,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     RestConfiguration getRestConfiguration(String component, boolean defaultIfNotFound);
     
     /**
-     * Gets all the RestConfigurations 
-     * @return
+     * Gets all the RestConfiguration's
      */
     Collection<RestConfiguration> getRestConfigurations();
 
@@ -625,6 +627,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception;
 
+    /**
+     * Loads a collection of rest definitions from the given {@link java.io.InputStream}.
+     *
+     * @param is input stream with the rest(s) definition to add
+     * @throws Exception if the rest definitions could not be loaded for whatever reason
+     * @return the rest definitions
+     */
+    RestsDefinition loadRestsDefinition(InputStream is) throws Exception;
+    
     /**
      * Adds a collection of route definitions to the context
      *
@@ -1379,6 +1390,20 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setProcessorFactory(ProcessorFactory processorFactory);
 
     /**
+     * Gets the current {@link org.apache.camel.spi.MessageHistoryFactory}
+     *
+     * @return the factory
+     */
+    MessageHistoryFactory getMessageHistoryFactory();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.MessageHistoryFactory}
+     *
+     * @param messageHistoryFactory the custom factory
+     */
+    void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory);
+
+    /**
      * Gets the current {@link Debugger}
      *
      * @return the debugger
@@ -1557,6 +1582,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the json or <tt>null</tt> if the component was not found
      */
     String explainComponentJson(String componentName, boolean includeAllOptions);
+
+    /**
+     * Returns a JSON schema representation of the component parameters (not endpoint parameters) for the given component by its id.
+     *
+     * @param dataFormat the data format instance.
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     * @return the json
+     */
+    String explainDataFormatJson(String dataFormatName, DataFormat dataFormat, boolean includeAllOptions);
 
     /**
      * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri.

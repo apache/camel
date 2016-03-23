@@ -218,6 +218,15 @@ public interface CamelController {
     String getRestModelAsXml(String camelContextName) throws Exception;
 
     /**
+     * Return the REST services API documentation as JSon (requires camel-swagger-java on classpath)
+     *
+     * @param camelContextName the Camel context.
+     * @return the REST API documentation as JSon
+     * @throws java.lang.Exception can be thrown
+     */
+    String getRestApiDocAsJson(String camelContextName) throws Exception;
+
+    /**
      * Return the REST services for the given Camel context.
      *
      * @param camelContextName the Camel context.
@@ -273,6 +282,15 @@ public interface CamelController {
      * @throws java.lang.Exception can be thrown
      */
     Map<String, Set<String>> listEipsLabelCatalog() throws Exception;
+
+    /**
+     * Collects information about a Camel component from catalog
+     *
+     * @param name the component name
+     * @return a map of key/value pairs with component information
+     * @throws java.lang.Exception can be thrown
+     */
+    Map<String, Object> componentInfo(String name) throws Exception;
 
     /**
      * Lists all components from the Camel components catalog

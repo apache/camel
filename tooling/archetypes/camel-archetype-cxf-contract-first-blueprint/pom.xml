@@ -24,12 +24,12 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>archetypes</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.camel.archetypes</groupId>
   <artifactId>camel-archetype-cxf-contract-first-blueprint</artifactId>
-  <name>Camel :: Archetypes :: CXF :: Contract First :: Blueprint (OSGi)</name>
+  <name>Camel :: Archetypes :: CXF :: Contract First :: Blueprint (OSGi) (deprecated)</name>
   <description>Creates a new Camel project with Apache CXF contract-first example using OSGi blueprint.</description>
   <packaging>maven-archetype</packaging>
 

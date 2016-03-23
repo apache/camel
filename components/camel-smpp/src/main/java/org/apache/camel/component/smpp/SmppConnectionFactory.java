@@ -54,6 +54,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import java.util.Map;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -126,6 +127,14 @@ public final class SmppConnectionFactory implements ConnectionFactory {
                 out.write("Proxy-Authorization: Basic ".getBytes());
                 out.write(code);
                 out.write("\r\n".getBytes());
+            }
+
+            Map<String, String> proxyHeaders = config.getProxyHeaders();
+            if (proxyHeaders != null) {
+                for (Map.Entry<String, String> entry: proxyHeaders.entrySet()) {
+                    out.write((entry.getKey() + ": " + entry.getValue()).getBytes());
+                    out.write("\r\n".getBytes());
+                }
             }
             
             out.write("\r\n".getBytes());

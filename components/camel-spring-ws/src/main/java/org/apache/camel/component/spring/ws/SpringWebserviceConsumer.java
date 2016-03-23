@@ -18,7 +18,6 @@ package org.apache.camel.component.spring.ws;
 
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 
@@ -29,7 +28,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.DefaultExchange;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.mime.Attachment;
@@ -54,7 +52,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
      * Invoked by Spring-WS when a {@link WebServiceMessage} is received
      */
     public void invoke(MessageContext messageContext) throws Exception {
-        Exchange exchange = new DefaultExchange(endpoint.getCamelContext(), ExchangePattern.InOptionalOut);
+        Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOptionalOut);
         populateExchangeFromMessageContext(messageContext, exchange);
 
         // start message processing

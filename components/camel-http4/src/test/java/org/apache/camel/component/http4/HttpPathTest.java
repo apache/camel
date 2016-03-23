@@ -44,6 +44,7 @@ public class HttpPathTest extends BaseHttpTest {
                 setSslContext(getSSLContext()).
                 registerHandler("/search", new BasicValidationHandler("GET", null, null, getExpectedContent())).
                 registerHandler("/test%20/path", new BasicValidationHandler("GET", null, null, getExpectedContent())).
+                registerHandler("/testWithQueryParams", new BasicValidationHandler("GET", "abc=123", null, getExpectedContent())).
                 create();
         localServer.start();
 
@@ -80,7 +81,30 @@ public class HttpPathTest extends BaseHttpTest {
 
         assertExchange(exchange);
     }
-    
+
+    @Test
+    public void httpPathHeaderWithStaticQueryParams() throws Exception {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?abc=123", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_PATH, "testWithQueryParams");
+            }
+        });
+
+        assertExchange(exchange);
+    }
+
+
+    @Test
+    public void httpPathHeaderWithBaseSlashesAndWithStaticQueryParams() throws Exception {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/" + "?abc=123", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_PATH, "/testWithQueryParams");
+            }
+        });
+
+        assertExchange(exchange);
+    }
+
     @Test
     public void httpEscapedCharacters() throws Exception {
         Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/test%20/path", new Processor() {

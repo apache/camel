@@ -34,28 +34,30 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Represents a timer endpoint that can generate periodic inbound exchanges triggered by a timer.
+ * The timer component is used for generating message exchanges when a timer fires.
  *
- * @version 
+ * This component is similar to the scheduler component, but has much less functionality.
  */
 @ManagedResource(description = "Managed TimerEndpoint")
 @UriEndpoint(scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true, consumerClass = TimerConsumer.class, label = "core,scheduling")
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath @Metadata(required = "true")
     private String timerName;
-    @UriParam
-    private Date time;
     @UriParam(defaultValue = "1000")
     private long period = 1000;
     @UriParam(defaultValue = "1000")
     private long delay = 1000;
-    @UriParam
-    private boolean fixedRate;
-    @UriParam(defaultValue = "true")
-    private boolean daemon = true;
     @UriParam(defaultValue = "0")
     private long repeatCount;
     @UriParam
+    private boolean fixedRate;
+    @UriParam(defaultValue = "true", label = "advanced")
+    private boolean daemon = true;
+    @UriParam(label = "advanced")
+    private Date time;
+    @UriParam(label = "advanced")
+    private String pattern;
+    @UriParam(label = "advanced")
     private Timer timer;
 
     public TimerEndpoint() {
@@ -83,6 +85,11 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         Consumer answer = new TimerConsumer(this, processor);
         configureConsumer(answer);
         return answer;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
     }
 
     @Override
@@ -203,29 +210,15 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         this.time = time;
     }
 
-    @ManagedAttribute(description = "Singleton")
-    public boolean isSingleton() {
-        return true;
+    public String getPattern() {
+        return pattern;
     }
 
-    @ManagedAttribute(description = "Camel id")
-    public String getCamelId() {
-        return this.getCamelContext().getName();
-    }
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    public String getCamelManagementName() {
-        return this.getCamelContext().getManagementName();
-    }
-
-    @ManagedAttribute(description = "Endpoint Uri")
-    public String getEndpointUri() {
-        return super.getEndpointUri();
-    }
-
-    @ManagedAttribute(description = "Endpoint State")
-    public String getState() {
-        return getStatus().name();
+    /**
+     * Allows you to specify a custom Date pattern to use for setting the time option using URI syntax.
+     */
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
     }
 
     public Timer getTimer(TimerConsumer consumer) {

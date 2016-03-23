@@ -85,7 +85,7 @@ public class CxfPayloadConsumerNamespaceOnEnvelopeTest extends CamelTestSupport 
                         // Convert to String to make testing the result easier
                         .convertBodyTo(String.class);
                 // The consumer is running in payload mode
-                from("cxf:bean:serviceEndpoint?DataFormat=PAYLOAD")
+                from("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD")
                         // Convert the CxfPayload to a String to trigger the issue
                         .convertBodyTo(String.class)
                         // Parse to DOM to make sure it's still valid XML

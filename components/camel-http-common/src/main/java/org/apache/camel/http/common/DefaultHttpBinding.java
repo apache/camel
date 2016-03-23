@@ -24,9 +24,13 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import javax.activation.DataHandler;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -54,10 +58,23 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultHttpBinding implements HttpBinding {
 
+    /**
+     * Whether Date/Locale should be converted to String types (enabled by default)
+     */
+    public static final String DATE_LOCALE_CONVERSION = "CamelHttpBindingDateLocaleConversion";
+
+    /**
+     * The data format used for storing java.util.Date instances as a String value.
+     */
+    public static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpBinding.class);
+    private static final TimeZone TIME_ZONE_GMT = TimeZone.getTimeZone("GMT");
+
     private boolean useReaderForPayload;
     private boolean eagerCheckContentAvailable;
     private boolean transferException;
+    private boolean allowJavaSerializedObject;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
 
     public DefaultHttpBinding() {
@@ -72,6 +89,9 @@ public class DefaultHttpBinding implements HttpBinding {
     public DefaultHttpBinding(HttpCommonEndpoint endpoint) {
         this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
         this.transferException = endpoint.isTransferException();
+        if (endpoint.getComponent() != null) {
+            this.allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
+        }
     }
 
     public void readRequest(HttpServletRequest request, HttpMessage message) {
@@ -117,11 +137,12 @@ public class DefaultHttpBinding implements HttpBinding {
         }
 
         // store the method and query and other info in headers as String types
+        String rawPath = getRawPath(request);
         headers.put(Exchange.HTTP_METHOD, request.getMethod());
         headers.put(Exchange.HTTP_QUERY, request.getQueryString());
         headers.put(Exchange.HTTP_URL, request.getRequestURL().toString());
         headers.put(Exchange.HTTP_URI, request.getRequestURI());
-        headers.put(Exchange.HTTP_PATH, request.getPathInfo());
+        headers.put(Exchange.HTTP_PATH, rawPath);
         headers.put(Exchange.CONTENT_TYPE, request.getContentType());
 
         if (LOG.isTraceEnabled()) {
@@ -129,20 +150,26 @@ public class DefaultHttpBinding implements HttpBinding {
             LOG.trace("HTTP query {}", request.getQueryString());
             LOG.trace("HTTP url {}", request.getRequestURL());
             LOG.trace("HTTP uri {}", request.getRequestURI());
-            LOG.trace("HTTP path {}", request.getPathInfo());
+            LOG.trace("HTTP path {}", rawPath);
             LOG.trace("HTTP content-type {}", request.getContentType());
         }
 
         // if content type is serialized java object, then de-serialize it to a Java object
         if (request.getContentType() != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(request.getContentType())) {
-            try {
-                InputStream is = message.getExchange().getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
-                Object object = HttpHelper.deserializeJavaObjectFromStream(is, message.getExchange().getContext());
-                if (object != null) {
-                    message.setBody(object);
+            // only deserialize java if allowed
+            if (allowJavaSerializedObject || isTransferException()) {
+                try {
+                    InputStream is = message.getExchange().getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
+                    Object object = HttpHelper.deserializeJavaObjectFromStream(is, message.getExchange().getContext());
+                    if (object != null) {
+                        message.setBody(object);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
                 }
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
+            } else {
+                // set empty body
+                message.setBody(null);
             }
         }
         
@@ -198,7 +225,14 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         }
     }
-    
+
+    private String getRawPath(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        String servletPath = request.getServletPath();
+        return uri.substring(contextPath.length() + servletPath.length());
+    }
+
     protected void populateAttachments(HttpServletRequest request, HttpMessage message) {
         // check if there is multipart files, if so will put it into DataHandler
         Enumeration<?> names = request.getAttributeNames();
@@ -282,7 +316,7 @@ public class DefaultHttpBinding implements HttpBinding {
             // use an iterator as there can be multiple values. (must not use a delimiter)
             final Iterator<?> it = ObjectHelper.createIterator(value, null);
             while (it.hasNext()) {
-                String headerValue = exchange.getContext().getTypeConverter().convertTo(String.class, it.next());
+                String headerValue = convertHeaderValueToString(exchange, it.next());
                 if (headerValue != null && headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
                     response.addHeader(key, headerValue);
@@ -300,10 +334,28 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
     
+    protected String convertHeaderValueToString(Exchange exchange, Object headerValue) {
+        if ((headerValue instanceof Date || headerValue instanceof Locale)
+            && convertDateAndLocaleLocally(exchange)) {
+            if (headerValue instanceof Date) {
+                return toHttpDate((Date)headerValue);
+            } else {
+                return toHttpLanguage((Locale)headerValue);
+            }
+        } else {
+            return exchange.getContext().getTypeConverter().convertTo(String.class, headerValue);
+        }
+    }
+
+    protected boolean convertDateAndLocaleLocally(Exchange exchange) {
+        // This check is done only if a given header value is Date or Locale
+        return exchange.getProperty(DATE_LOCALE_CONVERSION, Boolean.TRUE, Boolean.class);
+    }
+
     protected boolean isText(String contentType) {
         if (contentType != null) {
             String temp = contentType.toLowerCase();
-            if (temp.indexOf("text") >= 0 || temp.indexOf("html") >= 0) {
+            if (temp.contains("text") || temp.contains("html")) {
                 return true;
             }
         }
@@ -324,13 +376,17 @@ public class DefaultHttpBinding implements HttpBinding {
         // if content type is serialized Java object, then serialize and write it to the response
         String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
         if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
-            try {
-                Object object = message.getMandatoryBody(Serializable.class);
-                HttpHelper.writeObjectToServletResponse(response, object);
-                // object is written so return
-                return;
-            } catch (InvalidPayloadException e) {
-                throw new IOException(e);
+            if (allowJavaSerializedObject || isTransferException()) {
+                try {
+                    Object object = message.getMandatoryBody(Serializable.class);
+                    HttpHelper.writeObjectToServletResponse(response, object);
+                    // object is written so return
+                    return;
+                } catch (InvalidPayloadException e) {
+                    throw new IOException(e);
+                }
+            } else {
+                throw new RuntimeCamelException("Content-type " + HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed");
             }
         }
 
@@ -483,6 +539,14 @@ public class DefaultHttpBinding implements HttpBinding {
         this.transferException = transferException;
     }
 
+    public boolean isAllowJavaSerializedObject() {
+        return allowJavaSerializedObject;
+    }
+
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        this.allowJavaSerializedObject = allowJavaSerializedObject;
+    }
+
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -491,4 +555,26 @@ public class DefaultHttpBinding implements HttpBinding {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
+    protected static SimpleDateFormat getHttpDateFormat() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        dateFormat.setTimeZone(TIME_ZONE_GMT);
+        return dateFormat;
+    }
+    
+    protected static String toHttpDate(Date date) {
+        SimpleDateFormat format = getHttpDateFormat();
+        return format.format(date);
+    }
+    
+    protected static String toHttpLanguage(Locale locale) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(locale.getLanguage());
+        if (locale.getCountry() != null) {
+            // Locale.toString() will use a "_" separator instead, 
+            // while '-' is expected in headers such as Content-Language, etc:
+            // http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.10
+            sb.append('-').append(locale.getCountry());
+        }
+        return sb.toString();
+    }
 }

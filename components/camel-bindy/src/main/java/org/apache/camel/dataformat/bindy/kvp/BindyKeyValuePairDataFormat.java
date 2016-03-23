@@ -52,6 +52,11 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
         super(type);
     }
 
+    @Override
+    public String getDataFormatName() {
+        return "bindy-kvp";
+    }
+
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         BindyAbstractFactory factory = getFactory();

@@ -98,6 +98,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected boolean logExhausted = true;
     protected boolean logNewException = true;
     protected Boolean logExhaustedMessageHistory;
+    protected Boolean logExhaustedMessageBody;
     protected boolean logRetryAttempted = true;
     protected String delayPattern;
     protected boolean asyncDelayedRedelivery;
@@ -124,6 +125,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             + ", logExhausted=" + logExhausted
             + ", logNewException=" + logNewException
             + ", logExhaustedMessageHistory=" + logExhaustedMessageHistory
+            + ", logExhaustedMessageBody=" + logExhaustedMessageBody
             + ", useExponentialBackOff="  + useExponentialBackOff
             + ", backOffMultiplier=" + backOffMultiplier
             + ", useCollisionAvoidance=" + useCollisionAvoidance
@@ -401,6 +403,14 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */
     public RedeliveryPolicy logExhaustedMessageHistory(boolean logExhaustedMessageHistory) {
         setLogExhaustedMessageHistory(logExhaustedMessageHistory);
+        return this;
+    }
+
+    /**
+     * Sets whether to log exhausted errors including message body (requires message history to be enabled)
+     */
+    public RedeliveryPolicy logExhaustedMessageBody(boolean logExhaustedMessageBody) {
+        setLogExhaustedMessageBody(logExhaustedMessageBody);
         return this;
     }
 
@@ -706,6 +716,29 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */
     public void setLogExhaustedMessageHistory(boolean logExhaustedMessageHistory) {
         this.logExhaustedMessageHistory = logExhaustedMessageHistory;
+    }
+
+    public boolean isLogExhaustedMessageBody() {
+        // should default be disabled
+        return logExhaustedMessageBody != null && logExhaustedMessageBody;
+    }
+
+    /**
+     * Whether the option logExhaustedMessageBody has been configured or not
+     *
+     * @return <tt>null</tt> if not configured, or the configured value as true or false
+     * @see #isLogExhaustedMessageBody()
+     */
+    public Boolean getLogExhaustedMessageBody() {
+        return logExhaustedMessageBody;
+    }
+
+    /**
+     * Sets whether exhausted message body/headers should be logged with message history included
+     * (requires logExhaustedMessageHistory to be enabled).
+     */
+    public void setLogExhaustedMessageBody(Boolean logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
     }
 
     public boolean isAsyncDelayedRedelivery() {

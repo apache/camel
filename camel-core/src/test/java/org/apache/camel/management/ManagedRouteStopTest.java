@@ -57,6 +57,10 @@ public class ManagedRouteStopTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be started", ServiceStatus.Started.name(), state);
 
+        String uptime = (String) mbeanServer.getAttribute(on, "Uptime");
+        assertNotNull(uptime);
+        log.info("Uptime: {}", uptime);
+
         mbeanServer.invoke(on, "stop", null, null);
 
         registered = mbeanServer.isRegistered(on);
@@ -65,6 +69,9 @@ public class ManagedRouteStopTest extends ManagementTestSupport {
         // should be stopped, eg its removed
         state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
+
+        uptime = (String) mbeanServer.getAttribute(on, "Uptime");
+        assertEquals("", uptime);
     }
 
     @Override

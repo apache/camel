@@ -87,7 +87,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @Override
     public boolean add(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager);
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
 
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -122,7 +122,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @Override
     public boolean contains(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager);
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
 
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -151,7 +151,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @Override
     public boolean remove(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager);
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
 
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
@@ -188,7 +188,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @ManagedOperation(description = "Clear the store")
     public void clear() {
-        final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory, true, sharedEntityManager);
+        final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory, true, sharedEntityManager, true);
 
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {

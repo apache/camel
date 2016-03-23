@@ -127,6 +127,31 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         assertNull(exchange.getIn().getHeader("Foo"));
     }
 
+    public void testCaughtException() throws Exception {
+        // use a mixed list, the MyFoo is not serializable so the entire list should be skipped
+        List<Object> list = new ArrayList<Object>();
+        list.add("I am okay");
+        list.add(new MyFoo("Tiger"));
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("Hello World");
+        exchange.getIn().setHeader("Foo", list);
+        exchange.getIn().setHeader("Bar", 123);
+        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, new IllegalArgumentException("Forced"));
+
+        DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange);
+
+        exchange = new DefaultExchange(context);
+        DefaultExchangeHolder.unmarshal(exchange, holder);
+
+        // the caught exception should be included
+        assertEquals("Hello World", exchange.getIn().getBody());
+        assertEquals(123, exchange.getIn().getHeader("Bar"));
+        assertNull(exchange.getIn().getHeader("Foo"));
+        assertNotNull(exchange.getProperty(Exchange.EXCEPTION_CAUGHT));
+        assertEquals("Forced", exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
+    }
+
     public void testFileNotSupported() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/log4j.properties"));

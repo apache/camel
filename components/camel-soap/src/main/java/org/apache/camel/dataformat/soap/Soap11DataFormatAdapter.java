@@ -70,19 +70,25 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
             exception = exchange.getIn().getHeader(Exchange.EXCEPTION_CAUGHT, Throwable.class);
         }
 
-        final List<JAXBElement<?>> bodyContent;
-        List<JAXBElement<?>> headerContent = new ArrayList<JAXBElement<?>>();
+        final List<Object> bodyContent;
+        List<Object> headerContent = new ArrayList<Object>();
         if (exception != null) {
-            bodyContent = new ArrayList<JAXBElement<?>>();
+            bodyContent = new ArrayList<Object>();
             bodyContent.add(createFaultFromException(exception));
         } else {
+            if (!dataFormat.isIgnoreUnmarshalledHeaders()) {
+                List<Object> inboundSoapHeaders = (List<Object>) exchange.getIn().getHeader(SoapJaxbDataFormat.SOAP_UNMARSHALLED_HEADER_LIST);
+                if (null != inboundSoapHeaders) {
+                    headerContent.addAll(inboundSoapHeaders);
+                }
+            }
             bodyContent = getDataFormat().createContentFromObject(inputObject, soapAction, headerContent);
         }
 
-        for (JAXBElement<?> elem : bodyContent) {
+        for (Object elem : bodyContent) {
             body.getAny().add(elem);
         }
-        for (JAXBElement<?> elem : headerContent) {
+        for (Object elem : headerContent) {
             header.getAny().add(elem);
         }
         Envelope envelope = new Envelope();

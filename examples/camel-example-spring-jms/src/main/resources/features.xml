@@ -17,22 +17,11 @@
 -->
 <features>
     <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
-    
-    <feature name='activemq-feature' version='${project.version}'>
-       <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
-       <bundle>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
-       <bundle>mvn:org.apache.geronimo.specs/geronimo-j2ee-management_1.1_spec/1.0.1</bundle>
-       <bundle>mvn:org.apache.geronimo.specs/geronimo-j2ee-connector_1.5_spec/2.0.0</bundle>
-       <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-pool/1.5.4_1</bundle>
-       <bundle>mvn:org.apache.xbean/xbean-spring/3.4.3</bundle>
-       <bundle>mvn:org.apache.activemq/kahadb/${activemq-version}</bundle>
-       <bundle>mvn:org.apache.activemq/activemq-core/${activemq-version}</bundle>
-       <bundle>mvn:org.apache.activemq/activemq-ra/${activemq-version}</bundle>
-       <bundle>mvn:org.apache.activemq/activemq-pool/${activemq-version}</bundle>
-       <bundle>mvn:org.apache.activemq/activemq-camel/${activemq-version}</bundle>
-    </feature>
-    
+    <repository>mvn:org.apache.activemq/activemq-karaf/${activemq-version}/xml/features</repository>
+
     <feature name='camel-example-spring-jms' version='${project.version}'>
+        <feature>activemq-broker-noweb</feature>
+        <feature>activemq-camel</feature>
         <feature version="${project.version}">camel</feature>
         <feature version="${project.version}">camel-jms</feature>
         <bundle>mvn:org.apache.camel/camel-example-spring-jms/${project.version}</bundle>

@@ -66,17 +66,17 @@ public class MailComponentRecipientSetTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 MailConfiguration config = new MailConfiguration();
-                config.setCC("spy@spy.com");
+                config.setCc("spy@spy.com");
                 config.setFrom("me@me.com");
 
                 MailComponent mail = context.getComponent("smtp", MailComponent.class);
                 mail.setConfiguration(config);
 
-                from("direct:a").to("smtp://localhost?username=james2&password=secret&To=a@a.com");
+                from("direct:a").to("smtp://localhost?username=james2&password=secret&to=a@a.com");
 
-                from("direct:b").to("smtp://localhost?username=james&password=secret&To=b@b.com&From=you@you.com");
+                from("direct:b").to("smtp://localhost?username=james&password=secret&to=b@b.com&from=you@you.com");
 
-                from("direct:c").to("smtp://localhost?username=admin&password=secret&To=c@c.com&CC=you@you.com,them@them.com");
+                from("direct:c").to("smtp://localhost?username=admin&password=secret&to=c@c.com&cc=you@you.com,them@them.com");
             }
         };
     }

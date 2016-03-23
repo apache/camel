@@ -64,9 +64,6 @@ public class ${className}Test {
 
         // Disable JMX for test
         context.disableJMX();
-
-        // Fake a component for test
-        // context.addComponent("amq", new MockComponent());
     }
 
     @After
@@ -90,8 +87,7 @@ public class ${className}Test {
         });
 
         MockEndpoint resultEndpoint = context.getEndpoint("mock:log:foo", MockEndpoint.class);
-        // resultEndpoint.expectedMessageCount(1); // If you want to just check the number of messages
-        resultEndpoint.expectedBodiesReceived("hello"); // If you want to check the contents
+        resultEndpoint.expectedBodiesReceived("hello");
 
         // Start the integration
         integration.run();

@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
-import org.apache.solr.client.solrj.impl.CloudSolrServer;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.cloud.MiniSolrCloudCluster;
 import org.apache.solr.common.SolrInputDocument;
@@ -60,11 +60,11 @@ public class SolrCloudFixture {
     File testDir;
     SolrZkClient zkClient;
 
-    CloudSolrServer solrClient;
+    CloudSolrClient solrClient;
     
     public SolrCloudFixture(String solrHome) throws Exception {
        
-        miniCluster = new MiniSolrCloudCluster(1, "/solr", new File(solrHome, "solr-no-core.xml"), null, null);
+        miniCluster = new MiniSolrCloudCluster(1, "/solr", new File("target/tmp"), new File(solrHome, "solr-no-core.xml"), null, null);
         String zkAddr = miniCluster.getZkServer().getZkAddress();
         String zkHost = miniCluster.getZkServer().getZkHost();
 
@@ -78,7 +78,7 @@ public class SolrCloudFixture {
             }
         }
 
-        solrClient = new CloudSolrServer(zkAddr, true);
+        solrClient = new CloudSolrClient(zkAddr, true);
         solrClient.connect();
 
         createCollection(solrClient, "collection1", 1, 1, "conf1");
@@ -98,7 +98,7 @@ public class SolrCloudFixture {
         putConfig(confName, zkClient, solrhome, name, name);
     }
 
-    protected NamedList<Object> createCollection(CloudSolrServer server, String name, int numShards,
+    protected NamedList<Object> createCollection(CloudSolrClient server, String name, int numShards,
                                                  int replicationFactor, String configName) throws Exception {
         ModifiableSolrParams modParams = new ModifiableSolrParams();
         modParams.set(CoreAdminParams.ACTION, CollectionAction.CREATE.name());
@@ -150,7 +150,7 @@ public class SolrCloudFixture {
     }
 
     public void teardown() throws Exception {
-        solrClient.shutdown();
+        solrClient.close();
         miniCluster.shutdown();
 
         solrClient = null;

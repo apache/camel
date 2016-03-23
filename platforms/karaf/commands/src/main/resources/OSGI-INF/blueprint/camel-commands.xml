@@ -206,6 +206,15 @@
         <null/>
       </completers>
     </command>
+    <command name="camel/rest-api-doc">
+      <action class="org.apache.camel.karaf.commands.RestApiDoc">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
     <command name="camel/rest-show">
       <action class="org.apache.camel.karaf.commands.RestShow">
         <property name="camelController" ref="camelController"/>

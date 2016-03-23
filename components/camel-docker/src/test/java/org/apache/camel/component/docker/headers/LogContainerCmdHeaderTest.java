@@ -22,7 +22,6 @@ import com.github.dockerjava.api.command.LogContainerCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -36,7 +35,6 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
     @Mock
     private LogContainerCmd mockObject;
 
-    @Ignore
     @Test
     public void logContainerHeaderTest() {
 

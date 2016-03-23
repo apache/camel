@@ -45,7 +45,8 @@ import static org.mockito.Mockito.verify;
 @IntegrationTest({
         "camel.springboot.consumerTemplateCacheSize=100",
         "camel.springboot.jmxEnabled=true",
-        "camel.springboot.name=customName"})
+        "camel.springboot.name=customName",
+        "camel.springboot.typeConversion=true"})
 public class CamelAutoConfigurationTest extends Assert {
 
     // Collaborators fixtures

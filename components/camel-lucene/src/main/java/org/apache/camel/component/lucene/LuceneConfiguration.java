@@ -33,7 +33,7 @@ import org.apache.lucene.util.Version;
 public class LuceneConfiguration {
     private URI uri;
     private String authority;
-    private Version luceneVersion = Version.LUCENE_4_10_3;
+    private Version luceneVersion = LuceneConstants.LUCENE_VERSION;
 
     @UriPath @Metadata(required = "true")
     private String host;

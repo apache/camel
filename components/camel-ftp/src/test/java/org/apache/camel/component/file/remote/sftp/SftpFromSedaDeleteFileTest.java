@@ -33,7 +33,7 @@ public class SftpFromSedaDeleteFileTest extends SftpServerTestSupport {
     protected String getFtpUrl() {
         return "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
                 + "?username=admin&knownHostsFile=./src/test/resources/known_hosts&privateKeyFile=./src/test/resources/id_rsa"
-                + "&privateKeyFilePassphrase=secret&delay=500&disconnect=false&delete=true";
+                + "&privateKeyPassphrase=secret&delay=500&disconnect=false&delete=true";
     }
 
     @Override

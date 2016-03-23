@@ -32,6 +32,8 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
     private SWFEndpoint endpoint;
     private final SWFConfiguration configuration;
     private GenericWorkflowWorker genericWorker;
+    
+    private transient String swfWorkflowConsumerToString;
 
     public SWFWorkflowConsumer(SWFEndpoint endpoint, Processor processor, SWFConfiguration configuration) {
         super(endpoint, processor);
@@ -83,6 +85,9 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
 
     @Override
     public String toString() {
-        return "SWFWorkflowConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (swfWorkflowConsumerToString == null) {
+            swfWorkflowConsumerToString = "SWFWorkflowConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return swfWorkflowConsumerToString;
     }
 }

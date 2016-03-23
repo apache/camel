@@ -29,8 +29,7 @@ public class CamelJingTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testComponent("rnc");
-        testComponent("rng");
+        testComponent(COMPONENT);
     }
 
     @Configuration

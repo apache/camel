@@ -36,8 +36,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -46,6 +44,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Component for working with documents stored in MongoDB database.
+ */
 @UriEndpoint(scheme = "mongodb", title = "MongoDB", syntax = "mongodb:connectionBean", consumerClass = MongoDbTailableCursorConsumer.class, label = "database,nosql")
 public class MongoDbEndpoint extends DefaultEndpoint {
 
@@ -65,7 +66,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private MongoDbOperation operation;
     @UriParam(defaultValue = "true")
     private boolean createCollection = true;
-    @UriParam
+    @UriParam(enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY,SAFE")
     private WriteConcern writeConcern;
     private WriteConcern writeConcernRef;
     @UriParam

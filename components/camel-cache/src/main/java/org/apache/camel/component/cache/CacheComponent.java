@@ -17,7 +17,6 @@
 package org.apache.camel.component.cache;
 
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -102,7 +101,7 @@ public class CacheComponent extends UriEndpointComponent {
         super.doStart();
         if (cacheManagerFactory == null) {
             if (configurationFile != null) {
-                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configurationFile);
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), configurationFile);
                 cacheManagerFactory = new DefaultCacheManagerFactory(is, configurationFile);
             } else {
                 cacheManagerFactory = new DefaultCacheManagerFactory();

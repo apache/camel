@@ -436,10 +436,10 @@ public class SimpleOperatorTest extends LanguageTestSupport {
             assertEquals(30, e.getIndex());
         }
 
-        assertPredicate("${in.header.bar} range '100..200' && ${in.header.foo} == 'abc'" , true);
-        assertPredicate("${in.header.bar} range '200..300' && ${in.header.foo} == 'abc'" , false);
-        assertPredicate("${in.header.bar} range '200..300' || ${in.header.foo} == 'abc'" , true);
-        assertPredicate("${in.header.bar} range '200..300' || ${in.header.foo} == 'def'" , false);
+        assertPredicate("${in.header.bar} range '100..200' && ${in.header.foo} == 'abc'", true);
+        assertPredicate("${in.header.bar} range '200..300' && ${in.header.foo} == 'abc'", false);
+        assertPredicate("${in.header.bar} range '200..300' || ${in.header.foo} == 'abc'", true);
+        assertPredicate("${in.header.bar} range '200..300' || ${in.header.foo} == 'def'", false);
     }
 
     public void testNotRange() throws Exception {

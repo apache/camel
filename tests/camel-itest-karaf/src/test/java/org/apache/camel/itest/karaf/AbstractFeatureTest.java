@@ -20,29 +20,29 @@ import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
-
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.osgi.CamelContextFactory;
-
 import org.junit.After;
 import org.junit.Before;
-
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
+import org.ops4j.pax.exam.rbc.Constants;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNotNull;
-
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.vmOption;
@@ -55,16 +55,20 @@ public abstract class AbstractFeatureTest {
     @Inject
     protected BundleContext bundleContext;
 
+    @Inject
+    protected BlueprintContainer blueprintContainer;
+
     @Before
     public void setUp() throws Exception {
-        LOG.info("Calling the setUp method ");
-        LOG.info("The BundleContext is " + bundleContext);
+        LOG.info("setUp() using BundleContext: {}", bundleContext);
+
+        // give time for karaf to install
         Thread.sleep(3000);
     }
 
     @After
     public void tearDown() throws Exception {
-        LOG.info("Calling the tearDown method ");
+        LOG.info("tearDown()");
     }
 
     protected void testComponent(String component) throws Exception {
@@ -73,7 +77,7 @@ public abstract class AbstractFeatureTest {
             try {
                 assertNotNull("Cannot get component with name: " + component, createCamelContext().getComponent(component));
                 return;
-            } catch (Exception t) {
+            } catch (Throwable t) {
                 if (System.currentTimeMillis() < max) {
                     Thread.sleep(1000);
                 } else {
@@ -95,7 +99,7 @@ public abstract class AbstractFeatureTest {
                 assertNotNull(dataFormatDefinition);
                 assertNotNull(dataFormatDefinition.getDataFormat(new DefaultRouteContext(createCamelContext())));
                 return;
-            } catch (Exception t) {
+            } catch (Throwable t) {
                 if (System.currentTimeMillis() < max) {
                     Thread.sleep(1000);
                 } else {
@@ -115,7 +119,7 @@ public abstract class AbstractFeatureTest {
             try {
                 assertNotNull(createCamelContext().resolveLanguage(lang));
                 return;
-            } catch (Exception t) {
+            } catch (Throwable t) {
                 if (System.currentTimeMillis() < max) {
                     Thread.sleep(1000);
                 } else {
@@ -126,12 +130,10 @@ public abstract class AbstractFeatureTest {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        LOG.info("Creating the CamelContext ...");
+        LOG.info("Creating CamelContext using BundleContext: {} and BlueprintContainer: {}", bundleContext, blueprintContainer);
         setThreadContextClassLoader();
-        CamelContextFactory factory = new CamelContextFactory();
-        factory.setBundleContext(bundleContext);
-        LOG.info("Get the bundleContext is " + bundleContext);
-        return factory.createContext();
+        BlueprintCamelContext context = new BlueprintCamelContext(bundleContext, blueprintContainer);
+        return context;
     }
 
     protected void setThreadContextClassLoader() {
@@ -161,15 +163,6 @@ public abstract class AbstractFeatureTest {
                 versionAsInProject().type("xml/features");
     }
     
-    public static UrlReference getKarafFeatureUrl() {
-        String karafVersion = System.getProperty("karafVersion");
-        LOG.info("*** The karaf version is " + karafVersion + " ***");
-
-        String type = "xml/features";
-        return mavenBundle().groupId("org.apache.karaf.assemblies.features").
-            artifactId("standard").version(karafVersion).type(type);
-    }
-
     private static void switchPlatformEncodingToUTF8() {
         try {
             System.setProperty("file.encoding", "UTF-8");
@@ -187,7 +180,7 @@ public abstract class AbstractFeatureTest {
         try {
             p.load(ins);
         } catch (Throwable t) {
-            //
+            // ignore
         }
         String karafVersion = p.getProperty("org.apache.karaf/apache-karaf/version");
         if (karafVersion == null) {
@@ -195,7 +188,7 @@ public abstract class AbstractFeatureTest {
         }
         if (karafVersion == null) {
             // setup the default version of it
-            karafVersion = "2.4.0";
+            karafVersion = "2.4.4";
         }
         return karafVersion;
     }
@@ -206,40 +199,44 @@ public abstract class AbstractFeatureTest {
         return mavenOption;
     }
 
-    public static Option[] configure(String feature) {
+    public static Option[] configure(String mainFeature, String... extraFeatures) {
         switchPlatformEncodingToUTF8();
         String karafVersion = getKarafVersion();
-        LOG.info("*** The karaf version is " + karafVersion + " ***");
+        LOG.info("*** Apache Karaf version is " + karafVersion + " ***");
+
+        List<String> list = new ArrayList<String>();
+        list.add("camel-core");
+        list.add("camel-blueprint");
+        list.add("camel-" + mainFeature);
+        for (String extra : extraFeatures) {
+            list.add("camel-" + extra);
+        }
+        String[] features = list.toArray(new String[list.size()]);
 
         Option[] options = new Option[] {
             // for remote debugging
             //org.ops4j.pax.exam.CoreOptions.vmOption("-Xdebug"),
             //org.ops4j.pax.exam.CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
-            
+
+            // we need INFO logging otherwise we cannot see what happens
+            new LogLevelOption(LogLevelOption.LogLevel.INFO),
+
             KarafDistributionOption.karafDistributionConfiguration()
                     .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
                     .karafVersion(karafVersion)
                     .name("Apache Karaf")
                     .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
 
+            // keep the folder so we can look inside when something fails
+            KarafDistributionOption.keepRuntimeFolder(),
+
             vmOption("-Dfile.encoding=UTF-8"),
 
-            //KarafDistributionOption.keepRuntimeFolder(),
-            // override the config.properties (to fix pax-exam bug)
-            //KarafDistributionOption.replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
-            // Update the jre.properties to export the sun.misc package
-            KarafDistributionOption.replaceConfigurationFile("etc/jre.properties", new File("src/test/resources/org/apache/camel/itest/karaf/jre.properties")),
-            KarafDistributionOption.replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
-            KarafDistributionOption.replaceConfigurationFile("etc/org.ops4j.pax.url.mvn.cfg", new File("src/test/resources/org/apache/camel/itest/karaf/org.ops4j.pax.url.mvn.cfg")),
-            
+            // install junit
             getJUnitBundle(),
 
-            // we need INFO logging otherwise we cannot see what happens
-            new LogLevelOption(LogLevelOption.LogLevel.INFO),
-
-
-            // install the cxf jaxb spec as the karaf doesn't provide it by default
-            KarafDistributionOption.features(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring", "camel-" + feature)
+            // install the features
+            KarafDistributionOption.features(getCamelKarafFeatureUrl(), features)
         };
 
         return options;

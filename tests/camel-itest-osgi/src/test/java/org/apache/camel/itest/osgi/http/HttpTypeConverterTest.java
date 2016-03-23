@@ -160,6 +160,9 @@ public class HttpTypeConverterTest extends OSGiIntegrationTestSupport {
         public void setContentLength(int len) {
         }
 
+        public void setContentLengthLong(long len) {
+        }
+
         public void setContentType(String type) {
         }
 

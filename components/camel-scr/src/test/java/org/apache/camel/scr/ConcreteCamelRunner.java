@@ -45,7 +45,8 @@ public class ConcreteCamelRunner extends AbstractCamelRunner implements Lifecycl
     public Map<String, String> getDefaultProperties() {
         // Set default properties
         Map<String, String> defaultProps = new HashMap<String, String>();
-        defaultProps.put("camelContextId", "camel-runner-test");
+        defaultProps.put("camelContextId", "camel-runner");
+        defaultProps.put("unit.camelContextId", "camel-runner-unitTest");
         defaultProps.put("camelRouteId", "test/direct-mock");
         defaultProps.put("active", "true");
         defaultProps.put("from", "direct:start");

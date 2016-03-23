@@ -17,6 +17,7 @@
 package org.apache.camel.tools.apt;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +25,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
@@ -33,6 +35,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
@@ -40,9 +43,9 @@ import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
-import static org.apache.camel.tools.apt.IOHelper.loadText;
-import static org.apache.camel.tools.apt.Strings.canonicalClassName;
-import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
+import static org.apache.camel.tools.apt.helper.IOHelper.loadText;
+import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
+import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
 
 /**
  * Abstract class for Camel apt plugins.
@@ -168,6 +171,21 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
         return null;
     }
 
+    protected VariableElement findFieldElement(TypeElement classElement, String fieldName) {
+        if (isNullOrEmpty(fieldName)) {
+            return null;
+        }
+
+        List<VariableElement> fields = ElementFilter.fieldsIn(classElement.getEnclosedElements());
+        for (VariableElement field : fields) {
+            if (fieldName.equals(field.getSimpleName().toString())) {
+                return field;
+            }
+        }
+
+        return null;
+    }
+
     protected TypeElement findTypeElement(RoundEnvironment roundEnv, String className) {
         if (isNullOrEmpty(className) || "java.lang.Object".equals(className)) {
             return null;
@@ -192,7 +210,7 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
             String packageName = className.substring(0, idx);
             PackageElement pe = elementUtils.getPackageElement(packageName);
             if (pe != null) {
-                List<? extends Element> enclosedElements = pe.getEnclosedElements();
+                List<? extends Element> enclosedElements = getEnclosedElements(pe);
                 for (Element rootElement : enclosedElements) {
                     if (rootElement instanceof TypeElement) {
                         TypeElement typeElement = (TypeElement) rootElement;
@@ -206,6 +224,17 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
         }
 
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<? extends Element> getEnclosedElements(PackageElement pe) {
+        // some components like hadoop/spark has bad classes that causes javac scanning issues
+        try {
+            return pe.getEnclosedElements();
+        } catch (Throwable e) {
+            // ignore
+        }
+        return Collections.EMPTY_LIST;
     }
 
     protected void findTypeElementChildren(RoundEnvironment roundEnv, Set<TypeElement> found, String superClassName) {
@@ -333,5 +362,21 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
         }
 
         return null;
+    }
+
+    protected void dumpExceptionToErrorFile(String fileName, String message, Throwable e) {
+        File file = new File(fileName);
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            fos.write(sw.toString().getBytes());
+            pw.close();
+            sw.close();
+            fos.close();
+        } catch (Throwable t) {
+            // ignore
+        }
     }
 }

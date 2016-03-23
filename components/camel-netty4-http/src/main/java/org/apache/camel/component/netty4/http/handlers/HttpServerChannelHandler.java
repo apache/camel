@@ -52,6 +52,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+
 /**
  * Netty HTTP {@link ServerChannelHandler} that handles the incoming HTTP requests and routes
  * the received message in Camel.
@@ -300,7 +301,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             if (cause instanceof ClosedChannelException) {
                 LOG.debug("Channel already closed. Ignoring this exception.");
             } else {
-                LOG.warn("Closing channel as an exception was thrown from Netty", cause);
+                LOG.debug("Closing channel as an exception was thrown from Netty", cause);
                 // close channel in case an exception was thrown
                 NettyHelper.close(ctx.channel());
             }

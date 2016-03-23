@@ -37,6 +37,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -266,6 +267,17 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                         row.put("camelContextName", context.getName());
                         row.put("routeId", route.getId());
                         row.put("state", getRouteState(route));
+                        row.put("uptime", route.getUptime());
+                        ManagedRouteMBean mr = context.getManagedRoute(route.getId(), ManagedRouteMBean.class);
+                        if (mr != null) {
+                            row.put("exchangesTotal", "" + mr.getExchangesTotal());
+                            row.put("exchangesInflight", "" + mr.getExchangesInflight());
+                            row.put("exchangesFailed", "" + mr.getExchangesFailed());
+                        } else {
+                            row.put("exchangesTotal", "0");
+                            row.put("exchangesInflight", "0");
+                            row.put("exchangesFailed", "0");
+                        }
                         answer.add(row);
                     }
                 }
@@ -402,6 +414,15 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
         return ModelHelper.dumpModelAsXml(null, def);
+    }
+
+    public String getRestApiDocAsJson(String camelContextName) throws Exception {
+        CamelContext context = this.getLocalCamelContext(camelContextName);
+        if (context == null) {
+            return null;
+        }
+
+        return context.getRestRegistry().apiDocAsJson();
     }
 
     public List<Map<String, String>> getEndpoints(String camelContextName) throws Exception {

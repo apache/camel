@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
@@ -193,13 +194,13 @@ public final class ObjectHelper {
     /**
      * A helper method for comparing objects for equality while handling nulls
      */
-    public static boolean equal(Object a, Object b, boolean ignoreCase) {
+    public static boolean equal(final Object a, final Object b, final boolean ignoreCase) {
         if (a == b) {
             return true;
         }
 
-        if (a instanceof byte[] && b instanceof byte[]) {
-            return equalByteArray((byte[])a, (byte[])b);
+        if (a == null || b == null) {
+            return false;
         }
 
         if (ignoreCase) {
@@ -208,7 +209,13 @@ public final class ObjectHelper {
             }
         }
 
-        return a != null && b != null && a.equals(b);
+        if (a.getClass().isArray() && b.getClass().isArray()) {
+            // uses array based equals
+            return Objects.deepEquals(a, b);
+        } else {
+            // use regular equals
+            return a.equals(b);
+        }
     }
 
     /**
@@ -216,22 +223,7 @@ public final class ObjectHelper {
      * nulls
      */
     public static boolean equalByteArray(byte[] a, byte[] b) {
-        if (a == b) {
-            return true;
-        }
-
-        // loop and compare each byte
-        if (a != null && b != null && a.length == b.length) {
-            for (int i = 0; i < a.length; i++) {
-                if (a[i] != b[i]) {
-                    return false;
-                }
-            }
-            // all bytes are equal
-            return true;
-        }
-
-        return false;
+        return Arrays.equals(a, b);
     }
 
     /**
@@ -666,8 +658,30 @@ public final class ObjectHelper {
      * @param allowEmptyValues  whether to allow empty values
      * @return the iterator
      */
-    public static Iterator<Object> createIterator(Object value, String delimiter, final boolean allowEmptyValues) {
-        return createIterable(value, delimiter, allowEmptyValues).iterator();
+    public static Iterator<Object> createIterator(Object value, String delimiter, boolean allowEmptyValues) {
+        return createIterable(value, delimiter, allowEmptyValues, false).iterator();
+    }
+
+    /**
+     * Creates an iterator over the value if the value is a collection, an
+     * Object[], a String with values separated by the given delimiter,
+     * or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     *
+     * </p> In case of primitive type arrays the returned {@code Iterator} iterates
+     * over the corresponding Java primitive wrapper objects of the given elements
+     * inside the {@code value} array. That's we get an autoboxing of the primitive
+     * types here for free as it's also the case in Java language itself.
+     *
+     * @param value             the value
+     * @param delimiter         delimiter for separating String values
+     * @param allowEmptyValues  whether to allow empty values
+     * @param pattern           whether the delimiter is a pattern
+     * @return the iterator
+     */
+    public static Iterator<Object> createIterator(Object value, String delimiter,
+                                                  boolean allowEmptyValues, boolean pattern) {
+        return createIterable(value, delimiter, allowEmptyValues, pattern).iterator();
     }
 
     /**
@@ -687,8 +701,32 @@ public final class ObjectHelper {
      * @return the iterable
      * @see java.lang.Iterable
      */
+    public static Iterable<Object> createIterable(Object value, String delimiter,
+                                                  final boolean allowEmptyValues) {
+        return createIterable(value, delimiter, allowEmptyValues, false);
+    }
+
+    /**
+     * Creates an iterable over the value if the value is a collection, an
+     * Object[], a String with values separated by the given delimiter,
+     * or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     *
+     * </p> In case of primitive type arrays the returned {@code Iterable} iterates
+     * over the corresponding Java primitive wrapper objects of the given elements
+     * inside the {@code value} array. That's we get an autoboxing of the primitive
+     * types here for free as it's also the case in Java language itself.
+     *
+     * @param value             the value
+     * @param delimiter         delimiter for separating String values
+     * @param allowEmptyValues  whether to allow empty values
+     * @param pattern           whether the delimiter is a pattern
+     * @return the iterable
+     * @see java.lang.Iterable
+     */
     @SuppressWarnings("unchecked")
-    public static Iterable<Object> createIterable(Object value, String delimiter, final boolean allowEmptyValues) {
+    public static Iterable<Object> createIterable(Object value, String delimiter,
+                                                  final boolean allowEmptyValues, final boolean pattern) {
 
         // if its a message than we want to iterate its body
         if (value instanceof Message) {
@@ -769,8 +807,8 @@ public final class ObjectHelper {
 
             // this code is optimized to only use a Scanner if needed, eg there is a delimiter
 
-            if (delimiter != null && s.contains(delimiter)) {
-                // use a scanner if it contains the delimiter
+            if (delimiter != null && (pattern || s.contains(delimiter))) {
+                // use a scanner if it contains the delimiter or is a pattern
                 final Scanner scanner = new Scanner((String)value);
 
                 if (DEFAULT_DELIMITER.equals(delimiter)) {
@@ -1282,7 +1320,12 @@ public final class ObjectHelper {
             }
         } else {
             if (!source.getReturnType().isAssignableFrom(target.getReturnType())) {
-                return false;
+                boolean b1 = source.isBridge();
+                boolean b2 = target.isBridge();
+                // must not be bridge methods
+                if (!b1 && !b2) {
+                    return false;
+                }
             }
         }
 
@@ -1299,7 +1342,12 @@ public final class ObjectHelper {
                 }
             } else {
                 if (!(source.getParameterTypes()[i].isAssignableFrom(target.getParameterTypes()[i]))) {
-                    return false;
+                    boolean b1 = source.isBridge();
+                    boolean b2 = target.isBridge();
+                    // must not be bridge methods
+                    if (!b1 && !b2) {
+                        return false;
+                    }
                 }
             }
         }

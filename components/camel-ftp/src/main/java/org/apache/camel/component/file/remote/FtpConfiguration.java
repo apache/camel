@@ -29,7 +29,7 @@ public class FtpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_FTP_PORT = 21;
 
-    @UriParam
+    @UriParam(label = "security")
     private String account;
 
     public FtpConfiguration() {

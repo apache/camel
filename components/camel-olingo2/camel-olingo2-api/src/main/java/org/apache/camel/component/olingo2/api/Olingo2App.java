@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.olingo2.api;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -79,6 +80,17 @@ public interface Olingo2App {
      */
     <T> void read(Edm edm, String resourcePath, Map<String, String> queryParams,
                   Olingo2ResponseHandler<T> responseHandler);
+
+    /**
+     * Reads an OData resource and invokes callback with the unparsed input stream.
+     * @param edm Service Edm, read from calling <code>read(null, "$metdata", null, responseHandler)</code>
+     * @param resourcePath OData Resource path
+     * @param queryParams OData query params
+     *                    from http://www.odata.org/documentation/odata-version-2-0/uri-conventions#SystemQueryOptions
+     * @param responseHandler callback handler
+     */
+    void uread(Edm edm, String resourcePath, Map<String, String> queryParams,
+               Olingo2ResponseHandler<InputStream> responseHandler);
 
     /**
      * Deletes an OData resource and invokes callback

@@ -34,30 +34,40 @@ import org.jboss.netty.handler.codec.frame.TooLongFrameException;
 @UriParams
 public class NettyHttpConfiguration extends NettyConfiguration {
 
+    @UriPath(enums = "http,https") @Metadata(required = "true")
+    private String protocol;
     @UriPath @Metadata(required = "true")
+    private String host;
+    @UriPath
+    private int port;
+    @UriPath
     private String path;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean urlDecodeHeaders;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean mapHeaders = true;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean compression;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean transferException;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean matchOnUriPrefix;
     @UriParam
     private boolean bridgeEndpoint;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean disableStreamCache;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean send503whenSuspended = true;
-    @UriParam(defaultValue = "" + 1024 * 1024)
+    @UriParam(label = "consumer,advanced", defaultValue = "" + 1024 * 1024)
     private int chunkedMaxContentLength = 1024 * 1024;
-    @UriParam(label = "consumer", defaultValue = "8192")
+    @UriParam(label = "consumer,advanced", defaultValue = "8192")
     private int maxHeaderSize = 8192;
+    @UriParam(label = "producer,advanced", defaultValue = "200-299")
+    private String okStatusCodeRange = "200-299";
+    @UriParam(label = "producer,advanced")
+    private boolean useRelativePath;
 
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
@@ -81,6 +91,48 @@ public class NettyHttpConfiguration extends NettyConfiguration {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    /**
+     * The protocol to use which is either http or https
+     */
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    @Override
+    public String getHost() {
+        // override to setup better documentation for netty-http
+        return super.getHost();
+    }
+
+    /**
+     * The local hostname such as localhost, or 0.0.0.0 when being a consumer.
+     * The remote HTTP server hostname when using producer.
+     */
+    @Override
+    public void setHost(String host) {
+        // override to setup better documentation for netty-http
+        super.setHost(host);
+    }
+
+    @Override
+    public int getPort() {
+        // override to setup better documentation for netty-http
+        return super.getPort();
+    }
+
+    /**
+     * The port number. Is default 80 for http and 443 for https.
+     */
+    @Override
+    public void setPort(int port) {
+        // override to setup better documentation for netty-http
+        super.setPort(port);
     }
 
     public boolean isCompression() {
@@ -115,6 +167,9 @@ public class NettyHttpConfiguration extends NettyConfiguration {
      * in the response as a application/x-java-serialized-object content type.
      * On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException.
      * The caused exception is required to be serialized.
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
@@ -245,4 +300,30 @@ public class NettyHttpConfiguration extends NettyConfiguration {
         throw new UnsupportedOperationException("You cannot setAllowDefaultCodec here.");
     }
 
+    public String getOkStatusCodeRange() {
+        return okStatusCodeRange;
+    }
+
+    /**
+     * The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
+     * <p/>
+     * The default range is <tt>200-299</tt>
+     */
+    public void setOkStatusCodeRange(String okStatusCodeRange) {
+        this.okStatusCodeRange = okStatusCodeRange;
+    }  
+
+    /**
+     * Sets whether to use a relative path in HTTP requests.
+     * <p/>
+     * Some third party backend systems such as IBM Datapower do not support absolute URIs in HTTP POSTs, and setting
+     * this option to <tt>true</tt> can work around this problem.
+     */
+    public void setUseRelativePath(boolean useRelativePath) {
+        this.useRelativePath = useRelativePath;
+    }
+
+    public boolean isUseRelativePath() {
+        return this.useRelativePath;        
+    }
 }

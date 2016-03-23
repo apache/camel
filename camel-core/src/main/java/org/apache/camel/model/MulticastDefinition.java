@@ -31,6 +31,7 @@ import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -105,7 +106,9 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
     /**
      * Sets the AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing message from the Multicast.
-     * By default Camel will use the last reply as the outgoing message. You can also use a POJO as the AggregationStrategy
+     * By default Camel will use the last reply as the outgoing message. You can also use a POJO as the AggregationStrategy.
+     * If an exception is thrown from the aggregate method in the AggregationStrategy, then by default, that exception
+     * is not handled by the error handler. The error handler can be enabled to react if enabling the shareUnitOfWork option.
      */
     public MulticastDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
@@ -115,6 +118,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     /**
      * Sets a reference to the AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing message from the Multicast.
      * By default Camel will use the last reply as the outgoing message. You can also use a POJO as the AggregationStrategy
+     * If an exception is thrown from the aggregate method in the AggregationStrategy, then by default, that exception
+     * is not handled by the error handler. The error handler can be enabled to react if enabling the shareUnitOfWork option.
      */
     public MulticastDefinition aggregationStrategyRef(String aggregationStrategyRef) {
         setStrategyRef(aggregationStrategyRef);
@@ -283,11 +288,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     }
 
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
-        if (strategy == null) {
-            // default to use latest aggregation strategy
-            strategy = new UseLatestAggregationStrategy();
-        }
+        final AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
         boolean isParallelProcessing = getParallelProcessing() != null && getParallelProcessing();
         boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
@@ -308,12 +309,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
         MulticastProcessor answer = new MulticastProcessor(routeContext.getCamelContext(), list, strategy, isParallelProcessing,
                                       threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, onPrepare, isShareUnitOfWork, isParallelAggregate);
-        if (isShareUnitOfWork) {
-            // wrap answer in a sub unit of work, since we share the unit of work
-            CamelInternalProcessor internalProcessor = new CamelInternalProcessor(answer);
-            internalProcessor.addAdvice(new CamelInternalProcessor.SubUnitOfWorkProcessorAdvice());
-            return internalProcessor;
-        }
         return answer;
     }
 
@@ -335,13 +330,22 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
             }
         }
 
-        if (strategy != null && strategy instanceof CamelContextAware) {
+        if (strategy == null) {
+            // default to use latest aggregation strategy
+            strategy = new UseLatestAggregationStrategy();
+        }
+
+        if (strategy instanceof CamelContextAware) {
             ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
+        }
+
+        if (shareUnitOfWork != null && shareUnitOfWork) {
+            // wrap strategy in share unit of work
+            strategy = new ShareUnitOfWorkAggregationStrategy(strategy);
         }
 
         return strategy;
     }
-
 
     public AggregationStrategy getAggregationStrategy() {
         return aggregationStrategy;

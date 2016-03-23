@@ -67,15 +67,16 @@ public class CamelAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(RoutesCollector.class)
-    RoutesCollector routesCollector(ApplicationContext applicationContext) {
+    RoutesCollector routesCollector(ApplicationContext applicationContext, CamelConfigurationProperties configurationProperties) {
         Collection<CamelContextConfiguration> configurations = applicationContext.getBeansOfType(CamelContextConfiguration.class).values();
-        return new RoutesCollector(new ArrayList<CamelContextConfiguration>(configurations));
+        return new RoutesCollector(applicationContext, new ArrayList<CamelContextConfiguration>(configurations), configurationProperties);
     }
 
     /**
      * Default producer template for the bootstrapped Camel context.
      */
-    @Bean
+    @Bean(initMethod = "", destroyMethod = "")
+    // Camel handles the lifecycle of this bean
     @ConditionalOnMissingBean(ProducerTemplate.class)
     ProducerTemplate producerTemplate(CamelContext camelContext,
                                       CamelConfigurationProperties configurationProperties) {
@@ -85,7 +86,8 @@ public class CamelAutoConfiguration {
     /**
      * Default consumer template for the bootstrapped Camel context.
      */
-    @Bean
+    @Bean(initMethod = "", destroyMethod = "")
+    // Camel handles the lifecycle of this bean
     @ConditionalOnMissingBean(ConsumerTemplate.class)
     ConsumerTemplate consumerTemplate(CamelContext camelContext,
                                       CamelConfigurationProperties configurationProperties) {
@@ -99,11 +101,17 @@ public class CamelAutoConfiguration {
         return new SpringPropertiesParser();
     }
 
-    @Bean
-    PropertiesComponent properties() {
-        PropertiesComponent properties = new PropertiesComponent();
-        properties.setPropertiesParser(propertiesParser());
-        return properties;
+    @Bean(initMethod = "", destroyMethod = "")
+    // Camel handles the lifecycle of this bean
+    PropertiesComponent properties(CamelContext camelContext, PropertiesParser parser) {
+        if (camelContext.hasComponent("properties") != null) {
+            return camelContext.getComponent("properties", PropertiesComponent.class);
+        } else {
+            PropertiesComponent pc = new PropertiesComponent();
+            pc.setPropertiesParser(parser);
+            camelContext.addComponent("properties", pc);
+            return pc;
+        }
     }
 
     /**

@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -41,6 +41,8 @@
       !org.apache.camel.*,
       !com.googlecode.concurrentlinkedhashmap,
       ${camel.osgi.import.defaults},
+      org.springframework.transaction;resolution:=optional,
+      org.apache.camel.spring.spi;resolution:=optional,
       org.apache.xalan.xsltc.trax;resolution:=optional,
       javax.activation;resolution:=optional,
       javax.xml.bind;resolution:=optional,
@@ -69,8 +71,9 @@
       org.apache.camel.spi.ComponentResolver;component=properties,
       org.apache.camel.spi.ComponentResolver;component=ref,
       org.apache.camel.spi.ComponentResolver;component=rest,
-      org.apache.camel.spi.ComponentResolver;component=seda,
+      org.apache.camel.spi.ComponentResolver;component=rest-api,
       org.apache.camel.spi.ComponentResolver;component=scheduler,
+      org.apache.camel.spi.ComponentResolver;component=seda,
       org.apache.camel.spi.ComponentResolver;component=stub,
       org.apache.camel.spi.ComponentResolver;component=test,
       org.apache.camel.spi.ComponentResolver;component=timer,
@@ -83,9 +86,9 @@
       org.apache.camel.spi.DataFormatResolver;dataformat=zip,
       org.apache.camel.spi.LanguageResolver;language=bean,
       org.apache.camel.spi.LanguageResolver;language=constant,
+      org.apache.camel.spi.LanguageResolver;language=exchangeProperty,
       org.apache.camel.spi.LanguageResolver;language=file,
       org.apache.camel.spi.LanguageResolver;language=header,
-      org.apache.camel.spi.LanguageResolver;language=property,
       org.apache.camel.spi.LanguageResolver;language=ref,
       org.apache.camel.spi.LanguageResolver;language=simple,
       org.apache.camel.spi.LanguageResolver;language=tokenize,
@@ -165,7 +168,6 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson2-version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -319,7 +321,14 @@
               <goal>validate-components</goal>
             </goals>
             <phase>prepare-package</phase>
-         </execution>
+          </execution>
+          <execution>
+            <id>readme</id>
+            <goals>
+              <goal>update-readme</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
         </executions>
       </plugin>
     </plugins>

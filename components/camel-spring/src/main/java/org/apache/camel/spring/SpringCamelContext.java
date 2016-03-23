@@ -78,11 +78,21 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             NO_START.remove();
         }
     }
-    
+
+    /**
+     * @deprecated its better to create and boot Spring the standard Spring way and to get hold of CamelContext
+     * using the Spring API.
+     */
+    @Deprecated
     public static SpringCamelContext springCamelContext(ApplicationContext applicationContext) throws Exception {
         return springCamelContext(applicationContext, true);
     }
-    
+
+    /**
+     * @deprecated its better to create and boot Spring the standard Spring way and to get hold of CamelContext
+     * using the Spring API.
+     */
+    @Deprecated
     public static SpringCamelContext springCamelContext(ApplicationContext applicationContext, boolean maybeStart) throws Exception {
         if (applicationContext != null) {
             // lets try and look up a configured camel context in the context
@@ -99,6 +109,11 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         return answer;
     }
 
+    /**
+     * @deprecated its better to create and boot Spring the standard Spring way and to get hold of CamelContext
+     * using the Spring API.
+     */
+    @Deprecated
     public static SpringCamelContext springCamelContext(String configLocations) throws Exception {
         return springCamelContext(new ClassPathXmlApplicationContext(configLocations));
     }
