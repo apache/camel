@@ -80,6 +80,7 @@
     <brave-zipkin-version>3.5.0</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
+    <caffeine-version>2.2.3</caffeine-version>
     <californium-version>1.0.0-M3</californium-version>
     <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
     <cassandra-driver-version>2.1.9</cassandra-driver-version>
@@ -128,7 +129,6 @@
     <commons-pool2-version>2.4.2</commons-pool2-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <compress-lzf-version>1.0.3</compress-lzf-version>
-    <concurrentlinkedhashmap.version>1.4.2</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
     <cxf-version>3.1.6</cxf-version>
     <cxf-version-range>[3.0,4.0)</cxf-version-range>
@@ -2041,11 +2041,11 @@
         <version>${kafka-version}</version>
       </dependency>
       
-      <!-- API -->
+      <!-- embedded concurrent lru map -->
       <dependency>
-        <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
-        <artifactId>concurrentlinkedhashmap-lru</artifactId>
-        <version>${concurrentlinkedhashmap.version}</version>
+        <groupId>com.github.ben-manes.caffeine</groupId>
+        <artifactId>caffeine</artifactId>
+        <version>${caffeine-version}</version>
       </dependency>
 
       <!-- optional dependencies -->

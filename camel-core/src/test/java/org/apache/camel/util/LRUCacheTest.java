@@ -28,7 +28,8 @@ public class LRUCacheTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        cache = new LRUCache<String, Service>(10);
+        // for testing use sync listener
+        cache = new LRUCache<String, Service>(10, 10, true, false, false, true);
     }
 
     public void testLRUCache() {
@@ -44,7 +45,7 @@ public class LRUCacheTest extends TestCase {
         assertSame(service2, cache.get("B"));
     }
 
-    public void testLRUCacheEviction() {
+    public void testLRUCacheEviction() throws Exception {
         MyService service1 = new MyService();
         MyService service2 = new MyService();
         MyService service3 = new MyService();
@@ -85,11 +86,18 @@ public class LRUCacheTest extends TestCase {
         cache.put("K", service11);
         assertNull(service11.getStopped());
 
+        // the eviction is async so force cleanup
+        cache.cleanUp();
+
         // should evict the eldest, and stop the service
         assertTrue(service1.getStopped());
 
-        cache.put("L", service12);
         assertNull(service12.getStopped());
+
+        cache.put("L", service12);
+
+        // the eviction is async so force cleanup
+        cache.cleanUp();
 
         // should evict the eldest, and stop the service
         assertTrue(service2.getStopped());

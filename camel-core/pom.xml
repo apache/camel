@@ -126,8 +126,8 @@
     <!-- required dependencies by camel-core -->
     <!-- which we shade into camel-core so its available for everybody out of the box -->
     <dependency>
-      <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
-      <artifactId>concurrentlinkedhashmap-lru</artifactId>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
     </dependency>
 
     <!-- required dependencies by camel-core -->
@@ -226,7 +226,7 @@
             <configuration>
               <artifactSet>
                 <includes>
-                  <include>com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru</include>
+                  <include>com.github.ben-manes.caffeine:caffeine</include>
                 </includes>
                 <excludes>
                   <exclude>org.apache.camel:apt</exclude>
@@ -234,8 +234,8 @@
               </artifactSet>
               <relocations>
                 <relocation>
-                  <pattern>com.googlecode.concurrentlinkedhashmap</pattern>
-                  <shadedPattern>org.apache.camel.com.googlecode.concurrentlinkedhashmap</shadedPattern>
+                  <pattern>com.github.benmanes.caffeine.cache</pattern>
+                  <shadedPattern>org.apache.camel.com.github.benmanes.caffeine.cache</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>

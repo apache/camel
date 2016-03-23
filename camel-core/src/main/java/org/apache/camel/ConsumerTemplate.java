@@ -81,6 +81,11 @@ public interface ConsumerTemplate extends Service {
      */
     int getCurrentCacheSize();
 
+    /**
+     * Cleanup the cache (purging stale entries)
+     */
+    void cleanUp();
+
     // Synchronous methods
     // -----------------------------------------------------------------------
 

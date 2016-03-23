@@ -138,8 +138,12 @@ public class DefaultCamelContextTest extends TestSupport {
         assertEquals(2, list.size());
 
         Iterator<Endpoint> it = list.iterator();
-        assertEquals("log://bar", it.next().getEndpointUri());
-        assertEquals("log://baz", it.next().getEndpointUri());
+        String s1 = it.next().getEndpointUri();
+        String s2 = it.next().getEndpointUri();
+        assertTrue("log://bar".equals(s1) || "log://bar".equals(s2));
+        assertTrue("log://baz".equals(s1) || "log://baz".equals(s2));
+        assertTrue("log://baz".equals(s1) || "log://baz".equals(s2));
+        assertTrue("log://baz".equals(s1) || "log://baz".equals(s2));
 
         assertEquals(1, ctx.getEndpoints().size());
     }

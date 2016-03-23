@@ -92,6 +92,12 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return eventNotifierEnabled;
     }
 
+    public void cleanUp() {
+        if (producerCache != null) {
+            producerCache.cleanUp();
+        }
+    }
+
     public void setEventNotifierEnabled(boolean eventNotifierEnabled) {
         this.eventNotifierEnabled = eventNotifierEnabled;
         // if we already created the cache then adjust its setting as well
