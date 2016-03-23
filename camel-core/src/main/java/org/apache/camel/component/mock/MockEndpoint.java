@@ -681,7 +681,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         }
 
         if (actualValue instanceof Expression) {
-            actualValue = ((Expression)actualValue).evaluate(exchange, expectedValue != null ? expectedValue.getClass() : Object.class);
+            Class clazz = Object.class;
+            if (expectedValue != null) {
+                clazz = expectedValue.getClass();
+            }
+            actualValue = ((Expression)actualValue).evaluate(exchange, clazz);
         } else if (actualValue instanceof Predicate) {
             actualValue = ((Predicate)actualValue).matches(exchange);
         } else if (expectedValue != null) {
