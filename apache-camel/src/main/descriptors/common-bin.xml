@@ -49,6 +49,7 @@
         <include>org.apache.camel:camel-castor</include>
         <include>org.apache.camel:camel-cdi</include>
         <include>org.apache.camel:camel-chunk</include>
+        <include>org.apache.camel:camel-cm-sms</include>
         <include>org.apache.camel:camel-cmis</include>
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-core-osgi</include>
