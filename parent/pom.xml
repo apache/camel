@@ -125,7 +125,6 @@
     <commons-net-version>3.3</commons-net-version>
     <commons-pool-version>1.6</commons-pool-version>
     <commons-pool2-version>2.4.2</commons-pool2-version>
-    <commons-pool2-version>2.4.1</commons-pool2-version>
 	<commons-validator-version>1.5.0</commons-validator-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <compress-lzf-version>1.0.3</compress-lzf-version>
