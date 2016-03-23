@@ -18,7 +18,6 @@ package org.apache.camel.component.cm;
 
 import java.util.Map;
 import java.util.Set;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
@@ -28,7 +27,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.URISupport;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +41,10 @@ public class CMComponent extends UriEndpointComponent {
     @BeanInject
     private Validator validator;
 
+    public CMComponent() {
+        super(CMEndpoint.class);
+    }
+
     public CMComponent(final CamelContext context) {
         super(context, CMEndpoint.class);
     }
@@ -54,11 +56,6 @@ public class CMComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
 
         LOG.debug("Creating CM Endpoint ... ");
-
-        final String url = CMConstants.DEFAULT_SCHEME + remaining;
-        if (!UrlValidator.getInstance().isValid(url)) {
-            throw new ResolveEndpointFailedException(uri, String.format("HOST provided: %s seem to be invalid. Remember SCHEME has to be excluded.", url));
-        }
 
         LOG.debug("Uri=[{}], path=[{}], parameters=[{}]", new Object[] {URISupport.sanitizeUri(uri), URISupport.sanitizePath(remaining), parameters });
 

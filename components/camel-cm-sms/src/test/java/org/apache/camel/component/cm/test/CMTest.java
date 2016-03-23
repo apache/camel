@@ -155,13 +155,6 @@ public class CMTest extends AbstractJUnit4SpringContextTests {
         }
     }
 
-    @Test(expected = ResolveEndpointFailedException.class)
-    public void testInvalidUriEndpoint() throws Throwable {
-        // cm-sms://sgw01.cm.nl/gateway.ashx?defaultFrom=MyBusiness&defaultMaxNumberOfParts=8&productToken=ea723fd7-da81-4826-89bc-fa7144e71c40&testConnectionOnStartup=true
-        String noHostUri = "cm-sms://gateway.ashx?defaultFrom=MyBusiness&defaultMaxNumberOfParts=8&productToken=ea723fd7-da81-4826-89bc-fa7144e71c40&testConnectionOnStartup=true";
-        camelContext.getEndpoint(noHostUri);
-    }
-
     /*
      * 2. Invalid Payload
      */

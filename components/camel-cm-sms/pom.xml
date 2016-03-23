@@ -69,11 +69,6 @@
       <artifactId>javax.el-api</artifactId>
       <version>${javax.el-api-version}</version>
     </dependency>
-    <dependency>
-      <groupId>commons-validator</groupId>
-      <artifactId>commons-validator</artifactId>
-      <version>${commons-validator-version}</version>
-    </dependency>
 
     <!-- test dependencies -->
     <dependency>

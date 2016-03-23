@@ -289,15 +289,17 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.chunk-templates/${chunk-templates-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-chunk/${project.version}</bundle>
   </feature>
-  <feature name='camel-cm' version='${project.version}' resolver='(obr)' start-level='50'>
+  <feature name='camel-cm-sms' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${cxf-version-range}'>cxf-specs</feature>
-	<bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-	<bundle dependency='true'>mvn:org.jsoup/jsoup/${jsoup-version}</bundle>
-	<bundle dependency='true'>mvn:javax.validation/validation-api/${validation-api-version}</bundle>
-	<bundle dependency='true'>mvn:javax.el/javax.el-api/${javax.el-api-version}</bundle>
-	<bundle dependency='true'>mvn:commons-validator/commons-validator/${commons-validator-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-cm/${project.version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.googlecode.libphonenumber/libphonenumber/${libphonenumber-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+	  <bundle dependency='true'>mvn:org.jsoup/jsoup/${jsoup-version}</bundle>
+	  <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-api-version}</bundle>
+	  <bundle dependency='true'>mvn:javax.el/javax.el-api/${javax.el-api-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-cm-sms/${project.version}</bundle>
   </feature>
   <feature name='camel-cmis' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
