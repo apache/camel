@@ -38,8 +38,8 @@ import org.infinispan.query.remote.client.MarshallerRegistration;
 import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
 import org.junit.Test;
 
-import static org.apache.camel.component.infinispan.UserUtils.CQ_USERS;
-import static org.apache.camel.component.infinispan.UserUtils.createKey;
+import static org.apache.camel.component.infinispan.util.UserUtils.CQ_USERS;
+import static org.apache.camel.component.infinispan.util.UserUtils.createKey;
 
 public class InfinispanContinuousQueryIT extends CamelTestSupport {
 
