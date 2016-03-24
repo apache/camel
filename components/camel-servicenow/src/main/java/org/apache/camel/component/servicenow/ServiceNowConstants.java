@@ -24,7 +24,7 @@ public interface ServiceNowConstants {
 
     String RESOURCE_TABLE = "table";
     String RESOURCE_AGGREGATE = "aggregate";
-    String RESOURCE_IMPORT = "aggregate";
+    String RESOURCE_IMPORT = "import";
 
     String ACTION_RETRIEVE = "retrieve";
     String ACTION_CREATE = "create";

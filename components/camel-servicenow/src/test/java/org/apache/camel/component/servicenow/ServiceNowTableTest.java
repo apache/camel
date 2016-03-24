@@ -53,6 +53,29 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
     }
 
     @Test
+    public void testRetrieveSomeWithDefaults() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:servicenow-defaults");
+        mock.expectedMessageCount(1);
+
+        template().sendBodyAndHeaders(
+            "direct:servicenow-defaults",
+            null,
+            new KVBuilder()
+                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                .put(ServiceNowConstants.SYSPARM_LIMIT, "10")
+                .build()
+        );
+
+        mock.assertIsSatisfied();
+
+        Exchange exchange = mock.getExchanges().get(0);
+        List<Incident> items = exchange.getIn().getBody(List.class);
+
+        assertNotNull(items);
+        assertTrue(items.size() <= 10);
+    }
+
+    @Test
     public void testIncidentWorkflow() throws Exception {
 
         Incident incident = null;
@@ -280,6 +303,17 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
                         + "&model.incident=org.apache.camel.component.servicenow.model.Incident")
                     .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
                     .to("mock:servicenow");
+                from("direct:servicenow-defaults")
+                    .to("servicenow:{{env:SERVICENOW_INSTANCE}}"
+                        + "?userName={{env:SERVICENOW_USERNAME}}"
+                        + "&password={{env:SERVICENOW_PASSWORD}}"
+                        //+ "&oauthClientId={{env:SERVICENOW_OAUTH2_CLIENT_ID}}"
+                        //+ "&oauthClientSecret={{env:SERVICENOW_OAUTH2_CLIENT_SECRET}}"
+                        + "&model.incident=org.apache.camel.component.servicenow.model.Incident"
+                        + "&resource=table"
+                        + "&table=incident")
+                    .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
+                    .to("mock:servicenow-defaults");
             }
         };
     }
