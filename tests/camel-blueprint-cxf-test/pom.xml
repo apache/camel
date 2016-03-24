@@ -34,7 +34,7 @@
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm-all</artifactId>
-      <version>4.0</version>
+      <version>5.1</version>
       <scope>test</scope>
     </dependency>
 
