@@ -335,7 +335,7 @@
     <json-path-version>2.1.0</json-path-version>
     <json-simple-version>1.1.1</json-simple-version>
     <json-smart-version>2.2.1</json-smart-version>
-	<jsoup-version>1.8.3</jsoup-version>
+    <jsoup-version>1.8.3</jsoup-version>
     <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
     <jsr311-api-version>1.1.1</jsr311-api-version>
     <jsmpp-bundle-version>2.1.0_4</jsmpp-bundle-version>
@@ -359,7 +359,7 @@
     <kubernetes-model-version>1.0.43</kubernetes-model-version>
     <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
     <leveldbjni-version>1.8</leveldbjni-version>
-	<libphonenumber-version>7.2.7</libphonenumber-version>
+    <libphonenumber-version>7.2.7</libphonenumber-version>
     <!-- virtual dependency only used by Eclipse m2e -->
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <log4j-version>1.2.17</log4j-version>
