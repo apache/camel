@@ -49,7 +49,7 @@ public class ServiceNowProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        final String resource = exchange.getIn().getHeader(ServiceNowConstants.RESOURCE, String.class);
+        String resource = exchange.getIn().getHeader(ServiceNowConstants.RESOURCE, configuration.getResource(), String.class);
 
         if (ObjectHelper.equal(ServiceNowConstants.RESOURCE_TABLE, resource, true)) {
             tableCache.get().process(exchange);
