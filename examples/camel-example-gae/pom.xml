@@ -26,7 +26,7 @@
     </parent>
 
     <artifactId>camel-example-gae</artifactId>
-    <name>Camel :: Example :: GAE</name>
+    <name>Camel :: Example :: GAE (deprecated)</name>
     <description>Demonstrates how to get Camel running on Google App Engine</description>
     <packaging>war</packaging>
 
