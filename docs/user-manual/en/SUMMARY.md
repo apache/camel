@@ -128,6 +128,7 @@
     * [Eventadmin](eventadmin.adoc)
     * [Exec](exec.adoc)
     * [Facebook](facebook.adoc)
+    * [Flatpack](flatpack.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
