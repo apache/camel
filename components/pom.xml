@@ -263,6 +263,7 @@
     <module>camel-xstream</module>
     <module>camel-yammer</module>
     <module>camel-zipfile</module>
+    <module>camel-zipkin</module>
     <module>camel-zookeeper</module>
   </modules>
 
