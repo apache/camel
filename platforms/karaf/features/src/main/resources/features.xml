@@ -726,6 +726,11 @@
     <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http4/${project.version}</bundle>
   </feature>
+    <feature name='camel-hystrix' version='${project.version}' resolver='(obr)' start-level='50'>
+        <feature version='${project.version}'>camel-core</feature>
+        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hystrix/${hystrix-bundle-version}</bundle>
+        <bundle>mvn:org.apache.camel/camel-hystrix/${project.version}</bundle>
+    </feature>
   <feature name='camel-ibatis' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
 	  <feature>transaction</feature>
