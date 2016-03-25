@@ -132,6 +132,7 @@
     * [FOP](fop.adoc)
     * [Freemarker](freemarker.adoc)
     * [FTP](ftp.adoc)
+    * [GAE](gae.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
