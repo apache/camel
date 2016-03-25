@@ -150,6 +150,7 @@
 -->
 
 * Data Formats
+    * [Flatpack](flatpack-dataformat.adoc)
     * [XML JSON](xmljson.adoc)
 
 * User Guide
