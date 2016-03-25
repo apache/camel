@@ -69,6 +69,11 @@ http://svn.apache.org/repos/asf/xmlgraphics/commons/trunk/src/java/org/apache/xm
 Endpoint Options
 ^^^^^^^^^^^^^^^^
 
+// component options: START
+The FOP component has no options.
+// component options: END
+
+
 // endpoint options: START
 The FOP component supports 5 endpoint options which are listed below:
 
