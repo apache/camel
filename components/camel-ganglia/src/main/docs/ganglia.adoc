@@ -53,8 +53,11 @@ You can append query options to the URI in the following format,
 Ganglia component and endpoint URI options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 // component options: START
 The Ganglia component supports 1 options which are listed below.
+
+
 
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
@@ -62,6 +65,7 @@ The Ganglia component supports 1 options which are listed below.
 | configuration | GangliaConfiguration | To use the shared configuration
 |=======================================================================
 // component options: END
+
 
 // endpoint options: START
 The Ganglia component supports 16 endpoint options which are listed below:

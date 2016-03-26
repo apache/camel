@@ -39,8 +39,11 @@ You can append query options to the URI in the following format,
 Options
 ^^^^^^^
 
+
 // component options: START
 The Freemarker component supports 1 options which are listed below.
+
+
 
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
@@ -48,6 +51,7 @@ The Freemarker component supports 1 options which are listed below.
 | configuration | Configuration | To use an existing freemarker.template.Configuration instance as the configuration.
 |=======================================================================
 // component options: END
+
 
 // endpoint options: START
 The Freemarker component supports 7 endpoint options which are listed below:
