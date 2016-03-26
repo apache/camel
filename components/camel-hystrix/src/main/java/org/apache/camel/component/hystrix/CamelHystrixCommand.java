@@ -47,9 +47,17 @@ public class CamelHystrixCommand extends HystrixCommand<Exchange> {
         }
         try {
             Endpoint endpoint = findEndpoint(fallbackEndpointId);
+            if (exchange.getException() != null) {
+                Exception exception = exchange.getException();
+                exchange.setException(null);
+                if (exception instanceof InterruptedException) {
+                    exchange.removeProperty(Exchange.ROUTE_STOP);
+                }
+            }
+
             endpoint.createProducer().process(exchange);
-        } catch (Exception e) {
-           throw new RuntimeException(e.getMessage());
+        } catch (Exception exception) {
+            throw new RuntimeException(exception.getMessage());
         }
         return exchange;
     }
@@ -59,14 +67,20 @@ public class CamelHystrixCommand extends HystrixCommand<Exchange> {
         try {
             Endpoint endpoint = findEndpoint(runEndpointId);
             endpoint.createProducer().process(exchange);
-        } catch (Exception e) {
+        } catch (Exception exception) {
             exchange.setException(null);
-            throw new RuntimeException(e.getMessage());
+            if (exception instanceof InterruptedException) {
+                exchange.removeProperty(Exchange.ROUTE_STOP);
+            }
+            throw new RuntimeException(exception.getMessage());
         }
 
         if (exchange.getException() != null) {
             Exception exception = exchange.getException();
             exchange.setException(null);
+            if (exception instanceof InterruptedException) {
+                exchange.removeProperty(Exchange.ROUTE_STOP);
+            }
             throw new RuntimeException(exception.getMessage());
         }
         return exchange;

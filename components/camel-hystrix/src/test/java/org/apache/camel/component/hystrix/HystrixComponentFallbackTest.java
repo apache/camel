@@ -33,16 +33,7 @@ import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HystrixComponentTest extends CamelTestSupport {
-
-    @Produce(uri = "direct:start")
-    protected ProducerTemplate template;
-
-    @EndpointInject(uri = "mock:result")
-    protected MockEndpoint resultEndpoint;
-
-    @EndpointInject(uri = "mock:error")
-    protected MockEndpoint errorEndpoint;
+public class HystrixComponentFallbackTest extends HystrixComponentBase {
 
     @Test
     public void invokesTargetEndpoint() throws Exception {
@@ -86,53 +77,6 @@ public class HystrixComponentTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test
-    public void invokesCachedEndpoint() throws Exception {
-        resultEndpoint.expectedMessageCount(1);
-        errorEndpoint.expectedMessageCount(0);
-
-        template.sendBodyAndHeader("body", "key", "cachedKey");
-        template.sendBodyAndHeader("body", "key", "cachedKey");
-
-        assertMockEndpointsSatisfied();
-
-        resultEndpoint.expectedMessageCount(2);
-        template.sendBodyAndHeader("body", "key", "cachedKey");
-        template.sendBodyAndHeader("body", "key", "differentCachedKey");
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void invokesCachedEndpointFromDifferentThread() throws Exception {
-        resultEndpoint.expectedMessageCount(1);
-        errorEndpoint.expectedMessageCount(0);
-
-        template.sendBodyAndHeader("body", "key", "cachedKey");
-
-        final CountDownLatch latch = new CountDownLatch(1);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                template.sendBodyAndHeader("body", "key", "cachedKey");
-                latch.countDown();
-            }
-        }).start();
-
-        latch.await(2, TimeUnit.SECONDS);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        CamelContext context = new DefaultCamelContext(registry);
-        registry.put("run", context.getEndpoint("direct:run"));
-        registry.put("fallback", context.getEndpoint("direct:fallback"));
-        registry.put("bodyExpression", ExpressionBuilder.headerExpression("key"));
-        return context;
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -146,7 +90,7 @@ public class HystrixComponentTest extends CamelTestSupport {
                         .to("mock:result");
 
                 from("direct:start")
-                        .to("hystrix:testKey?runEndpointId=run&fallbackEndpointId=fallback&cacheKeyExpression=#bodyExpression&propagateRequestContext=true");
+                        .to("hystrix:testKey?runEndpointId=run&fallbackEndpointId=fallback&cacheKeyExpression=#headerExpression&initializeRequestContext=true");
             }
         };
     }

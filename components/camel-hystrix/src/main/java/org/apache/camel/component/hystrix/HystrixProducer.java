@@ -19,14 +19,17 @@ package org.apache.camel.component.hystrix;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
+import com.netflix.hystrix.HystrixCommandMetrics;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixRequestCache;
 import com.netflix.hystrix.HystrixThreadPoolKey;
+import com.netflix.hystrix.HystrixThreadPoolMetrics;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ExchangeHelper;
 
 /**
  * The Hystrix producer.
@@ -42,148 +45,231 @@ public class HystrixProducer extends DefaultProducer {
 
     public void process(final Exchange exchange) throws Exception {
         HystrixCommand.Setter setter = HystrixCommand.Setter.withGroupKey(
-                HystrixCommandGroupKey.Factory.asKey(configuration.getGroupKey()));
-        setCommandPropertiesDefaults(setter);
-        setThreadPoolPropertiesDefaults(setter);
+                HystrixCommandGroupKey.Factory.asKey(exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_GROUP_KEY, configuration.getGroupKey(), String.class)));
+
+        setCommandPropertiesDefaults(setter, exchange);
+        setThreadPoolPropertiesDefaults(setter, exchange);
+
 
         CamelHystrixCommand camelHystrixCommand = new CamelHystrixCommand(setter, exchange, getCacheKey(exchange),
-                configuration.getRunEndpointId(), configuration.getFallbackEndpointId());
+                exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_RUN_ENDPOINT_ID, configuration.getRunEndpointId(), String.class),
+                exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_FALLBACK_ENDPOINT_ID, configuration.getFallbackEndpointId(), String.class));
 
         checkRequestContextPresent(exchange);
         clearCache(camelHystrixCommand.getCommandKey(), exchange);
         camelHystrixCommand.execute();
+        populateWithMetrics(exchange, camelHystrixCommand);
     }
 
-    private void setCommandPropertiesDefaults(HystrixCommand.Setter setter) {
-        if (configuration.getCommandKey() != null) {
-            setter.andCommandKey(HystrixCommandKey.Factory.asKey(configuration.getCommandKey()));
+    private void setHeader(Exchange exchange, String key, Object value) {
+        if (ExchangeHelper.isOutCapable(exchange)) {
+            exchange.getOut().setHeader(key, value);
+        } else {
+            exchange.getIn().setHeader(key, value);
         }
+    }
 
+    private void setCommandPropertiesDefaults(HystrixCommand.Setter setter, Exchange exchange) {
         HystrixCommandProperties.Setter commandDefaults = HystrixCommandProperties.Setter();
         setter.andCommandPropertiesDefaults(commandDefaults);
 
-        if (configuration.getCircuitBreakerEnabled() != null) {
-            commandDefaults.withCircuitBreakerEnabled(configuration.getCircuitBreakerEnabled());
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_COMMAND_KEY, configuration.getCommandKey(), String.class) != null) {
+            setter.andCommandKey(HystrixCommandKey.Factory.asKey(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_COMMAND_KEY, configuration.getCommandKey(), String.class)));
         }
 
-        if (configuration.getCircuitBreakerErrorThresholdPercentage() != null) {
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CIRCUIT_BREAKER_ENABLED, configuration.getCircuitBreakerEnabled(), Boolean.class) != null) {
+            commandDefaults.withCircuitBreakerEnabled(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CIRCUIT_BREAKER_ENABLED, configuration.getCircuitBreakerEnabled(), Boolean.class));
+        }
+
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CIRCUIT_BREAKER_ERROR_THRESHOLD_PERCENTAGE,
+                configuration.getCircuitBreakerErrorThresholdPercentage(), Integer.class) != null) {
             commandDefaults.withCircuitBreakerErrorThresholdPercentage(
-                    configuration.getCircuitBreakerErrorThresholdPercentage());
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CIRCUIT_BREAKER_ERROR_THRESHOLD_PERCENTAGE,
+                            configuration.getCircuitBreakerErrorThresholdPercentage(), Integer.class));
         }
 
-        if (configuration.getCircuitBreakerForceClosed() != null) {
-            commandDefaults.withCircuitBreakerForceClosed(configuration.getCircuitBreakerForceClosed());
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CIRCUIT_BREAKER_FORCE_CLOSED,
+                configuration.getCircuitBreakerForceClosed(), Boolean.class) != null) {
+            commandDefaults.withCircuitBreakerForceClosed(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CIRCUIT_BREAKER_FORCE_CLOSED,
+                            configuration.getCircuitBreakerForceClosed(), Boolean.class));
         }
 
-        if (configuration.getCircuitBreakerForceOpen() != null) {
-            commandDefaults.withCircuitBreakerForceOpen(configuration.getCircuitBreakerForceOpen());
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CIRCUIT_BREAKER_FORCE_OPEN,
+                configuration.getCircuitBreakerForceOpen(), Boolean.class) != null) {
+            commandDefaults.withCircuitBreakerForceOpen(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CIRCUIT_BREAKER_FORCE_OPEN,
+                            configuration.getCircuitBreakerForceOpen(), Boolean.class));
         }
 
-        if (configuration.getCircuitBreakerRequestVolumeThreshold() != null) {
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CIRCUIT_BREAKER_REQUEST_VOLUME_THRESHOLD,
+                configuration.getCircuitBreakerRequestVolumeThreshold(), Integer.class) != null) {
             commandDefaults.withCircuitBreakerRequestVolumeThreshold(
-                    configuration.getCircuitBreakerRequestVolumeThreshold());
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CIRCUIT_BREAKER_REQUEST_VOLUME_THRESHOLD,
+                            configuration.getCircuitBreakerRequestVolumeThreshold(), Integer.class));
         }
 
-        if (configuration.getCircuitBreakerSleepWindowInMilliseconds() != null) {
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CIRCUIT_BREAKER_SLEEP_WINDOW_IN_MILLISECONDS,
+                configuration.getCircuitBreakerSleepWindowInMilliseconds(), Integer.class) != null) {
             commandDefaults.withCircuitBreakerSleepWindowInMilliseconds(
-                    configuration.getCircuitBreakerSleepWindowInMilliseconds());
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CIRCUIT_BREAKER_SLEEP_WINDOW_IN_MILLISECONDS,
+                            configuration.getCircuitBreakerSleepWindowInMilliseconds(), Integer.class));
         }
 
-        if (configuration.getExecutionIsolationSemaphoreMaxConcurrentRequests() != null) {
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_EXECUTION_ISOLATION_SEMAPHORE_MAX_CONCURRENT_REQUESTS,
+                configuration.getExecutionIsolationSemaphoreMaxConcurrentRequests(), Integer.class) != null) {
             commandDefaults.withExecutionIsolationSemaphoreMaxConcurrentRequests(
-                    configuration.getExecutionIsolationSemaphoreMaxConcurrentRequests());
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_EXECUTION_ISOLATION_SEMAPHORE_MAX_CONCURRENT_REQUESTS,
+                            configuration.getExecutionIsolationSemaphoreMaxConcurrentRequests(), Integer.class));
         }
 
-        if (configuration.getExecutionIsolationStrategy() != null) {
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_EXECUTION_ISOLATION_STRATEGY,
+                configuration.getExecutionIsolationStrategy(), String.class) != null) {
             commandDefaults.withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.valueOf(
-                    configuration.getExecutionIsolationStrategy()));
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_EXECUTION_ISOLATION_STRATEGY,
+                    configuration.getExecutionIsolationStrategy(), String.class)));
         }
 
-        if (configuration.getExecutionIsolationThreadInterruptOnTimeout() != null) {
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_EXECUTION_ISOLATION_THREAD_INTERRUPTION_ON_TIMEOUT,
+                configuration.getExecutionIsolationThreadInterruptOnTimeout(), Boolean.class) != null) {
             commandDefaults.withExecutionIsolationThreadInterruptOnTimeout(
-                    configuration.getExecutionIsolationThreadInterruptOnTimeout());
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_EXECUTION_ISOLATION_THREAD_INTERRUPTION_ON_TIMEOUT,
+                            configuration.getExecutionIsolationThreadInterruptOnTimeout(), Boolean.class));
         }
 
-        if (configuration.getExecutionTimeoutInMilliseconds() != null) {
-            commandDefaults.withExecutionTimeoutInMilliseconds(configuration.getExecutionTimeoutInMilliseconds());
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_EXECUTION_TIMEOUT_IN_MILLISECONDS,
+                configuration.getExecutionTimeoutInMilliseconds(), Integer.class) != null) {
+            commandDefaults.withExecutionTimeoutInMilliseconds(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_EXECUTION_TIMEOUT_IN_MILLISECONDS,
+                            configuration.getExecutionTimeoutInMilliseconds(), Integer.class));
         }
 
-        if (configuration.getExecutionTimeoutEnabled() != null) {
-            commandDefaults.withExecutionTimeoutEnabled(configuration.getExecutionTimeoutEnabled());
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_EXECUTION_TIMEOUT_ENABLED,
+                configuration.getExecutionTimeoutEnabled(), Boolean.class) != null) {
+            commandDefaults.withExecutionTimeoutEnabled(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_EXECUTION_TIMEOUT_ENABLED,
+                            configuration.getExecutionTimeoutEnabled(), Boolean.class));
         }
 
-        if (configuration.getFallbackIsolationSemaphoreMaxConcurrentRequests() != null) {
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_FALLBACK_ISOLATION_SEMAPHORE_MAX_CONCURRENT_REQUESTS,
+                configuration.getFallbackIsolationSemaphoreMaxConcurrentRequests(), Integer.class) != null) {
             commandDefaults.withFallbackIsolationSemaphoreMaxConcurrentRequests(
-                    configuration.getFallbackIsolationSemaphoreMaxConcurrentRequests());
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_FALLBACK_ISOLATION_SEMAPHORE_MAX_CONCURRENT_REQUESTS,
+                            configuration.getFallbackIsolationSemaphoreMaxConcurrentRequests(), Integer.class));
         }
 
-        if (configuration.getFallbackEnabled() != null) {
-            commandDefaults.withFallbackEnabled(configuration.getFallbackEnabled());
-        }
-        if (configuration.getMetricsHealthSnapshotIntervalInMilliseconds() != null) {
-            commandDefaults.withMetricsHealthSnapshotIntervalInMilliseconds(configuration.getMetricsHealthSnapshotIntervalInMilliseconds());
-        }
-
-        if (configuration.getMetricsRollingPercentileBucketSize() != null) {
-            commandDefaults.withMetricsRollingPercentileBucketSize(configuration.getMetricsRollingPercentileBucketSize());
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_FALLBACK_ENABLED,
+                configuration.getFallbackEnabled(), Boolean.class) != null) {
+            commandDefaults.withFallbackEnabled(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_FALLBACK_ENABLED,
+                            configuration.getFallbackEnabled(), Boolean.class));
         }
 
-        if (configuration.getMetricsRollingPercentileEnabled() != null) {
-            commandDefaults.withMetricsRollingPercentileEnabled(configuration.getMetricsRollingPercentileEnabled());
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_METRICS_HEALTH_SNAPSHOT_INTERVAL_IN_MILLISECONDS,
+                configuration.getMetricsHealthSnapshotIntervalInMilliseconds(), Integer.class) != null) {
+            commandDefaults.withMetricsHealthSnapshotIntervalInMilliseconds(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_METRICS_HEALTH_SNAPSHOT_INTERVAL_IN_MILLISECONDS,
+                            configuration.getMetricsHealthSnapshotIntervalInMilliseconds(), Integer.class));
         }
 
-        if (configuration.getMetricsRollingPercentileWindowInMilliseconds() != null) {
-            commandDefaults.withMetricsRollingPercentileWindowInMilliseconds(configuration.getMetricsRollingPercentileWindowInMilliseconds());
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_METRICS_ROLLING_PERCENTILE_BUCKET_SIZE,
+                configuration.getMetricsRollingPercentileBucketSize(), Integer.class) != null) {
+            commandDefaults.withMetricsRollingPercentileBucketSize(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_METRICS_ROLLING_PERCENTILE_BUCKET_SIZE,
+                            configuration.getMetricsRollingPercentileBucketSize(), Integer.class));
         }
 
-        if (configuration.getMetricsRollingPercentileWindowBuckets() != null) {
-            commandDefaults.withMetricsRollingPercentileWindowBuckets(configuration.getMetricsRollingPercentileWindowBuckets());
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_METRICS_ROLLING_PERCENTILE_ENABLED,
+                configuration.getMetricsRollingPercentileEnabled(), Boolean.class) != null) {
+            commandDefaults.withMetricsRollingPercentileEnabled(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_METRICS_ROLLING_PERCENTILE_ENABLED,
+                            configuration.getMetricsRollingPercentileEnabled(), Boolean.class));
         }
 
-        if (configuration.getMetricsRollingStatisticalWindowInMilliseconds() != null) {
-            commandDefaults.withMetricsRollingStatisticalWindowInMilliseconds(configuration.getMetricsRollingStatisticalWindowInMilliseconds());
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_METRICS_ROLLING_PERCENTILE_WINDOW_IN_MILLISECONDS,
+                configuration.getMetricsRollingPercentileWindowInMilliseconds(), Integer.class) != null) {
+            commandDefaults.withMetricsRollingPercentileWindowInMilliseconds(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_METRICS_ROLLING_PERCENTILE_WINDOW_IN_MILLISECONDS,
+                            configuration.getMetricsRollingPercentileWindowInMilliseconds(), Integer.class));
         }
 
-        if (configuration.getMetricsRollingStatisticalWindowBuckets() != null) {
-            commandDefaults.withMetricsRollingStatisticalWindowBuckets(configuration.getMetricsRollingStatisticalWindowBuckets());
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_METRICS_ROLLING_PERCENTILE_WINDOW_BUCKETS,
+                configuration.getMetricsRollingPercentileWindowBuckets(), Integer.class) != null) {
+            commandDefaults.withMetricsRollingPercentileWindowBuckets(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_METRICS_ROLLING_PERCENTILE_WINDOW_BUCKETS,
+                            configuration.getMetricsRollingPercentileWindowBuckets(), Integer.class));
         }
 
-        if (configuration.getRequestCacheEnabled() != null) {
-            commandDefaults.withRequestCacheEnabled(configuration.getRequestCacheEnabled());
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_METRICS_ROLLING_STATISTICAL_WINDOW_IN_MILLISECONDS,
+                configuration.getMetricsRollingStatisticalWindowInMilliseconds(), Integer.class) != null) {
+            commandDefaults.withMetricsRollingStatisticalWindowInMilliseconds(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_METRICS_ROLLING_STATISTICAL_WINDOW_IN_MILLISECONDS,
+                            configuration.getMetricsRollingStatisticalWindowInMilliseconds(), Integer.class));
         }
 
-        if (configuration.getRequestLogEnabled() != null) {
-            commandDefaults.withRequestLogEnabled(configuration.getRequestLogEnabled());
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_METRICS_ROLLING_STATISTICAL_WINDOW_BUCKETS,
+                configuration.getMetricsRollingStatisticalWindowBuckets(), Integer.class) != null) {
+            commandDefaults.withMetricsRollingStatisticalWindowBuckets(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_METRICS_ROLLING_STATISTICAL_WINDOW_BUCKETS,
+                            configuration.getMetricsRollingStatisticalWindowBuckets(), Integer.class));
+        }
+
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_REQUEST_CACHE_ENABLED, configuration.getRequestCacheEnabled(), Boolean.class) != null) {
+            commandDefaults.withRequestCacheEnabled(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_REQUEST_CACHE_ENABLED, configuration.getRequestCacheEnabled(), Boolean.class));
+        }
+
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_REQUEST_LOG_ENABLED, configuration.getRequestLogEnabled(), Boolean.class) != null) {
+            commandDefaults.withRequestLogEnabled(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_REQUEST_LOG_ENABLED, configuration.getRequestLogEnabled(), Boolean.class));
         }
     }
 
-    private void setThreadPoolPropertiesDefaults(HystrixCommand.Setter setter) {
-        if (configuration.getThreadPoolKey() != null) {
-            setter.andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(configuration.getThreadPoolKey()));
-        }
-
+    private void setThreadPoolPropertiesDefaults(HystrixCommand.Setter setter, Exchange exchange) {
         HystrixThreadPoolProperties.Setter threadPoolProperties = HystrixThreadPoolProperties.Setter();
         setter.andThreadPoolPropertiesDefaults(threadPoolProperties);
 
-        if (configuration.getCoreSize() != null) {
-            threadPoolProperties.withCoreSize(configuration.getCoreSize());
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_KEY, configuration.getThreadPoolKey(), String.class) != null) {
+            setter.andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_KEY, configuration.getThreadPoolKey(), String.class)));
         }
-        if (configuration.getKeepAliveTimeMinutes() != null) {
-            threadPoolProperties.withKeepAliveTimeMinutes(configuration.getKeepAliveTimeMinutes());
+
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CORE_POOL_SIZE, configuration.getCorePoolSize(), Integer.class) != null) {
+            threadPoolProperties.withCoreSize(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CORE_POOL_SIZE, configuration.getCorePoolSize(), Integer.class));
         }
-        if (configuration.getMaxQueueSize() != null) {
-            threadPoolProperties.withMaxQueueSize(configuration.getMaxQueueSize());
+
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_KEEP_ALIVE_TIME, configuration.getKeepAliveTime(), Integer.class) != null) {
+            threadPoolProperties.withKeepAliveTimeMinutes(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_KEEP_ALIVE_TIME, configuration.getKeepAliveTime(), Integer.class));
         }
-        if (configuration.getQueueSizeRejectionThreshold() != null) {
-            threadPoolProperties.withQueueSizeRejectionThreshold(configuration.getQueueSizeRejectionThreshold());
+
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_MAX_QUEUE_SIZE, configuration.getMaxQueueSize(), Integer.class) != null) {
+            threadPoolProperties.withMaxQueueSize(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_MAX_QUEUE_SIZE, configuration.getMaxQueueSize(), Integer.class));
         }
-        if (configuration.getMetricsRollingStatisticalWindowInMilliseconds() != null) {
+
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_QUEUE_SIZE_REJECTION_THRESHOLD,
+                configuration.getQueueSizeRejectionThreshold(), Integer.class) != null) {
+            threadPoolProperties.withQueueSizeRejectionThreshold(
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_QUEUE_SIZE_REJECTION_THRESHOLD,
+                            configuration.getQueueSizeRejectionThreshold(), Integer.class));
+        }
+
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_ROLLING_NUMBER_STATISTICAL_WINDOW_IN_MILLISECONDS,
+                configuration.getThreadPoolRollingNumberStatisticalWindowInMilliseconds(), Integer.class) != null) {
             threadPoolProperties.withMetricsRollingStatisticalWindowInMilliseconds(
-                    configuration.getMetricsRollingStatisticalWindowInMilliseconds());
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_ROLLING_NUMBER_STATISTICAL_WINDOW_IN_MILLISECONDS,
+                            configuration.getThreadPoolRollingNumberStatisticalWindowInMilliseconds(), Integer.class));
         }
-        if (configuration.getMetricsRollingStatisticalWindowBuckets() != null) {
+
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_ROLLING_NUMBER_STATISTICAL_WINDOW_BUCKETS,
+                configuration.getThreadPoolRollingNumberStatisticalWindowBuckets(), Integer.class) != null) {
             threadPoolProperties.withMetricsRollingStatisticalWindowBuckets(
-                    configuration.getMetricsRollingStatisticalWindowBuckets());
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_ROLLING_NUMBER_STATISTICAL_WINDOW_BUCKETS,
+                            configuration.getThreadPoolRollingNumberStatisticalWindowBuckets(), Integer.class));
         }
     }
 
@@ -195,13 +281,13 @@ public class HystrixProducer extends DefaultProducer {
     private synchronized void checkRequestContextPresent(Exchange exchange) {
         if (!HystrixRequestContext.isCurrentThreadInitialized()) {
             HystrixRequestContext customRequestContext = exchange.getIn()
-                    .getHeader(HystrixConstants.CAMEL_HYSTRIX_REQUEST_CONTEXT_KEY, HystrixRequestContext.class);
+                    .getHeader(HystrixConstants.CAMEL_HYSTRIX_REQUEST_CONTEXT, HystrixRequestContext.class);
 
             if (customRequestContext != null) {
                 HystrixRequestContext.setContextOnCurrentThread(customRequestContext);
-            } else {
+            } else if (requestContext != null) {
                 HystrixRequestContext.setContextOnCurrentThread(requestContext);
-                exchange.getIn().setHeader(HystrixConstants.CAMEL_HYSTRIX_REQUEST_CONTEXT_KEY, requestContext);
+                exchange.getIn().setHeader(HystrixConstants.CAMEL_HYSTRIX_REQUEST_CONTEXT, requestContext);
             }
         }
     }
@@ -214,9 +300,34 @@ public class HystrixProducer extends DefaultProducer {
         }
     }
 
+    private void populateWithMetrics(Exchange exchange, CamelHystrixCommand camelHystrixCommand) {
+        HystrixCommandMetrics commandMetrics = HystrixCommandMetrics.getInstance(camelHystrixCommand.getCommandKey());
+        HystrixThreadPoolMetrics threadPoolMetrics = HystrixThreadPoolMetrics.getInstance(camelHystrixCommand.getThreadPoolKey());
+
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_COMMAND_METRICS_TOTAL_REQUESTS, commandMetrics.getHealthCounts().getTotalRequests());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_COMMAND_METRICS_ERROR_COUNT, commandMetrics.getHealthCounts().getErrorCount());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_COMMAND_METRICS_ERROR_PERCENTAGE, commandMetrics.getHealthCounts().getErrorPercentage());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_COMMAND_METRICS_CURRENT_CONCURRENT_EXECUTION_COUNT, commandMetrics.getCurrentConcurrentExecutionCount());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_COMMAND_METRICS_EXECUTION_TIME_MEAN, commandMetrics.getExecutionTimeMean());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_COMMAND_METRICS_ROLLING_MAX_CONCURRENT_EXECUTIONS, commandMetrics.getRollingMaxConcurrentExecutions());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_COMMAND_METRICS_TOTAL_TIME_MEAN, commandMetrics.getTotalTimeMean());
+
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_METRICS_CURRENT_ACTIVE_COUNT, threadPoolMetrics.getCurrentActiveCount());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_METRICS_CUMULATIVE_COUNT_THREADS_EXECUTED, threadPoolMetrics.getCumulativeCountThreadsExecuted());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_METRICS_CURRENT_COMPLETED_TASK_COUNT, threadPoolMetrics.getCurrentCompletedTaskCount());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_METRICS_CURRENT_CORE_POOL_SIZE, threadPoolMetrics.getCurrentCorePoolSize());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_METRICS_CURRENT_LARGEST_POOL_SIZE, threadPoolMetrics.getCurrentLargestPoolSize());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_METRICS_CURRENT_MAXIMUM_POOL_SIZE, threadPoolMetrics.getCurrentMaximumPoolSize());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_METRICS_CURRENT_POOL_SIZE, threadPoolMetrics.getCurrentPoolSize());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_METRICS_CURRENT_QUEUE_SIZE, threadPoolMetrics.getCurrentQueueSize());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_METRICS_CURRENT_TASK_COUNT, threadPoolMetrics.getCurrentTaskCount());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_METRICS_ROLLING_COUNT_THREADS_EXECUTED, threadPoolMetrics.getRollingCountThreadsExecuted());
+        setHeader(exchange, HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_METRICS_ROLLING_MAX_ACTIVE_THREADS, threadPoolMetrics.getRollingMaxActiveThreads());
+    }
+
     @Override
     protected void doStart() throws Exception {
-        if (configuration.getPropagateRequestContext() != null && configuration.getPropagateRequestContext()) {
+        if (configuration.getInitializeRequestContext() != null && configuration.getInitializeRequestContext()) {
             requestContext = HystrixRequestContext.initializeContext();
         }
         super.doStart();

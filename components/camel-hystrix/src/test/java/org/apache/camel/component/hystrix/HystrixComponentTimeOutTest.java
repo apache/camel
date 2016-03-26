@@ -16,14 +16,10 @@
  */
 package org.apache.camel.component.hystrix;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExpressionBuilder;
@@ -34,50 +30,45 @@ import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HystrixComponentRequestContextTest extends HystrixComponentBase {
+public class HystrixComponentTimeOutTest extends CamelTestSupport {
+
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
+
+    @EndpointInject(uri = "mock:result")
+    protected MockEndpoint resultEndpoint;
+
+    @EndpointInject(uri = "mock:error")
+    protected MockEndpoint errorEndpoint;
 
     @Test
-    public void invokesCachedEndpointWithCustomRequestContext() throws Exception {
-        resultEndpoint.expectedMessageCount(1);
-        errorEndpoint.expectedMessageCount(0);
+    public void slowOperationTimesOutAndFallbacks() throws Exception {
+        resultEndpoint.expectedMessageCount(0);
+        errorEndpoint.expectedMessageCount(1);
 
-        HystrixRequestContext customContext = HystrixRequestContext.initializeContext();
-        final Map headers = new HashMap<>();
-        headers.put("key", "cachedKey");
-        headers.put(HystrixConstants.CAMEL_HYSTRIX_REQUEST_CONTEXT, customContext);
-
-        template.sendBodyAndHeaders("body", headers);
-
-        final CountDownLatch latch = new CountDownLatch(1);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                template.sendBodyAndHeaders("body", headers);
-                latch.countDown();
-            }
-        }).start();
-
-        latch.await(2, TimeUnit.SECONDS);
+        template.sendBody("test");
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void invokesCachedEndpointTwiceWhenCacheIsCleared() throws Exception {
-        resultEndpoint.expectedMessageCount(2);
+    public void slowOperationSucceedsWithExtendedTimeout() throws Exception {
+        resultEndpoint.expectedMessageCount(1);
         errorEndpoint.expectedMessageCount(0);
 
-        HystrixRequestContext customContext = HystrixRequestContext.initializeContext();
-        final Map headers = new HashMap<>();
-        headers.put("key", "cachedKey");
-        headers.put(HystrixConstants.CAMEL_HYSTRIX_REQUEST_CONTEXT, customContext);
+        template.sendBodyAndHeader("test", HystrixConstants.CAMEL_HYSTRIX_EXECUTION_TIMEOUT_IN_MILLISECONDS, Integer.valueOf(700));
 
-        template.sendBodyAndHeaders("body", headers);
-
-        headers.put(HystrixConstants.CAMEL_HYSTRIX_CLEAR_CACHE_FIRST, true);
-
-        template.sendBodyAndHeaders("body", headers);
         assertMockEndpointsSatisfied();
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
+        CamelContext context = new DefaultCamelContext(registry);
+        registry.put("run", context.getEndpoint("direct:run"));
+        registry.put("fallback", context.getEndpoint("direct:fallback"));
+        registry.put("headerExpression", ExpressionBuilder.headerExpression("key"));
+        return context;
     }
 
     @Override
@@ -90,10 +81,16 @@ public class HystrixComponentRequestContextTest extends HystrixComponentBase {
                         .to("mock:error");
 
                 from("direct:run")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                Thread.sleep(500); //a slow operation
+                            }
+                        })
                         .to("mock:result");
 
                 from("direct:start")
-                        .to("hystrix:testKey?runEndpointId=run&fallbackEndpointId=fallback&cacheKeyExpression=#headerExpression");
+                        .to("hystrix:testKey?runEndpointId=run&fallbackEndpointId=fallback&executionTimeoutInMilliseconds=100");
             }
         };
     }

@@ -16,32 +16,50 @@
  */
 package org.apache.camel.component.hystrix;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class HystrixComponentCircuitBreakerTest extends HystrixComponentBase {
+public class HystrixComponentCacheTest extends HystrixComponentBase {
 
     @Test
-    public void circuitBreakerRejectsWhenTresholdReached() throws Exception {
-        final int requestCount = 5;
+    public void invokesCachedEndpoint() throws Exception {
+        resultEndpoint.expectedMessageCount(1);
+        errorEndpoint.expectedMessageCount(0);
+
+        template.sendBodyAndHeader("body", "key", "cachedKey");
+        template.sendBodyAndHeader("body", "key", "cachedKey");
+
+        assertMockEndpointsSatisfied();
+
         resultEndpoint.expectedMessageCount(2);
-        errorEndpoint.expectedMessageCount(requestCount);
-        resultEndpoint.whenAnyExchangeReceived(new Processor() {
+        template.sendBodyAndHeader("body", "key", "cachedKey");
+        template.sendBodyAndHeader("body", "key", "differentCachedKey");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void invokesCachedEndpointFromDifferentThread() throws Exception {
+        resultEndpoint.expectedMessageCount(1);
+        errorEndpoint.expectedMessageCount(0);
+
+        template.sendBodyAndHeader("body", "key", "cachedKey");
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        new Thread(new Runnable() {
             @Override
-            public void process(Exchange exchange) throws Exception {
-                throw new RuntimeException("blow");
+            public void run() {
+                template.sendBodyAndHeader("body", "key", "cachedKey");
+                latch.countDown();
             }
-        });
+        }).start();
 
-        for (int i = 0; i < requestCount; i++) {
-            try {
-                template.sendBody("test");
-            } catch (Exception e) {
+        latch.await(2, TimeUnit.SECONDS);
 
-            }
-        }
         assertMockEndpointsSatisfied();
     }
 
@@ -55,16 +73,10 @@ public class HystrixComponentCircuitBreakerTest extends HystrixComponentBase {
                         .to("mock:error");
 
                 from("direct:run")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                Thread.sleep(500);
-                            }
-                        })
                         .to("mock:result");
 
                 from("direct:start")
-                        .to("hystrix:testKey?runEndpointId=run&fallbackEndpointId=fallback&circuitBreakerRequestVolumeThreshold=2");
+                        .to("hystrix:testKey?runEndpointId=run&fallbackEndpointId=fallback&cacheKeyExpression=#headerExpression&initializeRequestContext=true");
             }
         };
     }
