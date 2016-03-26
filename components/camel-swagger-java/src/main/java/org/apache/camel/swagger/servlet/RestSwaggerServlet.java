@@ -95,6 +95,11 @@ public class RestSwaggerServlet extends HttpServlet {
             Object value = config.getInitParameter(name);
             parameters.put(name, value);
         }
+        // when using servlet then use the cors filter to enable cors
+        if (parameters.get("cors") != null) {
+            LOG.warn("Use RestSwaggerCorsFilter when uisng this Servlet to enable CORS");
+            parameters.remove("cors");
+        }
         support.initSwagger(swaggerConfig, parameters);
 
         // allow to configure these options from the servlet config as well
@@ -143,7 +148,7 @@ public class RestSwaggerServlet extends HttpServlet {
         try {
             // render list of camel contexts as root
             if (apiContextIdListing && (ObjectHelper.isEmpty(route) || route.equals("/"))) {
-                support.renderCamelContexts(adapter, contextId, apiContextIdPattern, json, yaml);
+                support.renderCamelContexts(adapter, contextId, apiContextIdPattern, json, yaml, null);
             } else {
                 String name = null;
                 if (ObjectHelper.isNotEmpty(route)) {
@@ -183,7 +188,7 @@ public class RestSwaggerServlet extends HttpServlet {
                 if (!match) {
                     adapter.noContent();
                 } else {
-                    support.renderResourceListing(adapter, swaggerConfig, name, route, json, yaml, classResolver);
+                    support.renderResourceListing(adapter, swaggerConfig, name, route, json, yaml, classResolver, null);
                 }
             }
         } catch (Exception e) {
