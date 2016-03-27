@@ -42,7 +42,7 @@ public class ClassLoadingAwareObjectInputStreamTest {
 
         final DefaultExchange exchange = new DefaultExchange(context);
 
-        final List<MyObject> objects = new ArrayList<>();
+        final List<MyObject> objects = new ArrayList<MyObject>();
         final MyObject o = new MyObject("leb", "hello".getBytes());
         objects.add(o);
 
