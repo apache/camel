@@ -64,6 +64,7 @@ public class NettyProducerHangTest extends CamelTestSupport {
         }
     }
 
+    //CHECKSTYLE:OFF
     private void acceptReplyAcceptClose() throws IOException {
         byte buf[] = new byte[128];
 
@@ -89,5 +90,6 @@ public class NettyProducerHangTest extends CamelTestSupport {
         }
         log.info("Close socket");
     }
+    //CHECKSTYLE:ON
 
 }
