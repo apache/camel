@@ -25,7 +25,7 @@ public class CamelSnakeyamlTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testComponent("camel-snakeyaml", "yaml-snakeyaml");
+        testDataFormat("camel-snakeyaml", "yaml-snakeyaml");
     }
 
 }

@@ -23,7 +23,7 @@ import org.ops4j.pax.exam.junit.PaxExam;
 @RunWith(PaxExam.class)
 public class CamelJCacheTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelJCacheTest.class);
+    public static final String COMPONENT = "jcache";
 
     @Test
     public void test() throws Exception {

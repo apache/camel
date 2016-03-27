@@ -24,7 +24,8 @@
 
 echo "Running tests and kill karaf after each test"
 
-FILES=src/test/java/org/apache/camel/itest/karaf/*
+## directory where the karaf unit tests are
+testdir='src/test/java/org/apache/camel/itest/karaf'
 
 ## you can pass in the test name to start from eg run-tests.sh CamelFtpTest
 ## to start testing from this test and onwards.
@@ -35,7 +36,8 @@ else
   found=0
 fi  
 
-for filename in $FILES
+## ensure the files are sorted
+for filename in $(ls -f $testdir/* | sort);
 do
   testname=$(basename ${filename%.*})
 

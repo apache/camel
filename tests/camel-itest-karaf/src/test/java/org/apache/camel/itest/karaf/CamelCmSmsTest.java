@@ -27,8 +27,8 @@ public class CamelCmSmsTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
+        // TODO: fails as javax bean validator must be installed also
         testComponent(COMPONENT);
     }
-
 
 }

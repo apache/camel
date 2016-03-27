@@ -302,6 +302,10 @@
 	  <bundle dependency='true'>mvn:org.jsoup/jsoup/${jsoup-version}</bundle>
 	  <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-api-version}</bundle>
 	  <bundle dependency='true'>mvn:javax.el/javax.el-api/${javax.el-api-version}</bundle>
+    <bundle dependency='true'>mvn:org.glassfish.web/javax.el/${javax.el-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml/classmate/${classmate-version}</bundle>
+    <bundle dependency='true'>mvn:org.hibernate/hibernate-validator/${hibernate-validator-version}</bundle>
+    <bundle dependency='true'>mvn:org.jboss.logging/jboss-logging/${jboss-logging-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cm-sms/${project.version}</bundle>
   </feature>
   <feature name='camel-cmis' version='${project.version}' resolver='(obr)' start-level='50'>

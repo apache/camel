@@ -16,17 +16,20 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
+@Ignore
 public class CamelIgniteTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelIgniteTest.class);
 
     @Test
     public void test() throws Exception {
+        // TODO: we need to install some ignite stuff first (see the info of camel feature)
         testComponent(COMPONENT);
     }
 

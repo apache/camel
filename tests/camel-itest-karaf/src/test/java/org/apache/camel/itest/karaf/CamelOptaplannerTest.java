@@ -27,6 +27,7 @@ public class CamelOptaplannerTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
+        // TODO: need to expose com.sun.source.tree in jre.properties
         testComponent(COMPONENT);
     }
 

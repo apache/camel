@@ -21,13 +21,15 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelGsonTest extends AbstractFeatureTest {
+public class CamelUnivocityParsersTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelGsonTest.class);
+    public static final String COMPONENT = extractName(CamelUnivocityParsersTest.class);
 
     @Test
     public void test() throws Exception {
-        testDataFormat(COMPONENT, "json-gson");
+        testDataFormat(COMPONENT, "univocity-csv");
+        testDataFormat(COMPONENT, "univocity-fixed");
+        testDataFormat(COMPONENT, "univocity-tsv");
     }
 
 }

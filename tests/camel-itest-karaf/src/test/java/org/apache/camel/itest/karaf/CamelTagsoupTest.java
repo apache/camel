@@ -27,8 +27,7 @@ public class CamelTagsoupTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testDataFormat(COMPONENT);
+        testDataFormat(COMPONENT, "tidyMarkup");
     }
-
 
 }

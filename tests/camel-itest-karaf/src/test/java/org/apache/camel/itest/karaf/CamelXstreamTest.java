@@ -27,8 +27,8 @@ public class CamelXstreamTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
+        testDataFormat(COMPONENT, "json-xstream");
         testDataFormat(COMPONENT, "xstream");
-        testDataFormat(COMPONENT, "json");
     }
 
 

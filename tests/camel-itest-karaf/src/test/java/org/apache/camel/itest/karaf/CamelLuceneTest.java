@@ -27,6 +27,7 @@ public class CamelLuceneTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
+        // TODO: the lucene bundle do not work - a new SMX bundle is on the way
         testComponent(COMPONENT);
     }
 

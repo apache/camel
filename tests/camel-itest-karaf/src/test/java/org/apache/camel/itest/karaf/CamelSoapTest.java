@@ -27,7 +27,7 @@ public class CamelSoapTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testDataFormat(COMPONENT);
+        testDataFormat(COMPONENT, "soapjaxb");
     }
 
 }
