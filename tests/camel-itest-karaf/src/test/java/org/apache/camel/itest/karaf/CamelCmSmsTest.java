@@ -16,11 +16,13 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
+@Ignore("The CmSmsComponent need to not requires @Inject")
 public class CamelCmSmsTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelCmSmsTest.class);

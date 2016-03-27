@@ -16,19 +16,20 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelYamlTest extends AbstractFeatureTest {
+@Ignore("Need a new hystrix SMX bundle")
+public class CamelHystrixTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = "snakeyaml";
+    public static final String COMPONENT = extractName(CamelHystrixTest.class);
 
     @Test
     public void test() throws Exception {
-        testDataFormat(COMPONENT, "yaml-snakeyaml");
+        testComponent(COMPONENT);
     }
-
 
 }
