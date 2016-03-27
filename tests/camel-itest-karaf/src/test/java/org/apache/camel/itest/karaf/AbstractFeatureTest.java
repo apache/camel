@@ -26,25 +26,23 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.EnumSet;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Properties;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.blueprint.BlueprintCamelContext;
-import org.apache.camel.impl.DefaultRouteContext;
-import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Language;
 import org.apache.karaf.features.FeaturesService;
 import org.junit.After;
 import org.junit.Before;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeBuilder;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
-import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -93,6 +91,16 @@ public abstract class AbstractFeatureTest {
         LOG.info("tearDown()");
     }
 
+    protected void installCamelFeature(String mainFeature) throws Exception {
+        if (!mainFeature.startsWith("camel-")) {
+            mainFeature = "camel-" + mainFeature;
+        }
+        LOG.info("Install main feature: {}", mainFeature);
+        // do not refresh bundles causing out bundle context to be invalid
+        // TODO: see if we can find a way maybe to install camel.xml as bundle/feature instead of part of unit test (see src/test/resources/OSGI-INF/blueprint)
+        featuresService.installFeature(mainFeature, EnumSet.of(FeaturesService.Option.NoAutoRefreshBundles));
+    }
+
     protected void testComponent(String component) throws Exception {
         testComponent("camel-" + component, component);
     }
@@ -100,10 +108,7 @@ public abstract class AbstractFeatureTest {
     protected void testComponent(String mainFeature, String component) throws Exception {
         LOG.info("Looking up CamelContext(myCamel) in OSGi Service Registry");
 
-        LOG.info("Install main feature: {}", mainFeature);
-        // do not refresh bundles causing out bundle context to be invalid
-        // TODO: see if we can find a way maybe to install camel.xml as bundle/feature instead of part of unit test (see src/test/resources/OSGI-INF/blueprint)
-        featuresService.installFeature(mainFeature, EnumSet.of(FeaturesService.Option.NoAutoRefreshBundles));
+        installCamelFeature(mainFeature);
 
         CamelContext camelContext = getOsgiService(bundleContext, CamelContext.class, "(camel.context.name=myCamel)", 20000);
         assertNotNull("Cannot find CamelContext with name myCamel", camelContext);
@@ -115,59 +120,42 @@ public abstract class AbstractFeatureTest {
         LOG.info("Found Camel component: {} instance: {} with className: {}", component, comp, comp.getClass());
     }
 
-    protected void testComponent() throws Exception {
-        testComponent(extractName(getClass()));
+    protected void testDataFormat(String dataFormat) throws Exception {
+        testDataFormat("camel-" + dataFormat, dataFormat);
     }
 
-    protected void testDataFormat(String format) throws Exception {
-        long max = System.currentTimeMillis() + 10000;
-        while (true) {
-            try {
-                DataFormatDefinition dataFormatDefinition = createDataformatDefinition(format);                
-                assertNotNull(dataFormatDefinition);
-                assertNotNull(dataFormatDefinition.getDataFormat(new DefaultRouteContext(createCamelContext())));
-                return;
-            } catch (Throwable t) {
-                if (System.currentTimeMillis() < max) {
-                    Thread.sleep(1000);
-                } else {
-                    throw t;
-                }
-            }
-        }
+    protected void testDataFormat(String mainFeature, String dataFormat) throws Exception {
+        LOG.info("Looking up CamelContext(myCamel) in OSGi Service Registry");
+
+        installCamelFeature(mainFeature);
+
+        CamelContext camelContext = getOsgiService(bundleContext, CamelContext.class, "(camel.context.name=myCamel)", 20000);
+        assertNotNull("Cannot find CamelContext with name myCamel", camelContext);
+
+        LOG.info("Getting Camel dataformat: {}", dataFormat);
+        DataFormat df = camelContext.resolveDataFormat(dataFormat);
+        assertNotNull("Cannot get dataformat with name: " + dataFormat, df);
+
+        LOG.info("Found Camel dataformat: {} instance: {} with className: {}", dataFormat, df, df.getClass());
     }
 
-    protected DataFormatDefinition createDataformatDefinition(String format) {
-        return null;
+    protected void testLanguage(String language) throws Exception {
+        testLanguage("camel-" + language, language);
     }
 
-    protected void testLanguage(String lang) throws Exception {
-        long max = System.currentTimeMillis() + 10000;
-        while (true) {
-            try {
-                assertNotNull(createCamelContext().resolveLanguage(lang));
-                return;
-            } catch (Throwable t) {
-                if (System.currentTimeMillis() < max) {
-                    Thread.sleep(1000);
-                } else {
-                    throw t;
-                }
-            }
-        }
-    }
+    protected void testLanguage(String mainFeature, String language) throws Exception {
+        LOG.info("Looking up CamelContext(myCamel) in OSGi Service Registry");
 
-    @Deprecated
-    protected CamelContext createCamelContext() throws Exception {
-        LOG.info("Creating CamelContext using BundleContext: {} and BlueprintContainer: {}", bundleContext, blueprintContainer);
-        setThreadContextClassLoader();
-        BlueprintCamelContext context = new BlueprintCamelContext(bundleContext, blueprintContainer);
-        return context;
-    }
+        installCamelFeature(mainFeature);
 
-    protected void setThreadContextClassLoader() {
-        // set the thread context classloader current bundle classloader
-        Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+        CamelContext camelContext = getOsgiService(bundleContext, CamelContext.class, "(camel.context.name=myCamel)", 20000);
+        assertNotNull("Cannot find CamelContext with name myCamel", camelContext);
+
+        LOG.info("Getting Camel language: {}", language);
+        Language lan = camelContext.resolveLanguage(language);
+        assertNotNull("Cannot get language with name: " + language, lan);
+
+        LOG.info("Found Camel language: {} instance: {} with className: {}", language, lan, lan.getClass());
     }
 
     public static String extractName(Class<?> clazz) {
@@ -191,7 +179,7 @@ public abstract class AbstractFeatureTest {
                 artifactId("apache-camel").
                 versionAsInProject().type("xml/features");
     }
-    
+
     private static void switchPlatformEncodingToUTF8() {
         try {
             System.setProperty("file.encoding", "UTF-8");
@@ -202,7 +190,7 @@ public abstract class AbstractFeatureTest {
             throw new RuntimeException(e);
         }
     }
-    
+
     private static String getKarafVersion() {
         InputStream ins = AbstractFeatureTest.class.getResourceAsStream("/META-INF/maven/dependencies.properties");
         Properties p = new Properties();
@@ -217,62 +205,44 @@ public abstract class AbstractFeatureTest {
         }
         if (karafVersion == null) {
             // setup the default version of it
-            karafVersion = "2.4.4";
+            karafVersion = "4.0.4";
         }
         return karafVersion;
     }
-    public static MavenArtifactProvisionOption getJUnitBundle() {
-        MavenArtifactProvisionOption mavenOption = mavenBundle().groupId("org.apache.servicemix.bundles")
-            .artifactId("org.apache.servicemix.bundles.junit");
-        mavenOption.versionAsInProject().start(true).startLevel(10);
-        return mavenOption;
-    }
 
-    public static Option[] configure(String mainFeature, String... extraFeatures) {
+    @Configuration
+    public static Option[] configure() {
         switchPlatformEncodingToUTF8();
         String karafVersion = getKarafVersion();
         LOG.info("*** Apache Karaf version is " + karafVersion + " ***");
 
-        List<String> list = new ArrayList<String>();
-        list.add("camel-core");
-        list.add("camel-blueprint");
-        list.add("camel-spring");
-        // we install main feature later
-        for (String extra : extraFeatures) {
-            list.add("camel-" + extra);
-        }
-        String[] features = list.toArray(new String[list.size()]);
+        Option[] options = new Option[]{
+                // for remote debugging
+                //org.ops4j.pax.exam.CoreOptions.vmOption("-Xdebug"),
+                //org.ops4j.pax.exam.CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
 
-        Option[] options = new Option[] {
-            // for remote debugging
-            //org.ops4j.pax.exam.CoreOptions.vmOption("-Xdebug"),
-            //org.ops4j.pax.exam.CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
+                // we need INFO logging otherwise we cannot see what happens
+                new LogLevelOption(LogLevelOption.LogLevel.INFO),
 
-            // we need INFO logging otherwise we cannot see what happens
-            new LogLevelOption(LogLevelOption.LogLevel.INFO),
+                KarafDistributionOption.karafDistributionConfiguration()
+                        .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
+                        .karafVersion(karafVersion)
+                        .name("Apache Karaf")
+                        .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
 
-            KarafDistributionOption.karafDistributionConfiguration()
-                    .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
-                    .karafVersion(karafVersion)
-                    .name("Apache Karaf")
-                    .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
+                // keep the folder so we can look inside when something fails
+                KarafDistributionOption.keepRuntimeFolder(),
 
-            // keep the folder so we can look inside when something fails
-            KarafDistributionOption.keepRuntimeFolder(),
+                vmOption("-Dfile.encoding=UTF-8"),
 
-            vmOption("-Dfile.encoding=UTF-8"),
+                // install junit
+                CoreOptions.junitBundles(),
 
-            CoreOptions.junitBundles(),
-
-            // install the features
-            KarafDistributionOption.features(getCamelKarafFeatureUrl(), features)
+                // install camel
+                KarafDistributionOption.features(getCamelKarafFeatureUrl(), "camel")
         };
 
         return options;
-    }
-
-    protected Option[] configureComponent() {
-        return configure(extractName(getClass()));
     }
 
     @SuppressWarnings("unchecked")
@@ -338,7 +308,7 @@ public abstract class AbstractFeatureTest {
      * Provides an iterable collection of references, even if the original array is <code>null</code>.
      */
     private static Collection<ServiceReference> asCollection(ServiceReference[] references) {
-        return references  == null ? new ArrayList<ServiceReference>(0) : Arrays.asList(references);
+        return references == null ? new ArrayList<ServiceReference>(0) : Arrays.asList(references);
     }
 
 }

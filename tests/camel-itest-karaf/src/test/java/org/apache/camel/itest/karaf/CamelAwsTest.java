@@ -18,8 +18,6 @@ package org.apache.camel.itest.karaf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
@@ -29,19 +27,14 @@ public class CamelAwsTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testComponent("aws-cw");
-        testComponent("aws-ddb");
-        testComponent("aws-s3");
-        testComponent("aws-sdb");
-        testComponent("aws-ses");
-        testComponent("aws-sns");
-        testComponent("aws-sqs");
-        testComponent("aws-swf");
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        return configure("aws");
+        testComponent(COMPONENT, "aws-cw");
+        testComponent(COMPONENT, "aws-ddb");
+        testComponent(COMPONENT, "aws-s3");
+        testComponent(COMPONENT, "aws-sdb");
+        testComponent(COMPONENT, "aws-ses");
+        testComponent(COMPONENT, "aws-sns");
+        testComponent(COMPONENT, "aws-sqs");
+        testComponent(COMPONENT, "aws-swf");
     }
 
 }

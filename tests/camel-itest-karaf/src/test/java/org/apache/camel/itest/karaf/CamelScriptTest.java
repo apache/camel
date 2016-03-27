@@ -18,8 +18,6 @@ package org.apache.camel.itest.karaf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
@@ -29,12 +27,8 @@ public class CamelScriptTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testLanguage("Groovy");
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT, "script-groovy");
+        installCamelFeature("script-groovy");
+        testLanguage(COMPONENT, "Groovy");
     }
 
 }
