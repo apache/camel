@@ -236,9 +236,9 @@ public class HystrixProducer extends DefaultProducer {
                     exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_KEY, configuration.getThreadPoolKey(), String.class)));
         }
 
-        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CORE_POOL_SIZE, configuration.getCorePoolSize(), Integer.class) != null) {
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CORE_SIZE, configuration.getCoreSize(), Integer.class) != null) {
             threadPoolProperties.withCoreSize(
-                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CORE_POOL_SIZE, configuration.getCorePoolSize(), Integer.class));
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CORE_SIZE, configuration.getCoreSize(), Integer.class));
         }
 
         if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_KEEP_ALIVE_TIME, configuration.getKeepAliveTime(), Integer.class) != null) {
@@ -258,18 +258,18 @@ public class HystrixProducer extends DefaultProducer {
                             configuration.getQueueSizeRejectionThreshold(), Integer.class));
         }
 
-        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_ROLLING_NUMBER_STATISTICAL_WINDOW_IN_MILLISECONDS,
-                configuration.getThreadPoolRollingNumberStatisticalWindowInMilliseconds(), Integer.class) != null) {
+        if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_METRICS_ROLLING_STATISTICAL_WINDOW_IN_MILLISECONDS,
+                configuration.getThreadPoolMetricsRollingStatisticalWindowInMilliseconds(), Integer.class) != null) {
             threadPoolProperties.withMetricsRollingStatisticalWindowInMilliseconds(
-                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_ROLLING_NUMBER_STATISTICAL_WINDOW_IN_MILLISECONDS,
-                            configuration.getThreadPoolRollingNumberStatisticalWindowInMilliseconds(), Integer.class));
+                    exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_METRICS_ROLLING_STATISTICAL_WINDOW_IN_MILLISECONDS,
+                            configuration.getThreadPoolMetricsRollingStatisticalWindowInMilliseconds(), Integer.class));
         }
 
         if (exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_ROLLING_NUMBER_STATISTICAL_WINDOW_BUCKETS,
-                configuration.getThreadPoolRollingNumberStatisticalWindowBuckets(), Integer.class) != null) {
+                configuration.getThreadPoolMetricsRollingStatisticalWindowBuckets(), Integer.class) != null) {
             threadPoolProperties.withMetricsRollingStatisticalWindowBuckets(
                     exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_THREAD_POOL_ROLLING_NUMBER_STATISTICAL_WINDOW_BUCKETS,
-                            configuration.getThreadPoolRollingNumberStatisticalWindowBuckets(), Integer.class));
+                            configuration.getThreadPoolMetricsRollingStatisticalWindowBuckets(), Integer.class));
         }
     }
 

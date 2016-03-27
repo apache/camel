@@ -69,12 +69,12 @@ public class HystrixConfiguration {
     @UriParam(label = "producer")
     private String fallbackEndpointId;
 
-    private Integer corePoolSize;
+    private Integer coreSize;
     private Integer keepAliveTime;
     private Integer maxQueueSize;
     private Integer queueSizeRejectionThreshold;
-    private Integer threadPoolRollingNumberStatisticalWindowInMilliseconds;
-    private Integer threadPoolRollingNumberStatisticalWindowBuckets;
+    private Integer threadPoolMetricsRollingStatisticalWindowInMilliseconds;
+    private Integer threadPoolMetricsRollingStatisticalWindowBuckets;
 
     private Boolean circuitBreakerEnabled;
     private Integer circuitBreakerErrorThresholdPercentage;
@@ -161,12 +161,12 @@ public class HystrixConfiguration {
         this.threadPoolKey = threadPoolKey;
     }
 
-    public Integer getCorePoolSize() {
-        return corePoolSize;
+    public Integer getCoreSize() {
+        return coreSize;
     }
 
-    public void setCorePoolSize(Integer corePoolSize) {
-        this.corePoolSize = corePoolSize;
+    public void setCoreSize(Integer coreSize) {
+        this.coreSize = coreSize;
     }
 
     public Integer getKeepAliveTime() {
@@ -193,20 +193,20 @@ public class HystrixConfiguration {
         this.queueSizeRejectionThreshold = queueSizeRejectionThreshold;
     }
 
-    public Integer getThreadPoolRollingNumberStatisticalWindowInMilliseconds() {
-        return threadPoolRollingNumberStatisticalWindowInMilliseconds;
+    public Integer getThreadPoolMetricsRollingStatisticalWindowInMilliseconds() {
+        return threadPoolMetricsRollingStatisticalWindowInMilliseconds;
     }
 
-    public void setThreadPoolRollingNumberStatisticalWindowInMilliseconds(Integer threadPoolRollingNumberStatisticalWindowInMilliseconds) {
-        this.threadPoolRollingNumberStatisticalWindowInMilliseconds = threadPoolRollingNumberStatisticalWindowInMilliseconds;
+    public void setThreadPoolMetricsRollingStatisticalWindowInMilliseconds(Integer threadPoolMetricsRollingStatisticalWindowInMilliseconds) {
+        this.threadPoolMetricsRollingStatisticalWindowInMilliseconds = threadPoolMetricsRollingStatisticalWindowInMilliseconds;
     }
 
-    public Integer getThreadPoolRollingNumberStatisticalWindowBuckets() {
-        return threadPoolRollingNumberStatisticalWindowBuckets;
+    public Integer getThreadPoolMetricsRollingStatisticalWindowBuckets() {
+        return threadPoolMetricsRollingStatisticalWindowBuckets;
     }
 
-    public void setThreadPoolRollingNumberStatisticalWindowBuckets(Integer threadPoolRollingNumberStatisticalWindowBuckets) {
-        this.threadPoolRollingNumberStatisticalWindowBuckets = threadPoolRollingNumberStatisticalWindowBuckets;
+    public void setThreadPoolMetricsRollingStatisticalWindowBuckets(Integer threadPoolMetricsRollingStatisticalWindowBuckets) {
+        this.threadPoolMetricsRollingStatisticalWindowBuckets = threadPoolMetricsRollingStatisticalWindowBuckets;
     }
 
     public Boolean getCircuitBreakerEnabled() {
