@@ -60,10 +60,9 @@ import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.vmOption;
 
-
 public abstract class AbstractFeatureTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractFeatureTest.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(AbstractFeatureTest.class);
 
     @Inject
     protected BundleContext bundleContext;
