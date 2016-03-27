@@ -218,29 +218,29 @@ public abstract class AbstractFeatureTest {
         LOG.info("*** Apache Karaf version is " + karafVersion + " ***");
 
         Option[] options = new Option[]{
-                // for remote debugging
-                //org.ops4j.pax.exam.CoreOptions.vmOption("-Xdebug"),
-                //org.ops4j.pax.exam.CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
+            // for remote debugging
+            //org.ops4j.pax.exam.CoreOptions.vmOption("-Xdebug"),
+            //org.ops4j.pax.exam.CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
 
-                // we need INFO logging otherwise we cannot see what happens
-                new LogLevelOption(LogLevelOption.LogLevel.INFO),
+            // we need INFO logging otherwise we cannot see what happens
+            new LogLevelOption(LogLevelOption.LogLevel.INFO),
 
-                KarafDistributionOption.karafDistributionConfiguration()
-                        .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
-                        .karafVersion(karafVersion)
-                        .name("Apache Karaf")
-                        .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
+            KarafDistributionOption.karafDistributionConfiguration()
+                    .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
+                    .karafVersion(karafVersion)
+                    .name("Apache Karaf")
+                    .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
 
-                // keep the folder so we can look inside when something fails
-                KarafDistributionOption.keepRuntimeFolder(),
+            // keep the folder so we can look inside when something fails
+            KarafDistributionOption.keepRuntimeFolder(),
 
-                vmOption("-Dfile.encoding=UTF-8"),
+            vmOption("-Dfile.encoding=UTF-8"),
 
-                // install junit
-                CoreOptions.junitBundles(),
+            // install junit
+            CoreOptions.junitBundles(),
 
-                // install camel
-                KarafDistributionOption.features(getCamelKarafFeatureUrl(), "camel")
+            // install camel
+            KarafDistributionOption.features(getCamelKarafFeatureUrl(), "camel")
         };
 
         return options;
