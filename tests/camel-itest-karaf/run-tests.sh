@@ -26,14 +26,46 @@ echo "Running tests and kill karaf after each test"
 
 FILES=src/test/java/org/apache/camel/itest/karaf/*
 
+## you can pass in the test name to start from eg run-tests.sh CamelFtpTest
+## to start testing from this test and onwards.
+if [ "$#" -eq  "0" ]
+then
+  found=1
+else
+  found=0
+fi  
+
 for filename in $FILES
 do
   testname=$(basename ${filename%.*})
-  if [ $testname != "AbstractFeatureTest" ]
+
+  if [ $found -eq 0 ]
   then
+    if [ $testname == "$1" ]
+    then
+     found=1
+    fi 
+  fi
+
+  if [ $found -eq 1 ] && [ $testname != "AbstractFeatureTest" ]
+  then
+    echo "*******************************************************************"
     echo "Running test $testname"
-    mvn test -Dtest=$testname
-    ## TODO: wonder if we can get exit code from mvn, and fail if its not 0 ?
+    echo "*******************************************************************"
+    if mvn test -Dtest=$testname ; then
+      echo "\n"
+      echo "*******************************************************************"
+      echo "Test success: $testname"
+      echo "*******************************************************************"
+      echo "\n"
+    else
+      echo "\n"
+      echo "*******************************************************************"
+      echo "Test failure: $testname"
+      echo "*******************************************************************"
+      echo "\n"
+      exit 1;
+    fi  
     echo "Killing Karaf to ensure no dangling karaf running"
     jps -l | grep karaf | cut -d ' ' -f 1 | xargs -n1 kill -kill
   fi  
