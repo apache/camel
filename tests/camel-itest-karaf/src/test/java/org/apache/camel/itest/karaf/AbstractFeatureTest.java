@@ -21,24 +21,39 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Dictionary;
+import java.util.EnumSet;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.karaf.features.FeaturesService;
 import org.junit.After;
 import org.junit.Before;
+import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.ProbeBuilder;
+import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
-import org.ops4j.pax.exam.rbc.Constants;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.Filter;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,12 +73,19 @@ public abstract class AbstractFeatureTest {
     @Inject
     protected BlueprintContainer blueprintContainer;
 
+    @Inject
+    protected FeaturesService featuresService;
+
+    @ProbeBuilder
+    public TestProbeBuilder probeConfiguration(TestProbeBuilder probe) {
+        // makes sure the generated Test-Bundle contains this import!
+        probe.setHeader(Constants.DYNAMICIMPORT_PACKAGE, "*");
+        return probe;
+    }
+
     @Before
     public void setUp() throws Exception {
         LOG.info("setUp() using BundleContext: {}", bundleContext);
-
-        // give time for karaf to install
-        Thread.sleep(3000);
     }
 
     @After
@@ -72,19 +94,25 @@ public abstract class AbstractFeatureTest {
     }
 
     protected void testComponent(String component) throws Exception {
-        long max = System.currentTimeMillis() + 10000;
-        while (true) {
-            try {
-                assertNotNull("Cannot get component with name: " + component, createCamelContext().getComponent(component));
-                return;
-            } catch (Throwable t) {
-                if (System.currentTimeMillis() < max) {
-                    Thread.sleep(1000);
-                } else {
-                    throw t;
-                }
-            }
-        }
+        testComponent("camel-" + component, component);
+    }
+
+    protected void testComponent(String mainFeature, String component) throws Exception {
+        LOG.info("Looking up CamelContext(myCamel) in OSGi Service Registry");
+
+        LOG.info("Install main feature: {}", mainFeature);
+        // do not refresh bundles causing out bundle context to be invalid
+        // TODO: see if we can find a way maybe to install camel.xml as bundle/feature instead of part of unit test (see src/test/resources/OSGI-INF/blueprint)
+        featuresService.installFeature(mainFeature, EnumSet.of(FeaturesService.Option.NoAutoRefreshBundles));
+
+        CamelContext camelContext = getOsgiService(bundleContext, CamelContext.class, "(camel.context.name=myCamel)", 20000);
+        assertNotNull("Cannot find CamelContext with name myCamel", camelContext);
+
+        LOG.info("Getting Camel component: {}", component);
+        Component comp = camelContext.getComponent(component);
+        assertNotNull("Cannot get component with name: " + component, comp);
+
+        LOG.info("Found Camel component: {} instance: {} with className: {}", component, comp, comp.getClass());
     }
 
     protected void testComponent() throws Exception {
@@ -129,6 +157,7 @@ public abstract class AbstractFeatureTest {
         }
     }
 
+    @Deprecated
     protected CamelContext createCamelContext() throws Exception {
         LOG.info("Creating CamelContext using BundleContext: {} and BlueprintContainer: {}", bundleContext, blueprintContainer);
         setThreadContextClassLoader();
@@ -207,7 +236,8 @@ public abstract class AbstractFeatureTest {
         List<String> list = new ArrayList<String>();
         list.add("camel-core");
         list.add("camel-blueprint");
-        list.add("camel-" + mainFeature);
+        list.add("camel-spring");
+        // we install main feature later
         for (String extra : extraFeatures) {
             list.add("camel-" + extra);
         }
@@ -232,8 +262,7 @@ public abstract class AbstractFeatureTest {
 
             vmOption("-Dfile.encoding=UTF-8"),
 
-            // install junit
-            getJUnitBundle(),
+            CoreOptions.junitBundles(),
 
             // install the features
             KarafDistributionOption.features(getCamelKarafFeatureUrl(), features)
@@ -244,6 +273,72 @@ public abstract class AbstractFeatureTest {
 
     protected Option[] configureComponent() {
         return configure(extractName(getClass()));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getOsgiService(BundleContext bundleContext, Class<T> type, String filter, long timeout) {
+        ServiceTracker tracker;
+        try {
+            String flt;
+            if (filter != null) {
+                if (filter.startsWith("(")) {
+                    flt = "(&(" + Constants.OBJECTCLASS + "=" + type.getName() + ")" + filter + ")";
+                } else {
+                    flt = "(&(" + Constants.OBJECTCLASS + "=" + type.getName() + ")(" + filter + "))";
+                }
+            } else {
+                flt = "(" + Constants.OBJECTCLASS + "=" + type.getName() + ")";
+            }
+            Filter osgiFilter = FrameworkUtil.createFilter(flt);
+            tracker = new ServiceTracker(bundleContext, osgiFilter, null);
+            tracker.open(true);
+            // Note that the tracker is not closed to keep the reference
+            // This is buggy, as the service reference may change i think
+            Object svc = tracker.waitForService(timeout);
+
+            if (svc == null) {
+                Dictionary<?, ?> dic = bundleContext.getBundle().getHeaders();
+                LOG.warn("Test bundle headers: " + explode(dic));
+
+                for (ServiceReference ref : asCollection(bundleContext.getAllServiceReferences(null, null))) {
+                    LOG.warn("ServiceReference: " + ref + ", bundle: " + ref.getBundle() + ", symbolicName: " + ref.getBundle().getSymbolicName());
+                }
+
+                for (ServiceReference ref : asCollection(bundleContext.getAllServiceReferences(null, flt))) {
+                    LOG.warn("Filtered ServiceReference: " + ref + ", bundle: " + ref.getBundle() + ", symbolicName: " + ref.getBundle().getSymbolicName());
+                }
+
+                throw new RuntimeException("Gave up waiting for service " + flt);
+            }
+            return type.cast(svc);
+        } catch (InvalidSyntaxException e) {
+            throw new IllegalArgumentException("Invalid filter", e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Explode the dictionary into a <code>,</code> delimited list of <code>key=value</code> pairs.
+     */
+    private static String explode(Dictionary<?, ?> dictionary) {
+        Enumeration<?> keys = dictionary.keys();
+        StringBuilder result = new StringBuilder();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            result.append(String.format("%s=%s", key, dictionary.get(key)));
+            if (keys.hasMoreElements()) {
+                result.append(", ");
+            }
+        }
+        return result.toString();
+    }
+
+    /**
+     * Provides an iterable collection of references, even if the original array is <code>null</code>.
+     */
+    private static Collection<ServiceReference> asCollection(ServiceReference[] references) {
+        return references  == null ? new ArrayList<ServiceReference>(0) : Arrays.asList(references);
     }
 
 }

@@ -29,7 +29,7 @@ public class CamelCassandraqlTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testComponent("cql");
+        testComponent(COMPONENT, "cql");
     }
 
     @Configuration
