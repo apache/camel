@@ -72,8 +72,13 @@ public class NettyProducerHangTest extends CamelTestSupport {
         Socket soc = serverSocket.accept();
 
         log.info("Open socket and accept data");
-        try (InputStream is = soc.getInputStream();
-                OutputStream os = soc.getOutputStream()) {
+
+        InputStream is = null;
+        OutputStream os = null;
+
+        try {
+            is = soc.getInputStream();
+            os = soc.getOutputStream();
             // read first message
             is.read(buf);
 
@@ -85,6 +90,8 @@ public class NettyProducerHangTest extends CamelTestSupport {
 
             // do not reply, just close socket (emulate network problem)
         } finally {
+            os.close();
+            is.close();
             soc.close();
             serverSocket.close();
         }
