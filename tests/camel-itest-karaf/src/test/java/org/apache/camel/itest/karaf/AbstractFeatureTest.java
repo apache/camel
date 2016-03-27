@@ -234,6 +234,9 @@ public abstract class AbstractFeatureTest {
             // keep the folder so we can look inside when something fails
             KarafDistributionOption.keepRuntimeFolder(),
 
+            // need to modify the jre.properties to export some com.sun packages that some features rely on
+            KarafDistributionOption.replaceConfigurationFile("etc/jre.properties", new File("src/test/resources/jre.properties")),
+
             vmOption("-Dfile.encoding=UTF-8"),
 
             // install junit

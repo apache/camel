@@ -16,22 +16,18 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-@Ignore
 public class CamelJbpmTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelJbpmTest.class);
 
     @Test
     public void test() throws Exception {
-        // TODO: need to expose com.sun.tools.xjc in jre.properties
         testComponent(COMPONENT);
     }
-
 
 }
