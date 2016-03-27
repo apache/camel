@@ -114,7 +114,8 @@ public abstract class AbstractFeatureTest {
         assertNotNull("Cannot find CamelContext with name myCamel", camelContext);
 
         LOG.info("Getting Camel component: {}", component);
-        Component comp = camelContext.getComponent(component);
+        // do not auto start the component as it may not have been configured properly and fail in its start method
+        Component comp = camelContext.getComponent(component, true, false);
         assertNotNull("Cannot get component with name: " + component, comp);
 
         LOG.info("Found Camel component: {} instance: {} with className: {}", component, comp, comp.getClass());

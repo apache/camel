@@ -27,7 +27,9 @@ public class CamelBindyTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testDataFormat(COMPONENT);
+        testDataFormat(COMPONENT, "bindy-csv");
+        testDataFormat(COMPONENT, "bindy-fixed");
+        testDataFormat(COMPONENT, "bindy-kvp");
     }
 
 }

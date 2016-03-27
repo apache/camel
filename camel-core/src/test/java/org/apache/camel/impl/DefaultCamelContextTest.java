@@ -58,6 +58,26 @@ public class DefaultCamelContextTest extends TestSupport {
         assertNull(component);
     }
     
+    public void testAutoStartComponentsOff() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
+        ctx.start();
+
+        BeanComponent component = (BeanComponent) ctx.getComponent("bean", true, false);
+        // should be stopped
+        assertTrue(component.getStatus().isStopped());
+    }
+
+    public void testAutoStartComponentsOn() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
+        ctx.start();
+
+        BeanComponent component = (BeanComponent) ctx.getComponent("bean", true, true);
+        // should be started
+        assertTrue(component.getStatus().isStarted());
+    }
+
     public void testCreateDefaultUuidGenerator() {
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.disableJMX();

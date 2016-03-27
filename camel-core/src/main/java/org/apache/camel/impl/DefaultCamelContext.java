@@ -383,10 +383,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Component getComponent(String name) {
-        return getComponent(name, autoCreateComponents);
+        return getComponent(name, autoCreateComponents, true);
     }
 
     public Component getComponent(String name, boolean autoCreateComponents) {
+        return getComponent(name, autoCreateComponents, true);
+    }
+
+    public Component getComponent(String name, boolean autoCreateComponents, boolean autoStart) {
         // synchronize the look up and auto create so that 2 threads can't
         // concurrently auto create the same component.
         synchronized (components) {
@@ -399,7 +403,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     component = getComponentResolver().resolveComponent(name, this);
                     if (component != null) {
                         addComponent(name, component);
-                        if (isStarted() || isStarting()) {
+                        if (autoStart && (isStarted() || isStarting())) {
                             // If the component is looked up after the context is started, lets start it up.
                             if (component instanceof Service) {
                                 startService((Service)component);
@@ -428,6 +432,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
             throw new IllegalArgumentException(message);
         }
+    }
+
+    public Component resolveComponent(String name) {
+        Component answer = hasComponent(name);
+        if (answer == null) {
+            try {
+                answer = getComponentResolver().resolveComponent(name, this);
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Cannot resolve component: " + name, e);
+            }
+        }
+        return answer;
     }
 
     public Component removeComponent(String componentName) {
