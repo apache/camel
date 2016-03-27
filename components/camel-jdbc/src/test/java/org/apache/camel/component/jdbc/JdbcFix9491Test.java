@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jdbc;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.EndpointInject;
