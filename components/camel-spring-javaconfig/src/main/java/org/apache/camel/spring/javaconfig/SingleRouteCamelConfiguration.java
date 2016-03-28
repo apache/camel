@@ -28,6 +28,10 @@ import org.springframework.context.annotation.Bean;
  * href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-annotation-config">
  * Spring annotation-based</a> configurations to configure a {@link org.apache.camel.CamelContext} with a single
  * {@link RouteBuilder} instance.
+ * <p/>
+ * You may want to use Spring's {@link org.springframework.stereotype.Component} annotation and mark your Camel
+ * {@link RouteBuilder} classes using this annotation and have it automatic discovered, if you are using
+ * Spring's annotation scanner.
  */
 public abstract class SingleRouteCamelConfiguration extends CamelConfiguration {
 
