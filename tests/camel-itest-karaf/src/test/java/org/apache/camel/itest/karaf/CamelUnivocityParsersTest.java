@@ -18,24 +18,18 @@ package org.apache.camel.itest.karaf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-@Deprecated
-public class CamelJetty8Test extends AbstractFeatureTest {
+public class CamelUnivocityParsersTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelJetty8Test.class);
+    public static final String COMPONENT = extractName(CamelUnivocityParsersTest.class);
 
     @Test
     public void test() throws Exception {
-        testComponent("jetty");
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
+        testDataFormat(COMPONENT, "univocity-csv");
+        testDataFormat(COMPONENT, "univocity-fixed");
+        testDataFormat(COMPONENT, "univocity-tsv");
     }
 
 }

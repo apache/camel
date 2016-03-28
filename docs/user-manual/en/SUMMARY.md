@@ -128,6 +128,12 @@
     * [Eventadmin](eventadmin.adoc)
     * [Exec](exec.adoc)
     * [Facebook](facebook.adoc)
+    * [Flatpack](flatpack.adoc)
+    * [FOP](fop.adoc)
+    * [Freemarker](freemarker.adoc)
+    * [FTP](ftp.adoc)
+    * [GAE](gae.adoc)
+    * [Ganglia](ganglia.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
@@ -149,6 +155,7 @@
 -->
 
 * Data Formats
+    * [Flatpack](flatpack-dataformat.adoc)
     * [XML JSON](xmljson.adoc)
 
 * User Guide

@@ -34,6 +34,7 @@ import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.parseJsonSchema
  * Helper to find documentation for inherited options when a component extends another.
  */
 public final class DocumentationHelper {
+
     private DocumentationHelper() {
         //utility class, never constructed
     }

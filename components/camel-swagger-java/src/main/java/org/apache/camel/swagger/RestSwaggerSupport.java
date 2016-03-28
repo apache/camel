@@ -42,6 +42,7 @@ import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.CamelVersionHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.slf4j.Logger;
@@ -190,13 +191,11 @@ public class RestSwaggerSupport {
     }
 
     public void renderResourceListing(RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route, boolean json, boolean yaml,
-                                      ClassResolver classResolver) throws Exception {
+                                      ClassResolver classResolver, RestConfiguration configuration) throws Exception {
         LOG.trace("renderResourceListing");
 
         if (cors) {
-            response.setHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-            response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH");
-            response.setHeader("Access-Control-Allow-Origin", "*");
+            setupCorsHeaders(response, configuration.getCorsHeaders());
         }
 
         List<RestDefinition> rests = getRestDefinitions(contextId);
@@ -244,13 +243,12 @@ public class RestSwaggerSupport {
     /**
      * Renders a list of available CamelContexts in the JVM
      */
-    public void renderCamelContexts(RestApiResponseAdapter response, String contextId, String contextIdPattern, boolean json, boolean yaml) throws Exception {
+    public void renderCamelContexts(RestApiResponseAdapter response, String contextId, String contextIdPattern, boolean json, boolean yaml,
+                                    RestConfiguration configuration) throws Exception {
         LOG.trace("renderCamelContexts");
 
         if (cors) {
-            response.setHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-            response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH");
-            response.setHeader("Access-Control-Allow-Origin", "*");
+            setupCorsHeaders(response, configuration.getCorsHeaders());
         }
 
         List<String> contexts = findCamelContexts();
@@ -300,6 +298,39 @@ public class RestSwaggerSupport {
         response.setHeader(Exchange.CONTENT_LENGTH, "" + len);
 
         response.writeBytes(sb.toString().getBytes());
+    }
+
+    private static void setupCorsHeaders(RestApiResponseAdapter response, Map<String, String> corsHeaders) {
+        // use default value if none has been configured
+        String allowOrigin = corsHeaders != null ? corsHeaders.get("Access-Control-Allow-Origin") : null;
+        if (allowOrigin == null) {
+            allowOrigin = RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN;
+        }
+        String allowMethods = corsHeaders != null ? corsHeaders.get("Access-Control-Allow-Methods") : null;
+        if (allowMethods == null) {
+            allowMethods = RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS;
+        }
+        String allowHeaders = corsHeaders != null ? corsHeaders.get("Access-Control-Allow-Headers") : null;
+        if (allowHeaders == null) {
+            allowHeaders = RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS;
+        }
+        String maxAge = corsHeaders != null ? corsHeaders.get("Access-Control-Max-Age") : null;
+        if (maxAge == null) {
+            maxAge = RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE;
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Using CORS headers[");
+            LOG.trace("  Access-Control-Allow-Origin={}", allowOrigin);
+            LOG.trace("  Access-Control-Allow-Methods={}", allowMethods);
+            LOG.trace("  Access-Control-Allow-Headers={}", allowHeaders);
+            LOG.trace("  Access-Control-Max-Age={}", maxAge);
+            LOG.trace("]");
+        }
+        response.setHeader("Access-Control-Allow-Origin", allowOrigin);
+        response.setHeader("Access-Control-Allow-Methods", allowMethods);
+        response.setHeader("Access-Control-Allow-Headers", allowHeaders);
+        response.setHeader("Access-Control-Max-Age", maxAge);
     }
 
 }

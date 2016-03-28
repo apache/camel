@@ -51,6 +51,8 @@ public class ServiceNowConfiguration {
     @UriParam(label = "advanced")
     private String apiUrl;
     @UriParam
+    private String resource;
+    @UriParam
     private String table;
     @UriParam
     private Boolean excludeReferenceLink = false;
@@ -150,6 +152,17 @@ public class ServiceNowConfiguration {
             && ObjectHelper.isNotEmpty(password)
             && ObjectHelper.isNotEmpty(oauthClientId)
             && ObjectHelper.isNotEmpty(oauthClientSecret);
+    }
+
+    public String getResource() {
+        return resource;
+    }
+
+    /**
+     * The default resource, can be overridden by header CamelServiceNowResource
+     */
+    public void setResource(String resource) {
+        this.resource = resource;
     }
 
     public String getTable() {

@@ -30,6 +30,10 @@
   <name>Camel :: Integration Tests :: Karaf</name>
   <description>Performs Karaf compliance integration tests</description>
 
+  <properties>
+    <karf-test-version>${karaf4-version}</karf-test-version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
@@ -54,7 +58,7 @@
     <dependency>
       <groupId>org.apache.karaf</groupId>
       <artifactId>apache-karaf</artifactId>
-      <version>${karaf-version}</version>
+      <version>${karf-test-version}</version>
       <type>tar.gz</type>
       <scope>test</scope>
       <exclusions>
@@ -231,18 +235,15 @@
         </plugins>
       </build>
     </profile>
+
+    <!-- test with older karaf 3.x -->
     <profile>
       <id>karaf3</id>
       <properties>
-        <karaf-version>${karaf3-version}</karaf-version>
+        <karf-test-version>${karaf3-version}</karf-test-version>
       </properties>
     </profile>
-    <profile>
-      <id>karaf4</id>
-      <properties>
-        <karaf-version>${karaf4-version}</karaf-version>
-      </properties>
-    </profile>
+
   </profiles>
 
 </project>

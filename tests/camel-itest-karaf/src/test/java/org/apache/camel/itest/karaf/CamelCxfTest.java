@@ -18,8 +18,6 @@ package org.apache.camel.itest.karaf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
@@ -29,14 +27,9 @@ public class CamelCxfTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testComponent(COMPONENT);
-        testComponent("cxfrs");
-        testComponent("cxfbean");
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT, "cxf-jaxb");
+        testComponent(COMPONENT, "cxf");
+        testComponent(COMPONENT, "cxfrs");
+        testComponent(COMPONENT, "cxfbean");
     }
 
 }

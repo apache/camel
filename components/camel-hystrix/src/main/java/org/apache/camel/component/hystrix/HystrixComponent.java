@@ -14,27 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.karaf;
+package org.apache.camel.component.hystrix;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExam;
+import java.util.Map;
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.UriEndpointComponent;
 
-@RunWith(PaxExam.class)
-public class CamelJetty9Test extends AbstractFeatureTest {
+/**
+ * Represents the component that manages {@link HystrixComponent}.
+ */
+public class HystrixComponent extends UriEndpointComponent {
 
-    public static final String COMPONENT = extractName(CamelJetty9Test.class);
-
-    @Test
-    public void test() throws Exception {
-        testComponent("jetty");
+    public HystrixComponent() {
+        super(HystrixEndpoint.class);
     }
 
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        HystrixConfiguration configuration = new HystrixConfiguration();
+        configuration.setGroupKey(remaining);
+        setProperties(configuration, parameters);
+        return new HystrixEndpoint(uri, this, configuration);
     }
-
 }

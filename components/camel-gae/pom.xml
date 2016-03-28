@@ -27,7 +27,7 @@
   <artifactId>camel-gae</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: GAE</name>
-  <description>Camel GAE support</description>
+  <description>Camel GAE support (deprecated)</description>
 
   <properties>
     <camel.osgi.import.before.defaults>

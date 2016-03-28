@@ -16,25 +16,21 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
+@Ignore("Need new version of lucene bundle")
 public class CamelLuceneTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelLuceneTest.class);
 
     @Test
     public void test() throws Exception {
+        // TODO: the lucene bundle do not work - a new SMX bundle is on the way
         testComponent(COMPONENT);
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
     }
 
 }

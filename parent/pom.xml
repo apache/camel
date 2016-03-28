@@ -36,7 +36,7 @@
     <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.13.2</activemq-version>
-    <ahc-version>1.9.35</ahc-version>
+    <ahc-version>1.9.36</ahc-version>
     <ant-bundle-version>1.7.0_6</ant-bundle-version>
     <antlr-bundle-version>3.5.2_1</antlr-bundle-version>
     <antlr-runtime-bundle-version>3.5.2_1</antlr-runtime-bundle-version>
@@ -54,7 +54,7 @@
     <arquillian-weld-se-embedded-version>1.0.0.CR9</arquillian-weld-se-embedded-version>
     <asm-bundle-version>3.3.1_1</asm-bundle-version>
     <asm-version>3.3.1</asm-version>
-    <aspectj-version>1.8.8</aspectj-version>
+    <aspectj-version>1.8.9</aspectj-version>
     <atmos-client-version>2.2.2</atmos-client-version>
     <atmosphere-version>2.4.3</atmosphere-version>
     <atmosphere-version-range>[2.4,3.0)</atmosphere-version-range>
@@ -76,7 +76,7 @@
     <boon-version>0.33</boon-version>
     <bouncycastle-version>1.54</bouncycastle-version>
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
-    <braintree-gateway-version>2.55.0</braintree-gateway-version>
+    <braintree-gateway-version>2.58.0</braintree-gateway-version>
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
     <californium-version>1.0.0-M3</californium-version>
@@ -241,6 +241,8 @@
     <httpclient4-olingo2-version>4.4.1</httpclient4-olingo2-version>
     <httpasyncclient-version>4.1.1</httpasyncclient-version>
     <httpclient-version>3.1</httpclient-version>
+    <hystrix-version>1.4.23</hystrix-version>
+    <hystrix-bundle-version>1.3.13_1</hystrix-bundle-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.7</ical4j-version>
@@ -335,7 +337,7 @@
     <json-path-version>2.1.0</json-path-version>
     <json-simple-version>1.1.1</json-simple-version>
     <json-smart-version>2.2.1</json-smart-version>
-	<jsoup-version>1.8.3</jsoup-version>
+    <jsoup-version>1.8.3</jsoup-version>
     <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
     <jsr311-api-version>1.1.1</jsr311-api-version>
     <jsmpp-bundle-version>2.1.0_4</jsmpp-bundle-version>
@@ -359,7 +361,7 @@
     <kubernetes-model-version>1.0.43</kubernetes-model-version>
     <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
     <leveldbjni-version>1.8</leveldbjni-version>
-	<libphonenumber-version>7.2.7</libphonenumber-version>
+    <libphonenumber-version>7.2.8</libphonenumber-version>
     <!-- virtual dependency only used by Eclipse m2e -->
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <log4j-version>1.2.17</log4j-version>
@@ -450,6 +452,7 @@
     <protobuf-version>2.6.1</protobuf-version>
     <qpid-bundle-version>0.28_1</qpid-bundle-version>
     <qpid-version>0.28</qpid-version>
+    <qpid-proton-j-version>0.12.0</qpid-proton-j-version>
     <qpid-jms-client-version>0.8.0</qpid-jms-client-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
@@ -486,7 +489,6 @@
     <sip-api-version>1.1</sip-api-version>
     <slf4j-api-version>1.7.13</slf4j-api-version>
     <slf4j-version>1.7.13</slf4j-version>
-    <smack-bundle-version>4.0.6</smack-bundle-version>
     <smack-version>4.0.7</smack-version>
     <snakeyaml-version>1.17</snakeyaml-version>
     <snappy-version>1.1.2.1</snappy-version>
@@ -1057,6 +1059,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-http4</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-hystrix</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

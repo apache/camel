@@ -84,6 +84,8 @@ public class IrcConfiguration implements Cloneable {
     @UriParam(defaultValue = "true")
     private boolean autoRejoin = true;
     private SSLContextParameters sslContextParameters;
+    @UriParam
+    private String nickPassword;
 
     public IrcConfiguration() {
     }
@@ -439,6 +441,17 @@ public class IrcConfiguration implements Cloneable {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+    
+    /**
+     * Your IRC server nickname password.
+     */
+    public String getNickPassword() {
+        return nickPassword;
+    }
+
+    public void setNickPassword(String nickPassword) {
+        this.nickPassword = nickPassword;
     }
 
     public String toString() {

@@ -18,8 +18,6 @@ package org.apache.camel.itest.karaf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
@@ -29,12 +27,7 @@ public class CamelCassandraqlTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testComponent("cql");
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
+        testComponent(COMPONENT, "cql");
     }
 
 }

@@ -14,28 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.karaf;
+package org.apache.camel.component.infinispan.util;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExam;
-
-@RunWith(PaxExam.class)
-public class CamelJdbcAggregatorTest extends AbstractFeatureTest {
-
-    // the aggregator is included in the camel-sql artifact
-    public static final String COMPONENT = "sql";
-
-    @Test
-    public void test() throws Exception {
-        // its not a component
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
-    }
-
+public interface Condition {
+    boolean isSatisfied() throws Exception;
 }
