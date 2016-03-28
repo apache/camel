@@ -18,10 +18,12 @@ package org.apache.camel.component.cm;
 
 import java.util.Map;
 import java.util.Set;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 
-import org.apache.camel.BeanInject;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -35,10 +37,9 @@ import org.slf4j.LoggerFactory;
  */
 public class CMComponent extends UriEndpointComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CMComponent.class);
+    private static final Logger LOG = LoggerFactory
+        .getLogger(CMComponent.class);
 
-    // TODO: Must not rely on dependency injection as it should work out of the box
-    @BeanInject
     private Validator validator;
 
     public CMComponent() {
@@ -53,11 +54,17 @@ public class CMComponent extends UriEndpointComponent {
      * Endpoints factory
      */
     @Override
-    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(final String uri, final String remaining,
+                                      final Map<String, Object> parameters)
+        throws Exception {
 
         LOG.debug("Creating CM Endpoint ... ");
 
-        LOG.debug("Uri=[{}], path=[{}], parameters=[{}]", new Object[] {URISupport.sanitizeUri(uri), URISupport.sanitizePath(remaining), parameters });
+        LOG.debug("Uri=[{}], path=[{}], parameters=[{}]",
+                  new Object[] {URISupport.sanitizeUri(uri),
+                                URISupport
+                                    .sanitizePath(remaining),
+                                parameters});
 
         // Set configuration based on uri parameters
         final CMConfiguration config = new CMConfiguration();
@@ -65,11 +72,14 @@ public class CMComponent extends UriEndpointComponent {
 
         // Validate configuration
         LOG.debug("Validating uri based configuration");
-        final Set<ConstraintViolation<CMConfiguration>> constraintViolations = validator.validate(config);
+        final Set<ConstraintViolation<CMConfiguration>> constraintViolations = getValidator()
+            .validate(config);
         if (constraintViolations.size() > 0) {
             final StringBuffer msg = new StringBuffer();
             for (final ConstraintViolation<CMConfiguration> cv : constraintViolations) {
-                msg.append(String.format("- Invalid value for %s: %s", cv.getPropertyPath().toString(), cv.getMessage()));
+                msg.append(String.format("- Invalid value for %s: %s",
+                                         cv.getPropertyPath().toString(),
+                                         cv.getMessage()));
             }
             throw new ResolveEndpointFailedException(uri, msg.toString());
         }
@@ -87,6 +97,11 @@ public class CMComponent extends UriEndpointComponent {
     }
 
     public Validator getValidator() {
+        if (validator == null) {
+            ValidatorFactory factory = Validation
+                .buildDefaultValidatorFactory();
+            validator = factory.getValidator();
+        }
         return validator;
     }
 
