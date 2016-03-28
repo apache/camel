@@ -19,9 +19,12 @@ package org.apache.camel.spring.javaconfig;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import static java.util.Collections.emptyList;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.CamelBeanPostProcessor;
@@ -121,6 +124,24 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
         }
 
         return configuredObject;
+    }
+
+    /**
+     * Get's the {@link ProducerTemplate} to be used.
+     */
+    @Bean(initMethod = "", destroyMethod = "")
+    // Camel handles the lifecycle of this bean
+    public ProducerTemplate producerTemplate(CamelContext camelContext) throws Exception {
+        return camelContext.createProducerTemplate();
+    }
+
+    /**
+     * Get's the {@link ConsumerTemplate} to be used.
+     */
+    @Bean(initMethod = "", destroyMethod = "")
+    // Camel handles the lifecycle of this bean
+    public ConsumerTemplate consumerTemplate(CamelContext camelContext) throws Exception {
+        return camelContext.createConsumerTemplate();
     }
 
     @Bean
