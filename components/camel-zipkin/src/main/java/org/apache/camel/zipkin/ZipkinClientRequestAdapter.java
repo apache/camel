@@ -56,10 +56,15 @@ public final class ZipkinClientRequestAdapter implements ClientRequestAdapter {
 
     @Override
     public void addSpanIdToRequest(@Nullable SpanId spanId) {
-        exchange.getIn().setHeader(ZipkinConstants.TRACE_ID, IdConversion.convertToString(spanId.getTraceId()));
-        exchange.getIn().setHeader(ZipkinConstants.SPAN_ID, IdConversion.convertToString(spanId.getSpanId()));
-        if (spanId.getParentSpanId() != null) {
-            exchange.getIn().setHeader(ZipkinConstants.PARENT_SPAN_ID, IdConversion.convertToString(spanId.getParentSpanId()));
+        if (spanId == null) {
+            exchange.getIn().setHeader(ZipkinConstants.SAMPLED, "0");
+        } else {
+            exchange.getIn().setHeader(ZipkinConstants.SAMPLED, "1");
+            exchange.getIn().setHeader(ZipkinConstants.TRACE_ID, IdConversion.convertToString(spanId.getTraceId()));
+            exchange.getIn().setHeader(ZipkinConstants.SPAN_ID, IdConversion.convertToString(spanId.getSpanId()));
+            if (spanId.getParentSpanId() != null) {
+                exchange.getIn().setHeader(ZipkinConstants.PARENT_SPAN_ID, IdConversion.convertToString(spanId.getParentSpanId()));
+            }
         }
     }
 
