@@ -1,4 +1,4 @@
-# camel-cm
+# camel-cm-sms
 
 [Camel component](http://camel.apache.org/components.html) for the [CM SMS Gateway](https://www.cmtelecom.com). 
 
@@ -9,13 +9,13 @@ You must have a valid account.  More information are available at [CM Telecom](h
 ### URI Format
 
 ```
-cm://sgw01.cm.nl/gateway.ashx?defaultFrom=DefaultSender&defaultMaxNumberOfParts=8&productToken=2fb82162-754c-4c1b-806d-9cb7efd677f4
+cm-sms://sgw01.cm.nl/gateway.ashx?defaultFrom=DefaultSender&defaultMaxNumberOfParts=8&productToken=2fb82162-754c-4c1b-806d-9cb7efd677f4
 ```
 
 
 ### Endpoint Options
 
-CM endpoints act like a **producer** and support the following options.
+CM SMS endpoints act like a **producer** and support the following options.
 
 | Name  | Default Value | Description |
 | ------------- | ------------- | ------------- |
@@ -24,9 +24,5 @@ CM endpoints act like a **producer** and support the following options.
 | defaultMaxNumberOfParts  | 8 | If it is a [multipart message](https://dashboard.onlinesmsgateway.com/docs#send-a-message-multipart) forces the max number of parts to be sent. <p>The gateway will first check if a message is larger than 160 characters, if so, the message will be cut into multiple 153 characters parts limited by these parameters whether the message is [GSM 0038 encodeable](https://en.wikipedia.org/wiki/GSM_03.38). <p>Otherwise, The gateway will check if a message is larger than 70 characters, if so, the message will be cut into multiple 67 characters parts to a maximum of this parameter.|
 | testConnectionOnStartup | false | This ensures that Camel is not started with failed connections cause an exception is thrown on startup. | 
 
-### Tests
-
-Tests provided so far show a valid [Spring Configuration](https://github.com/oalles/camel-cm/blob/master/src/test/java/org/apache/camel/component/cm/test/TestConfiguration.java). Notice that CM Component URI is built from properties in a [file](https://github.com/oalles/camel-cm/blob/master/src/test/resources/cm-smsgw.properties). 
-
 ### Sample of Usage
-You can try [this project](https://github.com/oalles/camel-cm-sample) to see how camel-cm can be integrated in a camel route. 
+You can try [this project](https://github.com/oalles/camel-cm-sample) to see how camel-cm-sms can be integrated in a camel route. 
