@@ -72,6 +72,12 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         return rate;
     }
 
+    /**
+     * Configures a rate that decides how many events should be traced by zpkin.
+     * The rate is expressed as a percentage (1.0f = 100%, 0.5f is 50%, 0.1f is 10%).
+     *
+     * @param rate minimum sample rate is 0.0001, or 0.01% of traces
+     */
     public void setRate(float rate) {
         this.rate = rate;
     }
@@ -80,6 +86,9 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         return spanCollector;
     }
 
+    /**
+     * The collector to use for sending zipkin span events to the zipkin server.
+     */
     public void setSpanCollector(SpanCollector spanCollector) {
         this.spanCollector = spanCollector;
     }
@@ -88,6 +97,9 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         return serviceMappings.get("*");
     }
 
+    /**
+     * To use a global service name that matches all Camel events
+     */
     public void setServiceName(String serviceName) {
         serviceMappings.put("*", serviceName);
     }
@@ -100,6 +112,13 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         this.serviceMappings = serviceMappings;
     }
 
+    /**
+     * Adds a service mapping that matches Camel events to the given zipkin serivce name.
+     * See more details at the class javadoc.
+     *
+     * @param pattern  the pattern such as route id, endpoint url
+     * @param serviceName the zpkin service name
+     */
     public void addServiceMapping(String pattern, String serviceName) {
         serviceMappings.put(pattern, serviceName);
     }
@@ -144,8 +163,11 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
 
     @Override
     public boolean isEnabled(EventObject event) {
-        return event instanceof ExchangeSendingEvent || event instanceof ExchangeSentEvent
-                || event instanceof ExchangeCreatedEvent || event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent;
+        return event instanceof ExchangeSendingEvent
+                || event instanceof ExchangeSentEvent
+                || event instanceof ExchangeCreatedEvent
+                || event instanceof ExchangeCompletedEvent
+                || event instanceof ExchangeFailedEvent;
     }
 
     private String getServiceName(Exchange exchange, Endpoint endpoint) {
@@ -261,7 +283,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         event.getExchange().setProperty(key, span);
 
         if (log.isDebugEnabled()) {
-            log.debug("clientRequest: service={}, id={} ", serviceName, span != null ? span.getId() : "<null>");
+            log.debug("clientRequest[service={}, spanId={}]", serviceName, span != null ? span.getId() : "<null>");
         }
     }
 
@@ -274,7 +296,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         binder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
-            log.debug("clientResponse: service={}, id={} ", serviceName, span != null ? span.getId() : "<null>");
+            log.debug("clientResponse[service={}, spanId={}]", serviceName, span != null ? span.getId() : "<null>");
         }
     }
 
@@ -286,7 +308,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         event.getExchange().setProperty(key, span);
 
         if (log.isDebugEnabled()) {
-            log.debug("serverRequest: service={}, id={} ", serviceName, span != null ? span.getSpan().getId() : "<null>");
+            log.debug("serverRequest[service={}, spanId={}]", serviceName, span != null ? span.getSpan().getId() : "<null>");
         }
     }
 
@@ -299,7 +321,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         binder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
-            log.debug("serverResponse: service={}, id={} ", serviceName, span != null ? span.getSpan().getId() : "<null>");
+            log.debug("serverResponse: service={}, spanId={} ", serviceName, span != null ? span.getSpan().getId() : "<null>");
         }
     }
 
@@ -312,7 +334,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         binder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
-            log.debug("serverResponse: service={}, id={} ", serviceName, span != null ? span.getSpan().getId() : "<null>");
+            log.debug("serverResponse[service={}, spanId={}]", serviceName, span != null ? span.getSpan().getId() : "<null>");
         }
     }
 
