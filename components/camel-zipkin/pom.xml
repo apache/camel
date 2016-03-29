@@ -45,12 +45,15 @@
     <dependency>
       <groupId>com.github.kristofa</groupId>
       <artifactId>brave-core</artifactId>
-      <version>3.5.0</version>
+      <version>${brave-zipkin-version}</version>
     </dependency>
+
+    <!-- for testing using a real zipkin server -->
     <dependency>
       <groupId>com.github.kristofa</groupId>
       <artifactId>brave-spancollector-scribe</artifactId>
-      <version>3.5.0</version>
+      <version>${brave-zipkin-version}</version>
+      <scope>test</scope>
     </dependency>
 
     <!-- test dependencies -->
