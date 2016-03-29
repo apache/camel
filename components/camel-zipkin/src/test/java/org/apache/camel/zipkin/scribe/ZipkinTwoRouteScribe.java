@@ -45,6 +45,8 @@ public class ZipkinTwoRouteScribe extends CamelTestSupport {
         // we have 2 routes as services
         zipkin.addServiceMapping("seda:cat", "cat");
         zipkin.addServiceMapping("seda:dog", "dog");
+        // capture message body as well
+        zipkin.setIncludeMessageBody(true);
         zipkin.setSpanCollector(new ScribeSpanCollector(ip, 9410));
         context.getManagementStrategy().addEventNotifier(zipkin);
 
@@ -53,7 +55,7 @@ public class ZipkinTwoRouteScribe extends CamelTestSupport {
 
     @Test
     public void testZipkinRoute() throws Exception {
-        template.requestBody("direct:start", "Hello Cat and Dog");
+        template.requestBody("direct:start", "Camel say hello Cat");
     }
 
     @Override
@@ -66,11 +68,13 @@ public class ZipkinTwoRouteScribe extends CamelTestSupport {
                 from("seda:cat").routeId("cat")
                         .log("routing at ${routeId}")
                         .delay(simple("${random(1000,2000)}"))
+                        .setBody().constant("Cat says hello Dog")
                         .to("seda:dog");
 
                 from("seda:dog").routeId("dog")
                         .log("routing at ${routeId}")
-                        .delay(simple("${random(0,500)}"));
+                        .delay(simple("${random(0,500)}"))
+                        .setBody().constant("Dog say hello Cat and Camel");
             }
         };
     }

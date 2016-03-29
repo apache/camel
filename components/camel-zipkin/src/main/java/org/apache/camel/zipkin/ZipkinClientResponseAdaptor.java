@@ -16,30 +16,62 @@
  */
 package org.apache.camel.zipkin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import com.github.kristofa.brave.ClientResponseAdapter;
 import com.github.kristofa.brave.KeyValueAnnotation;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.MessageHelper;
+import org.apache.camel.util.URISupport;
 
 public class ZipkinClientResponseAdaptor implements ClientResponseAdapter {
 
+    private final ZipkinEventNotifier eventNotifier;
     private final Exchange exchange;
     private final Endpoint endpoint;
+    private final String url;
 
-    public ZipkinClientResponseAdaptor(Exchange exchange, Endpoint endpoint) {
+    public ZipkinClientResponseAdaptor(ZipkinEventNotifier eventNotifier, Exchange exchange, Endpoint endpoint) {
+        this.eventNotifier = eventNotifier;
         this.exchange = exchange;
         this.endpoint = endpoint;
+        this.url = URISupport.sanitizeUri(endpoint.getEndpointUri());
     }
 
     @Override
     public Collection<KeyValueAnnotation> responseAnnotations() {
-        if (exchange.getException() != null) {
-            return Collections.singletonList(KeyValueAnnotation.create("camel.failure", exchange.getException().getMessage()));
-        } else {
-            return Collections.emptyList();
+        KeyValueAnnotation key1 = KeyValueAnnotation.create("camel.client.endpoint.url", url);
+        KeyValueAnnotation key2 = KeyValueAnnotation.create("camel.client.exchange.id", exchange.getExchangeId());
+        KeyValueAnnotation key3 = KeyValueAnnotation.create("camel.client.exchange.pattern", exchange.getPattern().name());
+
+        KeyValueAnnotation key4 = null;
+        if (eventNotifier.isIncludeMessageBody()) {
+            String body = MessageHelper.extractBodyForLogging(exchange.hasOut() ? exchange.getOut() : exchange.getIn(), "");
+            key4 = KeyValueAnnotation.create("camel.client.exchange.message.response.body", body);
         }
+
+        KeyValueAnnotation key5 = null;
+        // lets capture http response code for http based components
+        String responseCode = exchange.hasOut() ? exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE, String.class) : exchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE, String.class);
+        if (responseCode != null) {
+            key5 = KeyValueAnnotation.create("camel.client.exchange.message.response.code", responseCode);
+        }
+
+        List<KeyValueAnnotation> list = new ArrayList<>();
+        list.add(key1);
+        list.add(key2);
+        list.add(key3);
+        if (key4 != null) {
+            list.add(key4);
+        }
+        if (key5 != null) {
+            list.add(key5);
+        }
+        return list;
     }
 }

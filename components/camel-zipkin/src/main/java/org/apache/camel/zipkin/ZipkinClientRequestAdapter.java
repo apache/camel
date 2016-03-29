@@ -16,8 +16,10 @@
  */
 package org.apache.camel.zipkin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 import com.github.kristofa.brave.ClientRequestAdapter;
@@ -27,17 +29,20 @@ import com.github.kristofa.brave.SpanId;
 import com.github.kristofa.brave.internal.Nullable;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.URISupport;
 
 public final class ZipkinClientRequestAdapter implements ClientRequestAdapter {
 
+    private final ZipkinEventNotifier eventNotifier;
     private final String serviceName;
     private final Exchange exchange;
     private final Endpoint endpoint;
     private final String spanName;
     private final String url;
 
-    public ZipkinClientRequestAdapter(String serviceName, Exchange exchange, Endpoint endpoint) {
+    public ZipkinClientRequestAdapter(ZipkinEventNotifier eventNotifier, String serviceName, Exchange exchange, Endpoint endpoint) {
+        this.eventNotifier = eventNotifier;
         this.serviceName = serviceName;
         this.exchange = exchange;
         this.endpoint = endpoint;
@@ -66,12 +71,23 @@ public final class ZipkinClientRequestAdapter implements ClientRequestAdapter {
 
     @Override
     public Collection<KeyValueAnnotation> requestAnnotations() {
-        String id = exchange.getExchangeId();
-        String mep = exchange.getPattern().name();
-
         KeyValueAnnotation key1 = KeyValueAnnotation.create("camel.client.endpoint.url", url);
-        KeyValueAnnotation key2 = KeyValueAnnotation.create("camel.client.exchange.id", id);
-        KeyValueAnnotation key3 = KeyValueAnnotation.create("camel.client.exchange.pattern", mep);
-        return Arrays.asList(key1, key2, key3);
+        KeyValueAnnotation key2 = KeyValueAnnotation.create("camel.client.exchange.id", exchange.getExchangeId());
+        KeyValueAnnotation key3 = KeyValueAnnotation.create("camel.client.exchange.pattern", exchange.getPattern().name());
+
+        KeyValueAnnotation key4 = null;
+        if (eventNotifier.isIncludeMessageBody()) {
+            String body = MessageHelper.extractBodyForLogging(exchange.hasOut() ? exchange.getOut() : exchange.getIn(), "");
+            key4 = KeyValueAnnotation.create("camel.client.exchange.message.request.body", body);
+        }
+
+        List<KeyValueAnnotation> list = new ArrayList<>();
+        list.add(key1);
+        list.add(key2);
+        list.add(key3);
+        if (key4 != null) {
+            list.add(key4);
+        }
+        return list;
     }
 }

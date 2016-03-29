@@ -31,6 +31,9 @@ import com.twitter.zipkin.gen.Span;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.StatefulService;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
@@ -58,12 +61,14 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
  * <p/>
  * At least one mapping must be configured, you can use <tt>*</tt> to match all incoming and outgoing messages.
  */
-public class ZipkinEventNotifier extends EventNotifierSupport {
+@ManagedResource(description = "Managing ZipkinEventNotifier")
+public class ZipkinEventNotifier extends EventNotifierSupport implements StatefulService {
 
     private float rate = 1.0f;
     private SpanCollector spanCollector;
     private Map<String, String> serviceMappings = new HashMap<>();
     private Map<String, Brave> braves = new HashMap<>();
+    private boolean includeMessageBody;
 
     public ZipkinEventNotifier() {
     }
@@ -121,6 +126,22 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
      */
     public void addServiceMapping(String pattern, String serviceName) {
         serviceMappings.put(pattern, serviceName);
+    }
+
+    @ManagedAttribute(description = "Whether to include the Camel message body in the zipkin traces")
+    public boolean isIncludeMessageBody() {
+        return includeMessageBody;
+    }
+
+    /**
+     * Whether to include the Camel message body in the zipkin traces.
+     * <p/>
+     * This is not recommended for production usage, or when having big payloads. You can limit the size by
+     * configuring the <a href="http://camel.apache.org/how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.html">max debug log size</a>.
+     */
+    @ManagedAttribute(description = "Whether to include the Camel message body in the zipkin traces")
+    public void setIncludeMessageBody(boolean includeMessageBody) {
+        this.includeMessageBody = includeMessageBody;
     }
 
     @Override
@@ -276,7 +297,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
 
     private void clientRequest(Brave brave, String serviceName, ExchangeSendingEvent event) {
         ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
-        brave.clientRequestInterceptor().handle(new ZipkinClientRequestAdapter(serviceName, event.getExchange(), event.getEndpoint()));
+        brave.clientRequestInterceptor().handle(new ZipkinClientRequestAdapter(this, serviceName, event.getExchange(), event.getEndpoint()));
         Span span = binder.getCurrentClientSpan();
 
         String key = "CamelZipkinClientSpan-" + serviceName;
@@ -292,7 +313,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         String key = "CamelZipkinClientSpan-" + serviceName;
         Span span = event.getExchange().getProperty(key, Span.class);
         binder.setCurrentSpan(span);
-        brave.clientResponseInterceptor().handle(new ZipkinClientResponseAdaptor(event.getExchange(), event.getEndpoint()));
+        brave.clientResponseInterceptor().handle(new ZipkinClientResponseAdaptor(this, event.getExchange(), event.getEndpoint()));
         binder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
@@ -302,7 +323,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
 
     private void serverRequest(Brave brave, String serviceName, ExchangeCreatedEvent event) {
         ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
-        brave.serverRequestInterceptor().handle(new ZipkinServerRequestAdapter(event.getExchange()));
+        brave.serverRequestInterceptor().handle(new ZipkinServerRequestAdapter(this, event.getExchange()));
         ServerSpan span = binder.getCurrentServerSpan();
         String key = "CamelZipkinServerSpan-" + serviceName;
         event.getExchange().setProperty(key, span);
@@ -317,11 +338,11 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         String key = "CamelZipkinServerSpan-" + serviceName;
         ServerSpan span = event.getExchange().getProperty(key, ServerSpan.class);
         binder.setCurrentSpan(span);
-        brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(event.getExchange()));
+        brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(this, event.getExchange()));
         binder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
-            log.debug("serverResponse: service={}, spanId={} ", serviceName, span != null ? span.getSpan().getId() : "<null>");
+            log.debug("serverResponse[service={}, spanId={}, status=exchangeCompleted]", serviceName, span != null ? span.getSpan().getId() : "<null>");
         }
     }
 
@@ -330,11 +351,11 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         String key = "CamelZipkinServerSpan-" + serviceName;
         ServerSpan span = event.getExchange().getProperty(key, ServerSpan.class);
         binder.setCurrentSpan(span);
-        brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(event.getExchange()));
+        brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(this, event.getExchange()));
         binder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
-            log.debug("serverResponse[service={}, spanId={}]", serviceName, span != null ? span.getSpan().getId() : "<null>");
+            log.debug("serverResponse[service={}, spanId={}, status=exchangeFailed]", serviceName, span != null ? span.getSpan().getId() : "<null>");
         }
     }
 
