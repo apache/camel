@@ -41,7 +41,7 @@ public class SparkEndpoint extends DefaultEndpoint {
     private String accept;
     @UriParam
     private SparkConfiguration sparkConfiguration;
-    @UriParam
+    @UriParam(label = "advanced")
     private SparkBinding sparkBinding;
 
     public SparkEndpoint(String endpointUri, Component component) {
@@ -128,7 +128,8 @@ public class SparkEndpoint extends DefaultEndpoint {
         ObjectHelper.notEmpty(verb, "verb", this);
         ObjectHelper.notEmpty(path, "path", this);
 
-        // verb must be supported by Spark
-        HttpMethod.valueOf(verb);
+        // verb must be supported by Spark and lets convert to the actual name
+        HttpMethod method = getCamelContext().getTypeConverter().mandatoryConvertTo(HttpMethod.class, verb);
+        verb = method.name();
     }
 }

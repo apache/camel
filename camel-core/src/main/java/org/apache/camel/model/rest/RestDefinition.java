@@ -19,8 +19,10 @@ package org.apache.camel.model.rest;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -67,6 +69,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     @XmlAttribute
     private Boolean enableCORS;
+
+    @XmlAttribute
+    private Boolean apiDocs;
 
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
@@ -174,9 +179,22 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         this.enableCORS = enableCORS;
     }
 
+    public Boolean getApiDocs() {
+        return apiDocs;
+    }
+
+    /**
+     * Whether to include or exclude the VerbDefinition in API documentation.
+     * This option will override what may be configured on a parent level
+     * <p/>
+     * The default value is true.
+     */
+    public void setApiDocs(Boolean apiDocs) {
+        this.apiDocs = apiDocs;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
-
 
     /**
      * To set the base path of this REST service
@@ -234,10 +252,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return addVerb("head", uri);
     }
 
+    @Deprecated
     public RestDefinition options() {
         return addVerb("options", null);
     }
 
+    @Deprecated
     public RestDefinition options(String uri) {
         return addVerb("options", uri);
     }
@@ -456,6 +476,23 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
+     * Include or exclude the current Rest Definition in API documentation.
+     * <p/>
+     * The default value is true.
+     */
+    public RestDefinition apiDocs(Boolean apiDocs) {
+        if (getVerbs().isEmpty()) {
+            this.apiDocs = apiDocs;
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setApiDocs(apiDocs);
+        }
+
+        return this;
+    }
+
+    /**
      * Routes directly to the given static endpoint.
      * <p/>
      * If you need additional routing capabilities, then use {@link #route()} instead.
@@ -545,6 +582,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      * REST DSL and turn those into regular Camel routes.
      */
     public List<RouteDefinition> asRouteDefinition(CamelContext camelContext) {
+        // sanity check this rest definition do not have duplicates
+        validateUniquePaths();
+
         List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
         if (camelContext.getRestConfigurations().isEmpty()) {
             camelContext.getRestConfiguration();
@@ -553,6 +593,19 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             addRouteDefinition(camelContext, answer, config.getComponent());
         }
         return answer;
+    }
+
+    protected void validateUniquePaths() {
+        Set<String> paths = new HashSet<String>();
+        for (VerbDefinition verb : verbs) {
+            String path = verb.asVerb();
+            if (verb.getUri() != null) {
+                path += ":" + verb.getUri();
+            }
+            if (!paths.add(path)) {
+                throw new IllegalArgumentException("Duplicate verb detected in rest-dsl: " + path);
+            }
+        }
     }
 
     /**

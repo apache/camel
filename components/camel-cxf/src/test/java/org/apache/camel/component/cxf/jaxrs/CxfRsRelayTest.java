@@ -106,8 +106,7 @@ public class CxfRsRelayTest extends TestSupport {
                             .upload(CamelRouteBuilder.class.getResourceAsStream(SAMPLE_CONTENT_PATH),
                                     SAMPLE_NAME);
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        throw new RuntimeException(e);
+                        log.warn("Error uploading to http://localhost:" + port6 + "/CxfRsRelayTest/rest", e);
                     }
                 }
             });

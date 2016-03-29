@@ -79,8 +79,12 @@ public @interface ContextName {
 
         private final String name;
 
-        public Literal(String name) {
+        private Literal(String name) {
             this.name = name;
+        }
+
+        public static Literal of(String name) {
+            return new Literal(name);
         }
 
         @Override

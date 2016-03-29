@@ -49,17 +49,17 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     @UriParam(label = "consumer",
             description = "Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.")
     boolean matchOnUriPrefix;
-    @UriParam(defaultValue = "true", description = "If this option is false Jetty servlet will disable the HTTP streaming and set the content-length header on the response")
+    @UriParam(defaultValue = "true", description = "If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response")
     boolean chunked = true;
     @UriParam(label = "common",
-            description = "Determines whether or not the raw input stream from Jetty is cached or not"
+            description = "Determines whether or not the raw input stream from Servlet is cached or not"
                     + " (Camel will read the stream into a in memory/overflow to file, Stream caching) cache."
-                    + " By default Camel will cache the Jetty input stream to support reading it multiple times to ensure it Camel"
+                    + " By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel"
                     + " can retrieve all data from the stream. However you can set this option to true when you for example need"
                     + " to access the raw stream, such as streaming it directly to a file or other persistent store."
                     + " DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body"
                     + " if this option is false to support reading the stream multiple times."
-                    + " If you use Jetty to bridge/proxy an endpoint then consider enabling this option to improve performance,"
+                    + " If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance,"
                     + " in case you do not need to read the message payload multiple times."
                     + " The http/http4 producer will by default cache the response body stream. If setting this option to true,"
                     + " then the producers will not cache the response body stream but use the response stream as-is as the message body.")
@@ -78,8 +78,11 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             + " data from the request to Java and that can be a potential security risk.")
     boolean transferException;
     @UriParam(label = "consumer",
-            description = "Specifies whether to enable HTTP TRACE for this Jetty consumer. By default TRACE is turned off.")
+            description = "Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.")
     boolean traceEnabled;
+    @UriParam(label = "consumer",
+            description = "Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.")
+    boolean optionsEnabled;
     @UriParam(label = "consumer",
             description = "Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.")
     String httpMethodRestrict;
@@ -261,14 +264,14 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * Determines whether or not the raw input stream from Jetty is cached or not
+     * Determines whether or not the raw input stream from Servlet is cached or not
      * (Camel will read the stream into a in memory/overflow to file, Stream caching) cache.
-     * By default Camel will cache the Jetty input stream to support reading it multiple times to ensure it Camel
+     * By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel
      * can retrieve all data from the stream. However you can set this option to true when you for example need
      * to access the raw stream, such as streaming it directly to a file or other persistent store.
      * DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body
      * if this option is false to support reading the stream multiple times.
-     * If you use Jetty to bridge/proxy an endpoint then consider enabling this option to improve performance,
+     * If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance,
      * in case you do not need to read the message payload multiple times.
      + The http/http4 producer will by default cache the response body stream. If setting this option to true,
      + then the producers will not cache the response body stream but use the response stream as-is as the message body.
@@ -282,7 +285,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * If this option is false Jetty servlet will disable the HTTP streaming and set the content-length header on the response
+     * If this option is false Servlet will disable the HTTP streaming and set the content-length header on the response
      */
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
@@ -343,10 +346,21 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * Specifies whether to enable HTTP TRACE for this Jetty consumer. By default TRACE is turned off.
+     * Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.
      */
     public void setTraceEnabled(boolean traceEnabled) {
         this.traceEnabled = traceEnabled;
+    }
+
+    public boolean isOptionsEnabled() {
+        return optionsEnabled;
+    }
+
+    /**
+     * Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.
+     */
+    public void setOptionsEnabled(boolean optionsEnabled) {
+        this.optionsEnabled = optionsEnabled;
     }
 
     public String getHttpMethodRestrict() {
@@ -431,6 +445,5 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     public void setOkStatusCodeRange(String okStatusCodeRange) {
         this.okStatusCodeRange = okStatusCodeRange;
     }
-
 
 }

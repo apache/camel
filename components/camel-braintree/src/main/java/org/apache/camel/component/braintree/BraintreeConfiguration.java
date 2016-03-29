@@ -18,9 +18,11 @@ package org.apache.camel.component.braintree;
 
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
+import org.apache.camel.component.braintree.internal.BraintreeApiName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -32,6 +34,12 @@ public class BraintreeConfiguration {
     private static final String MERCHANT_ID = "merchant_id";
     private static final String PUBLIC_KEY  = "public_key";
     private static final String PRIVATE_KEY = "private_key";
+
+    @UriPath
+    @Metadata(required = "true")
+    private BraintreeApiName apiName;
+    @UriPath
+    private String methodName;
 
     @UriParam
     @Metadata(required = "true")
@@ -56,6 +64,28 @@ public class BraintreeConfiguration {
     @UriParam
     @Metadata(label = "proxy")
     private Integer proxyPort;
+
+    public BraintreeApiName getApiName() {
+        return apiName;
+    }
+
+    /**
+     * What kind of operation to perform
+     */
+    public void setApiName(BraintreeApiName apiName) {
+        this.apiName = apiName;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    /**
+     * What sub operation to use for the selected operation
+     */
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
 
     public String getEnvironment() {
         return ObjectHelper.notNull(environment, ENVIRONMENT);

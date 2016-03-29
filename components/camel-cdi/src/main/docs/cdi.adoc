@@ -1,3 +1,11 @@
+ifdef::env-github[]
+:caution-caption: :boom:
+:important-caption: :exclamation:
+:note-caption: :information_source:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
 [[CDI-CamelCDI]]
 Camel CDI
 ~~~~~~~~~
@@ -15,12 +23,13 @@ bridges Camel events (e.g. `RouteAddedEvent`,
 and provides a CDI events endpoint that can be used to consume / produce
 CDI events from / to Camel routes.
 
-
 NOTE: While the Camel CDI component is available as of **Camel 2.10**, it's
 been rewritten in *Camel 2.17* to better fit into the CDI programming
 model. Hence some of the features like the Camel events to CDI events
 bridge and the CDI events endpoint only apply starting Camel 2.17.
 
+NOTE: More details on how to test Camel CDI applications are available in
+link:cdi-testing.html[Camel CDI testing].
 
 [[CDI-Auto-configuredCamelcontext]]
 Auto-configured Camel context
@@ -55,7 +64,7 @@ route is as simple as declaring a class, e.g.:
 
 [source,java]
 ----
-class MyRouteBean extends RoutesBuilder {
+class MyRouteBean extends RouteBuilder {
  
     @Override
     public void configure() {
@@ -103,7 +112,7 @@ you can used the `@ContextName` qualifier provided by Camel CDI, e.g.:
 [source,java]
 ----
 @ContextName("camel-context")
-class MyRouteBean extends RoutesBuilder {
+class MyRouteBean extends RouteBuilder {
  
     @Override
     public void configure() {
@@ -215,7 +224,7 @@ class BarCamelContext extends DefaultCamelContext {
 }
  
 @ContextName("foo")
-class RouteAddedToFooCamelContext extends RoutesBuilder {
+class RouteAddedToFooCamelContext extends RouteBuilder {
 
     @Override
     public void configure() {
@@ -224,7 +233,7 @@ class RouteAddedToFooCamelContext extends RoutesBuilder {
 }
  
 @BarContextQualifier
-class RouteAddedToBarCamelContext extends RoutesBuilder {
+class RouteAddedToBarCamelContext extends RouteBuilder {
 
     @Override
     public void configure() {
@@ -233,7 +242,7 @@ class RouteAddedToBarCamelContext extends RoutesBuilder {
 }
  
 @ContextName("baz")
-class RouteAddedToBazCamelContext extends RoutesBuilder {
+class RouteAddedToBazCamelContext extends RouteBuilder {
 
     @Override
     public void configure() {
@@ -242,7 +251,7 @@ class RouteAddedToBazCamelContext extends RoutesBuilder {
 }
  
 @MyOtherQualifier
-class RouteNotAddedToAnyCamelContext extends RoutesBuilder {
+class RouteNotAddedToAnyCamelContext extends RouteBuilder {
 
     @Override
     public void configure() {
@@ -260,6 +269,10 @@ the `RouteNotAddedToAnyCamelContext` bean qualified with the
 user-defined `@MyOtherQualifier` qualifier does not get added to any
 Camel contexts. That may be useful, for example, for Camel routes that
 may be required to be added later during the application execution.
+
+NOTE: Since Camel version 2.17.0, Camel CDI is capable of managing any kind of
+`CamelContext` beans (e.g. `DefaultCamelContext`). In previous versions, it is only capable of managing beans
+of type `CdiCamelContext` so it is required to extend it.
 
 The CDI qualifiers declared on the `CamelContext` beans are also used to
 bind the corresponding Camel primitives, e.g.:
@@ -767,6 +780,93 @@ karaf@root()> camel:context-list
 See the `camel-example-cdi-osgi` example for a working example of the
 Camel CDI OSGi integration.
 
+
+[[CDI-ProgrammaticLazyInjectionProgrammaticLookup]]
+Lazy Injection / Programmatic Lookup
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+While the CDI programmatic model favors a http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#typesafe_resolution[typesafe resolution]
+mechanism that occurs at application initialization time, it is possible to perform
+dynamic / lazy injection later during the application execution using the
+http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#programmatic_lookup[programmatic lookup]
+mechanism.
+
+Camel CDI provides for convenience the annotation literals corresponding to the
+CDI qualifiers that you can use for standard injection of Camel primitives.
+These annotation literals can be used in conjunction with the `javax.enterprise.inject.Instance`
+interface which is the CDI entry point to perform lazy injection / programmatic lookup.
+
+For example, you can use the provided annotation literal for the `@Uri` qualifier
+to lazily lookup for Camel primitives, e.g. for `ProducerTemplate` beans:
+
+[source,java]
+----
+@Any
+@Inject
+Instance<ProducerTemplate> producers;
+
+ProducerTemplate inbound = producers
+    .select(Uri.Literal.of("direct:inbound"))
+    .get();
+----
+
+Or for `Endpoint` beans, e.g.:
+
+[source,java]
+----
+@Any
+@Inject
+Instance<Endpoint> endpoints;
+
+MockEndpoint outbound = endpoints
+    .select(MockEndpoint.class, Uri.Literal.of("mock:outbound"))
+    .get();
+----
+
+Similarly, you can use the provided annotation literal for
+the `@ContextName` qualifier to lazily lookup for `CamelContext`
+beans, e.g.:
+
+[source,java]
+----
+@Any
+@Inject
+Instance<CamelContext> contexts;
+
+CamelContext context = contexts
+    .select(ContextName.Literal.of("foo"))
+    .get();
+----
+
+You can also refined the selection based on the Camel context type, e.g.:
+
+[source,java]
+----
+@Any
+@Inject
+Instance<CamelContext> contexts;
+
+// Refine the selection by type
+Instance<DefaultCamelContext> context = contexts.select(DefaultCamelContext.class);
+
+// Check if such a bean exists then retrieve a reference
+if (!context.isUnsatisfied())
+    context.get();
+----
+
+Or even iterate over a selection of Camel contexts, e.g.:
+
+[source,java]
+----
+@Any
+@Inject
+Instance<CamelContext> contexts;
+
+for (CamelContext context : contexts)
+    context.setUseBreadcrumb(true);
+----
+
+
 [[CDI-MavenArchetype]]
 Maven Archetype
 ^^^^^^^^^^^^^^^
@@ -793,8 +893,8 @@ following runtimes:
 |Container |Version |Runtime
 |Weld SE |1.1.28.Final |CDI 1.0 / Java SE 7
 |OpenWebBeans |1.2.7 |CDI 1.0 / Java SE 7
-|Weld SE |2.3.2.Final |CDI 1.2 / Java SE 7
-|OpenWebBeans |1.6.2 |CDI 1.2 / Java SE 7
+|Weld SE |2.3.3.Final |CDI 1.2 / Java SE 7
+|OpenWebBeans |1.6.3 |CDI 1.2 / Java SE 7
 |WildFly |8.2.1.Final |CDI 1.2 / Java EE 7
 |WildFly |9.0.1.Final |CDI 1.2 / Java EE 7
 |Karaf |2.4.4 |CDI 1.2 / OSGi 4 / PAX CDI
@@ -809,25 +909,50 @@ Examples
 The following examples are available in the `examples` directory of the
 Camel project:
 
-* `camel-example-cdi-metrics` - illustrates the integration between
-Camel, Dropwizard Metrics and CDI,
-* `camel-example-cdi-properties` - illustrates the integration between
-Camel, DeltaSpike and CDI for configuration properties,
-* `camel-example-cdi-osgi` - a CDI application using the SJMS component
-that can be executed inside an OSGi container using PAX CDI,
-* `camel-example-cdi-rest-servlet` - illustrates the Camel REST DSL
-being used in a Web application that uses CDI as dependency injection
-framework,
-* `camel-example-widget-gadget-cdi` - the Widget and Gadget use-case
-from the EIP book implemented in Java with CDI dependency Injection,
-* `camel-example-swagger-cdi` - an example using REST DSL and Swagger
-Java with CDI.
+[width="100%",cols="1m,3",options="header",]
+|============================================
+|Example |Description
+
+|camel-example-cdi
+|Illustrates how to work with Camel using CDI to configure components,
+endpoints and beans
+
+|camel-example-cdi-metrics
+|Illustrates the integration between Camel, Dropwizard Metrics and CDI
+
+|camel-example-cdi-properties
+|Illustrates the integration between Camel, DeltaSpike and CDI for
+configuration properties
+
+|camel-example-cdi-osgi
+|A CDI application using the SJMS component that can be executed
+inside an OSGi container using PAX CDI
+
+|camel-example-cdi-rest-servlet
+|Illustrates the Camel REST DSL being used in a Web application that
+uses CDI as dependency injection framework
+
+|camel-example-cdi-test
+|Demonstrates the testing features that are provided as part of
+the integration between Camel and CDI
+
+|camel-example-swagger-cdi
+|An example using REST DSL and Swagger Java with CDI
+
+|camel-example-widget-gadget-cdi
+|The Widget and Gadget use-case from the EIP book implemented
+in Java with CDI dependency Injection
+
+|============================================
 
 [[CDI-SeeAlso]]
 See Also
 ^^^^^^^^
 
-* http://www.cdi-spec.org[CDI Web site]
+* link:cdi-testing.html[Camel CDI testing]
+* http://www.cdi-spec.org[CDI specification Web site]
 * http://www.cdi-spec.org/ecosystem/[CDI ecosystem]
-* https://github.com/astefanutti/further-cdi[Going further with CDI]
+* http://weld.cdi-spec.org[Weld home page]
+* http://openwebbeans.apache.org[OpenWebBeans home page]
+* https://github.com/astefanutti/further-cdi[Going further with CDI and Camel]
 (See Camel CDI section)

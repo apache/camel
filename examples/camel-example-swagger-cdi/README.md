@@ -29,11 +29,14 @@ For example to get a user with id 123
 
 <http://localhost:8080/user/123>
 
-The rest services provides Swagger API which can be accessed from the following url
+The rest services provides Swagger API in json or yaml format
+which can be accessed from the following url
 
-    curl http://localhost:8080/api-doc
+    curl http://localhost:8080/api-doc/swagger.json
+    curl http://localhost:8080/api-doc/swagger.yaml
 
-<http://localhost:8080/api-doc>
+
+<http://localhost:8080/api-doc/swagger.json>
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 

@@ -80,7 +80,10 @@ public class SqlComponent extends UriEndpointComponent {
         Map<String, Object> templateOptions = IntrospectionSupport.extractProperties(parameters, "template.");
         IntrospectionSupport.setProperties(jdbcTemplate, templateOptions);
 
-        String query = remaining.replaceAll(parameterPlaceholderSubstitute, "?");
+        String query = remaining;
+        if (usePlaceholder) {
+            query = query.replaceAll(parameterPlaceholderSubstitute, "?");
+        }
 
         String onConsume = getAndRemoveParameter(parameters, "consumer.onConsume", String.class);
         if (onConsume == null) {
@@ -106,6 +109,7 @@ public class SqlComponent extends UriEndpointComponent {
 
         SqlEndpoint endpoint = new SqlEndpoint(uri, this, jdbcTemplate, query);
         endpoint.setPlaceholder(parameterPlaceholderSubstitute);
+        endpoint.setUsePlaceholder(isUsePlaceholder());
         endpoint.setOnConsume(onConsume);
         endpoint.setOnConsumeFailed(onConsumeFailed);
         endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);

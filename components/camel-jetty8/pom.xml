@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-jetty8</artifactId>
@@ -31,7 +31,7 @@
 
   <properties>
     <camel.osgi.import.before.defaults>
-      javax.servlet.*;version="${servlet-version-range}"
+      org.eclipse.jetty.*;version="[8,9)"
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.jetty8</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=jetty</camel.osgi.export.service>
@@ -52,8 +52,9 @@
       <artifactId>camel-jetty-common</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-servlet_3.0_spec</artifactId>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${javax.servlet-api-version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>

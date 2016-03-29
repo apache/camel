@@ -43,6 +43,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -129,7 +130,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         }
         path = FileUtil.stripLeadingSeparator(path);
         String scheme = "http";
-        String host = "localhost";
+        String host = "";
         int port = 0;
 
         RestConfiguration config = configuration;
@@ -157,6 +158,17 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
             }
         }
 
+        // if no explicit hostname set then resolve the hostname
+        if (ObjectHelper.isEmpty(host)) {
+            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                host = "0.0.0.0";
+            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                host = HostUtils.getLocalHostName();
+            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                host = HostUtils.getLocalIp();
+            }
+        }
+
         Map<String, Object> map = new HashMap<String, Object>();
         // build query string, and append any endpoint configuration properties
         if (config.getComponent() == null || config.getComponent().equals("undertow")) {
@@ -164,6 +176,12 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
             }
+        }
+
+        boolean cors = config.isEnableCORS();
+        if (cors) {
+            // allow HTTP Options as we want to handle CORS in rest-dsl
+            map.put("optionsEnabled", "true");
         }
 
         String query = URISupport.createQueryString(map);
@@ -175,8 +193,12 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
             url = "undertow:%s://%s:%s/%s?httpMethodRestrict=%s";
         }
 
+        // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
-
+        if (cors) {
+            restrict += ",OPTIONS";
+        }
+        // get the endpoint
         url = String.format(url, scheme, host, port, path, restrict);
 
         if (!query.isEmpty()) {
@@ -186,7 +208,17 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         UndertowEndpoint endpoint = camelContext.getEndpoint(url, UndertowEndpoint.class);
         setProperties(endpoint, parameters);
 
+        if (!map.containsKey("undertowHttpBinding")) {
+            // use the rest binding, if not using a custom http binding
+            endpoint.setUndertowHttpBinding(new RestUndertowHttpBinding());
+        }
+
+        // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
+        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+            setProperties(consumer, config.getConsumerProperties());
+        }
+
         return consumer;
     }
 

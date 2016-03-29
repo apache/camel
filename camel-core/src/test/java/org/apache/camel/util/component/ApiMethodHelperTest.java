@@ -175,7 +175,7 @@ public class ApiMethodHelperTest {
         assertEquals("Derived sayHi(name)", "Howdy Dave", ApiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI_1, properties));
     }
 
-    static enum TestMethod implements ApiMethod {
+    enum TestMethod implements ApiMethod {
 
         SAYHI(String.class, "sayHi"),
         SAYHI_1(String.class, "sayHi", String.class, "name"),
@@ -188,7 +188,7 @@ public class ApiMethodHelperTest {
 
         private final ApiMethod apiMethod;
 
-        private TestMethod(Class<?> resultType, String name, Object... args) {
+        TestMethod(Class<?> resultType, String name, Object... args) {
             this.apiMethod = new ApiMethodImpl(TestProxy.class, resultType, name, args);
         }
 

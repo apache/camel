@@ -101,7 +101,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
                         if (service != null) {
                             String name = (String)sr.getProperty("name");
                             if (name != null) {
-                                result.put(name , type.cast(service));
+                                result.put(name, type.cast(service));
                             } else {
                                 // generate a unique name for it
                                 result.put(type.getSimpleName() + count, type.cast(service));

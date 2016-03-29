@@ -22,7 +22,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.management.event.CamelContextStartedEvent;
 
-class Producer {
+public class Producer {
 
     void sendMessage(@Observes CamelContextStartedEvent event, @Uri("sjms:sample.queue") ProducerTemplate producer) {
         producer.sendBodyAndHeader("Sample Message", "Sender", getClass().getSimpleName());

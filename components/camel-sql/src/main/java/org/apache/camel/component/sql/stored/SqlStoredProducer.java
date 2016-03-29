@@ -20,10 +20,13 @@ import java.sql.SQLException;
 import java.util.Iterator;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.sql.SqlHelper;
 import org.apache.camel.impl.DefaultProducer;
 import org.springframework.dao.DataAccessException;
 
 public class SqlStoredProducer extends DefaultProducer {
+
+    private String resolvedTemplate;
     private CallableStatementWrapperFactory callableStatementWrapperFactory;
 
     public SqlStoredProducer(SqlStoredEndpoint endpoint) {
@@ -36,10 +39,10 @@ public class SqlStoredProducer extends DefaultProducer {
     }
 
     public void process(final Exchange exchange) throws Exception {
-        StamentWrapper stamentWrapper = createStatement(exchange);
-        stamentWrapper.call(new WrapperExecuteCallback() {
+        StatementWrapper statementWrapper = createStatement(exchange);
+        statementWrapper.call(new WrapperExecuteCallback() {
             @Override
-            public void execute(StamentWrapper ps) throws SQLException, DataAccessException {
+            public void execute(StatementWrapper ps) throws SQLException, DataAccessException {
                 // transfer incoming message body data to prepared statement parameters, if necessary
                 if (getEndpoint().isBatch()) {
                     Iterator<?> iterator;
@@ -100,17 +103,28 @@ public class SqlStoredProducer extends DefaultProducer {
         });
     }
 
-    private StamentWrapper createStatement(Exchange exchange) throws SQLException {
-        final String sql;
+    private StatementWrapper createStatement(Exchange exchange) throws SQLException {
+        String sql;
         if (getEndpoint().isUseMessageBodyForTemplate()) {
             sql = exchange.getIn().getBody(String.class);
         } else {
             String templateHeader = exchange.getIn().getHeader(SqlStoredConstants.SQL_STORED_TEMPLATE, String.class);
-            sql = templateHeader != null ? templateHeader : getEndpoint().getTemplate();
+            sql = templateHeader != null ? templateHeader : resolvedTemplate;
+        }
+
+        try {
+            sql = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), sql, null);
+        } catch (Exception e) {
+            throw new SQLException("Error loading template resource: " + sql, e);
         }
 
         return getEndpoint().getWrapperFactory().create(sql);
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
 
+        resolvedTemplate = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), getEndpoint().getTemplate(), null);
+    }
 }

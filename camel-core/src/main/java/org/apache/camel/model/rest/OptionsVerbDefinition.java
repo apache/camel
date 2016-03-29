@@ -28,6 +28,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "rest")
 @XmlRootElement(name = "options")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class OptionsVerbDefinition extends VerbDefinition {
 
 }

@@ -507,7 +507,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         private final TimeUnit timeUnit;
         private final AtomicBoolean timeoutOccurred;
 
-        public ShutdownTask(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit,
+        ShutdownTask(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit,
                             boolean suspendOnly, boolean abortAfterTimeout, AtomicBoolean timeoutOccurred) {
             this.context = context;
             this.routes = routes;

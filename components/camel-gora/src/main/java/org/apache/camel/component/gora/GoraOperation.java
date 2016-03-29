@@ -74,7 +74,7 @@ public enum GoraOperation {
     /**
      * Enum constructor
      */
-     GoraOperation(final String str) {
+    GoraOperation(final String str) {
         value = str;
     }
 }

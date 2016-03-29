@@ -116,6 +116,7 @@ software:
 * **camel-gae** can be configured for secure communications
 * **camel-http** can be configured to use https
 * **camel-http4** can be configured to use https
+* **camel-infinispan** can be configured for secure communications
 * **camel-jasypt** can be used for secure communications
 * **camel-jetty** can be configured to use https
 * **camel-mail** can be configured for secure communications
@@ -124,3 +125,4 @@ software:
 * **camel-netty4-http** can be configured to use https
 * **camel-undertow** can be configured to use https
 * **camel-xmlsecurity** can be configured for secure communications
+

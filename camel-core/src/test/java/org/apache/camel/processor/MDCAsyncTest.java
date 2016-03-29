@@ -71,7 +71,7 @@ public class MDCAsyncTest extends ContextTestSupport {
         
         private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(1);
 
-        public MyAsyncProcessor() {
+        MyAsyncProcessor() {
             // submit a Runnable that does nothing just to initialise the threads
             EXECUTOR.submit(new Runnable() {
                 @Override

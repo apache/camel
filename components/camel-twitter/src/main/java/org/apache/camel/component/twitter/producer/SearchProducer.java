@@ -28,12 +28,12 @@ import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.Twitter;
 
-public class SearchProducer extends Twitter4JProducer {
+public class SearchProducer extends TwitterProducer {
 
     private volatile long lastId;
 
-    public SearchProducer(TwitterEndpoint te) {
-        super(te);
+    public SearchProducer(TwitterEndpoint endpoint) {
+        super(endpoint);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class SearchProducer extends Twitter4JProducer {
         // keywords from header take precedence
         String keywords = exchange.getIn().getHeader(TwitterConstants.TWITTER_KEYWORDS, String.class);
         if (keywords == null) {
-            keywords = te.getProperties().getKeywords();
+            keywords = endpoint.getProperties().getKeywords();
         }
 
         if (keywords == null) {
@@ -53,14 +53,14 @@ public class SearchProducer extends Twitter4JProducer {
         Query query = new Query(keywords);
 
         // filter of older tweets
-        if (te.getProperties().isFilterOld() && myLastId != 0) {
+        if (endpoint.getProperties().isFilterOld() && myLastId != 0) {
             query.setSinceId(myLastId);
         }
         
         // since id
         Long sinceId = exchange.getIn().getHeader(TwitterConstants.TWITTER_SINCEID, Long.class);
         if (sinceId == null) {
-            sinceId = te.getProperties().getSinceId();
+            sinceId = endpoint.getProperties().getSinceId();
         }
         if (ObjectHelper.isNotEmpty(sinceId)) {
             query.setSinceId(sinceId);
@@ -75,17 +75,17 @@ public class SearchProducer extends Twitter4JProducer {
         // language
         String lang = exchange.getIn().getHeader(TwitterConstants.TWITTER_SEARCH_LANGUAGE, String.class);
         if (lang == null) {
-            lang = te.getProperties().getLang();
+            lang = endpoint.getProperties().getLang();
         }
 
         if (ObjectHelper.isNotEmpty(lang)) {
             query.setLang(lang);
         }
 
-        // number of elemnt per page
+        // number of elements per page
         Integer count = exchange.getIn().getHeader(TwitterConstants.TWITTER_COUNT, Integer.class);
         if (count == null) {
-            count = te.getProperties().getCount();
+            count = endpoint.getProperties().getCount();
         }
         if (ObjectHelper.isNotEmpty(count)) {
             query.setCount(count);
@@ -94,10 +94,10 @@ public class SearchProducer extends Twitter4JProducer {
         // number of pages
         Integer numberOfPages = exchange.getIn().getHeader(TwitterConstants.TWITTER_NUMBER_OF_PAGES, Integer.class);
         if (numberOfPages == null) {
-            numberOfPages = te.getProperties().getNumberOfPages();
+            numberOfPages = endpoint.getProperties().getNumberOfPages();
         }
 
-        Twitter twitter = te.getProperties().getTwitter();
+        Twitter twitter = endpoint.getProperties().getTwitter();
         log.debug("Searching twitter with keywords: {}", keywords);
         QueryResult results = twitter.search(query);
         List<Status> list = results.getTweets();
@@ -111,7 +111,7 @@ public class SearchProducer extends Twitter4JProducer {
             list.addAll(results.getTweets());
         }
 
-        if (te.getProperties().isFilterOld()) {
+        if (endpoint.getProperties().isFilterOld()) {
             for (Status t : list) {
                 long newId = t.getId();
                 if (newId > myLastId) {

@@ -185,7 +185,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
     private final class MyProducer extends DefaultProducer {
 
-        public MyProducer(Endpoint endpoint) {
+        MyProducer(Endpoint endpoint) {
             super(endpoint);
         }
 

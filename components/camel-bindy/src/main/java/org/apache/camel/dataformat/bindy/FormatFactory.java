@@ -22,6 +22,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.camel.dataformat.bindy.annotation.BindyConverter;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.format.BigDecimalFormat;
@@ -128,7 +129,11 @@ public final class FormatFactory {
      * @return Format the formatter
      * @throws IllegalArgumentException if not suitable formatter is found
      */
-    public static Format<?> getFormat(Class<?> clazz, String locale, DataField data) throws Exception {
+    public static Format<?> getFormat(Class<?> clazz, String locale, DataField data, BindyConverter converter) throws Exception {
+        if (converter != null) {
+            return converter.value().newInstance();
+        }
+
         String pattern = data.pattern();
         String timezone = data.timezone();
         int precision = data.precision();
@@ -148,7 +153,11 @@ public final class FormatFactory {
      * @throws IllegalArgumentException if not suitable formatter is found
      * TODO : Check if KeyValuePair could also use decimal/groupingSeparator/rounding for BigDecimal
      */
-    public static Format<?> getFormat(Class<?> clazz, String locale, KeyValuePairField data) throws Exception {
+    public static Format<?> getFormat(Class<?> clazz, String locale, KeyValuePairField data, BindyConverter converter) throws Exception {
+        if (converter != null) {
+            return converter.value().newInstance();
+        }
+
         String pattern = data.pattern();
         String timezone = data.timezone();
         int precision = data.precision();

@@ -262,7 +262,8 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
     protected boolean hasSuperClass(RoundEnvironment roundEnv, TypeElement classElement, String superClassName) {
         String aRootName = canonicalClassName(classElement.getQualifiedName().toString());
 
-        if (isNullOrEmpty(aRootName) || "java.lang.Object".equals(aRootName)) {
+        // do not check the classes from JDK itself
+        if (isNullOrEmpty(aRootName) || aRootName.startsWith("java.") || aRootName.startsWith("javax.")) {
             return false;
         }
 

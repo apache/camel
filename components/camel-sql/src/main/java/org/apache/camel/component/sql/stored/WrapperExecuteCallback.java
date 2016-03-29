@@ -22,5 +22,5 @@ import org.springframework.dao.DataAccessException;
 
 public interface WrapperExecuteCallback {
 
-    void execute(StamentWrapper stamentWrapper) throws SQLException, DataAccessException;
+    void execute(StatementWrapper statementWrapper) throws SQLException, DataAccessException;
 }

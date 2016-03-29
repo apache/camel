@@ -19,46 +19,49 @@ package org.apache.camel.component.kafka;
 import java.io.IOException;
 import java.util.Properties;
 
-import kafka.javaapi.producer.Producer;
-import kafka.producer.KeyedMessage;
-import kafka.producer.ProducerConfig;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
 
     public static final String TOPIC = "test";
 
-    @EndpointInject(uri = "kafka:localhost:{{karfkaPort}}?topic=" + TOPIC + "&zookeeperHost=localhost&zookeeperPort={{zookeeperPort}}"
-        + "&groupId=group1&autoOffsetReset=smallest")
+    @EndpointInject(uri = "kafka:localhost:{{karfkaPort}}?topic=" + TOPIC
+            + "&groupId=group1&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
+            + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+            + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true")
     private Endpoint from;
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint to;
 
-    private Producer<String, String> producer;
+    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
     @Before
     public void before() {
         Properties props = new Properties();
-        props.put("metadata.broker.list", "localhost:" + getKarfkaPort());
-        props.put("serializer.class", "kafka.serializer.StringEncoder");
-        props.put("partitioner.class", "org.apache.camel.component.kafka.SimplePartitioner");
-        props.put("request.required.acks", "1");
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:" + getKarfkaPort());
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
+        props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_PARTITIONER);
+        props.put(ProducerConfig.ACKS_CONFIG, "1");
 
-        ProducerConfig config = new ProducerConfig(props);
-        producer = new Producer<String, String>(config);
+        producer = new org.apache.kafka.clients.producer.KafkaProducer<String, String>(props);
     }
 
     @After
     public void after() {
-        producer.close();
+        if (producer != null) {
+            producer.close();
+        }
     }
 
     @Override
@@ -67,7 +70,7 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
 
             @Override
             public void configure() throws Exception {
-                from(from).to(to);
+                from(from).routeId("foo").to(to);
             }
         };
     }
@@ -78,10 +81,40 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
         for (int k = 0; k < 5; k++) {
             String msg = "message-" + k;
-            KeyedMessage<String, String> data = new KeyedMessage<String, String>(TOPIC, "1", msg);
+            ProducerRecord<String, String> data = new ProducerRecord<String, String>(TOPIC, "1", msg);
             producer.send(data);
         }
         to.assertIsSatisfied(3000);
     }
+
+    @Test
+    @Ignore("Currently there is a bug in kafka which leads to an uninterruptable thread so a resub take too long (works manually)")
+    public void kaftMessageIsConsumedByCamelSeekedToBeginning() throws Exception {
+        to.expectedMessageCount(5);
+        to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
+        for (int k = 0; k < 5; k++) {
+            String msg = "message-" + k;
+            ProducerRecord<String, String> data = new ProducerRecord<String, String>(TOPIC, "1", msg);
+            producer.send(data);
+        }
+        to.assertIsSatisfied(3000);
+
+        to.reset();
+
+        to.expectedMessageCount(5);
+        to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
+
+        //Restart endpoint,
+        context.stopRoute("foo");
+
+        KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
+        kafkaEndpoint.setSeekToBeginning(true);
+
+        context.startRoute("foo");
+
+        // As wee set seek to beginning we should re-consume all messages
+        to.assertIsSatisfied(3000);
+    }
+
 }
 

@@ -82,13 +82,15 @@ public class CdiOsgiIT {
 
     @Test
     public void testRouteStatus() {
-        assertThat("Route status is incorrect!", context.getRouteStatus("consumer-route"), equalTo(ServiceStatus.Started));
+        assertThat("Route status is incorrect!",
+            context.getRouteStatus("consumer-route"), equalTo(ServiceStatus.Started));
     }
 
     @Test
     public void testExchangesCompleted() throws Exception {
         ManagedRouteMBean route = context.getManagedRoute(context.getRoute("consumer-route").getId(), ManagedRouteMBean.class);
-        assertThat("Number of exchanges completed is incorrect!", route.getExchangesCompleted(), equalTo(1L));
+        assertThat("Number of exchanges completed is incorrect!",
+            route.getExchangesCompleted(), equalTo(1L));
     }
 
     @Test

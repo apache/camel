@@ -22,17 +22,16 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
 
-
 /**
  * The {@link ReplyManager} is responsible for handling <a href="http://camel.apache.org/request-reply.html">request-reply</a>
  * over RabbitMQ.
  *
- * @version 
+ * @version
  */
 public interface ReplyManager {
 
     /**
-     * Sets the belonging {@link org.apache.camel.component.jms.JmsEndpoint}.
+     * Sets the belonging {@link RabbitMQEndpoint}
      */
     void setEndpoint(RabbitMQEndpoint endpoint);
     
@@ -90,8 +89,6 @@ public interface ReplyManager {
 
     /**
      * Unregister a correlationId when you no longer need a reply
-     * 
-     * @param correlationId
      */
     void cancelCorrelationId(String correlationId);
 }

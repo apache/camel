@@ -18,8 +18,6 @@ package org.apache.camel.itest.karaf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
@@ -29,12 +27,8 @@ public class CamelJosqlTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        // TODO: how to test that?
+        testLanguage(COMPONENT, "sql");
     }
 
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
-    }
 
 }

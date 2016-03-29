@@ -19,9 +19,12 @@ package org.apache.camel.spring.javaconfig;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import static java.util.Collections.emptyList;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.CamelBeanPostProcessor;
@@ -42,15 +45,13 @@ import org.springframework.context.annotation.Configuration;
  * <a
  * href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-annotation-config">
  * Spring annotation-based</a> configurations for working with Camel. Unless {@link #routes()} method is overridden, this configuration
- * automagically load all the {@link org.apache.camel.builder.RouteBuilder} instances available in the Spring context.
+ * automatically load all the {@link org.apache.camel.builder.RouteBuilder} instances available in the Spring context.
  */
 @Configuration
 public abstract class CamelConfiguration implements BeanFactoryAware, ApplicationContextAware {
     
     private BeanFactory beanFactory;
-
     private AutowireCapableBeanFactory autowireCapableBeanFactory;
-
     private ApplicationContext applicationContext;
 
     public void setBeanFactory(BeanFactory beanFactory) {
@@ -125,6 +126,24 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
         return configuredObject;
     }
 
+    /**
+     * Get's the {@link ProducerTemplate} to be used.
+     */
+    @Bean(initMethod = "", destroyMethod = "")
+    // Camel handles the lifecycle of this bean
+    public ProducerTemplate producerTemplate(CamelContext camelContext) throws Exception {
+        return camelContext.createProducerTemplate();
+    }
+
+    /**
+     * Get's the {@link ConsumerTemplate} to be used.
+     */
+    @Bean(initMethod = "", destroyMethod = "")
+    // Camel handles the lifecycle of this bean
+    public ConsumerTemplate consumerTemplate(CamelContext camelContext) throws Exception {
+        return camelContext.createConsumerTemplate();
+    }
+
     @Bean
     public CamelBeanPostProcessor camelBeanPostProcessor() throws Exception {
         CamelBeanPostProcessor answer = new CamelBeanPostProcessor();
@@ -134,7 +153,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     }
 
     /**
-     * Returns the CamelContext
+     * Get's the {@link CamelContext} to be used.
      */
     @Bean
     public CamelContext camelContext() throws Exception {
@@ -143,13 +162,15 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
         List<RouteBuilder> routes = routes();
         for (RoutesBuilder route : routes) {
             camelContext.addRoutes(route);
-        }        
+        }
         return camelContext;
     }
-    
-    // Can register the camel component, language here
+
+    /**
+     * Callback to setup {@link CamelContext} before its started
+     */
     protected void setupCamelContext(CamelContext camelContext) throws Exception {
-        
+        // noop
     }
 
     /**

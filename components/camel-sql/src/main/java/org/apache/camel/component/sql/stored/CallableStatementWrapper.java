@@ -31,7 +31,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.CallableStatementCreator;
 
-public class CallableStatementWrapper implements StamentWrapper {
+public class CallableStatementWrapper implements StatementWrapper {
 
     final CallableStatementWrapperFactory factory;
 

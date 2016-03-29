@@ -16,10 +16,10 @@
  */
 package org.apache.camel.itest.karaf;
 
+import java.net.URI;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
@@ -29,12 +29,16 @@ public class CamelIgniteTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testComponent(COMPONENT);
-    }
+        // install ignite first
+        String version = "1.5.0.final";
+        LOG.info("Using Apache Ignite version: {}", version);
+        URI url = new URI("mvn:org.apache.ignite/ignite-osgi-karaf/" + version + "/xml/features");
 
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
+        featuresService.addRepository(url);
+        featuresService.installFeature("ignite-core");
+        featuresService.installFeature("ignite-camel");
+
+        testComponent(COMPONENT);
     }
 
 }

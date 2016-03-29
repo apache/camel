@@ -202,7 +202,7 @@ class RestSwaggerReader {
         Some( param.getDescription ),
         Some( param.getDefaultValue),
         if (param.getRequired != null) param.getRequired.booleanValue() else false,
-        if (param.getAllowMultiple != null) param.getAllowMultiple.booleanValue() else false,
+        false,
         param.getDataType,
         allowValues,
         param.getType.toString,

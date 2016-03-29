@@ -113,7 +113,7 @@ public class NatsConsumer extends DefaultConsumer {
                         Exchange exchange = getEndpoint().createExchange();
                         exchange.getIn().setBody(msg);
                         exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
-                        exchange.getIn().setHeader(NatsConstants.NATS_SUBSCRIBE_SID, sid);
+                        exchange.getIn().setHeader(NatsConstants.NATS_SUBSCRIPTION_ID, sid);
                         try {
                             processor.process(exchange);
                         } catch (Exception e) {

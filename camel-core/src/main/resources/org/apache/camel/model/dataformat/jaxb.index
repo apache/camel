@@ -26,6 +26,7 @@ CustomDataFormat
 DataFormatsDefinition
 FlatpackDataFormat
 GzipDataFormat
+HessianDataFormat
 HL7DataFormat
 IcalDataFormat
 JaxbDataFormat
@@ -48,5 +49,7 @@ UniVocityTsvDataFormat
 XMLBeansDataFormat
 XMLSecurityDataFormat
 XStreamDataFormat
+YAMLDataFormat
+YAMLLibrary
 ZipDataFormat
 ZipFileDataFormat

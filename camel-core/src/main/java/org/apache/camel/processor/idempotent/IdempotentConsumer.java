@@ -276,7 +276,7 @@ public class IdempotentConsumer extends ServiceSupport implements CamelContextAw
         private final AsyncCallback callback;
         private final boolean completionEager;
 
-        public IdempotentConsumerCallback(Exchange exchange, Synchronization onCompletion, AsyncCallback callback, boolean completionEager) {
+        IdempotentConsumerCallback(Exchange exchange, Synchronization onCompletion, AsyncCallback callback, boolean completionEager) {
             this.exchange = exchange;
             this.onCompletion = onCompletion;
             this.callback = callback;

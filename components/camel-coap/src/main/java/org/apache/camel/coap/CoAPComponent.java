@@ -28,6 +28,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.util.HostUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.config.NetworkConfig;
@@ -89,20 +91,37 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
             config = getCamelContext().getRestConfiguration("coap", true);
         }
 
+        String host = config.getHost();
+        if (ObjectHelper.isEmpty(host)) {
+            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                host = "0.0.0.0";
+            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                host = HostUtils.getLocalHostName();
+            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                host = HostUtils.getLocalIp();
+            }
+        }
+
         Map<String, Object> map = new HashMap<String, Object>();
         // setup endpoint options
         if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
             map.putAll(config.getEndpointProperties());
         }
 
+        // allow HTTP Options as we want to handle CORS in rest-dsl
+        boolean cors = config.isEnableCORS();
+
         String query = URISupport.createQueryString(map);
 
-        String url = (config.getScheme() == null ? "coap" : config.getScheme())
-            + "://" + config.getHost();
+        String url = (config.getScheme() == null ? "coap" : config.getScheme()) + "://" + host;
         if (config.getPort() != -1) {
             url += ":" + config.getPort();
         }
         String restrict = verb.toUpperCase(Locale.US);
+        if (cors) {
+            restrict += ",OPTIONS";
+        }
+
         if (uriTemplate == null) {
             uriTemplate = "";
         }
@@ -113,7 +132,13 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
         
         CoAPEndpoint endpoint = camelContext.getEndpoint(url, CoAPEndpoint.class);
         setProperties(endpoint, parameters);
-        return endpoint.createConsumer(processor);
+
+        // configure consumer properties
+        Consumer consumer = endpoint.createConsumer(processor);
+        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+            setProperties(consumer, config.getConsumerProperties());
+        }
+        return consumer;
     }
 
     @Override
@@ -121,7 +146,7 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
         super.doStart();
 
         RestConfiguration config = getCamelContext().getRestConfiguration("coap", true);
-        // configure additional options on spark configuration
+        // configure additional options on coap configuration
         if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
             setProperties(this, config.getComponentProperties());
         }

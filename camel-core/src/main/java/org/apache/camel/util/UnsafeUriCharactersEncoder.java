@@ -124,7 +124,7 @@ public final class UnsafeUriCharactersEncoder {
     private static class Pair {
         int left;
         int right;
-        public Pair(int left, int right) {
+        Pair(int left, int right) {
             this.left = left;
             this.right = right;
         }

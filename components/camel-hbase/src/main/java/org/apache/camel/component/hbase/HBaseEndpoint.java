@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hbase;
 
+import java.io.IOException;
 import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +33,10 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.HTableInterface;
-import org.apache.hadoop.hbase.client.HTablePool;
+import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.security.UserGroupInformation;
 
@@ -45,7 +47,7 @@ import org.apache.hadoop.security.UserGroupInformation;
 public class HBaseEndpoint extends DefaultEndpoint {
 
     private Configuration configuration;
-    private final HTablePool tablePool;
+    private final Connection connection;
     private HBaseAdmin admin;
 
     @UriPath(description = "The name of the table") @Metadata(required = "true")
@@ -80,10 +82,10 @@ public class HBaseEndpoint extends DefaultEndpoint {
      */
     private byte[] tableNameBytes;
 
-    public HBaseEndpoint(String uri, HBaseComponent component, HTablePool tablePool, String tableName) {
+    public HBaseEndpoint(String uri, HBaseComponent component, Connection connection, String tableName) {
         super(uri, component);
         this.tableName = tableName;
-        this.tablePool = tablePool;
+        this.connection = connection;
         if (this.tableName == null) {
             throw new IllegalArgumentException("Table name can not be null");
         } else {
@@ -275,21 +277,30 @@ public class HBaseEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+    }
+
     /**
      * Gets connection to the table (secured or not, depends on the object initialization)
      * please remember to close the table after use
      * @return table, remember to close!
      */
-    public HTableInterface getTable() {
+    public Table getTable() throws IOException {
         if (userGroupInformation != null) {
-            return userGroupInformation.doAs(new PrivilegedAction<HTableInterface>() {
+            return userGroupInformation.doAs(new PrivilegedAction<Table>() {
                 @Override
-                public HTableInterface run() {
-                    return tablePool.getTable(tableNameBytes);
+                public Table run() {
+                    try {
+                        return connection.getTable(TableName.valueOf(tableNameBytes));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
         } else {
-            return tablePool.getTable(tableNameBytes);
+            return connection.getTable(TableName.valueOf(tableNameBytes));
         }
     }
 
@@ -298,20 +309,20 @@ public class HBaseEndpoint extends DefaultEndpoint {
      */
     private HBaseRow createRowModel(Map<String, Object> parameters) {
         HBaseRow rowModel = new HBaseRow();
-        if (parameters.containsKey(HbaseAttribute.HBASE_ROW_TYPE.asOption())) {
-            String rowType = String.valueOf(parameters.remove(HbaseAttribute.HBASE_ROW_TYPE.asOption()));
+        if (parameters.containsKey(HBaseAttribute.HBASE_ROW_TYPE.asOption())) {
+            String rowType = String.valueOf(parameters.remove(HBaseAttribute.HBASE_ROW_TYPE.asOption()));
             if (rowType != null && !rowType.isEmpty()) {
                 rowModel.setRowType(getCamelContext().getClassResolver().resolveClass(rowType));
             }
         }
-        for (int i = 1; parameters.get(HbaseAttribute.HBASE_FAMILY.asOption(i)) != null
-                && parameters.get(HbaseAttribute.HBASE_QUALIFIER.asOption(i)) != null; i++) {
+        for (int i = 1; parameters.get(HBaseAttribute.HBASE_FAMILY.asOption(i)) != null
+                && parameters.get(HBaseAttribute.HBASE_QUALIFIER.asOption(i)) != null; i++) {
             HBaseCell cellModel = new HBaseCell();
-            cellModel.setFamily(String.valueOf(parameters.remove(HbaseAttribute.HBASE_FAMILY.asOption(i))));
-            cellModel.setQualifier(String.valueOf(parameters.remove(HbaseAttribute.HBASE_QUALIFIER.asOption(i))));
-            cellModel.setValue(String.valueOf(parameters.remove(HbaseAttribute.HBASE_VALUE.asOption(i))));
-            if (parameters.containsKey(HbaseAttribute.HBASE_VALUE_TYPE.asOption(i))) {
-                String valueType = String.valueOf(parameters.remove(HbaseAttribute.HBASE_VALUE_TYPE.asOption(i)));
+            cellModel.setFamily(String.valueOf(parameters.remove(HBaseAttribute.HBASE_FAMILY.asOption(i))));
+            cellModel.setQualifier(String.valueOf(parameters.remove(HBaseAttribute.HBASE_QUALIFIER.asOption(i))));
+            cellModel.setValue(String.valueOf(parameters.remove(HBaseAttribute.HBASE_VALUE.asOption(i))));
+            if (parameters.containsKey(HBaseAttribute.HBASE_VALUE_TYPE.asOption(i))) {
+                String valueType = String.valueOf(parameters.remove(HBaseAttribute.HBASE_VALUE_TYPE.asOption(i)));
                 if (valueType != null && !valueType.isEmpty()) {
                     rowModel.setRowType(getCamelContext().getClassResolver().resolveClass(valueType));
                 }

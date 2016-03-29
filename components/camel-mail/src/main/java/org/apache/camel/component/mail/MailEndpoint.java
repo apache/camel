@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
@@ -57,6 +58,12 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     private SortTerm[] sortTerm;
     @UriParam(label = "consumer,advanced")
     private MailBoxPostProcessAction postProcessAction;
+    @UriParam(label = "consumer,filter")
+    private IdempotentRepository<String> idempotentRepository;
+    @UriParam(label = "consumer,filter", defaultValue = "true")
+    private boolean idempotentRepositoryRemoveOnCommit = true;
+    @UriParam(label = "consumer,advanced")
+    private MailUidGenerator mailUidGenerator = new DefaultMailUidGenerator();
 
     public MailEndpoint() {
         // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a mailbox,
@@ -227,6 +234,50 @@ public class MailEndpoint extends ScheduledPollEndpoint {
      */
     public void setPostProcessAction(MailBoxPostProcessAction postProcessAction) {
         this.postProcessAction = postProcessAction;
+    }
+
+    public IdempotentRepository<String> getIdempotentRepository() {
+        return idempotentRepository;
+    }
+
+    /**
+     * A pluggable repository org.apache.camel.spi.IdempotentRepository which allows to cluster
+     * consuming from the same mailbox, and let the repository coordinate whether a mail message
+     * is valid for the consumer to process.
+     * <p/>
+     * By default no repository is in use.
+     */
+    public void setIdempotentRepository(IdempotentRepository<String> idempotentRepository) {
+        this.idempotentRepository = idempotentRepository;
+    }
+
+    public boolean isIdempotentRepositoryRemoveOnCommit() {
+        return idempotentRepositoryRemoveOnCommit;
+    }
+
+    /**
+     * When using idempotent repository, then when the mail message has been successfully processed and
+     * is committed, should the message id be removed from the idempotent repository (default) or
+     * be kept in the repository.
+     * <p/>
+     * By default its assumed the message id is unique and has no value to be kept in the repository,
+     * because the mail message will be marked as seen/moved or deleted to prevent it from being
+     * consumed again. And therefore having the message id stored in the idempotent repository has
+     * little value. However this option allows to store the message id, for whatever reason you may have.
+     */
+    public void setIdempotentRepositoryRemoveOnCommit(boolean idempotentRepositoryRemoveOnCommit) {
+        this.idempotentRepositoryRemoveOnCommit = idempotentRepositoryRemoveOnCommit;
+    }
+
+    public MailUidGenerator getMailUidGenerator() {
+        return mailUidGenerator;
+    }
+
+    /**
+     * A pluggable {@link MailUidGenerator} that allows to use custom logic to generate UUID of the mail message.
+     */
+    public void setMailUidGenerator(MailUidGenerator mailUidGenerator) {
+        this.mailUidGenerator = mailUidGenerator;
     }
 
     /**

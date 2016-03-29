@@ -20,8 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.EndpointHelper;
 
 public class KafkaComponent extends UriEndpointComponent {
 
@@ -34,30 +32,14 @@ public class KafkaComponent extends UriEndpointComponent {
     }
 
     @Override
-    protected KafkaEndpoint createEndpoint(String uri,
-                                           String remaining,
-                                           Map<String, Object> params) throws Exception {
-
+    protected KafkaEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {
         KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
         String brokers = remaining.split("\\?")[0];
-        Object confparam = params.get("configuration");
-        if (confparam != null) {
-            // need a special handling to resolve the reference before other parameters are set/merged into the config
-            KafkaConfiguration confobj = null;
-            if (confparam instanceof KafkaConfiguration) {
-                confobj = (KafkaConfiguration)confparam;
-            } else if (confparam instanceof String && EndpointHelper.isReferenceParameter((String)confparam)) { 
-                confobj = (KafkaConfiguration)CamelContextHelper.lookup(getCamelContext(), ((String)confparam).substring(1));
-            }
-            if (confobj != null) {
-                endpoint.setConfiguration(confobj.copy());
-            }
-            params.remove("configuration");
-        }
         if (brokers != null) {
             endpoint.getConfiguration().setBrokers(brokers);
         }
         setProperties(endpoint, params);
         return endpoint;
     }
+
 }

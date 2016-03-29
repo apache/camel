@@ -138,6 +138,10 @@ final class CdiSpiHelper {
                 qualifiers.add(annotation);
             }
         }
+        if (qualifiers.isEmpty()) {
+            qualifiers.add(DefaultLiteral.INSTANCE);
+        }
+        qualifiers.add(AnyLiteral.INSTANCE);
         return qualifiers;
     }
 }

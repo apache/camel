@@ -46,6 +46,7 @@ public class S3Component extends UriEndpointComponent {
         }
 
         S3Endpoint endpoint = new S3Endpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 }

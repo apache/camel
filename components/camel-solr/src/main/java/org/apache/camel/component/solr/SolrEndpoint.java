@@ -40,7 +40,8 @@ public class SolrEndpoint extends DefaultEndpoint {
 
     private String scheme = "http://";
 
-    @UriPath(description = "Hostname and port for the solr server") @Metadata(required = "true")
+    @UriPath(description = "Hostname and port for the solr server")
+    @Metadata(required = "true")
     private String url;
     @UriParam(defaultValue = "" + SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE)
     private int streamingQueueSize = SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE;
@@ -103,16 +104,16 @@ public class SolrEndpoint extends DefaultEndpoint {
     public SolrComponent getComponent() {
         return (SolrComponent) super.getComponent();
     }
-    
+
     private CloudSolrClient getCloudServer() {
-    	CloudSolrClient rVal = null;
+        CloudSolrClient rVal = null;
         if (this.getZkHost() != null && this.getCollection() != null) {
             rVal = new CloudSolrClient(zkHost);
             rVal.setDefaultCollection(this.getCollection());
         }
         return rVal;
     }
-    
+
     @Override
     public Producer createProducer() throws Exception {
         // do we have servers?

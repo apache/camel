@@ -22,6 +22,7 @@ import java.util.Map;
 import io.swagger.jaxrs.config.BeanConfig;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -34,11 +35,13 @@ public class RestSwaggerProcessor implements Processor {
     private final RestSwaggerSupport support;
     private final String contextIdPattern;
     private final boolean contextIdListing;
+    private final RestConfiguration configuration;
 
     @SuppressWarnings("unchecked")
-    public RestSwaggerProcessor(String contextIdPattern, boolean contextIdListing, Map<String, Object> parameters) {
+    public RestSwaggerProcessor(String contextIdPattern, boolean contextIdListing, Map<String, Object> parameters, RestConfiguration configuration) {
         this.contextIdPattern = contextIdPattern;
         this.contextIdListing = contextIdListing;
+        this.configuration = configuration;
         this.support = new RestSwaggerSupport();
         this.swaggerConfig = new BeanConfig();
 
@@ -53,13 +56,33 @@ public class RestSwaggerProcessor implements Processor {
 
         String contextId = exchange.getContext().getName();
         String route = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
+        String accept = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, String.class);
 
         RestApiResponseAdapter adapter = new ExchangeRestApiResponseAdapter(exchange);
+
+        // whether to use json or yaml
+        boolean json = false;
+        boolean yaml = false;
+        if (route != null && route.endsWith("/swagger.json")) {
+            json = true;
+            route = route.substring(0, route.length() - 13);
+        } else if (route != null && route.endsWith("/swagger.yaml")) {
+            yaml = true;
+            route = route.substring(0, route.length() - 13);
+        }
+        if (accept != null && !json && !yaml) {
+            json = accept.contains("json");
+            yaml = accept.contains("yaml");
+        }
+        if (!json && !yaml) {
+            // json is default
+            json = true;
+        }
 
         try {
             // render list of camel contexts as root
             if (contextIdListing && (ObjectHelper.isEmpty(route) || route.equals("/"))) {
-                support.renderCamelContexts(adapter, contextId, contextIdPattern);
+                support.renderCamelContexts(adapter, contextId, contextIdPattern, json, yaml, configuration);
             } else {
                 String name;
                 if (ObjectHelper.isNotEmpty(route)) {
@@ -92,7 +115,7 @@ public class RestSwaggerProcessor implements Processor {
                 if (!match) {
                     adapter.noContent();
                 } else {
-                    support.renderResourceListing(adapter, swaggerConfig, name, route, exchange.getContext().getClassResolver());
+                    support.renderResourceListing(adapter, swaggerConfig, name, route, json, yaml, exchange.getContext().getClassResolver(), configuration);
                 }
             }
         } catch (Exception e) {

@@ -106,6 +106,10 @@ public class SimpleTest extends LanguageTestSupport {
         assertNull(SimpleLanguage.simple("${null}").evaluate(exchange, Object.class));
     }
 
+    public void testSimpleFileDir() throws Exception {
+        assertExpression("file:mydir", "file:mydir");
+    }
+
     public void testEmptyExpression() throws Exception {
         assertExpression("", "");
         assertExpression(" ", " ");
@@ -1098,7 +1102,7 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.getLines[0]?.getRating}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
+            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
             assertEquals("getRating", cause.getMethodName());
         }
     }
@@ -1115,7 +1119,7 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.lines[0]?.rating}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
+            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
             assertEquals("rating", cause.getMethodName());
         }
     }
@@ -1140,8 +1144,8 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.getFriend.getFriend.getName}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            assertEquals("Failed to invoke method: .getFriend.getFriend.getName on null due to: java.lang.NullPointerException", e.getMessage());
-            assertIsInstanceOf(NullPointerException.class, e.getCause());
+            assertEquals("Failed to invoke method: .getFriend.getFriend.getName on org.apache.camel.language.simple.SimpleTest.Animal"
+                    + " due last method returned null and therefore cannot continue to invoke method .getName on a null instance", e.getMessage());
         }
     }
 
@@ -1166,8 +1170,8 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.friend.friend.name}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            assertEquals("Failed to invoke method: .friend.friend.name on null due to: java.lang.NullPointerException", e.getMessage());
-            assertIsInstanceOf(NullPointerException.class, e.getCause());
+            assertEquals("Failed to invoke method: .friend.friend.name on org.apache.camel.language.simple.SimpleTest.Animal"
+                    + " due last method returned null and therefore cannot continue to invoke method .name on a null instance", e.getMessage());
         }
     }
 

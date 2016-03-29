@@ -49,6 +49,7 @@ import org.apache.maven.model.Exclusion;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.artifact.MavenMetadataSource;
@@ -523,7 +524,7 @@ public class RunMojo extends AbstractExecMojo {
     class IsolatedThreadGroup extends ThreadGroup {
         Throwable uncaughtException; // synchronize access to this
 
-        public IsolatedThreadGroup(String name) {
+        IsolatedThreadGroup(String name) {
             super(name);
         }
 
@@ -922,8 +923,26 @@ public class RunMojo extends AbstractExecMojo {
                 relevantDependencies = this.resolveExecutableDependencies(executablePomArtifact, false);
             }
         } else {
-            relevantDependencies = Collections.emptySet();
-            getLog().debug("Plugin Dependencies will be excluded.");
+            getLog().debug("Only Direct Plugin Dependencies will be included.");
+            PluginDescriptor descriptor = (PluginDescriptor) getPluginContext().get("pluginDescriptor");
+            try {
+                relevantDependencies = artifactResolver
+                    .resolveTransitively(MavenMetadataSource
+                        .createArtifacts(this.artifactFactory,
+                            descriptor.getPlugin().getDependencies(),
+                            null, null, null),
+                        this.project.getArtifact(),
+                        Collections.emptyMap(),
+                        this.localRepository,
+                        this.remoteRepositories,
+                        metadataSource,
+                        new ScopeArtifactFilter(Artifact.SCOPE_RUNTIME),
+                        Collections.emptyList())
+                    .getArtifacts();
+            } catch (Exception ex) {
+                throw new MojoExecutionException("Encountered problems resolving dependencies of the plugin "
+                    + "in preparation for its execution.", ex);
+            }
         }
         return relevantDependencies;
     }

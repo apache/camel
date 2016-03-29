@@ -25,10 +25,10 @@ import twitter4j.StatusUpdate;
 /**
  * Produces text as a status update.
  */
-public class UserProducer extends Twitter4JProducer {
+public class UserProducer extends TwitterProducer {
 
-    public UserProducer(TwitterEndpoint te) {
-        super(te);
+    public UserProducer(TwitterEndpoint endpoint) {
+        super(endpoint);
     }
 
     @Override
@@ -56,10 +56,10 @@ public class UserProducer extends Twitter4JProducer {
     }
 
     private Status updateStatus(StatusUpdate status) throws Exception {
-        Status reponse = te.getProperties().getTwitter().updateStatus(status);
+        Status response = endpoint.getProperties().getTwitter().updateStatus(status);
         log.debug("Updated status: {}", status);
-        log.debug("Status id: {}", reponse.getId());
-        return reponse;
+        log.debug("Status id: {}", response.getId());
+        return response;
     }
 
     private Status updateStatus(String status) throws Exception {
@@ -68,7 +68,7 @@ public class UserProducer extends Twitter4JProducer {
             status = status.substring(0, 160);
         }
 
-        Status response = te.getProperties().getTwitter().updateStatus(status);
+        Status response = endpoint.getProperties().getTwitter().updateStatus(status);
         log.debug("Updated status: {}", status);
         log.debug("Status id: {}", response.getId());
         return response;

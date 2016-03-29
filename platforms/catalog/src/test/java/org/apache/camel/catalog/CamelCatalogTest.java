@@ -343,6 +343,15 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testAsEndpointUriLogShort() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("loggerName", "foo");
+        map.put("loggerLevel", "DEBUG");
+
+        assertEquals("log:foo?loggerLevel=DEBUG", catalog.asEndpointUri("log", map, false));
+    }
+
+    @Test
     public void testAsEndpointUriWithplaceholder() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put("query", "{{insert}}");

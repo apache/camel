@@ -132,7 +132,7 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
 
         private final Set<String> resolvedRsourceUris = new HashSet<>();
 
-        public CustomXsltUriResolver(ClassResolver resolver, String location) {
+        CustomXsltUriResolver(ClassResolver resolver, String location) {
             super(resolver, location);
         }
 

@@ -44,6 +44,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private Boolean prettyPrint;
     @XmlAttribute
+    private Boolean objectFactory;
+    @XmlAttribute
     private Boolean ignoreJAXBElement;
     @XmlAttribute
     private Boolean mustBeJAXBElement;
@@ -64,6 +66,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
     private String xmlStreamWriterWrapper;
     @XmlAttribute
     private String schemaLocation;
+    @XmlAttribute
+    private String noNamespaceSchemaLocation;
 
     public JaxbDataFormat() {
         super("jaxb");
@@ -109,6 +113,18 @@ public class JaxbDataFormat extends DataFormatDefinition {
      */
     public void setPrettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+
+    public Boolean getObjectFactory() {
+        return objectFactory;
+    }
+
+    /**
+     * Whether to allow using ObjectFactory classes to create the POJO classes during marshalling.
+     * This only applies to POJO classes that has not been annotated with JAXB and providing jaxb.index descriptor files.
+     */
+    public void setObjectFactory(Boolean objectFactory) {
+        this.objectFactory = objectFactory;
     }
 
     public Boolean getIgnoreJAXBElement() {
@@ -232,6 +248,17 @@ public class JaxbDataFormat extends DataFormatDefinition {
         this.schemaLocation = schemaLocation;
     }
 
+    public String getNoNamespaceSchemaLocation() {
+        return noNamespaceSchemaLocation;
+    }
+
+    /**
+     * To define the location of the namespaceless schema
+     */
+    public void setNoNamespaceSchemaLocation(String schemaLocation) {
+        this.noNamespaceSchemaLocation = schemaLocation;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
@@ -239,6 +266,12 @@ public class JaxbDataFormat extends DataFormatDefinition {
             setProperty(camelContext, dataFormat, "prettyPrint", Boolean.FALSE);
         } else { // the default value is true
             setProperty(camelContext, dataFormat, "prettyPrint", Boolean.TRUE);
+        }
+        answer = ObjectHelper.toBoolean(getObjectFactory());
+        if (answer != null && !answer) {
+            setProperty(camelContext, dataFormat, "objectFactory", Boolean.FALSE);
+        } else { // the default value is true
+            setProperty(camelContext, dataFormat, "objectFactory", Boolean.TRUE);
         }
         answer = ObjectHelper.toBoolean(getIgnoreJAXBElement());
         if (answer != null && !answer) {
@@ -285,6 +318,9 @@ public class JaxbDataFormat extends DataFormatDefinition {
         }
         if (schemaLocation != null) {
             setProperty(camelContext, dataFormat, "schemaLocation", schemaLocation);
+        }
+        if (noNamespaceSchemaLocation != null) {
+            setProperty(camelContext, dataFormat, "noNamespaceSchemaLocation", noNamespaceSchemaLocation);
         }
     }
 }

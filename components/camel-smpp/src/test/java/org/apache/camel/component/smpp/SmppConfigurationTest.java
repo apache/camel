@@ -19,6 +19,8 @@ package org.apache.camel.component.smpp;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
@@ -111,6 +113,7 @@ public class SmppConfigurationTest {
         assertEquals("user", configuration.getHttpProxyUsername());
         assertEquals("secret", configuration.getHttpProxyPassword());
         assertNotNull(configuration.getSessionStateListener());
+        assertEquals("1", configuration.getProxyHeaders().get("X-Proxy-Header"));
     }
 
     @Test
@@ -156,6 +159,7 @@ public class SmppConfigurationTest {
         assertEquals(config.getHttpProxyUsername(), configuration.getHttpProxyUsername());
         assertEquals(config.getHttpProxyPassword(), configuration.getHttpProxyPassword());
         assertEquals(config.getSessionStateListener(), configuration.getSessionStateListener());
+        assertEquals(config.getProxyHeaders(), configuration.getProxyHeaders());
     }
     
     @Test
@@ -193,7 +197,8 @@ public class SmppConfigurationTest {
                 + "httpProxyPort=3128, "
                 + "httpProxyUsername=null, "
                 + "httpProxyPassword=null, "
-                + "splittingPolicy=ALLOW]";
+                + "splittingPolicy=ALLOW, "
+                + "proxyHeaders=null]";
 
         assertEquals(expected, configuration.toString());
     }
@@ -231,5 +236,8 @@ public class SmppConfigurationTest {
             public void onStateChange(SessionState arg0, SessionState arg1, Object arg2) {
             }
         });
+        Map<String, String> proxyHeaders = new HashMap<String, String>();
+        proxyHeaders.put("X-Proxy-Header", "1");
+        config.setProxyHeaders(proxyHeaders);
     }
 }

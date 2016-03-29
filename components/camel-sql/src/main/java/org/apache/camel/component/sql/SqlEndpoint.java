@@ -32,7 +32,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @UriEndpoint(scheme = "sql", title = "SQL", syntax = "sql:query", consumerClass = SqlConsumer.class, label = "database,sql")
 public class SqlEndpoint extends DefaultSqlEndpoint {
 
-    @UriPath(description = "Sets the SQL query to perform") @Metadata(required = "true")
+    @UriPath(description = "Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.")
+    @Metadata(required = "true")
     private String query;
 
     public SqlEndpoint() {
@@ -78,7 +79,7 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
     }
 
     /**
-     * Sets the SQL query to perform
+     * Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.
      */
     public void setQuery(String query) {
         this.query = query;

@@ -448,6 +448,21 @@ public final class IntrospectionSupport {
         return rc;
     }
 
+    public static Map<String, String> extractStringProperties(Map<String, Object> properties) {
+        ObjectHelper.notNull(properties, "properties");
+
+        Map<String, String> rc = new LinkedHashMap<String, String>(properties.size());
+
+        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, Object> entry = it.next();
+            String name = entry.getKey();
+            String value = entry.getValue().toString();
+            rc.put(name, value);
+        }
+
+        return rc;
+    }
+
     public static boolean setProperties(CamelContext context, TypeConverter typeConverter, Object target, Map<String, Object> properties) throws Exception {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");

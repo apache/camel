@@ -241,7 +241,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
             if (!checkIndex(index)) {
                 return null;
             }
-            return nullToEmpty(streamReader.getAttributeType(index));
+            return nullToEmpty(streamReader.getAttributeValue(index));
         }
 
         @Override

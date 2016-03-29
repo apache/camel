@@ -25,7 +25,7 @@ import org.apache.camel.component.sql.SqlPrepareStatementStrategy;
 
 public class ElsqlSqlPrepareStatementStrategy implements SqlPrepareStatementStrategy {
 
-    public String prepareQuery(String query, boolean allowNamedParameters) throws SQLException {
+    public String prepareQuery(String query, boolean allowNamedParameters, Exchange exchange) throws SQLException {
         return query;
     }
 

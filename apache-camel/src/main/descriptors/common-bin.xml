@@ -49,6 +49,7 @@
         <include>org.apache.camel:camel-castor</include>
         <include>org.apache.camel:camel-cdi</include>
         <include>org.apache.camel:camel-chunk</include>
+        <include>org.apache.camel:camel-cm-sms</include>
         <include>org.apache.camel:camel-cmis</include>
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-core-osgi</include>
@@ -68,6 +69,7 @@
         <include>org.apache.camel:camel-ejb</include>
         <include>org.apache.camel:camel-elasticsearch</include>
         <include>org.apache.camel:camel-elsql</include>
+        <include>org.apache.camel:camel-etcd</include>
         <include>org.apache.camel:camel-eventadmin</include>
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-facebook</include>
@@ -94,6 +96,7 @@
         <include>org.apache.camel:camel-hbase</include>
         <include>org.apache.camel:camel-hdfs</include>
         <include>org.apache.camel:camel-hdfs2</include>
+        <include>org.apache.camel:camel-hessian</include>
         <include>org.apache.camel:camel-hipchat</include>
         <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-http-common</include>
@@ -103,6 +106,7 @@
         <include>org.apache.camel:camel-infinispan</include>
         <include>org.apache.camel:camel-ignite</include>
         <include>org.apache.camel:camel-irc</include>
+        <include>org.apache.camel:camel-ironmq</include>
         <include>org.apache.camel:camel-jackson</include>
         <include>org.apache.camel:camel-jacksonxml</include>
         <include>org.apache.camel:camel-jasypt</include>
@@ -110,6 +114,7 @@
         <include>org.apache.camel:camel-jaxb</include>
         <include>org.apache.camel:camel-jbpm</include>
         <include>org.apache.camel:camel-jcr</include>
+        <include>org.apache.camel:camel-jcache</include>
         <include>org.apache.camel:camel-jclouds</include>
         <include>org.apache.camel:camel-jdbc</include>
         <include>org.apache.camel:camel-jetty-common</include>
@@ -147,6 +152,7 @@
         <include>org.apache.camel:camel-mina2</include>
         <include>org.apache.camel:camel-mllp</include>
         <include>org.apache.camel:camel-mongodb</include>
+        <include>org.apache.camel:camel-mongodb-gridfs</include>
         <include>org.apache.camel:camel-mqtt</include>
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-mustache</include>
@@ -185,6 +191,7 @@
         <include>org.apache.camel:camel-schematron</include>
         <include>org.apache.camel:camel-scr</include>
         <include>org.apache.camel:camel-script</include>
+        <include>org.apache.camel:camel-servicenow</include>
         <include>org.apache.camel:camel-servlet</include>
         <include>org.apache.camel:camel-servletlistener</include>
         <include>org.apache.camel:camel-shiro</include>
@@ -192,6 +199,7 @@
         <include>org.apache.camel:camel-sjms</include>
         <include>org.apache.camel:camel-slack</include>
         <include>org.apache.camel:camel-smpp</include>
+        <include>org.apache.camel:camel-snakeyaml</include>
         <include>org.apache.camel:camel-snmp</include>
         <include>org.apache.camel:camel-soap</include>
         <include>org.apache.camel:camel-solr</include>
@@ -199,6 +207,8 @@
         <include>org.apache.camel:camel-splunk</include>
         <include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-batch</include>
+        <include>org.apache.camel:camel-spring-boot</include>
+        <include>org.apache.camel:camel-spring-boot-starter</include>
         <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-spring-javaconfig</include>
         <include>org.apache.camel:camel-spring-ldap</include>
@@ -217,8 +227,8 @@
         <include>org.apache.camel:camel-tagsoup</include>
         <include>org.apache.camel:camel-test</include>
         <include>org.apache.camel:camel-test-blueprint</include>
+        <include>org.apache.camel:camel-test-cdi</include>
         <include>org.apache.camel:camel-test-spring</include>
-        <include>org.apache.camel:camel-test-spring3</include>
         <include>org.apache.camel:camel-test-spring40</include>
         <include>org.apache.camel:camel-testng</include>
         <include>org.apache.camel:camel-twitter</include>
@@ -237,6 +247,7 @@
         <include>org.apache.camel:camel-xstream</include>
         <include>org.apache.camel:camel-yammer</include>
         <include>org.apache.camel:camel-zipfile</include>
+        <include>org.apache.camel:camel-zipkin</include>
         <include>org.apache.camel:camel-zookeeper</include>
         <include>org.apache.camel:camel-catalog</include>
         <include>org.apache.camel:camel-catalog-lucene</include>

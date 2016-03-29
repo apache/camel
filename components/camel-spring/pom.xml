@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-spring</artifactId>
@@ -30,6 +30,7 @@
   <packaging>bundle</packaging>
 
   <properties>
+      <!-- spring-dm only supports spring 3.x so we need to import that range -->
       <camel.osgi.import>
         !org.apache.camel.spring.*,
         !org.apache.camel.osgi.*,
@@ -38,6 +39,7 @@
         !org.apache.camel.language.spel,
         org.apache.camel.*;${camel.osgi.import.strict.version},
         org.springframework.osgi.*;version="[1.2,2)",
+        org.springframework*;version="${spring-dm-version-range}",
         org.osgi.service.event;resolution:=optional,
         ${camel.osgi.import.defaults},
         *
@@ -61,7 +63,7 @@
         org.apache.camel.osgi.Activator
       </camel.osgi.activator>
       <!-- do not skip any tests by default -->
-      <platform.skip.tests />
+      <platform.skip.tests/>
   </properties>
 
   <dependencies>
@@ -76,11 +78,23 @@
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
+      <artifactId>spring-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

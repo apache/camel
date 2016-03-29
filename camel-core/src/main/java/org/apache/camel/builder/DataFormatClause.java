@@ -35,6 +35,7 @@ import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
+import org.apache.camel.model.dataformat.HessianDataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
@@ -55,6 +56,8 @@ import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.XmlJsonDataFormat;
+import org.apache.camel.model.dataformat.YAMLDataFormat;
+import org.apache.camel.model.dataformat.YAMLLibrary;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -237,6 +240,13 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T gzip() {
         GzipDataFormat gzdf = new GzipDataFormat();
         return dataFormat(gzdf);
+    }
+
+    /**
+     * Uses the Hessian data format
+     */
+    public T hessian() {
+        return dataFormat(new HessianDataFormat());
     }
 
     /**
@@ -868,6 +878,25 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
             csb.append(clazz.getName());
         }
         return xstream(encoding, csb.toString());
+    }
+
+    /**
+     * Uses the YAML data format
+     *
+     * @param library the yaml library to use
+     */
+    public T yaml(YAMLLibrary library) {
+        return dataFormat(new YAMLDataFormat(library));
+    }
+
+    /**
+     * Uses the YAML data format
+     *
+     * @param type          the yaml type to use
+     * @param type          the type for json snakeyaml type
+     */
+    public T yaml(YAMLLibrary library, Class<?> type) {
+        return dataFormat(new YAMLDataFormat(library, type));
     }
 
     /**

@@ -43,7 +43,7 @@ public class CustomMapper extends BaseConverter {
                           Class<?> destinationClass,
                           Class<?> sourceClass) {
         try {
-            return mapCustom(sourceFieldValue);
+            return mapCustom(sourceFieldValue, sourceClass);
         } finally {
             done();
         }
@@ -72,7 +72,7 @@ public class CustomMapper extends BaseConverter {
         return method.invoke(customObj, methodPrms);
     }
 
-    Object mapCustom(Object source) {
+    Object mapCustom(Object source, Class<?> sourceClass) {
         // The converter parameter is stored in a thread local variable, so
         // we need to parse the parameter on each invocation
         // ex: custom-converter-param="org.example.MyMapping,map"
@@ -105,18 +105,18 @@ public class CustomMapper extends BaseConverter {
         }
 
         Object customObj;
-        Method method = null;
+        Method method;
         try {
-            Class<?> customClass = resolver.resolveClass(className);
+            Class<?> customClass = resolver.resolveMandatoryClass(className);
             customObj = customClass.newInstance();
 
             // If a specific mapping operation has been supplied use that
             if (operation != null && prmTypesAndValues != null) {
-                method = selectMethod(customClass, operation, source, prmTypesAndValues);
+                method = selectMethod(customClass, operation, sourceClass, prmTypesAndValues);
             } else if (operation != null) {
-                method = customClass.getMethod(operation, source.getClass());
+                method = customClass.getMethod(operation, sourceClass);
             } else {
-                method = selectMethod(customClass, source);
+                method = selectMethod(customClass, sourceClass);
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to load custom function", e);
@@ -168,12 +168,12 @@ public class CustomMapper extends BaseConverter {
     }
 
     Method selectMethod(Class<?> customClass,
-                        Object source) {
+                        Class<?> sourceClass) {
         Method method = null;
         for (Method m : customClass.getDeclaredMethods()) {
             if (m.getReturnType() != null
                     && m.getParameterTypes().length == 1
-                    && m.getParameterTypes()[0].isAssignableFrom(source.getClass())) {
+                    && m.getParameterTypes()[0].isAssignableFrom(sourceClass)) {
                 method = m;
                 break;
             }
@@ -185,7 +185,7 @@ public class CustomMapper extends BaseConverter {
     // ambiguous calls based upon number and types of parameters
     private Method selectMethod(Class<?> customClass,
                                 String operation,
-                                Object source,
+                                Class<?> sourceClass,
                                 String[][] parameters) {
         // Create list of potential methods
         List<Method> methods = new ArrayList<>();
@@ -199,7 +199,7 @@ public class CustomMapper extends BaseConverter {
             Class<?>[] prmTypes = method.getParameterTypes();
             if (!method.getName().equals(operation)
                     || method.getReturnType() == null
-                    || !prmTypes[0].isAssignableFrom(source.getClass())) {
+                    || !prmTypes[0].isAssignableFrom(sourceClass)) {
                 iter.remove();
                 continue;
             }

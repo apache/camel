@@ -2125,7 +2125,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * <a href="http://camel.apache.org/loop.html">Loop EIP:</a>
      * Creates a loop allowing to process the a message a number of times and possibly process them
-     * in a different way. Useful mostly for testing.
+     * in a different way.
      *
      * @param expression the loop expression
      * @return the builder
@@ -2138,8 +2138,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * <a href="http://camel.apache.org/loop.html">Loop EIP:</a>
+     * Creates a while loop allowing to process the a message while the predicate matches
+     * and possibly process them in a different way.
+     *
+     * @param predicate the while loop predicate
+     * @return the builder
+     */
+    public LoopDefinition loopDoWhile(Predicate predicate) {
+        LoopDefinition loop = new LoopDefinition(predicate);
+        addOutput(loop);
+        return loop;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/loop.html">Loop EIP:</a>
      * Creates a loop allowing to process the a message a number of times and possibly process them
-     * in a different way. Useful mostly for testing.
+     * in a different way.
      *
      * @param count  the number of times
      * @return the builder

@@ -33,7 +33,7 @@ public class CollectionProducerTest extends ContextTestSupport {
 
     private static class MyProducer extends CollectionProducer {
 
-        public MyProducer(Endpoint endpoint, Collection<Exchange> queue) {
+        MyProducer(Endpoint endpoint, Collection<Exchange> queue) {
             super(endpoint, queue);
         }
     }

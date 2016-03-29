@@ -1447,23 +1447,22 @@ public class DefaultCamelCatalog implements CamelCatalog {
      */
     private Map<String, String> filterProperties(String scheme, Map<String, String> options) {
         if ("log".equals(scheme)) {
-            Map<String, String> answer = new LinkedHashMap<String, String>();
             String showAll = options.get("showAll");
             if ("true".equals(showAll)) {
+                Map<String, String> filtered = new LinkedHashMap<String, String>();
                 // remove all the other showXXX options when showAll=true
                 for (Map.Entry<String, String> entry : options.entrySet()) {
                     String key = entry.getKey();
                     boolean skip = key.startsWith("show") && !key.equals("showAll");
                     if (!skip) {
-                        answer.put(key, entry.getValue());
+                        filtered.put(key, entry.getValue());
                     }
                 }
+                return filtered;
             }
-            return answer;
-        } else {
-            // use as-is
-            return options;
         }
+        // use as-is
+        return options;
     }
 
     @Override

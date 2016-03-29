@@ -230,8 +230,10 @@ Signatures as Siblings of the Signed Elements".
 Component Options
 ^^^^^^^^^^^^^^^^
 
+
 // component options: START
 The XML Security component supports 2 options which are listed below.
+
 
 
 [width="100%",cols="2s,1m,8",options="header"]
@@ -241,6 +243,7 @@ The XML Security component supports 2 options which are listed below.
 | verifierConfiguration | XmlVerifierConfiguration | To use a shared XmlVerifierConfiguration configuration to use as base for configuring endpoints.
 |=======================================================================
 // component options: END
+
 
 
 [[XMLSecuritycomponent-EndpointOptions]]

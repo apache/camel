@@ -22,7 +22,7 @@ import javax.inject.Named;
 
 import org.apache.camel.component.properties.PropertiesComponent;
 
-class Config {
+public class Config {
 
     @Produces
     @ApplicationScoped

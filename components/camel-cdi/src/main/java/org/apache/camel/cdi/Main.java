@@ -18,6 +18,7 @@ package org.apache.camel.cdi;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -27,6 +28,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
 import org.apache.deltaspike.cdise.api.CdiContainer;
 import org.apache.deltaspike.cdise.api.CdiContainerLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Camel CDI boot integration. Allows Camel and CDI to be booted up on the command line as a JVM process.
@@ -41,6 +44,8 @@ public class Main extends MainSupport {
         // Weld 2.3.1.Final to deactivate the registration of the shutdown hook.
         System.setProperty("org.jboss.weld.se.shutdownHook", String.valueOf(Boolean.FALSE));
     }
+
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     private static Main instance;
 
@@ -92,6 +97,17 @@ public class Main extends MainSupport {
         cdiContainer = container;
         super.doStart();
         postProcessContext();
+        warnIfNoCamelFound();
+    }
+
+    private void warnIfNoCamelFound() {
+        BeanManager manager = cdiContainer.getBeanManager();
+        Set<Bean<?>> contexts = manager.getBeans(CamelContext.class);
+        // Warn if the default CDI Camel context has no routes
+        if (contexts.size() == 1 && BeanManagerHelper.getReference(manager, CamelContext.class, contexts.iterator().next()).getRoutes().isEmpty()) {
+            LOG.warn("Camel CDI main has started with no Camel routes! "
+                   + "You may add some RouteBuilder beans to your project.");
+        }
     }
 
     @Override

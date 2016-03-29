@@ -82,8 +82,10 @@ AhcComponent Options
 
 
 
+
 // component options: START
 The AHC component supports 6 options which are listed below.
+
 
 
 [width="100%",cols="2s,1m,8",options="header"]
@@ -97,6 +99,7 @@ The AHC component supports 6 options which are listed below.
 | headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 // component options: END
+
 
 
 

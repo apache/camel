@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import com.codahale.metrics.Gauge;
@@ -34,7 +33,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
-import org.apache.camel.component.metrics.MetricsComponent;
 import org.apache.camel.component.metrics.MetricsConstants;
 import org.apache.camel.management.event.CamelContextStartedEvent;
 
@@ -92,15 +90,9 @@ class Application {
     }
 
     @Produces
-    @Singleton
-    @Named(MetricsComponent.METRIC_REGISTRY_NAME)
-    // TODO: remove when Camel Metrics component looks up for the Metrics registry by type only
-    MetricRegistry registry = new MetricRegistry();
-
-    @Produces
     @Metric(name = "success-ratio")
-        // Register a custom gauge that's the ratio of the 'success' meter on the 'generated' meter
-        // TODO: use a lambda expression and parameter names when Java 8 is a pre-requisite
+    // Register a custom gauge that's the ratio of the 'success' meter on the 'generated' meter
+    // TODO: use a lambda expression and parameter names when Java 8 is a pre-requisite
     Gauge<Double> successRatio(@Metric(name = "success") final Meter success,
                                @Metric(name = "generated") final Meter generated) {
         return new RatioGauge() {

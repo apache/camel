@@ -4,8 +4,10 @@ The @{title} component has no options.
 The @{title} component supports @{componentOptions.size()} options which are listed below.
 @end{}
 
+@if{!componentOptions.isEmpty()}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 @foreach{row : componentOptions}| @{row.name} | @{row.shortJavaType} | @{row.description}
 @end{}|=======================================================================
+@end{}

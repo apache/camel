@@ -56,7 +56,7 @@ import static org.apache.camel.tools.apt.helper.Strings.safeNull;
  * Process all camel-core's model classes (EIPs and DSL) and generate json schema documentation
  */
 @SupportedAnnotationTypes({"javax.xml.bind.annotation.*", "org.apache.camel.spi.Label"})
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
     // special when using expression/predicates in the model

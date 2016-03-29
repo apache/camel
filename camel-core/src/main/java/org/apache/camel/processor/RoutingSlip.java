@@ -82,7 +82,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
      */
     static final class PreparedErrorHandler extends KeyValueHolder<RouteContext, Processor> {
 
-        public PreparedErrorHandler(RouteContext key, Processor value) {
+        PreparedErrorHandler(RouteContext key, Processor value) {
             super(key, value);
         }
 

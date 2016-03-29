@@ -62,7 +62,7 @@ import static org.apache.camel.tools.apt.helper.Strings.safeNull;
  * Processes all Camel {@link UriEndpoint}s and generate json schema and html documentation for the endpoint/component.
  */
 @SupportedAnnotationTypes({"org.apache.camel.spi.*"})
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
     // CHECKSTYLE:OFF

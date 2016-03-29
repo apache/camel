@@ -142,7 +142,7 @@ public class CamelCdiTest {
     }
 
     protected CamelContext assertCamelContext(String contextName) {
-        CamelContext answer = camelContexts.select(new ContextName.Literal(contextName)).get();
+        CamelContext answer = camelContexts.select(ContextName.Literal.of(contextName)).get();
         assertTrue("CamelContext '" + contextName + "' is not started", answer.getStatus().isStarted());
         return answer;
     }

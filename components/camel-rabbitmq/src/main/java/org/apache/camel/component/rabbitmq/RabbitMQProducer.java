@@ -133,7 +133,6 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         this.executorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "CamelRabbitMQProducer[" + getEndpoint().getQueue() + "]");
-
         try {
             openConnectionAndChannelPool();
         } catch (IOException e) {
@@ -236,7 +235,8 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
             basicPublish(exchange, exchangeName, key);
         } catch (Exception e) {
             replyManager.cancelCorrelationId(correlationId);
-            throw e;
+            exchange.setException(e);
+            return true;
         }
         // continue routing asynchronously (reply will be processed async when its received)
         return false;
@@ -255,20 +255,12 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         }
 
         basicPublish(exchange, exchangeName, key);
-        if (callback != null) {
-            // we are synchronous so return true
-            callback.done(true);
-        }
+        callback.done(true);
         return true;
     }
 
     /**
      * Send a message borrowing a channel from the pool.
-     *
-     * @param exchange   Target exchange
-     * @param routingKey Routing key
-     * @param properties Header properties
-     * @param body       Body content
      */
     private void basicPublish(final Exchange camelExchange, final String rabbitExchange, final String routingKey) throws Exception {
         if (channelPool == null) {

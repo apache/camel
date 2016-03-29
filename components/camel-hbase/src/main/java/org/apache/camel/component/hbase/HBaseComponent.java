@@ -17,13 +17,15 @@
 package org.apache.camel.component.hbase;
 
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.client.HTablePool;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
 
 /**
  * Represents the component that manages {@link HBaseEndpoint}.
@@ -31,7 +33,7 @@ import org.apache.hadoop.hbase.client.HTablePool;
 public class HBaseComponent extends UriEndpointComponent {
 
     private Configuration configuration;
-    private HTablePool tablePool;
+    private Connection connection;
     private int poolMaxSize = 10;
 
     public HBaseComponent() {
@@ -43,18 +45,22 @@ public class HBaseComponent extends UriEndpointComponent {
         if (configuration == null) {
             configuration = HBaseConfiguration.create();
         }
-        tablePool = new HTablePool(configuration, poolMaxSize);
+
+        connection = ConnectionFactory.createConnection(
+            configuration,
+            Executors.newFixedThreadPool(poolMaxSize)
+        );
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (tablePool != null) {
-            tablePool.close();
+        if (connection != null) {
+            connection.close();
         }
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        HBaseEndpoint endpoint = new HBaseEndpoint(uri, this, tablePool, remaining);
+        HBaseEndpoint endpoint = new HBaseEndpoint(uri, this, connection, remaining);
         Map<String, Object> mapping = IntrospectionSupport.extractProperties(parameters, "row.");
         endpoint.setRowMapping(mapping);
         setProperties(endpoint, parameters);

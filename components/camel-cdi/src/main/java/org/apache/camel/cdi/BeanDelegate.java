@@ -89,4 +89,9 @@ final class BeanDelegate<T> implements Bean<T> {
     public void destroy(T instance, CreationalContext<T> creationalContext) {
         delegate.destroy(instance, creationalContext);
     }
+
+    @Override
+    public String toString() {
+        return delegate.toString();
+    }
 }

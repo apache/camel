@@ -24,10 +24,12 @@ import java.util.List;
 import java.util.Map;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.Delimiters;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.CharsetUtil;
+import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
@@ -104,7 +106,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean useByteBuf;
     @UriParam(label = "advanced")
     private boolean udpByteArrayCodec;
-    
+    @UriParam(label = "producer")
+    private boolean reuseChannel;
+
 
     /**
      * Returns a copy of this configuration
@@ -200,7 +204,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
         // additional netty options, we don't want to store an empty map, so set it as null if empty
         options = IntrospectionSupport.extractProperties(parameters, "option.");
-        if (options !=  null && options.isEmpty()) {
+        if (options != null && options.isEmpty()) {
             options = null;
         }
 
@@ -584,7 +588,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     public void setUdpConnectionlessSending(boolean udpConnectionlessSending) {
         this.udpConnectionlessSending = udpConnectionlessSending;
     }
-    
+
     public boolean isClientMode() {
         return clientMode;
     }
@@ -616,6 +620,23 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      */
     public void setUdpByteArrayCodec(boolean udpByteArrayCodec) {
         this.udpByteArrayCodec = udpByteArrayCodec;
+    }
+
+    public boolean isReuseChannel() {
+        return reuseChannel;
+    }
+
+    /**
+     * This option allows producers to reuse the same Netty {@link Channel} for the lifecycle of processing the {@link Exchange}.
+     * This is useable if you need to call a server multiple times in a Camel route and want to use the same network connection.
+     * When using this the channel is not returned to the connection pool until the {@link Exchange} is done; or disconnected
+     * if the disconnect option is set to true.
+     * <p/>
+     * The reused {@link Channel} is stored on the {@link Exchange} as an exchange property with the key {@link NettyConstants#NETTY_CHANNEL}
+     * which allows you to obtain the channel during routing and use it as well.
+     */
+    public void setReuseChannel(boolean reuseChannel) {
+        this.reuseChannel = reuseChannel;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {

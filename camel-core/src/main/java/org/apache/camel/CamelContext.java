@@ -304,6 +304,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Gets a component from the context by name.
+     * <p/>
+     * Notice the returned component will be auto-started. If you do not intend to do that
+     * then use {@link #getComponent(String, boolean, boolean)}.
      *
      * @param componentName the name of the component
      * @return the component
@@ -312,6 +315,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Gets a component from the context by name.
+     * <p/>
+     * Notice the returned component will be auto-started. If you do not intend to do that
+     * then use {@link #getComponent(String, boolean, boolean)}.
      *
      * @param name                 the name of the component
      * @param autoCreateComponents whether or not the component should
@@ -319,6 +325,17 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the component
      */
     Component getComponent(String name, boolean autoCreateComponents);
+
+    /**
+     * Gets a component from the context by name.
+     *
+     * @param name                 the name of the component
+     * @param autoCreateComponents whether or not the component should
+     *                             be lazily created if it does not already exist
+     * @param autoStart            whether to auto start the component if {@link CamelContext} is already started.
+     * @return the component
+     */
+    Component getComponent(String name, boolean autoCreateComponents, boolean autoStart);
 
     /**
      * Gets a component from the context by name and specifying the expected type of component.

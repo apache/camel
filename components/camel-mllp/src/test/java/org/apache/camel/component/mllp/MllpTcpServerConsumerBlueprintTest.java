@@ -35,16 +35,15 @@ import org.junit.Test;
 import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
 public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSupport {
-    String mllpHost = "localhost";
 
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
 
     final String receivedUri = "mock://received";
+    final String mllpHost = "localhost";
 
     @EndpointInject(uri = receivedUri)
     MockEndpoint received;
-
 
     @Override
     protected String getBlueprintDescriptor() {
@@ -58,7 +57,6 @@ public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSuppor
         services.put(ComponentResolver.class.getName(), asService(testResolver, "component", "mllp"));
     }
 
-
     @Override
     protected Properties useOverridePropertiesWithPropertiesComponent() {
         mllpClient.setMllpHost(mllpHost);
@@ -67,7 +65,7 @@ public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSuppor
         Properties props = new Properties();
 
         props.setProperty("receivedUri", receivedUri);
-        props.setProperty( "mllp.host", mllpClient.getMllpHost());
+        props.setProperty("mllp.host", mllpClient.getMllpHost());
         props.setProperty("mllp.port", Integer.toString(mllpClient.getMllpPort()));
 
         return props;
@@ -100,6 +98,5 @@ public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSuppor
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
-
 
 }

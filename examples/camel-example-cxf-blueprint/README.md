@@ -18,7 +18,7 @@ You will need to compile this example first:
 
 ### Run
 
-To run the example on Apache Karaf 2.3.1 or better
+To run the example on Apache Karaf 2.4.x
 
 #### Step 1: Laraf
 

@@ -320,7 +320,7 @@ public final class HttpHelper {
         if (queryString == null) {
             queryString = endpoint.getHttpUri().getRawQuery();
         }
-        // We should user the query string from the HTTP_URI header
+        // We should use the query string from the HTTP_URI header
         if (queryString == null) {
             queryString = uri.getRawQuery();
         }
@@ -497,6 +497,8 @@ public final class HttpHelper {
             throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
         }
         if (uriString != null) {
+            // in case the URI string contains unsafe characters
+            uriString = UnsafeUriCharactersEncoder.encodeHttpURI(uriString);
             URI uri = new URI(uriString);
             queryString = uri.getQuery();
         }

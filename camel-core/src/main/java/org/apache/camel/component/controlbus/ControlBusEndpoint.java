@@ -95,6 +95,7 @@ public class ControlBusEndpoint extends DefaultEndpoint {
 
     /**
      * To specify a route by its id.
+     * The special keyword "current" indicates the current route.
      */
     public void setRouteId(String routeId) {
         this.routeId = routeId;

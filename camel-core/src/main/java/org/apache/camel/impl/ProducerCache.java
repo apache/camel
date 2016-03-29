@@ -380,7 +380,7 @@ public class ProducerCache extends ServiceSupport {
         return doInProducer(endpoint, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) {
                 if (exchange == null) {
-                    exchange = pattern != null ? producer.createExchange(pattern) : producer.createExchange();
+                    exchange = pattern != null ? producer.getEndpoint().createExchange(pattern) : producer.getEndpoint().createExchange();
                 }
 
                 if (processor != null) {

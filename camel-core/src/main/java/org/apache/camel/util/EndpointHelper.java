@@ -53,7 +53,6 @@ public final class EndpointHelper {
     private static final AtomicLong ENDPOINT_COUNTER = new AtomicLong(0);
     private static final Pattern SYNTAX_PATTERN = Pattern.compile("(\\w+)");
 
-
     private EndpointHelper() {
         //Utility Class
     }
@@ -66,7 +65,7 @@ public final class EndpointHelper {
     public static void pollEndpoint(Endpoint endpoint, Processor processor, long timeout) throws Exception {
         PollingConsumer consumer = endpoint.createPollingConsumer();
         try {
-            consumer.start();
+            ServiceHelper.startService(consumer);
 
             while (true) {
                 Exchange exchange = consumer.receive(timeout);
@@ -78,9 +77,9 @@ public final class EndpointHelper {
             }
         } finally {
             try {
-                consumer.stop();
+                ServiceHelper.stopAndShutdownService(consumer);
             } catch (Exception e) {
-                LOG.warn("Failed to stop PollingConsumer: " + e, e);
+                LOG.warn("Failed to stop PollingConsumer: " + consumer + ". This example is ignored.", e);
             }
         }
     }
