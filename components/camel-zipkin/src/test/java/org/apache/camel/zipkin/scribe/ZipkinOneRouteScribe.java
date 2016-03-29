@@ -35,18 +35,20 @@ import org.junit.Test;
  * Adjust the IP address to what IP docker-machines have assigned, you can use
  * <tt>docker-machines ls</tt>
  */
-public class ZipkinRouteConcurrentScribe extends CamelTestSupport {
+public class ZipkinOneRouteScribe extends CamelTestSupport {
 
     private String ip = "192.168.99.100";
     private ZipkinEventNotifier zipkin;
+
+    // TODO: producer template also
+    // TODO: message id added x2
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
         zipkin = new ZipkinEventNotifier();
-        zipkin.addServiceMapping("seda:foo", "foo");
-        zipkin.addServiceMapping("seda:bar", "bar");
+        zipkin.addServiceMapping("seda:cat", "cat");
         zipkin.setSpanCollector(new ScribeSpanCollector(ip, 9410));
         context.getManagementStrategy().addEventNotifier(zipkin);
 
@@ -55,13 +57,13 @@ public class ZipkinRouteConcurrentScribe extends CamelTestSupport {
 
     @Test
     public void testZipkinRoute() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
-        for (int i = 0; i < 5; i++) {
-            template.sendBody("seda:foo", "Hello World");
+        for (int i = 0; i < 1; i++) {
+            template.sendBody("seda:cat", "Hello Cat");
         }
 
-        assertTrue(notify.matches(60, TimeUnit.SECONDS));
+        assertTrue(notify.matches(30, TimeUnit.SECONDS));
     }
 
     @Override
@@ -69,14 +71,9 @@ public class ZipkinRouteConcurrentScribe extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo?concurrentConsumers=5").routeId("foo")
+                from("seda:cat").routeId("cat")
                         .log("routing at ${routeId}")
-                        .delay(simple("${random(1000,2000)}"))
-                        .to("seda:bar");
-
-                from("seda:bar?concurrentConsumers=5").routeId("bar")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(0,500)}"));
+                        .delay(simple("${random(1000,2000)}"));
             }
         };
     }

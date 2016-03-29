@@ -31,9 +31,13 @@ import org.junit.Test;
  * Integration test requires running Zipkin/Scribe running
  *
  * The easiest way is to run using zipkin-docker: https://github.com/openzipkin/docker-zipkin
+ *
+ * Adjust the IP address to what IP docker-machines have assigned, you can use
+ * <tt>docker-machines ls</tt>
  */
 public class ZipkinSimpleRouteScribe extends CamelTestSupport {
 
+    private String ip = "192.168.99.100";
     private ZipkinEventNotifier zipkin;
 
     @Override
@@ -42,7 +46,7 @@ public class ZipkinSimpleRouteScribe extends CamelTestSupport {
 
         zipkin = new ZipkinEventNotifier();
         zipkin.addServiceMapping("seda:dude", "dude");
-        zipkin.setSpanCollector(new ScribeSpanCollector("192.168.99.101", 9410));
+        zipkin.setSpanCollector(new ScribeSpanCollector(ip, 9410));
         context.getManagementStrategy().addEventNotifier(zipkin);
 
         return context;
@@ -50,7 +54,7 @@ public class ZipkinSimpleRouteScribe extends CamelTestSupport {
 
     @Test
     public void testZipkinRoute() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
 
         for (int i = 0; i < 5; i++) {
             template.sendBody("seda:dude", "Hello World");

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.zipkin;
 
+import java.io.Closeable;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +24,8 @@ import java.util.Map;
 import com.github.kristofa.brave.Brave;
 import com.github.kristofa.brave.ClientSpanThreadBinder;
 import com.github.kristofa.brave.Sampler;
+import com.github.kristofa.brave.ServerSpan;
+import com.github.kristofa.brave.ServerSpanThreadBinder;
 import com.github.kristofa.brave.SpanCollector;
 import com.twitter.zipkin.gen.Span;
 import org.apache.camel.CamelContext;
@@ -35,6 +38,8 @@ import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ServiceHelper;
 
 import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
 
@@ -45,8 +50,8 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
  * This means you need to configure which which Camel endpoints that maps to zipkin service names.
  * The mapping can be configured using
  * <ul>
- *     <li>route id - A Camel route id</li>
- *     <li>endpoint url - A Camel endpoint url</li>
+ * <li>route id - A Camel route id</li>
+ * <li>endpoint url - A Camel endpoint url</li>
  * </ul>
  * For both kinds you can use wildcards and regular expressions to match, which is using the rules from
  * {@link EndpointHelper#matchPattern(String, String)} and {@link EndpointHelper#matchEndpoint(CamelContext, String, String)}
@@ -122,6 +127,19 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
                 braves.put(serviceName, brave);
             }
         }
+
+        ServiceHelper.startService(spanCollector);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        // stop and close collector
+        ServiceHelper.stopAndShutdownService(spanCollector);
+        if (spanCollector instanceof Closeable) {
+            IOHelper.close((Closeable) spanCollector);
+        }
     }
 
     @Override
@@ -134,16 +152,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         String answer = null;
 
         String id = routeIdExpression().evaluate(exchange, String.class);
-        for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
-            String pattern = entry.getKey();
-            if (EndpointHelper.matchPattern(pattern, id)) {
-                answer = entry.getValue();
-                break;
-            }
-        }
-
-        if (answer == null) {
-            id = exchange.getFromRouteId();
+        if (id != null) {
             for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
                 String pattern = entry.getKey();
                 if (EndpointHelper.matchPattern(pattern, id)) {
@@ -153,24 +162,41 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
             }
         }
 
+        if (answer == null) {
+            id = exchange.getFromRouteId();
+            if (id != null) {
+                for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
+                    String pattern = entry.getKey();
+                    if (EndpointHelper.matchPattern(pattern, id)) {
+                        answer = entry.getValue();
+                        break;
+                    }
+                }
+            }
+        }
+
         if (answer == null && endpoint != null) {
             String url = endpoint.getEndpointUri();
-            for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
-                String pattern = entry.getKey();
-                if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
-                    answer = entry.getValue();
-                    break;
+            if (url != null) {
+                for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
+                    String pattern = entry.getKey();
+                    if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
+                        answer = entry.getValue();
+                        break;
+                    }
                 }
             }
         }
 
         if (answer == null && exchange.getFromEndpoint() != null) {
             String url = exchange.getFromEndpoint().getEndpointUri();
-            for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
-                String pattern = entry.getKey();
-                if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
-                    answer = entry.getValue();
-                    break;
+            if (url != null) {
+                for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
+                    String pattern = entry.getKey();
+                    if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
+                        answer = entry.getValue();
+                        break;
+                    }
                 }
             }
         }
@@ -189,73 +215,98 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
     @Override
     public void notify(EventObject event) throws Exception {
         if (event instanceof ExchangeSendingEvent) {
-            clientRequest((ExchangeSendingEvent) event);
+            ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
+            String serviceName = getServiceName(ese.getExchange(), ese.getEndpoint());
+            Brave brave = getBrave(serviceName);
+            if (brave != null) {
+                clientRequest(brave, serviceName, ese);
+            }
         } else if (event instanceof ExchangeSentEvent) {
-            clientResponse((ExchangeSentEvent) event);
+            ExchangeSentEvent ese = (ExchangeSentEvent) event;
+            String serviceName = getServiceName(ese.getExchange(), ese.getEndpoint());
+            Brave brave = getBrave(serviceName);
+            if (brave != null) {
+                clientResponse(brave, serviceName, ese);
+            }
         } else if (event instanceof ExchangeCreatedEvent) {
-            serverRequest((ExchangeCreatedEvent) event);
+            ExchangeCreatedEvent ece = (ExchangeCreatedEvent) event;
+            String serviceName = getServiceName(ece.getExchange(), null);
+            Brave brave = getBrave(serviceName);
+            if (brave != null) {
+                serverRequest(brave, serviceName, ece);
+            }
         } else if (event instanceof ExchangeCompletedEvent) {
-            serverResponse((ExchangeCompletedEvent) event);
+            ExchangeCompletedEvent ece = (ExchangeCompletedEvent) event;
+            String serviceName = getServiceName(ece.getExchange(), null);
+            Brave brave = getBrave(serviceName);
+            if (brave != null) {
+                serverResponse(brave, serviceName, ece);
+            }
         } else if (event instanceof ExchangeFailedEvent) {
-            serverResponse((ExchangeFailedEvent) event);
+            ExchangeFailedEvent efe = (ExchangeFailedEvent) event;
+            String serviceName = getServiceName(efe.getExchange(), null);
+            Brave brave = getBrave(serviceName);
+            if (brave != null) {
+                serverResponse(brave, serviceName, efe);
+            }
         }
     }
 
-    private void clientRequest(ExchangeSendingEvent event) {
-        String serviceName = getServiceName(event.getExchange(), event.getEndpoint());
-        Brave brave = getBrave(serviceName);
-        if (brave != null) {
-            ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
-            brave.clientRequestInterceptor().handle(new ZipkinClientRequestAdapter(serviceName, event.getExchange(), event.getEndpoint()));
-            Span span = binder.getCurrentClientSpan();
-            event.getExchange().setProperty("CamelZipkinSpan", span);
+    private void clientRequest(Brave brave, String serviceName, ExchangeSendingEvent event) {
+        ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
+        brave.clientRequestInterceptor().handle(new ZipkinClientRequestAdapter(serviceName, event.getExchange(), event.getEndpoint()));
+        Span span = binder.getCurrentClientSpan();
+        event.getExchange().setProperty("CamelZipkinClientSpan", span);
+
+        if (log.isDebugEnabled()) {
+            log.debug("clientRequest: service={}, id={} ", serviceName, span != null ? span.getId() : "<null>");
         }
     }
 
-    private void clientResponse(ExchangeSentEvent event) {
-        String serviceName = getServiceName(event.getExchange(), event.getEndpoint());
-        Brave brave = getBrave(serviceName);
-        if (brave != null) {
-            ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
-            Span span = event.getExchange().getProperty("CamelZipkinSpan", Span.class);
-            binder.setCurrentSpan(span);
-            brave.clientResponseInterceptor().handle(new ZipkinClientResponseAdaptor(event.getExchange(), event.getEndpoint()));
-            binder.setCurrentSpan(null);
+    private void clientResponse(Brave brave, String serviceName, ExchangeSentEvent event) {
+        ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
+        Span span = event.getExchange().getProperty("CamelZipkinClientSpan", Span.class);
+        binder.setCurrentSpan(span);
+        brave.clientResponseInterceptor().handle(new ZipkinClientResponseAdaptor(event.getExchange(), event.getEndpoint()));
+        binder.setCurrentSpan(null);
+
+        if (log.isDebugEnabled()) {
+            log.debug("clientResponse: service={}, id={} ", serviceName, span != null ? span.getId() : "<null>");
         }
     }
 
-    private void serverRequest(ExchangeCreatedEvent event) {
-        String serviceName = getServiceName(event.getExchange(), null);
-        Brave brave = getBrave(serviceName);
-        if (brave != null) {
-            ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
-            brave.serverRequestInterceptor().handle(new ZipkinServerRequestAdapter(event.getExchange()));
-            Span span = binder.getCurrentClientSpan();
-            event.getExchange().setProperty("CamelZipkinSpan", span);
+    private void serverRequest(Brave brave, String serviceName, ExchangeCreatedEvent event) {
+        ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
+        brave.serverRequestInterceptor().handle(new ZipkinServerRequestAdapter(event.getExchange()));
+        ServerSpan span = binder.getCurrentServerSpan();
+        event.getExchange().setProperty("CamelZipkinServerSpan", span);
+
+        if (log.isDebugEnabled()) {
+            log.debug("serverRequest: service={}, id={} ", serviceName, span != null ? span.getSpan().getId() : "<null>");
         }
     }
 
-    private void serverResponse(ExchangeCompletedEvent event) {
-        String serviceName = getServiceName(event.getExchange(), null);
-        Brave brave = getBrave(serviceName);
-        if (brave != null) {
-            ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
-            Span span = event.getExchange().getProperty("CamelZipkinSpan", Span.class);
-            binder.setCurrentSpan(span);
-            brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(event.getExchange()));
-            binder.setCurrentSpan(null);
+    private void serverResponse(Brave brave, String serviceName, ExchangeCompletedEvent event) {
+        ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
+        ServerSpan span = event.getExchange().getProperty("CamelZipkinServerSpan", ServerSpan.class);
+        binder.setCurrentSpan(span);
+        brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(event.getExchange()));
+        binder.setCurrentSpan(null);
+
+        if (log.isDebugEnabled()) {
+            log.debug("serverResponse: service={}, id={} ", serviceName, span != null ? span.getSpan().getId() : "<null>");
         }
     }
 
-    private void serverResponse(ExchangeFailedEvent event) {
-        String serviceName = getServiceName(event.getExchange(), null);
-        Brave brave = getBrave(serviceName);
-        if (brave != null) {
-            ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
-            Span span = event.getExchange().getProperty("CamelZipkinSpan", Span.class);
-            binder.setCurrentSpan(span);
-            brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(event.getExchange()));
-            binder.setCurrentSpan(null);
+    private void serverResponse(Brave brave, String serviceName, ExchangeFailedEvent event) {
+        ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
+        ServerSpan span = event.getExchange().getProperty("CamelZipkinServerSpan", ServerSpan.class);
+        binder.setCurrentSpan(span);
+        brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(event.getExchange()));
+        binder.setCurrentSpan(null);
+
+        if (log.isDebugEnabled()) {
+            log.debug("serverResponse: service={}, id={} ", serviceName, span != null ? span.getSpan().getId() : "<null>");
         }
     }
 
