@@ -19,7 +19,9 @@ package org.apache.camel.zipkin;
 import java.io.Closeable;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.github.kristofa.brave.Brave;
 import com.github.kristofa.brave.ClientSpanThreadBinder;
@@ -59,7 +61,11 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
  * For both kinds you can use wildcards and regular expressions to match, which is using the rules from
  * {@link EndpointHelper#matchPattern(String, String)} and {@link EndpointHelper#matchEndpoint(CamelContext, String, String)}
  * <p/>
- * At least one mapping must be configured, you can use <tt>*</tt> to match all incoming and outgoing messages.
+ * To match all Camel messages you can use <tt>*</tt> in the pattern and configure that to the same service name.
+ * <br/>
+ * If no mapping has been configured then Camel will fallback and use endpoint uri's as service names.
+ * However its recommended to configure service mappings so you can use human logic names instead of Camel
+ * endpoint uris in the names.
  */
 @ManagedResource(description = "Managing ZipkinEventNotifier")
 public class ZipkinEventNotifier extends EventNotifierSupport implements StatefulService {
@@ -67,8 +73,10 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
     private float rate = 1.0f;
     private SpanCollector spanCollector;
     private Map<String, String> serviceMappings = new HashMap<>();
+    private Set<String> excludePatterns = new HashSet<>();
     private Map<String, Brave> braves = new HashMap<>();
     private boolean includeMessageBody;
+    private boolean useFallbackServiceNames;
 
     public ZipkinEventNotifier() {
     }
@@ -128,6 +136,21 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         serviceMappings.put(pattern, serviceName);
     }
 
+    public Set<String> getExcludePatterns() {
+        return excludePatterns;
+    }
+
+    public void setExcludePatterns(Set<String> excludePatterns) {
+        this.excludePatterns = excludePatterns;
+    }
+
+    /**
+     * Adds an exclude pattern that will disable tracing with zipkin for Camel messages that matches the pattern.
+     */
+    public void addExcludePattern(String pattern) {
+        excludePatterns.add(pattern);
+    }
+
     @ManagedAttribute(description = "Whether to include the Camel message body in the zipkin traces")
     public boolean isIncludeMessageBody() {
         return includeMessageBody;
@@ -149,7 +172,8 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         super.doStart();
 
         if (serviceMappings.isEmpty()) {
-            throw new IllegalStateException("At least one service name must be configured");
+            log.warn("No service name(s) has been configured. Camel will fallback and use endpoint uris as service names.");
+            useFallbackServiceNames = true;
         }
 
         // create braves mapped per service name
@@ -196,9 +220,15 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
 
         String id = routeIdExpression().evaluate(exchange, String.class);
         if (id != null) {
+            // exclude patterns take precedence
+            for (String pattern : excludePatterns) {
+                if (EndpointHelper.matchPattern(id, pattern)) {
+                    return null;
+                }
+            }
             for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
                 String pattern = entry.getKey();
-                if (EndpointHelper.matchPattern(pattern, id)) {
+                if (EndpointHelper.matchPattern(id, pattern)) {
                     answer = entry.getValue();
                     break;
                 }
@@ -208,9 +238,15 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         if (answer == null) {
             id = exchange.getFromRouteId();
             if (id != null) {
+                // exclude patterns take precedence
+                for (String pattern : excludePatterns) {
+                    if (EndpointHelper.matchPattern(id, pattern)) {
+                        return null;
+                    }
+                }
                 for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
                     String pattern = entry.getKey();
-                    if (EndpointHelper.matchPattern(pattern, id)) {
+                    if (EndpointHelper.matchPattern(id, pattern)) {
                         answer = entry.getValue();
                         break;
                     }
@@ -221,6 +257,12 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         if (answer == null && endpoint != null) {
             String url = endpoint.getEndpointUri();
             if (url != null) {
+                // exclude patterns take precedence
+                for (String pattern : excludePatterns) {
+                    if (EndpointHelper.matchPattern(url, pattern)) {
+                        return null;
+                    }
+                }
                 for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
                     String pattern = entry.getKey();
                     if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
@@ -234,6 +276,12 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         if (answer == null && exchange.getFromEndpoint() != null) {
             String url = exchange.getFromEndpoint().getEndpointUri();
             if (url != null) {
+                // exclude patterns take precedence
+                for (String pattern : excludePatterns) {
+                    if (EndpointHelper.matchPattern(url, pattern)) {
+                        return null;
+                    }
+                }
                 for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
                     String pattern = entry.getKey();
                     if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
@@ -244,15 +292,49 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
             }
         }
 
-        return answer;
+        if (answer == null && useFallbackServiceNames) {
+            String key = null;
+            if (endpoint != null) {
+                key = endpoint.getEndpointKey();
+            } else if (exchange.getFromEndpoint() != null) {
+                key = exchange.getFromEndpoint().getEndpointKey();
+            }
+            // exclude patterns take precedence
+            for (String pattern : excludePatterns) {
+                if (EndpointHelper.matchPattern(key, pattern)) {
+                    return null;
+                }
+            }
+            if (log.isTraceEnabled() && key != null) {
+                log.trace("Using serviceName: {} as fallback", key);
+            }
+            return key;
+        } else {
+            if (log.isTraceEnabled() && answer != null) {
+                log.trace("Using serviceName: {}", answer);
+            }
+            return answer;
+        }
     }
 
     private Brave getBrave(String serviceName) {
+        Brave brave = null;
         if (serviceName != null) {
-            return braves.get(serviceName);
-        } else {
-            return null;
+            brave = braves.get(serviceName);
+
+            if (brave == null && useFallbackServiceNames) {
+                log.debug("Creating Brave assigned to serviceName: {}", serviceName + " as fallback");
+                Brave.Builder builder = new Brave.Builder(serviceName);
+                builder = builder.traceSampler(Sampler.create(rate));
+                if (spanCollector != null) {
+                    builder = builder.spanCollector(spanCollector);
+                }
+                brave = builder.build();
+                braves.put(serviceName, brave);
+            }
         }
+
+        return brave;
     }
 
     @Override
@@ -304,7 +386,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         event.getExchange().setProperty(key, span);
 
         if (log.isDebugEnabled()) {
-            log.debug("clientRequest[service={}, spanId={}]", serviceName, span != null ? span.getId() : "<null>");
+            log.debug("clientRequest\t[service={}, spanId={}]", serviceName, span != null ? span.getId() : "<null>");
         }
     }
 
@@ -317,7 +399,8 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         binder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
-            log.debug("clientResponse[service={}, spanId={}]", serviceName, span != null ? span.getId() : "<null>");
+            // one space to align client vs server in the logs
+            log.debug("clientResponse\t[service={}, spanId={}]", serviceName, span != null ? span.getId() : "<null>");
         }
     }
 
@@ -329,7 +412,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         event.getExchange().setProperty(key, span);
 
         if (log.isDebugEnabled()) {
-            log.debug("serverRequest[service={}, spanId={}]", serviceName, span != null ? span.getSpan().getId() : "<null>");
+            log.debug("serverRequest\t[service={}, spanId={}]", serviceName, span != null ? span.getSpan().getId() : "<null>");
         }
     }
 
@@ -342,7 +425,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         binder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
-            log.debug("serverResponse[service={}, spanId={}, status=exchangeCompleted]", serviceName, span != null ? span.getSpan().getId() : "<null>");
+            log.debug("serverResponse\t[service={}, spanId={}]\t[status=exchangeCompleted]", serviceName, span != null ? span.getSpan().getId() : "<null>");
         }
     }
 
@@ -355,7 +438,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         binder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
-            log.debug("serverResponse[service={}, spanId={}, status=exchangeFailed]", serviceName, span != null ? span.getSpan().getId() : "<null>");
+            log.debug("serverResponse[service={}, spanId={}]\t[status=exchangeFailed]", serviceName, span != null ? span.getSpan().getId() : "<null>");
         }
     }
 
