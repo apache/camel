@@ -41,8 +41,6 @@ public class ZipkinTimerRouteScribe extends CamelTestSupport {
     private String ip = "192.168.99.100";
     private ZipkinEventNotifier zipkin;
 
-    // TODO: producer template also (add a skip flag)
-
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
@@ -59,6 +57,8 @@ public class ZipkinTimerRouteScribe extends CamelTestSupport {
     public void testZipkinRoute() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).from("seda:timer").whenDone(1).create();
 
+        template.sendBody("direct:start", "Hello Timer");
+
         assertTrue(notify.matches(30, TimeUnit.SECONDS));
     }
 
@@ -67,7 +67,7 @@ public class ZipkinTimerRouteScribe extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:trigger?repeatCount=1").setBody().constant("Hello Cat").to(ExchangePattern.InOut, "seda:timer");
+                from("direct:start").to(ExchangePattern.InOut, "seda:timer");
 
                 from("seda:timer").routeId("timer")
                         .log("routing at ${routeId}")

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.zipkin;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Locale;
 
 import com.github.kristofa.brave.KeyValueAnnotation;
@@ -35,11 +35,13 @@ public class ZipkinServerRequestAdapter implements ServerRequestAdapter {
     private final Exchange exchange;
     private final Endpoint endpoint;
     private final String spanName;
+    private final String url;
 
     public ZipkinServerRequestAdapter(Exchange exchange) {
         this.exchange = exchange;
         this.endpoint = exchange.getFromEndpoint();
         this.spanName = URISupport.sanitizeUri(endpoint.getEndpointKey()).toLowerCase(Locale.US);
+        this.url = URISupport.sanitizeUri(endpoint.getEndpointUri());
     }
 
     @Override
@@ -63,7 +65,12 @@ public class ZipkinServerRequestAdapter implements ServerRequestAdapter {
     @Override
     public Collection<KeyValueAnnotation> requestAnnotations() {
         String id = exchange.getExchangeId();
-        return Collections.singletonList(KeyValueAnnotation.create("camel.exchange.id", id));
+        String mep = exchange.getPattern().name();
+
+        KeyValueAnnotation key1 = KeyValueAnnotation.create("camel.server.endpoint.url", url);
+        KeyValueAnnotation key2 = KeyValueAnnotation.create("camel.server.exchange.id", id);
+        KeyValueAnnotation key3 = KeyValueAnnotation.create("camel.server.exchange.pattern", mep);
+        return Arrays.asList(key1, key2, key3);
     }
 
 }

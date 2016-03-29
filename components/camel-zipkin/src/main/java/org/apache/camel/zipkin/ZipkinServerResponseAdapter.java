@@ -37,7 +37,7 @@ public class ZipkinServerResponseAdapter implements ServerResponseAdapter {
     @Override
     public Collection<KeyValueAnnotation> responseAnnotations() {
         if (exchange.getException() != null) {
-            return Collections.singletonList(KeyValueAnnotation.create("camel.failure", exchange.getException().getMessage()));
+            return Collections.singletonList(KeyValueAnnotation.create("camel.server.failure", exchange.getException().getMessage()));
         } else {
             return Collections.emptyList();
         }
