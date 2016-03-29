@@ -50,7 +50,7 @@ public class ZipkinServerRequestAdapter implements ServerRequestAdapter {
 
     @Override
     public TraceData getTraceData() {
-        String sampled = exchange.getIn().getHeader(ZipkinConstants.SAMPLED, String.class);
+        String sampled = exchange.getIn().getHeader(ZipkinConstants.SAMPLED, "0", String.class);
         if (sampled.equals("0") || sampled.toLowerCase().equals("false")) {
             return TraceData.builder().sample(false).build();
         } else {

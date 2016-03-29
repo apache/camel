@@ -38,6 +38,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.properties.ServiceHostPropertiesFunction;
+import org.apache.camel.component.properties.ServicePortPropertiesFunction;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
@@ -70,7 +72,7 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
  * However its recommended to configure service mappings so you can use human logic names instead of Camel
  * endpoint uris in the names.
  * <p/>
- * Camel will auto-configure a {@link ScribeSpanCollector} if no SpanCollector has explict been configured, and
+ * Camel will auto-configure a {@link ScribeSpanCollector} if no SpanCollector explicit has been configured, and
  * if the hostname and port has been configured as environment variables
  * <ul>
  *     <li>ZIPKIN_SERVICE_HOST - The hostname</li>
@@ -81,6 +83,8 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
 public class ZipkinEventNotifier extends EventNotifierSupport implements StatefulService, CamelContextAware {
 
     private CamelContext camelContext;
+    private String hostName;
+    private int port;
     private float rate = 1.0f;
     private SpanCollector spanCollector;
     private Map<String, String> serviceMappings = new HashMap<>();
@@ -100,12 +104,34 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         this.camelContext = camelContext;
     }
 
+    public String getHostName() {
+        return hostName;
+    }
+
+    /**
+     * Sets a hostname for the remote zipkin server to use.
+     */
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    /**
+     * Sets the port number for the remote zipkin server to use.
+     */
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     public float getRate() {
         return rate;
     }
 
     /**
-     * Configures a rate that decides how many events should be traced by zpkin.
+     * Configures a rate that decides how many events should be traced by zipkin.
      * The rate is expressed as a percentage (1.0f = 100%, 0.5f is 50%, 0.1f is 10%).
      *
      * @param rate minimum sample rate is 0.0001, or 0.01% of traces
@@ -145,7 +171,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
     }
 
     /**
-     * Adds a service mapping that matches Camel events to the given zipkin serivce name.
+     * Adds a service mapping that matches Camel events to the given zipkin service name.
      * See more details at the class javadoc.
      *
      * @param pattern  the pattern such as route id, endpoint url
@@ -195,14 +221,18 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
         if (spanCollector == null) {
-            // is there a zipkin service setup as ENV variable to auto register a scribe span collector
-            // use the {{service:name}} function that resolves this for us
-            String host = camelContext.resolvePropertyPlaceholders("{{service.host:zipkin}}");
-            String port = camelContext.resolvePropertyPlaceholders("{{service.port:zipkin}}");
-            if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
-                log.info("Auto-configuring Zipkin ScribeSpanCollector using host: {} and port: {}", host, port);
-                int num = camelContext.getTypeConverter().mandatoryConvertTo(Integer.class, port);
-                spanCollector = new ScribeSpanCollector(host, num);
+            if (hostName != null && port > 0) {
+                log.info("Configuring Zipkin ScribeSpanCollector using host: {} and port: {}", hostName, port);
+                spanCollector = new ScribeSpanCollector(hostName, port);
+            } else {
+                // is there a zipkin service setup as ENV variable to auto register a scribe span collector
+                String host = new ServiceHostPropertiesFunction().apply("zipkin");
+                String port = new ServicePortPropertiesFunction().apply("zipkin");
+                if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
+                    log.info("Auto-configuring Zipkin ScribeSpanCollector using host: {} and port: {}", host, port);
+                    int num = camelContext.getTypeConverter().mandatoryConvertTo(Integer.class, port);
+                    spanCollector = new ScribeSpanCollector(host, num);
+                }
             }
         }
 
