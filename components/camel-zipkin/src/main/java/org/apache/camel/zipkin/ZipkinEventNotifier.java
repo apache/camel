@@ -25,6 +25,7 @@ import com.github.kristofa.brave.ClientSpanThreadBinder;
 import com.github.kristofa.brave.Sampler;
 import com.github.kristofa.brave.SpanCollector;
 import com.twitter.zipkin.gen.Span;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
@@ -37,6 +38,21 @@ import org.apache.camel.util.EndpointHelper;
 
 import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
 
+/**
+ * To use zipkin with Camel then setup this {@link org.apache.camel.spi.EventNotifier} in your Camel application.
+ * <p/>
+ * Events (span) are captured for incoming and outgoing messages being sent to/from Camel.
+ * This means you need to configure which which Camel endpoints that maps to zipkin service names.
+ * The mapping can be configured using
+ * <ul>
+ *     <li>route id - A Camel route id</li>
+ *     <li>endpoint url - A Camel endpoint url</li>
+ * </ul>
+ * For both kinds you can use wildcards and regular expressions to match, which is using the rules from
+ * {@link EndpointHelper#matchPattern(String, String)} and {@link EndpointHelper#matchEndpoint(CamelContext, String, String)}
+ * <p/>
+ * At least one mapping must be configured, you can use <tt>*</tt> to match all incoming and outgoing messages.
+ */
 public class ZipkinEventNotifier extends EventNotifierSupport {
 
     private float rate = 1.0f;
@@ -79,8 +95,8 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         this.serviceMappings = serviceMappings;
     }
 
-    public void addServiceMapping(String routeId, String serviceName) {
-        serviceMappings.put(routeId, serviceName);
+    public void addServiceMapping(String pattern, String serviceName) {
+        serviceMappings.put(pattern, serviceName);
     }
 
     @Override

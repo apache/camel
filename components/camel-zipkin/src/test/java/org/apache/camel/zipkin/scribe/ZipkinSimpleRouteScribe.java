@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.zipkin;
+package org.apache.camel.zipkin.scribe;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,9 +24,15 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.zipkin.ZipkinEventNotifier;
 import org.junit.Test;
 
-public class ZipkinRouteScribeTest extends CamelTestSupport {
+/**
+ * Integration test requires running Zipkin/Scribe running
+ *
+ * The easiest way is to run using zipkin-docker: https://github.com/openzipkin/docker-zipkin
+ */
+public class ZipkinSimpleRouteScribe extends CamelTestSupport {
 
     private ZipkinEventNotifier zipkin;
 
@@ -35,8 +41,7 @@ public class ZipkinRouteScribeTest extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
 
         zipkin = new ZipkinEventNotifier();
-        zipkin.addServiceMapping("seda:foo", "foo");
-        zipkin.addServiceMapping("seda:bar", "bar");
+        zipkin.addServiceMapping("seda:dude", "dude");
         zipkin.setSpanCollector(new ScribeSpanCollector("192.168.99.101", 9410));
         context.getManagementStrategy().addEventNotifier(zipkin);
 
@@ -48,10 +53,10 @@ public class ZipkinRouteScribeTest extends CamelTestSupport {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
 
         for (int i = 0; i < 5; i++) {
-            template.sendBody("seda:foo", "Hello World");
+            template.sendBody("seda:dude", "Hello World");
         }
 
-        assertTrue(notify.matches(60, TimeUnit.SECONDS));
+        assertTrue(notify.matches(30, TimeUnit.SECONDS));
     }
 
     @Override
@@ -59,14 +64,9 @@ public class ZipkinRouteScribeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").routeId("foo")
+                from("seda:dude").routeId("dude")
                         .log("routing at ${routeId}")
-                        .delay(simple("${random(1000,2000)}"))
-                        .to("seda:bar");
-
-                from("seda:bar").routeId("bar")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(0,500)}"));
+                        .delay(simple("${random(1000,2000)}"));
             }
         };
     }

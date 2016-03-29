@@ -37,7 +37,7 @@ public class ZipkinClientResponseAdaptor implements ClientResponseAdapter {
     @Override
     public Collection<KeyValueAnnotation> responseAnnotations() {
         if (exchange.getException() != null) {
-            return Collections.singletonList(KeyValueAnnotation.create("CamelZipkinFailed", exchange.getException().getMessage()));
+            return Collections.singletonList(KeyValueAnnotation.create("camel.failure", exchange.getException().getMessage()));
         } else {
             return Collections.emptyList();
         }

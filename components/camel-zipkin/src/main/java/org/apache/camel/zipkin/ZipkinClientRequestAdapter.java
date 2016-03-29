@@ -65,6 +65,6 @@ public final class ZipkinClientRequestAdapter implements ClientRequestAdapter {
     @Override
     public Collection<KeyValueAnnotation> requestAnnotations() {
         String msgId = exchange.getIn().getMessageId();
-        return Collections.singletonList(KeyValueAnnotation.create("CamelMessageId", msgId));
+        return Collections.singletonList(KeyValueAnnotation.create("camel.message.id", msgId));
     }
 }

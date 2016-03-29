@@ -16,8 +16,6 @@
  */
 package org.apache.camel.zipkin;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -28,6 +26,9 @@ import com.twitter.zipkin.gen.Span;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * To collect zipkin span's using a logger.
+ */
 public class ZipkinLoggingSpanCollector implements SpanCollector {
 
     private final Set<BinaryAnnotation> defaultAnnotations = new LinkedHashSet<BinaryAnnotation>();

@@ -19,6 +19,9 @@ package org.apache.camel.zipkin;
 import com.github.kristofa.brave.IdConversion;
 import com.github.kristofa.brave.SpanId;
 
+/**
+ * Helper class.
+ */
 public final class ZipkinHelper {
 
     private ZipkinHelper() {

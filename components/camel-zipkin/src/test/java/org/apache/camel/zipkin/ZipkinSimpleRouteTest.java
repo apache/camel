@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class ZipkinRouteTest extends CamelTestSupport {
+public class ZipkinSimpleRouteTest extends CamelTestSupport {
 
     private ZipkinEventNotifier zipkin;
 
@@ -34,8 +34,7 @@ public class ZipkinRouteTest extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
 
         zipkin = new ZipkinEventNotifier();
-        zipkin.addServiceMapping("seda:foo", "foo");
-        zipkin.addServiceMapping("seda:bar", "bar");
+        zipkin.addServiceMapping("seda:dude", "dude");
         zipkin.setSpanCollector(new ZipkinLoggingSpanCollector());
         context.getManagementStrategy().addEventNotifier(zipkin);
 
@@ -44,10 +43,10 @@ public class ZipkinRouteTest extends CamelTestSupport {
 
     @Test
     public void testZipkinRoute() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
 
         for (int i = 0; i < 5; i++) {
-            template.sendBody("seda:foo", "Hello World");
+            template.sendBody("seda:dude", "Hello World");
         }
 
         assertTrue(notify.matches(30, TimeUnit.SECONDS));
@@ -58,14 +57,9 @@ public class ZipkinRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo?concurrentConsumers=5").routeId("foo")
+                from("seda:dude").routeId("dude")
                         .log("routing at ${routeId}")
-                        .delay(simple("${random(1000,2000)}"))
-                        .to("seda:bar");
-
-                from("seda:bar?concurrentConsumers=5").routeId("bar")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(0,500)}"));
+                        .delay(simple("${random(1000,2000)}"));
             }
         };
     }
