@@ -1489,7 +1489,6 @@
     <bundle>mvn:org.apache.camel/camel-solr/${project.version}</bundle>
   </feature>
   <feature name='camel-spark-rest' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>camel-spark-rest requires Java 8 and Jetty9</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-jetty9</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.sparkjava-core/${spark-rest-bundle-version}</bundle>
@@ -1814,6 +1813,14 @@
   <feature name='camel-zipfile' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-zipfile/${project.version}</bundle>
+  </feature>
+  <feature name='camel-zipkin' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-zpikin using spancollector-scribe does not yet work in OSGi</details>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:com.github.kristofa/brave-core/${brave-zipkin-version}</bundle>
+    <!--<bundle dependency='true'>wrap:mvn:com.github.kristofa/brave-spancollector-scribe/${brave-zipkin-version}</bundle>-->
+    <bundle dependency='true'>mvn:org.apache.thrift/libthrift/${libthrift-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-zipkin/${project.version}</bundle>
   </feature>
   <feature name='camel-zookeeper' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>

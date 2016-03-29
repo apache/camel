@@ -47,13 +47,11 @@
       <artifactId>brave-core</artifactId>
       <version>${brave-zipkin-version}</version>
     </dependency>
-
-    <!-- for testing using a real zipkin server -->
+    <!-- to send to zipkin server -->
     <dependency>
       <groupId>com.github.kristofa</groupId>
       <artifactId>brave-spancollector-scribe</artifactId>
       <version>${brave-zipkin-version}</version>
-      <scope>test</scope>
     </dependency>
 
     <!-- test dependencies -->

@@ -247,6 +247,7 @@
         <include>org.apache.camel:camel-xstream</include>
         <include>org.apache.camel:camel-yammer</include>
         <include>org.apache.camel:camel-zipfile</include>
+        <include>org.apache.camel:camel-zipkin</include>
         <include>org.apache.camel:camel-zookeeper</include>
         <include>org.apache.camel:camel-catalog</include>
         <include>org.apache.camel:camel-catalog-lucene</include>

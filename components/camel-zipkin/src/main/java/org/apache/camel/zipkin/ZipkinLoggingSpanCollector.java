@@ -16,12 +16,8 @@
  */
 package org.apache.camel.zipkin;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import com.github.kristofa.brave.IdConversion;
 import com.github.kristofa.brave.SpanCollector;
-import com.twitter.zipkin.gen.BinaryAnnotation;
 import com.twitter.zipkin.gen.Span;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +27,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ZipkinLoggingSpanCollector implements SpanCollector {
 
-    private final Set<BinaryAnnotation> defaultAnnotations = new LinkedHashSet<BinaryAnnotation>();
     private final String name;
     private final Logger logger;
 
@@ -46,12 +41,6 @@ public class ZipkinLoggingSpanCollector implements SpanCollector {
 
     @Override
     public void collect(Span span) {
-        if (!defaultAnnotations.isEmpty()) {
-            for (BinaryAnnotation ba : defaultAnnotations) {
-                span.addToBinary_annotations(ba);
-            }
-        }
-
         if (logger.isInfoEnabled()) {
             long ms = span.getDuration() != null ? span.getDuration() / 1000 : -1;
             String id = IdConversion.convertToString(span.getId());
@@ -62,7 +51,7 @@ public class ZipkinLoggingSpanCollector implements SpanCollector {
 
     @Override
     public void addDefaultAnnotation(String key, String value) {
-        defaultAnnotations.add(BinaryAnnotation.create(key, value, null));
+        // noop
     }
 
 }
