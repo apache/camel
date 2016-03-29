@@ -29,8 +29,10 @@ import com.github.kristofa.brave.Sampler;
 import com.github.kristofa.brave.ServerSpan;
 import com.github.kristofa.brave.ServerSpanThreadBinder;
 import com.github.kristofa.brave.SpanCollector;
+import com.github.kristofa.brave.scribe.ScribeSpanCollector;
 import com.twitter.zipkin.gen.Span;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.StatefulService;
@@ -44,6 +46,7 @@ import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
 import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
@@ -66,10 +69,18 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
  * If no mapping has been configured then Camel will fallback and use endpoint uri's as service names.
  * However its recommended to configure service mappings so you can use human logic names instead of Camel
  * endpoint uris in the names.
+ * <p/>
+ * Camel will auto-configure a {@link ScribeSpanCollector} if no SpanCollector has explict been configured, and
+ * if the hostname and port has been configured as environment variables
+ * <ul>
+ *     <li>ZIPKIN_SERVICE_HOST - The hostname</li>
+ *     <li>ZIPKIN_SERVICE_PORT - The port number</li>
+ * </ul>
  */
 @ManagedResource(description = "Managing ZipkinEventNotifier")
-public class ZipkinEventNotifier extends EventNotifierSupport implements StatefulService {
+public class ZipkinEventNotifier extends EventNotifierSupport implements StatefulService, CamelContextAware {
 
+    private CamelContext camelContext;
     private float rate = 1.0f;
     private SpanCollector spanCollector;
     private Map<String, String> serviceMappings = new HashMap<>();
@@ -79,6 +90,14 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
     private boolean useFallbackServiceNames;
 
     public ZipkinEventNotifier() {
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public float getRate() {
@@ -130,7 +149,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
      * See more details at the class javadoc.
      *
      * @param pattern  the pattern such as route id, endpoint url
-     * @param serviceName the zpkin service name
+     * @param serviceName the zipkin service name
      */
     public void addServiceMapping(String pattern, String serviceName) {
         serviceMappings.put(pattern, serviceName);
@@ -146,6 +165,8 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
 
     /**
      * Adds an exclude pattern that will disable tracing with zipkin for Camel messages that matches the pattern.
+     *
+     * @param pattern  the pattern such as route id, endpoint url
      */
     public void addExcludePattern(String pattern) {
         excludePatterns.add(pattern);
@@ -170,6 +191,22 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
+
+        if (spanCollector == null) {
+            // is there a zipkin service setup as ENV variable to auto register a scribe span collector
+            // use the {{service:name}} function that resolves this for us
+            String host = camelContext.resolvePropertyPlaceholders("{{service.host:zipkin}}");
+            String port = camelContext.resolvePropertyPlaceholders("{{service.port:zipkin}}");
+            if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
+                log.info("Auto-configuring ZipkinScribeSpanCollector using host: {} and port: {}", host, port);
+                int num = camelContext.getTypeConverter().mandatoryConvertTo(Integer.class, port);
+                spanCollector = new ScribeSpanCollector(host, num);
+            }
+        }
+
+        ObjectHelper.notNull(spanCollector, "SpanCollector", this);
 
         if (serviceMappings.isEmpty()) {
             log.warn("No service name(s) has been configured. Camel will fallback and use endpoint uris as service names.");
