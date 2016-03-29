@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,6 @@ package org.apache.camel.component.cm;
 
 import java.util.Map;
 import java.util.Set;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -28,7 +27,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CMComponent extends UriEndpointComponent {
 
-    private static final Logger LOG = LoggerFactory
-        .getLogger(CMComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CMComponent.class);
 
     private Validator validator;
 
@@ -50,21 +47,8 @@ public class CMComponent extends UriEndpointComponent {
         super(context, CMEndpoint.class);
     }
 
-    /**
-     * Endpoints factory
-     */
     @Override
-    protected Endpoint createEndpoint(final String uri, final String remaining,
-                                      final Map<String, Object> parameters)
-        throws Exception {
-
-        LOG.debug("Creating CM Endpoint ... ");
-
-        LOG.debug("Uri=[{}], path=[{}], parameters=[{}]",
-                  new Object[] {URISupport.sanitizeUri(uri),
-                                URISupport
-                                    .sanitizePath(remaining),
-                                parameters});
+    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
 
         // Set configuration based on uri parameters
         final CMConfiguration config = new CMConfiguration();
@@ -72,23 +56,20 @@ public class CMComponent extends UriEndpointComponent {
 
         // Validate configuration
         LOG.debug("Validating uri based configuration");
-        final Set<ConstraintViolation<CMConfiguration>> constraintViolations = getValidator()
-            .validate(config);
+        final Set<ConstraintViolation<CMConfiguration>> constraintViolations = getValidator().validate(config);
         if (constraintViolations.size() > 0) {
             final StringBuffer msg = new StringBuffer();
             for (final ConstraintViolation<CMConfiguration> cv : constraintViolations) {
                 msg.append(String.format("- Invalid value for %s: %s",
-                                         cv.getPropertyPath().toString(),
-                                         cv.getMessage()));
+                        cv.getPropertyPath().toString(),
+                        cv.getMessage()));
             }
             throw new ResolveEndpointFailedException(uri, msg.toString());
         }
-        LOG.debug("CMConfiguration - OK!");
 
         // Component is an Endpoint factory. So far, just one Endpoint type.
         // Endpoint construction and configuration.
 
-        LOG.debug("Creating CMEndpoint");
         final CMEndpoint endpoint = new CMEndpoint(uri, this);
         endpoint.setConfiguration(config);
         endpoint.setHost(remaining);
@@ -98,8 +79,7 @@ public class CMComponent extends UriEndpointComponent {
 
     public Validator getValidator() {
         if (validator == null) {
-            ValidatorFactory factory = Validation
-                .buildDefaultValidatorFactory();
+            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
             validator = factory.getValidator();
         }
         return validator;
