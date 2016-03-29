@@ -16,12 +16,9 @@
  */
 package org.apache.camel.zipkin.scribe;
 
-import java.util.concurrent.TimeUnit;
-
 import com.github.kristofa.brave.scribe.ScribeSpanCollector;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.zipkin.ZipkinEventNotifier;
@@ -45,6 +42,7 @@ public class ZipkinSimpleRouteScribe extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
 
         zipkin = new ZipkinEventNotifier();
+        // we have one route as service
         zipkin.addServiceMapping("seda:dude", "dude");
         zipkin.setSpanCollector(new ScribeSpanCollector(ip, 9410));
         context.getManagementStrategy().addEventNotifier(zipkin);
@@ -54,13 +52,9 @@ public class ZipkinSimpleRouteScribe extends CamelTestSupport {
 
     @Test
     public void testZipkinRoute() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
-
         for (int i = 0; i < 5; i++) {
-            template.sendBody("seda:dude", "Hello World");
+            template.requestBody("direct:start", "Hello World");
         }
-
-        assertTrue(notify.matches(30, TimeUnit.SECONDS));
     }
 
     @Override
@@ -68,6 +62,8 @@ public class ZipkinSimpleRouteScribe extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                from("direct:start").to("seda:dude");
+
                 from("seda:dude").routeId("dude")
                         .log("routing at ${routeId}")
                         .delay(simple("${random(1000,2000)}"));

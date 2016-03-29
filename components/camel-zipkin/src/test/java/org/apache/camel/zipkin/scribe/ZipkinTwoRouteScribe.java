@@ -16,12 +16,9 @@
  */
 package org.apache.camel.zipkin.scribe;
 
-import java.util.concurrent.TimeUnit;
-
 import com.github.kristofa.brave.scribe.ScribeSpanCollector;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.zipkin.ZipkinEventNotifier;
@@ -35,7 +32,7 @@ import org.junit.Test;
  * Adjust the IP address to what IP docker-machines have assigned, you can use
  * <tt>docker-machines ls</tt>
  */
-public class ZipkinRouteConcurrentScribe extends CamelTestSupport {
+public class ZipkinTwoRouteScribe extends CamelTestSupport {
 
     private String ip = "192.168.99.100";
     private ZipkinEventNotifier zipkin;
@@ -46,8 +43,8 @@ public class ZipkinRouteConcurrentScribe extends CamelTestSupport {
 
         zipkin = new ZipkinEventNotifier();
         // we have 2 routes as services
-        zipkin.addServiceMapping("seda:foo", "foo");
-        zipkin.addServiceMapping("seda:bar", "bar");
+        zipkin.addServiceMapping("seda:cat", "cat");
+        zipkin.addServiceMapping("seda:dog", "dog");
         zipkin.setSpanCollector(new ScribeSpanCollector(ip, 9410));
         context.getManagementStrategy().addEventNotifier(zipkin);
 
@@ -56,13 +53,7 @@ public class ZipkinRouteConcurrentScribe extends CamelTestSupport {
 
     @Test
     public void testZipkinRoute() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).from("seda:foo").whenDone(5).create();
-
-        for (int i = 0; i < 5; i++) {
-            template.requestBody("direct:foo", "Hello World");
-        }
-
-        assertTrue(notify.matches(60, TimeUnit.SECONDS));
+        template.requestBody("direct:start", "Hello Cat and Dog");
     }
 
     @Override
@@ -70,14 +61,14 @@ public class ZipkinRouteConcurrentScribe extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("sed:foo");
+                from("direct:start").to("seda:cat");
 
-                from("seda:foo?concurrentConsumers=2").routeId("foo")
+                from("seda:cat").routeId("cat")
                         .log("routing at ${routeId}")
                         .delay(simple("${random(1000,2000)}"))
-                        .to("seda:bar");
+                        .to("seda:dog");
 
-                from("seda:bar?concurrentConsumers=2").routeId("bar")
+                from("seda:dog").routeId("dog")
                         .log("routing at ${routeId}")
                         .delay(simple("${random(0,500)}"));
             }

@@ -46,6 +46,7 @@ public class ZipkinTimerRouteScribe extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
 
         zipkin = new ZipkinEventNotifier();
+        // we have one route as service
         zipkin.addServiceMapping("seda:timer", "timer");
         zipkin.setSpanCollector(new ScribeSpanCollector(ip, 9410));
         context.getManagementStrategy().addEventNotifier(zipkin);

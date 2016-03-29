@@ -256,7 +256,9 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
         brave.clientRequestInterceptor().handle(new ZipkinClientRequestAdapter(serviceName, event.getExchange(), event.getEndpoint()));
         Span span = binder.getCurrentClientSpan();
-        event.getExchange().setProperty("CamelZipkinClientSpan", span);
+
+        String key = "CamelZipkinClientSpan-" + serviceName;
+        event.getExchange().setProperty(key, span);
 
         if (log.isDebugEnabled()) {
             log.debug("clientRequest: service={}, id={} ", serviceName, span != null ? span.getId() : "<null>");
@@ -265,7 +267,8 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
 
     private void clientResponse(Brave brave, String serviceName, ExchangeSentEvent event) {
         ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
-        Span span = event.getExchange().getProperty("CamelZipkinClientSpan", Span.class);
+        String key = "CamelZipkinClientSpan-" + serviceName;
+        Span span = event.getExchange().getProperty(key, Span.class);
         binder.setCurrentSpan(span);
         brave.clientResponseInterceptor().handle(new ZipkinClientResponseAdaptor(event.getExchange(), event.getEndpoint()));
         binder.setCurrentSpan(null);
@@ -279,7 +282,8 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
         ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
         brave.serverRequestInterceptor().handle(new ZipkinServerRequestAdapter(event.getExchange()));
         ServerSpan span = binder.getCurrentServerSpan();
-        event.getExchange().setProperty("CamelZipkinServerSpan", span);
+        String key = "CamelZipkinServerSpan-" + serviceName;
+        event.getExchange().setProperty(key, span);
 
         if (log.isDebugEnabled()) {
             log.debug("serverRequest: service={}, id={} ", serviceName, span != null ? span.getSpan().getId() : "<null>");
@@ -288,7 +292,8 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
 
     private void serverResponse(Brave brave, String serviceName, ExchangeCompletedEvent event) {
         ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
-        ServerSpan span = event.getExchange().getProperty("CamelZipkinServerSpan", ServerSpan.class);
+        String key = "CamelZipkinServerSpan-" + serviceName;
+        ServerSpan span = event.getExchange().getProperty(key, ServerSpan.class);
         binder.setCurrentSpan(span);
         brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(event.getExchange()));
         binder.setCurrentSpan(null);
@@ -300,7 +305,8 @@ public class ZipkinEventNotifier extends EventNotifierSupport {
 
     private void serverResponse(Brave brave, String serviceName, ExchangeFailedEvent event) {
         ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
-        ServerSpan span = event.getExchange().getProperty("CamelZipkinServerSpan", ServerSpan.class);
+        String key = "CamelZipkinServerSpan-" + serviceName;
+        ServerSpan span = event.getExchange().getProperty(key, ServerSpan.class);
         binder.setCurrentSpan(span);
         brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(event.getExchange()));
         binder.setCurrentSpan(null);
