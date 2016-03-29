@@ -50,9 +50,9 @@ public class ZipkinServerRequestAdapter implements ServerRequestAdapter {
 
     @Override
     public TraceData getTraceData() {
-        String traceId = exchange.getIn().getHeader("CamelZipkinTraceId", String.class);
-        String spanId = exchange.getIn().getHeader("CamelZipkinSpanId", String.class);
-        String parentSpanId = exchange.getIn().getHeader("CamelZipkinParentSpanId", String.class);
+        String traceId = exchange.getIn().getHeader(ZipkinConstants.TRACE_ID, String.class);
+        String spanId = exchange.getIn().getHeader(ZipkinConstants.SPAN_ID, String.class);
+        String parentSpanId = exchange.getIn().getHeader(ZipkinConstants.PARENT_SPAN_ID, String.class);
         if (traceId != null && spanId != null) {
             SpanId span = getSpanId(traceId, spanId, parentSpanId);
             return TraceData.builder().sample(true).spanId(span).build();

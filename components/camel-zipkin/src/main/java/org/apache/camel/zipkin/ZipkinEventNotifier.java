@@ -200,7 +200,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
             String host = camelContext.resolvePropertyPlaceholders("{{service.host:zipkin}}");
             String port = camelContext.resolvePropertyPlaceholders("{{service.port:zipkin}}");
             if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
-                log.info("Auto-configuring ZipkinScribeSpanCollector using host: {} and port: {}", host, port);
+                log.info("Auto-configuring Zipkin ScribeSpanCollector using host: {} and port: {}", host, port);
                 int num = camelContext.getTypeConverter().mandatoryConvertTo(Integer.class, port);
                 spanCollector = new ScribeSpanCollector(host, num);
             }
