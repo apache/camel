@@ -285,48 +285,13 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
     private String getServiceName(Exchange exchange, Endpoint endpoint) {
         String answer = null;
 
-        String id = routeIdExpression().evaluate(exchange, String.class);
-        if (id != null) {
-            // exclude patterns take precedence
-            for (String pattern : excludePatterns) {
-                if (EndpointHelper.matchPattern(id, pattern)) {
-                    return null;
-                }
-            }
-            for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
-                String pattern = entry.getKey();
-                if (EndpointHelper.matchPattern(id, pattern)) {
-                    answer = entry.getValue();
-                    break;
-                }
-            }
-        }
-
-        if (answer == null) {
-            id = exchange.getFromRouteId();
-            if (id != null) {
-                // exclude patterns take precedence
-                for (String pattern : excludePatterns) {
-                    if (EndpointHelper.matchPattern(id, pattern)) {
-                        return null;
-                    }
-                }
-                for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
-                    String pattern = entry.getKey();
-                    if (EndpointHelper.matchPattern(id, pattern)) {
-                        answer = entry.getValue();
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (answer == null && endpoint != null) {
+        // endpoint takes precedence over route
+        if (endpoint != null) {
             String url = endpoint.getEndpointUri();
             if (url != null) {
                 // exclude patterns take precedence
                 for (String pattern : excludePatterns) {
-                    if (EndpointHelper.matchPattern(url, pattern)) {
+                    if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
                         return null;
                     }
                 }
@@ -345,13 +310,52 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
             if (url != null) {
                 // exclude patterns take precedence
                 for (String pattern : excludePatterns) {
-                    if (EndpointHelper.matchPattern(url, pattern)) {
+                    if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
                         return null;
                     }
                 }
                 for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
                     String pattern = entry.getKey();
                     if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
+                        answer = entry.getValue();
+                        break;
+                    }
+                }
+            }
+        }
+
+        // route
+        if (answer == null) {
+            String id = routeIdExpression().evaluate(exchange, String.class);
+            if (id != null) {
+                // exclude patterns take precedence
+                for (String pattern : excludePatterns) {
+                    if (EndpointHelper.matchPattern(id, pattern)) {
+                        return null;
+                    }
+                }
+                for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
+                    String pattern = entry.getKey();
+                    if (EndpointHelper.matchPattern(id, pattern)) {
+                        answer = entry.getValue();
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (answer == null) {
+            String id = exchange.getFromRouteId();
+            if (id != null) {
+                // exclude patterns take precedence
+                for (String pattern : excludePatterns) {
+                    if (EndpointHelper.matchPattern(id, pattern)) {
+                        return null;
+                    }
+                }
+                for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
+                    String pattern = entry.getKey();
+                    if (EndpointHelper.matchPattern(id, pattern)) {
                         answer = entry.getValue();
                         break;
                     }
@@ -453,7 +457,11 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         event.getExchange().setProperty(key, span);
 
         if (log.isDebugEnabled()) {
-            log.debug("clientRequest\t[service={}, spanId={}]", serviceName, span != null ? span.getId() : "<null>");
+            String id = "<null>";
+            if (span != null) {
+                id = "" + span.getId();
+            }
+            log.debug("clientRequest\t[service={}, spanId={}]", serviceName, id);
         }
     }
 
@@ -466,8 +474,11 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         binder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
-            // one space to align client vs server in the logs
-            log.debug("clientResponse\t[service={}, spanId={}]", serviceName, span != null ? span.getId() : "<null>");
+            String id = "<null>";
+            if (span != null) {
+                id = "" + span.getId();
+            }
+            log.debug("clientResponse\t[service={}, spanId={}]", serviceName, id);
         }
     }
 
@@ -479,7 +490,11 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         event.getExchange().setProperty(key, span);
 
         if (log.isDebugEnabled()) {
-            log.debug("serverRequest\t[service={}, spanId={}]", serviceName, span != null ? span.getSpan().getId() : "<null>");
+            String id = "<null>";
+            if (span != null && span.getSpan() != null) {
+                id = "" + span.getSpan().getId();
+            }
+            log.debug("serverRequest\t[service={}, spanId={}]", serviceName, id);
         }
     }
 
@@ -492,7 +507,11 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         binder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
-            log.debug("serverResponse\t[service={}, spanId={}]\t[status=exchangeCompleted]", serviceName, span != null ? span.getSpan().getId() : "<null>");
+            String id = "<null>";
+            if (span != null && span.getSpan() != null) {
+                id = "" + span.getSpan().getId();
+            }
+            log.debug("serverResponse\t[service={}, spanId={}]\t[status=exchangeCompleted]", serviceName, id);
         }
     }
 
@@ -505,7 +524,11 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         binder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
-            log.debug("serverResponse[service={}, spanId={}]\t[status=exchangeFailed]", serviceName, span != null ? span.getSpan().getId() : "<null>");
+            String id = "<null>";
+            if (span != null && span.getSpan() != null) {
+                id = "" + span.getSpan().getId();
+            }
+            log.debug("serverResponse[service={}, spanId={}]\t[status=exchangeFailed]", serviceName, id);
         }
     }
 

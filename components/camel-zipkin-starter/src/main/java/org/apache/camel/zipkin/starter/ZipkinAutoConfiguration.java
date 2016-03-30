@@ -17,6 +17,7 @@
 package org.apache.camel.zipkin.starter;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.zipkin.ZipkinEventNotifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -39,7 +40,12 @@ public class ZipkinAutoConfiguration {
         notifier.setHostName(configurationProperties.getHostName());
         notifier.setPort(configurationProperties.getPort());
         notifier.setRate(configurationProperties.getRate());
-        notifier.setServiceName(configurationProperties.getServiceName());
+        if (ObjectHelper.isNotEmpty(configurationProperties.getServiceName())) {
+            notifier.setServiceName(configurationProperties.getServiceName());
+        }
+        if (ObjectHelper.isNotEmpty(configurationProperties.getExcludePattern())) {
+            notifier.addExcludePattern(configurationProperties.getExcludePattern());
+        }
         notifier.setIncludeMessageBody(configurationProperties.isIncludeMessageBody());
 
         // register the bean into CamelContext

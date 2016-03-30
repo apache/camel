@@ -26,6 +26,7 @@ public class ZipkinConfigurationProperties {
     private float rate = 1.0f;
     private boolean includeMessageBody;
     private String serviceName;
+    private String excludePattern;
 
     public String getHostName() {
         return hostName;
@@ -86,5 +87,16 @@ public class ZipkinConfigurationProperties {
      */
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
+    }
+
+    public String getExcludePattern() {
+        return excludePattern;
+    }
+
+    /**
+     * Sets an exclude pattern that will disable tracing with zipkin for Camel messages that matches the pattern.
+     */
+    public void setExcludePattern(String excludePattern) {
+        this.excludePattern = excludePattern;
     }
 }

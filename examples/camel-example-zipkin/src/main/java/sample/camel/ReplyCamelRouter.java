@@ -16,7 +16,6 @@
  */
 package sample.camel;
 
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
@@ -26,15 +25,15 @@ import org.springframework.stereotype.Component;
  * Use <tt>@Component</tt> to make Camel auto detect this route when starting.
  */
 @Component
-public class HelloCamelRouter extends RouteBuilder {
+public class ReplyCamelRouter extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("timer:hello?period={{timer.period}}").routeId("client")
-                .setExchangePattern(ExchangePattern.InOut)
-                .transform(method("myBean", "saySomething"))
-                .log("Saying ${body}")
-                .to("seda:hello");
+        from("seda:hello").routeId("server")
+            .delay(simple("${random(1000,2000)}"))
+            .transform(simple("You said ${body}"))
+            .log("Replying with ${body}");
+
     }
 
 }
