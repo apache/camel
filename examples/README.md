@@ -74,8 +74,6 @@ All examples have been sort by type/category
 ##### Social
 
 * [camel-example-box-osgi](camel-example-box-osgi/README.md)
-* [camel-example-gae](camel-example-gae/README.md)
-* [camel-example-gauth](camel-example-gauth/README.md)
 * [camel-example-simplejirabot](camel-example-simplejirabot/README.md)
 * [camel-example-twitter-websocket](camel-example-twitter-websocket/README.md)
 * [camel-example-twitter-websocket-blueprint](camel-example-twitter-websocket-blueprint/README.md)
