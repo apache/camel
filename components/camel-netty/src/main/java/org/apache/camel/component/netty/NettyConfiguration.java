@@ -173,7 +173,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         }
 
         setHost(uri.getHost());
-        setPort(uri.getPort());
+        if (uri.getPort() != -1) {
+            setPort(uri.getPort());
+        }
 
         ssl = component.getAndRemoveOrResolveReferenceParameter(parameters, "ssl", boolean.class, false);
         sslHandler = component.getAndRemoveOrResolveReferenceParameter(parameters, "sslHandler", SslHandler.class, sslHandler);
