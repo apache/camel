@@ -38,8 +38,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private String protocol;
     @UriPath @Metadata(required = "true")
     private String host;
-    @UriPath
-    private int port;
+    @UriPath(name = "port")
+    private int dummy;
     @UriPath
     private String path;
     @UriParam(label = "consumer,advanced")

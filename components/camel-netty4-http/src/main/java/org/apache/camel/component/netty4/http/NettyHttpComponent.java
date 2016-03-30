@@ -123,7 +123,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         // set port on configuration which is either shared or using default values
         if (sharedPort != -1) {
             config.setPort(sharedPort);
-        } else if (config.getPort() == -1) {
+        } else if (config.getPort() == -1 || config.getPort() == 0) {
             if (remaining.startsWith("http:")) {
                 config.setPort(80);
             } else if (remaining.startsWith("https:")) {
