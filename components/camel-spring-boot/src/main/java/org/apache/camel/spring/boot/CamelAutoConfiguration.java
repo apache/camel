@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
@@ -45,16 +46,21 @@ public class CamelAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(CamelContext.class)
     CamelContext camelContext(ApplicationContext applicationContext,
-                              CamelConfigurationProperties configurationProperties) {
+                              CamelConfigurationProperties config) {
+
         CamelContext camelContext = new SpringCamelContext(applicationContext);
         SpringCamelContext.setNoStart(true);
 
-        if (!configurationProperties.isJmxEnabled()) {
+        if (!config.isJmxEnabled()) {
             camelContext.disableJMX();
         }
 
-        if (configurationProperties.getName() != null) {
-            ((SpringCamelContext) camelContext).setName(configurationProperties.getName());
+        if (config.getName() != null) {
+            ((SpringCamelContext) camelContext).setName(config.getName());
+        }
+
+        if (config.getLogDebugMaxChars() > 0) {
+            camelContext.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "" + config.getLogDebugMaxChars());
         }
 
         return camelContext;
@@ -67,9 +73,9 @@ public class CamelAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(RoutesCollector.class)
-    RoutesCollector routesCollector(ApplicationContext applicationContext, CamelConfigurationProperties configurationProperties) {
+    RoutesCollector routesCollector(ApplicationContext applicationContext, CamelConfigurationProperties config) {
         Collection<CamelContextConfiguration> configurations = applicationContext.getBeansOfType(CamelContextConfiguration.class).values();
-        return new RoutesCollector(applicationContext, new ArrayList<CamelContextConfiguration>(configurations), configurationProperties);
+        return new RoutesCollector(applicationContext, new ArrayList<CamelContextConfiguration>(configurations), config);
     }
 
     /**
@@ -79,8 +85,8 @@ public class CamelAutoConfiguration {
     // Camel handles the lifecycle of this bean
     @ConditionalOnMissingBean(ProducerTemplate.class)
     ProducerTemplate producerTemplate(CamelContext camelContext,
-                                      CamelConfigurationProperties configurationProperties) {
-        return camelContext.createProducerTemplate(configurationProperties.getProducerTemplateCacheSize());
+                                      CamelConfigurationProperties config) {
+        return camelContext.createProducerTemplate(config.getProducerTemplateCacheSize());
     }
 
     /**
@@ -90,8 +96,8 @@ public class CamelAutoConfiguration {
     // Camel handles the lifecycle of this bean
     @ConditionalOnMissingBean(ConsumerTemplate.class)
     ConsumerTemplate consumerTemplate(CamelContext camelContext,
-                                      CamelConfigurationProperties configurationProperties) {
-        return camelContext.createConsumerTemplate(configurationProperties.getConsumerTemplateCacheSize());
+                                      CamelConfigurationProperties config) {
+        return camelContext.createConsumerTemplate(config.getConsumerTemplateCacheSize());
     }
 
     // SpringCamelContext integration

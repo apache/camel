@@ -50,13 +50,13 @@ public class CamelConfigurationProperties {
 
     /**
      * Directory to scan for adding additional XML routes.
-     * You can turn this off by setting the value to <tt>false</tt>
+     * You can turn this off by setting the value to false.
      */
     private String xmlRoutes = "classpath:camel/*.xml";
 
     /**
      * Directory to scan for adding additional XML rests.
-     * You can turn this off by setting the value to <tt>false</tt>
+     * You can turn this off by setting the value to false.
      */
     private String xmlRests = "classpath:camel-rest/*.xml";
 
@@ -67,6 +67,13 @@ public class CamelConfigurationProperties {
      * If you run Spring-Boot with spring-boot-starter-web then the web container keeps the JVM running.
      */
     private boolean mainRunController;
+
+    /**
+     * Is used to limit the maximum length of the logging Camel message bodies. If the message body
+     * is longer than the limit, the log message is clipped. Use a value of 0 or negative to have unlimited length.
+     * Use for example 1000 to log at at most 1000 chars.
+     */
+    private int logDebugMaxChars;
 
     // Getters & setters
 
@@ -132,5 +139,13 @@ public class CamelConfigurationProperties {
 
     public void setMainRunController(boolean mainRunController) {
         this.mainRunController = mainRunController;
+    }
+
+    public int getLogDebugMaxChars() {
+        return logDebugMaxChars;
+    }
+
+    public void setLogDebugMaxChars(int logDebugMaxChars) {
+        this.logDebugMaxChars = logDebugMaxChars;
     }
 }
