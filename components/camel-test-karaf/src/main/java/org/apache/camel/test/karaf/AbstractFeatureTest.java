@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.karaf;
+package org.apache.camel.test.karaf;
 
 import java.io.File;
 import java.io.InputStream;
@@ -33,6 +33,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.karaf.features.FeaturesService;
 import org.junit.After;
 import org.junit.Before;
@@ -59,6 +60,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.vmOption;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 
 public abstract class AbstractFeatureTest {
 
@@ -231,18 +235,30 @@ public abstract class AbstractFeatureTest {
                     .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
 
             // keep the folder so we can look inside when something fails
-            KarafDistributionOption.keepRuntimeFolder(),
+            keepRuntimeFolder(),
+
+            // Disable the SSH port
+            configureConsole().ignoreRemoteShell(),
 
             // need to modify the jre.properties to export some com.sun packages that some features rely on
             KarafDistributionOption.replaceConfigurationFile("etc/jre.properties", new File("src/test/resources/jre.properties")),
 
             vmOption("-Dfile.encoding=UTF-8"),
 
-            // install junit
+            // Disable the Karaf shutdown port
+            editConfigurationFilePut("etc/custom.properties", "karaf.shutdown.port", "-1"),
+
+            // Assign unique ports for Karaf
+            editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port", Integer.toString(AvailablePortFinder.getNextAvailable()) ),
+            editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiRegistryPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
+            editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiServerPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
+
+                // install junit
             CoreOptions.junitBundles(),
 
             // install camel
-            KarafDistributionOption.features(getCamelKarafFeatureUrl(), "camel")
+            KarafDistributionOption.features(getCamelKarafFeatureUrl(), "camel"),
+            mavenBundle().groupId("org.apache.camel").artifactId("camel-test-karaf").versionAsInProject()
         };
 
         return options;

@@ -20,6 +20,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.apache.camel.test.karaf.AbstractFeatureTest;
 
 @RunWith(PaxExam.class)
 @Ignore("camel-guice does not work in OSGi")

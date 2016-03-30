@@ -20,6 +20,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.apache.camel.test.karaf.AbstractFeatureTest;
 
 @RunWith(PaxExam.class)
 @Ignore("Does not yet work in OSGi: https://issues.apache.org/jira/browse/SMX4-1983")
