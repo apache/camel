@@ -105,12 +105,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
                 answer.getHeaders().putAll(inputMessage.getHeaders());
                 answer.setHeader("zipFileName", current.getName());
                 answer.setHeader(Exchange.FILE_NAME, current.getName());
-                if (current.getSize() > 0) {
-                    answer.setBody(new ZipInputStreamWrapper(zipInputStream));
-                } else {
-                    // Workaround for the case when the entry is zero bytes big
-                    answer.setBody(new ByteArrayInputStream(new byte[0]));
-                }
+                answer.setBody(new ZipInputStreamWrapper(zipInputStream));
                 return answer;
             } else {
                 LOGGER.trace("close zipInputStream");
