@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,19 +34,22 @@ public class ZipkinAutoConfiguration {
     // Camel handles the lifecycle of this bean
     @ConditionalOnMissingBean(ZipkinEventNotifier.class)
     ZipkinEventNotifier zipkinEventNotifier(CamelContext camelContext,
-                                            ZipkinConfigurationProperties configurationProperties) {
+                                            ZipkinConfigurationProperties config) {
 
         ZipkinEventNotifier notifier = new ZipkinEventNotifier();
-        notifier.setHostName(configurationProperties.getHostName());
-        notifier.setPort(configurationProperties.getPort());
-        notifier.setRate(configurationProperties.getRate());
-        if (ObjectHelper.isNotEmpty(configurationProperties.getServiceName())) {
-            notifier.setServiceName(configurationProperties.getServiceName());
+        notifier.setHostName(config.getHostName());
+        notifier.setPort(config.getPort());
+        notifier.setRate(config.getRate());
+        if (ObjectHelper.isNotEmpty(config.getServiceName())) {
+            notifier.setServiceName(config.getServiceName());
         }
-        if (ObjectHelper.isNotEmpty(configurationProperties.getExcludePattern())) {
-            notifier.addExcludePattern(configurationProperties.getExcludePattern());
+        if (config.getExcludePatterns() != null) {
+            notifier.setExcludePatterns(config.getExcludePatterns());
         }
-        notifier.setIncludeMessageBody(configurationProperties.isIncludeMessageBody());
+        if (config.getServiceMappings() != null) {
+            notifier.setServiceMappings(config.getServiceMappings());
+        }
+        notifier.setIncludeMessageBody(config.isIncludeMessageBody());
 
         // register the bean into CamelContext
         camelContext.getManagementStrategy().addEventNotifier(notifier);

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.zipkin.starter;
+
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -26,7 +29,8 @@ public class ZipkinConfigurationProperties {
     private float rate = 1.0f;
     private boolean includeMessageBody;
     private String serviceName;
-    private String excludePattern;
+    private Set<String> excludePatterns;
+    private Map<String, String> serviceMappings;
 
     public String getHostName() {
         return hostName;
@@ -89,14 +93,26 @@ public class ZipkinConfigurationProperties {
         this.serviceName = serviceName;
     }
 
-    public String getExcludePattern() {
-        return excludePattern;
+    public Set<String> getExcludePatterns() {
+        return excludePatterns;
     }
 
     /**
-     * Sets an exclude pattern that will disable tracing with zipkin for Camel messages that matches the pattern.
+     * Sets exclude pattern(s) that will disable tracing with zipkin for Camel messages that matches the pattern.
      */
-    public void setExcludePattern(String excludePattern) {
-        this.excludePattern = excludePattern;
+    public void setExcludePatterns(Set<String> excludePatterns) {
+        this.excludePatterns = excludePatterns;
+    }
+
+    public Map<String, String> getServiceMappings() {
+        return serviceMappings;
+    }
+
+    /**
+     * Sets service mapping(s) that matches Camel events to the given zipkin service name.
+     * The key is the pattern, the value is the service name.
+     */
+    public void setServiceMappings(Map<String, String> serviceMappings) {
+        this.serviceMappings = serviceMappings;
     }
 }
