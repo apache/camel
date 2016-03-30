@@ -24,21 +24,52 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "camel.zipkin")
 public class ZipkinConfigurationProperties {
 
+    /**
+     * Sets a hostname for the remote zipkin server to use.
+     */
     private String hostName;
+
+    /**
+     * Sets the port number for the remote zipkin server to use.
+     */
     private int port;
+
+    /**
+     * Configures a rate that decides how many events should be traced by zipkin.
+     * The rate is expressed as a percentage (1.0f = 100%, 0.5f is 50%, 0.1f is 10%).
+     */
     private float rate = 1.0f;
+
+    /**
+     * Whether to include the Camel message body in the zipkin traces.
+     *
+     * This is not recommended for production usage, or when having big payloads.
+     * You can limit the size by configuring camel.springboot.log-debug-max-chars option.
+     */
     private boolean includeMessageBody;
+
+    /**
+     * To use a global service name that matches all Camel events
+     */
     private String serviceName;
+
+    /**
+     * Sets exclude pattern(s) that will disable tracing with zipkin for Camel messages that matches the pattern.
+     */
     private Set<String> excludePatterns;
+
+    /**
+     * Sets service mapping(s) that matches Camel events to the given zipkin service name.
+     * The key is the pattern, the value is the service name.
+     */
     private Map<String, String> serviceMappings;
+
+    // Getters & setters
 
     public String getHostName() {
         return hostName;
     }
 
-    /**
-     * Sets a hostname for the remote zipkin server to use.
-     */
     public void setHostName(String hostName) {
         this.hostName = hostName;
     }
@@ -47,9 +78,6 @@ public class ZipkinConfigurationProperties {
         return port;
     }
 
-    /**
-     * Sets the port number for the remote zipkin server to use.
-     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -58,12 +86,6 @@ public class ZipkinConfigurationProperties {
         return rate;
     }
 
-    /**
-     * Configures a rate that decides how many events should be traced by zipkin.
-     * The rate is expressed as a percentage (1.0f = 100%, 0.5f is 50%, 0.1f is 10%).
-     *
-     * @param rate minimum sample rate is 0.0001, or 0.01% of traces
-     */
     public void setRate(float rate) {
         this.rate = rate;
     }
@@ -72,12 +94,6 @@ public class ZipkinConfigurationProperties {
         return includeMessageBody;
     }
 
-    /**
-     * Whether to include the Camel message body in the zipkin traces.
-     * <p/>
-     * This is not recommended for production usage, or when having big payloads. You can limit the size by
-     * configuring the <a href="http://camel.apache.org/how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.html">max debug log size</a>.
-     */
     public void setIncludeMessageBody(boolean includeMessageBody) {
         this.includeMessageBody = includeMessageBody;
     }
@@ -86,9 +102,6 @@ public class ZipkinConfigurationProperties {
         return serviceName;
     }
 
-    /**
-     * To use a global service name that matches all Camel events
-     */
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }
@@ -97,9 +110,6 @@ public class ZipkinConfigurationProperties {
         return excludePatterns;
     }
 
-    /**
-     * Sets exclude pattern(s) that will disable tracing with zipkin for Camel messages that matches the pattern.
-     */
     public void setExcludePatterns(Set<String> excludePatterns) {
         this.excludePatterns = excludePatterns;
     }
@@ -108,10 +118,6 @@ public class ZipkinConfigurationProperties {
         return serviceMappings;
     }
 
-    /**
-     * Sets service mapping(s) that matches Camel events to the given zipkin service name.
-     * The key is the pattern, the value is the service name.
-     */
     public void setServiceMappings(Map<String, String> serviceMappings) {
         this.serviceMappings = serviceMappings;
     }
