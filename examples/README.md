@@ -102,6 +102,7 @@ All examples have been sort by type/category
 * [camel-example-bam](camel-example-bam/README.md)
 * [camel-example-management](camel-example-management/README.md)
 * [camel-example-splunk](camel-example-splunk/README.md)
+* [camel-example-zipkin](camel-example-zipkin/README.md)
 
 ##### Miscellaneous
 
