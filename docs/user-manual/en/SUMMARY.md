@@ -132,7 +132,6 @@
     * [FOP](fop.adoc)
     * [Freemarker](freemarker.adoc)
     * [FTP](ftp.adoc)
-    * [GAE](gae.adoc)
     * [Ganglia](ganglia.adoc)
     * [Geocoder](geocoder.adoc)
     * [Ironmq](ironmq.adoc)
