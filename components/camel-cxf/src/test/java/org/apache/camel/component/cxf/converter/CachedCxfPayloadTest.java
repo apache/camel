@@ -36,41 +36,44 @@ import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.Test;
 
 public class CachedCxfPayloadTest extends ExchangeTestSupport {
-    private static final String PAYLOAD = "<foo>bar</foo>";
+    private static final String PAYLOAD = "<foo>bar<![CDATA[ & a cdata section ]]></foo>";
+    private static final String PAYLOAD_AMPED = "<foo>bar &amp; a cdata section </foo>";
 
     @Test
     public void testCachedCxfPayloadSAXSource() throws TypeConversionException, NoTypeConversionAvailableException, IOException {
         SAXSource source = context.getTypeConverter().mandatoryConvertTo(SAXSource.class, PAYLOAD);
-        doTest(source);
+        // this conversion uses org.apache.camel.converter.jaxp.XmlConverter.toDOMNodeFromSAX which uses Transformer
+        // to convert SAXSource to DOM. This conversion preserves the content but loses its original representation.
+        doTest(source, PAYLOAD_AMPED);
     }
 
     @Test
     public void testCachedCxfPayloadStAXSource() throws TypeConversionException, NoTypeConversionAvailableException, IOException {
         StAXSource source = context.getTypeConverter().mandatoryConvertTo(StAXSource.class, PAYLOAD);
-        doTest(source);
+        doTest(source, PAYLOAD);
     }
 
     @Test
     public void testCachedCxfPayloadStaxSource() throws TypeConversionException, NoTypeConversionAvailableException, IOException {
         XMLStreamReader streamReader = StaxUtils.createXMLStreamReader(new StreamSource(new StringReader(PAYLOAD)));
         StaxSource source = new StaxSource(streamReader);
-        doTest(source);
+        doTest(source, PAYLOAD);
     }
 
     @Test
     public void testCachedCxfPayloadDOMSource() throws TypeConversionException, NoTypeConversionAvailableException, IOException {
         DOMSource source = context.getTypeConverter().mandatoryConvertTo(DOMSource.class, PAYLOAD);
-        doTest(source);
+        doTest(source, PAYLOAD);
     }
 
     @Test
     public void testCachedCxfPayloadStreamSource() throws TypeConversionException, NoTypeConversionAvailableException, IOException {
         StreamSource source = context.getTypeConverter().mandatoryConvertTo(StreamSource.class, PAYLOAD);
-        doTest(source);
+        doTest(source, PAYLOAD);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void doTest(Object source) throws IOException {
+    private void doTest(Object source, String payload) throws IOException {
         CxfPayload<?> originalPayload = context.getTypeConverter().convertTo(CxfPayload.class, source);
         CachedCxfPayload<?> cache = new CachedCxfPayload(originalPayload, exchange, new XmlConverter());
 
@@ -80,7 +83,7 @@ public class CachedCxfPayloadTest extends ExchangeTestSupport {
         cache.writeTo(bos);
 
         String s = context.getTypeConverter().convertTo(String.class, bos);
-        assertEquals(PAYLOAD, s);
+        assertEquals(payload, s);
 
         cache.reset();
 
@@ -89,15 +92,15 @@ public class CachedCxfPayloadTest extends ExchangeTestSupport {
         clone.writeTo(bos);
 
         s = context.getTypeConverter().convertTo(String.class, bos);
-        assertEquals(PAYLOAD, s);
+        assertEquals(payload, s);
 
         cache.reset();
         clone.reset();
 
         s = context.getTypeConverter().convertTo(String.class, cache);
-        assertEquals(PAYLOAD, s);
+        assertEquals(payload, s);
 
         s = context.getTypeConverter().convertTo(String.class, clone);
-        assertEquals(PAYLOAD, s);
+        assertEquals(payload, s);
     }
 }
