@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import com.braintreegateway.BraintreeGateway;
 import org.apache.camel.CamelContext;
@@ -70,6 +71,8 @@ public class AbstractBraintreeTestSupport extends CamelTestSupport {
         addOptionIfMissing(options, "privateKey" , "CAMEL_BRAINTREE_PRIVATE_KEY");
 
         final BraintreeConfiguration configuration = new BraintreeConfiguration();
+        configuration.setHttpLogLevel(Level.WARNING);
+        configuration.setHttpLogName("org.apache.camel.component.braintree.camel-braintree");
         IntrospectionSupport.setProperties(configuration, options);
 
         // add BraintreeComponent to Camel context
