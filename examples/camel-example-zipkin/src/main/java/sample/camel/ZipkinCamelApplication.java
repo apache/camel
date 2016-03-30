@@ -22,7 +22,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 //CHECKSTYLE:OFF
 /**
- * A sample Spring Boot application that starts the Camel routes.
+ * A Spring Boot application that starts the Camel Zipkin application.
+ * <p/>
+ * Notice we use the `@CamelZipkin` annotation to enable Camel with Zipkin.
+ * The configuration of Zipkin is in the <tt>application.properties</tt> file.
  */
 @SpringBootApplication
 @CamelZipkin
