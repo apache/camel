@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-guava-eventbus</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Guava-EventBus</name>
     <description>Camel Guava EventBus support</description>
 

@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>camel-hessian</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Hessian</name>
     <description>Hessian serialization support</description>
 

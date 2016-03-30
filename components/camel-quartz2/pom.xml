@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-quartz2</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Quartz2</name>
   <description>Camel Quartz2 support</description>
 

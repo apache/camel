@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>camel-ignite</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Ignite</name>
   <description>Camel Ignite component</description>
 

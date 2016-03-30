@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-jxpath</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: JXPath</name>
   <description>Camel JXPath support</description>
 

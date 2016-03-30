@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>camel-example-cafe</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Example :: Cafe</name>
   <description>A cafe example showing how to work with Camel</description>
 

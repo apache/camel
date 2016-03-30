@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-test</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Test</name>
     <description>Camel Testing Library using JUnit</description>
 

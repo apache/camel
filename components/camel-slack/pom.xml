@@ -26,7 +26,7 @@ limitations under the License.
   </parent>
 
   <artifactId>camel-slack</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Slack</name>
   <description>Camel Slack Support</description>
 

@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>camel-jsch</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Jsch</name>
   <description>Camel SCP Support</description>
 

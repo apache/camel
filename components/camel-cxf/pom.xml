@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-cxf</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: CXF</name>
   <description>Camel CXF support</description>
 
@@ -40,6 +40,7 @@
       !org.apache.camel.component.cxf.jaxrs,
       !org.apache.camel.component.cxf.spring,
       !org.apache.camel.component.cxf.util,
+      !org.apache.camel.blueprint,
       javax.activation*;version="[0.0,2)",
       javax.annotation*;version="[0.0,2)",
       javax.jws*;version="[0.0,3)",

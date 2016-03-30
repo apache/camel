@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-facebook</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Facebook</name>
   <description>Camel Facebook Support</description>
 

@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-jing</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Jing</name>
     <description>Camel Jing support</description>
 

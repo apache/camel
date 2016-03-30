@@ -27,7 +27,7 @@
   <name>Camel :: DNS</name>
   <artifactId>camel-dns</artifactId>
   <description>Camel DNS support</description>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
 
   <properties>
     <camel.osgi.export.pkg>

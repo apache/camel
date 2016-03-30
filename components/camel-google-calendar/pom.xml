@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-google-calendar</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: GoogleCalendar</name>
   <description>Camel Component for GoogleCalendar</description>
 

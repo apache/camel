@@ -20,7 +20,7 @@
   </parent>
 
   <artifactId>camel-github</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: GitHub</name>
 
    <properties>

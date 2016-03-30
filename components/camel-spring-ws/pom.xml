@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>camel-spring-ws</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Spring Web Services</name>
   <description>Camel support for Spring Web Services</description>
 

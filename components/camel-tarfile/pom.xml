@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-tarfile</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Tar File</name>
   <description>Camel Tar file support</description>
 

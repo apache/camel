@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-sap-netweaver</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: SAP NetWeaver</name>
     <description>Camel SAP NetWeaver support</description>
 

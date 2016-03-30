@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-jetty</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Jetty</name>
     <description>Camel Jetty Component</description>
 

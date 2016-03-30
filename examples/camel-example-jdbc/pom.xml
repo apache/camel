@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-example-jdbc</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Example :: JDBC</name>
   <description>An example for showing Camel using JDBC component</description>
 

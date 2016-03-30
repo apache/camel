@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-geocoder</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Geocoder</name>
   <description>Camel GeoCoder support</description>
 

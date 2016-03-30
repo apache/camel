@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>camel-kura</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Kura</name>
     <description>Camel Kura support</description>
 

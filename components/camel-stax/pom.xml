@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-stax</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: StAX</name>
   <description>Camel StAX support</description>
 

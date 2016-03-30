@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-pgevent</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: PgEvent</name>
   <description>Component for sending/receiving notifications in PostgreSQL via the pgjdbc-ng driver</description>
 

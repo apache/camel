@@ -21,7 +21,7 @@
 
   <groupId>${groupId}</groupId>
   <artifactId>${artifactId}</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <version>${version}</version>
 
   <name>A Camel Spring-DM Route</name>

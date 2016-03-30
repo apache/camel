@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-boon</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Boon</name>
     <description>Camel Boon support</description>
 

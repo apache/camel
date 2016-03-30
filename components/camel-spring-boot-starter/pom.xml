@@ -29,6 +29,10 @@
   <name>Camel :: Spring Boot :: Starter</name>
   <description>Spring Boot Apache Camel Starter</description>
 
+  <properties>
+    <camel.osgi.export.pkg />
+  </properties>
+
   <dependencies>
 
     <dependency>

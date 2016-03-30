@@ -27,7 +27,7 @@
   <artifactId>camel-spring</artifactId>
   <name>Camel :: Spring</name>
   <description>Camel Spring support</description>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
 
   <properties>
       <!-- spring-dm only supports spring 3.x so we need to import that range -->
@@ -37,6 +37,8 @@
         !org.apache.camel.component,
         !org.apache.camel.component.event,
         !org.apache.camel.language.spel,
+        !org.apache.camel.core.osgi*,
+        !org.apache.camel.core.xml*,
         org.apache.camel.*;${camel.osgi.import.strict.version},
         org.springframework.osgi.*;version="[1.2,2)",
         org.springframework*;version="${spring-dm-version-range}",
@@ -51,10 +53,6 @@
         org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.language.spel;${camel.osgi.split.pkg};${camel.osgi.version}
       </camel.osgi.export>
-      <camel.osgi.private.pkg>
-        org.apache.camel.core.osgi*,
-        org.apache.camel.core.xml*
-      </camel.osgi.private.pkg>
       <camel.osgi.export.service>
         org.apache.camel.spi.ComponentResolver;component=spring-event,
         org.apache.camel.spi.LanguageResolver;language=spel
@@ -239,6 +237,52 @@
     </resources>
 
     <plugins>
+
+      <!-- Inline the contents of camel-core-osgi and camel-core-xml into this bundle. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.camel</groupId>
+                  <artifactId>camel-core-xml</artifactId>
+                  <version>${project.version}</version>
+                  <includes>org/apache/camel/**</includes>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.apache.camel</groupId>
+                  <artifactId>camel-core-osgi</artifactId>
+                  <version>${project.version}</version>
+                  <includes>org/apache/camel/**</includes>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>prepare-package</phase>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>

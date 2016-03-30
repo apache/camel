@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-rabbitmq</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: RabbitMQ</name>
   <description>Camel RabbitMQ Component</description>
 

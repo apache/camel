@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-commands-core</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Platforms :: Commands :: Core</name>
   <description>Core Camel Commands</description>
 

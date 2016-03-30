@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-jpa</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: JPA</name>
   <description>Camel JPA support</description>
 

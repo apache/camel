@@ -25,6 +25,6 @@
 
     <artifactId>camel-example-simplejirabot-javadsl</artifactId>
     <name>Camel :: Example :: Simple Jira Bot :: Java DSL</name>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
 </project>

@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-beanio</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
 
   <name>Camel :: BeanIO</name>
   <description>Camel BeanIO data format support</description>

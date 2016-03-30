@@ -26,7 +26,6 @@
     <version>2.18-SNAPSHOT</version>
   </parent>
 
-
   <artifactId>apt</artifactId>
   <name>Camel :: Annotation Processor</name>
   <description>Processes Camel endpoint source code</description>
@@ -59,7 +58,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
 
   <build>
     <plugins>

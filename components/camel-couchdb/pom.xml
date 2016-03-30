@@ -25,7 +25,7 @@
 	</parent>
 
 	<artifactId>camel-couchdb</artifactId>
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 	<name>Camel :: CouchDB</name>
 	<description>Camel CouchDB component</description>
 

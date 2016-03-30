@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>camel-mongodb-gridfs</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: MongoDB GridFS</name>
     <description>Camel MongoDB GridFS component</description>
 

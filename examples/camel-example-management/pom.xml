@@ -26,7 +26,7 @@
     </parent>
 
     <artifactId>camel-example-management</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Example :: Management</name>
     <description>An example for showing Camel JMX management</description>
 

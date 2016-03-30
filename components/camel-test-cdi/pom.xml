@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-test-cdi</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Test :: CDI</name>
   <description>Camel Testing Library using JUnit and CDI</description>
 

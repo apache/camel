@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-leveldb</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: LevelDB</name>
     <description>Camel LevelDB Support</description>
 

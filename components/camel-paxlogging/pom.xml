@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-paxlogging</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Pax Logging</name>
     <description>Camel OSGi PaxLogging support</description>
 

@@ -24,7 +24,7 @@
     </parent>
 
     <artifactId>camel-spring-ldap</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Spring LDAP</name>
     <description>Camel support for Spring LDAP</description>
 

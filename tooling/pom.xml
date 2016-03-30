@@ -31,6 +31,10 @@
   <description>Camel Tooling</description>
   <packaging>pom</packaging>
 
+  <properties>
+    <camel.osgi.export.pkg />
+  </properties>
+
   <modules>
     <module>parent</module>
     <module>spi-annotations</module>

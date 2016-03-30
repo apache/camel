@@ -27,7 +27,7 @@
   <artifactId>camel-scr</artifactId>
   <name>Camel :: SCR</name>
   <description>Camel SCR support</description>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.scr</camel.osgi.export.pkg>

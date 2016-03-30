@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-ahc-ws</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: AHC-WS</name>
   <description>Camel Websocket Client support</description>
 

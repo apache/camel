@@ -26,7 +26,7 @@
     </parent>
 
     <artifactId>camel-cache</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Cache</name>
     <description>Camel Cache support based on ehCache</description>
 

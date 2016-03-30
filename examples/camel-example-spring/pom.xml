@@ -25,7 +25,7 @@
 	</parent>
 
 	<artifactId>camel-example-spring</artifactId>
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 	<name>Camel :: Example :: Spring</name>
 	<description>An example showing how to work with Camel and Spring</description>
 

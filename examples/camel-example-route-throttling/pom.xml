@@ -26,7 +26,7 @@
     </parent>
 
     <artifactId>camel-example-route-throttling</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Example :: Route :: Throttling</name>
     <description>A client-server example using JMS transport where we on the server side can throttle the Camel
         route dynamically based on the flow of messages</description>

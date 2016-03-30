@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-mqtt</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: MQTT</name>
     <description>Camel MQTT client</description>
 

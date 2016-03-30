@@ -30,6 +30,10 @@
     <description>Camel Commands using Spring Boot Shell</description>
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+      <camel.osgi.export.pkg />
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

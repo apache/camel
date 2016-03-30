@@ -24,7 +24,7 @@
 	</parent>
 
 	<artifactId>camel-netty-http</artifactId>
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 	<name>Camel :: Netty HTTP (deprecated)</name>
 	<description>Camel Netty HTTP support</description>
 

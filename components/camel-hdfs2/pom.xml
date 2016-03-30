@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>camel-hdfs2</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: HDFS2</name>
   <description>Camel HDFS support with Hadoop 2.x libraries</description>
 

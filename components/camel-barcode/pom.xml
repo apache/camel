@@ -26,7 +26,7 @@ limitations under the License.
     </parent>
 
     <artifactId>camel-barcode</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Barcode</name>
     <description>Camel Barcode (e.g. QRcode, PDF417, DataMatrix) support</description>
 

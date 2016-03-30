@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-xmlrpc</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: XML RPC</name>
   <description>Camel XML RPC support</description>
 

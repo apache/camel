@@ -26,7 +26,7 @@
     </parent>
 
     <artifactId>camel-dropbox</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Dropbox</name>
     <description>Camel Dropbox support</description>
 

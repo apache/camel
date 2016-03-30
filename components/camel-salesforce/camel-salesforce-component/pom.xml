@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-salesforce</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Salesforce</name>
   <description>Camel Salesforce support</description>
 

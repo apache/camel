@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-zipfile</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Zip File</name>
   <description>Camel Zip file support</description>
 

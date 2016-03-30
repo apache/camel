@@ -26,7 +26,7 @@
     </parent>
 
     <artifactId>camel-atmosphere-websocket</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Atmosphere WebSocket Servlet</name>
     <description>Camel Atmosphere WebSocket Servlet</description>
 

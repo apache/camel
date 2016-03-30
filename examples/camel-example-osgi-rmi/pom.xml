@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-example-osgi-rmi</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Example :: OSGi RMI</name>
     <description>A OSGi example which exposes a RMI service.</description>
 

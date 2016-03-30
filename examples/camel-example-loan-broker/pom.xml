@@ -25,7 +25,7 @@
 	</parent>
 
 	<artifactId>camel-example-loan-broker</artifactId>
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 	<name>Camel :: Example :: Loan-Broker</name>
 	<description>An example that shows the EPI's loan broker demo</description>
 

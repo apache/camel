@@ -20,7 +20,7 @@
   </parent>
 
   <artifactId>camel-nats</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Nats</name>
 
    <properties>

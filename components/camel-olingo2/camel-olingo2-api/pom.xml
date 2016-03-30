@@ -28,7 +28,7 @@
   <artifactId>camel-olingo2-api</artifactId>
   <name>Camel :: Olingo2 :: API</name>
   <description>Camel Olingo2 API</description>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.olingo2.api*</camel.osgi.export.pkg>

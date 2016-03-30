@@ -379,14 +379,15 @@
     <maven-archetype-plugin-version>2.0</maven-archetype-plugin-version>
     <maven-archetype-packaging-version>2.0</maven-archetype-packaging-version>
     <maven-bundle-version>${maven-bundle-plugin-version}</maven-bundle-version>
-    <!-- problems by upgrading to maven-bundle-plugin 2.4.0 -->
-    <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
+    <!-- Staying in 2.x because 3.x causes trouble. -->
+    <maven-bundle-plugin-version>3.0.1</maven-bundle-plugin-version>
     <maven-checkstyle-plugin-version>2.16</maven-checkstyle-plugin-version>
     <!-- AtomicException.java causes a problem with Checksyle > 6.6 due to 
         https://github.com/checkstyle/checkstyle/issues/1903
      -->
     <maven-checkstyle-version>6.6</maven-checkstyle-version>
     <maven-eclipse-plugin-version>2.10</maven-eclipse-plugin-version>
+    <maven-jar-plugin-version>2.6</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.7.Final</maven-jboss-as-maven-plugin-version>
     <maven-remote-resources-plugin-version>1.4</maven-remote-resources-plugin-version>
@@ -2833,6 +2834,16 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${maven-jar-plugin-version}</version>
+          <configuration>
+            <archive>
+              <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+            </archive>
+          </configuration>
+        </plugin>
+        <plugin>
           <groupId>net.alchim31.maven</groupId>
           <artifactId>scala-maven-plugin</artifactId>
           <version>${scala-maven-plugin-version}</version>
@@ -3199,6 +3210,7 @@
                    <goals>
                      <goal>cleanVersions</goal>
                      <goal>package</goal>
+                     <goal>manifest</goal>
                    </goals>
                  </pluginExecutionFilter>
                  <action>
@@ -3231,47 +3243,6 @@
     </pluginManagement>
 
     <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>${maven-bundle-plugin-version}</version>
-        <extensions>true</extensions>
-        <configuration>
-          <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
-          <instructions>
-            <Bundle-Name>${project.artifactId}</Bundle-Name>
-            <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
-            <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
-            <Export-Package>${camel.osgi.export}</Export-Package>
-            <Import-Package>${camel.osgi.import}</Import-Package>
-            <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
-            <Private-Package>${camel.osgi.private.pkg}</Private-Package>
-            <Import-Service>${camel.osgi.import.service}</Import-Service>
-            <Export-Service>${camel.osgi.export.service}</Export-Service>
-            <Require-Capability>${camel.osgi.require.capability}</Require-Capability>
-            <Provide-Capability>${camel.osgi.provide.capability}</Provide-Capability>
-            <Implementation-Title>Apache Camel</Implementation-Title>
-            <Implementation-Version>${project.version}</Implementation-Version>
-            <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
-            <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
-            <_failok>${camel.osgi.failok}</_failok>
-          </instructions>
-        </configuration>
-        <executions>
-          <execution>
-            <id>versions</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>cleanVersions</goal>
-            </goals>
-            <configuration>
-              <versions>
-                <camel.osgi.version.clean>${project.version}</camel.osgi.version.clean>
-              </versions>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -3313,6 +3284,55 @@
             <configuration>
               <strict>true</strict>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>${maven-bundle-plugin-version}</version>
+        <extensions>false</extensions>
+        <configuration>
+          <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
+          <instructions>
+            <Bundle-Name>${project.artifactId}</Bundle-Name>
+            <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
+            <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
+            <Export-Package>${camel.osgi.export}</Export-Package>
+            <Import-Package>${camel.osgi.import}</Import-Package>
+            <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
+            <Private-Package>${camel.osgi.private.pkg}</Private-Package>
+            <Import-Service>${camel.osgi.import.service}</Import-Service>
+            <Export-Service>${camel.osgi.export.service}</Export-Service>
+            <Require-Capability>${camel.osgi.require.capability}</Require-Capability>
+            <Provide-Capability>${camel.osgi.provide.capability}</Provide-Capability>
+            <Implementation-Title>Apache Camel</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+            <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
+            <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
+            <_failok>${camel.osgi.failok}</_failok>
+          </instructions>
+        </configuration>
+        <executions>
+          <execution>
+            <id>versions</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>cleanVersions</goal>
+            </goals>
+            <configuration>
+              <versions>
+                <camel.osgi.version.clean>${project.version}</camel.osgi.version.clean>
+              </versions>
+            </configuration>
+          </execution>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
@@ -3366,6 +3386,7 @@
   </reporting>
 
   <profiles>
+
     <profile>
       <id>nochecks</id>
       <activation>

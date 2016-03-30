@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-pdf</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: PDF</name>
   <description>Camel PDF support</description>
 

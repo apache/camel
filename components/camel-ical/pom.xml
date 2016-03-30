@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-ical</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: iCal</name>
   <description>Camel iCal component</description>
 

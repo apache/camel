@@ -20,7 +20,7 @@
   </parent>
 
   <artifactId>camel-kubernetes</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Kubernetes</name>
 
    <properties>

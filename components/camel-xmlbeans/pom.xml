@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-xmlbeans</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: XMLBeans</name>
   <description>Camel XMLBeans support</description>
 

@@ -26,7 +26,7 @@
     </parent>
 
     <artifactId>camel-xmlsecurity</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: XML Security</name>
     <description>Camel Partial XML Encryption/Decryption and XML Signature support</description>
 

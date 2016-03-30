@@ -28,7 +28,7 @@
   <artifactId>camel-linkedin-api</artifactId>
   <name>Camel :: LinkedIn :: API</name>
   <description>Camel LinkedIn API</description>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.linkedin.api*</camel.osgi.export.pkg>

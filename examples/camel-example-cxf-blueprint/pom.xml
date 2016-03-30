@@ -28,7 +28,13 @@
   <artifactId>camel-example-cxf-blueprint</artifactId>
   <name>Camel :: Example :: CXF :: Blueprint</name>
   <description>An example which use a CXF consumer and the OSGI HTTP Service</description>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
+
+  <properties>
+    <camel.osgi.export.pkg>
+      org.apache.camel.example.reportincident*
+    </camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -96,24 +102,6 @@
           </execution>
         </executions>
       </plugin>
-
-      <!-- to generate the MANIFEST-FILE of the bundle -->
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <manifestLocation>target/META-INF</manifestLocation>
-          <instructions>
-            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.apache.camel.example.reportincident*</Export-Package>
-            <Import-Package>
-              *
-            </Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-
     </plugins>
   </build>
 

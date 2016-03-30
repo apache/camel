@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-jackson</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Jackson</name>
     <description>Camel Jackson support</description>
 

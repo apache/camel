@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-paho</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Paho</name>
   <description>Camel Eclipse Paho support</description>
 

@@ -26,7 +26,7 @@
     </parent>
 
     <artifactId>camel-stream</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Stream</name>
     <description>Camel Stream (System.in, System.out, System.err) support</description>
 

@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>camel-core</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Core</name>
   <description>The Core Camel Java DSL based router</description>
 
@@ -213,7 +213,6 @@
         </plugins>
     </pluginManagement>
     <plugins>
-
       <!-- shade concurrent hashmap for faster Camel and spi-annotations as needed by everybody -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

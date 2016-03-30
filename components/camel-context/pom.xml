@@ -27,7 +27,7 @@
     <artifactId>camel-context</artifactId>
     <name>Camel :: Context (deprecated)</name>
     <description>Camel Context component to expose CamelContext objects as a black box Component for use in other routes</description>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.context.*</camel.osgi.export.pkg>

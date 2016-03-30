@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-cm-sms</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
 
   <name>Camel :: CM SMS</name>
   <description>Camel CM SMS Gateway Component</description>

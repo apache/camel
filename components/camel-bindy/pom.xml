@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-bindy</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Bindy</name>
     <description>Camel Bindy data format support</description>
 

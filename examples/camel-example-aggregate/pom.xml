@@ -26,7 +26,7 @@
     </parent>
 
     <artifactId>camel-example-aggregate</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Example :: Aggregate</name>
     <description>Demonstrates the persistent support for the Camel aggregator</description>
 

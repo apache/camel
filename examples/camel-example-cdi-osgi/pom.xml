@@ -29,7 +29,7 @@
   <artifactId>camel-example-cdi-osgi</artifactId>
   <name>Camel :: Example :: CDI :: OSGi</name>
   <description>PAX CDI example</description>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
 
   <dependencies>
 

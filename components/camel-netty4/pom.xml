@@ -24,7 +24,7 @@
 	</parent>
 
 	<artifactId>camel-netty4</artifactId>
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 	<name>Camel :: Netty4</name>
 	<description>Camel Netty NIO based socket communication component</description>
 

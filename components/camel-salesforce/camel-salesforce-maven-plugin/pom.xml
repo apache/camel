@@ -147,6 +147,29 @@
 
   <build>
     <plugins>
+      <!-- maven-jar-plugin config for Maven plugins. -->
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>bundle-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <archive combine.self="override">
+            <manifestFile/>
+            <manifest>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
       <!-- Generate plugin help -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

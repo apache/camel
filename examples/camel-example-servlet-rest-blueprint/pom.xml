@@ -28,7 +28,16 @@
   <artifactId>camel-example-servlet-rest-blueprint</artifactId>
   <name>Camel :: Example :: Servlet REST Blueprint</name>
   <description>An example using Servlet REST with OSGi Blueprint</description>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
+
+  <properties>
+    <camel.osgi.import.pkg>
+      *
+    </camel.osgi.import.pkg>
+    <camel.osgi.export.pkg>
+      *
+    </camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 
@@ -76,28 +85,5 @@
       <version>1.0.13</version>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-
-      <!-- to generate the MANIFEST-FILE of the bundle -->
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <manifestLocation>target/META-INF</manifestLocation>
-          <instructions>
-            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.apache.camel.example.rest*</Export-Package>
-            <Import-Package>
-              *
-            </Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-
-    </plugins>
-  </build>
 
 </project>

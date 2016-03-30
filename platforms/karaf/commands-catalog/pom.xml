@@ -27,7 +27,7 @@
 
   <groupId>org.apache.camel.karaf</groupId>
   <artifactId>camel-karaf-commands-catalog</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Platforms :: Apache Karaf :: Commands :: Catalog</name>
 
   <properties>

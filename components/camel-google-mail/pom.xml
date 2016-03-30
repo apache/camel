@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-google-mail</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: GoogleMail</name>
   <description>Camel Component for GoogleMail</description>
 

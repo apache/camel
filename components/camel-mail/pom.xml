@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-mail</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Mail</name>
     <description>Camel Mail support</description>
 

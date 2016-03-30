@@ -24,7 +24,7 @@
 	</parent>
 
 	<artifactId>camel-lucene</artifactId>
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 	<name>Camel :: Lucene</name>
 	<description>Camel Lucene based search component</description>
 

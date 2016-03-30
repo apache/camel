@@ -24,7 +24,7 @@
     </parent>
 
     <artifactId>camel-gora</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Gora</name>
 
     <description>

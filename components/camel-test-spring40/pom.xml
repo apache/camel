@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-test-spring40</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Test :: Spring 4.0 (deprecated)</name>
   <description>Camel Testing Library using JUnit and Spring 4.0</description>
 

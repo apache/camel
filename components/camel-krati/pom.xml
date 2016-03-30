@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-krati</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Krati</name>
     <description>Camel Krati support</description>
 

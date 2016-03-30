@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-testng</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: TestNG</name>
     <description>Camel Testing Library using TestNG</description>
 

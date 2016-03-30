@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-example-tracer</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Example :: Tracer</name>
   <description>An example showing how to persist Camel trace event messages using JPA</description>
 

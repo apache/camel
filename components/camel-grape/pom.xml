@@ -33,6 +33,7 @@
     <groovy-eclipse-batch.version>2.4.3-01</groovy-eclipse-batch.version>
     <groovy-eclipse-compiler.version>2.9.2-01</groovy-eclipse-compiler.version>
     <plexus-compiler-api.version>2.7</plexus-compiler-api.version>
+    <camel.osgi.export.pkg />
   </properties>
 
   <dependencies>

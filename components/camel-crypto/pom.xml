@@ -25,7 +25,7 @@
 	</parent>
 
 	<artifactId>camel-crypto</artifactId>
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 	<name>Camel :: Crypto</name>
 	<description>Camel Cryptographic Support</description>
 

@@ -24,7 +24,7 @@
     </parent>
 
     <artifactId>camel-smpp</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: SMPP</name>
     <description>Camel SMPP support</description>
 

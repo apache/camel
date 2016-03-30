@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-jsonpath</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: JSon Path</name>
   <description>Camel JSON Path Language</description>
 

@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>camel-mongodb</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: MongoDB</name>
   <description>Camel MongoDB component</description>
 

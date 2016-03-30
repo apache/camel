@@ -26,7 +26,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-schematron</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Schematron</name>
     <description>Camel Schematron support</description>
 

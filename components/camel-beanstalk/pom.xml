@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>camel-beanstalk</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Beanstalk</name>
   <description>Camel Beanstalk component</description>
 

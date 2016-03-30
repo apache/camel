@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-cometd</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Cometd</name>
     <description>Camel Cometd support based on Jetty </description>
 

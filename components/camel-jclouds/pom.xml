@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>camel-jclouds</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: JClouds</name>
   <description>Camel JClouds support</description>
 

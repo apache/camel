@@ -28,7 +28,7 @@
   </parent>
 
   <artifactId>camel-mllp</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: MLLP</name>
   <description>Camel MLLP Component</description>
 

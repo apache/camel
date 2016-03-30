@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-jolt</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Jolt</name>
   <description>Camel Jolt Support</description>
 

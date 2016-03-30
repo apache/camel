@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>camel-solr</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Solr</name>
   <description>Camel Solr Support</description>
 

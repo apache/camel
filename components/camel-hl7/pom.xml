@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-hl7</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: HL7</name>
     <description>Camel HL7 support</description>
 

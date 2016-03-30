@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-linkedin</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: LinkedIn :: Component</name>
   <description>Camel LinkedIn component</description>
 

@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-example-mybatis</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Example :: MyBatis</name>
   <description>An example for showing Camel using MyBatis SQL mapper component</description>
 

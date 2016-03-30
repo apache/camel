@@ -27,7 +27,7 @@
     </parent>
 
     <artifactId>camel-hdfs</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: HDFS</name>
     <description>Camel HDFS support</description>
 

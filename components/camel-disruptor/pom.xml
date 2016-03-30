@@ -28,7 +28,7 @@
     <name>Camel :: Disruptor</name>
     <artifactId>camel-disruptor</artifactId>
     <description>Camel :: Disruptor component</description>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.disruptor.*</camel.osgi.export.pkg>

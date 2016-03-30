@@ -20,7 +20,7 @@
   </parent>
 
   <artifactId>camel-jira</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: JIRA</name>
 
    <properties>

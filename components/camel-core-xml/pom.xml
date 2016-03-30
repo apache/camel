@@ -28,6 +28,12 @@
   <name>Camel :: Core XML</name>
   <description>Camel Core XML support</description>
 
+  <properties>
+    <camel.osgi.export.pkg>
+      org.apache.camel.core.xml.*
+    </camel.osgi.export.pkg>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>

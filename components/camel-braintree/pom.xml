@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-braintree</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Braintree</name>
   <description>Camel Braintree support</description>
 

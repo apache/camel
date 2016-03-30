@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>camel-script</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Script</name>
     <description>Camel Script support</description>
 

@@ -27,7 +27,7 @@
     </parent>
 
     <artifactId>camel-ldap</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: LDAP</name>
     <description>Camel LDAP support</description>
 

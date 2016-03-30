@@ -29,6 +29,10 @@
   <artifactId>camel-spring-boot</artifactId>
   <description>Camel :: Spring Boot</description>
 
+  <properties>
+    <camel.osgi.export.pkg />
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>

@@ -27,7 +27,7 @@
   <name>Camel :: Splunk</name>
   <artifactId>camel-splunk</artifactId>
   <description>Camel :: Splunk component</description>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
 
   <properties>
     <camel.osgi.import.before.defaults>

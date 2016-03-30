@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-jcache</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: JCache</name>
   <description>Camel JCache support</description>
 

@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-ironmq</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
 
   <name>Camel :: IronMQ</name>
   <description>Camel IronMQ component</description>

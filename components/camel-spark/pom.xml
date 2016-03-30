@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>camel-spark</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Apache Spark</name>
   <description>Camel Apache Spark Support</description>
 

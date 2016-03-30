@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-catalog</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Platforms :: Catalog</name>
   <description>Camel Catalog</description>
 

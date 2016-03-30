@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-example-sql-blueprint</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Example :: SQL :: Blueprint</name>
   <description>An example for showing Camel using SQL component with blueprint</description>
 

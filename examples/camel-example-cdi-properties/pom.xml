@@ -31,6 +31,12 @@
   <description>DeltaSpike configuration properties CDI example</description>
   <packaging>jar</packaging>
 
+  <properties>
+    <camel.osgi.export.pkg>
+      org.apache.camel.example.cdi.properties*
+    </camel.osgi.export.pkg>
+  </properties>
+
   <dependencies>
 
     <!-- CDI API -->
@@ -89,7 +95,6 @@
 
   <build>
     <plugins>
-
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
