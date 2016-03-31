@@ -215,7 +215,7 @@
       </plugins>
     </pluginManagement>
     <plugins>
-      <!-- shade concurrent hashmap for faster Camel and spi-annotations as needed by everybody -->
+      <!-- shade caffeine cache for faster Camel and spi-annotations as needed by everybody -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -229,6 +229,7 @@
               <artifactSet>
                 <includes>
                   <include>com.github.ben-manes.caffeine:caffeine</include>
+                  <include>org.apache.camel:spi-annotations</include>
                 </includes>
                 <excludes>
                   <exclude>org.apache.camel:apt</exclude>
@@ -236,8 +237,8 @@
               </artifactSet>
               <relocations>
                 <relocation>
-                  <pattern>com.github.benmanes.caffeine.cache</pattern>
-                  <shadedPattern>org.apache.camel.com.github.benmanes.caffeine.cache</shadedPattern>
+                  <pattern>com.github.benmanes.caffeine</pattern>
+                  <shadedPattern>org.apache.camel.com.github.benmanes.caffeine</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
@@ -347,7 +348,6 @@
           </links>
           <linksource>true</linksource>
           <maxmemory>256m</maxmemory>
-
           <groups>
             <group>
               <title>Camel API</title>
@@ -358,7 +358,7 @@
               <packages>org.apache.camel.builder:org.apache.camel.builder.*</packages>
             </group>
             <group>
-              <title>The bean and JAXB2 model for EIP rule definitions</title>
+              <title>The routing model for EIP rule definitions</title>
               <packages>org.apache.camel.model:org.apache.camel.model.*</packages>
             </group>
             <group>
