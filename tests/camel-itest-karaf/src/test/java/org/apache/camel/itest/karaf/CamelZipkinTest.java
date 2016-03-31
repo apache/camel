@@ -16,11 +16,13 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
+@Ignore("Does not yet work in OSGi: https://issues.apache.org/jira/browse/SMX4-1983")
 public class CamelZipkinTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelZipkinTest.class);
