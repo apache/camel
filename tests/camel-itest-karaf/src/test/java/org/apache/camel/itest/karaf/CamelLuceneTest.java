@@ -23,7 +23,6 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-@Ignore("Need new version of lucene bundle")
 public class CamelLuceneTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelLuceneTest.class);

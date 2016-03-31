@@ -15,7 +15,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -39,7 +40,7 @@
     <camel.osgi.import>
       org.apache.camel.tools.*;resolution:=optional,
       !org.apache.camel.*,
-      !com.googlecode.concurrentlinkedhashmap,
+      !com.github.benmanes.caffeine.cache,
       ${camel.osgi.import.defaults},
       org.springframework.transaction;resolution:=optional,
       org.apache.camel.spring.spi;resolution:=optional,
@@ -103,13 +104,14 @@
       net.sf.saxon
     </camel.osgi.dynamic>
     <camel.osgi.provide.capability>
-      osgi.extender; osgi.extender="org.apache.camel"; uses:="org.apache.camel.impl.osgi"; version:Version="$(version;==;${camel.osgi.version.clean})"
+      osgi.extender; osgi.extender="org.apache.camel"; uses:="org.apache.camel.impl.osgi";
+      version:Version="$(version;==;${camel.osgi.version.clean})"
     </camel.osgi.provide.capability>
     <camel.osgi.activator>
       org.apache.camel.impl.osgi.Activator
     </camel.osgi.activator>
     <!-- do not skip any tests by default -->
-    <platform.skip.tests />
+    <platform.skip.tests/>
   </properties>
 
   <dependencies>
@@ -126,8 +128,8 @@
     <!-- required dependencies by camel-core -->
     <!-- which we shade into camel-core so its available for everybody out of the box -->
     <dependency>
-      <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
-      <artifactId>concurrentlinkedhashmap-lru</artifactId>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
     </dependency>
 
     <!-- required dependencies by camel-core -->
@@ -184,36 +186,36 @@
 
   <build>
     <pluginManagement>
-        <plugins>
-            <!-- Eclipse m2e Lifecycle Management -->
-            <plugin>
-                <groupId>org.eclipse.m2e</groupId>
-                <artifactId>lifecycle-mapping</artifactId>
-                <version>${lifecycle-mapping-version}</version>
-                <configuration>
-                    <lifecycleMappingMetadata>
-                        <pluginExecutions>
-                            <pluginExecution>
-                                <pluginExecutionFilter>
-                                    <groupId>org.apache.camel</groupId>
-                                    <artifactId>camel-package-maven-plugin</artifactId>
-                                    <versionRange>${project.version}</versionRange>
-                                    <goals>
-                                        <goal>generate-eips-list</goal>
-                                    </goals>
-                                </pluginExecutionFilter>
-                                <action>
-                                    <ignore />
-                                </action>
-                            </pluginExecution>
-                        </pluginExecutions>
-                    </lifecycleMappingMetadata>
-                </configuration>
-            </plugin>
-        </plugins>
+      <plugins>
+        <!-- Eclipse m2e Lifecycle Management -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>${lifecycle-mapping-version}</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-package-maven-plugin</artifactId>
+                    <versionRange>${project.version}</versionRange>
+                    <goals>
+                      <goal>generate-eips-list</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
     </pluginManagement>
     <plugins>
-      <!-- shade concurrent hashmap for faster Camel and spi-annotations as needed by everybody -->
+      <!-- shade caffeine cache for faster Camel and spi-annotations as needed by everybody -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -226,7 +228,8 @@
             <configuration>
               <artifactSet>
                 <includes>
-                  <include>com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru</include>
+                  <include>com.github.ben-manes.caffeine:caffeine</include>
+                  <include>org.apache.camel:spi-annotations</include>
                 </includes>
                 <excludes>
                   <exclude>org.apache.camel:apt</exclude>
@@ -234,14 +237,42 @@
               </artifactSet>
               <relocations>
                 <relocation>
-                  <pattern>com.googlecode.concurrentlinkedhashmap</pattern>
-                  <shadedPattern>org.apache.camel.com.googlecode.concurrentlinkedhashmap</shadedPattern>
+                  <pattern>com.github.benmanes.caffeine</pattern>
+                  <shadedPattern>org.apache.camel.com.github.benmanes.caffeine</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
           </execution>
         </executions>
       </plugin>
+
+      <!-- include additional metadata from target/generated into the camel-core JAR -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>include-metadata</id>
+            <phase>package</phase>
+            <configuration>
+              <target>
+                <echo>Including metadata properties files in camel-core.jar</echo>
+                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}.jar"
+                     update="true">
+                  <fileset dir="${basedir}/target/generated/camel/components/" includes="**/*"/>
+                  <fileset dir="${basedir}/target/generated/camel/dataformats/" includes="**/*"/>
+                  <fileset dir="${basedir}/target/generated/camel/languages/" includes="**/*"/>
+                  <fileset dir="${basedir}/target/generated/camel/models/" includes="**/*"/>
+                </jar>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- generate the attached tests jar -->
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
@@ -258,6 +289,12 @@
           </excludes>
         </configuration>
       </plugin>
+
+      <!--<classesDirectory>${project.build.outputDirectory}</classesDirectory>-->
+      <!--<classesDirectory>${project.build}/generated/camel/components</classesDirectory>-->
+      <!--<classesDirectory>${project.build}/generated/camel/dataformats</classesDirectory>-->
+      <!--<classesDirectory>${project.build}/generated/camel/languages</classesDirectory>-->
+      <!--<classesDirectory>${project.build}/generated/camel/models</classesDirectory>-->
 
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -345,7 +382,6 @@
           </links>
           <linksource>true</linksource>
           <maxmemory>256m</maxmemory>
-
           <groups>
             <group>
               <title>Camel API</title>
@@ -356,7 +392,7 @@
               <packages>org.apache.camel.builder:org.apache.camel.builder.*</packages>
             </group>
             <group>
-              <title>The bean and JAXB2 model for EIP rule definitions</title>
+              <title>The routing model for EIP rule definitions</title>
               <packages>org.apache.camel.model:org.apache.camel.model.*</packages>
             </group>
             <group>
@@ -502,7 +538,6 @@
         <dependency>
           <groupId>org.apache.camel</groupId>
           <artifactId>apt</artifactId>
-          <version>${project.version}</version>
           <scope>provided</scope>
         </dependency>
       </dependencies>
@@ -521,8 +556,8 @@
       </properties>
     </profile>
     <profile>
-       <id>xalan</id>
-       <dependencies>
+      <id>xalan</id>
+      <dependencies>
         <!-- enable the Xalan processor -->
         <dependency>
           <groupId>xalan</groupId>
@@ -532,8 +567,8 @@
       </dependencies>
     </profile>
     <profile>
-       <id>xerces</id>
-       <dependencies>
+      <id>xerces</id>
+      <dependencies>
         <!-- enable the xerces processor -->
         <dependency>
           <groupId>xerces</groupId>
@@ -543,19 +578,18 @@
       </dependencies>
     </profile>
     <profile>
-       <id>woodstox</id>
-       <activation>
-         <activeByDefault>true</activeByDefault>
-       </activation>
-       <dependencies>
-          <!-- xmltokenizer using woodstox -->
-          <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-asl</artifactId>
-            <version>${woodstox-version}</version>
-            <scope>test</scope>
-          </dependency>
-        </dependencies>
+      <id>woodstox</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <!-- xmltokenizer using woodstox -->
+        <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>woodstox-core-asl</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
 

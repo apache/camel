@@ -21,7 +21,6 @@ import javax.naming.Context;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version 
@@ -59,7 +58,7 @@ public class FileDataSetProducerWithSplitTest extends ContextTestSupport {
 
     @Override
     public void setUp() throws Exception {
-        dataSet = new FileDataSet(testDataFileName, "\n");
+        dataSet = new FileDataSet(testDataFileName, System.lineSeparator());
         assertEquals("Unexpected DataSet size", testDataFileRecordCount, dataSet.getSize());
         super.setUp();
     }

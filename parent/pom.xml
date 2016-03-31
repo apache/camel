@@ -65,8 +65,8 @@
     <avro-bundle-version>1.8.0_1</avro-bundle-version>
     <avro-ipc-bundle-version>1.8.0_1</avro-ipc-bundle-version>
     <awaitility.version>1.7.0</awaitility.version>
-    <aws-java-sdk-bundle-version>1.10.52_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.10.52</aws-java-sdk-version>
+    <aws-java-sdk-bundle-version>1.10.62_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-version>1.10.62</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
     <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
@@ -80,6 +80,7 @@
     <brave-zipkin-version>3.5.0</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
+    <caffeine-version>2.2.3</caffeine-version>
     <californium-version>1.0.0-M3</californium-version>
     <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
     <cassandra-driver-version>2.1.9</cassandra-driver-version>
@@ -91,8 +92,8 @@
     <cdi-api-1.0-version>1.0-SP4</cdi-api-1.0-version>
     <cdi-api-1.1-version>1.1</cdi-api-1.1-version>
     <cdi-api-1.2-version>1.2</cdi-api-1.2-version>
-    <cglib-bundle-version>3.2.0_1</cglib-bundle-version>
-    <cglib-version>3.2.0</cglib-version>
+    <cglib-bundle-version>3.2.1_1</cglib-bundle-version>
+    <cglib-version>3.2.1</cglib-version>
     <chunk-templates-version>3.2.0</chunk-templates-version>
     <chunk-templates-bundle-version>3.2.0_1</chunk-templates-bundle-version>
     <classmate-version>1.3.1</classmate-version>
@@ -128,7 +129,6 @@
     <commons-pool2-version>2.4.2</commons-pool2-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <compress-lzf-version>1.0.3</compress-lzf-version>
-    <concurrentlinkedhashmap.version>1.4.2</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
     <cxf-version>3.1.6</cxf-version>
     <cxf-version-range>[3.0,4.0)</cxf-version-range>
@@ -152,9 +152,9 @@
     <ehcache-version>2.10.1</ehcache-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
-    <elasticsearch-bundle-version>2.2.0_1</elasticsearch-bundle-version>
+    <elasticsearch-bundle-version>2.2.1_1</elasticsearch-bundle-version>
     <elasticsearch-guava-version>18.0</elasticsearch-guava-version>
-    <elasticsearch-version>2.2.0</elasticsearch-version>
+    <elasticsearch-version>2.2.1</elasticsearch-version>
     <elasticsearch-cluster-runner-version>2.2.0.0</elasticsearch-cluster-runner-version>
     <elsql-version>1.2</elsql-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
@@ -162,8 +162,8 @@
     <etcd4j-version>2.10.0</etcd4j-version>
     <exec-maven-plugin-version>1.4.0</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
-    <facebook4j-core-version>2.4.2</facebook4j-core-version>
-    <facebook4j-core-bundle-version>2.4.2_1</facebook4j-core-bundle-version>
+    <facebook4j-core-version>2.4.3</facebook4j-core-version>
+    <facebook4j-core-bundle-version>2.4.3_1</facebook4j-core-bundle-version>
     <fastinfoset-version>1.2.13_1</fastinfoset-version>
     <felix-configadmin-version>1.8.8</felix-configadmin-version>
     <felix-connect-version>0.1.0</felix-connect-version>
@@ -221,7 +221,7 @@
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.21</hawtdispatch-version>
-    <hazelcast-version>3.6</hazelcast-version>
+    <hazelcast-version>3.6.1</hazelcast-version>
     <hbase-version>1.2.0</hbase-version>
     <hessian-version>4.0.38</hessian-version>
     <hibernate-validator-version>5.2.4.Final</hibernate-validator-version>
@@ -350,6 +350,7 @@
     <jzlib-version>1.1.3</jzlib-version>
     <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
     <kafka-version>0.9.0.1</kafka-version>
+    <kafka-bundle-version>0.9.0.1_1</kafka-bundle-version>
     <karaf-version>2.4.4</karaf-version>
     <karaf3-version>3.0.6</karaf3-version>
     <karaf4-version>4.0.4</karaf4-version>
@@ -367,8 +368,8 @@
     <logback-version>1.1.5</logback-version>
     <lucene3-bundle-version>3.6.0_1</lucene3-bundle-version>
     <lucene3-version>3.6.0</lucene3-version>
-    <lucene-bundle-version>5.4.1_1</lucene-bundle-version>
-    <lucene-version>5.4.1</lucene-version>
+    <lucene-bundle-version>5.5.0_1</lucene-bundle-version>
+    <lucene-version>5.5.0</lucene-version>
     <lucene-version-range>[5,6)</lucene-version-range>
     <lightcouch-version>0.1.8</lightcouch-version>
     <lightcouch-gson-version>2.3.1</lightcouch-gson-version>
@@ -392,7 +393,7 @@
     <maven-jboss-as-maven-plugin-version>7.7.Final</maven-jboss-as-maven-plugin-version>
     <maven-remote-resources-plugin-version>1.4</maven-remote-resources-plugin-version>
     <!-- resources plugin needed by Camel maven archetypes -->
-    <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
+    <maven-resources-plugin-version>2.7</maven-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
     <maven-shade-plugin-version>2.4.1</maven-shade-plugin-version>
@@ -412,8 +413,7 @@
     <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.9.1</mustache-java-version>
     <mustache-guava-version>16.0</mustache-guava-version>
-    <!-- 0.9.x is not working: https://issues.apache.org/jira/browse/SM-2898 -->
-    <mustache-bundle-version>0.8.18_1</mustache-bundle-version>
+    <mustache-bundle-version>0.9.1_2</mustache-bundle-version>
     <mvel-version>2.2.7.Final</mvel-version>
     <mybatis-version>3.3.1</mybatis-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
@@ -490,10 +490,10 @@
     <slf4j-version>1.7.13</slf4j-version>
     <smack-version>4.0.7</smack-version>
     <snakeyaml-version>1.17</snakeyaml-version>
-    <snappy-version>1.1.2.1</snappy-version>
+    <snappy-version>1.1.2.4</snappy-version>
     <snmp4j-version>2.3.4_1</snmp4j-version>
-    <solr-bundle-version>5.3.1_1</solr-bundle-version>
-    <solr-version>5.3.1</solr-version>
+    <solr-bundle-version>5.5.0_1</solr-bundle-version>
+    <solr-version>5.5.0</solr-version>
     <solr-version-range>[5,6)</solr-version-range>
     <spark-version>1.6.1</spark-version>
     <spark-rest-version>2.3</spark-rest-version>
@@ -592,8 +592,8 @@
     <xpp3-bundle-version>1.1.4c_7</xpp3-bundle-version>
     <xpp3-version>1.1.4c</xpp3-version>
     <xsdlib-version>2013.2</xsdlib-version>
-    <xstream-bundle-version>1.4.8_1</xstream-bundle-version>
-    <xstream-version>1.4.8</xstream-version>
+    <xstream-bundle-version>1.4.9_1</xstream-bundle-version>
+    <xstream-version>1.4.9</xstream-version>
     <xom-version>1.2.5</xom-version>
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
     <zkclient-version>0.8</zkclient-version>
@@ -2041,11 +2041,11 @@
         <version>${kafka-version}</version>
       </dependency>
       
-      <!-- API -->
+      <!-- embedded concurrent lru map -->
       <dependency>
-        <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
-        <artifactId>concurrentlinkedhashmap-lru</artifactId>
-        <version>${concurrentlinkedhashmap.version}</version>
+        <groupId>com.github.ben-manes.caffeine</groupId>
+        <artifactId>caffeine</artifactId>
+        <version>${caffeine-version}</version>
       </dependency>
 
       <!-- optional dependencies -->
