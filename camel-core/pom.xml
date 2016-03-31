@@ -39,7 +39,7 @@
     <camel.osgi.import>
       org.apache.camel.tools.*;resolution:=optional,
       !org.apache.camel.*,
-      !com.googlecode.concurrentlinkedhashmap,
+      !com.github.benmanes.caffeine.cache,
       ${camel.osgi.import.defaults},
       org.springframework.transaction;resolution:=optional,
       org.apache.camel.spring.spi;resolution:=optional,
