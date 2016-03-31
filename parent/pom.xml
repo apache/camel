@@ -393,7 +393,7 @@
     <maven-jboss-as-maven-plugin-version>7.7.Final</maven-jboss-as-maven-plugin-version>
     <maven-remote-resources-plugin-version>1.4</maven-remote-resources-plugin-version>
     <!-- resources plugin needed by Camel maven archetypes -->
-    <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
+    <maven-resources-plugin-version>2.7</maven-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
     <maven-shade-plugin-version>2.4.1</maven-shade-plugin-version>
