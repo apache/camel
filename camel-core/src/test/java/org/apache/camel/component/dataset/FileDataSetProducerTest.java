@@ -21,7 +21,6 @@ import javax.naming.Context;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version 
@@ -30,7 +29,7 @@ public class FileDataSetProducerTest extends ContextTestSupport {
     protected FileDataSet dataSet;
 
     final String testDataFileName = "src/test/data/file-dataset-test.txt";
-    final String testPayload = "Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8\nLine 9\nLine 10\n";
+    final String testPayload = String.format("Line 1%nLine 2%nLine 3%nLine 4%nLine 5%nLine 6%nLine 7%nLine 8%nLine 9%nLine 10%n");
 
     final String sourceUri = "direct://source";
     final String dataSetName = "foo";
