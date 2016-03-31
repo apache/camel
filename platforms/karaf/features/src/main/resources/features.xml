@@ -59,7 +59,6 @@
     </conditional>
   </feature>
   <feature name='camel-blueprint' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature>aries-blueprint</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-blueprint/${project.version}</bundle>
   </feature>
