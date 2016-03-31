@@ -17,7 +17,9 @@
 package org.apache.camel.util;
 
 /**
- * A Least Recently Used Cache which uses {@link java.lang.ref.WeakReference}.
+ * A cache that uses a near optional LRU Cache using {@link java.lang.ref.WeakReference}.
+ * <p/>
+ * The Cache is implemented by Caffeine which provides an <a href="https://github.com/ben-manes/caffeine/wiki/Efficiency">efficient cache</a>.
  * <p/>
  * This implementation uses {@link java.lang.ref.WeakReference} for stored values in the cache, to support the JVM
  * when it wants to reclaim objects for example during garbage collection. Therefore this implementation does
@@ -47,7 +49,6 @@ package org.apache.camel.util;
  * @see LRUSoftCache
  */
 public class LRUWeakCache<K, V> extends LRUCache<K, V> {
-    private static final long serialVersionUID = 1L;
 
     public LRUWeakCache(int maximumCacheSize) {
         this(16, maximumCacheSize);

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.util;
 
-import java.lang.ref.SoftReference;
-
 /**
- * A Least Recently Used Cache which uses {@link SoftReference}.
+ * A cache that uses a near optional LRU Cache using {@link java.lang.ref.SoftReference}.
+ * <p/>
+ * The Cache is implemented by Caffeine which provides an <a href="https://github.com/ben-manes/caffeine/wiki/Efficiency">efficient cache</a>.
  * <p/>
  * This implementation uses {@link java.lang.ref.SoftReference} for stored values in the cache, to support the JVM
  * when it wants to reclaim objects when it's running out of memory. Therefore this implementation does
@@ -49,8 +49,6 @@ import java.lang.ref.SoftReference;
  * @see LRUWeakCache
  */
 public class LRUSoftCache<K, V> extends LRUCache<K, V> {
-
-    private static final long serialVersionUID = 1L;
 
     public LRUSoftCache(int maximumCacheSize) {
         this(16, maximumCacheSize);

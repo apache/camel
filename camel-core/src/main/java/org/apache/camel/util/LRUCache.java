@@ -30,7 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Least Recently Used Cache.
+ * A cache that uses a near optional LRU Cache.
+ * <p/>
+ * The Cache is implemented by Caffeine which provides an <a href="https://github.com/ben-manes/caffeine/wiki/Efficiency">efficient cache</a>.
  * <p/>
  * If this cache stores {@link org.apache.camel.Service} then this implementation will on eviction
  * invoke the {@link org.apache.camel.Service#stop()} method, to auto-stop the service.
@@ -39,7 +41,6 @@ import org.slf4j.LoggerFactory;
  * @see LRUWeakCache
  */
 public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Serializable {
-    private static final long serialVersionUID = -342098639681884414L;
     private static final Logger LOG = LoggerFactory.getLogger(LRUCache.class);
 
     protected final AtomicLong hits = new AtomicLong();
@@ -190,14 +191,16 @@ public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Seriali
 
     @Override
     public void onRemoval(K key, V value, RemovalCause cause) {
-        evicted.incrementAndGet();
-        LOG.trace("onRemoval {} -> {}", key, value);
-        if (stopOnEviction) {
-            try {
-                // stop service as its evicted from cache
-                ServiceHelper.stopService(value);
-            } catch (Exception e) {
-                LOG.warn("Error stopping service: " + value + ". This exception will be ignored.", e);
+        if (cause.wasEvicted()) {
+            evicted.incrementAndGet();
+            LOG.trace("onRemoval {} -> {}", key, value);
+            if (stopOnEviction) {
+                try {
+                    // stop service as its evicted from cache
+                    ServiceHelper.stopService(value);
+                } catch (Exception e) {
+                    LOG.warn("Error stopping service: " + value + ". This exception will be ignored.", e);
+                }
             }
         }
     }
