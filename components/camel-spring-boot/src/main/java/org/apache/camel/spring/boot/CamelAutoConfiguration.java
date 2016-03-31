@@ -40,8 +40,7 @@ import org.springframework.context.annotation.Import;
 public class CamelAutoConfiguration {
 
     /**
-     * Spring-aware Camel context for the application. Auto-detects and loads all routes available in the Spring
-     * context.
+     * Spring-aware Camel context for the application. Auto-detects and loads all routes available in the Spring context.
      */
     @Bean
     @ConditionalOnMissingBean(CamelContext.class)
@@ -61,6 +60,20 @@ public class CamelAutoConfiguration {
 
         if (config.getLogDebugMaxChars() > 0) {
             camelContext.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "" + config.getLogDebugMaxChars());
+        }
+
+        camelContext.setStreamCaching(config.isStreamCaching());
+        camelContext.setTracing(config.isTracing());
+        camelContext.setMessageHistory(config.isMessageHistory());
+        camelContext.setHandleFault(config.isHandleFault());
+        camelContext.setAutoStartup(config.isAutoStartup());
+        camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
+
+        if (camelContext.getManagementStrategy().getManagementAgent() != null) {
+            camelContext.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(config.isEndpointRuntimeStatisticsEnabled());
+            camelContext.getManagementStrategy().getManagementAgent().setStatisticsLevel(config.getJmxManagementStatisticsLevel());
+            camelContext.getManagementStrategy().getManagementAgent().setManagementNamePattern(config.getJmxManagementNamePattern());
+            camelContext.getManagementStrategy().getManagementAgent().setCreateConnector(config.isJmxCreateConnector());
         }
 
         return camelContext;
