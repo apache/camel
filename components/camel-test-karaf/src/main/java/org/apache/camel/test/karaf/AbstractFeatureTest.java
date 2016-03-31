@@ -63,6 +63,7 @@ import static org.ops4j.pax.exam.CoreOptions.vmOption;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 
 public abstract class AbstractFeatureTest {
 
@@ -233,6 +234,7 @@ public abstract class AbstractFeatureTest {
                     .karafVersion(karafVersion)
                     .name("Apache Karaf")
                     .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
+            logLevel(LogLevelOption.LogLevel.WARN),
 
             // keep the folder so we can look inside when something fails
             keepRuntimeFolder(),
@@ -249,7 +251,7 @@ public abstract class AbstractFeatureTest {
             editConfigurationFilePut("etc/custom.properties", "karaf.shutdown.port", "-1"),
 
             // Assign unique ports for Karaf
-            editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port", Integer.toString(AvailablePortFinder.getNextAvailable()) ),
+            editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port", Integer.toString(AvailablePortFinder.getNextAvailable())),
             editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiRegistryPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
             editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiServerPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
 

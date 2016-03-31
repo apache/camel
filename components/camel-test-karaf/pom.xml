@@ -28,7 +28,7 @@
 
   <artifactId>camel-test-karaf</artifactId>
   <name>Camel :: Test :: Karaf</name>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <description>Camel Testing Library using Pax Exam, Karaf and JUnit</description>
 
   <properties>
