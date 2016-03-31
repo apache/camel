@@ -15,7 +15,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -103,13 +104,14 @@
       net.sf.saxon
     </camel.osgi.dynamic>
     <camel.osgi.provide.capability>
-      osgi.extender; osgi.extender="org.apache.camel"; uses:="org.apache.camel.impl.osgi"; version:Version="$(version;==;${camel.osgi.version.clean})"
+      osgi.extender; osgi.extender="org.apache.camel"; uses:="org.apache.camel.impl.osgi";
+      version:Version="$(version;==;${camel.osgi.version.clean})"
     </camel.osgi.provide.capability>
     <camel.osgi.activator>
       org.apache.camel.impl.osgi.Activator
     </camel.osgi.activator>
     <!-- do not skip any tests by default -->
-    <platform.skip.tests />
+    <platform.skip.tests/>
   </properties>
 
   <dependencies>
@@ -184,33 +186,33 @@
 
   <build>
     <pluginManagement>
-        <plugins>
-            <!-- Eclipse m2e Lifecycle Management -->
-            <plugin>
-                <groupId>org.eclipse.m2e</groupId>
-                <artifactId>lifecycle-mapping</artifactId>
-                <version>${lifecycle-mapping-version}</version>
-                <configuration>
-                    <lifecycleMappingMetadata>
-                        <pluginExecutions>
-                            <pluginExecution>
-                                <pluginExecutionFilter>
-                                    <groupId>org.apache.camel</groupId>
-                                    <artifactId>camel-package-maven-plugin</artifactId>
-                                    <versionRange>${project.version}</versionRange>
-                                    <goals>
-                                        <goal>generate-eips-list</goal>
-                                    </goals>
-                                </pluginExecutionFilter>
-                                <action>
-                                    <ignore />
-                                </action>
-                            </pluginExecution>
-                        </pluginExecutions>
-                    </lifecycleMappingMetadata>
-                </configuration>
-            </plugin>
-        </plugins>
+      <plugins>
+        <!-- Eclipse m2e Lifecycle Management -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>${lifecycle-mapping-version}</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-package-maven-plugin</artifactId>
+                    <versionRange>${project.version}</versionRange>
+                    <goals>
+                      <goal>generate-eips-list</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
     </pluginManagement>
     <plugins>
       <!-- shade concurrent hashmap for faster Camel and spi-annotations as needed by everybody -->
@@ -521,8 +523,8 @@
       </properties>
     </profile>
     <profile>
-       <id>xalan</id>
-       <dependencies>
+      <id>xalan</id>
+      <dependencies>
         <!-- enable the Xalan processor -->
         <dependency>
           <groupId>xalan</groupId>
@@ -532,8 +534,8 @@
       </dependencies>
     </profile>
     <profile>
-       <id>xerces</id>
-       <dependencies>
+      <id>xerces</id>
+      <dependencies>
         <!-- enable the xerces processor -->
         <dependency>
           <groupId>xerces</groupId>
@@ -543,19 +545,19 @@
       </dependencies>
     </profile>
     <profile>
-       <id>woodstox</id>
-       <activation>
-         <activeByDefault>true</activeByDefault>
-       </activation>
-       <dependencies>
-          <!-- xmltokenizer using woodstox -->
-          <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-asl</artifactId>
-            <version>${woodstox-version}</version>
-            <scope>test</scope>
-          </dependency>
-        </dependencies>
+      <id>woodstox</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <!-- xmltokenizer using woodstox -->
+        <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>woodstox-core-asl</artifactId>
+          <version>${woodstox-version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
 
