@@ -52,6 +52,9 @@ public class ProducerTemplateMaximumCacheSizeTest extends SpringRunWithTestSuppo
             template.sendBody(e, "Hello");
         }
 
+        // the eviction is async so force cleanup
+        template.cleanUp();
+
         assertEquals("Size should be 50", 50, template.getCurrentCacheSize());
         template.stop();
 
