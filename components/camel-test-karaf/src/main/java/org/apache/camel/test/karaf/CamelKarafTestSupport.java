@@ -1,7 +1,10 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -32,7 +35,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
@@ -57,10 +59,13 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import org.junit.Assert;
-
+import static org.junit.Assert.fail;
 import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.replaceConfigurationFile;
 
 /*
    TODO:  This file is a copy of KarafTestSupport.java from the Karaf 4 repository.  
@@ -72,7 +77,7 @@ public class CamelKarafTestSupport {
     static final Long COMMAND_TIMEOUT = 30000L;
     static final Long SERVICE_TIMEOUT = 30000L;
 
-    ExecutorService executor = Executors.newCachedThreadPool();
+    protected ExecutorService executor = Executors.newCachedThreadPool();
 
     @Inject
     protected BundleContext bundleContext;
@@ -326,7 +331,7 @@ public class CamelKarafTestSupport {
                 return;
             }
         }
-        Assert.fail("Feature " + featureName + " should be installed but is not");
+        fail("Feature " + featureName + " should be installed but is not");
     }
 
     public void assertFeatureInstalled(String featureName, String featureVersion) {
@@ -336,7 +341,7 @@ public class CamelKarafTestSupport {
                 return;
             }
         }
-        Assert.fail("Feature " + featureName + "/" + featureVersion + " should be installed but is not");
+        fail("Feature " + featureName + "/" + featureVersion + " should be installed but is not");
     }
     
     protected void installAndAssertFeature(String feature) throws Exception {
