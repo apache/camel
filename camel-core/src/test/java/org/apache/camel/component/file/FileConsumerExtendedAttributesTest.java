@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.FileUtil;
 import org.junit.Test;
 
 /**
@@ -81,6 +82,9 @@ public class FileConsumerExtendedAttributesTest extends ContextTestSupport {
 
     @Test
     public void testPosixAttributes() throws Exception {
+        if (FileUtil.isWindows()) {
+            return;
+        }
         testAttributes("mock:posix", "posix:");
     }
 
