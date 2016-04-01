@@ -135,6 +135,7 @@
     * [Ganglia](ganglia.adoc)
     * [Geocoder](geocoder.adoc)
     * [Git](git.adoc)
+    * [Github](github.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
