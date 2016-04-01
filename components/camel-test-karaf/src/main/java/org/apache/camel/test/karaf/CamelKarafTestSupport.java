@@ -41,16 +41,21 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.security.auth.Subject;
 
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.MavenUtils;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeBuilder;
 import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
+import org.ops4j.pax.exam.options.UrlReference;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
@@ -60,19 +65,17 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 import static org.junit.Assert.fail;
+import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.replaceConfigurationFile;
 
-/*
-   TODO:  This file is a copy of KarafTestSupport.java from the Karaf 4 repository.  
-   Eventually there will be a karaf-test module that contains this class, and we'll
-   be able to use that.  For now, use this as a starting point.
-*/
-public class CamelKarafTestSupport {
+public class CamelKarafTestSupport extends CamelTestSupport {
 
     static final Long COMMAND_TIMEOUT = 30000L;
     static final Long SERVICE_TIMEOUT = 30000L;
@@ -102,21 +105,45 @@ public class CamelKarafTestSupport {
     @Configuration
     public Option[] config() {
         return new Option[]{
-                // KarafDistributionOption.debugConfiguration("8889", true),
-                karafDistributionConfiguration().frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").versionAsInProject().type("tar.gz"))
-                        .karafVersion(MavenUtils.getArtifactVersion("org.apache.karaf", "apache-karaf")).name("Apache Karaf").unpackDirectory(new File("target/exam")),
+                karafDistributionConfiguration()
+                        .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").versionAsInProject().type("tar.gz"))
+                        .karafVersion(MavenUtils.getArtifactVersion("org.apache.karaf", "apache-karaf"))
+                        .name("Apache Karaf")
+                        .unpackDirectory(new File("target/karaf")),
+
+                // keep the folder so we can look inside when something fails
                 keepRuntimeFolder(),
-                logLevel(LogLevelOption.LogLevel.INFO),
+
+                // Disable the SSH port
+                configureConsole().ignoreRemoteShell(),
+
+                // Configure Logging
+                logLevel(LogLevelOption.LogLevel.WARN),
                 replaceConfigurationFile("etc/org.ops4j.pax.logging.cfg", getConfigFile("/etc/org.ops4j.pax.logging.cfg")),
-                editConfigurationFilePut("etc/system.properties", "hibernate3.version", System.getProperty("hibernate3.version")),
-                editConfigurationFilePut("etc/system.properties", "hibernate42.version", System.getProperty("hibernate42.version")),
-                editConfigurationFilePut("etc/system.properties", "hibernate43.version", System.getProperty("hibernate43.version")),
-                editConfigurationFilePut("etc/system.properties", "spring31.version", System.getProperty("spring31.version")),
-                editConfigurationFilePut("etc/system.properties", "spring32.version", System.getProperty("spring32.version")),
-                editConfigurationFilePut("etc/system.properties", "spring40.version", System.getProperty("spring40.version")),
-                editConfigurationFilePut("etc/system.properties", "spring41.version", System.getProperty("spring41.version"))
+
+                // Assign unique ports
+                editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port", Integer.toString(AvailablePortFinder.getNextAvailable())),
+                editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiRegistryPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
+                editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiServerPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
+
+                // Install JUnit
+                junitBundles(),
+
+                // Install base camel features
+                KarafDistributionOption.features(getCamelKarafFeatureUrl(), "camel", "camel-test"),
+
+                // Install the support bundle
+                mavenBundle().groupId("org.apache.camel").artifactId("camel-test-karaf").versionAsInProject()
         };
     }
+
+    public static UrlReference getCamelKarafFeatureUrl() {
+        return mavenBundle().
+                groupId("org.apache.camel.karaf").
+                artifactId("apache-camel").
+                versionAsInProject().type("xml/features");
+    }
+
 
     /**
      * Executes a shell command and returns output as a String.
