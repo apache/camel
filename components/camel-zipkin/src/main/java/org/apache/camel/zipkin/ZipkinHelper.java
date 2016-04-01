@@ -27,7 +27,7 @@ public final class ZipkinHelper {
     private ZipkinHelper() {
     }
 
-    public static SpanId getSpanId(String traceId, String spanId, String parentSpanId) {
+    public static SpanId createSpanId(String traceId, String spanId, String parentSpanId) {
         if (parentSpanId != null) {
             return SpanId.create(IdConversion.convertToLong(traceId), IdConversion.convertToLong(spanId), IdConversion.convertToLong(parentSpanId));
         }

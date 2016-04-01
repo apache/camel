@@ -32,7 +32,7 @@ public class Service1Route extends RouteBuilder {
         zipkin.setHostName("192.168.99.100");
         zipkin.setPort(9410);
         zipkin.addClientServiceMapping("http://localhost:9090/service2", "service2");
-        zipkin.addClientServiceMapping("http://localhost:7070/service3", "service3");
+//        zipkin.addClientServiceMapping("http://localhost:7070/service3", "service3");
 
         // add zipkin to CamelContext
         getContext().getManagementStrategy().addEventNotifier(zipkin);
@@ -40,7 +40,7 @@ public class Service1Route extends RouteBuilder {
         from("timer:trigger?exchangePattern=InOut&period=30s")
             .bean("counterBean")
             .to("http://localhost:9090/service2")
-            .to("http://localhost:7070/service3")
+//            .to("http://localhost:7070/service3")
             .log("Result: ${body}");
     }
 

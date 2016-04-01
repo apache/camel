@@ -30,7 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.URISupport;
 
-import static org.apache.camel.zipkin.ZipkinHelper.getSpanId;
+import static org.apache.camel.zipkin.ZipkinHelper.createSpanId;
 
 public class ZipkinServerRequestAdapter implements ServerRequestAdapter {
 
@@ -58,7 +58,7 @@ public class ZipkinServerRequestAdapter implements ServerRequestAdapter {
             String spanId = exchange.getIn().getHeader(ZipkinConstants.SPAN_ID, String.class);
             String parentSpanId = exchange.getIn().getHeader(ZipkinConstants.PARENT_SPAN_ID, String.class);
             if (traceId != null && spanId != null) {
-                SpanId span = getSpanId(traceId, spanId, parentSpanId);
+                SpanId span = createSpanId(traceId, spanId, parentSpanId);
                 return TraceData.builder().sample(true).spanId(span).build();
             }
         }

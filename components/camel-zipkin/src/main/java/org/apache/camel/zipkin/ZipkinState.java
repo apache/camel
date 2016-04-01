@@ -20,8 +20,16 @@ import java.util.Stack;
 
 import com.github.kristofa.brave.ServerSpan;
 import com.twitter.zipkin.gen.Span;
+import org.apache.camel.Exchange;
 
-public class ZipkinState {
+/**
+ * The state of the zipkin trace which we store on the {@link Exchange}
+ * <p/>
+ * This is needed to keep track of of correlating when an existing span
+ * is calling downstream service(s) and therefore must be able to correlate
+ * those service calls with the parent span.
+ */
+public final class ZipkinState {
 
     public static final String KEY = "CamelZipkinState";
 

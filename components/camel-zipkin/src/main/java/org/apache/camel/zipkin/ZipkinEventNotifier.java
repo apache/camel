@@ -501,7 +501,8 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
     }
 
     private void clientRequest(Brave brave, String serviceName, ExchangeSendingEvent event) {
-        ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
+        ClientSpanThreadBinder clientBinder = brave.clientSpanThreadBinder();
+        ServerSpanThreadBinder serverBinder = brave.serverSpanThreadBinder();
 
         // reuse existing span if we do multiple requests from the same
         ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
@@ -509,21 +510,22 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
             state = new ZipkinState();
             event.getExchange().setProperty(ZipkinState.KEY, state);
         }
+        // need to store the last span in use whether it was a server or client based span
         Object last = state.getLast();
         if (last != null && last instanceof Span) {
-            binder.setCurrentSpan((Span) last);
+            clientBinder.setCurrentSpan((Span) last);
         } else if (last != null && last instanceof ServerSpan) {
-            Span span = ((ServerSpan) last).getSpan();
-            binder.setCurrentSpan(span);
+            serverBinder.setCurrentSpan((ServerSpan) last);
         }
 
         brave.clientRequestInterceptor().handle(new ZipkinClientRequestAdapter(this, serviceName, event.getExchange(), event.getEndpoint()));
 
         // store span after request
-        Span span = binder.getCurrentClientSpan();
+        Span span = clientBinder.getCurrentClientSpan();
         state.pushClientSpan(span);
         // and reset binder
-        binder.setCurrentSpan(null);
+        clientBinder.setCurrentSpan(null);
+        serverBinder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
             String traceId = "<null>";
@@ -546,16 +548,16 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         Span span = null;
         ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
         if (state != null) {
+            // only process if it was a zipkin client event
             span = state.popClientSpan();
         }
 
         if (span != null) {
-            // only process if it was a zipkin client event
-            ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
-            binder.setCurrentSpan(span);
+            ClientSpanThreadBinder clientBinder = brave.clientSpanThreadBinder();
+            clientBinder.setCurrentSpan(span);
             brave.clientResponseInterceptor().handle(new ZipkinClientResponseAdaptor(this, event.getExchange(), event.getEndpoint()));
             // and reset binder
-            binder.setCurrentSpan(null);
+            clientBinder.setCurrentSpan(null);
 
             if (log.isDebugEnabled()) {
                 String traceId = "" + span.getTrace_id();
@@ -567,7 +569,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
     }
 
     private void serverRequest(Brave brave, String serviceName, ExchangeCreatedEvent event) {
-        ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
+        ServerSpanThreadBinder serverBinder = brave.serverSpanThreadBinder();
 
         // reuse existing span if we do multiple requests from the same
         ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
@@ -577,16 +579,16 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         }
         Object last = state.getLast();
         if (last != null && last instanceof ServerSpan) {
-            binder.setCurrentSpan((ServerSpan) last);
+            serverBinder.setCurrentSpan((ServerSpan) last);
         }
 
         brave.serverRequestInterceptor().handle(new ZipkinServerRequestAdapter(this, event.getExchange()));
 
         // store span after request
-        ServerSpan span = binder.getCurrentServerSpan();
+        ServerSpan span = serverBinder.getCurrentServerSpan();
         state.pushServerSpan(span);
         // and reset binder
-        binder.setCurrentSpan(null);
+        serverBinder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
             String traceId = "<null>";
@@ -609,16 +611,16 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         ServerSpan span = null;
         ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
         if (state != null) {
+            // only process if it was a zipkin server event
             span = state.popServerSpan();
         }
 
         if (span != null) {
-            // only process if it was a zipkin server event
-            ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
-            binder.setCurrentSpan(span);
+            ServerSpanThreadBinder serverBinder = brave.serverSpanThreadBinder();
+            serverBinder.setCurrentSpan(span);
             brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(this, event.getExchange()));
             // and reset binder
-            binder.setCurrentSpan(null);
+            serverBinder.setCurrentSpan(null);
 
             if (log.isDebugEnabled()) {
                 String traceId = "<null>";
@@ -642,16 +644,16 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         ServerSpan span = null;
         ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
         if (state != null) {
+            // only process if it was a zipkin server event
             span = state.popServerSpan();
         }
 
         if (span != null) {
-            // only process if it was a zipkin server event
-            ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
-            binder.setCurrentSpan(span);
+            ServerSpanThreadBinder serverBinder = brave.serverSpanThreadBinder();
+            serverBinder.setCurrentSpan(span);
             brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(this, event.getExchange()));
             // and reset binder
-            binder.setCurrentSpan(null);
+            serverBinder.setCurrentSpan(null);
 
             if (log.isDebugEnabled()) {
                 String traceId = "<null>";
