@@ -73,14 +73,17 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
  * endpoint uris in the names.
  * <p/>
  * Camel will auto-configure a {@link ScribeSpanCollector} if no SpanCollector explicit has been configured, and
- * if the hostname and port has been configured as environment variables
+ * if the hostname and port to the span collector has been configured as environment variables
  * <ul>
- *     <li>ZIPKIN_SERVICE_HOST - The hostname</li>
- *     <li>ZIPKIN_SERVICE_PORT - The port number</li>
+ *     <li>ZIPKIN_COLLECTOR_SERVICE_HOST - The hostname</li>
+ *     <li>ZIPKIN_COLLECTOR_SERVICE_PORT - The port number</li>
  * </ul>
  */
 @ManagedResource(description = "Managing ZipkinEventNotifier")
 public class ZipkinEventNotifier extends EventNotifierSupport implements StatefulService, CamelContextAware {
+
+    private final Map<String, Brave> braves = new HashMap<>();
+    private transient boolean useFallbackServiceNames;
 
     private CamelContext camelContext;
     private String hostName;
@@ -90,9 +93,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
     private Map<String, String> clientServiceMappings = new HashMap<>();
     private Map<String, String> serverServiceMappings = new HashMap<>();
     private Set<String> excludePatterns = new HashSet<>();
-    private Map<String, Brave> braves = new HashMap<>();
     private boolean includeMessageBody;
-    private boolean useFallbackServiceNames;
 
     public ZipkinEventNotifier() {
     }
@@ -247,8 +248,8 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
                 spanCollector = new ScribeSpanCollector(hostName, port);
             } else {
                 // is there a zipkin service setup as ENV variable to auto register a scribe span collector
-                String host = new ServiceHostPropertiesFunction().apply("zipkin");
-                String port = new ServicePortPropertiesFunction().apply("zipkin");
+                String host = new ServiceHostPropertiesFunction().apply("zipkin-collector");
+                String port = new ServicePortPropertiesFunction().apply("zipkin-collector");
                 if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
                     log.info("Auto-configuring Zipkin ScribeSpanCollector using host: {} and port: {}", host, port);
                     int num = camelContext.getTypeConverter().mandatoryConvertTo(Integer.class, port);
@@ -288,6 +289,8 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         if (spanCollector instanceof Closeable) {
             IOHelper.close((Closeable) spanCollector);
         }
+
+        braves.clear();
     }
 
     @Override
