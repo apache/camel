@@ -32,8 +32,10 @@ public class ZipkinTwoRouteTest extends CamelTestSupport {
 
         zipkin = new ZipkinEventNotifier();
         // we have 2 routes as services
-        zipkin.addServiceMapping("seda:cat", "cat");
-        zipkin.addServiceMapping("seda:dog", "dog");
+        zipkin.addClientServiceMapping("seda:cat", "cat");
+        zipkin.addServerServiceMapping("seda:cat", "cat");
+        zipkin.addClientServiceMapping("seda:dog", "dog");
+        zipkin.addServerServiceMapping("seda:dog", "dog");
         // capture message body as well
         zipkin.setIncludeMessageBody(true);
         zipkin.setSpanCollector(new ZipkinLoggingSpanCollector());

@@ -16,24 +16,27 @@
  */
 package sample.camel;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.springframework.stereotype.Component;
+import org.apache.camel.zipkin.starter.CamelZipkin;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+//CHECKSTYLE:OFF
 /**
- * A simple Camel route that triggers from a timer and calls a bean and prints to system out.
+ * A Spring Boot application that starts the Camel Zipkin application.
  * <p/>
- * Use <tt>@Component</tt> to make Camel auto detect this route when starting.
+ * Notice we use the `@CamelZipkin` annotation to enable Camel with Zipkin.
+ * The configuration of Zipkin is in the <tt>application.properties</tt> file.
  */
-@Component
-public class ReplyCamelRouter extends RouteBuilder {
+@SpringBootApplication
+@CamelZipkin
+public class Service2Application {
 
-    @Override
-    public void configure() throws Exception {
-        from("seda:hello").routeId("server")
-            .delay(simple("${random(1000,2000)}"))
-            .transform(simple("You said ${body}"))
-            .log("Replying with ${body}");
-
+    /**
+     * A main method to start this application.
+     */
+    public static void main(String[] args) {
+        SpringApplication.run(Service2Application.class, args);
     }
 
 }
+//CHECKSTYLE:ON

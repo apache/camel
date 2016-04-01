@@ -41,7 +41,8 @@ public class ZipkinAutoConfigureScribe extends CamelTestSupport {
 
         zipkin = new ZipkinEventNotifier();
         // we have one route as service
-        zipkin.addServiceMapping("seda:cat", "cat");
+        zipkin.addClientServiceMapping("seda:cat", "cat");
+        zipkin.addServerServiceMapping("seda:cat", "cat");
         // should auto configure as we have not setup a spanCollector
         context.getManagementStrategy().addEventNotifier(zipkin);
 

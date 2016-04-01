@@ -6,12 +6,17 @@ This example shows how to use Camel with Zipkin to trace/timing all incoming and
 
 The example requires a running Zipkin Server.
 
-The example includes two routes. The client route uses a timer to send a message to the server route.
-The server route then replies back to the client.
+The example includes two sub maven modules that implement
+
+- service1
+- service2
+
+Where service1 calls service2 using HTTP.
 
 ### Configuration
 
-The example is configured in the `src/main/resources/application.properties` file.
+Service1 is configured in the `src/main/java/sample/camel/Service1Application.java` source code.
+Service2 is configured in the `src/main/resources/application.properties` properties file.
 
 Here you need to configure the hostname and port number for the Zipkin Server.
 
@@ -23,10 +28,26 @@ You will need to compile this example first:
 $ mvn compile
 ```
 
+### Run the example
+
+Then using two different shells and run service2 before service1.
+
+```sh
+$ cd service2
+$ mvn compile spring-boot:run
+```
+
+When service2 is ready then start service1
+
+```sh
+$ cd service1
+$ mvn compile camel:run
+```
+
 ### Zipkin web console
 
 You should be able to visualize the traces and timings from this example using the Zipkin Web Console.
-The service name is named `hello`.
+The services are named `service1` and `service2`.
 
 
 ### Installing Zipkin Server using Docker
@@ -37,16 +58,6 @@ There is a [quickstart guide at zipkin](http://zipkin.io/pages/quickstart.html) 
 Remember to configure the IP address and port number in the `application.properties` file.
 
 You can find the IP using `docker-machine ls`
-
-### Run
-
-To run the example, type:
-
-```sh
-$ mvn spring-boot:run
-```
-
-To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>.
 
 ### Forum, Help, etc
 

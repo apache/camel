@@ -59,10 +59,16 @@ public class ZipkinConfigurationProperties {
     private Set<String> excludePatterns;
 
     /**
-     * Sets service mapping(s) that matches Camel events to the given zipkin service name.
+     * Sets client service mapping(s) that matches Camel events to the given zipkin service name.
      * The key is the pattern, the value is the service name.
      */
-    private Map<String, String> serviceMappings;
+    private Map<String, String> clientServiceMappings;
+
+    /**
+     * Sets server service mapping(s) that matches Camel events to the given zipkin service name.
+     * The key is the pattern, the value is the service name.
+     */
+    private Map<String, String> serverServiceMappings;
 
     // Getters & setters
 
@@ -114,11 +120,19 @@ public class ZipkinConfigurationProperties {
         this.excludePatterns = excludePatterns;
     }
 
-    public Map<String, String> getServiceMappings() {
-        return serviceMappings;
+    public Map<String, String> getClientServiceMappings() {
+        return clientServiceMappings;
     }
 
-    public void setServiceMappings(Map<String, String> serviceMappings) {
-        this.serviceMappings = serviceMappings;
+    public void setClientServiceMappings(Map<String, String> clientServiceMappings) {
+        this.clientServiceMappings = clientServiceMappings;
+    }
+
+    public Map<String, String> getServerServiceMappings() {
+        return serverServiceMappings;
+    }
+
+    public void setServerServiceMappings(Map<String, String> serverServiceMappings) {
+        this.serverServiceMappings = serverServiceMappings;
     }
 }

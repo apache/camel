@@ -34,8 +34,8 @@ public class ZipkinRouteConcurrentTest extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
 
         zipkin = new ZipkinEventNotifier();
-        zipkin.addServiceMapping("seda:foo", "foo");
-        zipkin.addServiceMapping("seda:bar", "bar");
+        zipkin.addClientServiceMapping("seda:foo", "foo");
+        zipkin.addServerServiceMapping("seda:bar", "bar");
         zipkin.setSpanCollector(new ZipkinLoggingSpanCollector());
         context.getManagementStrategy().addEventNotifier(zipkin);
 

@@ -16,25 +16,25 @@
  */
 package sample.camel;
 
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.stereotype.Component;
+import org.apache.camel.zipkin.ZipkinEventNotifier;
 
-/**
- * A simple Camel route that triggers from a timer and calls a bean and prints to system out.
- * <p/>
- * Use <tt>@Component</tt> to make Camel auto detect this route when starting.
- */
-@Component
-public class HelloCamelRouter extends RouteBuilder {
+public class Service3Route extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("timer:hello?period={{timer.period}}").routeId("client")
-                .setExchangePattern(ExchangePattern.InOut)
-                .transform(method("myBean", "saySomething"))
-                .log("Saying ${body}")
-                .to("seda:hello");
+        ZipkinEventNotifier zipkin = new ZipkinEventNotifier();
+        zipkin.setHostName("192.168.99.100");
+        zipkin.setPort(9410);
+        zipkin.setServiceName("service3");
+
+        // add zipkin to CamelContext
+        getContext().getManagementStrategy().addEventNotifier(zipkin);
+
+        from("undertow:http://0.0.0.0:7070/service3").routeId("service3")
+                .convertBodyTo(String.class)
+                .delay(simple("${random(1000,2000)}"))
+                .transform(simple("Bye: ${body}"));
     }
 
 }

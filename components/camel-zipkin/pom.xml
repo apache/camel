@@ -77,7 +77,7 @@
           <!-- needed for testing auto configure -->
           <environmentVariables>
             <ZIPKIN_SERVICE_HOST>192.168.99.100</ZIPKIN_SERVICE_HOST>
-            <ZIPKIN_SERVICE_PORT>9401</ZIPKIN_SERVICE_PORT>
+            <ZIPKIN_SERVICE_PORT>9410</ZIPKIN_SERVICE_PORT>
           </environmentVariables>
         </configuration>
       </plugin>
@@ -98,7 +98,7 @@
               <reuseForks>true</reuseForks>
               <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
               <includes>
-                <include>**/*ScribeTest.java</include>
+                <include>**/*Scribe.java</include>
               </includes>
             </configuration>
           </plugin>

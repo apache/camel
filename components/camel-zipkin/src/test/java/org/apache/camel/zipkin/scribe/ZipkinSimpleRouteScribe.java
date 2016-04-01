@@ -43,7 +43,8 @@ public class ZipkinSimpleRouteScribe extends CamelTestSupport {
 
         zipkin = new ZipkinEventNotifier();
         // we have one route as service
-        zipkin.addServiceMapping("seda:dude", "dude");
+        zipkin.addClientServiceMapping("seda:dude", "dude");
+        zipkin.addServerServiceMapping("seda:dude", "dude");
         zipkin.setSpanCollector(new ScribeSpanCollector(ip, 9410));
         context.getManagementStrategy().addEventNotifier(zipkin);
 

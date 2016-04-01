@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -87,7 +87,8 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
     private int port;
     private float rate = 1.0f;
     private SpanCollector spanCollector;
-    private Map<String, String> serviceMappings = new HashMap<>();
+    private Map<String, String> clientServiceMappings = new HashMap<>();
+    private Map<String, String> serverServiceMappings = new HashMap<>();
     private Set<String> excludePatterns = new HashSet<>();
     private Map<String, Brave> braves = new HashMap<>();
     private boolean includeMessageBody;
@@ -152,33 +153,53 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
     }
 
     public String getServiceName() {
-        return serviceMappings.get("*");
+        return clientServiceMappings.get("*");
     }
 
     /**
      * To use a global service name that matches all Camel events
      */
     public void setServiceName(String serviceName) {
-        serviceMappings.put("*", serviceName);
+        clientServiceMappings.put("*", serviceName);
+        serverServiceMappings.put("*", serviceName);
     }
 
-    public Map<String, String> getServiceMappings() {
-        return serviceMappings;
+    public Map<String, String> getClientServiceMappings() {
+        return clientServiceMappings;
     }
 
-    public void setServiceMappings(Map<String, String> serviceMappings) {
-        this.serviceMappings = serviceMappings;
+    public void setClientServiceMappings(Map<String, String> clientServiceMappings) {
+        this.clientServiceMappings = clientServiceMappings;
     }
 
     /**
-     * Adds a service mapping that matches Camel events to the given zipkin service name.
+     * Adds a client service mapping that matches Camel events to the given zipkin service name.
      * See more details at the class javadoc.
      *
      * @param pattern  the pattern such as route id, endpoint url
      * @param serviceName the zipkin service name
      */
-    public void addServiceMapping(String pattern, String serviceName) {
-        serviceMappings.put(pattern, serviceName);
+    public void addClientServiceMapping(String pattern, String serviceName) {
+        clientServiceMappings.put(pattern, serviceName);
+    }
+
+    public Map<String, String> getServerServiceMappings() {
+        return serverServiceMappings;
+    }
+
+    public void setServerServiceMappings(Map<String, String> serverServiceMappings) {
+        this.serverServiceMappings = serverServiceMappings;
+    }
+
+    /**
+     * Adds a server service mapping that matches Camel events to the given zipkin service name.
+     * See more details at the class javadoc.
+     *
+     * @param pattern  the pattern such as route id, endpoint url
+     * @param serviceName the zipkin service name
+     */
+    public void addServerServiceMapping(String pattern, String serviceName) {
+        serverServiceMappings.put(pattern, serviceName);
     }
 
     public Set<String> getExcludePatterns() {
@@ -238,13 +259,13 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
 
         ObjectHelper.notNull(spanCollector, "SpanCollector", this);
 
-        if (serviceMappings.isEmpty()) {
+        if (clientServiceMappings.isEmpty()) {
             log.warn("No service name(s) has been configured. Camel will fallback and use endpoint uris as service names.");
             useFallbackServiceNames = true;
         }
 
         // create braves mapped per service name
-        for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
+        for (Map.Entry<String, String> entry : clientServiceMappings.entrySet()) {
             String pattern = entry.getKey();
             String serviceName = entry.getValue();
             Brave brave = braves.get(pattern);
@@ -282,7 +303,17 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
                 || event instanceof ExchangeFailedEvent;
     }
 
-    private String getServiceName(Exchange exchange, Endpoint endpoint) {
+    private String getServiceName(EventObject event, Exchange exchange, Endpoint endpoint, boolean server, boolean client) {
+        if (client) {
+            return getServiceName(event, exchange, endpoint, clientServiceMappings, server, client);
+        } else if (server) {
+            return getServiceName(event, exchange, endpoint, serverServiceMappings, server, client);
+        } else {
+            return null;
+        }
+    }
+
+    private String getServiceName(EventObject event, Exchange exchange, Endpoint endpoint, Map<String, String> serviceMappings, boolean server, boolean client) {
         String answer = null;
 
         // endpoint takes precedence over route
@@ -305,20 +336,23 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
             }
         }
 
-        if (answer == null && exchange.getFromEndpoint() != null) {
-            String url = exchange.getFromEndpoint().getEndpointUri();
-            if (url != null) {
-                // exclude patterns take precedence
-                for (String pattern : excludePatterns) {
-                    if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
-                        return null;
+        // special for created event as its a server side to know where it was from
+        if (server && (event instanceof ExchangeCreatedEvent || event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent)) {
+            if (answer == null && exchange.getFromEndpoint() != null) {
+                String url = exchange.getFromEndpoint().getEndpointUri();
+                if (url != null) {
+                    // exclude patterns take precedence
+                    for (String pattern : excludePatterns) {
+                        if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
+                            return null;
+                        }
                     }
-                }
-                for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
-                    String pattern = entry.getKey();
-                    if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
-                        answer = entry.getValue();
-                        break;
+                    for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
+                        String pattern = entry.getKey();
+                        if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
+                            answer = entry.getValue();
+                            break;
+                        }
                     }
                 }
             }
@@ -410,37 +444,46 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
 
     @Override
     public void notify(EventObject event) throws Exception {
+        // client events
         if (event instanceof ExchangeSendingEvent) {
             ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
-            String serviceName = getServiceName(ese.getExchange(), ese.getEndpoint());
+            String serviceName = getServiceName(ese, ese.getExchange(), ese.getEndpoint(), false, true);
             Brave brave = getBrave(serviceName);
             if (brave != null) {
                 clientRequest(brave, serviceName, ese);
             }
         } else if (event instanceof ExchangeSentEvent) {
             ExchangeSentEvent ese = (ExchangeSentEvent) event;
-            String serviceName = getServiceName(ese.getExchange(), ese.getEndpoint());
+            String serviceName = getServiceName(ese, ese.getExchange(), ese.getEndpoint(), false, true);
             Brave brave = getBrave(serviceName);
             if (brave != null) {
                 clientResponse(brave, serviceName, ese);
             }
-        } else if (event instanceof ExchangeCreatedEvent) {
+        }
+
+        // server received client request
+        if (event instanceof ExchangeCreatedEvent) {
             ExchangeCreatedEvent ece = (ExchangeCreatedEvent) event;
-            String serviceName = getServiceName(ece.getExchange(), null);
-            Brave brave = getBrave(serviceName);
-            if (brave != null) {
-                serverRequest(brave, serviceName, ece);
+            // we should only emit a server request if we have an existing trace id (eg a client has called us)
+            if (hasZipkinTraceId(ece.getExchange())) {
+                String serviceName = getServiceName(ece, ece.getExchange(), null, true, false);
+                Brave brave = getBrave(serviceName);
+                if (brave != null) {
+                    serverRequest(brave, serviceName, ece);
+                }
             }
-        } else if (event instanceof ExchangeCompletedEvent) {
+        }
+        // server completed events
+        if (event instanceof ExchangeCompletedEvent) {
             ExchangeCompletedEvent ece = (ExchangeCompletedEvent) event;
-            String serviceName = getServiceName(ece.getExchange(), null);
+            String serviceName = getServiceName(ece, ece.getExchange(), null, true, false);
             Brave brave = getBrave(serviceName);
             if (brave != null) {
                 serverResponse(brave, serviceName, ece);
             }
         } else if (event instanceof ExchangeFailedEvent) {
             ExchangeFailedEvent efe = (ExchangeFailedEvent) event;
-            String serviceName = getServiceName(efe.getExchange(), null);
+            String serviceName = getServiceName(efe, efe.getExchange(), null, true, false);
             Brave brave = getBrave(serviceName);
             if (brave != null) {
                 serverResponse(brave, serviceName, efe);
@@ -450,86 +493,180 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
 
     private void clientRequest(Brave brave, String serviceName, ExchangeSendingEvent event) {
         ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
-        brave.clientRequestInterceptor().handle(new ZipkinClientRequestAdapter(this, serviceName, event.getExchange(), event.getEndpoint()));
-        Span span = binder.getCurrentClientSpan();
 
-        String key = "CamelZipkinClientSpan-" + serviceName;
-        event.getExchange().setProperty(key, span);
+        // reuse existing span if we do multiple requests from the same
+        ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
+        if (state == null) {
+            state = new ZipkinState();
+            event.getExchange().setProperty(ZipkinState.KEY, state);
+        }
+        Object last = state.getLast();
+        if (last != null && last instanceof Span) {
+            binder.setCurrentSpan((Span) last);
+        } else if (last != null && last instanceof ServerSpan) {
+            Span span = ((ServerSpan) last).getSpan();
+            binder.setCurrentSpan(span);
+        }
+
+        brave.
+
+        brave.clientRequestInterceptor().handle(new ZipkinClientRequestAdapter(this, serviceName, event.getExchange(), event.getEndpoint()));
+
+        // store span after request
+        Span span = binder.getCurrentClientSpan();
+        state.pushClientSpan(span);
+        // and reset binder
+        binder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
-            String id = "<null>";
+            String traceId = "<null>";
             if (span != null) {
-                id = "" + span.getId();
+                traceId = "" + span.getTrace_id();
             }
-            log.debug("clientRequest\t[service={}, spanId={}]", serviceName, id);
+            String spanId = "<null>";
+            if (span != null) {
+                spanId = "" + span.getId();
+            }
+            String parentId = "<null>";
+            if (span != null) {
+                parentId = "" + span.getParent_id();
+            }
+            log.debug("clientRequest [service={}, traceId={}, spanId={}, parentId={}]", serviceName, traceId, spanId, parentId);
         }
     }
 
     private void clientResponse(Brave brave, String serviceName, ExchangeSentEvent event) {
-        ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
-        String key = "CamelZipkinClientSpan-" + serviceName;
-        Span span = event.getExchange().getProperty(key, Span.class);
-        binder.setCurrentSpan(span);
-        brave.clientResponseInterceptor().handle(new ZipkinClientResponseAdaptor(this, event.getExchange(), event.getEndpoint()));
-        binder.setCurrentSpan(null);
+        Span span = null;
+        ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
+        if (state != null) {
+            span = state.popClientSpan();
+        }
 
-        if (log.isDebugEnabled()) {
-            String id = "<null>";
-            if (span != null) {
-                id = "" + span.getId();
+        if (span != null) {
+            // only process if it was a zipkin client event
+            ClientSpanThreadBinder binder = brave.clientSpanThreadBinder();
+            binder.setCurrentSpan(span);
+            brave.clientResponseInterceptor().handle(new ZipkinClientResponseAdaptor(this, event.getExchange(), event.getEndpoint()));
+            // and reset binder
+            binder.setCurrentSpan(null);
+
+            if (log.isDebugEnabled()) {
+                String traceId = "" + span.getTrace_id();
+                String spanId = "" + span.getId();
+                String parentId = "" + span.getParent_id();
+                log.debug("clientResponse[service={}, traceId={}, spanId={}, parentId={}]", serviceName, traceId, spanId, parentId);
             }
-            log.debug("clientResponse\t[service={}, spanId={}]", serviceName, id);
         }
     }
 
     private void serverRequest(Brave brave, String serviceName, ExchangeCreatedEvent event) {
         ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
+
+        // reuse existing span if we do multiple requests from the same
+        ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
+        if (state == null) {
+            state = new ZipkinState();
+            event.getExchange().setProperty(ZipkinState.KEY, state);
+        }
+        Object last = state.getLast();
+        if (last != null && last instanceof ServerSpan) {
+            binder.setCurrentSpan((ServerSpan) last);
+        }
+
         brave.serverRequestInterceptor().handle(new ZipkinServerRequestAdapter(this, event.getExchange()));
+
+        // store span after request
         ServerSpan span = binder.getCurrentServerSpan();
-        String key = "CamelZipkinServerSpan-" + serviceName;
-        event.getExchange().setProperty(key, span);
+        state.pushServerSpan(span);
+        // and reset binder
+        binder.setCurrentSpan(null);
 
         if (log.isDebugEnabled()) {
-            String id = "<null>";
-            if (span != null && span.getSpan() != null) {
-                id = "" + span.getSpan().getId();
+            String traceId = "<null>";
+            if (span.getSpan() != null) {
+                traceId = "" + span.getSpan().getTrace_id();
             }
-            log.debug("serverRequest\t[service={}, spanId={}]", serviceName, id);
+            String spanId = "<null>";
+            if (span.getSpan() != null) {
+                spanId = "" + span.getSpan().getId();
+            }
+            String parentId = "<null>";
+            if (span.getSpan() != null) {
+                parentId = "" + span.getSpan().getParent_id();
+            }
+            log.debug("serverRequest [service={}, traceId={}, spanId={}, parentId={}]", serviceName, traceId, spanId, parentId);
         }
     }
 
     private void serverResponse(Brave brave, String serviceName, ExchangeCompletedEvent event) {
-        ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
-        String key = "CamelZipkinServerSpan-" + serviceName;
-        ServerSpan span = event.getExchange().getProperty(key, ServerSpan.class);
-        binder.setCurrentSpan(span);
-        brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(this, event.getExchange()));
-        binder.setCurrentSpan(null);
+        ServerSpan span = null;
+        ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
+        if (state != null) {
+            span = state.popServerSpan();
+        }
 
-        if (log.isDebugEnabled()) {
-            String id = "<null>";
-            if (span != null && span.getSpan() != null) {
-                id = "" + span.getSpan().getId();
+        if (span != null) {
+            // only process if it was a zipkin server event
+            ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
+            binder.setCurrentSpan(span);
+            brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(this, event.getExchange()));
+            // and reset binder
+            binder.setCurrentSpan(null);
+
+            if (log.isDebugEnabled()) {
+                String traceId = "<null>";
+                if (span.getSpan() != null) {
+                    traceId = "" + span.getSpan().getTrace_id();
+                }
+                String spanId = "<null>";
+                if (span.getSpan() != null) {
+                    spanId = "" + span.getSpan().getId();
+                }
+                String parentId = "<null>";
+                if (span.getSpan() != null) {
+                    parentId = "" + span.getSpan().getParent_id();
+                }
+                log.debug("serverResponse[service={}, traceId={}, spanId={}, parentId={}] [status=exchangeFailed]", serviceName, traceId, spanId, parentId);
             }
-            log.debug("serverResponse\t[service={}, spanId={}]\t[status=exchangeCompleted]", serviceName, id);
         }
     }
 
     private void serverResponse(Brave brave, String serviceName, ExchangeFailedEvent event) {
-        ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
-        String key = "CamelZipkinServerSpan-" + serviceName;
-        ServerSpan span = event.getExchange().getProperty(key, ServerSpan.class);
-        binder.setCurrentSpan(span);
-        brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(this, event.getExchange()));
-        binder.setCurrentSpan(null);
-
-        if (log.isDebugEnabled()) {
-            String id = "<null>";
-            if (span != null && span.getSpan() != null) {
-                id = "" + span.getSpan().getId();
-            }
-            log.debug("serverResponse[service={}, spanId={}]\t[status=exchangeFailed]", serviceName, id);
+        ServerSpan span = null;
+        ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
+        if (state != null) {
+            span = state.popServerSpan();
         }
+
+        if (span != null) {
+            // only process if it was a zipkin server event
+            ServerSpanThreadBinder binder = brave.serverSpanThreadBinder();
+            binder.setCurrentSpan(span);
+            brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(this, event.getExchange()));
+            // and reset binder
+            binder.setCurrentSpan(null);
+
+            if (log.isDebugEnabled()) {
+                String traceId = "<null>";
+                if (span.getSpan() != null) {
+                    traceId = "" + span.getSpan().getTrace_id();
+                }
+                String spanId = "<null>";
+                if (span.getSpan() != null) {
+                    spanId = "" + span.getSpan().getId();
+                }
+                String parentId = "<null>";
+                if (span.getSpan() != null) {
+                    parentId = "" + span.getSpan().getParent_id();
+                }
+                log.debug("serverResponse[service={}, traceId={}, spanId={}, parentId={}] [status=exchangeFailed]", serviceName, traceId, spanId, parentId);
+            }
+        }
+    }
+
+    private boolean hasZipkinTraceId(Exchange exchange) {
+        // must have zipkin headers to start a server event
+        return exchange.getIn().getHeader(ZipkinConstants.TRACE_ID) != null;
     }
 
 }

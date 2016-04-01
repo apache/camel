@@ -16,27 +16,17 @@
  */
 package sample.camel;
 
-import org.apache.camel.zipkin.starter.CamelZipkin;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
-//CHECKSTYLE:OFF
-/**
- * A Spring Boot application that starts the Camel Zipkin application.
- * <p/>
- * Notice we use the `@CamelZipkin` annotation to enable Camel with Zipkin.
- * The configuration of Zipkin is in the <tt>application.properties</tt> file.
- */
-@SpringBootApplication
-@CamelZipkin
-public class ZipkinCamelApplication {
+@Singleton
+@Named("counterBean")
+public class CounterBean {
 
-    /**
-     * A main method to start this application.
-     */
-    public static void main(String[] args) {
-        SpringApplication.run(ZipkinCamelApplication.class, args);
+    private int counter;
+
+    public String someMethod(String body) {
+        return "" + ++counter;
     }
 
 }
-//CHECKSTYLE:ON

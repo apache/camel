@@ -16,23 +16,14 @@
  */
 package sample.camel;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.apache.camel.main.Main;
 
-/**
- * A bean that returns a message when you call the {@link #saySomething()} method.
- * <p/>
- * Uses <tt>@Component("myBean")</tt> to register this bean with the name <tt>myBean</tt>
- * that we use in the Camel route to lookup this bean.
- */
-@Component("myBean")
-public class HelloBean {
+public class Service3Application {
 
-    @Value("${greeting}")
-    private String say;
-
-    public String saySomething() {
-        return say;
+    public static void main(String[] args) throws Exception {
+        Main main = new Main();
+        main.addRouteBuilder(new Service3Route());
+        main.run();
     }
 
 }

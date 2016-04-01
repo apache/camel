@@ -46,8 +46,11 @@ public class ZipkinAutoConfiguration {
         if (config.getExcludePatterns() != null) {
             notifier.setExcludePatterns(config.getExcludePatterns());
         }
-        if (config.getServiceMappings() != null) {
-            notifier.setServiceMappings(config.getServiceMappings());
+        if (config.getClientServiceMappings() != null) {
+            notifier.setClientServiceMappings(config.getClientServiceMappings());
+        }
+        if (config.getServerServiceMappings() != null) {
+            notifier.setServerServiceMappings(config.getServerServiceMappings());
         }
         notifier.setIncludeMessageBody(config.isIncludeMessageBody());
 
