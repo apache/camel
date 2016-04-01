@@ -134,6 +134,7 @@
     * [FTP](ftp.adoc)
     * [Ganglia](ganglia.adoc)
     * [Geocoder](geocoder.adoc)
+    * [Git](git.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
