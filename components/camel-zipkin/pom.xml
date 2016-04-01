@@ -28,7 +28,7 @@
 
   <artifactId>camel-zipkin</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Zookeeper</name>
+  <name>Camel :: Zipkin</name>
   <description>Camel Zipkin Support</description>
 
   <properties>

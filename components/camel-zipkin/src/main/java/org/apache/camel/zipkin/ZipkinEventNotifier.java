@@ -268,16 +268,12 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         for (Map.Entry<String, String> entry : clientServiceMappings.entrySet()) {
             String pattern = entry.getKey();
             String serviceName = entry.getValue();
-            Brave brave = braves.get(pattern);
-            if (brave == null) {
-                Brave.Builder builder = new Brave.Builder(serviceName);
-                builder = builder.traceSampler(Sampler.create(rate));
-                if (spanCollector != null) {
-                    builder = builder.spanCollector(spanCollector);
-                }
-                brave = builder.build();
-                braves.put(serviceName, brave);
-            }
+            createBraveForService(pattern, serviceName);
+        }
+        for (Map.Entry<String, String> entry : serverServiceMappings.entrySet()) {
+            String pattern = entry.getKey();
+            String serviceName = entry.getValue();
+            createBraveForService(pattern, serviceName);
         }
 
         ServiceHelper.startService(spanCollector);
@@ -422,6 +418,19 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         }
     }
 
+    private void createBraveForService(String pattern, String serviceName) {
+        Brave brave = braves.get(pattern);
+        if (brave == null && !braves.containsKey(serviceName)) {
+            Brave.Builder builder = new Brave.Builder(serviceName);
+            builder = builder.traceSampler(Sampler.create(rate));
+            if (spanCollector != null) {
+                builder = builder.spanCollector(spanCollector);
+            }
+            brave = builder.build();
+            braves.put(serviceName, brave);
+        }
+    }
+
     private Brave getBrave(String serviceName) {
         Brave brave = null;
         if (serviceName != null) {
@@ -507,8 +516,6 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
             Span span = ((ServerSpan) last).getSpan();
             binder.setCurrentSpan(span);
         }
-
-        brave.
 
         brave.clientRequestInterceptor().handle(new ZipkinClientRequestAdapter(this, serviceName, event.getExchange(), event.getEndpoint()));
 
