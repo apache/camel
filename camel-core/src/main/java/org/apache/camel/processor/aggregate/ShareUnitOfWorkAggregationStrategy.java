@@ -37,7 +37,7 @@ public final class ShareUnitOfWorkAggregationStrategy implements AggregationStra
     }
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-        // aggreagate using the actual strategy first
+        // aggregate using the actual strategy first
         Exchange answer = strategy.aggregate(oldExchange, newExchange);
         // ensure any errors is propagated from the new exchange to the answer
         propagateFailure(answer, newExchange);
