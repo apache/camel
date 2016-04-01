@@ -35,18 +35,14 @@ public final class ZipkinState {
 
     private final Stack<Span> clientSpans = new Stack<>();
     private final Stack<ServerSpan> serverSpans = new Stack<>();
-    private Object last;
 
     public void pushClientSpan(Span span) {
         clientSpans.push(span);
-        last = span;
     }
 
     public Span popClientSpan() {
         if (!clientSpans.empty()) {
-            Span answer = clientSpans.pop();
-            last = answer;
-            return answer;
+            return clientSpans.pop();
         } else {
             return null;
         }
@@ -54,20 +50,22 @@ public final class ZipkinState {
 
     public void pushServerSpan(ServerSpan span) {
         serverSpans.push(span);
-        last = span;
     }
 
     public ServerSpan popServerSpan() {
         if (!serverSpans.empty()) {
-            ServerSpan answer = serverSpans.pop();
-            last = answer;
-            return answer;
+            return serverSpans.pop();
         } else {
             return null;
         }
     }
 
-    public Object getLast() {
-        return last;
+    public ServerSpan peekServerSpan() {
+        if (!serverSpans.empty()) {
+            return serverSpans.peek();
+        } else {
+            return null;
+        }
     }
+
 }

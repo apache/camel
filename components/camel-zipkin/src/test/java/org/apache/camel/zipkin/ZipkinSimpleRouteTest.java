@@ -27,16 +27,18 @@ import org.junit.Test;
 
 public class ZipkinSimpleRouteTest extends CamelTestSupport {
 
-    private ZipkinEventNotifier zipkin;
+    private ZipkinTracer zipkin;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        zipkin = new ZipkinEventNotifier();
+        zipkin = new ZipkinTracer();
         zipkin.setServiceName("dude");
         zipkin.setSpanCollector(new ZipkinLoggingSpanCollector());
-        context.getManagementStrategy().addEventNotifier(zipkin);
+
+        context.addService(zipkin);
+//        context.getManagementStrategy().addEventNotifier(zipkin);
 
         return context;
     }

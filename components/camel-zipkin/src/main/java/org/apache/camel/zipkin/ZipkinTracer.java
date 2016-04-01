@@ -35,6 +35,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
@@ -45,6 +46,9 @@ import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IOHelper;
@@ -79,8 +83,8 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
  *     <li>ZIPKIN_COLLECTOR_SERVICE_PORT - The port number</li>
  * </ul>
  */
-@ManagedResource(description = "Managing ZipkinEventNotifier")
-public class ZipkinEventNotifier extends EventNotifierSupport implements StatefulService, CamelContextAware {
+@ManagedResource(description = "Managing ZipkinTracer")
+public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, RoutePolicyFactory, StatefulService, CamelContextAware {
 
     private final Map<String, Brave> braves = new HashMap<>();
     private transient boolean useFallbackServiceNames;
@@ -95,7 +99,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
     private Set<String> excludePatterns = new HashSet<>();
     private boolean includeMessageBody;
 
-    public ZipkinEventNotifier() {
+    public ZipkinTracer() {
     }
 
     public CamelContext getCamelContext() {
@@ -291,6 +295,9 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         }
 
         braves.clear();
+
+        camelContext.getManagementStrategy().removeEventNotifier(this);
+        camelContext.getRoutePolicyFactories().remove(this);
     }
 
     @Override
@@ -302,17 +309,17 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
                 || event instanceof ExchangeFailedEvent;
     }
 
-    private String getServiceName(EventObject event, Exchange exchange, Endpoint endpoint, boolean server, boolean client) {
+    private String getServiceName(Exchange exchange, Endpoint endpoint, boolean server, boolean client) {
         if (client) {
-            return getServiceName(event, exchange, endpoint, clientServiceMappings, server, client);
+            return getServiceName(exchange, endpoint, clientServiceMappings);
         } else if (server) {
-            return getServiceName(event, exchange, endpoint, serverServiceMappings, server, client);
+            return getServiceName(exchange, endpoint, serverServiceMappings);
         } else {
             return null;
         }
     }
 
-    private String getServiceName(EventObject event, Exchange exchange, Endpoint endpoint, Map<String, String> serviceMappings, boolean server, boolean client) {
+    private String getServiceName(Exchange exchange, Endpoint endpoint, Map<String, String> serviceMappings) {
         String answer = null;
 
         // endpoint takes precedence over route
@@ -330,28 +337,6 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
                     if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
                         answer = entry.getValue();
                         break;
-                    }
-                }
-            }
-        }
-
-        // special for created event as its a server side to know where it was from
-        if (server && (event instanceof ExchangeCreatedEvent || event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent)) {
-            if (answer == null && exchange.getFromEndpoint() != null) {
-                String url = exchange.getFromEndpoint().getEndpointUri();
-                if (url != null) {
-                    // exclude patterns take precedence
-                    for (String pattern : excludePatterns) {
-                        if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
-                            return null;
-                        }
-                    }
-                    for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
-                        String pattern = entry.getKey();
-                        if (EndpointHelper.matchEndpoint(exchange.getContext(), url, pattern)) {
-                            answer = entry.getValue();
-                            break;
-                        }
                     }
                 }
             }
@@ -459,46 +444,17 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         // client events
         if (event instanceof ExchangeSendingEvent) {
             ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
-            String serviceName = getServiceName(ese, ese.getExchange(), ese.getEndpoint(), false, true);
+            String serviceName = getServiceName(ese.getExchange(), ese.getEndpoint(), false, true);
             Brave brave = getBrave(serviceName);
             if (brave != null) {
                 clientRequest(brave, serviceName, ese);
             }
         } else if (event instanceof ExchangeSentEvent) {
             ExchangeSentEvent ese = (ExchangeSentEvent) event;
-            String serviceName = getServiceName(ese, ese.getExchange(), ese.getEndpoint(), false, true);
+            String serviceName = getServiceName(ese.getExchange(), ese.getEndpoint(), false, true);
             Brave brave = getBrave(serviceName);
             if (brave != null) {
                 clientResponse(brave, serviceName, ese);
-            }
-        }
-
-        // server received client request
-        if (event instanceof ExchangeCreatedEvent) {
-            ExchangeCreatedEvent ece = (ExchangeCreatedEvent) event;
-            // we should only emit a server request if we have an existing trace id (eg a client has called us)
-            if (hasZipkinTraceId(ece.getExchange())) {
-                String serviceName = getServiceName(ece, ece.getExchange(), null, true, false);
-                Brave brave = getBrave(serviceName);
-                if (brave != null) {
-                    serverRequest(brave, serviceName, ece);
-                }
-            }
-        }
-        // server completed events
-        if (event instanceof ExchangeCompletedEvent) {
-            ExchangeCompletedEvent ece = (ExchangeCompletedEvent) event;
-            String serviceName = getServiceName(ece, ece.getExchange(), null, true, false);
-            Brave brave = getBrave(serviceName);
-            if (brave != null) {
-                serverResponse(brave, serviceName, ece);
-            }
-        } else if (event instanceof ExchangeFailedEvent) {
-            ExchangeFailedEvent efe = (ExchangeFailedEvent) event;
-            String serviceName = getServiceName(efe, efe.getExchange(), null, true, false);
-            Brave brave = getBrave(serviceName);
-            if (brave != null) {
-                serverResponse(brave, serviceName, efe);
             }
         }
     }
@@ -513,12 +469,10 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
             state = new ZipkinState();
             event.getExchange().setProperty(ZipkinState.KEY, state);
         }
-        // need to store the last span in use whether it was a server or client based span
-        Object last = state.getLast();
-        if (last != null && last instanceof Span) {
-            clientBinder.setCurrentSpan((Span) last);
-        } else if (last != null && last instanceof ServerSpan) {
-            serverBinder.setCurrentSpan((ServerSpan) last);
+        // if we started from a server span then lets reuse that when we call a downstream service
+        ServerSpan last = state.peekServerSpan();
+        if (last != null) {
+            serverBinder.setCurrentSpan(last);
         }
 
         brave.clientRequestInterceptor().handle(new ZipkinClientRequestAdapter(this, serviceName, event.getExchange(), event.getEndpoint()));
@@ -571,21 +525,22 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         }
     }
 
-    private void serverRequest(Brave brave, String serviceName, ExchangeCreatedEvent event) {
+    private void serverRequest(Brave brave, String serviceName, Exchange exchange) {
         ServerSpanThreadBinder serverBinder = brave.serverSpanThreadBinder();
 
         // reuse existing span if we do multiple requests from the same
-        ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
+        ZipkinState state = exchange.getProperty(ZipkinState.KEY, ZipkinState.class);
         if (state == null) {
             state = new ZipkinState();
-            event.getExchange().setProperty(ZipkinState.KEY, state);
+            exchange.setProperty(ZipkinState.KEY, state);
         }
-        Object last = state.getLast();
-        if (last != null && last instanceof ServerSpan) {
-            serverBinder.setCurrentSpan((ServerSpan) last);
+        // if we started from a another server span then lets reuse that
+        ServerSpan last = state.peekServerSpan();
+        if (last != null) {
+            serverBinder.setCurrentSpan(last);
         }
 
-        brave.serverRequestInterceptor().handle(new ZipkinServerRequestAdapter(this, event.getExchange()));
+        brave.serverRequestInterceptor().handle(new ZipkinServerRequestAdapter(this, exchange));
 
         // store span after request
         ServerSpan span = serverBinder.getCurrentServerSpan();
@@ -610,9 +565,9 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         }
     }
 
-    private void serverResponse(Brave brave, String serviceName, ExchangeCompletedEvent event) {
+    private void serverResponse(Brave brave, String serviceName, Exchange exchange) {
         ServerSpan span = null;
-        ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
+        ZipkinState state = exchange.getProperty(ZipkinState.KEY, ZipkinState.class);
         if (state != null) {
             // only process if it was a zipkin server event
             span = state.popServerSpan();
@@ -621,7 +576,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         if (span != null) {
             ServerSpanThreadBinder serverBinder = brave.serverSpanThreadBinder();
             serverBinder.setCurrentSpan(span);
-            brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(this, event.getExchange()));
+            brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(this, exchange));
             // and reset binder
             serverBinder.setCurrentSpan(null);
 
@@ -638,40 +593,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
                 if (span.getSpan() != null) {
                     parentId = "" + span.getSpan().getParent_id();
                 }
-                log.debug("serverResponse[service={}, traceId={}, spanId={}, parentId={}] [status=exchangeCompleted]", serviceName, traceId, spanId, parentId);
-            }
-        }
-    }
-
-    private void serverResponse(Brave brave, String serviceName, ExchangeFailedEvent event) {
-        ServerSpan span = null;
-        ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
-        if (state != null) {
-            // only process if it was a zipkin server event
-            span = state.popServerSpan();
-        }
-
-        if (span != null) {
-            ServerSpanThreadBinder serverBinder = brave.serverSpanThreadBinder();
-            serverBinder.setCurrentSpan(span);
-            brave.serverResponseInterceptor().handle(new ZipkinServerResponseAdapter(this, event.getExchange()));
-            // and reset binder
-            serverBinder.setCurrentSpan(null);
-
-            if (log.isDebugEnabled()) {
-                String traceId = "<null>";
-                if (span.getSpan() != null) {
-                    traceId = "" + span.getSpan().getTrace_id();
-                }
-                String spanId = "<null>";
-                if (span.getSpan() != null) {
-                    spanId = "" + span.getSpan().getId();
-                }
-                String parentId = "<null>";
-                if (span.getSpan() != null) {
-                    parentId = "" + span.getSpan().getParent_id();
-                }
-                log.debug("serverResponse[service={}, traceId={}, spanId={}, parentId={}] [status=exchangeFailed]", serviceName, traceId, spanId, parentId);
+                log.debug("serverResponse[service={}, traceId={}, spanId={}, parentId={}]", serviceName, traceId, spanId, parentId);
             }
         }
     }
@@ -681,4 +603,58 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
         return exchange.getIn().getHeader(ZipkinConstants.TRACE_ID) != null;
     }
 
+    @Override
+    public void onInit(Route route) {
+        // noop
+    }
+
+    @Override
+    public void onRemove(Route route) {
+        // noop
+    }
+
+    @Override
+    public void onStart(Route route) {
+        // noop
+    }
+
+    @Override
+    public void onStop(Route route) {
+        // noop
+    }
+
+    @Override
+    public void onSuspend(Route route) {
+        // noop
+    }
+
+    @Override
+    public void onResume(Route route) {
+        // noop
+    }
+
+    @Override
+    public void onExchangeBegin(Route route, Exchange exchange) {
+        if (hasZipkinTraceId(exchange)) {
+            String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
+            Brave brave = getBrave(serviceName);
+            if (brave != null) {
+                serverRequest(brave, serviceName, exchange);
+            }
+        }
+    }
+
+    @Override
+    public void onExchangeDone(Route route, Exchange exchange) {
+        String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
+        Brave brave = getBrave(serviceName);
+        if (brave != null) {
+            serverResponse(brave, serviceName, exchange);
+        }
+    }
+
+    @Override
+    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
+        return this;
+    }
 }

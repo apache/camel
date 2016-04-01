@@ -33,14 +33,14 @@ import org.apache.camel.util.URISupport;
 
 public final class ZipkinClientRequestAdapter implements ClientRequestAdapter {
 
-    private final ZipkinEventNotifier eventNotifier;
+    private final ZipkinTracer eventNotifier;
     private final String serviceName;
     private final Exchange exchange;
     private final Endpoint endpoint;
     private final String spanName;
     private final String url;
 
-    public ZipkinClientRequestAdapter(ZipkinEventNotifier eventNotifier, String serviceName, Exchange exchange, Endpoint endpoint) {
+    public ZipkinClientRequestAdapter(ZipkinTracer eventNotifier, String serviceName, Exchange exchange, Endpoint endpoint) {
         this.eventNotifier = eventNotifier;
         this.serviceName = serviceName;
         this.exchange = exchange;

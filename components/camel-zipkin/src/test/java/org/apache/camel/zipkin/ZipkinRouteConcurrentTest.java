@@ -27,13 +27,13 @@ import org.junit.Test;
 
 public class ZipkinRouteConcurrentTest extends CamelTestSupport {
 
-    private ZipkinEventNotifier zipkin;
+    private ZipkinTracer zipkin;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        zipkin = new ZipkinEventNotifier();
+        zipkin = new ZipkinTracer();
         zipkin.addClientServiceMapping("seda:foo", "foo");
         zipkin.addServerServiceMapping("seda:bar", "bar");
         zipkin.setSpanCollector(new ZipkinLoggingSpanCollector());

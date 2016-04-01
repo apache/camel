@@ -21,7 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.zipkin.ZipkinEventNotifier;
+import org.apache.camel.zipkin.ZipkinTracer;
 import org.junit.Test;
 
 /**
@@ -35,13 +35,13 @@ import org.junit.Test;
 public class ZipkinOneRouteScribe extends CamelTestSupport {
 
     private String ip = "192.168.99.100";
-    private ZipkinEventNotifier zipkin;
+    private ZipkinTracer zipkin;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        zipkin = new ZipkinEventNotifier();
+        zipkin = new ZipkinTracer();
         // we have one route as service
         zipkin.addClientServiceMapping("seda:cat", "cat");
         zipkin.addServerServiceMapping("seda:cat", "cat");

@@ -41,11 +41,13 @@ public class ZipkinLoggingSpanCollector implements SpanCollector {
 
     @Override
     public void collect(Span span) {
-        if (logger.isInfoEnabled()) {
+        if (logger.isTraceEnabled()) {
+            String name = span.getName();
+            String traceId = "" + span.getTrace_id();
+            String spanId = "" + span.getId();
+            String parentId = "" + span.getParent_id();
             long ms = span.getDuration() != null ? span.getDuration() / 1000 : -1;
-            String id = IdConversion.convertToString(span.getId());
-            String line = String.format("%s(%s) - %s ms", span.getName(), id, ms);
-            logger.info(line);
+            logger.info("Zipkin[name={}, traceId={}, spanId={}, parentId={}, duration={} ms]", name, traceId, spanId, parentId, ms);
         }
     }
 

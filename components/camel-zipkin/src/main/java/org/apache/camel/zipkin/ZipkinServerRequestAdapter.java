@@ -34,13 +34,13 @@ import static org.apache.camel.zipkin.ZipkinHelper.createSpanId;
 
 public class ZipkinServerRequestAdapter implements ServerRequestAdapter {
 
-    private final ZipkinEventNotifier eventNotifier;
+    private final ZipkinTracer eventNotifier;
     private final Exchange exchange;
     private final Endpoint endpoint;
     private final String spanName;
     private final String url;
 
-    public ZipkinServerRequestAdapter(ZipkinEventNotifier eventNotifier, Exchange exchange) {
+    public ZipkinServerRequestAdapter(ZipkinTracer eventNotifier, Exchange exchange) {
         this.eventNotifier = eventNotifier;
         this.exchange = exchange;
         this.endpoint = exchange.getFromEndpoint();

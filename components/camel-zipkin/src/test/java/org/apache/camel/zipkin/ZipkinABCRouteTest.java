@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class ZipkinSimpleFallbackRouteTest extends CamelTestSupport {
+public class ZipkinABCRouteTest extends CamelTestSupport {
 
     private ZipkinTracer zipkin;
 
@@ -34,22 +34,27 @@ public class ZipkinSimpleFallbackRouteTest extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
 
         zipkin = new ZipkinTracer();
-        // no service so should use fallback naming style
-        // we do not want to trace any direct endpoints
-        zipkin.addExcludePattern("direct:*");
+
+        zipkin.addClientServiceMapping("seda:a", "a");
+        zipkin.addClientServiceMapping("seda:b", "b");
+        zipkin.addClientServiceMapping("seda:c", "c");
+        zipkin.addServerServiceMapping("seda:a", "a");
+        zipkin.addServerServiceMapping("seda:b", "b");
+        zipkin.addServerServiceMapping("seda:c", "c");
         zipkin.setSpanCollector(new ZipkinLoggingSpanCollector());
+
+        // attaching ourself to CamelContext
         context.getManagementStrategy().addEventNotifier(zipkin);
+        context.addRoutePolicyFactory(zipkin);
 
         return context;
     }
 
     @Test
     public void testZipkinRoute() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
-        for (int i = 0; i < 5; i++) {
-            template.sendBody("seda:dude", "Hello World");
-        }
+        template.requestBody("direct:start", "Hello World");
 
         assertTrue(notify.matches(30, TimeUnit.SECONDS));
     }
@@ -59,9 +64,22 @@ public class ZipkinSimpleFallbackRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:dude").routeId("dude")
+                from("direct:start").to("seda:a").routeId("start");
+
+                from("seda:a").routeId("a")
+                    .log("routing at ${routeId}")
+                    .to("seda:b")
+                    .delay(2000)
+                    .to("seda:c")
+                    .log("End of routing");
+
+                from("seda:b").routeId("b")
                         .log("routing at ${routeId}")
                         .delay(simple("${random(1000,2000)}"));
+
+                from("seda:c").routeId("c")
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(0,100)}"));
             }
         };
     }

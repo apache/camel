@@ -24,13 +24,13 @@ import org.junit.Test;
 
 public class ZipkinTwoRouteTest extends CamelTestSupport {
 
-    private ZipkinEventNotifier zipkin;
+    private ZipkinTracer zipkin;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        zipkin = new ZipkinEventNotifier();
+        zipkin = new ZipkinTracer();
         // we have 2 routes as services
         zipkin.addClientServiceMapping("seda:cat", "cat");
         zipkin.addServerServiceMapping("seda:cat", "cat");

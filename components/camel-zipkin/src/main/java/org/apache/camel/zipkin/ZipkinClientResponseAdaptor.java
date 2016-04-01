@@ -29,12 +29,12 @@ import org.apache.camel.util.URISupport;
 
 public class ZipkinClientResponseAdaptor implements ClientResponseAdapter {
 
-    private final ZipkinEventNotifier eventNotifier;
+    private final ZipkinTracer eventNotifier;
     private final Exchange exchange;
     private final Endpoint endpoint;
     private final String url;
 
-    public ZipkinClientResponseAdaptor(ZipkinEventNotifier eventNotifier, Exchange exchange, Endpoint endpoint) {
+    public ZipkinClientResponseAdaptor(ZipkinTracer eventNotifier, Exchange exchange, Endpoint endpoint) {
         this.eventNotifier = eventNotifier;
         this.exchange = exchange;
         this.endpoint = endpoint;
