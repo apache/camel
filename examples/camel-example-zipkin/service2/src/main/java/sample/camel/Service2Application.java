@@ -16,27 +16,14 @@
  */
 package sample.camel;
 
-import org.apache.camel.zipkin.starter.CamelZipkin;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.apache.camel.main.Main;
 
-//CHECKSTYLE:OFF
-/**
- * A Spring Boot application that starts the Camel Zipkin application.
- * <p/>
- * Notice we use the `@CamelZipkin` annotation to enable Camel with Zipkin.
- * The configuration of Zipkin is in the <tt>application.properties</tt> file.
- */
-@SpringBootApplication
-@CamelZipkin
 public class Service2Application {
 
-    /**
-     * A main method to start this application.
-     */
-    public static void main(String[] args) {
-        SpringApplication.run(Service2Application.class, args);
+    public static void main(String[] args) throws Exception {
+        Main main = new Main();
+        main.addRouteBuilder(new Service2Route());
+        main.run();
     }
 
 }
-//CHECKSTYLE:ON

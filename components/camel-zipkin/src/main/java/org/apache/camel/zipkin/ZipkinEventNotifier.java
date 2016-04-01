@@ -635,7 +635,7 @@ public class ZipkinEventNotifier extends EventNotifierSupport implements Statefu
                 if (span.getSpan() != null) {
                     parentId = "" + span.getSpan().getParent_id();
                 }
-                log.debug("serverResponse[service={}, traceId={}, spanId={}, parentId={}] [status=exchangeFailed]", serviceName, traceId, spanId, parentId);
+                log.debug("serverResponse[service={}, traceId={}, spanId={}, parentId={}] [status=exchangeCompleted]", serviceName, traceId, spanId, parentId);
             }
         }
     }

@@ -6,12 +6,13 @@ This example shows how to use Camel with Zipkin to trace/timing all incoming and
 
 The example requires a running Zipkin Server.
 
-The example includes two sub maven modules that implement
+The example includes three sub maven modules that implement
 
+- client
 - service1
 - service2
 
-Where service1 calls service2 using HTTP.
+Where client -> service1 -> service2 using HTTP.
 
 ### Configuration
 
@@ -30,17 +31,24 @@ $ mvn compile
 
 ### Run the example
 
-Then using two different shells and run service2 before service1.
-
-```sh
-$ cd service2
-$ mvn compile spring-boot:run
-```
-
-When service2 is ready then start service1
+Then using three different shells and run service1 and service2 before the client.
 
 ```sh
 $ cd service1
+$ mvn compile spring-boot:run
+```
+
+When service1 is ready then start service2
+
+```sh
+$ cd service2
+$ mvn compile camel:run
+```
+
+And then start the client that calls service1 every 30th seconds.
+
+```sh
+$ cd client
 $ mvn compile camel:run
 ```
 

@@ -25,8 +25,8 @@
     <version>2.18-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-example-zipkin-service3</artifactId>
-  <name>Camel :: Example :: Zipkin :: Service 3</name>
+  <artifactId>camel-example-zipkin-client</artifactId>
+  <name>Camel :: Example :: Zipkin :: Client</name>
   <description>An example showing how to trace incoming and outgoing messages from Camel with Zipkin</description>
 
   <properties>
@@ -48,10 +48,18 @@
 
   <dependencies>
 
-    <!-- camel-core -->
+    <!-- CDI API -->
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <version>${cdi-api-1.2-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- camel-cdi -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-cdi</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -59,8 +67,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-undertow</artifactId>
+      <artifactId>camel-http</artifactId>
     </dependency>
+
+    <!-- logging -->
+
 
   </dependencies>
 
@@ -72,10 +83,17 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
         <version>${project.version}</version>
-        <configuration>
-          <mainClass>sample.camel.Service3Application</mainClass>
-        </configuration>
         <dependencies>
+          <dependency>
+            <groupId>org.apache.deltaspike.cdictrl</groupId>
+            <artifactId>deltaspike-cdictrl-weld</artifactId>
+            <version>${deltaspike-version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.jboss.weld.se</groupId>
+            <artifactId>weld-se</artifactId>
+            <version>${weld2-version}</version>
+          </dependency>
           <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>

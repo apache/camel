@@ -31,9 +31,9 @@
   <description>An example showing how to trace incoming and outgoing messages from Camel with Zipkin</description>
 
   <modules>
+    <module>client</module>
     <module>service1</module>
     <module>service2</module>
-    <module>service3</module>
   </modules>
 
 </project>
