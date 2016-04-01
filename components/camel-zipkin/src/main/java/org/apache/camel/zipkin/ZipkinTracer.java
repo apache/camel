@@ -102,6 +102,15 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
     public ZipkinTracer() {
     }
 
+    public void init(CamelContext camelContext) {
+        if (!camelContext.getManagementStrategy().getEventNotifiers().contains(this)) {
+            camelContext.getManagementStrategy().addEventNotifier(this);
+        }
+        if (!camelContext.getRoutePolicyFactories().contains(this)) {
+            camelContext.addRoutePolicyFactory(this);
+        }
+    }
+
     public CamelContext getCamelContext() {
         return camelContext;
     }

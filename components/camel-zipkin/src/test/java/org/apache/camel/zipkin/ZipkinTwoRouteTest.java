@@ -39,7 +39,9 @@ public class ZipkinTwoRouteTest extends CamelTestSupport {
         // capture message body as well
         zipkin.setIncludeMessageBody(true);
         zipkin.setSpanCollector(new ZipkinLoggingSpanCollector());
-        context.getManagementStrategy().addEventNotifier(zipkin);
+
+        // attaching ourself to CamelContext
+        zipkin.init(context);
 
         return context;
     }

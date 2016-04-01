@@ -44,8 +44,7 @@ public class ZipkinABCRouteTest extends CamelTestSupport {
         zipkin.setSpanCollector(new ZipkinLoggingSpanCollector());
 
         // attaching ourself to CamelContext
-        context.getManagementStrategy().addEventNotifier(zipkin);
-        context.addRoutePolicyFactory(zipkin);
+        zipkin.init(context);
 
         return context;
     }

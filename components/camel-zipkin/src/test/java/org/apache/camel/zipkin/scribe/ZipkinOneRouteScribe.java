@@ -46,7 +46,9 @@ public class ZipkinOneRouteScribe extends CamelTestSupport {
         zipkin.addClientServiceMapping("seda:cat", "cat");
         zipkin.addServerServiceMapping("seda:cat", "cat");
         zipkin.setSpanCollector(new ScribeSpanCollector(ip, 9410));
-        context.getManagementStrategy().addEventNotifier(zipkin);
+
+        // attaching ourself to CamelContext
+        zipkin.init(context);
 
         return context;
     }

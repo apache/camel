@@ -38,7 +38,9 @@ public class ZipkinSimpleFallbackRouteTest extends CamelTestSupport {
         // we do not want to trace any direct endpoints
         zipkin.addExcludePattern("direct:*");
         zipkin.setSpanCollector(new ZipkinLoggingSpanCollector());
-        context.getManagementStrategy().addEventNotifier(zipkin);
+
+        // attaching ourself to CamelContext
+        zipkin.init(context);
 
         return context;
     }

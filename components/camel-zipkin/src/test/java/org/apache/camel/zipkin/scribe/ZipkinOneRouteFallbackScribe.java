@@ -47,7 +47,9 @@ public class ZipkinOneRouteFallbackScribe extends CamelTestSupport {
         zipkin.addExcludePattern("direct:*");
         zipkin.setIncludeMessageBody(true);
         zipkin.setSpanCollector(new ScribeSpanCollector(ip, 9410));
-        context.getManagementStrategy().addEventNotifier(zipkin);
+
+        // attaching ourself to CamelContext
+        zipkin.init(context);
 
         return context;
     }

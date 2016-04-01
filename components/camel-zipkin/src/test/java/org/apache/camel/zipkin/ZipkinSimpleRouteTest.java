@@ -37,8 +37,8 @@ public class ZipkinSimpleRouteTest extends CamelTestSupport {
         zipkin.setServiceName("dude");
         zipkin.setSpanCollector(new ZipkinLoggingSpanCollector());
 
-        context.addService(zipkin);
-//        context.getManagementStrategy().addEventNotifier(zipkin);
+        // attaching ourself to CamelContext
+        zipkin.init(context);
 
         return context;
     }

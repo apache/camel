@@ -48,8 +48,7 @@ public class ZipkinABCRouteScribe extends CamelTestSupport {
         zipkin.setSpanCollector(new ScribeSpanCollector(ip, 9410));
 
         // attaching ourself to CamelContext
-        context.getManagementStrategy().addEventNotifier(zipkin);
-        context.addRoutePolicyFactory(zipkin);
+        zipkin.init(context);
 
         return context;
     }
