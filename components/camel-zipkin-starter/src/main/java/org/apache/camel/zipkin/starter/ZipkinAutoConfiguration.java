@@ -18,7 +18,7 @@ package org.apache.camel.zipkin.starter;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.zipkin.ZipkinEventNotifier;
+import org.apache.camel.zipkin.ZipkinTracer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,32 +32,32 @@ public class ZipkinAutoConfiguration {
 
     @Bean(initMethod = "", destroyMethod = "")
     // Camel handles the lifecycle of this bean
-    @ConditionalOnMissingBean(ZipkinEventNotifier.class)
-    ZipkinEventNotifier zipkinEventNotifier(CamelContext camelContext,
-                                            ZipkinConfigurationProperties config) {
+    @ConditionalOnMissingBean(ZipkinTracer.class)
+    ZipkinTracer zipkinEventNotifier(CamelContext camelContext,
+                                     ZipkinConfigurationProperties config) {
 
-        ZipkinEventNotifier notifier = new ZipkinEventNotifier();
-        notifier.setHostName(config.getHostName());
-        notifier.setPort(config.getPort());
-        notifier.setRate(config.getRate());
+        ZipkinTracer zipkin = new ZipkinTracer();
+        zipkin.setHostName(config.getHostName());
+        zipkin.setPort(config.getPort());
+        zipkin.setRate(config.getRate());
         if (ObjectHelper.isNotEmpty(config.getServiceName())) {
-            notifier.setServiceName(config.getServiceName());
+            zipkin.setServiceName(config.getServiceName());
         }
         if (config.getExcludePatterns() != null) {
-            notifier.setExcludePatterns(config.getExcludePatterns());
+            zipkin.setExcludePatterns(config.getExcludePatterns());
         }
         if (config.getClientServiceMappings() != null) {
-            notifier.setClientServiceMappings(config.getClientServiceMappings());
+            zipkin.setClientServiceMappings(config.getClientServiceMappings());
         }
         if (config.getServerServiceMappings() != null) {
-            notifier.setServerServiceMappings(config.getServerServiceMappings());
+            zipkin.setServerServiceMappings(config.getServerServiceMappings());
         }
-        notifier.setIncludeMessageBody(config.isIncludeMessageBody());
+        zipkin.setIncludeMessageBody(config.isIncludeMessageBody());
 
         // register the bean into CamelContext
-        camelContext.getManagementStrategy().addEventNotifier(notifier);
+        zipkin.init(camelContext);
 
-        return notifier;
+        return zipkin;
     }
 
 }

@@ -28,7 +28,7 @@ public class Service1Route extends RouteBuilder {
             .removeHeaders("CamelHttp*")
             .convertBodyTo(String.class)
             .delay(simple("${random(1000,2000)}"))
-            .transform(simple("Hello: ${body}"))
+            .transform(simple("Service1: ${body}"))
             .to("http://0.0.0.0:{{service2.port}}/service2");
 
     }

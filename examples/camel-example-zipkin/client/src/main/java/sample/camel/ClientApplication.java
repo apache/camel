@@ -20,20 +20,20 @@ import javax.enterprise.event.Observes;
 
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.management.event.CamelContextStartingEvent;
-import org.apache.camel.zipkin.ZipkinEventNotifier;
+import org.apache.camel.zipkin.ZipkinTracer;
 
 @ContextName("Server1")
 public class ClientApplication {
 
     public void setupCamel(@Observes CamelContextStartingEvent event) {
         // create zipkin
-        ZipkinEventNotifier zipkin = new ZipkinEventNotifier();
+        ZipkinTracer zipkin = new ZipkinTracer();
         zipkin.setHostName("192.168.99.100");
         zipkin.setPort(9410);
         zipkin.addClientServiceMapping("http://localhost:9090/service1", "service1");
 
         // add zipkin to CamelContext
-        event.getContext().getManagementStrategy().addEventNotifier(zipkin);
+        zipkin.init(event.getContext());
     }
 
 }

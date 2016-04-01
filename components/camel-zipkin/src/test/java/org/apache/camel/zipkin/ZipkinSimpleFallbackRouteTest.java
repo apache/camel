@@ -34,9 +34,6 @@ public class ZipkinSimpleFallbackRouteTest extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
 
         zipkin = new ZipkinTracer();
-        // no service so should use fallback naming style
-        // we do not want to trace any direct endpoints
-        zipkin.addExcludePattern("direct:*");
         zipkin.setSpanCollector(new ZipkinLoggingSpanCollector());
 
         // attaching ourself to CamelContext
