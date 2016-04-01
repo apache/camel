@@ -569,7 +569,7 @@
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
     <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
     <wsdl4j-version>1.6.2</wsdl4j-version>
-    <xalan-bundle-version>2.7.2_2</xalan-bundle-version>
+    <xalan-bundle-version>2.7.2_3</xalan-bundle-version>
     <xalan-version>2.7.2</xalan-version>
     <xbean-spring-version>3.18</xbean-spring-version>
     <!-- xbean-asm4-bundle is used by openjpa -->
