@@ -299,10 +299,6 @@ public class HttpProducer extends DefaultProducer {
 
     /**
      * Extracts the response from the method as a InputStream.
-     *
-     * @param httpRequest the method that was executed
-     * @return the response either as a stream, or as a deserialized java object
-     * @throws IOException can be thrown
      */
     protected Object extractResponseBody(HttpRequestBase httpRequest, HttpResponse httpResponse, Exchange exchange, boolean ignoreResponseBody) throws IOException, ClassNotFoundException {
         HttpEntity entity = httpResponse.getEntity();
@@ -323,7 +319,7 @@ public class HttpProducer extends DefaultProducer {
         }
         // Honor the character encoding
         String contentType = null;
-        header = httpRequest.getFirstHeader("content-type");
+        header = httpResponse.getFirstHeader("content-type");
         if (header != null) {
             contentType = header.getValue();
             // find the charset and set it to the Exchange
