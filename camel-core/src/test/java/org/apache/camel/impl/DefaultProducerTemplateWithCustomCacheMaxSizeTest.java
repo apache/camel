@@ -45,6 +45,9 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
             template.sendBody(e, "Hello");
         }
 
+        // the eviction is async so force cleanup
+        template.cleanUp();
+
         assertEquals("Size should be 200", 200, template.getCurrentCacheSize());
         template.stop();
 

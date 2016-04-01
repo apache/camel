@@ -77,8 +77,8 @@ public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     @Override
     protected void doStart() throws Exception {
         endpoint = CamelContextHelper.mandatoryLookup(getCamelContext(), name, Endpoint.class);
-        // add the endpoint as a service so Camel can manage the endpoint and enlist the endpoint in JMX etc.
-        getCamelContext().addService(endpoint);
+        // add the endpoint to the endpoint registry
+        getCamelContext().addEndpoint(endpoint.getEndpointUri(), endpoint);
         super.doStart();
     }
 

@@ -166,7 +166,5 @@ public class DataSetConsumerTest extends ContextTestSupport {
 
         Thread.sleep(100);
         assertMockEndpointsSatisfied();
-
-        System.out.println("Place for Breakpoint");
     }
 }

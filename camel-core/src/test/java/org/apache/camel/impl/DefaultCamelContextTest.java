@@ -351,6 +351,7 @@ public class DefaultCamelContextTest extends TestSupport {
 
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.addService(my);
+        ctx.start();
 
         assertEquals(ctx, my.getCamelContext());
         assertEquals("Started", my.getStatus().name());
