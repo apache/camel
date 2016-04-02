@@ -141,6 +141,8 @@
     * [Google Mail](google-mail.adoc)
     * [Gora](gora.adoc)
     * [Grape](grape.adoc)
+    * [Groovy](groovy.adoc)
+        * [Groovy DSL](groovy-dsl.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
