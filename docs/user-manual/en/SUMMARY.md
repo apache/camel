@@ -138,6 +138,7 @@
     * [Github](github.adoc)
     * [Google Calendar](google-calendar.adoc)
     * [Google Drive](google-drive.adoc)
+    * [Google Mail](google-mail.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
