@@ -47,8 +47,11 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The Guava EventBus component supports 2 options which are listed below.
+
+
 
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
@@ -57,6 +60,7 @@ The Guava EventBus component supports 2 options which are listed below.
 | listenerInterface | Class<?> | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option.
 |=======================================================================
 // component options: END
+
 
 // endpoint options: START
 The Guava EventBus component supports 7 endpoint options which are listed below:
