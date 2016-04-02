@@ -146,6 +146,7 @@
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
+    * [JSON](json.adoc)
     * [Metrics](metrics.adoc)
     * [Mock](mock.adoc)
     * [Properties](properties.adoc)
