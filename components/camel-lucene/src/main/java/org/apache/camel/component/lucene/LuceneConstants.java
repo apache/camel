@@ -19,5 +19,5 @@ package org.apache.camel.component.lucene;
 import org.apache.lucene.util.Version;
 
 public interface LuceneConstants {
-    Version LUCENE_VERSION = Version.LUCENE_5_5_0;
+    Version LUCENE_VERSION = Version.LUCENE_5_4_1;
 }
