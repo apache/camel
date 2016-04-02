@@ -136,6 +136,7 @@
     * [Geocoder](geocoder.adoc)
     * [Git](git.adoc)
     * [Github](github.adoc)
+    * [Google Calendar](google-calendar.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
