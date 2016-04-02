@@ -145,6 +145,7 @@
         * [Groovy DSL](groovy-dsl.adoc)
     * [Guava Eventbus](guava-eventbus.adoc)
     * [Guice](guice.adoc)
+    * [Hawtdb](hawtdb.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
