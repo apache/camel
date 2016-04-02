@@ -143,6 +143,7 @@
     * [Grape](grape.adoc)
     * [Groovy](groovy.adoc)
         * [Groovy DSL](groovy-dsl.adoc)
+    * [Guava Eventbus](guava-eventbus.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
