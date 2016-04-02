@@ -155,6 +155,7 @@ public class RestSwaggerSupport {
                 xml = (String) server.invoke(found, "dumpRestsAsXml", null, null);
             }
             if (xml != null) {
+                LOG.debug("DumpRestAsXml:\n{}", xml);
                 RestsDefinition rests = ModelHelper.createModelFromXml(null, xml, RestsDefinition.class);
                 if (rests != null) {
                     return rests.getRests();
