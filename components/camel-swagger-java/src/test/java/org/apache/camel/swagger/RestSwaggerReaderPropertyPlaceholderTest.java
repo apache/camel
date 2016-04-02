@@ -101,6 +101,8 @@ public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
         assertTrue(json.contains("\"summary\" : \"To update the greeting message\""));
         assertTrue(json.contains("\"/hello/bye/{name}\""));
         assertTrue(json.contains("\"/hello/hi/{name}\""));
+        assertFalse(json.contains("{foo}"));
+        assertFalse(json.contains("{bar}"));
 
         context.stop();
     }

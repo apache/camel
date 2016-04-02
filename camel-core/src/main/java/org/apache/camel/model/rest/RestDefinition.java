@@ -753,17 +753,30 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 allPath = verb.getUri();
             }
 
-            // each {} is a parameter
+            // each {} is a parameter (url templating)
             String[] arr = allPath.split("\\/");
             for (String a : arr) {
+                // need to resolve property placeholders first
+                try {
+                    a = camelContext.resolvePropertyPlaceholders(a);
+                } catch (Exception e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
                 if (a.startsWith("{") && a.endsWith("}")) {
                     String key = a.substring(1, a.length() - 1);
                     //  merge if exists
                     boolean found = false;
                     for (RestOperationParamDefinition param : verb.getParams()) {
                         // name is mandatory
-                        ObjectHelper.notEmpty(param.getName(), "parameter name");
-                        if (param.getName().equalsIgnoreCase(key)) {
+                        String name = param.getName();
+                        ObjectHelper.notEmpty(name, "parameter name");
+                        // need to resolve property placeholders first
+                        try {
+                            name = camelContext.resolvePropertyPlaceholders(name);
+                        } catch (Exception e) {
+                            throw ObjectHelper.wrapRuntimeCamelException(e);
+                        }
+                        if (name.equalsIgnoreCase(key)) {
                             param.type(RestParamType.path);
                             found = true;
                             break;
