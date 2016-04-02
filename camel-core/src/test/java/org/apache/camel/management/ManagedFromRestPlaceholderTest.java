@@ -70,9 +70,9 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
         assertTrue(xml.contains("</rests>"));
 
         assertTrue(xml.contains("<param name=\"header_letter\" type=\"query\" description=\"header param description2\""
-                + " defaultValue=\"b\" required=\"false\" collectionFormat=\"multi\" dataType=\"string\" access=\"acc2\">"));
+                + " defaultValue=\"b\" required=\"false\" collectionFormat=\"multi\" dataType=\"string\">"));
         assertTrue(xml.contains("<param name=\"header_count\" type=\"header\" description=\"header param description1\" "
-                + "defaultValue=\"1\" required=\"true\" dataType=\"integer\" access=\"acc1\">"));
+                + "defaultValue=\"1\" required=\"true\" dataType=\"integer\">"));
         assertTrue(xml.contains("<value>1</value>"));
         assertTrue(xml.contains("<value>a</value>"));
 
@@ -99,10 +99,10 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
                 rest("{{bar}}")
                     .get().consumes("application/json")
                         .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues(Arrays.asList("1", "2", "3", "4"))
-                            .defaultValue("1").name("header_count").required(true).access("acc1")
+                            .defaultValue("1").name("header_count").required(true)
                         .endParam().
                         param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues(Arrays.asList("a", "b", "c", "d"))
-                            .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false).access("acc2")
+                            .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
                         .endParam()
                         .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
                         .to("direct:bye")

@@ -77,8 +77,6 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("header_letter", rest.getVerbs().get(0).getParams().get(1).getName());
         assertEquals(Boolean.TRUE, rest.getVerbs().get(0).getParams().get(0).getRequired());
         assertEquals(Boolean.FALSE, rest.getVerbs().get(0).getParams().get(1).getRequired());
-        assertEquals("acc1", rest.getVerbs().get(0).getParams().get(0).getAccess());
-        assertEquals("acc2", rest.getVerbs().get(0).getParams().get(1).getAccess());
 
         assertEquals("300", rest.getVerbs().get(0).getResponseMsgs().get(0).getCode());
         assertEquals("error", rest.getVerbs().get(0).getResponseMsgs().get(1).getCode());
@@ -111,10 +109,10 @@ public class FromRestGetTest extends ContextTestSupport {
                 rest("/say/bye")
                         .get().consumes("application/json")
                         .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues("1", "2", "3", "4")
-                        .defaultValue("1").name("header_count").required(true).access("acc1")
+                        .defaultValue("1").name("header_count").required(true)
                         .endParam().
                         param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
-                        .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false).access("acc2")
+                        .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
                         .endParam()
                         .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
                         .responseMessage().code("error").message("does not work").endResponseMessage()
