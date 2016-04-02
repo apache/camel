@@ -146,6 +146,7 @@
     * [Guava Eventbus](guava-eventbus.adoc)
     * [Guice](guice.adoc)
     * [Hawtdb](hawtdb.adoc)
+    * [Hazelcast](hazelcast.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
