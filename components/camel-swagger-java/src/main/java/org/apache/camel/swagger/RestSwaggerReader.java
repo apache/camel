@@ -244,6 +244,7 @@ public class RestSwaggerReader {
                 if (parameter != null) {
                     parameter.setName(param.getName());
                     parameter.setDescription(param.getDescription());
+                    parameter.setAccess(param.getAccess());
                     parameter.setRequired(param.getRequired());
 
                     // set type on parameter
