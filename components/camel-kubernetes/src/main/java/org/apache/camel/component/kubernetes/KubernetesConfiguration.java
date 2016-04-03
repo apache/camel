@@ -37,10 +37,10 @@ public class KubernetesConfiguration {
     @UriParam
     private DefaultKubernetesClient kubernetesClient;
 
-    @UriParam
+    @UriParam(label = "security")
     private String username;
 
-    @UriParam
+    @UriParam(label = "security")
     private String password;
 
     @UriParam(label = "producer", enums = "listNamespaces,listNamespacesByLabels,getNamespace,createNamespace,deleteNamespace,listServices,listServicesByLabels,getService,createService,"
@@ -54,34 +54,34 @@ public class KubernetesConfiguration {
     @UriParam
     private String apiVersion;
 
-    @UriParam
+    @UriParam(label = "security")
     private String caCertData;
 
-    @UriParam
+    @UriParam(label = "security")
     private String caCertFile;
 
-    @UriParam
+    @UriParam(label = "security")
     private String clientCertData;
 
-    @UriParam
+    @UriParam(label = "security")
     private String clientCertFile;
 
-    @UriParam
+    @UriParam(label = "security")
     private String clientKeyAlgo;
 
-    @UriParam
+    @UriParam(label = "security")
     private String clientKeyData;
 
-    @UriParam
+    @UriParam(label = "security")
     private String clientKeyFile;
 
-    @UriParam
+    @UriParam(label = "security")
     private String clientKeyPassphrase;
 
-    @UriParam
+    @UriParam(label = "security")
     private String oauthToken;
 
-    @UriParam
+    @UriParam(label = "security")
     private Boolean trustCerts;
 
     @UriParam(label = "consumer")
