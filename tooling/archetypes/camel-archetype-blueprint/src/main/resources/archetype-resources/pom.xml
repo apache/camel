@@ -15,7 +15,8 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -24,7 +25,7 @@
   <version>${version}</version>
   <packaging>jar</packaging>
 
-  <name>Camel Blueprint Route</name>
+  <name>A Camel Blueprint Route</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -122,7 +123,7 @@
         </configuration>
       </plugin>
 
-       <!-- to run the example using mvn camel:run -->
+      <!-- to run the example using mvn camel:run -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
