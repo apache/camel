@@ -21,20 +21,24 @@
 
   <groupId>${groupId}</groupId>
   <artifactId>${artifactId}</artifactId>
-  <packaging>jar</packaging>
   <version>${version}</version>
+  <packaging>jar</packaging>
 
   <name>Camel Blueprint Route</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
     <camel-version>${camel-version}</camel-version>
+
     <slf4j-version>${slf4j-version}</slf4j-version>
     <log4j-version>${log4j-version}</log4j-version>
   </properties>
 
   <dependencies>
+
+    <!-- Camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -46,13 +50,6 @@
       <version>\${camel-version}</version>
     </dependency>
 
-    <!-- Logging -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>\${slf4j-version}</version>
-    </dependency>
-
     <!-- Testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -60,8 +57,6 @@
       <version>\${camel-version}</version>
       <scope>test</scope>
     </dependency>
-
-    <!-- Test Logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
@@ -78,9 +73,9 @@
   </dependencies>
 
   <build>
-    <defaultGoal>install</defaultGoal>
-
     <plugins>
+
+      <!-- compiler plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -99,18 +94,31 @@
         </configuration>
       </plugin>
 
-      <!-- to generate the MANIFEST-FILE of the bundle -->
+      <!-- to generate the MANIFEST.MF of the bundle -->
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <version>${maven-bundle-plugin-version}</version>
-        <extensions>true</extensions>
+        <extensions>false</extensions>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- to include MANIFEST.MF in the bundle -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${maven-jar-plugin-version}</version>
         <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Private-Package>${package}.*</Private-Package>
-            <Import-Package>*</Import-Package>
-          </instructions>
+          <archive>
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
         </configuration>
       </plugin>
 
@@ -120,7 +128,6 @@
         <artifactId>camel-maven-plugin</artifactId>
         <version>\${camel-version}</version>
       </plugin>
-
     </plugins>
   </build>
 
