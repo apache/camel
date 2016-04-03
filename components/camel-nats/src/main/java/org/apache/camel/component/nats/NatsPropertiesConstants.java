@@ -17,7 +17,7 @@
 package org.apache.camel.component.nats;
 
 public interface NatsPropertiesConstants {
-    String NATS_PROPERTY_URI = "uri";
+    String NATS_PROPERTY_URL = "io.nats.client.url";
     String NATS_PROPERTY_VERBOSE = "io.nats.client.verbose";
     String NATS_PROPERTY_PEDANTIC = "io.nats.client.pedantic";
     String NATS_PROPERTY_RECONNECT = "io.nats.client.reconnect.allowed";
