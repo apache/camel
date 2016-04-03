@@ -26,6 +26,7 @@ public class NatsProducerTest extends CamelTestSupport {
     
     @Test
     public void sendTest() throws Exception {
+        
         template.sendBody("direct:send", "pippo");
     }
 

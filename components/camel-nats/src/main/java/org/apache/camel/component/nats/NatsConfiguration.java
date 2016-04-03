@@ -218,12 +218,12 @@ public class NatsConfiguration {
         return props;
     }
 
-    public Properties createSubProperties() {
-        Properties props = new Properties();
-        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_QUEUE, getQueueName());
-        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_MAX_MESSAGES, getMaxMessages());
-        return props;
-    }
+//    public Properties createSubProperties() {
+//        Properties props = new Properties();
+//        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_QUEUE, getQueueName());
+//        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_MAX_MESSAGES, getMaxMessages());
+//        return props;
+//    }
 
     private String splitServers() {
         StringBuilder servers = new StringBuilder();

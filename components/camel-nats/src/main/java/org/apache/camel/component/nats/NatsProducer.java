@@ -18,12 +18,15 @@ package org.apache.camel.component.nats;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.nats.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.nats.client.Connection;
+import io.nats.client.ConnectionFactory;
 
 public class NatsProducer extends DefaultProducer {
     
@@ -64,14 +67,15 @@ public class NatsProducer extends DefaultProducer {
         LOG.debug("Stopping Nats Producer");
         
         LOG.debug("Closing Nats Connection");
-        if (connection != null && connection.isConnected()) {
+        if (connection != null && !connection.isClosed()) {
             connection.close();
         }
     }
 
-    private Connection getConnection() throws IOException, InterruptedException {
+    private Connection getConnection() throws TimeoutException, IOException {
         Properties prop = getEndpoint().getNatsConfiguration().createProperties();
-        connection = Connection.connect(prop);
+        ConnectionFactory factory = new ConnectionFactory(prop);
+        connection = factory.createConnection();
         return connection;
     }
 

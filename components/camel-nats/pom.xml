@@ -34,9 +34,9 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.github.tyagihas</groupId>
-      <artifactId>java_nats</artifactId>
-      <version>${java-nats-version}</version>
+      <groupId>io.nats</groupId>
+      <artifactId>jnats</artifactId>
+      <version>${jnats-version}</version>
     </dependency>
     <!-- testing -->
     <dependency>

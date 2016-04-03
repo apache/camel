@@ -34,7 +34,7 @@ public class NatsConsumerTest extends CamelTestSupport {
     @Test
     public void testConsumer() throws InterruptedException, IOException {
         mockResultEndpoint.expectedMessageCount(1);
-        mockResultEndpoint.expectedBodiesReceived("test");
+        mockResultEndpoint.expectedBodiesReceived("{Subject=test;Reply=null;Payload=<test>}");
         template.requestBody("direct:send", "test");
 
         mockResultEndpoint.assertIsSatisfied();
