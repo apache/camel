@@ -32,31 +32,34 @@ The topic will be created if they don't already exists. +
 URI Options
 ^^^^^^^^^^^
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+
+// component options: START
+The AWS Simple Notification System component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The AWS Simple Notification System component supports 12 endpoint options which are listed below:
+
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
-|Name |Default Value |Context |Description
-
-|amazonSNSClient |`null` |Producer |Reference to a `com.amazonaws.services.sns.AmazonSNS` in the
-link:registry.html[Registry].
-
-|accessKey |`null` |Producer |Amazon AWS Access Key
-
-|secretKey |`null` |Producer |Amazon AWS Secret Key
-
-|subject |`null` |Producer |The subject which is used if the message header 'CamelAwsSnsSubject' is
-not present.
-
-|amazonSNSEndpoint |`null` |Producer |The region with which the AWS-SNS client wants to work with.
-
-|policy |`null` |Producer |*Camel 2.8.4*: The policy for this queue to set in the
-`com.amazonaws.services.sns.model.SetTopicAttributesRequest`.
-
-|proxyHost |`null` |Producer |*Camel 2.16*: Specify a proxy host to be used inside the client
-definition.
-
-|proxyPort |`null` |Producer |*Camel 2.16*: Specify a proxy port to be used inside the client
-definition.
+| Name | Group | Default | Java Type | Description
+| topicName | producer |  | String | *Required* The name of the topic
+| accessKey | producer |  | String | Amazon AWS Access Key
+| amazonSNSClient | producer |  | AmazonSNS | To use the AmazonSNS as the client
+| amazonSNSEndpoint | producer |  | String | The region with which the AWS-SNS client wants to work with.
+| messageStructure | producer |  | String | The message structure to use such as json
+| policy | producer |  | String | The policy for this queue
+| proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
+| proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
+| secretKey | producer |  | String | Amazon AWS Secret Key
+| subject | producer |  | String | The subject which is used if the message header 'CamelAwsSnsSubject' is not present.
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+// endpoint options: END
+
 
 Required SNS component options
 

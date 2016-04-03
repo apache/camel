@@ -31,40 +31,36 @@ The metrics will be created if they don't already exists. +
 [[AWS-CW-URIOptions]]
 URI Options
 ^^^^^^^^^^^
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+
+
+// component options: START
+The AWS CloudWatch component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The AWS CloudWatch component supports 13 endpoint options which are listed below:
+
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
-|Name |Default Value |Context |Description
-
-|amazonCwClient |`null` |Producer |Reference to a `com.amazonaws.services.cloudwatch.AmazonCloudWatch` in
-the link:registry.html[Registry].
-
-|accessKey |`null` |Producer |Amazon AWS Access Key
-
-|secretKey |`null` |Producer |Amazon AWS Secret Key
-
-|name |`null` |Producer |The metric name which is used if the message header
-'CamelAwsCwMetricName' is not present.
-
-|value |`1.0` |Producer |The metric value which is used if the message header
-'CamelAwsCwMetricValue' is not present.
-
-|unit |`Count` |Producer |The metric unit which is used if the message header
-'CamelAwsCwMetricUnit' is not present.
-
-|namespace |`null` |Producer |The metric namespace which is used if the message header
-'CamelAwsCwMetricNamespace' is not present.
-
-|timestamp |`null` |Producer |The metric timestamp which is used if the message header
-'CamelAwsCwMetricTimestamp' is not present.
-
-|amazonCwEndpoint |`null` |Producer |The region with which the AWS-CW client wants to work with.
-
-|proxyHost |`null` |Producer |*Camel 2.16*: Specify a proxy host to be used inside the client
-definition.
-
-|proxyPort |`null` |Producer |*Camel 2.16*: Specify a proxy port to be used inside the client
-definition.
+| Name | Group | Default | Java Type | Description
+| namespace | producer |  | String | *Required* The metric namespace
+| accessKey | producer |  | String | Amazon AWS Access Key
+| amazonCwClient | producer |  | AmazonCloudWatch | To use the AmazonCloudWatch as the client
+| amazonCwEndpoint | producer |  | String | The region with which the AWS-CW client wants to work with.
+| name | producer |  | String | The metric name
+| proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
+| proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
+| secretKey | producer |  | String | Amazon AWS Secret Key
+| timestamp | producer |  | Date | The metric timestamp
+| unit | producer |  | String | The metric unit
+| value | producer |  | Double | The metric value
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+// endpoint options: END
+
 
 Required CW component options
 

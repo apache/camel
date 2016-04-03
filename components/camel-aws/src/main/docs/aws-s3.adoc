@@ -30,6 +30,13 @@ The bucket will be created if it don't already exists. +
 URI Options
 ^^^^^^^^^^^
 
+
+// component options: START
+The AWS S3 Storage Service component has no options.
+// component options: END
+
+
+
 // endpoint options: START
 The AWS S3 Storage Service component supports 38 endpoint options which are listed below:
 
@@ -76,6 +83,7 @@ The AWS S3 Storage Service component supports 38 endpoint options which are list
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
 // endpoint options: END
+
 
 
 |=======================================================================

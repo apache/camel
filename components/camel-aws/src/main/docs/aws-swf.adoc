@@ -29,59 +29,52 @@ You can append query options to the URI in the following format,
 URI Options
 ^^^^^^^^^^^
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+
+// component options: START
+The AWS Simple Workflow component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The AWS Simple Workflow component supports 30 endpoint options which are listed below:
+
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
-|Name |Default Value |Context |Description
-
-|amazonSWClient |`null` |All |A reference to
-a com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient in
-the link:registry.html[Registry].
-
-|accessKey |`null` |All |Amazon AWS Access Key.
-
-|secretKey |`null` |All |Amazon AWS Secret Key.
-
-|sWClient.XXX |`null` |All |Properties to set on AmazonSimpleWorkflowClient in use.
-
-|clientConfiguration.XXX |`null` |All |Properties to set on ClientConfiguration in use.
-
-|startWorkflowOptions.XXX |`null` |Workflow/Producer |Properties to set on useStartWorkflowOptions in use.
-
-|operation |START |Workflow/Producer |The operation to perform on the workflow. Supported operations are:
-SIGNAL, CANCEL, TERMINATE, GET_STATE, START, DESCRIBE, GET_HISTORY.
-
-|domainName |`null` |All |The workflow domain to use.
-
-|activityList |`null` |Activity/Consumer |The list name to consume activities from.
-
-|workflowList |`null` |Workflow/Consumer |The list name to consume workflows from.
-
-|eventName |`null` |All |The workflow or activity event name to use.
-
-|version |`null` |All |The workflow or activity event version to use.
-
-|signalName |`null` |Workflow/Producer|The name of the signal to send to the workflow. 
-
-|childPolicy |`null` |Workflow/Producer |The policy to use on child workflows when terminating a workflow.
-
-|terminationReason |`null` |Workflow/Producer |The reason for terminating a workflow.
-
-|stateResultType |Object |Workflow/Producer |The type of the result when a workflow state is queried.
-
-|terminationDetails |`null` |Workflow/Producer |Details for terminating a workflow.
-
-|dataConverter |`JsonDataConverter` |All |An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter
-to use for serializing/deserializing the data.
-
-|activitySchedulingOptions |`null` |Activity/Producer |An instance of ActivitySchedulingOptions used to specify different
-timeout options.
-
-|activityTypeExecutionOptions |`null` |Activity/Consumer |An instance of ActivityTypeExecutionOptions.
-
-|activityTypeRegistrationOptions |`null` |Activity/Consumer |An instance of ActivityTypeRegistrationOptions.
-
-|workflowTypeRegistrationOptions |`null` |Workflow/Consumer |An instance of WorkflowTypeRegistrationOptions.
+| Name | Group | Default | Java Type | Description
+| type | common |  | String | *Required* Activity or workflow
+| accessKey | common |  | String | Amazon AWS Access Key.
+| amazonSWClient | common |  | AmazonSimpleWorkflowClient | To use the given AmazonSimpleWorkflowClient as client
+| dataConverter | common |  | DataConverter | An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter to use for serializing/deserializing the data.
+| domainName | common |  | String | The workflow domain to use.
+| eventName | common |  | String | The workflow or activity event name to use.
+| secretKey | common |  | String | Amazon AWS Secret Key.
+| version | common |  | String | The workflow or activity event version to use.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| clientConfigurationParameters | advanced |  | Map | To configure the ClientConfiguration using the key/values from the Map.
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| startWorkflowOptionsParameters | advanced |  | Map | To configure the StartWorkflowOptions using the key/values from the Map.
+| sWClientParameters | advanced |  | Map | To configure the AmazonSimpleWorkflowClient using the key/values from the Map.
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| activityList | activity |  | String | The list name to consume activities from.
+| activitySchedulingOptions | activity |  | ActivitySchedulingOptions | Activity scheduling options
+| activityThreadPoolSize | activity | 100 | int | Maximum number of threads in work pool for activity.
+| activityTypeExecutionOptions | activity |  | ActivityTypeExecutionOptions | Activity execution options
+| activityTypeRegistrationOptions | activity |  | ActivityTypeRegistrationOptions | Activity registration options
+| childPolicy | workflow |  | String | The policy to use on child workflows when terminating a workflow.
+| executionStartToCloseTimeout | workflow | 3600 | String | Set the execution start to close timeout.
+| operation | workflow | START | String | Workflow operation
+| signalName | workflow |  | String | The name of the signal to send to the workflow.
+| stateResultType | workflow |  | String | The type of the result when a workflow state is queried.
+| taskStartToCloseTimeout | workflow | 600 | String | Set the task start to close timeout.
+| terminationDetails | workflow |  | String | Details for terminating a workflow.
+| terminationReason | workflow |  | String | The reason for terminating a workflow.
+| workflowList | workflow |  | String | The list name to consume workflows from.
+| workflowTypeRegistrationOptions | workflow |  | WorkflowTypeRegistrationOptions | Workflow registration options
 |=======================================================================
+// endpoint options: END
+
 
 Required SWF component options
 

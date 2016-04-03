@@ -29,29 +29,32 @@ You can append query options to the URI in the following format,
 URI Options
 ^^^^^^^^^^^
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+
+// component options: START
+The AWS EC2 component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The AWS EC2 component supports 10 endpoint options which are listed below:
+
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
-|Name |Default Value |Context |Description
-
-|amazonEc2Client |`null` |Producer |Reference to a com.amazonaws.services.ec2.AmazonEC2Client in the
-link:registry.html[Registry].
-
-|accessKey |`null` |Producer |Amazon AWS Access Key 
-
-|secretKey |`null` |Producer |Amazon AWS Secret Key
-
-|amazonEc2Endpoint |`null` |Producer |The region with which the AWS-EC2 client wants to work with.
-
-|operation |`null` |Producer |Valid values are createAndRunInstances, startInstances, stopInstances,
-terminateInstances, describeInstances, describeInstancesStatus,
-rebootInstances, monitorInstances and unmonitorInstances
-
-|proxyHost |`null` |Producer |*Camel 2.16*: Specify a proxy host to be used inside the client
-definition.
-
-|proxyPort |`null` |Producer |*Camel 2.16*: Specify a proxy port to be used inside the client
-definition.
+| Name | Group | Default | Java Type | Description
+| label | producer |  | String | *Required* Logical name
+| accessKey | producer |  | String | Amazon AWS Access Key
+| amazonEc2Client | producer |  | AmazonEC2Client | To use a existing configured AmazonEC2Client as client
+| amazonEc2Endpoint | producer |  | String | The region with which the AWS-EC2 client wants to work with.
+| operation | producer |  | EC2Operations | *Required* The operation to perform
+| proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
+| proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
+| secretKey | producer |  | String | Amazon AWS Secret Key
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+// endpoint options: END
+
 
 Required EC2 component options
 

@@ -29,38 +29,35 @@ You can append query options to the URI in the following format,
 URI Options
 ^^^^^^^^^^^
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+
+// component options: START
+The AWS Simple Email Service component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The AWS Simple Email Service component supports 13 endpoint options which are listed below:
+
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
-|Name |Default Value |Context |Description
-
-|amazonSESClient |`null` |Producer |Reference to a
-`com.amazonaws.services.simpleemail.AmazonSimpleEmailService` in the
-link:registry.html[Registry].
-
-|accessKey |`null` |Producer |Amazon AWS Access Key
-
-|secretKey |`null` |Producer |Amazon AWS Secret Key
-
-|amazonSESEndpoint |`null` |Producer |The region with which the AWS-SES client wants to work with.
-
-|subject |`null` |Producer |The subject which is used if the message header 'CamelAwsSesSubject' is
-not present.
-
-|to |`null` |Producer |List of destination email address. Can be overriden with 'CamelAwsSesTo'
-header.
-
-|returnPath |`null` |Producer |The email address to which bounce notifications are to be forwarded,
-override it using 'CamelAwsSesReturnPath' header.
-
-|replyToAddresses |`null` |Producer |List of reply-to email address(es) for the message, override it using
-'CamelAwsSesReplyToAddresses' header.
-
-|proxyHost |`null` |Producer |*Camel 2.16*: Specify a proxy host to be used inside the client
-definition.
-
-|proxyPort |`null` |Producer |*Camel 2.16*: Specify a proxy port to be used inside the client
-definition.
+| Name | Group | Default | Java Type | Description
+| from | producer |  | String | *Required* The sender's email address.
+| accessKey | producer |  | String | Amazon AWS Access Key
+| amazonSESClient | producer |  | AmazonSimpleEmailService | To use the AmazonSimpleEmailService as the client
+| amazonSESEndpoint | producer |  | String | The region with which the AWS-SES client wants to work with.
+| proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
+| proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
+| replyToAddresses | producer |  | List | List of reply-to email address(es) for the message override it using 'CamelAwsSesReplyToAddresses' header.
+| returnPath | producer |  | String | The email address to which bounce notifications are to be forwarded override it using 'CamelAwsSesReturnPath' header.
+| secretKey | producer |  | String | Amazon AWS Secret Key
+| subject | producer |  | String | The subject which is used if the message header 'CamelAwsSesSubject' is not present.
+| to | producer |  | List | List of destination email address. Can be overriden with 'CamelAwsSesTo' header.
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+// endpoint options: END
+
 
 Required SES component options
 
