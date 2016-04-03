@@ -96,6 +96,7 @@ public class RestSwaggerReader {
         return swagger;
     }
 
+    // CHECKSTYLE:OFF
     private void parse(Swagger swagger, RestDefinition rest, String camelContextId, ClassResolver classResolver) {
         List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
         // must sort the verbs by uri so we group them together when an uri has multiple operations
@@ -333,6 +334,7 @@ public class RestSwaggerReader {
             swagger.path(opPath, path);
         }
     }
+    // CHECKSTYLE:ON
 
     private Model asModel(String typeName, Swagger swagger) {
         boolean array = typeName.endsWith("[]");
