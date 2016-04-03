@@ -117,13 +117,6 @@ public class PackageModelMojo extends AbstractMojo {
 
             getLog().info("Generated " + outFile + " containing " + models.size() + " Camel models");
 
-            if (projectHelper != null) {
-                List<String> includes = new ArrayList<String>();
-                includes.add("**/model.properties");
-                projectHelper.addResource(this.project, outDir.getPath(), includes, new ArrayList<String>());
-                projectHelper.attachArtifact(this.project, "properties", "camelModel", outFile);
-            }
-
         } catch (IOException e) {
             throw new MojoFailureException("Error writing to file " + outFile);
         }
