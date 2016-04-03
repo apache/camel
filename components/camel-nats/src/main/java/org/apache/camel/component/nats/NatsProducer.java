@@ -20,13 +20,13 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 
+import io.nats.client.Connection;
+import io.nats.client.ConnectionFactory;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.nats.client.Connection;
-import io.nats.client.ConnectionFactory;
 
 public class NatsProducer extends DefaultProducer {
     

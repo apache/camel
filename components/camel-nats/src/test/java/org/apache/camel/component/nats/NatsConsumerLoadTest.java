@@ -17,8 +17,10 @@
 package org.apache.camel.component.nats;
 
 import java.io.IOException;
-import java.util.Properties;
 import java.util.concurrent.TimeoutException;
+
+import io.nats.client.Connection;
+import io.nats.client.ConnectionFactory;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,9 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import io.nats.client.Connection;
-import io.nats.client.ConnectionFactory;
 
 @Ignore("Require a running Nats server")
 public class NatsConsumerLoadTest extends CamelTestSupport {
@@ -54,7 +53,7 @@ public class NatsConsumerLoadTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-            	from("direct:send").to("nats://localhost:4222?topic=test");
+                from("direct:send").to("nats://localhost:4222?topic=test");
                 from("nats://localhost:4222?topic=test").to(mockResultEndpoint);
             }
         };

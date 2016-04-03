@@ -21,18 +21,18 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeoutException;
 
+import io.nats.client.Connection;
+import io.nats.client.ConnectionFactory;
+import io.nats.client.Message;
+import io.nats.client.MessageHandler;
+import io.nats.client.Subscription;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.nats.client.Connection;
-import io.nats.client.ConnectionFactory;
-import io.nats.client.Message;
-import io.nats.client.MessageHandler;
-import io.nats.client.Subscription;
 
 public class NatsConsumer extends DefaultConsumer {
 
@@ -114,11 +114,10 @@ public class NatsConsumer extends DefaultConsumer {
         @Override
         public void run() {
             try {
-            	if (ObjectHelper.isNotEmpty(configuration.getQueueName())) {
+                if (ObjectHelper.isNotEmpty(configuration.getQueueName())) {
                     sid = connection.subscribe(getEndpoint().getNatsConfiguration().getTopic(), getEndpoint().getNatsConfiguration().getQueueName(), new MessageHandler() {
-    					
-    					@Override
-    					public void onMessage(Message msg) {
+                        @Override
+                        public void onMessage(Message msg) {
                             LOG.debug("Received Message: {}", msg);
                             Exchange exchange = getEndpoint().createExchange();
                             exchange.getIn().setBody(msg);
@@ -130,15 +129,14 @@ public class NatsConsumer extends DefaultConsumer {
                                 getExceptionHandler().handleException("Error during processing", exchange, e);
                             }
                         }
-    				});
+                    });
                     if (ObjectHelper.isNotEmpty(getEndpoint().getNatsConfiguration().getMaxMessages())) {
-                    	sid.autoUnsubscribe(Integer.parseInt(getEndpoint().getNatsConfiguration().getMaxMessages()));
+                        sid.autoUnsubscribe(Integer.parseInt(getEndpoint().getNatsConfiguration().getMaxMessages()));
                     }
-            	} else {
+                } else {
                     sid = connection.subscribe(getEndpoint().getNatsConfiguration().getTopic(), new MessageHandler() {
-    					
-    					@Override
-    					public void onMessage(Message msg) {
+                        @Override
+                        public void onMessage(Message msg) {
                             LOG.debug("Received Message: {}", msg);
                             Exchange exchange = getEndpoint().createExchange();
                             exchange.getIn().setBody(msg);
@@ -150,14 +148,14 @@ public class NatsConsumer extends DefaultConsumer {
                                 getExceptionHandler().handleException("Error during processing", exchange, e);
                             }
                         }
-    				});
+                    });
                     if (ObjectHelper.isNotEmpty(getEndpoint().getNatsConfiguration().getMaxMessages())) {
-                    	sid.autoUnsubscribe(Integer.parseInt(getEndpoint().getNatsConfiguration().getMaxMessages()));
+                        sid.autoUnsubscribe(Integer.parseInt(getEndpoint().getNatsConfiguration().getMaxMessages()));
                     }    
-            	}
-                } catch (Throwable e) {
-                    getExceptionHandler().handleException("Error during processing", e);
                 }
+            } catch (Throwable e) {
+                getExceptionHandler().handleException("Error during processing", e);
+            }
         }
     }
 
