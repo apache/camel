@@ -255,17 +255,6 @@
         <include>org.apache.camel:camel-commands-jolokia</include>
         <include>org.apache.camel:camel-commands-spring-boot</include>
         <include>org.apache.camel.karaf:camel-karaf-commands</include>
-        <!-- this jar is mandatory -->
-        <include>org.slf4j:slf4j-api</include>
-      </includes>
-    </dependencySet>
-    <!-- this is needed for the jasypt tooling -->
-    <dependencySet>
-      <outputDirectory>/lib/optional</outputDirectory>
-      <unpack>false</unpack>
-      <scope>runtime</scope>
-      <includes>
-        <include>org.jasypt:jasypt</include>
       </includes>
     </dependencySet>
   </dependencySets>

@@ -39,6 +39,7 @@
       <excludes>
         <!-- disable build, IDEA and Eclipse files -->
         <exclude>**/*.i??</exclude>
+        <exclude>**/.idea/**</exclude>
         <exclude>**/eclipse-classes/**</exclude>
         <exclude>**/.project</exclude>
         <exclude>**/.classpath</exclude>
