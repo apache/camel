@@ -153,6 +153,7 @@
     * [JSON](json.adoc)
     * [Metrics](metrics.adoc)
     * [Mock](mock.adoc)
+    * [NATS](nats.adoc)
     * [Properties](properties.adoc)
     * [Quickfix](quickfix.adoc)
     * [SJMS](sjms.adoc)
