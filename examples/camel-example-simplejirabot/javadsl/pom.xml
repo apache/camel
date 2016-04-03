@@ -15,16 +15,19 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>camel-example-simplejirabot</artifactId>
-        <groupId>org.apache.camel</groupId>
-        <version>2.18-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <artifactId>camel-example-simplejirabot-javadsl</artifactId>
-    <name>Camel :: Example :: Simple Jira Bot :: Java DSL</name>
-    <packaging>jar</packaging>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>camel-example-simplejirabot</artifactId>
+    <groupId>org.apache.camel</groupId>
+    <version>2.18-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>camel-example-simplejirabot-javadsl</artifactId>
+  <name>Camel :: Example :: Simple Jira Bot :: Java DSL</name>
+  <packaging>jar</packaging>
 
 </project>

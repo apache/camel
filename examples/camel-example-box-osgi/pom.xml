@@ -15,57 +15,58 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.apache.camel</groupId>
-		<artifactId>examples</artifactId>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>examples</artifactId>
     <version>2.18-SNAPSHOT</version>
-	</parent>
+  </parent>
 
-	<artifactId>camel-example-box-osgi</artifactId>
-	<name>Camel :: Example :: Box :: OSGI</name>
-	<description>An example which use a Box Endpoint in OSGi</description>
-	<packaging>jar</packaging>
+  <artifactId>camel-example-box-osgi</artifactId>
+  <name>Camel :: Example :: Box :: OSGI</name>
+  <description>An example which use a Box Endpoint in OSGi</description>
+  <packaging>jar</packaging>
 
-	<properties>
-		<camel.osgi.export.pkg>
-     	  org.apache.camel.example*
-	    </camel.osgi.export.pkg>
-	</properties>
+  <properties>
+    <camel.osgi.export.pkg>
+      org.apache.camel.example*
+    </camel.osgi.export.pkg>
+  </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-box</artifactId>
-		</dependency>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-box</artifactId>
+    </dependency>
 
-		<!-- logging -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-		</dependency>
-		<!-- test -->
-		<dependency>
-		    <groupId>org.apache.camel</groupId>
-		    <artifactId>camel-test-spring</artifactId>
-		    <scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    <!-- test -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-spring</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>

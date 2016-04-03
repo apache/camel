@@ -15,105 +15,106 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>examples</artifactId>
-        <version>2.18-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>examples</artifactId>
+    <version>2.18-SNAPSHOT</version>
+  </parent>
 
-    <artifactId>camel-example-reportincident</artifactId>
-    <name>Camel :: Example :: Report Incident</name>
-    <description>An example based on real life use case for reporting incidents using webservice that are transformed
-        and send as emails to a backing system
-    </description>
-    <packaging>war</packaging>
-    
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-core</artifactId>
-		</dependency>
+  <artifactId>camel-example-reportincident</artifactId>
+  <name>Camel :: Example :: Report Incident</name>
+  <description>An example based on real life use case for reporting incidents using webservice that are transformed
+    and send as emails to a backing system
+  </description>
+  <packaging>war</packaging>
 
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring</artifactId>
-		</dependency>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
 
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-cxf</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+    </dependency>
 
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-velocity</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-cxf</artifactId>
+    </dependency>
 
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-mail</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-velocity</artifactId>
+    </dependency>
 
-        <!-- we make use of spring ContextLoaderListener to launch Camel -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mail</artifactId>
+    </dependency>
+
+    <!-- we make use of spring ContextLoaderListener to launch Camel -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- mock mail server so we do not send an email for real -->
     <dependency>
-        <groupId>org.jvnet.mock-javamail</groupId>
-        <artifactId>mock-javamail</artifactId>
-        <version>${mock-javamail-version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-          </exclusion>
-        </exclusions>
-        <scope>test</scope>
+      <groupId>org.jvnet.mock-javamail</groupId>
+      <artifactId>mock-javamail</artifactId>
+      <version>${mock-javamail-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.mail</groupId>
+          <artifactId>mail</artifactId>
+        </exclusion>
+      </exclusions>
+      <scope>test</scope>
     </dependency>
 
-		<!-- cxf -->
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxws</artifactId>
-			<version>${cxf-version}</version>
-		</dependency>
+    <!-- cxf -->
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-jaxws</artifactId>
+      <version>${cxf-version}</version>
+    </dependency>
 
-        <!-- regular http transport -->
-	    <dependency>
-		    <groupId>org.apache.cxf</groupId>
-		    <artifactId>cxf-rt-transports-http</artifactId>
-		    <version>${cxf-version}</version>
-	    </dependency>
+    <!-- regular http transport -->
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-transports-http</artifactId>
+      <version>${cxf-version}</version>
+    </dependency>
 
-		<!-- logging -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-		</dependency>
+    <!-- logging -->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
     </dependency>
 
     <!-- cxf web container for unit testing -->
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-transports-http-jetty</artifactId>
-			<version>${cxf-version}</version>
-		</dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-transports-http-jetty</artifactId>
+      <version>${cxf-version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -121,54 +122,54 @@
       <scope>test</scope>
     </dependency>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-	</dependencies>
+  </dependencies>
 
-    <build>
-        <plugins>
-            <!-- CXF wsdl2java generator, will plugin to the compile goal -->
-            <plugin>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-codegen-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-sources</id>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
-                            <wsdlOptions>
-                                <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/etc/report_incident.wsdl</wsdl>
-                                </wsdlOption>
-                            </wsdlOptions>
-                        </configuration>
-                        <goals>
-                            <goal>wsdl2java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+  <build>
+    <plugins>
+      <!-- CXF wsdl2java generator, will plugin to the compile goal -->
+      <plugin>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-codegen-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
+              <wsdlOptions>
+                <wsdlOption>
+                  <wsdl>${basedir}/src/main/resources/etc/report_incident.wsdl</wsdl>
+                </wsdlOption>
+              </wsdlOptions>
+            </configuration>
+            <goals>
+              <goal>wsdl2java</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
-            <!-- so we can run mvn jetty:run -->
-            <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty-plugin-version}</version>
-                <configuration>
-                   <connectors>
-                      <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                        <port>9080</port>
-                        <maxIdleTime>60000</maxIdleTime>
-                      </connector>
-                   </connectors>                   
-                </configuration>
-            </plugin>
+      <!-- so we can run mvn jetty:run -->
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty-plugin-version}</version>
+        <configuration>
+          <connectors>
+            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+              <port>9080</port>
+              <maxIdleTime>60000</maxIdleTime>
+            </connector>
+          </connectors>
+        </configuration>
+      </plugin>
 
-        </plugins>
-    </build>
+    </plugins>
+  </build>
 </project>

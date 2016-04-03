@@ -15,65 +15,66 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>examples</artifactId>
-        <version>2.18-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>examples</artifactId>
+    <version>2.18-SNAPSHOT</version>
+  </parent>
 
-    <artifactId>camel-example-servlet-tomcat-no-spring</artifactId>
-    <name>Camel :: Example :: Servlet Tomcat without Spring</name>
-    <description>An example using Camel Servlet with Apache Tomcat without using Spring</description>
-    <packaging>war</packaging>
+  <artifactId>camel-example-servlet-tomcat-no-spring</artifactId>
+  <name>Camel :: Example :: Servlet Tomcat without Spring</name>
+  <description>An example using Camel Servlet with Apache Tomcat without using Spring</description>
+  <packaging>war</packaging>
 
-    <dependencies>
+  <dependencies>
 
-        <!-- camel -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-        </dependency>
-        <!-- we need servletlistener to bootstrap Camel -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-servletlistener</artifactId>
-        </dependency>
-        <!-- we use the servlet component in the Camel application -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-servlet</artifactId>
-        </dependency>
+    <!-- camel -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
+    <!-- we need servletlistener to bootstrap Camel -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-servletlistener</artifactId>
+    </dependency>
+    <!-- we use the servlet component in the Camel application -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-servlet</artifactId>
+    </dependency>
 
-        <!-- logging -->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
+    <!-- logging -->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
 
-    </dependencies>
-    
-    <build>
-      <plugins>
-        <!-- allows running this example with mvn jetty:run -->
-         <plugin>
-             <groupId>org.eclipse.jetty</groupId>
-             <artifactId>jetty-maven-plugin</artifactId>
-             <version>${jetty9-version}</version>
-                <configuration>
-                	<webApp>
-                		<contextPath>/${project.artifactId}</contextPath>
-                	</webApp>
-                </configuration>
-         </plugin>
-      </plugins>
-    </build>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- allows running this example with mvn jetty:run -->
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty9-version}</version>
+        <configuration>
+          <webApp>
+            <contextPath>/${project.artifactId}</contextPath>
+          </webApp>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
