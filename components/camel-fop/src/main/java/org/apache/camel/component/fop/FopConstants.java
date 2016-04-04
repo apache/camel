@@ -19,5 +19,6 @@ package org.apache.camel.component.fop;
 public interface FopConstants {
     String CAMEL_FOP_RENDER = "CamelFop.Render.";
     String CAMEL_FOP_ENCRYPT = "CamelFop.Encrypt.";
+    String CAMEL_FOP_RENDERER_OPTIONS = "CamelFop.RendererOptions.";
     String CAMEL_FOP_OUTPUT_FORMAT = "CamelFop.Output.Format";
 }
