@@ -21,7 +21,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
@@ -79,7 +78,7 @@ public final class CxfPayloadConverter {
         }
         return new CxfPayload<T>(headers, body);
     }
-    
+
     @Converter
     public static <T> CxfPayload<T> sourceToCxfPayload(Source src, Exchange exchange) {
         List<T> headers = new ArrayList<T>();
@@ -92,21 +91,21 @@ public final class CxfPayloadConverter {
     public static <T> NodeList cxfPayloadToNodeList(CxfPayload<T> payload, Exchange exchange) {
         return new NodeListWrapper(payload.getBody());
     }
-    
+
     @Converter
     public static <T> Node cxfPayLoadToNode(CxfPayload<T> payload, Exchange exchange) {
         List<Element> payloadBodyElements = payload.getBody();
-        
+
         if (payloadBodyElements.size() > 0) {
             return payloadBodyElements.get(0);
         }
         return null;
     }
-    
+
     @Converter
     public static <T> Source cxfPayLoadToSource(CxfPayload<T> payload, Exchange exchange) {
         List<Source> payloadBody = payload.getBodySources();
-        
+
         if (payloadBody.size() > 0) {
             return payloadBody.get(0);
         }
@@ -128,15 +127,15 @@ public final class CxfPayloadConverter {
                 Source src = null;
                 // many of the common format that can have a Source created directly
                 if (value instanceof InputStream) {
-                    src = new StreamSource((InputStream)value);
+                    src = new StreamSource((InputStream) value);
                 } else if (value instanceof Reader) {
-                    src = new StreamSource((Reader)value);
+                    src = new StreamSource((Reader) value);
                 } else if (value instanceof String) {
-                    src = new StreamSource(new StringReader((String)value));                    
+                    src = new StreamSource(new StringReader((String) value));
                 } else if (value instanceof Node) {
-                    src = new DOMSource((Node)value);
+                    src = new DOMSource((Node) value);
                 } else if (value instanceof Source) {
-                    src = (Source)value;
+                    src = (Source) value;
                 }
                 if (src == null) {
                     // assuming staxsource is preferred, otherwise use the one preferred
@@ -179,8 +178,8 @@ public final class CxfPayloadConverter {
         // Convert a CxfPayload into something else
         if (CxfPayload.class.isAssignableFrom(value.getClass())) {
             CxfPayload<?> payload = (CxfPayload<?>) value;
-            
-            if (payload.getBodySources().size() == 1) {
+            int size = payload.getBodySources().size();
+            if (size == 1) {
                 if (type.isAssignableFrom(Document.class)) {
                     Source s = payload.getBodySources().get(0);
                     Document d;
@@ -205,16 +204,16 @@ public final class CxfPayloadConverter {
                         } else if (s instanceof StAXSource) {
                             r = ((StAXSource) s).getXMLStreamReader();
                         }
-                        if (r != null) { 
+                        if (r != null) {
                             s = new StAXSource(new DelegatingXMLStreamReader(r, payload.getNsMap()));
                         }
                     }
                     T t = tc.convertTo(type, s);
                     return t;
-                }                
+                }
             }
             TypeConverter tc = registry.lookup(type, NodeList.class);
-            if (tc != null) { 
+            if (tc != null) {
                 Object result = tc.convertTo(type, cxfPayloadToNodeList((CxfPayload<?>) value, exchange));
                 if (result == null) {
                     // no we could not do it currently, and we just abort the convert here
@@ -222,7 +221,7 @@ public final class CxfPayloadConverter {
                 } else {
                     return (T) result;
                 }
-                
+
             }
             // we cannot convert a node list, so we try the first item from the
             // node list
@@ -233,6 +232,11 @@ public final class CxfPayloadConverter {
                     return tc.convertTo(type, nodeList.item(0));
                 } else {
                     // no we could not do it currently
+                    return (T) Void.TYPE;
+                }
+            } else {
+                if (size == 0) {
+                    // empty size so we cannot convert
                     return (T) Void.TYPE;
                 }
             }
