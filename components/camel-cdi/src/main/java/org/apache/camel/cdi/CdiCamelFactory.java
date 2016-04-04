@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.Set;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
@@ -49,20 +50,38 @@ final class CdiCamelFactory {
         return selectContext(ip, instance, extension).getTypeConverter();
     }
 
-    @Uri("")
     @Produces
+    @Default @Uri("")
     // Qualifiers are dynamically added in CdiCamelExtension
     private static ProducerTemplate producerTemplate(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
         Uri uri = CdiSpiHelper.getQualifierByType(ip, Uri.class);
+        if (uri != null) {
+            return producerTemplateFromUri(ip, instance, extension, uri);
+        } else {
+            return defaultProducerTemplate(ip, instance, extension);
+        }
+    }
+
+    private static ProducerTemplate producerTemplateFromUri(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension, Uri uri) {
         try {
-            CamelContext context = uri.context().isEmpty() ? selectContext(ip, instance, extension) : selectContext(uri.context(), instance);
+            CamelContext context = uri.context().isEmpty()
+                ? selectContext(ip, instance, extension)
+                : selectContext(uri.context(), instance);
             ProducerTemplate producerTemplate = context.createProducerTemplate();
-            // FIXME: avoid NPE caused by missing @Uri qualifier when injection point is @ContextName qualified
             Endpoint endpoint = context.getEndpoint(uri.value(), Endpoint.class);
             producerTemplate.setDefaultEndpoint(endpoint);
             return producerTemplate;
         } catch (Exception cause) {
             throw new InjectionException("Error injecting producer template annotated with " + uri + " into " + ip, cause);
+        }
+    }
+
+    private static ProducerTemplate defaultProducerTemplate(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
+        try {
+            CamelContext context = selectContext(ip, instance, extension);
+            return context.createProducerTemplate();
+        } catch (Exception cause) {
+            throw new InjectionException("Error injecting producer template into " + ip, cause);
         }
     }
 
