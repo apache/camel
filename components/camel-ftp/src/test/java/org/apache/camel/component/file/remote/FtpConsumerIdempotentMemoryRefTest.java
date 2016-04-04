@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -57,7 +55,7 @@ public class FtpConsumerIdempotentMemoryRefTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello E", "e.txt");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matches(5, TimeUnit.SECONDS));
+        assertTrue(notify.matchesMockWaitTime());
 
         assertEquals(5, repo.getCache().size());
         assertTrue(repo.contains("a.txt"));
@@ -79,7 +77,7 @@ public class FtpConsumerIdempotentMemoryRefTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello G", "g.txt");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matches(5, TimeUnit.SECONDS));
+        assertTrue(notify.matchesMockWaitTime());
 
         assertEquals(5, repo.getCache().size());
     }
