@@ -114,7 +114,7 @@ final class CdiCamelFactory {
 
     // Maintained for backward compatibility reason though this is redundant with @Uri
     // see https://issues.apache.org/jira/browse/CAMEL-5553?focusedCommentId=13445936&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-13445936
-    @Mock("")
+    @Mock
     @Produces
     @Typed(MockEndpoint.class)
     // Qualifiers are dynamically added in CdiCamelExtension
