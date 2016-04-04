@@ -55,7 +55,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private int serverAliveCountMax = 1;
     @UriParam(label = "producer,advanced")
     private String chmod;
-    // comma separated list of ciphers. 
+    // comma separated list of ciphers.
     // null means default jsch list will be used
     @UriParam(label = "security")
     private String ciphers;
@@ -65,7 +65,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private String preferredAuthentications;
     @UriParam(defaultValue = "WARN")
     private LoggingLevel jschLoggingLevel = LoggingLevel.WARN;
-    @UriParam(label="advanced", description="Specifies how many requests may be outstanding at any one time.")
+    @UriParam(label = "advanced")
     private Integer bulkRequests;
 
     public SftpConfiguration() {
@@ -255,7 +255,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     public void setPreferredAuthentications(String pAuthentications) {
         this.preferredAuthentications = pAuthentications;
     }
-    
+
     public String getPreferredAuthentications() {
         return preferredAuthentications;
     }
@@ -271,16 +271,16 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     public void setJschLoggingLevel(LoggingLevel jschLoggingLevel) {
         this.jschLoggingLevel = jschLoggingLevel;
     }
-    
+
     /**
      * Specifies how many requests may be outstanding at any one time. Increasing this value may
      * slightly improve file transfer speed but will increase memory usage.
      */
     public void setBulkRequests(Integer bulkRequests) {
-		this.bulkRequests = bulkRequests;
-	}
-    
+        this.bulkRequests = bulkRequests;
+    }
+
     public Integer getBulkRequests() {
-		return bulkRequests;
-	}
+        return bulkRequests;
+    }
 }
