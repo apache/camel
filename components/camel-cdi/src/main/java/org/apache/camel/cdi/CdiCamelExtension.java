@@ -55,6 +55,7 @@ import org.apache.camel.BeanInject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consume;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Converter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -157,6 +158,10 @@ public class CdiCamelExtension implements Extension {
         producerBeans.put(ppm.getAnnotatedProducerMethod().getJavaMember(), ppm.getBean());
     }
 
+    private void consumerTemplateBeans(@Observes ProcessProducerMethod<ConsumerTemplate, CdiCamelFactory> ppm) {
+        producerBeans.put(ppm.getAnnotatedProducerMethod().getJavaMember(), ppm.getBean());
+    }
+
     private void producerTemplateBeans(@Observes ProcessProducerMethod<ProducerTemplate, CdiCamelFactory> ppm) {
         producerBeans.put(ppm.getAnnotatedProducerMethod().getJavaMember(), ppm.getBean());
     }
@@ -169,7 +174,9 @@ public class CdiCamelExtension implements Extension {
                 continue;
             }
             Class<?> type = CdiSpiHelper.getRawType(am.getBaseType());
-            if (Endpoint.class.isAssignableFrom(type) || ProducerTemplate.class.equals(type)) {
+            if (Endpoint.class.isAssignableFrom(type)
+                || ConsumerTemplate.class.equals(type)
+                || ProducerTemplate.class.equals(type)) {
                 Set<Annotation> qualifiers = CdiSpiHelper.getQualifiers(am, manager);
                 producerQualifiers.put(am.getJavaMember(), qualifiers);
                 Set<Annotation> annotations = new HashSet<>(am.getAnnotations());
@@ -237,7 +244,9 @@ public class CdiCamelExtension implements Extension {
                     qualifiers.addAll(ip.getQualifiers());
                 }
             } else {
-                if (Endpoint.class.isAssignableFrom(type) || ProducerTemplate.class.isAssignableFrom(type)) {
+                if (Endpoint.class.isAssignableFrom(type)
+                    || ConsumerTemplate.class.equals(type)
+                    || ProducerTemplate.class.equals(type)) {
                     qualifiers.addAll(CdiSpiHelper.excludeElementOfTypes(contextQualifiers, Default.class, Named.class));
                 }
             }

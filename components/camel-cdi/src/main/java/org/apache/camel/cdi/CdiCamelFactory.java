@@ -38,6 +38,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.util.TypeLiteral;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverter;
@@ -48,6 +49,12 @@ final class CdiCamelFactory {
     @Produces
     private static TypeConverter typeConverter(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
         return selectContext(ip, instance, extension).getTypeConverter();
+    }
+
+    @Produces
+    // Qualifiers are dynamically added in CdiCamelExtension
+    private static ConsumerTemplate consumerTemplate(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
+        return selectContext(ip, instance, extension).createConsumerTemplate();
     }
 
     @Produces
