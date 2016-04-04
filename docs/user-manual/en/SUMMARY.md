@@ -148,6 +148,7 @@
     * [Hawtdb](hawtdb.adoc)
     * [Hazelcast](hazelcast.adoc)
     * [Hbase](hbase.adoc)
+    * [HDFS](hdfs.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
