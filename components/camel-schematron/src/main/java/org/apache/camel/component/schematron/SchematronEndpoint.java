@@ -126,14 +126,14 @@ public class SchematronEndpoint extends DefaultEndpoint {
 
         if (rules == null) {
             try {
-                // Attempt to read the schematron rules  from the class path first.
+                // Attempt to read the schematron rules from the class path first.
                 LOG.debug("Reading schematron rules from class path {}", path);
                 InputStream schRules = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), path);
                 rules = TemplatesFactory.newInstance().getTemplates(schRules, transformerFactory);
             } catch (Exception classPathException) {
                 // Attempts from the file system.
                 LOG.debug("Error loading schematron rules from class path, attempting file system {}", path);
-                try{
+                try {
                     InputStream schRules = FileUtils.openInputStream(new File(path));
                     rules = TemplatesFactory.newInstance().getTemplates(schRules, transformerFactory);
                 } catch (FileNotFoundException e) {
