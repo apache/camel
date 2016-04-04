@@ -65,6 +65,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private String preferredAuthentications;
     @UriParam(defaultValue = "WARN")
     private LoggingLevel jschLoggingLevel = LoggingLevel.WARN;
+    @UriParam(label="advanced", description="Specifies how many requests may be outstanding at any one time.")
+    private Integer bulkRequests;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -269,4 +271,16 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     public void setJschLoggingLevel(LoggingLevel jschLoggingLevel) {
         this.jschLoggingLevel = jschLoggingLevel;
     }
+    
+    /**
+     * Specifies how many requests may be outstanding at any one time. Increasing this value may
+     * slightly improve file transfer speed but will increase memory usage.
+     */
+    public void setBulkRequests(Integer bulkRequests) {
+		this.bulkRequests = bulkRequests;
+	}
+    
+    public Integer getBulkRequests() {
+		return bulkRequests;
+	}
 }
