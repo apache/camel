@@ -92,11 +92,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
             if (abort) {
                 exchange.setException(new RejectedExecutionException());
             }
-
             LOG.trace("{} routing exchange {} ", abort ? "Aborted" : "Rejected", exchange);
-            // we should not continue routing, and no redelivery should be performed
-            exchange.setProperty(Exchange.ROUTE_STOP, true);
-            exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, true);
 
             if (shutdown.get()) {
                 exchange.setException(new RejectedExecutionException("ThreadsProcessor is not running."));
