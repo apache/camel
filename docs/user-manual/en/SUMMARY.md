@@ -147,6 +147,7 @@
     * [Guice](guice.adoc)
     * [Hawtdb](hawtdb.adoc)
     * [Hazelcast](hazelcast.adoc)
+    * [Hbase](hbase.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
