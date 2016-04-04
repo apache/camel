@@ -165,23 +165,23 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         
         return true;
     }
-    
+
     private void configureBulkRequests() {
-    	try {
-    		tryConfigureBulkRequests();
-    	} catch (JSchException e) {
-    		throw new GenericFileOperationFailedException("Failed to configure number of bulk requests", e);
-    	}
+        try {
+            tryConfigureBulkRequests();
+        } catch (JSchException e) {
+            throw new GenericFileOperationFailedException("Failed to configure number of bulk requests", e);
+        }
     }
-    
+
     private void tryConfigureBulkRequests() throws JSchException {
-    	Integer bulkRequests = endpoint.getConfiguration().getBulkRequests();
-    	
-    	if (bulkRequests != null) {
-    		LOG.trace("configuring channel to use up to {} bulk request(s)", bulkRequests);
-    		
-    		channel.setBulkRequests(bulkRequests);
-    	}
+        Integer bulkRequests = endpoint.getConfiguration().getBulkRequests();
+
+        if (bulkRequests != null) {
+            LOG.trace("configuring channel to use up to {} bulk request(s)", bulkRequests);
+
+            channel.setBulkRequests(bulkRequests);
+        }
     }
 
     protected Session createSession(final RemoteFileConfiguration configuration) throws JSchException {
