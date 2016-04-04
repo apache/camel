@@ -104,7 +104,9 @@ final class CdiCamelFactory {
     private static MockEndpoint mockEndpointFromUri(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
         Uri uri = CdiSpiHelper.getQualifierByType(ip, Uri.class);
         try {
-            CamelContext context = uri.context().isEmpty() ? selectContext(ip, instance, extension) : selectContext(uri.context(), instance);
+            CamelContext context = uri.context().isEmpty()
+                ? selectContext(ip, instance, extension)
+                : selectContext(uri.context(), instance);
             return context.getEndpoint(uri.value(), MockEndpoint.class);
         } catch (Exception cause) {
             throw new InjectionException("Error injecting mock endpoint annotated with " + uri
@@ -121,7 +123,9 @@ final class CdiCamelFactory {
     private static MockEndpoint createMockEndpoint(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
         Mock mock = CdiSpiHelper.getQualifierByType(ip, Mock.class);
         try {
-            CamelContext context = mock.context().isEmpty() ? selectContext(ip, instance, extension) : selectContext(mock.context(), instance);
+            CamelContext context = mock.context().isEmpty()
+                ? selectContext(ip, instance, extension)
+                : selectContext(mock.context(), instance);
             return context.getEndpoint(mock.value(), MockEndpoint.class);
         } catch (Exception cause) {
             throw new InjectionException("Error injecting mock endpoint annotated with " + mock + " into " + ip, cause);
@@ -134,7 +138,9 @@ final class CdiCamelFactory {
     private static Endpoint endpoint(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
         Uri uri = CdiSpiHelper.getQualifierByType(ip, Uri.class);
         try {
-            CamelContext context = uri.context().isEmpty() ? selectContext(ip, instance, extension) : selectContext(uri.context(), instance);
+            CamelContext context = uri.context().isEmpty()
+                ? selectContext(ip, instance, extension)
+                : selectContext(uri.context(), instance);
             return context.getEndpoint(uri.value(), Endpoint.class);
         } catch (Exception cause) {
             throw new InjectionException("Error injecting endpoint annotated with " + uri + " into " + ip, cause);
