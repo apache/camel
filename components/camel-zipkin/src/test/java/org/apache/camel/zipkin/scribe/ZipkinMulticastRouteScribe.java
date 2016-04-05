@@ -36,7 +36,7 @@ import org.junit.Test;
  * Adjust the IP address to what IP docker-machines have assigned, you can use
  * <tt>docker-machines ls</tt>
  */
-public class ZipkinABCRouteScribe extends CamelTestSupport {
+public class ZipkinMulticastRouteScribe extends CamelTestSupport {
 
     private String ip = "192.168.99.100";
     private ZipkinTracer zipkin;
@@ -79,9 +79,10 @@ public class ZipkinABCRouteScribe extends CamelTestSupport {
 
                 from("seda:a").routeId("a")
                     .log("routing at ${routeId}")
-                    .to("seda:b")
-                    .delay(2000)
-                    .to("seda:c")
+                    .multicast()
+                        .to("seda:b")
+                        .to("seda:c")
+                    .end()
                     .log("End of routing");
 
                 from("seda:b").routeId("b")

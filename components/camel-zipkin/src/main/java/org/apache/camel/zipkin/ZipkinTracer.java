@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,7 +58,7 @@ import org.apache.camel.util.ServiceHelper;
 import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
 
 /**
- * To use zipkin with Camel then setup this {@link org.apache.camel.spi.EventNotifier} in your Camel application.
+ * To use zipkin with Camel then setup this {@link ZipkinTracer} in your Camel application.
  * <p/>
  * Events (span) are captured for incoming and outgoing messages being sent to/from Camel.
  * This means you need to configure which which Camel endpoints that maps to zipkin service names.
@@ -82,6 +82,10 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
  *     <li>ZIPKIN_COLLECTOR_SERVICE_HOST - The hostname</li>
  *     <li>ZIPKIN_COLLECTOR_SERVICE_PORT - The port number</li>
  * </ul>
+ * <p/>
+ * This class is implemented as both an {@link org.apache.camel.spi.EventNotifier} and {@link RoutePolicy} that allows
+ * to trap when Camel starts/ends an {@link Exchange} being routed using the {@link RoutePolicy} and during the routing
+ * if the {@link Exchange} sends messages, then we track them using the {@link org.apache.camel.spi.EventNotifier}.
  */
 @ManagedResource(description = "Managing ZipkinTracer")
 public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, RoutePolicyFactory, StatefulService, CamelContextAware {
@@ -450,6 +454,9 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
 
     @Override
     public void notify(EventObject event) throws Exception {
+        // use event notifier to track events when Camel messages to endpoints
+        // these events corresponds to Zipkin client events
+
         // client events
         if (event instanceof ExchangeSendingEvent) {
             ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
@@ -534,7 +541,7 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
         }
     }
 
-    private void serverRequest(Brave brave, String serviceName, Exchange exchange) {
+    private ServerSpan serverRequest(Brave brave, String serviceName, Exchange exchange) {
         ServerSpanThreadBinder serverBinder = brave.serverSpanThreadBinder();
 
         // reuse existing span if we do multiple requests from the same
@@ -572,6 +579,8 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
             }
             log.debug("serverRequest [service={}, traceId={}, spanId={}, parentId={}]", serviceName, traceId, spanId, parentId);
         }
+
+        return span;
     }
 
     private void serverResponse(Brave brave, String serviceName, Exchange exchange) {
@@ -644,6 +653,9 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
 
     @Override
     public void onExchangeBegin(Route route, Exchange exchange) {
+        // use route policy to track events when Camel a Camel route begins/end the lifecycle of an Exchange
+        // these events corresponds to Zipkin server events
+
         if (hasZipkinTraceId(exchange)) {
             String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
             Brave brave = getBrave(serviceName);

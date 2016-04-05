@@ -14,31 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.zipkin.scribe;
+package org.apache.camel.zipkin;
 
 import java.util.concurrent.TimeUnit;
 
-import com.github.kristofa.brave.scribe.ScribeSpanCollector;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.zipkin.ZipkinLoggingSpanCollector;
-import org.apache.camel.zipkin.ZipkinTracer;
 import org.junit.Test;
 
-/**
- * Integration test requires running Zipkin/Scribe running
- *
- * The easiest way is to run using zipkin-docker: https://github.com/openzipkin/docker-zipkin
- *
- * Adjust the IP address to what IP docker-machines have assigned, you can use
- * <tt>docker-machines ls</tt>
- */
-public class ZipkinABCRouteScribe extends CamelTestSupport {
+public class ZipkinRecipientListRouteTest extends CamelTestSupport {
 
-    private String ip = "192.168.99.100";
     private ZipkinTracer zipkin;
 
     @Override
@@ -53,7 +41,7 @@ public class ZipkinABCRouteScribe extends CamelTestSupport {
         zipkin.addServerServiceMapping("seda:a", "a");
         zipkin.addServerServiceMapping("seda:b", "b");
         zipkin.addServerServiceMapping("seda:c", "c");
-        zipkin.setSpanCollector(new ScribeSpanCollector(ip, 9410));
+        zipkin.setSpanCollector(new ZipkinLoggingSpanCollector());
 
         // attaching ourself to CamelContext
         zipkin.init(context);
@@ -79,9 +67,7 @@ public class ZipkinABCRouteScribe extends CamelTestSupport {
 
                 from("seda:a").routeId("a")
                     .log("routing at ${routeId}")
-                    .to("seda:b")
-                    .delay(2000)
-                    .to("seda:c")
+                    .recipientList(constant("seda:b,seda:c"))
                     .log("End of routing");
 
                 from("seda:b").routeId("b")
