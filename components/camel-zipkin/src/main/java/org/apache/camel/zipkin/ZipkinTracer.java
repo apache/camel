@@ -50,6 +50,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -270,6 +271,8 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
 
     /**
      * Whether to include message bodies that are stream based in the zipkin traces.
+     * <p/>
+     * This requires enabling <a href="http://camel.apache.org/stream-caching.html">stream caching</a> on the routes or globally on the CamelContext.
      * <p/>
      * This is not recommended for production usage, or when having big payloads. You can limit the size by
      * configuring the <a href="http://camel.apache.org/how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.html">max debug log size</a>.
@@ -686,15 +689,29 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
                 serverRequest(brave, serviceName, exchange);
             }
         }
+
+        // add on completion after the route is done, but before the consumer writes the response
+        // this allows us to track the zipkin event before returning the response which is the right time
+        exchange.addOnCompletion(new SynchronizationAdapter() {
+            @Override
+            public void onAfterRoute(Route route, Exchange exchange) {
+                String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
+                Brave brave = getBrave(serviceName);
+                if (brave != null) {
+                    serverResponse(brave, serviceName, exchange);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "ZipkinTracerOnCompletion";
+            }
+        });
     }
 
     @Override
     public void onExchangeDone(Route route, Exchange exchange) {
-        String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
-        Brave brave = getBrave(serviceName);
-        if (brave != null) {
-            serverResponse(brave, serviceName, exchange);
-        }
+        // noop
     }
 
     @Override

@@ -18,6 +18,9 @@ package org.apache.camel.zipkin;
 
 import com.github.kristofa.brave.IdConversion;
 import com.github.kristofa.brave.SpanId;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
 
 /**
  * Helper class.
@@ -32,6 +35,31 @@ public final class ZipkinHelper {
             return SpanId.create(IdConversion.convertToLong(traceId), IdConversion.convertToLong(spanId), IdConversion.convertToLong(parentSpanId));
         }
         return SpanId.create(IdConversion.convertToLong(traceId), IdConversion.convertToLong(spanId), null);
+    }
+
+    public static StreamCache prepareBodyForLogging(Exchange exchange, boolean streams) {
+        if (!streams) {
+            // no need to prepare if streams is not enabled
+            return null;
+        }
+
+        Message message = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        // check if body is already cached
+        Object body = message.getBody();
+        if (body == null) {
+            return null;
+        } else if (body instanceof StreamCache) {
+            StreamCache sc = (StreamCache) body;
+            // reset so the cache is ready to be used before processing
+            sc.reset();
+            return sc;
+        }
+        // cache the body and if we could do that replace it as the new body
+        StreamCache sc = exchange.getContext().getStreamCachingStrategy().cache(exchange);
+        if (sc != null) {
+            message.setBody(sc);
+        }
+        return sc;
     }
 
 }

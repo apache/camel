@@ -23,10 +23,11 @@ public class ClientRoute extends RouteBuilder {
     @Override
     public void configure() {
         // you can configure the route rule with Java DSL here
-        from("timer:trigger?exchangePattern=InOut&period=30s")
+        from("timer:trigger?exchangePattern=InOut&period=30s").streamCaching()
             .bean("counterBean")
+            .log(" Client request: ${body}")
             .to("http://localhost:9090/service1")
-            .log("Result: ${body}");
+            .log("Client response: ${body}");
     }
 
 }

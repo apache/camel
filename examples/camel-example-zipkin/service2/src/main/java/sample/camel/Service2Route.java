@@ -37,10 +37,11 @@ public class Service2Route extends RouteBuilder {
         // add zipkin to CamelContext
         zipkin.init(getContext());
 
-        from("undertow:http://0.0.0.0:7070/service2").routeId("service2")
-                .convertBodyTo(String.class)
+        from("undertow:http://0.0.0.0:7070/service2").routeId("service2").streamCaching()
+                .log(" Service2 request: ${body}")
                 .delay(simple("${random(1000,2000)}"))
-                .transform(simple("Service2: ${body}"));
+                .transform(simple("Service2-${body}"))
+                .log("Service2 response: ${body}");
     }
 
 }

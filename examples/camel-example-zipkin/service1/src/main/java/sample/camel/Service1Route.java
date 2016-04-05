@@ -24,13 +24,13 @@ public class Service1Route extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("jetty:http://0.0.0.0:{{service1.port}}/service1").routeId("service1")
+        from("jetty:http://0.0.0.0:{{service1.port}}/service1").routeId("service1").streamCaching()
             .removeHeaders("CamelHttp*")
-            .convertBodyTo(String.class)
+            .log("Service1 request: ${body}")
             .delay(simple("${random(1000,2000)}"))
-            .transform(simple("Service1: ${body}"))
-            .to("http://0.0.0.0:{{service2.port}}/service2");
-
+            .transform(simple("Service1-${body}"))
+            .to("http://0.0.0.0:{{service2.port}}/service2")
+            .log("Service1 response: ${body}");
     }
 
 }
