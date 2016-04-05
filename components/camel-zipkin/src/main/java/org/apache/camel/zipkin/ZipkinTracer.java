@@ -500,20 +500,17 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
         clientBinder.setCurrentSpan(null);
         serverBinder.setCurrentSpan(null);
 
-        if (log.isDebugEnabled()) {
-            String traceId = "<null>";
-            if (span != null) {
-                traceId = "" + span.getTrace_id();
+        if (span != null && log.isDebugEnabled()) {
+            String traceId = "" + span.getTrace_id();
+            String spanId = "" + span.getId();
+            String parentId = span.getParent_id() != null ? "" + span.getParent_id() : null;
+            if (log.isDebugEnabled()) {
+                if (parentId != null) {
+                    log.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+                } else {
+                    log.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
+                }
             }
-            String spanId = "<null>";
-            if (span != null) {
-                spanId = "" + span.getId();
-            }
-            String parentId = "<null>";
-            if (span != null) {
-                parentId = "" + span.getParent_id();
-            }
-            log.debug("clientRequest [service={}, traceId={}, spanId={}, parentId={}]", serviceName, traceId, spanId, parentId);
         }
     }
 
@@ -535,8 +532,14 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
             if (log.isDebugEnabled()) {
                 String traceId = "" + span.getTrace_id();
                 String spanId = "" + span.getId();
-                String parentId = "" + span.getParent_id();
-                log.debug("clientResponse[service={}, traceId={}, spanId={}, parentId={}]", serviceName, traceId, spanId, parentId);
+                String parentId = span.getParent_id() != null ? "" + span.getParent_id() : null;
+                if (log.isDebugEnabled()) {
+                    if (parentId != null) {
+                        log.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+                    } else {
+                        log.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
+                    }
+                }
             }
         }
     }
@@ -564,20 +567,17 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
         // and reset binder
         serverBinder.setCurrentSpan(null);
 
-        if (log.isDebugEnabled()) {
-            String traceId = "<null>";
-            if (span.getSpan() != null) {
-                traceId = "" + span.getSpan().getTrace_id();
+        if (span != null && span.getSpan() != null && log.isDebugEnabled()) {
+            String traceId = "" + span.getSpan().getTrace_id();
+            String spanId = "" + span.getSpan().getId();
+            String parentId = span.getSpan().getParent_id() != null ? "" + span.getSpan().getParent_id() : null;
+            if (log.isDebugEnabled()) {
+                if (parentId != null) {
+                    log.debug(String.format("serverRequest [service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+                } else {
+                    log.debug(String.format("serverRequest [service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
+                }
             }
-            String spanId = "<null>";
-            if (span.getSpan() != null) {
-                spanId = "" + span.getSpan().getId();
-            }
-            String parentId = "<null>";
-            if (span.getSpan() != null) {
-                parentId = "" + span.getSpan().getParent_id();
-            }
-            log.debug("serverRequest [service={}, traceId={}, spanId={}, parentId={}]", serviceName, traceId, spanId, parentId);
         }
 
         return span;
@@ -598,20 +598,17 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
             // and reset binder
             serverBinder.setCurrentSpan(null);
 
-            if (log.isDebugEnabled()) {
-                String traceId = "<null>";
-                if (span.getSpan() != null) {
-                    traceId = "" + span.getSpan().getTrace_id();
+            if (span.getSpan() != null && log.isDebugEnabled()) {
+                String traceId = "" + span.getSpan().getTrace_id();
+                String spanId = "" + span.getSpan().getId();
+                String parentId = span.getSpan().getParent_id() != null ? "" + span.getSpan().getParent_id() : null;
+                if (log.isDebugEnabled()) {
+                    if (parentId != null) {
+                        log.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+                    } else {
+                        log.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
+                    }
                 }
-                String spanId = "<null>";
-                if (span.getSpan() != null) {
-                    spanId = "" + span.getSpan().getId();
-                }
-                String parentId = "<null>";
-                if (span.getSpan() != null) {
-                    parentId = "" + span.getSpan().getParent_id();
-                }
-                log.debug("serverResponse[service={}, traceId={}, spanId={}, parentId={}]", serviceName, traceId, spanId, parentId);
             }
         }
     }
