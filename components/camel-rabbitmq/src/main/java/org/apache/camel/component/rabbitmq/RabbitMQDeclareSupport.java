@@ -45,7 +45,9 @@ public class RabbitMQDeclareSupport {
     }
 
     private void declareAndBindExchangeWithQueue(final Channel channel) throws IOException {
-        declareExchange(channel, endpoint.getExchangeName(), endpoint.getExchangeType(), resolvedExchangeArguments());
+      if(shouldDeclareExchange()){  
+          declareExchange(channel, endpoint.getExchangeName(), endpoint.getExchangeType(), resolvedExchangeArguments());
+      }
 
         if (shouldDeclareQueue()) {
             // need to make sure the queueDeclare is same with the exchange declare
@@ -79,6 +81,10 @@ public class RabbitMQDeclareSupport {
 
     private boolean shouldDeclareQueue() {
         return !endpoint.isSkipQueueDeclare() && endpoint.getQueue() != null;
+    }
+    
+    private boolean shouldDeclareExchange() {
+        return !endpoint.isSkipExchangeDeclare();
     }
 
     private void populateQueueArgumentsFromConfigurer(final Map<String, Object> queueArgs) {

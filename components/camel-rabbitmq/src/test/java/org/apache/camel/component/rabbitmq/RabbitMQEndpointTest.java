@@ -254,4 +254,10 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?skipQueueDeclare=true", RabbitMQEndpoint.class);
         assertTrue(endpoint.isSkipQueueDeclare());
     }
+    
+    @Test
+    public void createEndpointWithSkipExchangeDeclareEnabled() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?skipExchangeDeclare=true", RabbitMQEndpoint.class);
+        assertTrue(endpoint.isSkipExchangeDeclare());
+    }
 }

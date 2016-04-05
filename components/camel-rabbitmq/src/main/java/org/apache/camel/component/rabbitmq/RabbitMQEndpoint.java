@@ -80,6 +80,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     @UriParam(label = "producer")
     private boolean skipQueueDeclare;
     @UriParam
+    private boolean skipExchangeDeclare;
+    @UriParam
     private Address[] addresses;
     @UriParam(defaultValue = "" + ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT;
@@ -402,6 +404,18 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
 
     public boolean isSkipQueueDeclare() {
         return skipQueueDeclare;
+    }
+    
+    /**
+     * If true the producer will not declare the exchange.
+     * This can be used if we need to declare the queue but not the exchange
+     */
+    public void setSkipExchangeDeclare(boolean skipExchangeDeclare) {
+        this.skipExchangeDeclare = skipExchangeDeclare;
+    }
+
+    public boolean isSkipExchangeDeclare() {
+        return skipExchangeDeclare;
     }
 
     /**
