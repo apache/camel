@@ -80,8 +80,9 @@ public final class ZipkinClientRequestAdapter implements ClientRequestAdapter {
         KeyValueAnnotation key3 = KeyValueAnnotation.create("camel.client.exchange.pattern", exchange.getPattern().name());
 
         KeyValueAnnotation key4 = null;
-        if (eventNotifier.isIncludeMessageBody()) {
-            String body = MessageHelper.extractBodyForLogging(exchange.hasOut() ? exchange.getOut() : exchange.getIn(), "");
+        if (eventNotifier.isIncludeMessageBody() || eventNotifier.isIncludeMessageBodyStreams()) {
+            boolean streams = eventNotifier.isIncludeMessageBodyStreams();
+            String body = MessageHelper.extractBodyForLogging(exchange.hasOut() ? exchange.getOut() : exchange.getIn(), "", streams, streams);
             key4 = KeyValueAnnotation.create("camel.client.exchange.message.request.body", body);
         }
 

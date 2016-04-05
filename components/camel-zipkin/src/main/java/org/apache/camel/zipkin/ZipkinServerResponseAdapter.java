@@ -54,8 +54,9 @@ public class ZipkinServerResponseAdapter implements ServerResponseAdapter {
         if (exchange.getException() != null) {
             String message = exchange.getException().getMessage();
             key4 = KeyValueAnnotation.create("camel.server.exchange.failure", message);
-        } else if (eventNotifier.isIncludeMessageBody()) {
-            String body = MessageHelper.extractBodyForLogging(exchange.hasOut() ? exchange.getOut() : exchange.getIn(), "");
+        } else if (eventNotifier.isIncludeMessageBody() || eventNotifier.isIncludeMessageBodyStreams()) {
+            boolean streams = eventNotifier.isIncludeMessageBodyStreams();
+            String body = MessageHelper.extractBodyForLogging(exchange.hasOut() ? exchange.getOut() : exchange.getIn(), "", streams, streams);
             key4 = KeyValueAnnotation.create("camel.server.exchange.message.response.body", body);
         }
 

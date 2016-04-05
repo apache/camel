@@ -87,7 +87,7 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
  * to trap when Camel starts/ends an {@link Exchange} being routed using the {@link RoutePolicy} and during the routing
  * if the {@link Exchange} sends messages, then we track them using the {@link org.apache.camel.spi.EventNotifier}.
  */
-@ManagedResource(description = "Managing ZipkinTracer")
+@ManagedResource(description = "ZipkinTracer")
 public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, RoutePolicyFactory, StatefulService, CamelContextAware {
 
     private final Map<String, Brave> braves = new HashMap<>();
@@ -102,10 +102,14 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
     private Map<String, String> serverServiceMappings = new HashMap<>();
     private Set<String> excludePatterns = new HashSet<>();
     private boolean includeMessageBody;
+    private boolean includeMessageBodyStreams;
 
     public ZipkinTracer() {
     }
 
+    /**
+     * Registers this {@link ZipkinTracer} on the {@link CamelContext}.
+     */
     public void init(CamelContext camelContext) {
         if (!camelContext.getManagementStrategy().getEventNotifiers().contains(this)) {
             camelContext.getManagementStrategy().addEventNotifier(this);
@@ -123,6 +127,7 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
         this.camelContext = camelContext;
     }
 
+    @ManagedAttribute(description = "The hostname for the remote zipkin server to use.")
     public String getHostName() {
         return hostName;
     }
@@ -134,6 +139,7 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
         this.hostName = hostName;
     }
 
+    @ManagedAttribute(description = "The port number for the remote zipkin server to use.")
     public int getPort() {
         return port;
     }
@@ -145,6 +151,7 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
         this.port = port;
     }
 
+    @ManagedAttribute(description = "Rates how many events should be traced by zipkin. The rate is expressed as a percentage (1.0f = 100%, 0.5f is 50%, 0.1f is 10%).")
     public float getRate() {
         return rate;
     }
@@ -247,10 +254,29 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
      * <p/>
      * This is not recommended for production usage, or when having big payloads. You can limit the size by
      * configuring the <a href="http://camel.apache.org/how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.html">max debug log size</a>.
+     * <p/>
+     * By default message bodies that are stream based are <b>not</b> included. You can use the option {@link #setIncludeMessageBodyStreams(boolean)} to
+     * turn that on.
      */
     @ManagedAttribute(description = "Whether to include the Camel message body in the zipkin traces")
     public void setIncludeMessageBody(boolean includeMessageBody) {
         this.includeMessageBody = includeMessageBody;
+    }
+
+    @ManagedAttribute(description = "Whether to include stream based Camel message bodies in the zipkin traces")
+    public boolean isIncludeMessageBodyStreams() {
+        return includeMessageBodyStreams;
+    }
+
+    /**
+     * Whether to include message bodies that are stream based in the zipkin traces.
+     * <p/>
+     * This is not recommended for production usage, or when having big payloads. You can limit the size by
+     * configuring the <a href="http://camel.apache.org/how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.html">max debug log size</a>.
+     */
+    @ManagedAttribute(description = "Whether to include stream based Camel message bodies in the zipkin traces")
+    public void setIncludeMessageBodyStreams(boolean includeMessageBodyStreams) {
+        this.includeMessageBodyStreams = includeMessageBodyStreams;
     }
 
     @Override
@@ -277,8 +303,8 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
 
         ObjectHelper.notNull(spanCollector, "SpanCollector", this);
 
-        if (clientServiceMappings.isEmpty()) {
-            log.warn("No service name(s) has been configured. Camel will fallback and use endpoint uris as service names.");
+        if (clientServiceMappings.isEmpty() && serverServiceMappings.isEmpty()) {
+            log.warn("No service name(s) has been mapped in clientServiceMappings or serverServiceMappings. Camel will fallback and use endpoint uris as service names.");
             useFallbackServiceNames = true;
         }
 

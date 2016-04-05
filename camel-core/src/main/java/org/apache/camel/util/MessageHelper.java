@@ -213,7 +213,23 @@ public final class MessageHelper {
                 streams = message.getExchange().getContext().getTypeConverter().convertTo(Boolean.class, message.getExchange(), property);
             }
         }
+        return extractBodyForLogging(message, prepend, streams, false);
+    }
 
+    /**
+     * Extracts the body for logging purpose.
+     * <p/>
+     * Will clip the body if its too big for logging.
+     *
+     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
+     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param message the message
+     * @param prepend a message to prepend
+     * @param allowStreams whether or not streams is allowed
+     * @param allowFiles whether or not files is allowed (currently not in use)
+     * @return the logging message
+     */
+    public static String extractBodyForLogging(Message message, String prepend, boolean allowStreams, boolean allowFiles) {
         // default to 1000 chars
         int maxChars = 1000;
 
@@ -224,7 +240,7 @@ public final class MessageHelper {
             }
         }
 
-        return extractBodyForLogging(message, prepend, streams, false, maxChars);
+        return extractBodyForLogging(message, prepend, allowStreams, allowFiles, maxChars);
     }
 
     /**
