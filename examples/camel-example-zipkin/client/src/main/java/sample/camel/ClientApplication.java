@@ -31,8 +31,12 @@ public class ClientApplication {
         zipkin.setHostName("192.168.99.100");
         zipkin.setPort(9410);
         zipkin.addClientServiceMapping("http://localhost:9090/service1", "service1");
+        // capture 100% of all the events
+        zipkin.setRate(1.0f);
+        // include message bodies in the traces (not recommended for production)
+        zipkin.setIncludeMessageBodyStreams(true);
 
-        // add zipkin to CamelContext
+        // register zipkin to CamelContext
         zipkin.init(event.getContext());
     }
 

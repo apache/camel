@@ -49,6 +49,14 @@ public class ZipkinConfigurationProperties {
     private boolean includeMessageBody;
 
     /**
+     * Whether to include message bodies that are stream based in the zipkin traces.
+     *
+     * This is not recommended for production usage, or when having big payloads.
+     * You can limit the size by configuring camel.springboot.log-debug-max-chars option.
+     */
+    private boolean includeMessageBodyStreams;
+
+    /**
      * To use a global service name that matches all Camel events
      */
     private String serviceName;
@@ -102,6 +110,14 @@ public class ZipkinConfigurationProperties {
 
     public void setIncludeMessageBody(boolean includeMessageBody) {
         this.includeMessageBody = includeMessageBody;
+    }
+
+    public boolean isIncludeMessageBodyStreams() {
+        return includeMessageBodyStreams;
+    }
+
+    public void setIncludeMessageBodyStreams(boolean includeMessageBodyStreams) {
+        this.includeMessageBodyStreams = includeMessageBodyStreams;
     }
 
     public String getServiceName() {

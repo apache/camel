@@ -53,6 +53,7 @@ public class ZipkinAutoConfiguration {
             zipkin.setServerServiceMappings(config.getServerServiceMappings());
         }
         zipkin.setIncludeMessageBody(config.isIncludeMessageBody());
+        zipkin.setIncludeMessageBodyStreams(config.isIncludeMessageBodyStreams());
 
         // register the bean into CamelContext
         zipkin.init(camelContext);
