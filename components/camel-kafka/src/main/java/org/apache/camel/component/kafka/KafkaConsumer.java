@@ -26,6 +26,7 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.common.errors.InterruptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,8 +128,17 @@ public class KafkaConsumer extends DefaultConsumer {
                 }
                 LOG.debug("Unsubscribing {} from topic {}", threadId, topicName);
                 consumer.unsubscribe();
+                LOG.debug("Closing {} ", threadId);
+                consumer.close();
+            } catch (InterruptException e) {
+                getExceptionHandler().handleException("Interrupted while consuming " + threadId + " from kafka topic", e);
+                consumer.unsubscribe();
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
                 getExceptionHandler().handleException("Error consuming " + threadId + " from kafka topic", e);
+            } finally {
+                LOG.debug("Closing {} ", threadId);
+                consumer.close();
             }
         }
 
