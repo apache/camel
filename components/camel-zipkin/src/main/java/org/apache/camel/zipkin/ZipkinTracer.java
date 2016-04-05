@@ -36,7 +36,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
-import org.apache.camel.StatefulService;
+import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.properties.ServiceHostPropertiesFunction;
@@ -50,16 +50,20 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
 
 /**
- * To use zipkin with Camel then setup this {@link ZipkinTracer} in your Camel application.
+ * To use Zipkin with Camel then setup this {@link ZipkinTracer} in your Camel application.
  * <p/>
  * Events (span) are captured for incoming and outgoing messages being sent to/from Camel.
  * This means you need to configure which which Camel endpoints that maps to zipkin service names.
@@ -89,8 +93,10 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
  * if the {@link Exchange} sends messages, then we track them using the {@link org.apache.camel.spi.EventNotifier}.
  */
 @ManagedResource(description = "ZipkinTracer")
-public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, RoutePolicyFactory, StatefulService, CamelContextAware {
+public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, StaticService, CamelContextAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ZipkinTracer.class);
+    private final ZipkinEventNotifier eventNotifier = new ZipkinEventNotifier();
     private final Map<String, Brave> braves = new HashMap<>();
     private transient boolean useFallbackServiceNames;
 
@@ -108,15 +114,22 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
     public ZipkinTracer() {
     }
 
+
+    @Override
+    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
+        return new ZipkinRoutePolicy(routeId);
+    }
+
     /**
      * Registers this {@link ZipkinTracer} on the {@link CamelContext}.
      */
     public void init(CamelContext camelContext) {
-        if (!camelContext.getManagementStrategy().getEventNotifiers().contains(this)) {
-            camelContext.getManagementStrategy().addEventNotifier(this);
-        }
-        if (!camelContext.getRoutePolicyFactories().contains(this)) {
-            camelContext.addRoutePolicyFactory(this);
+        if (!camelContext.hasService(this)) {
+            try {
+                camelContext.addService(this, true);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
         }
     }
 
@@ -284,20 +297,23 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
         ObjectHelper.notNull(camelContext, "CamelContext", this);
+
+        camelContext.getManagementStrategy().addEventNotifier(eventNotifier);
+        if (!camelContext.getRoutePolicyFactories().contains(this)) {
+            camelContext.addRoutePolicyFactory(this);
+        }
 
         if (spanCollector == null) {
             if (hostName != null && port > 0) {
-                log.info("Configuring Zipkin ScribeSpanCollector using host: {} and port: {}", hostName, port);
+                LOG.info("Configuring Zipkin ScribeSpanCollector using host: {} and port: {}", hostName, port);
                 spanCollector = new ScribeSpanCollector(hostName, port);
             } else {
                 // is there a zipkin service setup as ENV variable to auto register a scribe span collector
                 String host = new ServiceHostPropertiesFunction().apply("zipkin-collector");
                 String port = new ServicePortPropertiesFunction().apply("zipkin-collector");
                 if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
-                    log.info("Auto-configuring Zipkin ScribeSpanCollector using host: {} and port: {}", host, port);
+                    LOG.info("Auto-configuring Zipkin ScribeSpanCollector using host: {} and port: {}", host, port);
                     int num = camelContext.getTypeConverter().mandatoryConvertTo(Integer.class, port);
                     spanCollector = new ScribeSpanCollector(host, num);
                 }
@@ -307,7 +323,7 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
         ObjectHelper.notNull(spanCollector, "SpanCollector", this);
 
         if (clientServiceMappings.isEmpty() && serverServiceMappings.isEmpty()) {
-            log.warn("No service name(s) has been mapped in clientServiceMappings or serverServiceMappings. Camel will fallback and use endpoint uris as service names.");
+            LOG.warn("No service name(s) has been mapped in clientServiceMappings or serverServiceMappings. Camel will fallback and use endpoint uris as service names.");
             useFallbackServiceNames = true;
         }
 
@@ -328,8 +344,6 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
-
         // stop and close collector
         ServiceHelper.stopAndShutdownService(spanCollector);
         if (spanCollector instanceof Closeable) {
@@ -338,17 +352,8 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
 
         braves.clear();
 
-        camelContext.getManagementStrategy().removeEventNotifier(this);
+        camelContext.getManagementStrategy().removeEventNotifier(eventNotifier);
         camelContext.getRoutePolicyFactories().remove(this);
-    }
-
-    @Override
-    public boolean isEnabled(EventObject event) {
-        return event instanceof ExchangeSendingEvent
-                || event instanceof ExchangeSentEvent
-                || event instanceof ExchangeCreatedEvent
-                || event instanceof ExchangeCompletedEvent
-                || event instanceof ExchangeFailedEvent;
     }
 
     private String getServiceName(Exchange exchange, Endpoint endpoint, boolean server, boolean client) {
@@ -436,13 +441,13 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
                     return null;
                 }
             }
-            if (log.isTraceEnabled() && key != null) {
-                log.trace("Using serviceName: {} as fallback", key);
+            if (LOG.isTraceEnabled() && key != null) {
+                LOG.trace("Using serviceName: {} as fallback", key);
             }
             return key;
         } else {
-            if (log.isTraceEnabled() && answer != null) {
-                log.trace("Using serviceName: {}", answer);
+            if (LOG.isTraceEnabled() && answer != null) {
+                LOG.trace("Using serviceName: {}", answer);
             }
             return answer;
         }
@@ -467,7 +472,7 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
             brave = braves.get(serviceName);
 
             if (brave == null && useFallbackServiceNames) {
-                log.debug("Creating Brave assigned to serviceName: {}", serviceName + " as fallback");
+                LOG.debug("Creating Brave assigned to serviceName: {}", serviceName + " as fallback");
                 Brave.Builder builder = new Brave.Builder(serviceName);
                 builder = builder.traceSampler(Sampler.create(rate));
                 if (spanCollector != null) {
@@ -479,29 +484,6 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
         }
 
         return brave;
-    }
-
-    @Override
-    public void notify(EventObject event) throws Exception {
-        // use event notifier to track events when Camel messages to endpoints
-        // these events corresponds to Zipkin client events
-
-        // client events
-        if (event instanceof ExchangeSendingEvent) {
-            ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
-            String serviceName = getServiceName(ese.getExchange(), ese.getEndpoint(), false, true);
-            Brave brave = getBrave(serviceName);
-            if (brave != null) {
-                clientRequest(brave, serviceName, ese);
-            }
-        } else if (event instanceof ExchangeSentEvent) {
-            ExchangeSentEvent ese = (ExchangeSentEvent) event;
-            String serviceName = getServiceName(ese.getExchange(), ese.getEndpoint(), false, true);
-            Brave brave = getBrave(serviceName);
-            if (brave != null) {
-                clientResponse(brave, serviceName, ese);
-            }
-        }
     }
 
     private void clientRequest(Brave brave, String serviceName, ExchangeSendingEvent event) {
@@ -529,15 +511,15 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
         clientBinder.setCurrentSpan(null);
         serverBinder.setCurrentSpan(null);
 
-        if (span != null && log.isDebugEnabled()) {
+        if (span != null && LOG.isDebugEnabled()) {
             String traceId = "" + span.getTrace_id();
             String spanId = "" + span.getId();
             String parentId = span.getParent_id() != null ? "" + span.getParent_id() : null;
-            if (log.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 if (parentId != null) {
-                    log.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+                    LOG.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
                 } else {
-                    log.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
+                    LOG.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
                 }
             }
         }
@@ -558,15 +540,15 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
             // and reset binder
             clientBinder.setCurrentSpan(null);
 
-            if (log.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 String traceId = "" + span.getTrace_id();
                 String spanId = "" + span.getId();
                 String parentId = span.getParent_id() != null ? "" + span.getParent_id() : null;
-                if (log.isDebugEnabled()) {
+                if (LOG.isDebugEnabled()) {
                     if (parentId != null) {
-                        log.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+                        LOG.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
                     } else {
-                        log.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
+                        LOG.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
                     }
                 }
             }
@@ -596,15 +578,15 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
         // and reset binder
         serverBinder.setCurrentSpan(null);
 
-        if (span != null && span.getSpan() != null && log.isDebugEnabled()) {
+        if (span != null && span.getSpan() != null && LOG.isDebugEnabled()) {
             String traceId = "" + span.getSpan().getTrace_id();
             String spanId = "" + span.getSpan().getId();
             String parentId = span.getSpan().getParent_id() != null ? "" + span.getSpan().getParent_id() : null;
-            if (log.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 if (parentId != null) {
-                    log.debug(String.format("serverRequest [service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+                    LOG.debug(String.format("serverRequest [service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
                 } else {
-                    log.debug(String.format("serverRequest [service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
+                    LOG.debug(String.format("serverRequest [service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
                 }
             }
         }
@@ -627,15 +609,15 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
             // and reset binder
             serverBinder.setCurrentSpan(null);
 
-            if (span.getSpan() != null && log.isDebugEnabled()) {
+            if (span.getSpan() != null && LOG.isDebugEnabled()) {
                 String traceId = "" + span.getSpan().getTrace_id();
                 String spanId = "" + span.getSpan().getId();
                 String parentId = span.getSpan().getParent_id() != null ? "" + span.getSpan().getParent_id() : null;
-                if (log.isDebugEnabled()) {
+                if (LOG.isDebugEnabled()) {
                     if (parentId != null) {
-                        log.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+                        LOG.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
                     } else {
-                        log.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
+                        LOG.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
                     }
                 }
             }
@@ -647,75 +629,84 @@ public class ZipkinTracer extends EventNotifierSupport implements RoutePolicy, R
         return exchange.getIn().getHeader(ZipkinConstants.TRACE_ID) != null;
     }
 
-    @Override
-    public void onInit(Route route) {
-        // noop
-    }
+    private final class ZipkinEventNotifier extends EventNotifierSupport {
 
-    @Override
-    public void onRemove(Route route) {
-        // noop
-    }
+        @Override
+        public void notify(EventObject event) throws Exception {
+            // use event notifier to track events when Camel messages to endpoints
+            // these events corresponds to Zipkin client events
 
-    @Override
-    public void onStart(Route route) {
-        // noop
-    }
-
-    @Override
-    public void onStop(Route route) {
-        // noop
-    }
-
-    @Override
-    public void onSuspend(Route route) {
-        // noop
-    }
-
-    @Override
-    public void onResume(Route route) {
-        // noop
-    }
-
-    @Override
-    public void onExchangeBegin(Route route, Exchange exchange) {
-        // use route policy to track events when Camel a Camel route begins/end the lifecycle of an Exchange
-        // these events corresponds to Zipkin server events
-
-        if (hasZipkinTraceId(exchange)) {
-            String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
-            Brave brave = getBrave(serviceName);
-            if (brave != null) {
-                serverRequest(brave, serviceName, exchange);
+            // client events
+            if (event instanceof ExchangeSendingEvent) {
+                ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
+                String serviceName = getServiceName(ese.getExchange(), ese.getEndpoint(), false, true);
+                Brave brave = getBrave(serviceName);
+                if (brave != null) {
+                    clientRequest(brave, serviceName, ese);
+                }
+            } else if (event instanceof ExchangeSentEvent) {
+                ExchangeSentEvent ese = (ExchangeSentEvent) event;
+                String serviceName = getServiceName(ese.getExchange(), ese.getEndpoint(), false, true);
+                Brave brave = getBrave(serviceName);
+                if (brave != null) {
+                    clientResponse(brave, serviceName, ese);
+                }
             }
         }
 
-        // add on completion after the route is done, but before the consumer writes the response
-        // this allows us to track the zipkin event before returning the response which is the right time
-        exchange.addOnCompletion(new SynchronizationAdapter() {
-            @Override
-            public void onAfterRoute(Route route, Exchange exchange) {
+        @Override
+        public boolean isEnabled(EventObject event) {
+            return event instanceof ExchangeSendingEvent
+                    || event instanceof ExchangeSentEvent
+                    || event instanceof ExchangeCreatedEvent
+                    || event instanceof ExchangeCompletedEvent
+                    || event instanceof ExchangeFailedEvent;
+        }
+
+        @Override
+        public String toString() {
+            return "ZipkinEventNotifier";
+        }
+    }
+
+    private final class ZipkinRoutePolicy extends RoutePolicySupport {
+
+        private final String routeId;
+
+        public ZipkinRoutePolicy(String routeId) {
+            this.routeId = routeId;
+        }
+        @Override
+        public void onExchangeBegin(Route route, Exchange exchange) {
+            // use route policy to track events when Camel a Camel route begins/end the lifecycle of an Exchange
+            // these events corresponds to Zipkin server events
+
+            if (hasZipkinTraceId(exchange)) {
                 String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
                 Brave brave = getBrave(serviceName);
                 if (brave != null) {
-                    serverResponse(brave, serviceName, exchange);
+                    serverRequest(brave, serviceName, exchange);
                 }
             }
 
-            @Override
-            public String toString() {
-                return "ZipkinTracerOnCompletion";
-            }
-        });
+            // add on completion after the route is done, but before the consumer writes the response
+            // this allows us to track the zipkin event before returning the response which is the right time
+            exchange.addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onAfterRoute(Route route, Exchange exchange) {
+                    String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
+                    Brave brave = getBrave(serviceName);
+                    if (brave != null) {
+                        serverResponse(brave, serviceName, exchange);
+                    }
+                }
+
+                @Override
+                public String toString() {
+                    return "ZipkinTracerOnCompletion[" + routeId + "]";
+                }
+            });
+        }
     }
 
-    @Override
-    public void onExchangeDone(Route route, Exchange exchange) {
-        // noop
-    }
-
-    @Override
-    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
-        return this;
-    }
 }
