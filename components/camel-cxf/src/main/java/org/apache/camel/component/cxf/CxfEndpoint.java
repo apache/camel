@@ -197,6 +197,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private String password;
     @UriParam(label = "advanced", prefix = "properties.", multiValue = true)
     private Map<String, Object> properties;
+    @UriParam(name = "mep")
+    private String mep;
 
     public CxfEndpoint() {
     }
@@ -314,6 +316,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 sfb.setDataBinding(new SourceDataBinding());
             } else if (getDataFormat().dealias() == DataFormat.RAW) {
                 RAWDataFormatFeature feature = new RAWDataFormatFeature();
+                if (this.getMep() != null && this.getMep().equals("InOnly")) {
+                    //if DataFormat is RAW|MESSAGE, can't read message so can't
+                    //determine it's oneway so need get the MEP from URI explicitly
+                    feature.setOneway(true);
+                }
                 feature.addInIntercepters(getInInterceptors());
                 feature.addOutInterceptors(getOutInterceptors());
                 sfb.getFeatures().add(feature);
@@ -1124,6 +1131,18 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setUsername(String username) {
         this.username = username;
     }
+
+    public String getMep() {
+        return mep;
+    }
+
+    /**
+     * The Message Exchange Pattern
+     */
+    public void setMep(String mep) {
+        this.mep = mep;
+    }
+
 
     /**
      * We need to override the {@link ClientImpl#setParameters} method
