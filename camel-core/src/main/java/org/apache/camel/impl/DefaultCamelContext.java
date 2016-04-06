@@ -1218,11 +1218,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void addService(Object object, boolean stopOnShutdown) throws Exception {
-        doAddService(object, stopOnShutdown);
+        doAddService(object, stopOnShutdown, false);
     }
 
-    private void doAddService(Object object, boolean stopOnShutdown) throws Exception {
-        doAddService(object, stopOnShutdown, false);
+    @Override
+    public void addService(Object object, boolean stopOnShutdown, boolean forceStart) throws Exception {
+        doAddService(object, stopOnShutdown, forceStart);
     }
 
     private void doAddService(Object object, boolean stopOnShutdown, boolean forceStart) throws Exception {
@@ -2344,7 +2345,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 typeConverter = createTypeConverter();
                 try {
                     // must add service eager and force start it
-                    doAddService(typeConverter, true, true);
+                    addService(typeConverter, true, true);
                 } catch (Exception e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
                 }
@@ -2356,8 +2357,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public void setTypeConverter(TypeConverter typeConverter) {
         this.typeConverter = typeConverter;
         try {
-            // must add service eager
-            doAddService(typeConverter, true, true);
+            // must add service eager and force start it
+            addService(typeConverter, true, true);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -3001,23 +3002,23 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // and we needed to create endpoints up-front as it may be accessed before this context is started
         endpoints = new DefaultEndpointRegistry(this, endpoints);
         // add this as service and force pre-start them
-        doAddService(endpoints, true, true);
-        // special for executorServiceManager as want to stop it manually
-        doAddService(executorServiceManager, false, true);
-        doAddService(producerServicePool, true, true);
-        doAddService(pollingConsumerServicePool, true, true);
-        doAddService(inflightRepository, true, true);
-        doAddService(asyncProcessorAwaitManager, true, true);
-        doAddService(shutdownStrategy, true, true);
-        doAddService(packageScanClassResolver, true, true);
-        doAddService(restRegistry, true, true);
-        doAddService(messageHistoryFactory, true, true);
+        addService(endpoints, true, true);
+        // special for executorServiceManager as want to stop it manually so false in stopOnShutdown
+        addService(executorServiceManager, false, true);
+        addService(producerServicePool, true, true);
+        addService(pollingConsumerServicePool, true, true);
+        addService(inflightRepository, true, true);
+        addService(asyncProcessorAwaitManager, true, true);
+        addService(shutdownStrategy, true, true);
+        addService(packageScanClassResolver, true, true);
+        addService(restRegistry, true, true);
+        addService(messageHistoryFactory, true, true);
 
         if (runtimeEndpointRegistry != null) {
             if (runtimeEndpointRegistry instanceof EventNotifier) {
                 getManagementStrategy().addEventNotifier((EventNotifier) runtimeEndpointRegistry);
             }
-            doAddService(runtimeEndpointRegistry, true, true);
+            addService(runtimeEndpointRegistry, true, true);
         }
 
         // eager lookup any configured properties component to avoid subsequent lookup attempts which may impact performance
@@ -3059,7 +3060,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (streamCachingInUse) {
             // stream caching is in use so enable the strategy
             getStreamCachingStrategy().setEnabled(true);
-            doAddService(getStreamCachingStrategy(), true, true);
+            addService(getStreamCachingStrategy(), true, true);
         } else {
             // log if stream caching is not in use as this can help people to enable it if they use streams
             log.info("StreamCaching is not in use. If using streams then its recommended to enable stream caching."

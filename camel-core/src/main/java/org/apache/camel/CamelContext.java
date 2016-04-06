@@ -29,6 +29,7 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.impl.DeferServiceStartupListener;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -231,6 +232,25 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void addService(Object object, boolean stopOnShutdown) throws Exception;
 
     /**
+     * Adds a service to this context.
+     * <p/>
+     * The service will also have {@link CamelContext} injected if its {@link CamelContextAware}.
+     * The service will also be enlisted in JMX for management (if JMX is enabled).
+     * The service will be started, if its not already started.
+     * <p/>
+     * If the option <tt>closeOnShutdown</tt> is <tt>true</tt> then this context will control the lifecycle, ensuring
+     * the service is stopped when the context stops.
+     * If the option <tt>closeOnShutdown</tt> is <tt>false</tt> then this context will not stop the service when the context stops.
+     *
+     * @param object the service
+     * @param stopOnShutdown whether to stop the service when this CamelContext shutdown.
+     * @param forceStart whether to force starting the service right now, as otherwise the service may be deferred being started
+     *                   to later using {@link #deferStartService(Object, boolean)}
+     * @throws Exception can be thrown when starting the service
+     */
+    void addService(Object object, boolean stopOnShutdown, boolean forceStart) throws Exception;
+
+    /**
      * Removes a service from this context.
      * <p/>
      * The service is assumed to have been previously added using {@link #addService(Object)} method.
@@ -259,7 +279,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     <T> T hasService(Class<T> type);
 
     /**
-     * Defers starting the service until {@link CamelContext} is started and has initialized all its prior services and routes.
+     * Defers starting the service until {@link CamelContext} is (almost started) or started and has initialized all its prior services and routes.
      * <p/>
      * If {@link CamelContext} is already started then the service is started immediately.
      *
