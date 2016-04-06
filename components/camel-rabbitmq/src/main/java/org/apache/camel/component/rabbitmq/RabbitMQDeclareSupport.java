@@ -45,9 +45,9 @@ public class RabbitMQDeclareSupport {
     }
 
     private void declareAndBindExchangeWithQueue(final Channel channel) throws IOException {
-      if(shouldDeclareExchange()){  
-          declareExchange(channel, endpoint.getExchangeName(), endpoint.getExchangeType(), resolvedExchangeArguments());
-      }
+        if (shouldDeclareExchange()) {
+            declareExchange(channel, endpoint.getExchangeName(), endpoint.getExchangeType(), resolvedExchangeArguments());
+        }
 
         if (shouldDeclareQueue()) {
             // need to make sure the queueDeclare is same with the exchange declare
