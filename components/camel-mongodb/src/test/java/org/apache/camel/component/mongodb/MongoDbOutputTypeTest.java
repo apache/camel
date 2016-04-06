@@ -93,9 +93,7 @@ public class MongoDbOutputTypeTest extends AbstractMongoDbTest {
             template.getCamelContext().addRoutes(taillableRouteBuilder);
             fail("Endpoint should not be initialized with a non compatible outputType");
         } catch (Exception exception) {
-            log.debug("Exception raised during initialization", exception);
-            exception.printStackTrace();
-            assertTrue("Exception is not of type IllegalArgumentException", exception instanceof IllegalArgumentException);
+            assertTrue("Exception is not of type IllegalArgumentException", exception.getCause() instanceof IllegalArgumentException);
         }
     }
 
@@ -114,9 +112,7 @@ public class MongoDbOutputTypeTest extends AbstractMongoDbTest {
             template.getCamelContext().addRoutes(taillableRouteBuilder);
             fail("Endpoint should not be initialized with a non compatible outputType");
         } catch (Exception exception) {
-            log.debug("Exception raised during initialization", exception);
-            exception.printStackTrace();
-            assertTrue("Exception is not of type IllegalArgumentException", exception instanceof IllegalArgumentException);
+            assertTrue("Exception is not of type IllegalArgumentException", exception.getCause() instanceof IllegalArgumentException);
         }
     }
 

@@ -110,7 +110,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         mockEndpoint.expectedBodiesReceived(jobExecution);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test(expected = FailedToCreateRouteException.class)
     public void shouldThrowExceptionIfUsedAsConsumer() throws Exception {
         // When
         context().addRoutes(new RouteBuilder() {

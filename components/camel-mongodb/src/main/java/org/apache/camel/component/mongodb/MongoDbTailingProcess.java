@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.mongodb;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.Bytes;
 import com.mongodb.DBCollection;
@@ -35,7 +38,7 @@ public class MongoDbTailingProcess implements Runnable {
     private static final String CAPPED_KEY = "capped";
 
     public volatile boolean keepRunning = true;
-    public volatile boolean stopped; // = false
+    private final CountDownLatch latch = new CountDownLatch(1);
     
     private final DBCollection dbCol;
     private final MongoDbEndpoint endpoint;
@@ -81,7 +84,7 @@ public class MongoDbTailingProcess implements Runnable {
             tailTracking.recoverFromStore();
             cursor = initializeCursor();
         } catch (Exception e) {
-            throw new CamelMongoDbException("Exception ocurred while initializing tailable cursor", e);
+            throw new CamelMongoDbException("Exception occurred while initializing tailable cursor", e);
         }
 
         if (cursor == null) {
@@ -95,28 +98,30 @@ public class MongoDbTailingProcess implements Runnable {
      */
     @Override
     public void run() {
-        while (keepRunning) {
-            doRun();
-            // if the previous call didn't return because we have stopped running, then regenerate the cursor
-            if (keepRunning) {
-                cursor.close();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Regenerating cursor with lastVal: {}, waiting {}ms first", tailTracking.lastVal, cursorRegenerationDelay);
-                }
-                
-                if (cursorRegenerationDelayEnabled) {
-                    try {
-                        Thread.sleep(cursorRegenerationDelay);
-                    } catch (InterruptedException e) {
-                        LOG.error("Thread was interrupted", e);
+        try {
+            while (keepRunning) {
+                doRun();
+                // if the previous call didn't return because we have stopped running, then regenerate the cursor
+                if (keepRunning) {
+                    cursor.close();
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Regenerating cursor with lastVal: {}, waiting {}ms first", tailTracking.lastVal, cursorRegenerationDelay);
                     }
+
+                    if (cursorRegenerationDelayEnabled) {
+                        try {
+                            Thread.sleep(cursorRegenerationDelay);
+                        } catch (InterruptedException e) {
+                            // ignore
+                        }
+                    }
+
+                    cursor = initializeCursor();
                 }
-                    
-                cursor = initializeCursor();
             }
+        } finally {
+            latch.countDown();
         }
-        
-        stopped = true;
     }
 
     protected void stop() throws Exception {
@@ -129,9 +134,14 @@ public class MongoDbTailingProcess implements Runnable {
             cursor.close();
         }
         // wait until the main loop acknowledges the stop
-        while (!stopped) { }
+        // TODO: yikes this is not good with a endless while loop
+        // wait for stop latch
+        boolean zero = latch.await(30, TimeUnit.SECONDS);
         if (LOG.isInfoEnabled()) {
             LOG.info("Stopped MongoDB Tailable Cursor consumer, bound to collection: {}", "db: " + dbCol.getDB() + ", col: " + dbCol.getName());
+        }
+        if (!zero) {
+            LOG.warn("Waited 30 seconds for MongoDB Tailable Cursor consumer to stop cleanly. Will now force stop.");
         }
     }
 
