@@ -46,6 +46,7 @@ import org.w3c.dom.Node;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
@@ -192,27 +193,29 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private String password;
     @UriParam(label = "advanced", prefix = "properties.", multiValue = true)
     private Map<String, Object> properties;
-    @UriParam(name = "mep")
-    private String mep;
 
     public CxfEndpoint() {
+        setExchangePattern(ExchangePattern.InOut);
     }
 
     public CxfEndpoint(String remaining, CxfComponent cxfComponent) {
         super(remaining, cxfComponent);
         setAddress(remaining);
+        setExchangePattern(ExchangePattern.InOut);
     }
 
     @Deprecated
     public CxfEndpoint(String remaining, CamelContext context) {
         super(remaining, context);
         setAddress(remaining);
+        setExchangePattern(ExchangePattern.InOut);
     }
 
     @Deprecated
     public CxfEndpoint(String remaining) {
         super(remaining);
         setAddress(remaining);
+        setExchangePattern(ExchangePattern.InOut);
     }
 
     public CxfEndpoint copy() {
@@ -311,7 +314,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 sfb.setDataBinding(new SourceDataBinding());
             } else if (getDataFormat().dealias() == DataFormat.RAW) {
                 RAWDataFormatFeature feature = new RAWDataFormatFeature();
-                if (this.getMep() != null && this.getMep().equals("InOnly")) {
+                if (this.getExchangePattern().equals(ExchangePattern.InOnly)) {
                     //if DataFormat is RAW|MESSAGE, can't read message so can't
                     //determine it's oneway so need get the MEP from URI explicitly
                     feature.setOneway(true);
@@ -1127,16 +1130,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.username = username;
     }
 
-    public String getMep() {
-        return mep;
-    }
-
-    /**
-     * The Message Exchange Pattern
-     */
-    public void setMep(String mep) {
-        this.mep = mep;
-    }
 
 
     /**
