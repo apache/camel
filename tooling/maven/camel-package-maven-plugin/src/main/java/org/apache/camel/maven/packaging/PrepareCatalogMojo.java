@@ -92,6 +92,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File languagesOutDir;
 
     /**
+     * The output directory for documents catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/docs"
+     */
+    protected File documentsOutDir;
+
+    /**
      * The output directory for models catalog
      *
      * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/models"
@@ -167,6 +174,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         executeComponents();
         executeDataFormats();
         executeLanguages();
+        executeDocuments();
         executeArchetypes();
         executeXmlSchemas();
     }
@@ -680,6 +688,86 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
     }
 
+    protected void executeDocuments() throws MojoExecutionException, MojoFailureException {
+        getLog().info("Copying all Camel documents (ascii docs)");
+
+        // lets use sorted set/maps
+        Set<File> adocFiles = new TreeSet<File>();
+        Set<File> missingAdocFiles = new TreeSet<File>();
+        Set<File> duplicateAdocFiles = new TreeSet<File>();
+
+        // find all languages from the components directory
+        if (componentsDir != null && componentsDir.isDirectory()) {
+            File[] components = componentsDir.listFiles();
+            if (components != null) {
+                for (File dir : components) {
+                    if (dir.isDirectory() && !"target".equals(dir.getName())) {
+                        File target = new File(dir, "src/main/docs");
+
+                        int before = adocFiles.size();
+                        findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
+                        int after = adocFiles.size();
+
+                        if (before != after) {
+                            missingAdocFiles.add(dir);
+                        }
+                    }
+                }
+            }
+        }
+        if (coreDir != null && coreDir.isDirectory()) {
+            File target = new File(coreDir, "src/main/docs");
+            findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
+        }
+
+        getLog().info("Found " + adocFiles.size() + " ascii document files");
+
+        // make sure to create out dir
+        documentsOutDir.mkdirs();
+
+        for (File file : adocFiles) {
+            File to = new File(documentsOutDir, file.getName());
+            if (to.exists()) {
+                duplicateAdocFiles.add(to);
+                getLog().warn("Duplicate document name detected: " + to);
+            }
+            try {
+                copyFile(file, to);
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+            }
+        }
+
+        File all = new File(documentsOutDir, "../docs.properties");
+        try {
+            FileOutputStream fos = new FileOutputStream(all, false);
+
+            String[] names = documentsOutDir.list();
+            List<String> documents = new ArrayList<String>();
+            // sort the names
+            for (String name : names) {
+                if (name.endsWith(".adoc")) {
+                    // strip out .json from the name
+                    String documentName = name.substring(0, name.length() - 5);
+                    documents.add(documentName);
+                }
+            }
+
+            Collections.sort(documents);
+            for (String name : documents) {
+                fos.write(name.getBytes());
+                fos.write("\n".getBytes());
+            }
+
+            fos.close();
+
+        } catch (IOException e) {
+            throw new MojoFailureException("Error writing to file " + all);
+        }
+
+        printDocumentsReport(adocFiles, duplicateAdocFiles, missingAdocFiles);
+    }
+
     private void printModelsReport(Set<File> json, Set<File> duplicate, Set<File> missingLabels, Map<String, Set<String>> usedLabels, Set<File> missingJavaDoc) {
         getLog().info("================================================================================");
 
@@ -837,9 +925,37 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("================================================================================");
     }
 
+    private void printDocumentsReport(Set<File> docs, Set<File> duplicate, Set<File> missing) {
+        getLog().info("================================================================================");
+        getLog().info("");
+        getLog().info("Camel document catalog report");
+        getLog().info("");
+        getLog().info("\tDocuments found: " + docs.size());
+        for (File file : docs) {
+            getLog().info("\t\t" + asComponentName(file));
+        }
+        if (!duplicate.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tDuplicate document detected: " + duplicate.size());
+            for (File file : duplicate) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
+        getLog().info("");
+        if (!missing.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tMissing document detected: " + missing.size());
+            for (File name : missing) {
+                getLog().warn("\t\t" + name.getName());
+            }
+        }
+        getLog().info("");
+        getLog().info("================================================================================");
+    }
+
     private static String asComponentName(File file) {
         String name = file.getName();
-        if (name.endsWith(".json")) {
+        if (name.endsWith(".json") || name.endsWith(".adoc")) {
             return name.substring(0, name.length() - 5);
         }
         return name;
@@ -897,6 +1013,22 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     languages.add(file);
                 } else if (file.isDirectory()) {
                     findLanguageFilesRecursive(file, found, languages, filter);
+                }
+            }
+        }
+    }
+
+    private void findAsciiDocFilesRecursive(File dir, Set<File> found, FileFilter filter) {
+        File[] files = dir.listFiles(filter);
+        if (files != null) {
+            for (File file : files) {
+                // skip files in root dirs as Camel does not store information there but others may do
+                boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
+                boolean adocFile = !rootDir && file.isFile() && file.getName().endsWith(".adoc");
+                if (adocFile) {
+                    found.add(file);
+                } else if (file.isDirectory()) {
+                    findAsciiDocFilesRecursive(file, found, filter);
                 }
             }
         }
@@ -962,6 +1094,14 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 }
             }
             return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("language.properties"));
+        }
+    }
+
+    private class CamelAsciiDocFileFilter implements FileFilter {
+
+        @Override
+        public boolean accept(File pathname) {
+            return pathname.isFile() && pathname.getName().endsWith(".adoc");
         }
     }
 
