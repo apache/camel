@@ -179,7 +179,7 @@ public class HttpProducer extends DefaultProducer {
                 }
             }
         } finally {
-            if (httpResponse != null) {
+            if (httpResponse != null && !getEndpoint().isDisableStreamCache()) {
                 try {
                     EntityUtils.consume(httpResponse.getEntity());
                 } catch (IOException e) {
