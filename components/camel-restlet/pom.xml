@@ -61,6 +61,17 @@
       <groupId>org.restlet.jee</groupId>
       <artifactId>org.restlet.ext.httpclient</artifactId>
     </dependency>
+    <!-- extensions -->
+    <dependency>
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet.ext.jackson</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet.ext.gson</artifactId>
+      <optional>true</optional>
+    </dependency>
 
     <!-- camel test dependencies -->
     <dependency>

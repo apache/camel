@@ -465,6 +465,11 @@
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
     <rest-assured-version>2.7.0</rest-assured-version>
     <restlet-version>2.3.6</restlet-version>
+    <restlet-jackson-version>2.4.4</restlet-jackson-version>
+    <restlet-woodstox-version>4.3.0</restlet-woodstox-version>
+    <restlet-yaml-version>1.13</restlet-yaml-version>
+    <restlet-gson-version>2.3.1</restlet-gson-version>
+    <restlet-joda-time-version>2.3</restlet-joda-time-version>
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
     <rhino-version>1.7R2</rhino-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
@@ -2817,6 +2822,16 @@
       <dependency>
         <groupId>org.restlet.jee</groupId>
         <artifactId>org.restlet.ext.httpclient</artifactId>
+        <version>${restlet-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.restlet.jse</groupId>
+        <artifactId>org.restlet.ext.jackson</artifactId>
+        <version>${restlet-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.restlet.jse</groupId>
+        <artifactId>org.restlet.ext.gson</artifactId>
         <version>${restlet-version}</version>
       </dependency>
 
