@@ -407,7 +407,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     }
     
     /**
-     * If true the producer will not declare the exchange.
      * This can be used if we need to declare the queue but not the exchange
      */
     public void setSkipExchangeDeclare(boolean skipExchangeDeclare) {
