@@ -1317,6 +1317,28 @@
     <bundle dependency='true'>mvn:http://maven.restlet.org@id=restlet!org.restlet.osgi/org.restlet.ext.httpclient/${restlet-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-restlet/${project.version}</bundle>
   </feature>
+  <feature name='camel-restlet-jackson' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-restlet</feature>
+    <bundle dependency='true'>mvn:org.codehaus.woodstox/stax2-api/${stax2-api-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.woodstox/woodstox-core-asl/${restlet-woodstox-version}</bundle>
+    <bundle dependency='true'>mvn:org.yaml/snakeyaml/${restlet-yaml-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${restlet-jackson-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${restlet-jackson-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${restlet-jackson-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-csv/${restlet-jackson-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-smile/${restlet-jackson-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-xml/${restlet-jackson-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-yaml/${restlet-jackson-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${restlet-jackson-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jsonSchema/${restlet-jackson-version}</bundle>
+    <bundle>mvn:http://maven.restlet.org@id=restlet!org.restlet.osgi/org.restlet.ext.jackson/${restlet-version}</bundle>
+  </feature>
+  <feature name='camel-restlet-gson' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-restlet</feature>
+    <bundle dependency='true'>mvn:joda-time/joda-time/${restlet-joda-time-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.code.gson/gson/${restlet-gson-version}</bundle>
+    <bundle>mvn:http://maven.restlet.org@id=restlet!org.restlet.osgi/org.restlet.ext.gson/${restlet-version}</bundle>
+  </feature>
   <feature name='camel-rmi' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-rmi/${project.version}</bundle>
