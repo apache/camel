@@ -173,7 +173,7 @@ public class CxfConsumer extends DefaultConsumer {
                         camelExchange.setPattern(ExchangePattern.InOnly);
                     }
                 } else {
-                    if (cxfEndpoint.getMep() != null && cxfEndpoint.getMep().equals("InOnly")) {
+                    if (cxfEndpoint.getExchangePattern().equals(ExchangePattern.InOnly)) {
                         camelExchange.setPattern(ExchangePattern.InOnly);
                     }
                 }
