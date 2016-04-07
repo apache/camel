@@ -38,8 +38,8 @@ public class MongoDbTailingProcess implements Runnable {
     private static final String CAPPED_KEY = "capped";
 
     public volatile boolean keepRunning = true;
-    private final CountDownLatch latch = new CountDownLatch(1);
-    
+    public volatile boolean stopped; // = false
+
     private final DBCollection dbCol;
     private final MongoDbEndpoint endpoint;
     private final MongoDbTailableCursorConsumer consumer;
@@ -98,30 +98,28 @@ public class MongoDbTailingProcess implements Runnable {
      */
     @Override
     public void run() {
-        try {
-            while (keepRunning) {
-                doRun();
-                // if the previous call didn't return because we have stopped running, then regenerate the cursor
-                if (keepRunning) {
-                    cursor.close();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Regenerating cursor with lastVal: {}, waiting {}ms first", tailTracking.lastVal, cursorRegenerationDelay);
-                    }
-
-                    if (cursorRegenerationDelayEnabled) {
-                        try {
-                            Thread.sleep(cursorRegenerationDelay);
-                        } catch (InterruptedException e) {
-                            // ignore
-                        }
-                    }
-
-                    cursor = initializeCursor();
+        while (keepRunning) {
+            doRun();
+            // if the previous call didn't return because we have stopped running, then regenerate the cursor
+            if (keepRunning) {
+                cursor.close();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Regenerating cursor with lastVal: {}, waiting {}ms first", tailTracking.lastVal, cursorRegenerationDelay);
                 }
+
+                if (cursorRegenerationDelayEnabled) {
+                    try {
+                        Thread.sleep(cursorRegenerationDelay);
+                    } catch (InterruptedException e) {
+                        // ignore
+                    }
+                }
+
+                cursor = initializeCursor();
             }
-        } finally {
-            latch.countDown();
         }
+
+        stopped = true;
     }
 
     protected void stop() throws Exception {
@@ -134,14 +132,9 @@ public class MongoDbTailingProcess implements Runnable {
             cursor.close();
         }
         // wait until the main loop acknowledges the stop
-        // TODO: yikes this is not good with a endless while loop
-        // wait for stop latch
-        boolean zero = latch.await(30, TimeUnit.SECONDS);
+        while (!stopped) { }
         if (LOG.isInfoEnabled()) {
             LOG.info("Stopped MongoDB Tailable Cursor consumer, bound to collection: {}", "db: " + dbCol.getDB() + ", col: " + dbCol.getName());
-        }
-        if (!zero) {
-            LOG.warn("Waited 30 seconds for MongoDB Tailable Cursor consumer to stop cleanly. Will now force stop.");
         }
     }
 
