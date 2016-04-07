@@ -393,6 +393,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
             return "post";
         } else if (this instanceof PutVerbDefinition) {
             return "put";
+        } else if (this instanceof PatchVerbDefinition) {
+            return "patch";
         } else if (this instanceof DeleteVerbDefinition) {
             return "delete";
         } else if (this instanceof HeadVerbDefinition) {
