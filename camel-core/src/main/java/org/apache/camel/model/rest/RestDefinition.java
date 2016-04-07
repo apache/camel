@@ -236,6 +236,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return addVerb("put", uri);
     }
 
+    public RestDefinition patch() {
+        return addVerb("patch", null);
+    }
+
+    public RestDefinition patch(String uri) {
+        return addVerb("patch", uri);
+    }
+
     public RestDefinition delete() {
         return addVerb("delete", null);
     }
@@ -564,6 +572,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             answer = new HeadVerbDefinition();
         } else if ("put".equals(verb)) {
             answer = new PutVerbDefinition();
+        } else if ("patch".equals(verb)) {
+            answer = new PatchVerbDefinition();
         } else if ("options".equals(verb)) {
             answer = new OptionsVerbDefinition();
         } else {
