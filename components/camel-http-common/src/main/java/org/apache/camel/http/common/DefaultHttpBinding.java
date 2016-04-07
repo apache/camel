@@ -27,6 +27,7 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -104,23 +105,25 @@ public class DefaultHttpBinding implements HttpBinding {
             message.getBody();
         }
         // populate the headers from the request if mapHttpHeaders is true
-        Map<String, Object> headers = message.getHeaders();  
+        Map<String, Object> headers = new HashMap<String, Object>();  
         if (mapHttpMessageHeaders) {
-            //apply the headerFilterStrategy
-            Enumeration<?> names = request.getHeaderNames();
-            while (names.hasMoreElements()) {
-                String name = (String)names.nextElement();
-                String value = request.getHeader(name);
-                // use http helper to extract parameter value as it may contain multiple values
-                Object extracted = HttpHelper.extractHttpParameterValue(value);
-                // mapping the content-type
-                if (name.toLowerCase().equals("content-type")) {
-                    name = Exchange.CONTENT_TYPE;
-                }
-                if (headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
-                    HttpHelper.appendHeader(headers, name, extracted);
-                }
+        	headers = message.getHeaders();
+        }
+        
+        //apply the headerFilterStrategy
+        Enumeration<?> names = request.getHeaderNames();
+        while (names.hasMoreElements()) {
+            String name = (String)names.nextElement();
+            String value = request.getHeader(name);
+            // use http helper to extract parameter value as it may contain multiple values
+            Object extracted = HttpHelper.extractHttpParameterValue(value);
+            // mapping the content-type
+            if (name.toLowerCase().equals("content-type")) {
+                name = Exchange.CONTENT_TYPE;
+            }
+            if (headerFilterStrategy != null
+                && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
+                HttpHelper.appendHeader(headers, name, extracted);
             }
         }
                 
