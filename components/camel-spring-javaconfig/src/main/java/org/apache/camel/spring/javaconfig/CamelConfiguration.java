@@ -25,7 +25,6 @@ import static java.util.Collections.emptyList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
@@ -44,8 +43,7 @@ import org.springframework.context.annotation.Configuration;
  * A useful base class for writing
  * <a
  * href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-annotation-config">
- * Spring annotation-based</a> configurations for working with Camel. Unless {@link #routes()} method is overridden, this configuration
- * automatically load all the {@link org.apache.camel.builder.RouteBuilder} instances available in the Spring context.
+ * Spring annotation-based</a> configurations for working with Camel.
  */
 @Configuration
 public abstract class CamelConfiguration implements BeanFactoryAware, ApplicationContextAware {
@@ -84,7 +82,6 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     public <T> T getBean(String beanName, Class<T> type) {
         return beanFactory.getBean(beanName, type);
     }
-   
 
     /**
      * Invoke callbacks on the object, as though it were configured in the factory. If appropriate,
@@ -144,6 +141,9 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
         return camelContext.createConsumerTemplate();
     }
 
+    /**
+     * Camel post processor - required to support Camel annotations.
+     */
     @Bean
     public CamelBeanPostProcessor camelBeanPostProcessor() throws Exception {
         CamelBeanPostProcessor answer = new CamelBeanPostProcessor();
@@ -158,12 +158,14 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     @Bean
     public CamelContext camelContext() throws Exception {
         CamelContext camelContext = createCamelContext();
+        SpringCamelContext.setNoStart(true);
         setupCamelContext(camelContext);
-        List<RouteBuilder> routes = routes();
-        for (RoutesBuilder route : routes) {
-            camelContext.addRoutes(route);
-        }
         return camelContext;
+    }
+
+    @Bean
+    RoutesCollector routesCollector(ApplicationContext applicationContext) {
+        return new RoutesCollector(applicationContext, this);
     }
 
     /**
