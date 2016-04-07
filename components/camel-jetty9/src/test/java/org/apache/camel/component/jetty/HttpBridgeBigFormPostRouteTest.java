@@ -118,7 +118,7 @@ public class HttpBridgeBigFormPostRouteTest extends BaseJettyTest {
 
                 from("jetty:http://localhost:" + port2 + "/test/hello?matchOnUriPrefix=true")
                     .removeHeaders("formMetaData")
-                    .to("http://localhost:" + port1 + "?bridgeEndpoint=true");
+                    .to("http://localhost:" + port1 + "?bridgeEndpoint=true&mapHttpMessageHeaders=false");
             }
         };
     }  

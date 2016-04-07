@@ -75,6 +75,8 @@ public class DefaultHttpBinding implements HttpBinding {
     private boolean eagerCheckContentAvailable;
     private boolean transferException;
     private boolean allowJavaSerializedObject;
+    private boolean mapHttpMessageBody = true;
+    private boolean mapHttpMessageHeaders = true;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
 
     public DefaultHttpBinding() {
@@ -97,25 +99,28 @@ public class DefaultHttpBinding implements HttpBinding {
     public void readRequest(HttpServletRequest request, HttpMessage message) {
         LOG.trace("readRequest {}", request);
         
-        // lets force a parse of the body and headers
-        message.getBody();
-        // populate the headers from the request
-        Map<String, Object> headers = message.getHeaders();
-        
-        //apply the headerFilterStrategy
-        Enumeration<?> names = request.getHeaderNames();
-        while (names.hasMoreElements()) {
-            String name = (String)names.nextElement();
-            String value = request.getHeader(name);
-            // use http helper to extract parameter value as it may contain multiple values
-            Object extracted = HttpHelper.extractHttpParameterValue(value);
-            // mapping the content-type
-            if (name.toLowerCase().equals("content-type")) {
-                name = Exchange.CONTENT_TYPE;
-            }
-            if (headerFilterStrategy != null
-                && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
-                HttpHelper.appendHeader(headers, name, extracted);
+        // lets parse the body if mapHttpMessageBody is true
+        if (mapHttpMessageBody) {
+            message.getBody();
+        }
+        // populate the headers from the request if mapHttpHeaders is true
+        Map<String, Object> headers = message.getHeaders();  
+        if (mapHttpMessageHeaders) {
+            //apply the headerFilterStrategy
+            Enumeration<?> names = request.getHeaderNames();
+            while (names.hasMoreElements()) {
+                String name = (String)names.nextElement();
+                String value = request.getHeader(name);
+                // use http helper to extract parameter value as it may contain multiple values
+                Object extracted = HttpHelper.extractHttpParameterValue(value);
+                // mapping the content-type
+                if (name.toLowerCase().equals("content-type")) {
+                    name = Exchange.CONTENT_TYPE;
+                }
+                if (headerFilterStrategy != null
+                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
+                    HttpHelper.appendHeader(headers, name, extracted);
+                }
             }
         }
                 
@@ -555,7 +560,23 @@ public class DefaultHttpBinding implements HttpBinding {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
-    protected static SimpleDateFormat getHttpDateFormat() {
+    public boolean isMapHttpMessageBody() {
+		return mapHttpMessageBody;
+	}
+
+	public void setMapHttpMessageBody(boolean mapHttpMessageBody) {
+		this.mapHttpMessageBody = mapHttpMessageBody;
+	}
+
+	public boolean isMapHttpMessageHeaders() {
+		return mapHttpMessageHeaders;
+	}
+
+	public void setMapHttpMessageHeaders(boolean mapHttpMessageHeaders) {
+		this.mapHttpMessageHeaders = mapHttpMessageHeaders;
+	}
+
+	protected static SimpleDateFormat getHttpDateFormat() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
         dateFormat.setTimeZone(TIME_ZONE_GMT);
         return dateFormat;

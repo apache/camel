@@ -107,6 +107,14 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             description = "Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints."
                     + " See more details at http://camel.apache.org/urlrewrite.html")
     private UrlRewrite urlRewrite;
+    @UriParam(label = "advanced", defaultValue = "true",
+            description = "If this option is true then IN exchange Body of the exchange will be mapped to HTTP body." 
+            + " Setting this to false will avoid the HTTP mapping.")
+    boolean mapHttpMessageBody = true;
+    @UriParam(label = "advanced", defaultValue = "true",
+            description = "If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers."
+            + " Setting this to false will avoid the HTTP Headers mapping.")
+    boolean mapHttpMessageHeaders = true;
 
     public HttpCommonEndpoint() {
     }
@@ -169,6 +177,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
                 httpBinding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
             }
             httpBinding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
+            httpBinding.setMapHttpMessageBody(isMapHttpMessageBody());
+            httpBinding.setMapHttpMessageHeaders(isMapHttpMessageHeaders());
         }
         return httpBinding;
     }
@@ -446,4 +456,25 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         this.okStatusCodeRange = okStatusCodeRange;
     }
 
+	public boolean isMapHttpMessageBody() {
+		return mapHttpMessageBody;
+	}
+
+    /**
+     * If this option is true, the IN exchange body will be mapped to HTTP
+     */
+	public void setMapHttpMessageBody(boolean mapHttpMessageBody) {
+		this.mapHttpMessageBody = mapHttpMessageBody;
+	}
+
+	public boolean isMapHttpMessageHeaders() {
+		return mapHttpMessageHeaders;
+	}
+
+    /**
+     * If this option is true, the IN exchange headers will be mapped to HTTP Headers
+     */
+	public void setMapHttpMessageHeaders(boolean mapHttpMessageHeaders) {
+		this.mapHttpMessageHeaders = mapHttpMessageHeaders;
+	}
 }
