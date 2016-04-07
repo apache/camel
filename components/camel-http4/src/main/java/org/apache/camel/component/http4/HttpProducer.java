@@ -43,6 +43,7 @@ import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.GZIPHelper;
 import org.apache.camel.util.IOHelper;
@@ -179,11 +180,25 @@ public class HttpProducer extends DefaultProducer {
                 }
             }
         } finally {
-            if (httpResponse != null && !getEndpoint().isDisableStreamCache()) {
+            final HttpResponse response = httpResponse;
+            if (httpResponse != null && getEndpoint().isDisableStreamCache()) {
+                // close the stream at the end of the exchange to ensure it gets eventually closed later
+                exchange.addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onDone(Exchange exchange) {
+                        try {
+                            EntityUtils.consume(response.getEntity());
+                        } catch (Throwable e) {
+                            // ignore
+                        }
+                    }
+                });
+            } else if (httpResponse != null) {
+                // close the stream now
                 try {
-                    EntityUtils.consume(httpResponse.getEntity());
-                } catch (IOException e) {
-                    // nothing we could do
+                    EntityUtils.consume(response.getEntity());
+                } catch (Throwable e) {
+                    // ignore
                 }
             }
         }
