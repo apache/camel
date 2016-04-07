@@ -707,7 +707,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             }
             // register all the default values for the query parameters
             for (RestOperationParamDefinition param : verb.getParams()) {
-                if (RestParamType.query == param.getType() && param.getDefaultValue() != null) {
+                if (RestParamType.query == param.getType() && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
                     binding.addDefaultValue(param.getName(), param.getDefaultValue());
                 }
             }
