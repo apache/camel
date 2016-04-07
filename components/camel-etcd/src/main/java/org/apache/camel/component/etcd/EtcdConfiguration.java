@@ -39,6 +39,8 @@ public class EtcdConfiguration {
     private Integer timeToLive;
     @UriParam
     private Long timeout;
+    @UriParam(label = "consumer,advance", defaultValue = "0")
+    private Long fromIndex = 0L;
 
     public String getUris() {
         return uris;
@@ -128,4 +130,14 @@ public class EtcdConfiguration {
         this.timeout = timeout;
     }
 
+    public Long getFromIndex() {
+        return fromIndex;
+    }
+
+    /**
+     * The index to watch from
+     */
+    public void setFromIndex(Long fromIndex) {
+        this.fromIndex = fromIndex;
+    }
 }
