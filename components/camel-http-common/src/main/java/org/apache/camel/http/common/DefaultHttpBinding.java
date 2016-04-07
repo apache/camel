@@ -99,17 +99,45 @@ public class DefaultHttpBinding implements HttpBinding {
 
     public void readRequest(HttpServletRequest request, HttpMessage message) {
         LOG.trace("readRequest {}", request);
-        
-        // lets parse the body if mapHttpMessageBody is true
-        if (mapHttpMessageBody) {
-            message.getBody();
-        }
-        // populate the headers from the request if mapHttpHeaders is true
-        Map<String, Object> headers = new HashMap<String, Object>();  
+
         if (mapHttpMessageHeaders) {
-        	headers = message.getHeaders();
+            readHeaders(request, message);
         }
-        
+        if (mapHttpMessageBody) {
+            readBody(request, message);
+        }
+
+        // populate the headers from the request
+        Map<String, Object> headers = message.getHeaders();
+
+        // always store these standard headers
+        // store the method and query and other info in headers as String types
+        String rawPath = getRawPath(request);
+        headers.put(Exchange.HTTP_METHOD, request.getMethod());
+        headers.put(Exchange.HTTP_QUERY, request.getQueryString());
+        headers.put(Exchange.HTTP_URL, request.getRequestURL().toString());
+        headers.put(Exchange.HTTP_URI, request.getRequestURI());
+        headers.put(Exchange.HTTP_PATH, rawPath);
+        // only set content type if not already extracted
+        if (!headers.containsKey(Exchange.CONTENT_TYPE)) {
+            headers.put(Exchange.CONTENT_TYPE, request.getContentType());
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("HTTP method {}", request.getMethod());
+            LOG.trace("HTTP query {}", request.getQueryString());
+            LOG.trace("HTTP url {}", request.getRequestURL());
+            LOG.trace("HTTP uri {}", request.getRequestURI());
+            LOG.trace("HTTP path {}", rawPath);
+            LOG.trace("HTTP content-type {}", headers.get(Exchange.CONTENT_TYPE));
+        }
+    }
+
+    protected void readHeaders(HttpServletRequest request, HttpMessage message) {
+        LOG.trace("readHeaders {}", request);
+
+        Map<String, Object> headers = message.getHeaders();
+
         //apply the headerFilterStrategy
         Enumeration<?> names = request.getHeaderNames();
         while (names.hasMoreElements()) {
@@ -122,11 +150,11 @@ public class DefaultHttpBinding implements HttpBinding {
                 name = Exchange.CONTENT_TYPE;
             }
             if (headerFilterStrategy != null
-                && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
+                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
                 HttpHelper.appendHeader(headers, name, extracted);
             }
         }
-                
+
         if (request.getCharacterEncoding() != null) {
             headers.put(Exchange.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
             message.getExchange().setProperty(Exchange.CHARSET_NAME, request.getCharacterEncoding());
@@ -137,29 +165,16 @@ public class DefaultHttpBinding implements HttpBinding {
         } catch (Exception e) {
             throw new RuntimeCamelException("Cannot read request parameters due " + e.getMessage(), e);
         }
-        
+    }
+
+    protected void readBody(HttpServletRequest request, HttpMessage message) {
+        LOG.trace("readBody {}", request);
+
+        // lets parse the body
         Object body = message.getBody();
         // reset the stream cache if the body is the instance of StreamCache
         if (body instanceof StreamCache) {
-            ((StreamCache)body).reset();
-        }
-
-        // store the method and query and other info in headers as String types
-        String rawPath = getRawPath(request);
-        headers.put(Exchange.HTTP_METHOD, request.getMethod());
-        headers.put(Exchange.HTTP_QUERY, request.getQueryString());
-        headers.put(Exchange.HTTP_URL, request.getRequestURL().toString());
-        headers.put(Exchange.HTTP_URI, request.getRequestURI());
-        headers.put(Exchange.HTTP_PATH, rawPath);
-        headers.put(Exchange.CONTENT_TYPE, request.getContentType());
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("HTTP method {}", request.getMethod());
-            LOG.trace("HTTP query {}", request.getQueryString());
-            LOG.trace("HTTP url {}", request.getRequestURL());
-            LOG.trace("HTTP uri {}", request.getRequestURI());
-            LOG.trace("HTTP path {}", rawPath);
-            LOG.trace("HTTP content-type {}", request.getContentType());
+            ((StreamCache) body).reset();
         }
 
         // if content type is serialized java object, then de-serialize it to a Java object
@@ -180,7 +195,7 @@ public class DefaultHttpBinding implements HttpBinding {
                 message.setBody(null);
             }
         }
-        
+
         populateAttachments(request, message);
     }
 

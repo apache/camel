@@ -16,16 +16,14 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -83,6 +81,8 @@ public class HttpBridgeBigFormPostRouteTest extends BaseJettyTest {
 
     @Test
     public void testHttpClient() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:input");
+        mock.expectedMessageCount(1);
         
         List<NameValuePair> nvps = new ArrayList<NameValuePair>();
         nvps.add(new BasicNameValuePair("param1", LARGE_HEADER_VALUE));
@@ -93,19 +93,16 @@ public class HttpBridgeBigFormPostRouteTest extends BaseJettyTest {
         HttpPost httpPost = new HttpPost("http://localhost:" + port2 + "/test/hello");
         httpPost.setEntity(entity);
 
-        HttpHost proxy = new HttpHost("localhost", 8888, "http");
-        RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
-        httpPost.setConfig(config);
-
         CloseableHttpClient httpClient = HttpClients.createDefault();
         try {
             CloseableHttpResponse response = httpClient.execute(httpPost);
             assertEquals(response.getStatusLine().getStatusCode(), 200);
             response.close();
-        } catch (IOException e) {
         } finally {
             httpClient.close();
         }
+
+        mock.assertIsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -116,9 +113,14 @@ public class HttpBridgeBigFormPostRouteTest extends BaseJettyTest {
 
                 errorHandler(noErrorHandler());
 
-                from("jetty:http://localhost:" + port2 + "/test/hello?matchOnUriPrefix=true")
-                    .removeHeaders("formMetaData")
-                    .to("http://localhost:" + port1 + "?bridgeEndpoint=true");
+                from("jetty:http://localhost:" + port2 + "/test/hello?matchOnUriPrefix=true&mapHttpMessageHeaders=false&mapHttpMessageBody=false")
+                    .log("I was here")
+                    .to("jetty:http://localhost:" + port1 + "?bridgeEndpoint=true");
+
+                from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true")
+                    .log("Me too")
+                    .to("mock:input");
+
             }
         };
     }  
