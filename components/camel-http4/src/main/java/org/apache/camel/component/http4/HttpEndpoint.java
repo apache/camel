@@ -62,6 +62,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private HttpClientBuilder clientBuilder;
     @UriParam(label = "advanced")
     private HttpClient httpClient;
+    @UriParam(label = "advanced", defaultValue = "false")
+    private boolean useSystemProperties;
 
     @UriParam(label = "producer")
     private CookieStore cookieStore = new BasicCookieStore();
@@ -140,18 +142,22 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             clientBuilder.setConnectionManagerShared(true);
         }
 
-        // configure http proxy from camelContext
-        if (ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyPort"))) {
-            String host = getCamelContext().getProperty("http.proxyHost");
-            int port = Integer.parseInt(getCamelContext().getProperty("http.proxyPort"));
-            String scheme = getCamelContext().getProperty("http.proxyScheme");
-            // fallback and use either http or https depending on secure
-            if (scheme == null) {
-                scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
+        if (!useSystemProperties) {
+            // configure http proxy from camelContext
+            if (ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyPort"))) {
+                String host = getCamelContext().getProperty("http.proxyHost");
+                int port = Integer.parseInt(getCamelContext().getProperty("http.proxyPort"));
+                String scheme = getCamelContext().getProperty("http.proxyScheme");
+                // fallback and use either http or https depending on secure
+                if (scheme == null) {
+                    scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
+                }
+                LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", new Object[]{host, port, scheme});
+                HttpHost proxy = new HttpHost(host, port, scheme);
+                clientBuilder.setProxy(proxy);
             }
-            LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", new Object[]{host, port, scheme});
-            HttpHost proxy = new HttpHost(host, port, scheme);
-            clientBuilder.setProxy(proxy);
+        } else {
+            clientBuilder.useSystemProperties();
         }
         
         if (isAuthenticationPreemptive()) {
@@ -290,4 +296,14 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.httpClientOptions = httpClientOptions;
     }
 
+	public boolean isUseSystemProperties() {
+		return useSystemProperties;
+	}
+
+    /**
+     * To use System Properties as fallback for configuration
+     */
+	public void setUseSystemProperties(boolean useSystemProperties) {
+		this.useSystemProperties = useSystemProperties;
+	}
 }
