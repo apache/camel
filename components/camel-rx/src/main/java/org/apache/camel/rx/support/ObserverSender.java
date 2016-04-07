@@ -53,14 +53,14 @@ public class ObserverSender<T> implements Observer<T> {
 
     @Override
     public void onError(Throwable e) {
-        Exchange exchange = producer.createExchange();
+        Exchange exchange = producer.getEndpoint().createExchange();
         exchange.setException(e);
         send(exchange);
     }
 
     @Override
     public void onNext(T o) {
-        Exchange exchange = producer.createExchange();
+        Exchange exchange = producer.getEndpoint().createExchange();
         exchange.getIn().setBody(o);
         send(exchange);
     }
