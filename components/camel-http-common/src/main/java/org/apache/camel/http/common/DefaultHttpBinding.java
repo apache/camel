@@ -561,22 +561,22 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     public boolean isMapHttpMessageBody() {
-		return mapHttpMessageBody;
-	}
+        return mapHttpMessageBody;
+    }
 
-	public void setMapHttpMessageBody(boolean mapHttpMessageBody) {
-		this.mapHttpMessageBody = mapHttpMessageBody;
-	}
+    public void setMapHttpMessageBody(boolean mapHttpMessageBody) {
+        this.mapHttpMessageBody = mapHttpMessageBody;
+    }
 
-	public boolean isMapHttpMessageHeaders() {
-		return mapHttpMessageHeaders;
-	}
+    public boolean isMapHttpMessageHeaders() {
+        return mapHttpMessageHeaders;
+    }
 
-	public void setMapHttpMessageHeaders(boolean mapHttpMessageHeaders) {
-		this.mapHttpMessageHeaders = mapHttpMessageHeaders;
-	}
+    public void setMapHttpMessageHeaders(boolean mapHttpMessageHeaders) {
+        this.mapHttpMessageHeaders = mapHttpMessageHeaders;
+    }
 
-	protected static SimpleDateFormat getHttpDateFormat() {
+    protected static SimpleDateFormat getHttpDateFormat() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
         dateFormat.setTimeZone(TIME_ZONE_GMT);
         return dateFormat;

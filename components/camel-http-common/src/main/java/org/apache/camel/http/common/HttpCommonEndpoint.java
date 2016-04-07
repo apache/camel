@@ -100,13 +100,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             description = "Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present."
                     + " This can be turned on in case HTTP clients do not send streamed data.")
     boolean eagerCheckContentAvailable;
-    @UriParam(label = "producer", defaultValue = "200-299",
-            description = "The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.")
-    private String okStatusCodeRange = "200-299";
-    @UriParam(label = "producer,advanced",
-            description = "Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints."
-                    + " See more details at http://camel.apache.org/urlrewrite.html")
-    private UrlRewrite urlRewrite;
     @UriParam(label = "advanced", defaultValue = "true",
             description = "If this option is true then IN exchange Body of the exchange will be mapped to HTTP body." 
             + " Setting this to false will avoid the HTTP mapping.")
@@ -115,6 +108,13 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             description = "If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers."
             + " Setting this to false will avoid the HTTP Headers mapping.")
     boolean mapHttpMessageHeaders = true;
+    @UriParam(label = "producer", defaultValue = "200-299",
+            description = "The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.")
+    private String okStatusCodeRange = "200-299";
+    @UriParam(label = "producer,advanced",
+            description = "Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints."
+                    + " See more details at http://camel.apache.org/urlrewrite.html")
+    private UrlRewrite urlRewrite;
 
     public HttpCommonEndpoint() {
     }
@@ -456,25 +456,25 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         this.okStatusCodeRange = okStatusCodeRange;
     }
 
-	public boolean isMapHttpMessageBody() {
-		return mapHttpMessageBody;
-	}
+    public boolean isMapHttpMessageBody() {
+        return mapHttpMessageBody;
+    }
 
     /**
      * If this option is true, the IN exchange body will be mapped to HTTP
      */
-	public void setMapHttpMessageBody(boolean mapHttpMessageBody) {
-		this.mapHttpMessageBody = mapHttpMessageBody;
-	}
+    public void setMapHttpMessageBody(boolean mapHttpMessageBody) {
+        this.mapHttpMessageBody = mapHttpMessageBody;
+    }
 
-	public boolean isMapHttpMessageHeaders() {
-		return mapHttpMessageHeaders;
-	}
+    public boolean isMapHttpMessageHeaders() {
+        return mapHttpMessageHeaders;
+    }
 
     /**
      * If this option is true, the IN exchange headers will be mapped to HTTP Headers
      */
-	public void setMapHttpMessageHeaders(boolean mapHttpMessageHeaders) {
-		this.mapHttpMessageHeaders = mapHttpMessageHeaders;
-	}
+    public void setMapHttpMessageHeaders(boolean mapHttpMessageHeaders) {
+        this.mapHttpMessageHeaders = mapHttpMessageHeaders;
+    }
 }
