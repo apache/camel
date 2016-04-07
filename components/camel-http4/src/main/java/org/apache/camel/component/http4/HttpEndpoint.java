@@ -296,14 +296,14 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.httpClientOptions = httpClientOptions;
     }
 
-	public boolean isUseSystemProperties() {
-		return useSystemProperties;
-	}
+    public boolean isUseSystemProperties() {
+        return useSystemProperties;
+    }
 
     /**
      * To use System Properties as fallback for configuration
      */
-	public void setUseSystemProperties(boolean useSystemProperties) {
-		this.useSystemProperties = useSystemProperties;
-	}
+    public void setUseSystemProperties(boolean useSystemProperties) {
+        this.useSystemProperties = useSystemProperties;
+    }
 }
