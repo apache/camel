@@ -105,8 +105,6 @@ public class HttpProducer extends DefaultProducer {
             if (queryString != null) {
                 skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
-            // Need to remove the Host key as it should be not used
-            exchange.getIn().getHeaders().remove("host");
         }
         HttpRequestBase httpRequest = createMethod(exchange);
         Message in = exchange.getIn();
@@ -152,6 +150,16 @@ public class HttpProducer extends DefaultProducer {
                     String s =  values.size() > 1 ? values.toString() : values.get(0);
                     httpRequest.addHeader(key, s);
                 }
+            }
+        }
+
+        //In reverse proxy applications it can be desirable for the downstream service to see the original Host header
+        //if this option is set, and the exchange Host header is not null, we will set it's current value on the httpRequest
+        if (getEndpoint().isPreserveHostHeader()) {
+            String hostHeader = exchange.getIn().getHeader("Host", String.class);
+            if (hostHeader != null) {
+                //HttpClient 4 will check to see if the Host header is present, and use it if it is, see org.apache.http.protocol.RequestTargetHost in httpcore
+                httpRequest.setHeader("Host", hostHeader);
             }
         }
 

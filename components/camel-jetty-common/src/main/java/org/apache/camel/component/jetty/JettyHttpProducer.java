@@ -185,8 +185,6 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
             if (queryString != null) {
                 skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
-            // Need to remove the Host key as it should be not used 
-            exchange.getIn().getHeaders().remove("host");
         }
 
         // propagate headers as HTTP headers
@@ -225,6 +223,16 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
                     String s = values.size() > 1 ? values.toString() : values.get(0);
                     httpExchange.addRequestHeader(key, s);
                 }
+            }
+        }
+
+        //In reverse proxy applications it can be desirable for the downstream service to see the original Host header
+        //if this option is set, and the exchange Host header is not null, we will set it's current value on the httpExchange
+        if (getEndpoint().isPreserveHostHeader()) {
+            String hostHeader = exchange.getIn().getHeader("Host", String.class);
+            if (hostHeader != null) {
+                //HttpClient 4 will check to see if the Host header is present, and use it if it is, see org.apache.http.protocol.RequestTargetHost in httpcore
+                httpExchange.addRequestHeader("Host", hostHeader);
             }
         }
 
