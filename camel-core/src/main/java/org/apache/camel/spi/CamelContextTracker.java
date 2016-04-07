@@ -37,7 +37,7 @@ public class CamelContextTracker implements Closeable {
     public CamelContextTracker() {
         filter = new Filter() {
             public boolean accept(CamelContext camelContext) {
-                return camelContext.getClass().getName().contains("Proxy") == false;
+                return !camelContext.getClass().getName().contains("Proxy");
             }
         };
     }
@@ -50,7 +50,7 @@ public class CamelContextTracker implements Closeable {
      * Called to determine whether this tracker should accept the given context.
      */
     public boolean accept(CamelContext camelContext) {
-        return filter != null ? filter.accept(camelContext) : true;
+        return filter == null || filter.accept(camelContext);
     }
 
     /**
