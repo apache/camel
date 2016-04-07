@@ -66,6 +66,7 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "in"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "range"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not range"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "ends with"));
 
         // unary operators
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.unaryOperator, "++"));
