@@ -26,8 +26,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func1;
 
 public class ObservableMessageTest extends CamelTestSupport {
     protected MyObservableMessage observableMessage = new MyObservableMessage();
@@ -52,17 +50,9 @@ public class ObservableMessageTest extends CamelTestSupport {
         @Override
         protected void configure(Observable<Message> observable) {
             // lets process the messages using the RX API
-            observable.map(new Func1<Message, String>() {
-                @Override
-                public String call(Message message) {
-                    return "Hello " + message.getBody(String.class);
-                }
-            }).subscribe(new Action1<String>() {
-                @Override
-                public void call(String body) {
+            observable.map(message -> "Hello " + message.getBody(String.class)).subscribe(body -> {
                     template.sendBody(resultEndpoint, body);
-                }
-            });
+                });
         }
     }
 

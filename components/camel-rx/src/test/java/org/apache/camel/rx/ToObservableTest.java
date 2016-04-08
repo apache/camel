@@ -23,10 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rx.Observable;
-import rx.functions.Action1;
 
-/**
- */
 public class ToObservableTest extends RxTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ToObservableTest.class);
 
@@ -36,14 +33,11 @@ public class ToObservableTest extends RxTestSupport {
         mockEndpoint.expectedMessageCount(4);
 
         Observable<Message> observable = reactiveCamel.toObservable("timer://foo?fixedRate=true&period=100");
-        observable.take(4).subscribe(new Action1<Message>() {
-            @Override
-            public void call(Message message) {
+        observable.take(4).subscribe(message -> {
                 String body = "Processing message headers " + message.getHeaders();
                 LOG.info(body);
                 producerTemplate.sendBody(mockEndpoint, body);
-            }
-        });
+            });
 
         mockEndpoint.assertIsSatisfied();
     }

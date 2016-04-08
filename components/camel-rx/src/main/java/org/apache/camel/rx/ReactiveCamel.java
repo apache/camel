@@ -141,11 +141,6 @@ public class ReactiveCamel {
      * Return a newly created {@link Observable} without conversion
      */
     protected Observable<Exchange> createEndpointObservable(final Endpoint endpoint) {
-        return new EndpointObservable<Exchange>(endpoint, new EndpointSubscribeFunc<Exchange>(endpoint, new Func1<Exchange, Exchange>() {
-            @Override
-            public Exchange call(Exchange exchange) {
-                return exchange;
-            }
-        }));
+        return new EndpointObservable<Exchange>(endpoint, new EndpointSubscribeFunc<Exchange>(endpoint, exchange -> exchange));
     }
 }

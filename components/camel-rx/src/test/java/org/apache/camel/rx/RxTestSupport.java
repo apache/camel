@@ -22,8 +22,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.After;
 import org.junit.Before;
 
-/**
- */
 public abstract class RxTestSupport {
     protected CamelContext camelContext;
     protected ReactiveCamel reactiveCamel;

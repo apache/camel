@@ -24,7 +24,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
 import org.junit.Test;
 import rx.Observable;
-import rx.functions.Action1;
 
 public class ToObservableUoWTest extends RxTestSupport {
 
@@ -40,13 +39,10 @@ public class ToObservableUoWTest extends RxTestSupport {
         mockEndpoint.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
         Observable<Message> observable = reactiveCamel.toObservable("file://target/foo?move=done");
-        observable.subscribe(new Action1<Message>() {
-            @Override
-            public void call(Message message) {
+        observable.subscribe(message -> {
                 String body = message.getBody(String.class);
                 producerTemplate.sendBody("mock:results", body);
-            }
-        });
+            });
 
         producerTemplate.sendBodyAndHeader("file://target/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
         producerTemplate.sendBodyAndHeader("file://target/foo", "Bye World", Exchange.FILE_NAME, "bye.txt");
