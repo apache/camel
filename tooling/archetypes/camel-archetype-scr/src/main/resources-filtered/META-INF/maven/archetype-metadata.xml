@@ -25,9 +25,6 @@
         <requiredProperty key="camel-version">
           <defaultValue>${project.version}</defaultValue>
         </requiredProperty>
-        <requiredProperty key="log4j-version">
-          <defaultValue>${log4j-version}</defaultValue>
-        </requiredProperty>
         <requiredProperty key="maven-bundle-plugin-version">
           <defaultValue>${maven-bundle-plugin-version}</defaultValue>
         </requiredProperty>
@@ -42,9 +39,6 @@
         </requiredProperty>
         <requiredProperty key="maven-resources-plugin-version">
           <defaultValue>${maven-resources-plugin-version}</defaultValue>
-        </requiredProperty>
-        <requiredProperty key="slf4j-version">
-          <defaultValue>${slf4j-version}</defaultValue>
         </requiredProperty>
     </requiredProperties>
     <fileSets>
