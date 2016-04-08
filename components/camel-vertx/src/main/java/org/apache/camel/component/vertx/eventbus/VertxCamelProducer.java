@@ -63,7 +63,8 @@ public class VertxCamelProducer extends ServiceSupport implements Handler<Messag
     public void handle(Message<Exchange> event) {
         Exchange exchange = event.body();
         String url = (String) exchange.removeProperty("CamelVertxUrl");
-        // TODO: execute blocking
+        // ideally we should know if a endpoint support async procesing by nature or not
+        // then we can call the blocking vs non-blocking here in vert.x
         template.send(url, exchange);
         // signal we are done
         event.reply(exchange, options);
