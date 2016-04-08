@@ -97,4 +97,15 @@ public class Employee {
                 && this.getSalary() == e.getSalary()
                 && this.getHireDate().equals(e.getHireDate());
     }
+
+    @Override
+    public String toString() {
+        return "Employee{"
+                + "firstName='" + firstName + '\''
+                + ", lastName='" + lastName + '\''
+                + ", title='" + title + '\''
+                + ", salary=" + salary
+                + ", hireDate=" + hireDate
+                + '}';
+    }
 }

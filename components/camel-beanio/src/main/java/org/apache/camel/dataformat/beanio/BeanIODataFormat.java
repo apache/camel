@@ -113,6 +113,10 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
         this.camelContext = camelContext;
     }
 
+    StreamFactory getFactory() {
+        return factory;
+    }
+
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
         List<Object> models = getModels(exchange, body);
         writeModels(stream, models);
