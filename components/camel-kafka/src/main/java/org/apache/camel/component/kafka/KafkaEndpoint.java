@@ -283,10 +283,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         configuration.setBrokers(brokers);
     }
 
-    public void setMetadataFetchTimeoutMs(Integer metadataFetchTimeoutMs) {
-        configuration.setMetadataFetchTimeoutMs(metadataFetchTimeoutMs);
-    }
-
     public String getValueDeserializer() {
         return configuration.getValueDeserializer();
     }
@@ -375,10 +371,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         configuration.setSslKeystorePassword(sslKeystorePassword);
     }
 
-    public Boolean getBlockOnBufferFull() {
-        return configuration.getBlockOnBufferFull();
-    }
-
     public void setCheckCrcs(Boolean checkCrcs) {
         configuration.setCheckCrcs(checkCrcs);
     }
@@ -413,10 +405,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     public void setSslKeyPassword(String sslKeyPassword) {
         configuration.setSslKeyPassword(sslKeyPassword);
-    }
-
-    public void setBlockOnBufferFull(Boolean blockOnBufferFull) {
-        configuration.setBlockOnBufferFull(blockOnBufferFull);
     }
 
     public Integer getRequestRequiredAcks() {
@@ -495,10 +483,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return configuration.getSslTruststorePassword();
     }
 
-    public void setTimeoutMs(Integer timeoutMs) {
-        configuration.setTimeoutMs(timeoutMs);
-    }
-
     public void setConsumerStreams(int consumerStreams) {
         configuration.setConsumerStreams(consumerStreams);
     }
@@ -549,10 +533,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     public String getPartitionAssignor() {
         return configuration.getPartitionAssignor();
-    }
-
-    public Integer getMetadataFetchTimeoutMs() {
-        return configuration.getMetadataFetchTimeoutMs();
     }
 
     public void setSecurityProtocol(String securityProtocol) {
@@ -653,10 +633,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     public Integer getSendBufferBytes() {
         return configuration.getSendBufferBytes();
-    }
-
-    public Integer getTimeoutMs() {
-        return configuration.getTimeoutMs();
     }
 
     public String getSslProtocol() {
