@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public class HttpBindingPreservePostFormUrlEncodedBodyTest extends BaseJettyTest {
     
-	@Ignore
+    @Ignore
     @Test
     public void testSendToJetty() throws Exception {
         Exchange exchange = template.request("http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", new Processor() {

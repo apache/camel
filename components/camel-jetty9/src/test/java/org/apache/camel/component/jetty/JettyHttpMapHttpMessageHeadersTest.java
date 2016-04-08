@@ -28,7 +28,6 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
     @Test
     public void testHttpGetWithParamsViaURIFiltered() throws Exception {
-    	  	
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("one", null);
@@ -42,7 +41,6 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
     
     @Test
     public void testHttpGetWithParamsViaURINotFiltered() throws Exception {
-    	  	
         MockEndpoint mock = getMockEndpoint("mock:result1");
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("one", "einz");
