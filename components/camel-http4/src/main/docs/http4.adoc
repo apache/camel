@@ -81,8 +81,9 @@ The HTTP4 component supports 13 options which are listed below.
 
 
 
+
 // endpoint options: START
-The HTTP4 component supports 29 endpoint options which are listed below:
+The HTTP4 component supports 30 endpoint options which are listed below:
 
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
@@ -100,6 +101,7 @@ The HTTP4 component supports 29 endpoint options which are listed below:
 | httpBinding | producer |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
 | ignoreResponseBody | producer | false | boolean | If this option is true The http producer won't read response body and cache the input stream
 | okStatusCodeRange | producer | 200-299 | String | The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
+| preserveHostHeader | producer | false | boolean | If the option is true HttpProducer will set the Host header to the value contained in the current exchange Host header useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client this allows applications which use the Host header to generate accurate URL's for a proxied service
 | proxyHost | producer |  | String | The proxy host name
 | proxyPort | producer |  | int | The proxy port number
 | throwExceptionOnFailure | producer | true | boolean | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
@@ -118,6 +120,7 @@ The HTTP4 component supports 29 endpoint options which are listed below:
 | useSystemProperties | advanced | false | boolean | To use System Properties as fallback for configuration
 |=======================================================================
 // endpoint options: END
+
 
 
 
