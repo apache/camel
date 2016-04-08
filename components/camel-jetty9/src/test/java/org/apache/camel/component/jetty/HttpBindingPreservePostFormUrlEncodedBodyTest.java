@@ -44,7 +44,7 @@ public class HttpBindingPreservePostFormUrlEncodedBodyTest extends BaseJettyTest
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/myapp/myservice").process(new Processor() {
+                from("jetty:http://localhost:{{port}}/myapp/myservice?map").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         
