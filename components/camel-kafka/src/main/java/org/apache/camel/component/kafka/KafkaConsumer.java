@@ -103,7 +103,7 @@ public class KafkaConsumer extends DefaultConsumer {
             int processed = 0;
             try {
                 LOG.debug("Subscribing {} to topic {}", threadId, topicName);
-                consumer.subscribe(Arrays.asList(topicName));
+                consumer.subscribe(Arrays.asList(topicName.split(",")));
 
                 if (endpoint.isSeekToBeginning()) {
                     LOG.debug("{} is seeking to the beginning on topic {}", threadId, topicName);
