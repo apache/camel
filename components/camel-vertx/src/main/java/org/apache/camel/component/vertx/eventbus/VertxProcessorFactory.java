@@ -16,9 +16,14 @@
  */
 package org.apache.camel.component.vertx.eventbus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.vertx.core.Vertx;
 import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TransformDefinition;
@@ -35,6 +40,9 @@ public class VertxProcessorFactory implements ProcessorFactory {
 
     @Override
     public Processor createChildProcessor(RouteContext routeContext, ProcessorDefinition<?> def, boolean mandatory) throws Exception {
+        // let the classic camel-core create the child processor, which end up calling the createProcessor below
+        String id = def.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+        System.out.println("Child id" + id);
         return null;
     }
 
@@ -48,6 +56,14 @@ public class VertxProcessorFactory implements ProcessorFactory {
         } else if (def instanceof TransformDefinition) {
             Expression expression = ((TransformDefinition) def).getExpression().createExpression(routeContext);
             return new VertxTransformProcessor(vertx, id, expression);
+        } else if (def instanceof FilterDefinition) {
+            Predicate predicate = ((FilterDefinition) def).getExpression().createPredicate(routeContext);
+            List<Processor> children = new ArrayList<>();
+            for (ProcessorDefinition childDef : def.getOutputs()) {
+                Processor child = createProcessor(routeContext, childDef);
+                children.add(child);
+            }
+            return new VertxFilterProcessor(vertx, id, predicate, children);
         }
 
         throw new UnsupportedOperationException("EIP not supported yet");
