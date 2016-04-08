@@ -182,18 +182,9 @@ public class KafkaConfiguration {
     //ssl.truststore.type
     @UriParam(label = "producer", defaultValue = SslConfigs.DEFAULT_SSL_TRUSTSTORE_TYPE)
     private String sslTruststoreType = SslConfigs.DEFAULT_SSL_TRUSTSTORE_TYPE;
-    //timeout.ms
-    @UriParam(label = "producer", defaultValue = "30000")
-    private Integer timeoutMs = 30000;
-    //block.on.buffer.full
-    @UriParam(label = "producer", defaultValue = "false")
-    private Boolean blockOnBufferFull = false;
     //max.in.flight.requests.per.connection
     @UriParam(label = "producer", defaultValue = "5")
     private Integer maxInFlightRequest = 5;
-    //metadata.fetch.timeout.ms
-    @UriParam(label = "producer", defaultValue = "60000")
-    private Integer metadataFetchTimeoutMs = 600 * 1000;
     //metadata.max.age.ms
     @UriParam(label = "producer", defaultValue = "300000")
     private Integer metadataMaxAgeMs = 300000;
@@ -274,10 +265,7 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, SslConfigs.SSL_PROTOCOL_CONFIG, getSslProtocol());
         addPropertyIfNotNull(props, SslConfigs.SSL_PROVIDER_CONFIG, getSslProvider());
         addPropertyIfNotNull(props, SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, getSslTruststoreType());
-        addPropertyIfNotNull(props, ProducerConfig.TIMEOUT_CONFIG, getTimeoutMs());
-        addPropertyIfNotNull(props, ProducerConfig.BLOCK_ON_BUFFER_FULL_CONFIG, getBlockOnBufferFull());
         addPropertyIfNotNull(props, ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, getMaxInFlightRequest());
-        addPropertyIfNotNull(props, ProducerConfig.METADATA_FETCH_TIMEOUT_CONFIG, getMetadataFetchTimeoutMs());
         addPropertyIfNotNull(props, ProducerConfig.METADATA_MAX_AGE_CONFIG, getMetadataMaxAgeMs());
         addPropertyIfNotNull(props, ProducerConfig.METRIC_REPORTER_CLASSES_CONFIG, getMetricReporters());
         addPropertyIfNotNull(props, ProducerConfig.METRICS_NUM_SAMPLES_CONFIG, getNoOfMetricsSample());
@@ -387,7 +375,7 @@ public class KafkaConfiguration {
     }
 
     /**
-     * Name of the topic to use. When used on a consumer endpoint the topic can be a comma separated list of topics.
+     * Name of the topic to use.
      */
     public void setTopic(String topic) {
         this.topic = topic;
@@ -868,20 +856,6 @@ public class KafkaConfiguration {
         this.bufferMemorySize = bufferMemorySize;
     }
 
-    public Boolean getBlockOnBufferFull() {
-        return blockOnBufferFull;
-    }
-
-    /**
-     * When our memory buffer is exhausted we must either stop accepting new records (block) or throw errors.
-     * By default this setting is true and we block, however in some scenarios blocking is not desirable and it
-     * is better to immediately give an error. Setting this to false will accomplish that: the producer will throw
-     * a BufferExhaustedException if a recrord is sent and the buffer space is full.
-     */
-    public void setBlockOnBufferFull(Boolean blockOnBufferFull) {
-        this.blockOnBufferFull = blockOnBufferFull;
-    }
-
     public Integer getRequestRequiredAcks() {
         return requestRequiredAcks;
     }
@@ -1001,20 +975,6 @@ public class KafkaConfiguration {
         this.receiveBufferBytes = receiveBufferBytes;
     }
 
-    public Integer getTimeoutMs() {
-        return timeoutMs;
-    }
-
-    /**
-     * The configuration controls the maximum amount of time the server will wait for acknowledgments from followers to meet the
-     * acknowledgment requirements the producer has specified with the acks configuration. If the requested number of acknowledgments
-     * are not met when the timeout elapses an error will be returned. This timeout is measured on the server side and does not include
-     * the network latency of the request.
-     */
-    public void setTimeoutMs(Integer timeoutMs) {
-        this.timeoutMs = timeoutMs;
-    }
-
     public Integer getMaxInFlightRequest() {
         return maxInFlightRequest;
     }
@@ -1025,18 +985,6 @@ public class KafkaConfiguration {
      */
     public void setMaxInFlightRequest(Integer maxInFlightRequest) {
         this.maxInFlightRequest = maxInFlightRequest;
-    }
-
-    public Integer getMetadataFetchTimeoutMs() {
-        return metadataFetchTimeoutMs;
-    }
-
-    /**
-     * The first time data is sent to a topic we must fetch metadata about that topic to know which servers host the topic's partitions.
-     * This fetch to succeed before throwing an exception back to the client.
-     */
-    public void setMetadataFetchTimeoutMs(Integer metadataFetchTimeoutMs) {
-        this.metadataFetchTimeoutMs = metadataFetchTimeoutMs;
     }
 
     public Integer getMetadataMaxAgeMs() {
