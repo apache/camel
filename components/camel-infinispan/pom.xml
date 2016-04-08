@@ -254,8 +254,10 @@
                                             <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=static_filter_factory:add(configuration=default)</command>
                                             <!-- Separate cache for @ClientListener(includeCurrentState=true) -->
                                             <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=include_current_state:add(configuration=default)</command>
-                                            <!-- Separate cache for protobuf serialized objects. -->
+                                            <!-- Separate cache for misc tests. -->
                                             <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=misc_cache:add(configuration=default)</command>
+                                            <!-- Separate cache for idempotent tests. -->
+                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=idempotent:add(configuration=default)</command>
                                         </commands>
                                     </executeCommands>
                                 </configuration>

@@ -19,8 +19,10 @@ package org.apache.camel.component.infinispan.processor.idempotent;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.infinispan.InfinispanUtil;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
+import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.manager.DefaultCacheManager;
@@ -117,9 +119,19 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
 
     private BasicCache<Object, Boolean> getCache() {
         if (cache == null) {
-            cache = cacheName != null
-                ? cacheContainer.<Object, Boolean>getCache(cacheName)
-                : cacheContainer.<Object, Boolean>getCache();
+            // By default, previously existing values for java.util.Map operations
+            // are not returned for remote caches but idempotent repository needs
+            // them so force it.
+            if (InfinispanUtil.isRemote(cacheContainer)) {
+                RemoteCacheManager manager = InfinispanUtil.asRemote(cacheContainer);
+                cache = cacheName != null
+                    ? manager.getCache(cacheName, true)
+                    : manager.getCache(true);
+            } else {
+                cache = cacheName != null
+                    ? cacheContainer.getCache(cacheName)
+                    : cacheContainer.getCache();
+            }
         }
 
         return cache;
