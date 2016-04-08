@@ -24,8 +24,8 @@
     <requiredProperty key="camel-version">
       <defaultValue>${project.version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="jetty-version">
-      <defaultValue>${jetty-version}</defaultValue>
+    <requiredProperty key="jetty9-version">
+      <defaultValue>${jetty9-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="jetty-plugin-version">
       <defaultValue>${jetty-plugin-version}</defaultValue>

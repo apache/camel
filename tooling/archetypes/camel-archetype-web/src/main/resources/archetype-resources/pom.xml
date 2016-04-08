@@ -113,23 +113,15 @@
         </configuration>
       </plugin>
 
-      <!-- plugin so you can run mvn jetty:run -->
+      <!-- allows running this example with mvn jetty:run -->
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty-plugin-version}</version>
+        <version>${jetty9-version}</version>
         <configuration>
-          <webAppConfig>
+          <webApp>
             <contextPath>/${project.artifactId}</contextPath>
-          </webAppConfig>
-          <systemProperties>
-            <!-- enable easy JMX connection to JConsole -->
-            <systemProperty>
-              <name>com.sun.management.jmxremote</name>
-              <value/>
-            </systemProperty>
-          </systemProperties>
-          <scanIntervalSeconds>10</scanIntervalSeconds>
+          </webApp>
         </configuration>
       </plugin>
 
