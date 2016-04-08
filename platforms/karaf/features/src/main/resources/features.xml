@@ -487,6 +487,7 @@
     <bundle dependency="true">wrap:mvn:org.apache.xmlgraphics/batik-svggen/${xmlgraphics-batik-version}$Bundle-SymbolicName=org.apache.xmlgraphics.batik-svggen&amp;Bundle-Version=${xmlgraphics-batik-version}</bundle>
     <bundle dependency="true">wrap:mvn:org.apache.xmlgraphics/batik-extension/${xmlgraphics-batik-version}$Bundle-SymbolicName=org.apache.xmlgraphics.batik-extension&amp;Bundle-Version=${xmlgraphics-batik-version}</bundle>
     <bundle dependency="true">wrap:mvn:org.apache.xmlgraphics/batik-ext/${xmlgraphics-batik-version}$Bundle-SymbolicName=org.apache.xmlgraphics.batik-ext&amp;Bundle-Version=${xmlgraphics-batik-version}</bundle>
+    <bundle dependency="true">wrap:mvn:xml-apis/xml-apis-ext/${xml-apis-ext-version}$Bundle-SymbolicName=xml-apis-ext&amp;Bundle-Version=${xml-apis-ext-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${bcel-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.fop/${fop-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-fop/${project.version}</bundle>
