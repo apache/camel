@@ -17,9 +17,11 @@
 package org.apache.camel.component.vertx.eventbus;
 
 import io.vertx.core.Vertx;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
 
@@ -43,6 +45,9 @@ public class VertxProcessorFactory implements ProcessorFactory {
         if (def instanceof ToDefinition) {
             String uri = ((ToDefinition) def).getEndpointUri();
             return new VertxSendToProcessor(vertx, id, uri);
+        } else if (def instanceof TransformDefinition) {
+            Expression expression = ((TransformDefinition) def).getExpression().createExpression(routeContext);
+            return new VertxTransformProcessor(vertx, id, expression);
         }
 
         throw new UnsupportedOperationException("EIP not supported yet");

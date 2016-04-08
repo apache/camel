@@ -21,28 +21,33 @@ import io.vertx.core.eventbus.DeliveryOptions;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.util.AsyncProcessorHelper;
 
-public class VertxSendToProcessor implements AsyncProcessor {
+public class VertxTransformProcessor implements AsyncProcessor {
 
     private final Vertx vertx;
     private final String id;
-    private final String uri;
+    private final Expression expression;
     private final DeliveryOptions options;
 
-    public VertxSendToProcessor(Vertx vertx, String id, String uri) {
+    public VertxTransformProcessor(Vertx vertx, String id, Expression expression) {
         this.vertx = vertx;
         this.id = id;
-        this.uri = uri;
+        this.expression = expression;
         this.options = new DeliveryOptions();
         this.options.setCodecName("camel");
     }
 
     @Override
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        // if OUT then use reply handler to update exchange with result
-        exchange.setProperty("CamelVertxUrl", uri);
-        vertx.eventBus().send(VertxCamelProducer.class.getName(), exchange, options, (handler) -> {
+        exchange.setProperty("CamelVertxExpression", expression);
+        vertx.eventBus().send(VertxCamelTransform.class.getName(), exchange, options, (handler) -> {
             if (handler.failed()) {
                 Throwable t = handler.cause();
                 exchange.setException(t);
@@ -52,8 +57,4 @@ public class VertxSendToProcessor implements AsyncProcessor {
         return false;
     }
 
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
 }

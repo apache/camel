@@ -23,22 +23,21 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ProducerTemplate;
+import org.apache.camel.Expression;
+import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.ExchangeHelper;
 
-public class VertxCamelProducer extends ServiceSupport implements Handler<Message<Exchange>> {
+public class VertxCamelTransform extends ServiceSupport implements Handler<Message<Exchange>> {
 
     private final CamelContext camelContext;
-    private final ProducerTemplate template;
     private final Vertx vertx;
     private final String id;
     private MessageConsumer<Exchange> consumer;
     private final DeliveryOptions options;
 
-    public VertxCamelProducer(CamelContext camelContext, Vertx vertx, String id) {
+    public VertxCamelTransform(CamelContext camelContext, Vertx vertx, String id) {
         this.camelContext = camelContext;
-        this.template = camelContext.createProducerTemplate();
         this.vertx = vertx;
         this.id = id;
         this.options = new DeliveryOptions();
@@ -48,7 +47,6 @@ public class VertxCamelProducer extends ServiceSupport implements Handler<Messag
     @Override
     protected void doStart() throws Exception {
         consumer = vertx.eventBus().localConsumer(id, this);
-        ServiceHelper.startService(template);
     }
 
     @Override
@@ -56,16 +54,49 @@ public class VertxCamelProducer extends ServiceSupport implements Handler<Messag
         if (consumer != null) {
             consumer.unregister();
         }
-        ServiceHelper.stopService(template);
     }
 
     @Override
     public void handle(Message<Exchange> event) {
         Exchange exchange = event.body();
-        String url = (String) exchange.removeProperty("CamelVertxUrl");
+        Expression expression = (Expression) exchange.removeProperty("CamelVertxExpression");
         // TODO: execute blocking
-        template.send(url, exchange);
+        transform(exchange, expression);
         // signal we are done
         event.reply(exchange, options);
     }
+
+    private void transform(Exchange exchange, Expression expression) {
+        Object newBody = expression.evaluate(exchange, Object.class);
+
+        if (exchange.getException() != null) {
+            // the expression threw an exception so we should break-out
+            return;
+        }
+
+        boolean out = exchange.hasOut();
+        org.apache.camel.Message old = out ? exchange.getOut() : exchange.getIn();
+
+        // create a new message container so we do not drag specialized message objects along
+        // but that is only needed if the old message is a specialized message
+        boolean copyNeeded = !(old.getClass().equals(DefaultMessage.class));
+
+        if (copyNeeded) {
+            org.apache.camel.Message msg = new DefaultMessage();
+            msg.copyFrom(old);
+            msg.setBody(newBody);
+
+            // replace message on exchange (must set as OUT)
+            ExchangeHelper.replaceMessage(exchange, msg, true);
+        } else {
+            // no copy needed so set replace value directly
+            old.setBody(newBody);
+
+            // but the message must be on OUT
+            if (!exchange.hasOut()) {
+                exchange.setOut(exchange.getIn());
+            }
+        }
+    }
+
 }
