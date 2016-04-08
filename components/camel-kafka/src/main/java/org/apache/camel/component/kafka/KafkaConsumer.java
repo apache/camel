@@ -103,7 +103,7 @@ public class KafkaConsumer extends DefaultConsumer {
             int processed = 0;
             try {
                 LOG.debug("Subscribing {} to topic {}", threadId, topicName);
-                consumer.subscribe(Arrays.asList(topicName));
+                consumer.subscribe(Arrays.asList(topicName.split(",")));
                 while (isRunAllowed() && !isSuspendingOrSuspended()) {
                     ConsumerRecords<Object, Object> records = consumer.poll(Long.MAX_VALUE);
                     for (ConsumerRecord<Object, Object> record : records) {
