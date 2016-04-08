@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class HttpProxyRouteTest extends BaseJettyTest {
@@ -56,6 +57,7 @@ public class HttpProxyRouteTest extends BaseJettyTest {
         assertEquals("Get a wrong host header", "localhost:" + getPort2(), out);
     }
     
+    @Ignore
     @Test
     public void testHttpProxyFormHeader() throws Exception {
         String out = template.requestBodyAndHeader("http://localhost:{{port}}/form", "username=abc&pass=password", Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded", String.class);
