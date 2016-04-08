@@ -109,7 +109,18 @@
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-eclipse-compiler</artifactId>
-            <version>2.7.0-01</version>
+            <version>2.9.2-01</version>
+            <exclusions>
+              <exclusion>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-eclipse-batch</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-eclipse-batch</artifactId>
+            <version>2.4.3-01</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -127,7 +138,6 @@
           </classpathContainers>
         </configuration>
       </plugin>
-
 
       <!-- Allows the example to be run via 'mvn compile exec:java' -->
       <plugin>
