@@ -387,7 +387,7 @@ public class KafkaConfiguration {
     }
 
     /**
-     * Name of the topic to use.
+     * Name of the topic to use. When used on a consumer endpoint the topic can be a comma separated list of topics.
      */
     public void setTopic(String topic) {
         this.topic = topic;
