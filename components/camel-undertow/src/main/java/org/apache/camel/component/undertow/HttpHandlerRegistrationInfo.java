@@ -18,26 +18,33 @@ package org.apache.camel.component.undertow;
 
 import java.net.URI;
 
-import io.undertow.server.HttpHandler;
+public class HttpHandlerRegistrationInfo {
 
-/**
- * An undertow host abstraction
- *
- */
-public interface UndertowHost {
+    private Boolean matchOnUriPrefix;
+    private String methodRestrict;
+    private URI uri;
 
-    /**
-     * Validate whether this host can process the given URI
-     */
-    void validateEndpointURI(URI httpURI);
+    public String getMethodRestrict() {
+        return methodRestrict;
+    }
 
-    /**
-     * Register a handler with the given {@link HttpHandlerRegistrationInfo}
-     */
-    void registerHandler(HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler);
+    public void setMethodRestrict(String methodRestrict) {
+        this.methodRestrict = methodRestrict;
+    }
 
-    /**
-     * Unregister a handler with the given {@link HttpHandlerRegistrationInfo}
-     */
-    void unregisterHandler(HttpHandlerRegistrationInfo registrationInfo);
+    public URI getUri() {
+        return uri;
+    }
+
+    public void setUri(URI uri) {
+        this.uri = uri;
+    }
+
+    public Boolean isMatchOnUriPrefix() {
+        return matchOnUriPrefix;
+    }
+
+    public void setMatchOnUriPrefix(Boolean matchOnUriPrefix) {
+        this.matchOnUriPrefix = matchOnUriPrefix;
+    }
 }
