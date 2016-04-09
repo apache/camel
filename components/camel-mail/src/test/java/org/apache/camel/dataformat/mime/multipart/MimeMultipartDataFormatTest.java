@@ -17,8 +17,10 @@
 package org.apache.camel.dataformat.mime.multipart;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -283,6 +285,34 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         assertNull(out.getOut().getHeader("excluded"));
         assertEquals("any value", out.getOut().getHeader("x-foo"));
         assertEquals("also there", out.getOut().getHeader("x-bar"));
+    }
+
+    @Test
+    public void unmarshalRelated() throws IOException {
+        in.setBody(new File("src/test/resources/multipart-related.txt"));
+        unmarshalAndCheckAttachmentName("950120.aaCB@XIson.com");
+    }
+
+    @Test
+    public void unmarshalWithoutId() throws IOException {
+        in.setBody(new File("src/test/resources/multipart-without-id.txt"));
+        unmarshalAndCheckAttachmentName("@camel.apache.org");
+    }
+
+    private void unmarshalAndCheckAttachmentName(String matcher) throws IOException, UnsupportedEncodingException {
+        Exchange intermediate = template.send("direct:unmarshalonlyinlineheaders", exchange);
+        assertNotNull(intermediate.getOut());
+        String bodyStr = intermediate.getOut().getBody(String.class);
+        assertNotNull(bodyStr);
+        assertThat(bodyStr, startsWith("25"));
+        assertEquals(1, intermediate.getOut().getAttachmentNames().size());
+        assertThat(intermediate.getOut().getAttachmentNames().iterator().next(), containsString(matcher));
+        DataHandler dh = intermediate.getOut().getAttachment(intermediate.getOut().getAttachmentNames().iterator().next());
+        assertNotNull(dh);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        dh.writeTo(bos);
+        String attachmentString = new String(bos.toByteArray(), "UTF-8");
+        assertThat(attachmentString, startsWith("Old MacDonald had a farm"));
     }
 
     private void addAttachment(String attContentType, String attText, String attFileName) throws IOException {
