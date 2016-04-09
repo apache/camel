@@ -20,10 +20,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.activation.DataHandler;
@@ -236,7 +238,7 @@ public class MimeMultipartDataFormat implements DataFormat {
             content = mp.getBodyPart(0);
             for (int i = 1; i < mp.getCount(); i++) {
                 BodyPart bp = mp.getBodyPart(i);
-                camelMessage.addAttachment(MimeUtility.decodeText(bp.getFileName()), bp.getDataHandler());
+                camelMessage.addAttachment(getAttachmentKey(bp), bp.getDataHandler());
             }
         }
         if (content instanceof BodyPart) {
@@ -265,5 +267,23 @@ public class MimeMultipartDataFormat implements DataFormat {
             headers.addHeader(headerMame, h);
             camelMessage.removeHeader(headerMame);
         }
+    }
+
+    private String getAttachmentKey(BodyPart bp) throws MessagingException, UnsupportedEncodingException {
+        // use the filename as key for the map
+        String key = bp.getFileName();
+        // if there is no file name we use the Content-ID header
+        if (key == null && bp instanceof MimeBodyPart) {
+            key = ((MimeBodyPart)bp).getContentID();
+            if (key != null && key.startsWith("<") && key.length() > 2) {
+                // strip <>
+                key = key.substring(1, key.length() - 1);
+            }
+        }
+        // or a generated content id
+        if (key == null) {
+            key = UUID.randomUUID().toString() + "@camel.apache.org";
+        }
+        return MimeUtility.decodeText(key);
     }
 }
