@@ -53,17 +53,16 @@ public class BeanIOSplitterTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // setup beanio data format using the mapping file, loaded from the classpath
-                BeanIODataFormat format = new BeanIODataFormat(
-                        "org/apache/camel/dataformat/beanio/mappings.xml",
-                        "employeeFile");
-                format.setCamelContext(context);
+                // setup beanio splitter using the mapping file, loaded from the classpath
+                BeanIOSplitter splitter = new BeanIOSplitter();
+                splitter.setMapping("org/apache/camel/dataformat/beanio/mappings.xml");
+                splitter.setStreamName("employeeFile");
 
                 // a route which uses the bean io data format to format a CSV data
                 // to java objects
                 from("direct:unmarshal")
                     // and then split the message body so we get a message for each row
-                    .split(new BeanIOSplitter(format)).streaming()
+                    .split(splitter).streaming()
                         .to("log:line")
                         .to("mock:beanio-unmarshal");
                 // END SNIPPET: e1

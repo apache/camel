@@ -17,34 +17,70 @@
 package org.apache.camel.dataformat.beanio;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.Reader;
+import java.nio.charset.Charset;
+import java.util.Properties;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.beanio.BeanReader;
 import org.beanio.StreamFactory;
 
+/**
+ * You can use {@link BeanIOSplitter} with the Camel Splitter EIP to split big payloads
+ * using a stream mode to avoid reading the entire content into memory.
+ */
 public class BeanIOSplitter implements Expression {
 
-    // TODO: should not reuse dataformat but have its own configuration likely
-    // TODO: need some way of starting to load the stream factory
-    private BeanIODataFormat dataFormat;
+    private BeanIOConfiguration configuration = new BeanIOConfiguration();
+    private StreamFactory factory;
 
-    public BeanIOSplitter(BeanIODataFormat dataFormat) throws Exception {
-        this.dataFormat = dataFormat;
-        ServiceHelper.startService(dataFormat);
+    public BeanIOSplitter() throws Exception {
     }
 
-    public Object evaluate(Exchange exchange) throws InvalidPayloadException {
+    public BeanIOSplitter(BeanIOConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public BeanIOSplitter(String mapping, String streamName) {
+        setMapping(mapping);
+        setStreamName(streamName);
+    }
+
+    protected StreamFactory createStreamFactory(CamelContext camelContext) throws Exception {
+        ObjectHelper.notNull(getStreamName(), "Stream name not configured.");
+        // Create the stream factory that will be used to read/write objects.
+        StreamFactory answer = StreamFactory.newInstance();
+
+        // Load the mapping file using the resource helper to ensure it can be loaded in OSGi and other environments
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, getMapping());
+        try {
+            if (getProperties() != null) {
+                answer.load(is, getProperties());
+            } else {
+                answer.load(is);
+            }
+        } finally {
+            IOHelper.close(is);
+        }
+
+        return answer;
+    }
+
+    public Object evaluate(Exchange exchange) throws Exception {
         Message msg = exchange.getIn();
         Object body = msg.getBody();
 
-        StreamFactory sf = dataFormat.getFactory();
+        if (factory == null) {
+            factory = createStreamFactory(exchange.getContext());
+        }
 
         BeanReader beanReader = null;
         if (body instanceof WrappedFile) {
@@ -52,12 +88,14 @@ public class BeanIOSplitter implements Expression {
         }
         if (body instanceof File) {
             File file = (File) body;
-            beanReader = sf.createReader(dataFormat.getStreamName(), file);
+            beanReader = factory.createReader(getStreamName(), file);
         }
         if (beanReader == null) {
             Reader reader = msg.getMandatoryBody(Reader.class);
-            beanReader = sf.createReader(dataFormat.getStreamName(), reader);
+            beanReader = factory.createReader(getStreamName(), reader);
         }
+
+        beanReader.setErrorHandler(new BeanIOErrorHandler(configuration));
 
         return new BeanIOIterator(beanReader);
     }
@@ -67,9 +105,80 @@ public class BeanIOSplitter implements Expression {
         try {
             Object result = evaluate(exchange);
             return exchange.getContext().getTypeConverter().convertTo(type, exchange, result);
-        } catch (InvalidPayloadException e) {
+        } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 
+    public BeanIOConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(BeanIOConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public StreamFactory getFactory() {
+        return factory;
+    }
+
+    public void setFactory(StreamFactory factory) {
+        this.factory = factory;
+    }
+
+    public String getMapping() {
+        return configuration.getMapping();
+    }
+
+    public void setIgnoreUnexpectedRecords(boolean ignoreUnexpectedRecords) {
+        configuration.setIgnoreUnexpectedRecords(ignoreUnexpectedRecords);
+    }
+
+    public void setProperties(Properties properties) {
+        configuration.setProperties(properties);
+    }
+
+    public void setStreamName(String streamName) {
+        configuration.setStreamName(streamName);
+    }
+
+    public boolean isIgnoreUnidentifiedRecords() {
+        return configuration.isIgnoreUnidentifiedRecords();
+    }
+
+    public boolean isIgnoreInvalidRecords() {
+        return configuration.isIgnoreInvalidRecords();
+    }
+
+    public void setIgnoreInvalidRecords(boolean ignoreInvalidRecords) {
+        configuration.setIgnoreInvalidRecords(ignoreInvalidRecords);
+    }
+
+    public void setEncoding(Charset encoding) {
+        configuration.setEncoding(encoding);
+    }
+
+    public boolean isIgnoreUnexpectedRecords() {
+        return configuration.isIgnoreUnexpectedRecords();
+    }
+
+    public Properties getProperties() {
+        return configuration.getProperties();
+    }
+
+    public String getStreamName() {
+        return configuration.getStreamName();
+    }
+
+    public void setMapping(String mapping) {
+        configuration.setMapping(mapping);
+    }
+
+    public void setIgnoreUnidentifiedRecords(boolean ignoreUnidentifiedRecords) {
+        configuration.setIgnoreUnidentifiedRecords(ignoreUnidentifiedRecords);
+    }
+
+    public Charset getEncoding() {
+        return configuration.getEncoding();
+    }
 }
