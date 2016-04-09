@@ -103,8 +103,8 @@ public class FopEndpoint extends DefaultEndpoint {
         if (fopFactory == null && userConfigURL == null) {
             fopFactory = FopFactory.newInstance(new URI("./"));
         } else if (fopFactory != null && userConfigURL != null) {
-            throw new FopConfigException("More than one configuration. " +
-                    "You can configure fop either by config file or by supplying FopFactory but not both.");
+            throw new FopConfigException("More than one configuration. "
+                    + "You can configure fop either by config file or by supplying FopFactory but not both.");
         } else if (fopFactory == null && userConfigURL != null) {
             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), userConfigURL);
             fopFactory = FopFactory.newInstance(new URI(userConfigURL), is);
