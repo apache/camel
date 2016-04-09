@@ -31,38 +31,22 @@
   <name>Camel :: Example :: Spring :: JavaConfig</name>
   <description>An example showing how to work with Camel and Spring Java Config</description>
 
-  <properties>
-    <junit-version>4.8.1</junit-version>
-    <camel.osgi.export.pkg>org.apache.camel.example.spring.javaconfig</camel.osgi.export.pkg>
-    <!--We need to import the cglib packages here, and spring-core 3.2.x includes cglib  -->
-    <!--If the spring version is below 3.2.x, the import package should be changed to start with org.sf -->
-    <camel.osgi.import>
-      org.springframework.cglib.core,
-      org.springframework.cglib.proxy,
-      org.springframework.cglib.reflect,
-      *
-    </camel.osgi.import>
-  </properties>
-
   <dependencies>
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-javaconfig</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.servicemix.bundles</groupId>
-      <artifactId>org.apache.servicemix.bundles.cglib</artifactId>
-      <version>${cglib-bundle-version}</version>
-    </dependency>
+
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
@@ -96,19 +80,12 @@
 
       <!-- START SNIPPET: example -->
 
-      <!-- Allows the routes to be run via 'mvn camel:run' -->
+      <!-- Allows the routes to be run via 'mvn exec:java' -->
       <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
         <configuration>
-          <duration>5s</duration>
-          <configClasses>org.apache.camel.example.spring.javaconfig.MyRouteConfig</configClasses>
-          <!--
-              You could set the base package directory and let spring to find
-              the config classes for you
-              <basedPackages>org.apache.camel.example.spring.javaconfig</basedPackages>
-            -->
+          <mainClass>org.apache.camel.example.spring.javaconfig.MyApplication</mainClass>
         </configuration>
       </plugin>
       <!-- END SNIPPET: example -->
