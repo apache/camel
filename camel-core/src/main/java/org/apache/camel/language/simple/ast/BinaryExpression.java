@@ -104,6 +104,8 @@ public class BinaryExpression extends BaseSimpleNode {
             return createInExpression(leftExp, rightExp);
         } else if (operator == BinaryOperatorType.RANGE || operator == BinaryOperatorType.NOT_RANGE) {
             return createRangeExpression(expression, leftExp, rightExp);
+        } else if (operator == BinaryOperatorType.STARTS_WITH) {
+            return createExpression(leftExp, rightExp, PredicateBuilder.startsWith(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.ENDS_WITH) {
             return createExpression(leftExp, rightExp, PredicateBuilder.endsWith(leftExp, rightExp));
         }
