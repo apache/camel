@@ -219,31 +219,48 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         }
 
-        LOG.trace("HTTP method {} with Content-Type {}", request.getMethod(), request.getContentType());
-        Boolean flag = message.getHeader(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.class);
-        boolean skipWwwFormUrlEncoding =  flag != null ? flag : false; 
-        if (request.getMethod().equals("POST") && request.getContentType() != null
-                && request.getContentType().startsWith(HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
-                && !skipWwwFormUrlEncoding) {
-            String charset = request.getCharacterEncoding();
-            if (charset == null) {
-                charset = "UTF-8";
-            }
-            // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
-            String body = message.getBody(String.class);
-            if (ObjectHelper.isNotEmpty(body)) {
-                for (String param : body.split("&")) {
-                    String[] pair = param.split("=", 2);
-                    if (pair.length == 2) {
-                        String name = URLDecoder.decode(pair[0], charset);
-                        String value = URLDecoder.decode(pair[1], charset);
-                        if (headerFilterStrategy != null
-                                && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                            HttpHelper.appendHeader(headers, name, value);
+        // should we extract key=value pairs from form bodies (application/x-www-form-urlencoded)
+        // and map those to Camel headers
+        if (mapHttpMessageBody && mapHttpMessageHeaders) {
+            LOG.trace("HTTP method {} with Content-Type {}", request.getMethod(), request.getContentType());
+            Boolean flag = message.getHeader(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.class);
+            boolean skipWwwFormUrlEncoding = flag != null ? flag : false;
+            if (request.getMethod().equals("POST") && request.getContentType() != null
+                    && request.getContentType().startsWith(HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
+                    && !skipWwwFormUrlEncoding) {
+                String charset = request.getCharacterEncoding();
+                if (charset == null) {
+                    charset = "UTF-8";
+                }
+
+                // lets parse the body
+                Object body = message.getBody();
+                // reset the stream cache if the body is the instance of StreamCache
+                if (body instanceof StreamCache) {
+                    ((StreamCache) body).reset();
+                }
+
+                // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
+                String text = message.getBody(String.class);
+                if (ObjectHelper.isNotEmpty(text)) {
+                    for (String param : text.split("&")) {
+                        String[] pair = param.split("=", 2);
+                        if (pair.length == 2) {
+                            String name = URLDecoder.decode(pair[0], charset);
+                            String value = URLDecoder.decode(pair[1], charset);
+                            if (headerFilterStrategy != null
+                                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                                HttpHelper.appendHeader(headers, name, value);
+                            }
+                        } else {
+                            throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
                         }
-                    } else {
-                        throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
                     }
+                }
+
+                // reset the stream cache if the body is the instance of StreamCache
+                if (body instanceof StreamCache) {
+                    ((StreamCache) body).reset();
                 }
             }
         }
