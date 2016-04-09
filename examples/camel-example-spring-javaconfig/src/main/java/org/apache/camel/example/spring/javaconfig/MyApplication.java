@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.spring.javaconfig.CamelConfiguration;
 import org.apache.camel.spring.javaconfig.Main;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 //START SNIPPET: RouteConfig
@@ -28,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
  * A simple example router from a file system to an ActiveMQ queue and then to a file system
  */
 @Configuration
+@ComponentScan
 public class MyApplication extends CamelConfiguration {
 
     /**
@@ -36,7 +38,6 @@ public class MyApplication extends CamelConfiguration {
     public static void main(String[] args) throws Exception {
         Main main = new Main();
         main.setConfigClass(MyApplication.class);
-        main.setBasedPackages("org.apache.camel.example.spring.javaconfig");
         main.run();
     }
 
