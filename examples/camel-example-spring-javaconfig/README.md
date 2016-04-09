@@ -16,15 +16,14 @@ You will need to compile this example first:
 ### Run
 To run the example type
 
-	mvn camel:run
+	mvn exec:java
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 
 ### Configuration
 You can see the routing rules by looking at the java code in the
-`src/main/java directory` and the Spring XML configuration lives in
-`src/main/resources/META-INF/spring`
+`src/main/java directory`
 
 ### Documentation
 This example is documented at <http://camel.apache.org/spring-java-config-example.html>

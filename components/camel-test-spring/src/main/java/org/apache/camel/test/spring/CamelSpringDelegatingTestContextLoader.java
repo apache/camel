@@ -69,8 +69,10 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
         
         try {
             SpringCamelContext.setNoStart(true);
+            System.setProperty("skipStartingCamelContext", "true");
             ConfigurableApplicationContext context = (ConfigurableApplicationContext) super.loadContext(mergedConfig);
             SpringCamelContext.setNoStart(false);
+            System.clearProperty("skipStartingCamelContext");
             return loadContext(context, testClass);
         } finally {
             cleanup(testClass);

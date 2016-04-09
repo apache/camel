@@ -16,23 +16,16 @@
  */
 package org.apache.camel.spring.javaconfig;
 
-import java.io.FileNotFoundException;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spring.SpringCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.core.io.Resource;
 
 /**
  * Collects routes and rests from the various sources (like Spring application context beans registry or opinionated
@@ -82,44 +75,23 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                         }
                     }
                 }
+
+                try {
+                    boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
+                    if (skip) {
+                        LOG.info("Skipping starting CamelContext(s) as system property skipStartingCamelContext is set to be true.");
+                    } else {
+                        // start camel
+                        camelContext.start();
+                    }
+
+                } catch (Exception e) {
+                    throw new CamelSpringJavaconfigInitializationException(e);
+                }
+
             }
         } else {
             LOG.debug("Ignore ContextRefreshedEvent: {}", event);
-        }
-    }
-
-    // Helpers
-
-    private void loadXmlRoutes(ApplicationContext applicationContext, CamelContext camelContext, String directory) throws Exception {
-        LOG.info("Loading additional Camel XML routes from: {}", directory);
-        try {
-            Resource[] xmlRoutes = applicationContext.getResources(directory);
-            for (Resource xmlRoute : xmlRoutes) {
-                LOG.debug("Found XML route: {}", xmlRoute);
-                RoutesDefinition xmlDefinition = camelContext.loadRoutesDefinition(xmlRoute.getInputStream());
-                camelContext.addRouteDefinitions(xmlDefinition.getRoutes());
-            }
-        } catch (FileNotFoundException e) {
-            LOG.debug("No XML routes found in {}. Skipping XML routes detection.", directory);
-        }
-    }
-
-    private void loadXmlRests(ApplicationContext applicationContext, CamelContext camelContext, String directory) {
-        LOG.info("Loading additional Camel XML rests from: {}", directory);
-        try {
-            final Resource[] xmlRests = applicationContext.getResources(directory);
-            for (final Resource xmlRest : xmlRests) {
-                final RestsDefinition xmlDefinitions = camelContext.loadRestsDefinition(xmlRest.getInputStream());
-                camelContext.addRestDefinitions(xmlDefinitions.getRests());
-                for (final RestDefinition xmlDefinition : xmlDefinitions.getRests()) {
-                    final List<RouteDefinition> routeDefinitions = xmlDefinition.asRouteDefinition(camelContext);
-                    camelContext.addRouteDefinitions(routeDefinitions);
-                }
-            }
-        } catch (FileNotFoundException e) {
-            LOG.debug("No XML rests found in {}. Skipping XML rests detection.", directory);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
