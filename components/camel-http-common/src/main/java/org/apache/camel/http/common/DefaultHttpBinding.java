@@ -100,11 +100,12 @@ public class DefaultHttpBinding implements HttpBinding {
     public void readRequest(HttpServletRequest request, HttpMessage message) {
         LOG.trace("readRequest {}", request);
 
-        if (mapHttpMessageHeaders) {
-            readHeaders(request, message);
-        }
+        // must read body before headers
         if (mapHttpMessageBody) {
             readBody(request, message);
+        }
+        if (mapHttpMessageHeaders) {
+            readHeaders(request, message);
         }
 
         // populate the headers from the request
