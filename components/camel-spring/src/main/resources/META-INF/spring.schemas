@@ -90,6 +90,7 @@ http\://camel.apache.org/schema/spring/camel-spring-2.15.6.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.16.0.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.16.1.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.16.2.xsd=camel-spring.xsd
+http\://camel.apache.org/schema/spring/camel-spring-2.16.3.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.17.0.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-${project.version}.xsd=camel-spring.xsd
 
