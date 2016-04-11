@@ -18,6 +18,7 @@
 package org.apache.camel.component.cxf.converter;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -36,7 +37,14 @@ class DelegatingXMLStreamReader implements XMLStreamReader {
 
     public DelegatingXMLStreamReader(XMLStreamReader reader, Map<String, String> nsmap) {
         this.reader = reader;
-        this.xprefixes = nsmap.keySet().toArray(new String[0]);
+        Set<String> prefixes = nsmap.keySet();
+        for (int i = 0; i < reader.getNamespaceCount(); i++) {
+            String prefix = reader.getNamespacePrefix(i);
+            if (prefixes.contains(prefix)) {
+                prefixes.remove(prefix);
+            }
+        }
+        this.xprefixes = prefixes.toArray(new String[0]);
     }
 
     @Override
