@@ -76,8 +76,8 @@
         <configuration>
           <!-- needed for testing auto configure -->
           <environmentVariables>
-            <ZIPKIN_COLLECTOR_SERVICE_HOST>192.168.99.100</ZIPKIN_COLLECTOR_SERVICE_HOST>
-            <ZIPKIN_COLLECTOR_SERVICE_PORT>9410</ZIPKIN_COLLECTOR_SERVICE_PORT>
+            <ZIPKIN_COLLECTOR_SERVICE_THRIFT_HOST>192.168.99.100</ZIPKIN_COLLECTOR_SERVICE_THRIFT_HOST>
+            <ZIPKIN_COLLECTOR_SERVICE_THRIFT_PORT>9410</ZIPKIN_COLLECTOR_SERVICE_THRIFT_PORT>
           </environmentVariables>
         </configuration>
       </plugin>
