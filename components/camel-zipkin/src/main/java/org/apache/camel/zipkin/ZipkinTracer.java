@@ -126,7 +126,8 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     public void init(CamelContext camelContext) {
         if (!camelContext.hasService(this)) {
             try {
-                camelContext.addService(this, true);
+                // start this service eager so we init before Camel is starting up
+                camelContext.addService(this, true, true);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
