@@ -89,6 +89,8 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private int connectionPollDelay = 10;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+    @UriParam
+    private ConnectionConfiguration connectionConfig;
 
     public XmppEndpoint() {
     }
@@ -206,6 +208,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     }
 
     private XMPPTCPConnection createConnectionInternal() {
+        if (connectionConfig != null) {
+            return new XMPPTCPConnection(connectionConfig);
+        }
+
         if (port == 0) {
             port = 5222;
         }
@@ -402,6 +408,17 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
      */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public ConnectionConfiguration getConnectionConfig() {
+        return connectionConfig;
+    }
+
+    /**
+     * To use an existing connection configuration
+     */
+    public void setConnectionConfig(ConnectionConfiguration connectionConfig) {
+        this.connectionConfig = connectionConfig;
     }
 
     public boolean isTestConnectionOnStartup() {
