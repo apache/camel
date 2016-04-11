@@ -60,6 +60,7 @@ public class DefaultRouteContext implements RouteContext {
     private boolean routeAdded;
     private Boolean trace;
     private Boolean messageHistory;
+    private Boolean logExhaustedMessageBody;
     private Boolean streamCache;
     private Boolean handleFault;
     private Long delay;
@@ -280,6 +281,19 @@ public class DefaultRouteContext implements RouteContext {
         } else {
             // fallback to the option from camel context
             return getCamelContext().isMessageHistory();
+        }
+    }
+
+    public void setLogExhaustedMessageBody(Boolean logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
+    }
+
+    public Boolean isLogExhaustedMessageBody() {
+        if (logExhaustedMessageBody != null) {
+            return logExhaustedMessageBody;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isLogExhaustedMessageBody();
         }
     }
 
