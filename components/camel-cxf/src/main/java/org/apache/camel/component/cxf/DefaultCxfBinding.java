@@ -686,13 +686,15 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 continue;
             }
             
-            // things that are not filtered and not specifically copied will be put in transport headers
-            if (entry.getValue() instanceof List) {
-                transportHeaders.put(entry.getKey(), (List<String>)entry.getValue());
-            } else {
-                List<String> listValue = new ArrayList<String>();
-                listValue.add(entry.getValue().toString());
-                transportHeaders.put(entry.getKey(), listValue);
+            if (ObjectHelper.isNotEmpty(entry.getValue())) {
+                // things that are not filtered and not specifically copied will be put in transport headers
+                if (entry.getValue() instanceof List) {
+                    transportHeaders.put(entry.getKey(), (List<String>)entry.getValue());
+                } else {
+                    List<String> listValue = new ArrayList<String>();
+                    listValue.add(entry.getValue().toString());
+                    transportHeaders.put(entry.getKey(), listValue);
+                }
             }
             
         }
