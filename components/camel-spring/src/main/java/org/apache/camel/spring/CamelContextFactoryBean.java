@@ -16,9 +16,12 @@
  */
 package org.apache.camel.spring;
 
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -73,8 +76,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
-
 /**
  * A Spring {@link FactoryBean} to create and initialize a
  * {@link SpringCamelContext} and install routes either explicitly configured in
@@ -95,6 +96,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String trace;
     @XmlAttribute(required = false)
     private String messageHistory;
+    @XmlAttribute(required = false)
+    private String logExhaustedMessageBody;
     @XmlAttribute(required = false)
     private String streamCache;
     @XmlAttribute(required = false)
@@ -557,6 +560,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public String getLogExhaustedMessageBody() {
+        return logExhaustedMessageBody;
+    }
+
+    public void setLogExhaustedMessageBody(String logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
     }
 
     public String getStreamCache() {
