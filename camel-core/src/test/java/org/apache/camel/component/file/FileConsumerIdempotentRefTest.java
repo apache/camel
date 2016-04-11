@@ -103,6 +103,11 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         public boolean confirm(String key) {
             return true;
         }
+        
+        @Override
+        public void clear() {
+            return;  
+        }
 
         public void start() throws Exception {
         }

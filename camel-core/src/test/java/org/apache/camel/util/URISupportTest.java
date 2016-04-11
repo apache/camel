@@ -17,6 +17,7 @@
 package org.apache.camel.util;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -277,6 +278,20 @@ public class URISupportTest extends ContextTestSupport {
         map = URISupport.parseQuery("password=RAW(%2520w&rd)&serviceName=somechat");
         assertEquals(2, map.size());
         assertEquals("RAW(%2520w&rd)", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+    }
+
+    public void testParseQueryLenient() throws Exception {
+        try {
+            URISupport.parseQuery("password=secret&serviceName=somechat&", false, false);
+            fail("Should have thrown exception");
+        } catch (URISyntaxException e) {
+            // expected
+        }
+
+        Map<String, Object> map = URISupport.parseQuery("password=secret&serviceName=somechat&", false, true);
+        assertEquals(2, map.size());
+        assertEquals("secret", map.get("password"));
         assertEquals("somechat", map.get("serviceName"));
     }
 

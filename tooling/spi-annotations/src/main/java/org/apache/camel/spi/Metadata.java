@@ -54,4 +54,11 @@ public @interface Metadata {
      */
     String title() default "";
 
+    /**
+     * Returns a description of this entity.
+     * <p/>
+     * This is used for documentation and tooling only.
+     */
+    String description() default "";
+
 }

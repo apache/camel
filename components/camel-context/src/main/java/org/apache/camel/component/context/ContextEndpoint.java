@@ -27,6 +27,15 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
+/**
+ * The context component allows to send/receive messages between Camel routes in a black box way.
+ *
+ * The context component allows you to create new Camel Components from a CamelContext with a number of
+ * routes which is then treated as a black box, allowing you to refer to the local endpoints within the component
+ * from other CamelContexts.
+ * It is similar to the Routebox component in idea, though the Context component tries to be really simple for end users;
+ * just a simple convention over configuration approach to refer to local endpoints inside the CamelContext Component.
+ */
 @UriEndpoint(scheme = "context", title = "Camel Context", syntax = "context:contextId:localEndpointUrl", label = "endpoint")
 public class ContextEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
@@ -51,6 +60,9 @@ public class ContextEndpoint extends DefaultEndpoint implements DelegateEndpoint
         return contextId;
     }
 
+    /**
+     * Is the ID you used to register the CamelContext into the Registry.
+     */
     public void setContextId(String contextId) {
         this.contextId = contextId;
     }
@@ -59,6 +71,13 @@ public class ContextEndpoint extends DefaultEndpoint implements DelegateEndpoint
         return localEndpointUrl;
     }
 
+    /**
+     * Can be a valid Camel URI evaluated within the black box CamelContext.
+     * Or it can be a logical name which is mapped to any local endpoints.
+     * For example if you locally have endpoints like direct:invoices and seda:purchaseOrders
+     * inside a CamelContext of id supplyChain, then you can just use the URIs supplyChain:invoices
+     * or supplyChain:purchaseOrders to omit the physical endpoint kind and use pure logical URIs.
+     */
     public void setLocalEndpointUrl(String localEndpointUrl) {
         this.localEndpointUrl = localEndpointUrl;
     }

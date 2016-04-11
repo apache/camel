@@ -17,8 +17,17 @@
 package org.apache.camel.component.rest;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.FooBar;
+import org.apache.camel.impl.JndiRegistry;
 
 public class FromRestConfigurationTest extends FromRestGetTest {
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myDummy", new FooBar());
+        return jndi;
+    }
 
     @Override
     public void testFromRestModel() throws Exception {
@@ -31,10 +40,17 @@ public class FromRestConfigurationTest extends FromRestGetTest {
         assertEquals("stuff", context.getRestConfiguration().getComponentProperties().get("other"));
         assertEquals("200", context.getRestConfiguration().getEndpointProperties().get("size"));
         assertEquals("1000", context.getRestConfiguration().getConsumerProperties().get("pollTimeout"));
+        assertEquals("#myDummy", context.getRestConfiguration().getConsumerProperties().get("dummy"));
+
+        DummyRestConsumerFactory factory = (DummyRestConsumerFactory) context.getRegistry().lookupByName("dummy-rest");
+
+        Object dummy = context.getRegistry().lookupByName("myDummy");
+        assertSame(dummy, factory.getDummy());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        final RouteBuilder lowerR = super.createRouteBuilder();
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -42,20 +58,10 @@ public class FromRestConfigurationTest extends FromRestGetTest {
                     .componentProperty("foo", "bar")
                     .componentProperty("other", "stuff")
                     .endpointProperty("size", "200")
-                    .consumerProperty("pollTimeout", "1000");
+                    .consumerProperty("pollTimeout", "1000")
+                    .consumerProperty("dummy", "#myDummy");
 
-                rest("/say/hello")
-                        .get().to("direct:hello");
-
-                rest("/say/bye")
-                        .get().consumes("application/json").to("direct:bye")
-                        .post().to("mock:update");
-
-                from("direct:hello")
-                    .transform().constant("Hello World");
-
-                from("direct:bye")
-                    .transform().constant("Bye World");
+                includeRoutes(lowerR);
             }
         };
     }

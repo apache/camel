@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.ddb;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
@@ -42,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Defines the <a href="http://aws.amazon.com/dynamodb/">AWS DynamoDB endpoint</a>
+ * The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
  */
 @UriEndpoint(scheme = "aws-ddb", title = "AWS DynamoDB", syntax = "aws-ddb:tableName", producerOnly = true, label = "cloud,database,nosql")
 public class DdbEndpoint extends ScheduledPollEndpoint {
@@ -133,9 +134,16 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
     }
 
     AmazonDynamoDB createDdbClient() {
-        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(),
-                configuration.getSecretKey());
-        AmazonDynamoDB client = new AmazonDynamoDBClient(credentials);
+        AmazonDynamoDB client = null;
+        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            client = new AmazonDynamoDBClient(credentials, clientConfiguration);
+        } else {
+            client = new AmazonDynamoDBClient(credentials);
+        }
         return client;
     }
 

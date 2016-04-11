@@ -16,13 +16,9 @@
  */
 package org.apache.camel.example.spring.javaconfig;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.spring.javaconfig.Main;
-import org.apache.camel.util.IOHelper;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version 
@@ -32,20 +28,7 @@ public class IntegrationTest extends Assert {
     @Test
     public void testCamelRulesDeployCorrectlyInSpring() throws Exception {
         // let's boot up the Spring application context for 2 seconds to check that it works OK
-        Main.main("-duration", "2s", "-cc", "org.apache.camel.example.spring.javaconfig.MyRouteConfig");
+        Main.main("-duration", "2s", "-cc", "org.apache.camel.example.spring.javaconfig.MyApplication", "-bp", "org.apache.camel.example.spring.javaconfig");
     }
-    
-    @Test
-    public void testStartApplicationContext() throws Exception {
-        // test to boot up the application context from spring configuration
-        AbstractApplicationContext context = new ClassPathXmlApplicationContext("/META-INF/spring/camel-context.xml");
-        String[] names = context.getBeanNamesForType(CamelContext.class);
-        assertEquals("There should be a camel context ", 1, names.length);
-        CamelContext camelContext = context.getBean(names[0], CamelContext.class);
-        assertNotNull(camelContext);
-        Thread.sleep(2000);
 
-        // we're done so let's properly close the application context
-        IOHelper.close(context);
-    }
 }

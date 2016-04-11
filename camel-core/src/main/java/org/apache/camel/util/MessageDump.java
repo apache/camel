@@ -110,8 +110,8 @@ public final class MessageDump {
 
     @XmlElementWrapper(name = "headers")
     @XmlElements({
-        @XmlElement(type = Header.class, name = "header")
-    })
+            @XmlElement(type = Header.class, name = "header")
+        })
     private List<Header> headers;
 
     @XmlElementRef

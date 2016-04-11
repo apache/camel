@@ -22,11 +22,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.event.CamelContextStoppingEvent;
 import org.apache.camel.management.event.RouteStartedEvent;
 import org.apache.camel.management.event.RouteStoppedEvent;
-import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Test;
 
@@ -47,11 +45,10 @@ public class EventHelperTest {
             }
             
         });
-        ManagementStrategy managementStrategy = new DefaultManagementStrategy();
-        managementStrategy.addEventNotifier(en1);
-        managementStrategy.addEventNotifier(en2);
-        camelContext.setManagementStrategy(managementStrategy);
-        
+
+        camelContext.getManagementStrategy().addEventNotifier(en1);
+        camelContext.getManagementStrategy().addEventNotifier(en2);
+
         camelContext.start();
         camelContext.stop();
         
@@ -79,11 +76,10 @@ public class EventHelperTest {
             }
             
         });
-        ManagementStrategy managementStrategy = new DefaultManagementStrategy();
-        managementStrategy.addEventNotifier(en1);
-        managementStrategy.addEventNotifier(en2);
-        camelContext.setManagementStrategy(managementStrategy);
-        
+
+        camelContext.getManagementStrategy().addEventNotifier(en1);
+        camelContext.getManagementStrategy().addEventNotifier(en2);
+
         camelContext.start();
         camelContext.stop();
         
@@ -111,11 +107,10 @@ public class EventHelperTest {
             }
             
         });
-        ManagementStrategy managementStrategy = new DefaultManagementStrategy();
-        managementStrategy.addEventNotifier(en1);
-        managementStrategy.addEventNotifier(en2);
-        camelContext.setManagementStrategy(managementStrategy);
-        
+
+        camelContext.getManagementStrategy().addEventNotifier(en1);
+        camelContext.getManagementStrategy().addEventNotifier(en2);
+
         camelContext.start();
         camelContext.stop();
         

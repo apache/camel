@@ -22,6 +22,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
+ * This is a component for Camel to run DNS queries, using DNSJava.
+ * <p/>
  * The DNS components creates endpoints of the form: <br/>
  * dns:///... <br/>
  * At this point, the DNS component works with these operations:<br/>

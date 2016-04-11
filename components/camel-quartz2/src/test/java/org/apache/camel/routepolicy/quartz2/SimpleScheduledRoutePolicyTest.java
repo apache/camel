@@ -59,7 +59,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
             }
         });
         context.start();
-        context.stopRoute("test", 0, TimeUnit.MILLISECONDS);
+        context.stopRoute("test", 1000, TimeUnit.MILLISECONDS);
         
         Thread.sleep(5000);
         assertTrue(context.getRouteStatus("test") == ServiceStatus.Started);

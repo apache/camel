@@ -68,7 +68,10 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     protected void doStart() throws Exception {
         super.doStart();
 
-        initializeStream();
+        // if we scan the stream we are lenient and can wait for the stream to be available later
+        if (!endpoint.isScanStream()) {
+            initializeStream();
+        }
 
         executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, endpoint.getEndpointUri());
         executor.execute(this);
@@ -115,8 +118,13 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             inputStream = resolveStreamFromUrl();
             inputStreamToClose = inputStream;
         }
-        Charset charset = endpoint.getCharset();
-        return IOHelper.buffered(new InputStreamReader(inputStream, charset));
+
+        if (inputStream != null) {
+            Charset charset = endpoint.getCharset();
+            return IOHelper.buffered(new InputStreamReader(inputStream, charset));
+        } else {
+            return null;
+        }
     }
 
     private void readFromStream() throws Exception {
@@ -127,8 +135,12 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         if (endpoint.isScanStream()) {
             // repeat scanning from stream
             while (isRunAllowed()) {
-                line = br.readLine();
-                LOG.trace("Read line: {}", line);
+                if (br != null) {
+                    line = br.readLine();
+                    LOG.trace("Read line: {}", line);
+                } else {
+                    line = null;
+                }
                 boolean eos = line == null;
                 if (!eos && isRunAllowed()) {
                     index = processLine(line, false, index);
@@ -267,6 +279,9 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
         if (file.canRead()) {
             fileStream = new FileInputStream(file);
+        } else if (endpoint.isScanStream()) {
+            // if we scan the stream then it may not be available and we should return null
+            fileStream = null;
         } else {
             throw new IllegalArgumentException(INVALID_URI);
         }

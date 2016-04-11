@@ -61,6 +61,7 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
     
     @Override
     public void initialize(Client client, Bus bus) {
+        client.getEndpoint().put("org.apache.cxf.binding.soap.addNamespaceContext", "true");
         removeFaultInInterceptorFromClient(client);
         
         // Need to remove some interceptors that are incompatible
@@ -86,6 +87,7 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
 
     @Override
     public void initialize(Server server, Bus bus) {
+        server.getEndpoint().put("org.apache.cxf.binding.soap.addNamespaceContext", "true");
         server.getEndpoint().getBinding().getInInterceptors().add(new ConfigureDocLitWrapperInterceptor(true));
         if (server.getEndpoint().getBinding() instanceof SoapBinding) {
             server.getEndpoint().getBinding().getOutInterceptors().add(new SetSoapVersionInterceptor());

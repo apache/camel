@@ -21,12 +21,14 @@ package org.apache.camel.language.simple.types;
  */
 public enum BinaryOperatorType {
 
-    EQ, GT, GTE, LT, LTE, NOT_EQ, CONTAINS, NOT_CONTAINS, REGEX, NOT_REGEX,
-    IN, NOT_IN, IS, NOT_IS, RANGE, NOT_RANGE;
+    EQ, EQ_IGNORE, GT, GTE, LT, LTE, NOT_EQ, CONTAINS, NOT_CONTAINS, REGEX, NOT_REGEX,
+    IN, NOT_IN, IS, NOT_IS, RANGE, NOT_RANGE, STARTS_WITH, ENDS_WITH;
 
     public static BinaryOperatorType asOperator(String text) {
         if ("==".equals(text)) {
             return EQ;
+        } else if ("=~".equals(text)) {
+            return EQ_IGNORE;
         } else if (">".equals(text)) {
             return GT;
         } else if (">=".equals(text)) {
@@ -57,6 +59,10 @@ public enum BinaryOperatorType {
             return RANGE;
         } else if ("not range".equals(text)) {
             return NOT_RANGE;
+        } else if ("starts with".equals(text)) {
+            return STARTS_WITH;
+        } else if ("ends with".equals(text)) {
+            return ENDS_WITH;
         }
         throw new IllegalArgumentException("Operator not supported: " + text);
     }
@@ -64,6 +70,8 @@ public enum BinaryOperatorType {
     public static String getOperatorText(BinaryOperatorType operator) {
         if (operator == EQ) {
             return "==";
+        } else if (operator == EQ_IGNORE) {
+            return "=~";
         } else if (operator == GT) {
             return ">";
         } else if (operator == GTE) {
@@ -94,6 +102,10 @@ public enum BinaryOperatorType {
             return "range";
         } else if (operator == NOT_RANGE) {
             return "not range";
+        } else if (operator == STARTS_WITH) {
+            return "starts with";
+        } else if (operator == ENDS_WITH) {
+            return "ends with";
         }
         return "";
     }
@@ -146,6 +158,8 @@ public enum BinaryOperatorType {
     public static ParameterType[] supportedParameterTypes(BinaryOperatorType operator) {
         if (operator == EQ) {
             return null;
+        } else if (operator == EQ_IGNORE) {
+            return null;
         } else if (operator == GT) {
             return null;
         } else if (operator == GTE) {
@@ -176,6 +190,10 @@ public enum BinaryOperatorType {
             return new ParameterType[]{ParameterType.LiteralWithFunction, ParameterType.Function};
         } else if (operator == NOT_RANGE) {
             return new ParameterType[]{ParameterType.LiteralWithFunction, ParameterType.Function};
+        } else if (operator == STARTS_WITH) {
+            return null;
+        } else if (operator == ENDS_WITH) {
+            return null;
         }
         return null;
     }

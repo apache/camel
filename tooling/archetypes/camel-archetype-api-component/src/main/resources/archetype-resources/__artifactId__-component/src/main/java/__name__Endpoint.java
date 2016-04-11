@@ -21,7 +21,9 @@ import java.util.Map;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
@@ -36,8 +38,11 @@ import ${package}.internal.${name}PropertiesHelper;
 /**
  * Represents a ${name} endpoint.
  */
-@UriEndpoint(scheme = "${scheme}", consumerClass = ${name}Consumer.class, consumerPrefix = "consumer")
+@UriEndpoint(scheme = "${scheme}", title = "${name}", syntax="${scheme}:name", consumerClass = ${name}Consumer.class, label = "${name}")
 public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}Configuration> {
+
+    @UriPath @Metadata(required = "true")
+    private String name;
 
     // TODO create and manage API proxy
     private Object apiProxy;
@@ -91,4 +96,17 @@ public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}
     public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
         return apiProxy;
     }
+
+    /**
+     * Some description of this option, and what it does
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+
 }

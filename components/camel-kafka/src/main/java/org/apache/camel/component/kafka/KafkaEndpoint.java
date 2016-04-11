@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.net.URISyntaxException;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
-import kafka.message.MessageAndMetadata;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -27,29 +26,26 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 
+/**
+ * The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
+ */
 @UriEndpoint(scheme = "kafka", title = "Kafka", syntax = "kafka:brokers", consumerClass = KafkaConsumer.class, label = "messaging")
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
-    @UriPath @Metadata(required = "true")
-    private String brokers;
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
+    @UriParam
+    private boolean bridgeEndpoint;
 
     public KafkaEndpoint() {
     }
 
-    public KafkaEndpoint(String endpointUri,
-                         String remaining,
-                         KafkaComponent component) throws URISyntaxException {
+    public KafkaEndpoint(String endpointUri, KafkaComponent component) {
         super(endpointUri, component);
-        this.brokers = remaining.split("\\?")[0];
     }
 
     public KafkaConfiguration getConfiguration() {
@@ -76,7 +72,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     @Override
     public Producer createProducer() throws Exception {
-        return new KafkaProducer(this);
+        return createProducer(this);
     }
 
     @Override
@@ -84,379 +80,582 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return true;
     }
 
+    @Override
+    public boolean isMultipleConsumersSupported() {
+        return true;
+    }
+
     public ExecutorService createExecutor() {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KafkaTopic[" + configuration.getTopic() + "]", configuration.getConsumerStreams());
     }
 
-    public Exchange createKafkaExchange(MessageAndMetadata<byte[], byte[]> mm) {
-        Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
+    public Exchange createKafkaExchange(ConsumerRecord record) {
+        Exchange exchange = super.createExchange();
 
-        Message message = new DefaultMessage();
-        message.setHeader(KafkaConstants.PARTITION, mm.partition());
-        message.setHeader(KafkaConstants.TOPIC, mm.topic());
-        if (mm.key() != null) {
-            message.setHeader(KafkaConstants.KEY, new String(mm.key()));
+        Message message = exchange.getIn();
+        message.setHeader(KafkaConstants.PARTITION, record.partition());
+        message.setHeader(KafkaConstants.TOPIC, record.topic());
+        message.setHeader(KafkaConstants.OFFSET, record.offset());
+        if (record.key() != null) {
+            message.setHeader(KafkaConstants.KEY, record.key());
         }
-        message.setBody(mm.message());
-        exchange.setIn(message);
+        message.setBody(record.value());
 
         return exchange;
     }
 
+    protected KafkaProducer createProducer(KafkaEndpoint endpoint) {
+        return new KafkaProducer(endpoint);
+    }
 
     // Delegated properties from the configuration
     //-------------------------------------------------------------------------
 
-    public String getZookeeperConnect() {
-        return configuration.getZookeeperConnect();
+    public Properties createProducerProperties() {
+        return configuration.createProducerProperties();
     }
 
-    public void setZookeeperConnect(String zookeeperConnect) {
-        configuration.setZookeeperConnect(zookeeperConnect);
+    public void setValueDeserializer(String valueDeserializer) {
+        configuration.setValueDeserializer(valueDeserializer);
     }
 
-    public String getZookeeperHost() {
-        return configuration.getZookeeperHost();
-    }
-
-    public void setZookeeperHost(String zookeeperHost) {
-        configuration.setZookeeperHost(zookeeperHost);
-    }
-
-    public int getZookeeperPort() {
-        return configuration.getZookeeperPort();
-    }
-
-    public void setZookeeperPort(int zookeeperPort) {
-        configuration.setZookeeperPort(zookeeperPort);
-    }
-
-    public String getGroupId() {
-        return configuration.getGroupId();
-    }
-
-    public void setGroupId(String groupId) {
-        configuration.setGroupId(groupId);
-    }
-
-    public String getPartitioner() {
-        return configuration.getPartitioner();
-    }
-
-    public void setPartitioner(String partitioner) {
-        configuration.setPartitioner(partitioner);
-    }
-
-    public String getTopic() {
-        return configuration.getTopic();
-    }
-
-    public void setTopic(String topic) {
-        configuration.setTopic(topic);
-    }
-
-    public String getBrokers() {
-        return brokers;
-    }
-
-    public int getConsumerStreams() {
-        return configuration.getConsumerStreams();
-    }
-
-    public void setConsumerStreams(int consumerStreams) {
-        configuration.setConsumerStreams(consumerStreams);
-    }
-
-    public int getBatchSize() {
-        return configuration.getBatchSize();
-    }
-
-    public void setBatchSize(int batchSize) {
-        this.configuration.setBatchSize(batchSize);
-    }
-
-    public int getBarrierAwaitTimeoutMs() {
-        return configuration.getBarrierAwaitTimeoutMs();
-    }
-
-    public void setBarrierAwaitTimeoutMs(int barrierAwaitTimeoutMs) {
-        this.configuration.setBarrierAwaitTimeoutMs(barrierAwaitTimeoutMs);
-    }
-
-    public int getConsumersCount() {
-        return this.configuration.getConsumersCount();
-    }
-
-    public void setConsumersCount(int consumersCount) {
-        this.configuration.setConsumersCount(consumersCount);
-    }
-
-    public void setConsumerTimeoutMs(int consumerTimeoutMs) {
-        configuration.setConsumerTimeoutMs(consumerTimeoutMs);
-    }
-
-    public void setSerializerClass(String serializerClass) {
-        configuration.setSerializerClass(serializerClass);
-    }
-
-    public void setQueueBufferingMaxMessages(int queueBufferingMaxMessages) {
-        configuration.setQueueBufferingMaxMessages(queueBufferingMaxMessages);
-    }
-
-    public int getFetchWaitMaxMs() {
-        return configuration.getFetchWaitMaxMs();
-    }
-
-    public Integer getZookeeperConnectionTimeoutMs() {
-        return configuration.getZookeeperConnectionTimeoutMs();
-    }
-
-    public void setZookeeperConnectionTimeoutMs(Integer zookeeperConnectionTimeoutMs) {
-        configuration.setZookeeperConnectionTimeoutMs(zookeeperConnectionTimeoutMs);
-    }
-
-    public void setMessageSendMaxRetries(int messageSendMaxRetries) {
-        configuration.setMessageSendMaxRetries(messageSendMaxRetries);
-    }
-
-    public int getQueueBufferingMaxMs() {
-        return configuration.getQueueBufferingMaxMs();
-    }
-
-    public void setRequestRequiredAcks(short requestRequiredAcks) {
-        configuration.setRequestRequiredAcks(requestRequiredAcks);
-    }
-
-    public Integer getRebalanceBackoffMs() {
-        return configuration.getRebalanceBackoffMs();
-    }
-
-    public void setQueueEnqueueTimeoutMs(int queueEnqueueTimeoutMs) {
-        configuration.setQueueEnqueueTimeoutMs(queueEnqueueTimeoutMs);
-    }
-
-    public int getFetchMessageMaxBytes() {
-        return configuration.getFetchMessageMaxBytes();
-    }
-
-    public int getQueuedMaxMessages() {
-        return configuration.getQueuedMaxMessages();
-    }
-
-    public int getAutoCommitIntervalMs() {
-        return configuration.getAutoCommitIntervalMs();
-    }
-
-    public void setSocketTimeoutMs(int socketTimeoutMs) {
-        configuration.setSocketTimeoutMs(socketTimeoutMs);
-    }
-
-    public void setAutoCommitIntervalMs(int autoCommitIntervalMs) {
-        configuration.setAutoCommitIntervalMs(autoCommitIntervalMs);
-    }
-
-    public void setRequestTimeoutMs(int requestTimeoutMs) {
+    public void setRequestTimeoutMs(Integer requestTimeoutMs) {
         configuration.setRequestTimeoutMs(requestTimeoutMs);
     }
 
-    public void setCompressedTopics(String compressedTopics) {
-        configuration.setCompressedTopics(compressedTopics);
+    public void setProducerBatchSize(Integer producerBatchSize) {
+        configuration.setProducerBatchSize(producerBatchSize);
     }
 
-    public int getSocketReceiveBufferBytes() {
-        return configuration.getSocketReceiveBufferBytes();
+    public void setRetryBackoffMs(Integer retryBackoffMs) {
+        configuration.setRetryBackoffMs(retryBackoffMs);
     }
 
-    public void setSendBufferBytes(int sendBufferBytes) {
-        configuration.setSendBufferBytes(sendBufferBytes);
+    public void setNoOfMetricsSample(Integer noOfMetricsSample) {
+        configuration.setNoOfMetricsSample(noOfMetricsSample);
     }
 
-    public void setFetchMessageMaxBytes(int fetchMessageMaxBytes) {
-        configuration.setFetchMessageMaxBytes(fetchMessageMaxBytes);
+    public String getMetricReporters() {
+        return configuration.getMetricReporters();
     }
 
-    public int getRefreshLeaderBackoffMs() {
-        return configuration.getRefreshLeaderBackoffMs();
+    public void setSslKeystoreType(String sslKeystoreType) {
+        configuration.setSslKeystoreType(sslKeystoreType);
     }
 
-    public void setFetchWaitMaxMs(int fetchWaitMaxMs) {
-        configuration.setFetchWaitMaxMs(fetchWaitMaxMs);
-    }
-
-    public int getTopicMetadataRefreshIntervalMs() {
-        return configuration.getTopicMetadataRefreshIntervalMs();
-    }
-
-    public void setZookeeperSessionTimeoutMs(int zookeeperSessionTimeoutMs) {
-        configuration.setZookeeperSessionTimeoutMs(zookeeperSessionTimeoutMs);
-    }
-
-    public Integer getConsumerTimeoutMs() {
-        return configuration.getConsumerTimeoutMs();
-    }
-
-    public void setAutoCommitEnable(boolean autoCommitEnable) {
-        configuration.setAutoCommitEnable(autoCommitEnable);
-    }
-
-    public String getCompressionCodec() {
-        return configuration.getCompressionCodec();
-    }
-
-    public void setProducerType(String producerType) {
-        configuration.setProducerType(producerType);
-    }
-
-    public String getClientId() {
-        return configuration.getClientId();
-    }
-
-    public int getFetchMinBytes() {
-        return configuration.getFetchMinBytes();
-    }
-
-    public String getAutoOffsetReset() {
-        return configuration.getAutoOffsetReset();
-    }
-
-    public void setRefreshLeaderBackoffMs(int refreshLeaderBackoffMs) {
-        configuration.setRefreshLeaderBackoffMs(refreshLeaderBackoffMs);
-    }
-
-    public void setAutoOffsetReset(String autoOffsetReset) {
-        configuration.setAutoOffsetReset(autoOffsetReset);
-    }
-
-    public void setConsumerId(String consumerId) {
-        configuration.setConsumerId(consumerId);
-    }
-
-    public int getRetryBackoffMs() {
-        return configuration.getRetryBackoffMs();
-    }
-
-    public int getRebalanceMaxRetries() {
-        return configuration.getRebalanceMaxRetries();
-    }
-
-    public Boolean isAutoCommitEnable() {
-        return configuration.isAutoCommitEnable();
-    }
-
-    public void setQueueBufferingMaxMs(int queueBufferingMaxMs) {
-        configuration.setQueueBufferingMaxMs(queueBufferingMaxMs);
-    }
-
-    public void setRebalanceMaxRetries(int rebalanceMaxRetries) {
-        configuration.setRebalanceMaxRetries(rebalanceMaxRetries);
-    }
-
-    public int getZookeeperSessionTimeoutMs() {
-        return configuration.getZookeeperSessionTimeoutMs();
-    }
-
-    public void setKeySerializerClass(String keySerializerClass) {
-        configuration.setKeySerializerClass(keySerializerClass);
-    }
-
-    public void setCompressionCodec(String compressionCodec) {
-        configuration.setCompressionCodec(compressionCodec);
+    public void setSslCipherSuites(String sslCipherSuites) {
+        configuration.setSslCipherSuites(sslCipherSuites);
     }
 
     public void setClientId(String clientId) {
         configuration.setClientId(clientId);
     }
 
-    public int getSocketTimeoutMs() {
-        return configuration.getSocketTimeoutMs();
+    public void setMetricsSampleWindowMs(Integer metricsSampleWindowMs) {
+        configuration.setMetricsSampleWindowMs(metricsSampleWindowMs);
     }
 
-    public String getCompressedTopics() {
-        return configuration.getCompressedTopics();
+    public String getKeyDeserializer() {
+        return configuration.getKeyDeserializer();
     }
 
-    public int getZookeeperSyncTimeMs() {
-        return configuration.getZookeeperSyncTimeMs();
+    public int getConsumersCount() {
+        return configuration.getConsumersCount();
     }
 
-    public void setSocketReceiveBufferBytes(int socketReceiveBufferBytes) {
-        configuration.setSocketReceiveBufferBytes(socketReceiveBufferBytes);
+    public String getSslKeyPassword() {
+        return configuration.getSslKeyPassword();
     }
 
-    public int getQueueEnqueueTimeoutMs() {
-        return configuration.getQueueEnqueueTimeoutMs();
+    public void setSendBufferBytes(Integer sendBufferBytes) {
+        configuration.setSendBufferBytes(sendBufferBytes);
     }
 
-    public int getQueueBufferingMaxMessages() {
-        return configuration.getQueueBufferingMaxMessages();
+    public Boolean isAutoCommitEnable() {
+        return configuration.isAutoCommitEnable();
     }
 
-    public void setZookeeperSyncTimeMs(int zookeeperSyncTimeMs) {
-        configuration.setZookeeperSyncTimeMs(zookeeperSyncTimeMs);
-    }
-
-    public String getKeySerializerClass() {
-        return configuration.getKeySerializerClass();
-    }
-
-    public void setTopicMetadataRefreshIntervalMs(int topicMetadataRefreshIntervalMs) {
-        configuration.setTopicMetadataRefreshIntervalMs(topicMetadataRefreshIntervalMs);
-    }
-
-    public void setBatchNumMessages(int batchNumMessages) {
-        configuration.setBatchNumMessages(batchNumMessages);
-    }
-
-    public int getSendBufferBytes() {
-        return configuration.getSendBufferBytes();
-    }
-
-    public void setRebalanceBackoffMs(Integer rebalanceBackoffMs) {
-        configuration.setRebalanceBackoffMs(rebalanceBackoffMs);
-    }
-
-    public void setQueuedMaxMessages(int queuedMaxMessages) {
-        configuration.setQueuedMaxMessages(queuedMaxMessages);
-    }
-
-    public void setRetryBackoffMs(int retryBackoffMs) {
-        configuration.setRetryBackoffMs(retryBackoffMs);
-    }
-
-    public int getBatchNumMessages() {
-        return configuration.getBatchNumMessages();
-    }
-
-    public short getRequestRequiredAcks() {
-        return configuration.getRequestRequiredAcks();
-    }
-
-    public String getProducerType() {
-        return configuration.getProducerType();
+    public Integer getMaxBlockMs() {
+        return configuration.getMaxBlockMs();
     }
 
     public String getConsumerId() {
         return configuration.getConsumerId();
     }
 
-    public int getMessageSendMaxRetries() {
-        return configuration.getMessageSendMaxRetries();
+    public void setSslProtocol(String sslProtocol) {
+        configuration.setSslProtocol(sslProtocol);
     }
 
-    public void setFetchMinBytes(int fetchMinBytes) {
+    public void setReceiveBufferBytes(Integer receiveBufferBytes) {
+        configuration.setReceiveBufferBytes(receiveBufferBytes);
+    }
+
+    public Boolean getCheckCrcs() {
+        return configuration.getCheckCrcs();
+    }
+
+    public void setGroupId(String groupId) {
+        configuration.setGroupId(groupId);
+    }
+
+    public String getCompressionCodec() {
+        return configuration.getCompressionCodec();
+    }
+
+    public String getGroupId() {
+        return configuration.getGroupId();
+    }
+
+    public void setSslTruststoreLocation(String sslTruststoreLocation) {
+        configuration.setSslTruststoreLocation(sslTruststoreLocation);
+    }
+
+    public String getKerberosInitCmd() {
+        return configuration.getKerberosInitCmd();
+    }
+
+    public String getAutoOffsetReset() {
+        return configuration.getAutoOffsetReset();
+    }
+
+    public void setAutoCommitEnable(Boolean autoCommitEnable) {
+        configuration.setAutoCommitEnable(autoCommitEnable);
+    }
+
+    public void setSerializerClass(String serializerClass) {
+        configuration.setSerializerClass(serializerClass);
+    }
+
+    public Integer getQueueBufferingMaxMessages() {
+        return configuration.getQueueBufferingMaxMessages();
+    }
+
+    public void setSslEndpointAlgorithm(String sslEndpointAlgorithm) {
+        configuration.setSslEndpointAlgorithm(sslEndpointAlgorithm);
+    }
+
+    public void setRetries(Integer retries) {
+        configuration.setRetries(retries);
+    }
+
+    public void setAutoOffsetReset(String autoOffsetReset) {
+        configuration.setAutoOffsetReset(autoOffsetReset);
+    }
+
+    public Integer getSessionTimeoutMs() {
+        return configuration.getSessionTimeoutMs();
+    }
+
+    public Integer getBufferMemorySize() {
+        return configuration.getBufferMemorySize();
+    }
+
+    public String getKeySerializerClass() {
+        return configuration.getKeySerializerClass();
+    }
+
+    public void setSslProvider(String sslProvider) {
+        configuration.setSslProvider(sslProvider);
+    }
+
+    public void setFetchMinBytes(Integer fetchMinBytes) {
         configuration.setFetchMinBytes(fetchMinBytes);
+    }
+
+    public Integer getAutoCommitIntervalMs() {
+        return configuration.getAutoCommitIntervalMs();
+    }
+
+    public void setKeySerializerClass(String keySerializerClass) {
+        configuration.setKeySerializerClass(keySerializerClass);
+    }
+
+    public Integer getConnectionMaxIdleMs() {
+        return configuration.getConnectionMaxIdleMs();
+    }
+
+    public Integer getReceiveBufferBytes() {
+        return configuration.getReceiveBufferBytes();
+    }
+
+    public void setBrokers(String brokers) {
+        configuration.setBrokers(brokers);
+    }
+
+    public String getValueDeserializer() {
+        return configuration.getValueDeserializer();
+    }
+
+    public String getPartitioner() {
+        return configuration.getPartitioner();
+    }
+
+    public String getSslTruststoreLocation() {
+        return configuration.getSslTruststoreLocation();
+    }
+
+    public void setBarrierAwaitTimeoutMs(int barrierAwaitTimeoutMs) {
+        configuration.setBarrierAwaitTimeoutMs(barrierAwaitTimeoutMs);
+    }
+
+    public String getSslProvider() {
+        return configuration.getSslProvider();
+    }
+
+    public void setMetricReporters(String metricReporters) {
+        configuration.setMetricReporters(metricReporters);
+    }
+
+    public void setSslTruststorePassword(String sslTruststorePassword) {
+        configuration.setSslTruststorePassword(sslTruststorePassword);
+    }
+
+    public void setMaxInFlightRequest(Integer maxInFlightRequest) {
+        configuration.setMaxInFlightRequest(maxInFlightRequest);
+    }
+
+    public String getTopic() {
+        return configuration.getTopic();
+    }
+
+    public int getBarrierAwaitTimeoutMs() {
+        return configuration.getBarrierAwaitTimeoutMs();
+    }
+
+    public Integer getFetchMinBytes() {
+        return configuration.getFetchMinBytes();
+    }
+
+    public Integer getHeartbeatIntervalMs() {
+        return configuration.getHeartbeatIntervalMs();
+    }
+
+    public void setKeyDeserializer(String keyDeserializer) {
+        configuration.setKeyDeserializer(keyDeserializer);
+    }
+
+    public Integer getMaxRequestSize() {
+        return configuration.getMaxRequestSize();
+    }
+
+    public void setMetadataMaxAgeMs(Integer metadataMaxAgeMs) {
+        configuration.setMetadataMaxAgeMs(metadataMaxAgeMs);
+    }
+
+    public String getSslKeystoreType() {
+        return configuration.getSslKeystoreType();
+    }
+
+    public void setKerberosRenewWindowFactor(Double kerberosRenewWindowFactor) {
+        configuration.setKerberosRenewWindowFactor(kerberosRenewWindowFactor);
+    }
+
+    public Integer getKerberosBeforeReloginMinTime() {
+        return configuration.getKerberosBeforeReloginMinTime();
+    }
+
+    public String getSslEnabledProtocols() {
+        return configuration.getSslEnabledProtocols();
+    }
+
+    public Integer getMaxInFlightRequest() {
+        return configuration.getMaxInFlightRequest();
+    }
+
+    public Integer getProducerBatchSize() {
+        return configuration.getProducerBatchSize();
+    }
+
+    public void setSslKeystorePassword(String sslKeystorePassword) {
+        configuration.setSslKeystorePassword(sslKeystorePassword);
+    }
+
+    public void setCheckCrcs(Boolean checkCrcs) {
+        configuration.setCheckCrcs(checkCrcs);
+    }
+
+    public int getConsumerStreams() {
+        return configuration.getConsumerStreams();
+    }
+
+    public void setConsumersCount(int consumersCount) {
+        configuration.setConsumersCount(consumersCount);
+    }
+
+    public int getBatchSize() {
+        return configuration.getBatchSize();
+    }
+
+    public void setAutoCommitIntervalMs(Integer autoCommitIntervalMs) {
+        configuration.setAutoCommitIntervalMs(autoCommitIntervalMs);
+    }
+
+    public void setSslTruststoreType(String sslTruststoreType) {
+        configuration.setSslTruststoreType(sslTruststoreType);
+    }
+
+    public Integer getConsumerRequestTimeoutMs() {
+        return configuration.getConsumerRequestTimeoutMs();
+    }
+
+    public String getSslKeystorePassword() {
+        return configuration.getSslKeystorePassword();
+    }
+
+    public void setSslKeyPassword(String sslKeyPassword) {
+        configuration.setSslKeyPassword(sslKeyPassword);
+    }
+
+    public Integer getRequestRequiredAcks() {
+        return configuration.getRequestRequiredAcks();
+    }
+
+    public Double getKerberosRenewWindowFactor() {
+        return configuration.getKerberosRenewWindowFactor();
+    }
+
+    public void setKerberosInitCmd(String kerberosInitCmd) {
+        configuration.setKerberosInitCmd(kerberosInitCmd);
+    }
+
+    public Integer getRetryBackoffMs() {
+        return configuration.getRetryBackoffMs();
+    }
+
+    public void setSslTrustmanagerAlgorithm(String sslTrustmanagerAlgorithm) {
+        configuration.setSslTrustmanagerAlgorithm(sslTrustmanagerAlgorithm);
+    }
+
+    public void setConsumerRequestTimeoutMs(Integer consumerRequestTimeoutMs) {
+        configuration.setConsumerRequestTimeoutMs(consumerRequestTimeoutMs);
+    }
+
+    public void setReconnectBackoffMs(Integer reconnectBackoffMs) {
+        configuration.setReconnectBackoffMs(reconnectBackoffMs);
+    }
+
+    public void setKerberosRenewJitter(Double kerberosRenewJitter) {
+        configuration.setKerberosRenewJitter(kerberosRenewJitter);
+    }
+
+    public String getSslKeystoreLocation() {
+        return configuration.getSslKeystoreLocation();
+    }
+
+    public Integer getNoOfMetricsSample() {
+        return configuration.getNoOfMetricsSample();
+    }
+
+    public String getSslKeymanagerAlgorithm() {
+        return configuration.getSslKeymanagerAlgorithm();
+    }
+
+    public void setConsumerId(String consumerId) {
+        configuration.setConsumerId(consumerId);
+    }
+
+    public String getClientId() {
+        return configuration.getClientId();
+    }
+
+    public void setFetchWaitMaxMs(Integer fetchWaitMaxMs) {
+        configuration.setFetchWaitMaxMs(fetchWaitMaxMs);
+    }
+
+    public String getSslCipherSuites() {
+        return configuration.getSslCipherSuites();
+    }
+
+    public void setRequestRequiredAcks(Integer requestRequiredAcks) {
+        configuration.setRequestRequiredAcks(requestRequiredAcks);
+    }
+
+    public void setConnectionMaxIdleMs(Integer connectionMaxIdleMs) {
+        configuration.setConnectionMaxIdleMs(connectionMaxIdleMs);
+    }
+
+    public String getSslTrustmanagerAlgorithm() {
+        return configuration.getSslTrustmanagerAlgorithm();
+    }
+
+    public String getSslTruststorePassword() {
+        return configuration.getSslTruststorePassword();
+    }
+
+    public void setConsumerStreams(int consumerStreams) {
+        configuration.setConsumerStreams(consumerStreams);
+    }
+
+    public String getSslTruststoreType() {
+        return configuration.getSslTruststoreType();
+    }
+
+    public String getSecurityProtocol() {
+        return configuration.getSecurityProtocol();
+    }
+
+    public void setBufferMemorySize(Integer bufferMemorySize) {
+        configuration.setBufferMemorySize(bufferMemorySize);
+    }
+
+    public void setSaslKerberosServiceName(String saslKerberosServiceName) {
+        configuration.setSaslKerberosServiceName(saslKerberosServiceName);
+    }
+
+    public void setCompressionCodec(String compressionCodec) {
+        configuration.setCompressionCodec(compressionCodec);
+    }
+
+    public void setKerberosBeforeReloginMinTime(Integer kerberosBeforeReloginMinTime) {
+        configuration.setKerberosBeforeReloginMinTime(kerberosBeforeReloginMinTime);
+    }
+
+    public Integer getMetadataMaxAgeMs() {
+        return configuration.getMetadataMaxAgeMs();
     }
 
     public String getSerializerClass() {
         return configuration.getSerializerClass();
     }
 
-    public int getRequestTimeoutMs() {
+    public void setSslKeymanagerAlgorithm(String sslKeymanagerAlgorithm) {
+        configuration.setSslKeymanagerAlgorithm(sslKeymanagerAlgorithm);
+    }
+
+    public void setMaxRequestSize(Integer maxRequestSize) {
+        configuration.setMaxRequestSize(maxRequestSize);
+    }
+
+    public Double getKerberosRenewJitter() {
+        return configuration.getKerberosRenewJitter();
+    }
+
+    public String getPartitionAssignor() {
+        return configuration.getPartitionAssignor();
+    }
+
+    public void setSecurityProtocol(String securityProtocol) {
+        configuration.setSecurityProtocol(securityProtocol);
+    }
+
+    public void setQueueBufferingMaxMessages(Integer queueBufferingMaxMessages) {
+        configuration.setQueueBufferingMaxMessages(queueBufferingMaxMessages);
+    }
+
+    public String getSaslKerberosServiceName() {
+        return configuration.getSaslKerberosServiceName();
+    }
+
+    public void setBatchSize(int batchSize) {
+        configuration.setBatchSize(batchSize);
+    }
+
+    public Integer getLingerMs() {
+        return configuration.getLingerMs();
+    }
+
+    public Integer getRetries() {
+        return configuration.getRetries();
+    }
+
+    public Integer getMaxPartitionFetchBytes() {
+        return configuration.getMaxPartitionFetchBytes();
+    }
+
+    public String getSslEndpointAlgorithm() {
+        return configuration.getSslEndpointAlgorithm();
+    }
+
+    public Integer getReconnectBackoffMs() {
+        return configuration.getReconnectBackoffMs();
+    }
+
+    public void setLingerMs(Integer lingerMs) {
+        configuration.setLingerMs(lingerMs);
+    }
+
+    public void setPartitionAssignor(String partitionAssignor) {
+        configuration.setPartitionAssignor(partitionAssignor);
+    }
+
+    public Integer getRequestTimeoutMs() {
         return configuration.getRequestTimeoutMs();
     }
 
-    @Override
-    public boolean isMultipleConsumersSupported() {
-        return true;
+    public Properties createConsumerProperties() {
+        return configuration.createConsumerProperties();
     }
+
+    public void setTopic(String topic) {
+        configuration.setTopic(topic);
+    }
+
+    public Integer getFetchWaitMaxMs() {
+        return configuration.getFetchWaitMaxMs();
+    }
+
+    public void setSessionTimeoutMs(Integer sessionTimeoutMs) {
+        configuration.setSessionTimeoutMs(sessionTimeoutMs);
+    }
+
+    public void setSslEnabledProtocols(String sslEnabledProtocols) {
+        configuration.setSslEnabledProtocols(sslEnabledProtocols);
+    }
+
+    public void setHeartbeatIntervalMs(Integer heartbeatIntervalMs) {
+        configuration.setHeartbeatIntervalMs(heartbeatIntervalMs);
+    }
+
+    public void setMaxBlockMs(Integer maxBlockMs) {
+        configuration.setMaxBlockMs(maxBlockMs);
+    }
+
+    public void setSslKeystoreLocation(String sslKeystoreLocation) {
+        configuration.setSslKeystoreLocation(sslKeystoreLocation);
+    }
+
+    public void setMaxPartitionFetchBytes(Integer maxPartitionFetchBytes) {
+        configuration.setMaxPartitionFetchBytes(maxPartitionFetchBytes);
+    }
+
+    public void setPartitioner(String partitioner) {
+        configuration.setPartitioner(partitioner);
+    }
+
+    public String getBrokers() {
+        return configuration.getBrokers();
+    }
+
+    public Integer getMetricsSampleWindowMs() {
+        return configuration.getMetricsSampleWindowMs();
+    }
+
+    public Integer getSendBufferBytes() {
+        return configuration.getSendBufferBytes();
+    }
+
+    public String getSslProtocol() {
+        return configuration.getSslProtocol();
+    }
+
+    public boolean isSeekToBeginning() {
+        return configuration.isSeekToBeginning();
+    }
+
+    public void setSeekToBeginning(boolean seekToBeginning) {
+        configuration.setSeekToBeginning(seekToBeginning);
+    }
+
+    public boolean isBridgeEndpoint() {
+        return bridgeEndpoint;
+    }
+
+    /**
+     * If the option is true, then KafkaProducer will ignore the KafkaConstants.TOPIC header setting of the inbound message.
+     */
+    public void setBridgeEndpoint(boolean bridgeEndpoint) {
+        this.bridgeEndpoint = bridgeEndpoint;
+    }
+
 }

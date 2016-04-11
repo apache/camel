@@ -44,6 +44,7 @@ public final class HL7 {
     /**
      * @deprecated Use {@link #ack(ca.uhn.hl7v2.AcknowledgmentCode)}
      */
+    @Deprecated
     public static ValueBuilder ack(AckCode code) {
         return new ValueBuilder(new AckExpression(code));
     }

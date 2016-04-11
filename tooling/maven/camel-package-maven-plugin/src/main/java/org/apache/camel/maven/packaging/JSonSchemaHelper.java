@@ -52,7 +52,7 @@ public final class JSonSchemaHelper {
             // we need to find the group first
             if (!found) {
                 String s = line.trim();
-                found = s.startsWith("\"" + group + "\":");
+                found = s.startsWith("\"" + group + "\":") && s.endsWith("{");
                 continue;
             }
 
@@ -112,5 +112,28 @@ public final class JSonSchemaHelper {
         return value;
     }
 
+    /**
+     * Gets the value with the key in a safe way, eg returning an empty string if there was no value for the key.
+     */
+    public static String getSafeValue(String key, List<Map<String, String>> rows) {
+        for (Map<String, String> row : rows) {
+            String value = row.get(key);
+            if (value != null) {
+                return value;
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Gets the value with the key in a safe way, eg returning an empty string if there was no value for the key.
+     */
+    public static String getSafeValue(String key, Map<String, String> rows) {
+        String value = rows.get(key);
+        if (value != null) {
+            return value;
+        }
+        return "";
+    }
 
 }

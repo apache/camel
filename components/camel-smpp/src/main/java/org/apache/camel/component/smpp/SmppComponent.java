@@ -88,6 +88,9 @@ public class SmppComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use the shared SmppConfiguration as configuration.
+     */
     public void setConfiguration(SmppConfiguration configuration) {
         this.configuration = configuration;
     }

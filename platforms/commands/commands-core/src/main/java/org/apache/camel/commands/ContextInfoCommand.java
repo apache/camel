@@ -31,12 +31,11 @@ import static org.apache.camel.util.ObjectHelper.isEmpty;
 /**
  * Command to display detailed information about a given {@link org.apache.camel.CamelContext}.
  */
-public class ContextInfoCommand extends AbstractCamelCommand {
+public class ContextInfoCommand extends AbstractContextCommand {
 
     public static final String XML_TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     public static final String OUTPUT_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private StringEscape stringEscape;
-    private String context;
     private boolean verbose;
 
     /**
@@ -44,7 +43,7 @@ public class ContextInfoCommand extends AbstractCamelCommand {
      * @param verbose Whether to output verbose
      */
     public ContextInfoCommand(String context, boolean verbose) {
-        this.context = context;
+        super(context);
         this.verbose = verbose;
     }
 
@@ -56,7 +55,7 @@ public class ContextInfoCommand extends AbstractCamelCommand {
     }
 
     @Override
-    public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
+    protected Object performContextCommand(CamelController camelController, String contextName, PrintStream out, PrintStream err) throws Exception {
         Map<String, Object> row = camelController.getCamelContextInformation(context);
         if (row == null || row.isEmpty()) {
             err.println("Camel context " + context + " not found.");
@@ -75,6 +74,9 @@ public class ContextInfoCommand extends AbstractCamelCommand {
         out.println(stringEscape.unescapeJava("\u001B[1mMiscellaneous\u001B[0m"));
         out.println(stringEscape.unescapeJava("\tSuspended: " + row.get("suspended")));
         out.println(stringEscape.unescapeJava("\tShutdown Timeout: " + row.get("shutdownTimeout") + " sec."));
+        if (row.get("managementStatisticsLevel") != null) {
+            out.println(stringEscape.unescapeJava("\tManagement StatisticsLevel: " + row.get("managementStatisticsLevel")));
+        }
         out.println(stringEscape.unescapeJava("\tAllow UseOriginalMessage: " + row.get("allowUseOriginalMessage")));
         out.println(stringEscape.unescapeJava("\tMessage History: " + row.get("messageHistory")));
         out.println(stringEscape.unescapeJava("\tTracing: " + row.get("tracing")));
@@ -194,6 +196,15 @@ public class ContextInfoCommand extends AbstractCamelCommand {
             out.println(stringEscape.unescapeJava("\tTotal Processing Time: " + stat.getTotalProcessingTime() + " ms"));
             out.println(stringEscape.unescapeJava("\tLast Processing Time: " + stat.getLastProcessingTime() + " ms"));
             out.println(stringEscape.unescapeJava("\tDelta Processing Time: " + stat.getDeltaProcessingTime() + " ms"));
+
+            if (isEmpty(stat.getStartTimestamp())) {
+                // Print an empty value for scripting
+                out.println(stringEscape.unescapeJava("\tStart Statistics Date:"));
+            } else {
+                Date date = new SimpleDateFormat(XML_TIMESTAMP_FORMAT).parse(stat.getStartTimestamp());
+                String text = new SimpleDateFormat(OUTPUT_TIMESTAMP_FORMAT).format(date);
+                out.println(stringEscape.unescapeJava("\tStart Statistics Date: " + text));
+            }
 
             // Test for null to see if a any exchanges have been processed first to avoid NPE
             if (isEmpty(stat.getResetTimestamp())) {

@@ -17,11 +17,13 @@
 package org.apache.camel.component.rss;
 
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
+import org.apache.commons.codec.binary.Base64;
 
 public final class RssUtils {
 
@@ -40,6 +42,25 @@ public final class RssUtils {
             InputStream in = new URL(feedUri).openStream();
             SyndFeedInput input = new SyndFeedInput();
             return input.build(new XmlReader(in));
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
+        }
+    }
+
+    public static SyndFeed createFeed(String feedUri, String username, String password) throws Exception {
+        return createFeed(feedUri, username, password, Thread.currentThread().getContextClassLoader());
+    }
+
+    public static SyndFeed createFeed(String feedUri, String username, String password, ClassLoader classLoader) throws Exception {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(classLoader);
+            URL feedUrl = new URL(feedUri);
+            HttpURLConnection httpcon = (HttpURLConnection) feedUrl.openConnection();
+            String encoding = Base64.encodeBase64String(username.concat(":").concat(password).getBytes());
+            httpcon.setRequestProperty("Authorization", "Basic " + encoding);
+            SyndFeedInput input = new SyndFeedInput();
+            return input.build(new XmlReader(httpcon));
         } finally {
             Thread.currentThread().setContextClassLoader(tccl);
         }

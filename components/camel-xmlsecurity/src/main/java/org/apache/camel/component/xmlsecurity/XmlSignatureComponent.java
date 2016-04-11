@@ -30,7 +30,6 @@ import org.apache.camel.util.ObjectHelper;
 public class XmlSignatureComponent extends UriEndpointComponent {
 
     private XmlSignerConfiguration signerConfiguration;
-
     private XmlVerifierConfiguration verifierConfiguration;
 
     public XmlSignatureComponent() {
@@ -56,7 +55,7 @@ public class XmlSignatureComponent extends UriEndpointComponent {
             throw new MalformedURLException(
                 String.format(
                     "An invalid xmlsecurity uri was provided '%s'."
-                    + " Check the uri matches the format xmlsecurity:sign://<name> or xmlsecurity:verify://<name>",
+                    + " Check the uri matches the format xmlsecurity:sign://<name> or xmlsecurity:verify:<name>",
                     uri
                 )
             );
@@ -91,6 +90,9 @@ public class XmlSignatureComponent extends UriEndpointComponent {
         return signerConfiguration;
     }
 
+    /**
+     * To use a shared XmlSignerConfiguration configuration to use as base for configuring endpoints.
+     */
     public void setSignerConfiguration(XmlSignerConfiguration signerConfiguration) {
         this.signerConfiguration = signerConfiguration;
     }
@@ -102,6 +104,9 @@ public class XmlSignatureComponent extends UriEndpointComponent {
         return verifierConfiguration;
     }
 
+    /**
+     * To use a shared XmlVerifierConfiguration configuration to use as base for configuring endpoints.
+     */
     public void setVerifierConfiguration(XmlVerifierConfiguration verifierConfiguration) {
         this.verifierConfiguration = verifierConfiguration;
     }

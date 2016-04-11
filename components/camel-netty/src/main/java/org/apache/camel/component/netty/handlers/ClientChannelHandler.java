@@ -83,8 +83,13 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
 
         // the state may not be set
         if (exchange != null && callback != null) {
-            // set the cause on the exchange
-            exchange.setException(cause);
+            Throwable initialCause = exchange.getException();
+            if (initialCause != null && initialCause.getCause() == null) {
+                initialCause.initCause(cause);
+            } else {
+                // set the cause on the exchange
+                exchange.setException(cause);
+            }
 
             // close channel in case an exception was thrown
             NettyHelper.close(exceptionEvent.getChannel());
@@ -109,7 +114,11 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         // to keep track of open sockets
         producer.getAllChannels().remove(ctx.getChannel());
 
-        if (producer.getConfiguration().isSync() && !messageReceived && !exceptionHandled) {
+        // this channel is maybe closing graceful and the exchange is already done
+        // and if so we should not trigger an exception
+        boolean doneUoW = exchange.getUnitOfWork() == null;
+
+        if (producer.getConfiguration().isSync() && !doneUoW && !messageReceived && !exceptionHandled) {
             // To avoid call the callback.done twice 
             exceptionHandled = true;
             // session was closed but no message received. This could be because the remote server had an internal error
@@ -121,6 +130,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
             // signal callback
             callback.done(false);
         }
+
         // make sure the event can be processed by other handlers
         super.channelClosed(ctx, e);
     }
@@ -133,19 +143,18 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
             LOG.trace("Message received: {}", messageEvent);
         }
 
-        if (producer.getConfiguration().getRequestTimeout() > 0) {
-            ChannelHandler handler = ctx.getPipeline().get("timeout");
-            if (handler != null) {
-                LOG.trace("Removing timeout channel as we received message");
-                ctx.getPipeline().remove(handler);
-            }
+        ChannelHandler handler = ctx.getPipeline().get("timeout");
+        if (handler != null) {
+            LOG.trace("Removing timeout channel as we received message");
+            ctx.getPipeline().remove(handler);
         }
-
+        
         Exchange exchange = getExchange(ctx);
         if (exchange == null) {
             // we just ignore the received message as the channel is closed
             return;
-        }
+        }     
+
         AsyncCallback callback = getAsyncCallback(ctx);
 
         Message message;

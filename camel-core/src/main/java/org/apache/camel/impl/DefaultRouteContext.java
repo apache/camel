@@ -156,14 +156,12 @@ public class DefaultRouteContext implements RouteContext {
         if (!eventDrivenProcessors.isEmpty()) {
             Processor target = Pipeline.newInstance(getCamelContext(), eventDrivenProcessors);
 
+            // force creating the route id so its known ahead of the route is started
             String routeId = route.idOrCreate(getCamelContext().getNodeIdFactory());
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
             CamelInternalProcessor internal = new CamelInternalProcessor(target);
-            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
-
-            // and then in route context so we can keep track which route this is at runtime
-            internal.addAdvice(new CamelInternalProcessor.RouteContextAdvice(this));
+            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(this));
 
             // and then optionally add route policy processor if a custom policy is set
             List<RoutePolicy> routePolicyList = getRoutePolicyList();

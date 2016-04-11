@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.jclouds;
 
-import org.apache.camel.Exchange;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.util.ObjectHelper;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.io.Payload;
 import org.slf4j.Logger;
@@ -49,12 +52,25 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
         String container = getContainerName(exchange);
         String blobName = getBlobName(exchange);
         String operation = getOperation(exchange);
+        List blobNames = getBlobNameList(exchange);
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Processing {} operation on '{}'", operation, container + "/" + blobName);
         }
         if (JcloudsConstants.GET.equals(operation)) {
             exchange.getOut().setBody(JcloudsBlobStoreHelper.readBlob(blobStore, container, blobName));
+        } else if (JcloudsConstants.COUNT_BLOBS.equals(operation)) {
+            exchange.getOut().setBody(JcloudsBlobStoreHelper.countBlob(blobStore, container));
+        } else if (JcloudsConstants.REMOVE_BLOB.equals(operation)) {
+            JcloudsBlobStoreHelper.removeBlob(blobStore, container, blobName);
+        } else if (JcloudsConstants.CLEAR_CONTAINER.equals(operation)) {
+            JcloudsBlobStoreHelper.clearContainer(blobStore, container);
+        } else if (JcloudsConstants.DELETE_CONTAINER.equals(operation)) {
+            JcloudsBlobStoreHelper.deleteContainer(blobStore, container);
+        } else if (JcloudsConstants.CONTAINER_EXISTS.equals(operation)) {
+            exchange.getOut().setBody(JcloudsBlobStoreHelper.containerExists(blobStore, container));
+        } else if (JcloudsConstants.REMOVE_BLOBS.equals(operation)) {
+            JcloudsBlobStoreHelper.removeBlobs(blobStore, container, blobNames);
         } else {
             Payload body = exchange.getIn().getBody(Payload.class);
             JcloudsBlobStoreHelper.writeBlob(blobStore, container, blobName, body);
@@ -66,8 +82,8 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
      */
     protected String getBlobName(Exchange exchange) {
         String blobName = ((JcloudsBlobStoreEndpoint) getEndpoint()).getBlobName();
-        if (exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME) != null) {
-            blobName = (String) exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME);
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME))) {
+            blobName = exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME, String.class);
         }
         return blobName;
     }
@@ -77,8 +93,8 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
      */
     protected String getContainerName(Exchange exchange) {
         String containerName = ((JcloudsBlobStoreEndpoint) getEndpoint()).getContainer();
-        if (exchange.getIn().getHeader(JcloudsConstants.CONTAINER_NAME) != null) {
-            containerName = (String) exchange.getIn().getHeader(JcloudsConstants.CONTAINER_NAME);
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.CONTAINER_NAME))) {
+            containerName = exchange.getIn().getHeader(JcloudsConstants.CONTAINER_NAME, String.class);
         }
         return containerName;
     }
@@ -89,8 +105,8 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
     public String getOperation(Exchange exchange) {
         String operation = ((JcloudsBlobStoreEndpoint) getEndpoint()).getOperation();
 
-        if (exchange.getIn().getHeader(JcloudsConstants.OPERATION) != null) {
-            operation = (String) exchange.getIn().getHeader(JcloudsConstants.OPERATION);
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.OPERATION))) {
+            operation = exchange.getIn().getHeader(JcloudsConstants.OPERATION, String.class);
         }
         return operation;
     }
@@ -101,9 +117,21 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
     public String getLocationId(Exchange exchange) {
         String operation = ((JcloudsBlobStoreEndpoint) getEndpoint()).getLocationId();
 
-        if (exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID) != null) {
-            operation = (String) exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID);
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID))) {
+            operation = exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID, String.class);
         }
         return operation;
+    }
+    
+    /**
+     * Retrieves the Blob name list from the exchange headers.
+     */
+    public List getBlobNameList(Exchange exchange) {
+        List blobNames = new ArrayList<>();
+
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME_LIST))) {
+            blobNames = exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME_LIST, List.class);
+        }
+        return blobNames;
     }
 }

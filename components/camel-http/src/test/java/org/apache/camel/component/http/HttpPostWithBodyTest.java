@@ -24,6 +24,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -100,8 +101,8 @@ public class HttpPostWithBodyTest extends CamelTestSupport {
 
         log.debug("Body: " + body);
         assertNotNull("Should have a body!", body);
-        assertTrue("body should contain: <html>", body.contains("<html>"));
-
+        assertTrue("body should contain: <html", body.contains("<html"));
+        assertTrue("body should contain: </html>", body.contains("</html>"));
     }
 
     @Override

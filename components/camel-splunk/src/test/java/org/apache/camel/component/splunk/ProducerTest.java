@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.splunk;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
@@ -48,7 +49,7 @@ public class ProducerTest extends SplunkMockTestSupport {
         template.sendBody("direct:stream", splunkEvent);
         assertMockEndpointsSatisfied();
         Producer streamProducer = streamEndpoint.createProducer();
-        assertIsInstanceOf(StreamDataWriter.class, ((SplunkProducer) streamProducer).getDataWriter());
+        assertIsInstanceOf(StreamDataWriter.class, ((SplunkProducer)streamProducer).getDataWriter());
     }
 
     @Test
@@ -62,7 +63,7 @@ public class ProducerTest extends SplunkMockTestSupport {
         template.sendBody("direct:submit", splunkEvent);
         assertMockEndpointsSatisfied();
         Producer submitProducer = submitEndpoint.createProducer();
-        assertIsInstanceOf(SubmitDataWriter.class, ((SplunkProducer) submitProducer).getDataWriter());
+        assertIsInstanceOf(SubmitDataWriter.class, ((SplunkProducer)submitProducer).getDataWriter());
     }
 
     @Test
@@ -76,7 +77,12 @@ public class ProducerTest extends SplunkMockTestSupport {
         template.sendBody("direct:tcp", splunkEvent);
         assertMockEndpointsSatisfied();
         Producer tcpProducer = tcpEndpoint.createProducer();
-        assertIsInstanceOf(TcpDataWriter.class, ((SplunkProducer) tcpProducer).getDataWriter());
+        assertIsInstanceOf(TcpDataWriter.class, ((SplunkProducer)tcpProducer).getDataWriter());
+    }
+
+    @Test(expected = CamelExecutionException.class)
+    public void testBodyWithoutRawOption() throws Exception {
+        template.sendBody("direct:tcp", "foobar");
     }
 
     @Override

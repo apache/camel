@@ -46,7 +46,7 @@ public class PullRequestFilesProducerTest extends GitHubComponentTestBase {
                 context.addComponent("github", new GitHubComponent());
                 from("direct:validPullRequest")
                         .process(new MockPullFilesProducerProcessor())
-                        .to("github://pullRequestFiles?" + GITHUB_CREDENTIALS_STRING);
+                        .to("github://pullRequestFiles?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
 
 

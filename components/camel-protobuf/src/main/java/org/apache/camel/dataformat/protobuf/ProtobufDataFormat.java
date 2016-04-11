@@ -28,10 +28,11 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
-public class ProtobufDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+public class ProtobufDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private CamelContext camelContext;
     private Message defaultInstance;
@@ -42,6 +43,11 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Ca
 
     public ProtobufDataFormat(Message defaultInstance) {
         this.defaultInstance = defaultInstance;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "protobuf";
     }
 
     public CamelContext getCamelContext() {
@@ -74,7 +80,7 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Ca
      * @see org.apache.camel.spi.DataFormat#marshal(org.apache.camel.Exchange,
      * java.lang.Object, java.io.OutputStream)
      */
-    public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
+    public void marshal(final Exchange exchange, final Object graph, final OutputStream outputStream) throws Exception {
         ((Message)graph).writeTo(outputStream);
     }
 
@@ -83,7 +89,7 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Ca
      * @see org.apache.camel.spi.DataFormat#unmarshal(org.apache.camel.Exchange,
      * java.io.InputStream)
      */
-    public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
+    public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
         ObjectHelper.notNull(defaultInstance, "defaultInstance or instanceClassName must be set", this);
 
         Builder builder = defaultInstance.newBuilderForType().mergeFrom(inputStream);
@@ -95,13 +101,13 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Ca
         return builder.build();
     }
 
-    protected Message loadDefaultInstance(String className, CamelContext context) throws CamelException, ClassNotFoundException {
+    protected Message loadDefaultInstance(final String className, final CamelContext context) throws CamelException, ClassNotFoundException {
         Class<?> instanceClass = context.getClassResolver().resolveMandatoryClass(className);
         if (Message.class.isAssignableFrom(instanceClass)) {
             try {
                 Method method = instanceClass.getMethod("getDefaultInstance");
-                return (Message) method.invoke(null, new Object[0]);
-            } catch (Exception ex) {
+                return (Message) method.invoke(null);
+            } catch (final Exception ex) {
                 throw new CamelException("Can't set the defaultInstance of ProtobufferDataFormat with "
                         + className + ", caused by " + ex);
             }

@@ -25,6 +25,7 @@ import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
+import javax.jms.Session;
 import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
 import javax.jms.Topic;
@@ -37,11 +38,9 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -64,9 +63,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ErrorHandler;
 
 /**
- * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
+ * The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
  *
- * @version
+ * This component uses Spring JMS.
  */
 @ManagedResource(description = "Managed JMS Endpoint")
 @UriEndpoint(scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")
@@ -75,15 +74,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private final AtomicInteger runningMessageListeners = new AtomicInteger();
     private boolean pubSubDomain;
     private JmsBinding binding;
-    @UriPath(defaultValue = "queue", enums = "queue,topic,temp:queue,temp:topic")
+    @UriPath(defaultValue = "queue", enums = "queue,topic,temp:queue,temp:topic", description = "The kind of destination to use")
     private String destinationType;
-    @UriPath @Metadata(required = "true")
+    @UriPath(description = "Name of the queue or topic to use as destination")
+    @Metadata(required = "true")
     private String destinationName;
     private Destination destination;
-    @UriParam
+    @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
-    private String selector;
     @UriParam
     private JmsConfiguration configuration;
 
@@ -229,7 +227,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         } else {
             // do nothing, as we're working with a DefaultJmsMessageListenerContainer with an explicit DefaultTaskExecutorType,
             // so DefaultJmsMessageListenerContainer#createDefaultTaskExecutor will handle the creation
-            log.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}", 
+            log.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}",
                     listenerContainer, configuration.getDefaultTaskExecutorType());
         }
 
@@ -287,14 +285,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        Exchange exchange = new DefaultExchange(this, pattern);
+        Exchange exchange = super.createExchange(pattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
         return exchange;
     }
 
-    public Exchange createExchange(Message message) {
+    public Exchange createExchange(Message message, Session session) {
         Exchange exchange = createExchange(getExchangePattern());
-        exchange.setIn(new JmsMessage(message, getBinding()));
+        exchange.setIn(new JmsMessage(message, session, getBinding()));
         return exchange;
     }
 
@@ -320,7 +318,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public String getThreadName() {
         return "JmsConsumer[" + getEndpointConfiguredDestinationName() + "]";
     }
-    
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -336,6 +334,9 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }
@@ -357,8 +358,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     /**
      * Sets the binding used to convert from a Camel message to and from a JMS
      * message
-     *
-     * @param binding the binding to use
      */
     public void setBinding(JmsBinding binding) {
         this.binding = binding;
@@ -370,7 +369,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     /**
      * The kind of destination to use
-     * @param destinationType
      */
     public void setDestinationType(String destinationType) {
         this.destinationType = destinationType;
@@ -406,18 +404,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.configuration = configuration;
     }
 
-    public String getSelector() {
-        return selector;
-    }
-
-    /**
-     * Sets the JMS selector to use
-     */
-    public void setSelector(String selector) {
-        this.selector = selector;
-    }
-
-    @ManagedAttribute
     public boolean isSingleton() {
         return true;
     }
@@ -574,11 +560,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public ErrorHandler getErrorHandler() {
         return getConfiguration().getErrorHandler();
     }
-    
+
     public LoggingLevel getErrorHandlerLoggingLevel() {
         return getConfiguration().getErrorHandlerLoggingLevel();
     }
-   
+
     @ManagedAttribute
     public boolean isErrorHandlerLogStackTrace() {
         return getConfiguration().isErrorHandlerLogStackTrace();
@@ -648,6 +634,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public String getReplyTo() {
         return getConfiguration().getReplyTo();
+    }
+
+    @ManagedAttribute
+    public String getReplyToOverride() {
+        return getConfiguration().getReplyToOverride();
+    }
+
+    @ManagedAttribute
+    public boolean isReplyToSameDestinationAllowed() {
+        return getConfiguration().isReplyToSameDestinationAllowed();
     }
 
     @ManagedAttribute
@@ -981,6 +977,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public void setReplyToOverride(String replyToDestination) {
+        getConfiguration().setReplyToOverride(replyToDestination);
+    }
+
+    @ManagedAttribute
+    public void setReplyToSameDestinationAllowed(boolean replyToSameDestinationAllowed) {
+        getConfiguration().setReplyToSameDestinationAllowed(replyToSameDestinationAllowed);
+    }
+
+    @ManagedAttribute
     public void setReplyToDeliveryPersistent(boolean replyToDeliveryPersistent) {
         getConfiguration().setReplyToDeliveryPersistent(replyToDeliveryPersistent);
     }
@@ -1065,6 +1071,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setJmsKeyFormatStrategy(jmsHeaderStrategy);
     }
 
+    public MessageCreatedStrategy getMessageCreatedStrategy() {
+        return getConfiguration().getMessageCreatedStrategy();
+    }
+
+    public void setMessageCreatedStrategy(MessageCreatedStrategy messageCreatedStrategy) {
+        getConfiguration().setMessageCreatedStrategy(messageCreatedStrategy);
+    }
+
     @ManagedAttribute
     public boolean isTransferExchange() {
         return getConfiguration().isTransferExchange();
@@ -1083,6 +1097,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setTransferException(boolean transferException) {
         getConfiguration().setTransferException(transferException);
+    }
+
+    @ManagedAttribute
+    public void setTransferFault(boolean transferFault) {
+        getConfiguration().setTransferFault(transferFault);
+    }
+
+    @ManagedAttribute
+    public boolean isTransferFault() {
+        return getConfiguration().isTransferFault();
     }
 
     @ManagedAttribute
@@ -1208,35 +1232,18 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         configuration.setReplyToType(type);
     }
 
-    @ManagedAttribute(description = "Camel ID")
-    public String getCamelId() {
-        return getCamelContext().getName();
-    }
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    public String getCamelManagementName() {
-        return getCamelContext().getManagementName();
-    }
-
-    @ManagedAttribute(description = "Endpoint Uri", mask = true)
-    @Override
-    public String getEndpointUri() {
-        return super.getEndpointUri();
-    }
-
-    @ManagedAttribute(description = "Service State")
-    public String getState() {
-        ServiceStatus status = this.getStatus();
-        // if no status exists then its stopped
-        if (status == null) {
-            status = ServiceStatus.Stopped;
-        }
-        return status.name();
-    }
-
     @ManagedAttribute(description = "Number of running message listeners")
     public int getRunningMessageListeners() {
         return runningMessageListeners.get();
+    }
+
+    @ManagedAttribute
+    public String getSelector() {
+        return configuration.getSelector();
+    }
+
+    public void setSelector(String selector) {
+        configuration.setSelector(selector);
     }
 
     // Implementation methods

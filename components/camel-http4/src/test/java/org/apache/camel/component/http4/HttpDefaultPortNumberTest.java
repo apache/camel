@@ -22,7 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -32,15 +35,42 @@ import org.junit.Test;
 @Ignore("We cannot run this test as default port 80 is not allows on most boxes")
 public class HttpDefaultPortNumberTest extends BaseHttpTest {
 
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/search", new BasicValidationHandler("GET", null, null, getExpectedContent())).create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
+    
     @Test
     public void testHttpConnectionWithTwoRoutesAndOneWithDefaultPort() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("http4://" + getHostName() + "/search");
+                        .to("http4://" + localServer.getInetAddress().getHostName() + "/search");
                 from("direct:dummy")
-                        .to("http4://" + getHostName() + ":" + getPort() + "/search");
+                        .to("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search");
             }
         });
 
@@ -57,9 +87,9 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("http4://" + getHostName() + ":80/search");
+                        .to("http4://" + localServer.getInetAddress().getHostName() + ":80/search");
                 from("direct:dummy")
-                        .to("http4://" + getHostName() + ":" + getPort() + "/search");
+                        .to("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search");
             }
         });
 
@@ -76,9 +106,9 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("http4://" + getHostName() + "/search");
+                        .to("http4://" + localServer.getInetAddress().getHostName() + "/search");
                 from("direct:dummy")
-                        .to("http4://" + getHostName() + ":" + getPort() + "/search");
+                        .to("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search");
             }
         });
 
@@ -96,7 +126,7 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("http4://" + getHostName() + "/search");
+                        .to("http4://" + localServer.getInetAddress().getHostName() + "/search");
             }
         });
 
@@ -111,11 +141,6 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
     @Override
     public boolean isUseRouteBuilder() {
         return true;
-    }
-
-    @Override
-    protected void registerHandler(LocalTestServer server) {
-        server.register("/search", new BasicValidationHandler("GET", null, null, getExpectedContent()));
     }
 
     private void assertRefused(Exchange exchange, String portExt) {

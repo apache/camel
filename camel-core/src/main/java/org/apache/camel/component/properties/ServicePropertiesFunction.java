@@ -52,17 +52,22 @@ public class ServicePropertiesFunction implements PropertiesFunction {
         }
 
         // make sure to use upper case
-        key = key.toUpperCase(Locale.ENGLISH);
+        if (key != null) {
+            // make sure to use underscore as dash is not supported as ENV variables
+            key = key.toUpperCase(Locale.ENGLISH).replace('-', '_');
 
-        // a service should have both the host and port defined
-        String host = System.getenv(key + HOST_PREFIX);
-        String port = System.getenv(key + PORT_PREFIX);
+            // a service should have both the host and port defined
+            String host = System.getenv(key + HOST_PREFIX);
+            String port = System.getenv(key + PORT_PREFIX);
 
-        if (host != null && port != null) {
-            return host + ":" + port;
-        } else {
-            return defaultValue;
+            if (host != null && port != null) {
+                return host + ":" + port;
+            } else {
+                return defaultValue;
+            }
         }
+
+        return defaultValue;
     }
 }
 

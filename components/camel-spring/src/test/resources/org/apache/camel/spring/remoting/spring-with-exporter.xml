@@ -27,6 +27,7 @@
   <bean id="sayProxy" class="org.apache.camel.spring.remoting.CamelProxyFactoryBean">
     <property name="serviceUrl" value="direct:say"/>
     <property name="serviceInterface" value="org.apache.camel.spring.remoting.ISay"/>
+    <property name="binding" value="false"/>
   </bean>
   <!-- END SNIPPET: proxy -->
 

@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -53,12 +52,12 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
 
     public ConvertBodyDefinition(Class<?> typeClass) {
         setTypeClass(typeClass);
-        setType(typeClass.getName());
+        setType(typeClass.getCanonicalName());
     }
 
     public ConvertBodyDefinition(Class<?> typeClass, String charset) {
         setTypeClass(typeClass);
-        setType(typeClass.getName());
+        setType(typeClass.getCanonicalName());
         setCharset(charset);
     }
 
@@ -103,7 +102,6 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
     /**
      * The java type to convert to
      */
-    @Required
     public void setType(String type) {
         this.type = type;
     }

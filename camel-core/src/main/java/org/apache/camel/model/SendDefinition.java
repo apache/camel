@@ -25,7 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.spi.Required;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<Type> implements EndpointRequiredDefinition {
-    @XmlAttribute
+    @XmlAttribute @Metadata(required = "true")
     protected String uri;
     @XmlAttribute
     @Deprecated
@@ -99,7 +99,6 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
      *
      * @param uri the uri of the endpoint
      */
-    @Required
     public void setUri(String uri) {
         this.uri = uri;
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xquery;
 
+import java.util.Arrays;
+
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.lib.ModuleURIResolver;
@@ -40,7 +42,7 @@ public class XQueryModuleURIResolver implements ModuleURIResolver {
                 ss[i] = new StreamSource(xqueryComponent.resolveModuleResource(locations[i]).openStream());
             }
         } catch (Exception e) {
-            throw new XPathException("Error resolving resource: " + locations, e);
+            throw new XPathException("Error resolving resource: " + Arrays.toString(locations), e);
         }
         return ss;
     }

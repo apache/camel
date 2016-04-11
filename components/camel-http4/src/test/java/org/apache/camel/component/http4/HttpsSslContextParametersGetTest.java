@@ -21,9 +21,40 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class HttpsSslContextParametersGetTest extends HttpsGetTest {
+
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/mail/", new BasicValidationHandler("GET", null, null, getExpectedContent())).create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
     
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -35,12 +66,12 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
 
     @Test
     public void httpsGet() throws Exception {
-        localServer.register("/mail/", new BasicValidationHandler("GET", null, null, getExpectedContent()));
 
-        Exchange exchange = template.request("https4://127.0.0.1:" + getPort() + "/mail/?x509HostnameVerifier=x509HostnameVerifier&sslContextParametersRef=sslContextParameters", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
-        });
+        Exchange exchange = template.request("https4://127.0.0.1:" + localServer.getLocalPort() 
+            + "/mail/?x509HostnameVerifier=x509HostnameVerifier&sslContextParametersRef=sslContextParameters", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                }
+            });
 
         assertExchange(exchange);
     }

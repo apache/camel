@@ -33,7 +33,7 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
  *
  * @see TokenizeLanguage
  */
-@Metadata(label = "language", title = "Tokenize")
+@Metadata(label = "language,core", title = "Tokenize")
 @XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TokenizerExpression extends ExpressionDefinition {
@@ -53,6 +53,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     private Boolean includeTokens;
     @XmlAttribute
     private Integer group;
+    @XmlAttribute
+    private Boolean skipFirst;
 
     public TokenizerExpression() {
     }
@@ -113,7 +115,7 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * To inherit namepaces from a root/parent tag name
+     * To inherit namepaces from a root/parent tag name when using XML
      */
     public void setInheritNamespaceTagName(String inheritNamespaceTagName) {
         this.inheritNamespaceTagName = inheritNamespaceTagName;
@@ -136,7 +138,7 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * Whether to include the tokens in the parts
+     * Whether to include the tokens in the parts when using pairs
      * <p/>
      * The default value is false
      */
@@ -153,6 +155,17 @@ public class TokenizerExpression extends ExpressionDefinition {
      */
     public void setGroup(Integer group) {
         this.group = group;
+    }
+
+    public Boolean getSkipFirst() {
+        return skipFirst;
+    }
+
+    /**
+     * To skip the very first element
+     */
+    public void setSkipFirst(Boolean skipFirst) {
+        this.skipFirst = skipFirst;
     }
 
     @Override
@@ -181,6 +194,9 @@ public class TokenizerExpression extends ExpressionDefinition {
                 throw new IllegalArgumentException("Group must be a positive number, was: " + group);
             }
             language.setGroup(group);
+        }
+        if (skipFirst != null) {
+            language.setSkipFirst(skipFirst);
         }
         return language.createExpression();
     }

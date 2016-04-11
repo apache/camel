@@ -23,8 +23,8 @@ import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpConstants;
-import org.apache.camel.component.http.helper.HttpHelper;
+import org.apache.camel.http.common.HttpConstants;
+import org.apache.camel.http.common.HttpHelper;
 import org.junit.Test;
 
 /**
@@ -53,7 +53,7 @@ public class ServletTransferExceptionTest extends ServletCamelRouterTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("servlet:///hello?transferException=true")
+                from("servlet:hello?transferException=true")
                     .throwException(new IllegalArgumentException("Damn"));
             }
         };

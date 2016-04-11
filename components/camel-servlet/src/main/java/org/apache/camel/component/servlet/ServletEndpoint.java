@@ -22,26 +22,42 @@ import java.net.URISyntaxException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.http.HttpClientConfigurer;
-import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
 
-@UriEndpoint(scheme = "servlet", title = "Servlet", syntax = "servlet:servletName", consumerOnly = true, consumerClass = ServletConsumer.class, label = "http")
-public class ServletEndpoint extends HttpEndpoint {
+/**
+ * To use a HTTP Servlet as entry for Camel routes when running in a servlet container.
+ */
+@UriEndpoint(scheme = "servlet", extendsScheme = "http", title = "Servlet",
+        syntax = "servlet:contextPath", consumerOnly = true, consumerClass = ServletConsumer.class, label = "http")
+public class ServletEndpoint extends HttpCommonEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(label = "consumer") @Metadata(required = "true")
+    private String contextPath;
+
+    @UriParam(label = "consumer", defaultValue = "CamelServlet")
     private String servletName;
 
     public ServletEndpoint() {
     }
 
-    public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri, HttpClientParams params, HttpConnectionManager httpConnectionManager,
-                           HttpClientConfigurer clientConfigurer) throws URISyntaxException {
-        super(endPointURI, component, httpUri, params, httpConnectionManager, clientConfigurer);
+    public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri) throws URISyntaxException {
+        super(endPointURI, component, httpUri);
+        this.contextPath = httpUri.getPath();
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    /**
+     * The context-path to use
+     */
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
     }
 
     /**

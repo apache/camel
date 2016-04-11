@@ -28,6 +28,7 @@ public final class NettyConstants {
     public static final String NETTY_MESSAGE_EVENT = "CamelNettyMessageEvent";
     public static final String NETTY_REMOTE_ADDRESS = "CamelNettyRemoteAddress";
     public static final String NETTY_LOCAL_ADDRESS = "CamelNettyLocalAddress";
+    public static final String NETTY_REQUEST_TIMEOUT = "CamelNettyRequestTimeout";
     public static final String NETTY_SSL_SESSION = "CamelNettySSLSession";
     public static final String NETTY_SSL_CLIENT_CERT_SUBJECT_NAME = "CamelNettySSLClientCertSubjectName";
     public static final String NETTY_SSL_CLIENT_CERT_ISSUER_NAME = "CamelNettySSLClientCertIssuerName";

@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.reply;
 
 import javax.jms.Message;
+import javax.jms.Session;
 
 /**
  * Handles a reply.
@@ -29,9 +30,10 @@ public interface ReplyHandler {
      * The reply message was received
      *
      * @param correlationId  the correlation id
-     * @param reply  the reply message
+     * @param reply  the JMS reply message
+     * @param session the JMS session
      */
-    void onReply(String correlationId, Message reply);
+    void onReply(String correlationId, Message reply, Session session);
 
     /**
      * The reply message was not received and a timeout triggered

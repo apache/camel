@@ -32,14 +32,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyFixedLengthFactory;
-import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,18 +56,18 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     public BindyFixedLengthDataFormat() {
     }
 
-    public BindyFixedLengthDataFormat(String... packages) {
-        super(packages);
-    }
-
     public BindyFixedLengthDataFormat(Class<?> type) {
         super(type);
     }
 
+    @Override
+    public String getDataFormatName() {
+        return "bindy-fixed";
+    }
+    
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
-        PackageScanClassResolver resolver = exchange.getContext().getPackageScanClassResolver();
-        BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory(resolver);
+        BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
 
         // Get CRLF
@@ -80,14 +76,14 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         List<Map<String, Object>> models;
 
         // the body is not a prepared list so help a bit here and create one for us
-        if (exchange.getContext().getTypeConverter().convertTo(List.class, body) == null) {
+        if (!isPreparedList(body)) {
             models = new ArrayList<Map<String, Object>>();
             Iterator<?> it = ObjectHelper.createIterator(body);
             while (it.hasNext()) {
                 Object model = it.next();
                 String name = model.getClass().getName();
                 Map<String, Object> row = new HashMap<String, Object>();
-                row.put(name, body);
+                row.put(name, model);
                 models.add(row);
             }
         } else {
@@ -151,9 +147,34 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         }
     }
 
+    /*
+     * Check if the body is already parsed.
+     * Bindy expects a list containing Map<String, Object> entries
+     * where each Map contains only one entry where the key is the class
+     * name of the object to be marshalled, and the value is the
+     * object to be marshalled.
+     */
+    private boolean isPreparedList(Object object) {
+        if (List.class.isAssignableFrom(object.getClass())) {
+            List<?> list = (List<?>) object;
+            if (list.size() > 0) {
+                // Check first entry, should be enough
+                Object entry = list.get(0);
+                if (Map.class.isAssignableFrom(entry.getClass())) {
+                    Map<?, ?> map = (Map<?, ?>) entry;
+                    if (map.size() == 1) {
+                        if (map.keySet().toArray()[0] instanceof String) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        PackageScanClassResolver resolver = exchange.getContext().getPackageScanClassResolver();
-        BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory(resolver);
+        BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
         
         // List of Pojos
@@ -269,57 +290,18 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     }
 
     @Override
-    protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
-        
-        // Initialize the primary (body) model factory ignoring header and footer model classes
-        PackageScanFilter defaultRecordScanFilter = new PackageScanFilter() {
-            @Override
-            public boolean matches(Class<?> type) {
-                FixedLengthRecord record = type.getAnnotation(FixedLengthRecord.class);
-                return record != null && !record.isFooter() && !record.isHeader();
-            }
-        };
+    protected BindyAbstractFactory createModelFactory() throws Exception {
 
-        BindyFixedLengthFactory factory;
-        if (getClassType() != null) {
-            factory = new BindyFixedLengthFactory(resolver, defaultRecordScanFilter, getClassType());
-        } else {
-            factory = new BindyFixedLengthFactory(resolver, defaultRecordScanFilter, getPackages());
-        }
+        BindyFixedLengthFactory factory = new BindyFixedLengthFactory(getClassType());
         
         // Optionally initialize the header factory... using header model classes
         if (factory.hasHeader()) {
-            PackageScanFilter headerScanFilter = new PackageScanFilter() {
-                @Override
-                public boolean matches(Class<?> type) {
-                    FixedLengthRecord record = type.getAnnotation(FixedLengthRecord.class);
-                    return record != null && record.isHeader();
-                }
-            };
-            
-            if (getClassType() != null) {
-                this.headerFactory = new BindyFixedLengthFactory(resolver, headerScanFilter, getClassType());
-            } else {
-                this.headerFactory = new BindyFixedLengthFactory(resolver, headerScanFilter, getPackages());
-            }
+            this.headerFactory = new BindyFixedLengthFactory(factory.header());
         }
         
         // Optionally initialize the footer factory... using footer model classes
         if (factory.hasFooter()) {
-            
-            PackageScanFilter footerScanFilter = new PackageScanFilter() {
-                @Override
-                public boolean matches(Class<?> type) {
-                    FixedLengthRecord record = type.getAnnotation(FixedLengthRecord.class);
-                    return record != null && record.isFooter();
-                }
-            };
-            
-            if (getClassType() != null) {
-                this.footerFactory = new BindyFixedLengthFactory(resolver, footerScanFilter, getClassType());
-            } else {
-                this.footerFactory = new BindyFixedLengthFactory(resolver, footerScanFilter, getPackages());
-            }
+            this.footerFactory = new BindyFixedLengthFactory(factory.footer());
         }
         
         return factory;

@@ -63,11 +63,18 @@ public abstract class CacheManagerFactory extends ServiceSupport {
     }
 
     @Override
-    protected void doStop() throws Exception {
-        // shutdown cache manager when stopping
+    protected synchronized void doStop() throws Exception {
+        // only shutdown cache manager if no longer in use
+        // (it may be reused when running in app servers like Karaf)
         if (cacheManager != null) {
-            cacheManager.shutdown();
-            cacheManager = null;
+            int size = cacheManager.getCacheNames().length;
+            if (size <= 0) {
+                LOG.info("Shutting down CacheManager as its no longer in use");
+                cacheManager.shutdown();
+                cacheManager = null;
+            } else {
+                LOG.info("Cannot stop CacheManager as its still in use by {} clients", size);
+            }
         }
     }
 }

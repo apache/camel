@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,9 +28,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.sonatype.plexus.build.incremental.BuildContext;
+
 public final class PackageHelper {
 
     private PackageHelper() {
+    }
+    
+    public static boolean haveResourcesChanged(Log log, MavenProject project, BuildContext buildContext, String suffix) {
+        String baseDir = project.getBasedir().getAbsolutePath();
+        for (Resource r : project.getBuild().getResources()) {
+            File file = new File(r.getDirectory());
+            if (file.isAbsolute()) {
+                file = new File(r.getDirectory().substring(baseDir.length() + 1));
+            }
+            String path = file.getPath() + "/" + suffix;
+            log.debug("checking  if " + path + " (" + r.getDirectory() + "/" + suffix + ") has changed.");
+            if (buildContext.hasDelta(path)) {
+                log.debug("Indeed " + suffix + " has changed.");
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -58,6 +81,15 @@ public final class PackageHelper {
         } finally {
             isr.close();
             in.close();
+        }
+    }
+
+    public static void writeText(File file, String text) throws IOException {
+        FileOutputStream fos = new FileOutputStream(file, false);
+        try {
+            fos.write(text.getBytes());
+        } finally {
+            fos.close();
         }
     }
 

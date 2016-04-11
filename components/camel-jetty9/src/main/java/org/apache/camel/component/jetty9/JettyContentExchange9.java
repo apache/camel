@@ -48,8 +48,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Jetty specific exchange which keeps track of the the request and response.
- *
- * @version 
  */
 public class JettyContentExchange9 implements JettyContentExchange {
 
@@ -68,14 +66,14 @@ public class JettyContentExchange9 implements JettyContentExchange {
 
     private boolean supportRedirect;
 
-    public void init(Exchange exchange, JettyHttpBinding jettyBinding, 
+    public void init(Exchange exchange, JettyHttpBinding jettyBinding,
                      final HttpClient client, AsyncCallback callback) {
         this.exchange = exchange;
         this.jettyBinding = jettyBinding;
         this.client = client;
         this.callback = callback;
     }
-    
+
     protected void onRequestComplete() {
         LOG.trace("onRequestComplete");
         closeRequestContentSource();
@@ -123,17 +121,11 @@ public class JettyContentExchange9 implements JettyContentExchange {
         doTaskCompleted(ex);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#getBody()
-     */
     public byte[] getBody() {
         // must return the content as raw bytes
         return getResponseContentBytes();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#getUrl()
-     */
     public String getUrl() {
         try {
             return this.request.getURI().toURL().toExternalForm();
@@ -141,15 +133,15 @@ public class JettyContentExchange9 implements JettyContentExchange {
             throw new IllegalStateException(e.getMessage(), e);
         }
     }
-    
+
     protected void closeRequestContentSource() {
         tryClose(this.request.getContent());
     }
-    
+
     private void tryClose(Object obj) {
         if (obj instanceof Closeable) {
             try {
-                ((Closeable)obj).close();
+                ((Closeable) obj).close();
             } catch (IOException e) {
                 // Ignore
             }
@@ -170,72 +162,43 @@ public class JettyContentExchange9 implements JettyContentExchange {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#setRequestContentType(java.lang.String)
-     */
     public void setRequestContentType(String contentType) {
         this.requestContentType = contentType;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#getResponseStatus()
-     */
     public int getResponseStatus() {
         return this.response.getStatus();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#setMethod(java.lang.String)
-     */
     public void setMethod(String method) {
         this.request.method(method);
     }
-    
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#setTimeout(long)
-     */
+
     public void setTimeout(long timeout) {
         this.request.timeout(timeout, TimeUnit.MILLISECONDS);
     }
-    
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#setURL(java.lang.String)
-     */
+
     public void setURL(String url) {
         this.request = client.newRequest(url);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#setRequestContent(byte[])
-     */
     public void setRequestContent(byte[] byteArray) {
         this.request.content(new BytesContentProvider(byteArray), this.requestContentType);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#setRequestContent(java.lang.String, java.lang.String)
-     */
     public void setRequestContent(String data, String charset) throws UnsupportedEncodingException {
         StringContentProvider cp = charset != null ? new StringContentProvider(data, charset) : new StringContentProvider(data);
         this.request.content(cp, this.requestContentType);
     }
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#setRequestContent(java.io.InputStream)
-     */
+
     public void setRequestContent(InputStream ins) {
-        this.request.content(new InputStreamContentProvider(ins), this.requestContentType);        
+        this.request.content(new InputStreamContentProvider(ins), this.requestContentType);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#addRequestHeader(java.lang.String, java.lang.String)
-     */
     public void addRequestHeader(String key, String s) {
         this.request.header(key, s);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#send(org.eclipse.jetty.client.HttpClient)
-     */
     public void send(HttpClient client) throws IOException {
         org.eclipse.jetty.client.api.Request.Listener listener = new Request.Listener.Adapter() {
 
@@ -268,23 +231,24 @@ public class JettyContentExchange9 implements JettyContentExchange {
         this.response = response;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#getResponseContentBytes()
-     */
     public byte[] getResponseContentBytes() {
         return responseContent;
     }
-    
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#getResponseHeaders()
-     */
-    public Map<String, Collection<String>> getResponseHeaders() {
-        final HttpFields f = response.getHeaders();
-        Map<String, Collection<String>> ret = new TreeMap<String, Collection<String>>(String.CASE_INSENSITIVE_ORDER);
-        for (String n : f.getFieldNamesCollection()) {
-            ret.put(n,  f.getValuesList(n));
+
+    private Map<String, Collection<String>> getFieldsAsMap(HttpFields fields) {
+        final Map<String, Collection<String>> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        for (String name : fields.getFieldNamesCollection()) {
+            result.put(name, fields.getValuesList(name));
         }
-        return ret;
+        return result;
+    }
+
+    public Map<String, Collection<String>> getRequestHeaders() {
+        return getFieldsAsMap(request.getHeaders());
+    }
+
+    public Map<String, Collection<String>> getResponseHeaders() {
+        return getFieldsAsMap(response.getHeaders());
     }
 
     @Override

@@ -52,8 +52,22 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
         return new BoxEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 
-    // get the component's singleton BoxClient
-    protected synchronized CachedBoxClient getBoxClient() {
+    public CachedBoxClient getBoxClient() {
+        return cachedBoxClient;
+    }
+
+    /**
+     * To use the shared configuration
+     */
+    @Override
+    public void setConfiguration(BoxConfiguration configuration) {
+        super.setConfiguration(configuration);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
         if (cachedBoxClient == null) {
             if (configuration != null) {
                 cachedBoxClient = BoxClientHelper.createBoxClient(configuration);
@@ -61,7 +75,6 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
                 throw new IllegalArgumentException("Unable to connect, Box component configuration is missing");
             }
         }
-        return cachedBoxClient;
     }
 
     @Override

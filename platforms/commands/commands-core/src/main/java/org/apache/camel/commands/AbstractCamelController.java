@@ -25,9 +25,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.CatalogHelper;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.commands.internal.RegexUtil;
 import org.apache.camel.util.JsonSchemaHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Abstract {@link org.apache.camel.commands.CamelController} that implementators should extend.
@@ -35,6 +37,26 @@ import org.apache.camel.util.JsonSchemaHelper;
 public abstract class AbstractCamelController implements CamelController {
 
     private CamelCatalog catalog = new DefaultCamelCatalog();
+
+    @Override
+    public List<Map<String, String>> getCamelContexts(String filter) throws Exception {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        List<Map<String, String>> context = getCamelContexts();
+        if (filter != null) {
+            filter = RegexUtil.wildcardAsRegex(filter);
+        } else {
+            filter = "*";
+        }
+        for (Map<String, String> entry : context) {
+            String name = entry.get("name");
+            if (name.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(name, filter) || name.matches(filter)) {
+                answer.add(entry);
+            }
+        }
+
+        return answer;
+    }
 
     @Override
     public List<Map<String, String>> listEipsCatalog(String filter) throws Exception {
@@ -76,6 +98,59 @@ public abstract class AbstractCamelController implements CamelController {
             }
 
             answer.add(row);
+        }
+
+        return answer;
+    }
+
+    protected Map<String, Object> loadProperties(String json, String group, Map<String, Object> answer) {
+        List<Map<String, String>> kv = JsonSchemaHelper.parseJsonSchema(group, json, true);
+        if (kv.isEmpty()) {
+            return answer;
+        }
+
+        Map<String, Object> groupkv = new LinkedHashMap<>();
+        answer.put(group, groupkv);
+
+        for (Map<String, String> map : kv) {
+            boolean first = true;
+            Map<String, Object> properties = new LinkedHashMap<>();
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                if (first) {
+                    if (!ObjectHelper.equal(entry.getKey(), "name")) {
+                        throw new IllegalStateException("First entry should be the property name");
+                    }
+                    groupkv.put(entry.getValue(), properties);
+                    first = false;
+                } else {
+                    properties.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public Map<String, Object> componentInfo(String filter) throws Exception {
+        Map<String, Object> answer = new LinkedHashMap<>();
+        List<String> names = catalog.findComponentNames();
+        for (String name : names) {
+            if (name.equalsIgnoreCase(filter)) {
+                String json = catalog.componentJSonSchema(name);
+
+                List<Map<String, String>> kv;
+
+                kv = JsonSchemaHelper.parseJsonSchema("component", json, false);
+                for (Map<String, String> map : kv) {
+                    answer.putAll(map);
+                }
+
+                loadProperties(json, "componentProperties", answer);
+                loadProperties(json, "properties", answer);
+
+                break;
+            }
         }
 
         return answer;

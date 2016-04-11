@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.swagger;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import scala.collection.immutable.List;
 import scala.collection.mutable.Buffer;
 
 public class DefaultCamelSwaggerServletTest extends CamelTestSupport {
@@ -53,9 +55,33 @@ public class DefaultCamelSwaggerServletTest extends CamelTestSupport {
     @Test
     public void testServlet() throws Exception {
         DefaultCamelSwaggerServlet servlet = new DefaultCamelSwaggerServlet();
+        
         Buffer<RestDefinition> list = servlet.getRestDefinitions(null);
         assertEquals(1, list.size());
         RestDefinition rest = list.iterator().next();
+        checkRestDefinition(rest);
+
+        // get the RestDefinition by using the camel context id
+        list = servlet.getRestDefinitions(context.getName());
+        assertEquals(1, list.size());
+        rest = list.iterator().next();
+        checkRestDefinition(rest);
+        
+        RestDefinition rest2 = context.getRestDefinitions().get(0);
+        checkRestDefinition(rest2);
+    }
+    
+    @Test
+    public void testContexts() throws Exception {
+        DefaultCamelSwaggerServlet servlet = new DefaultCamelSwaggerServlet();
+
+        List<String> list = servlet.findCamelContexts();
+        assertEquals(1, list.length());
+        assertEquals(context.getName(), list.head());
+    }
+
+    private void checkRestDefinition(RestDefinition rest) {
+        assertNotNull(rest);
         assertEquals("/hello", rest.getPath());
         assertEquals("/hi", rest.getVerbs().get(0).getUri());
         assertEquals("get", rest.getVerbs().get(0).asVerb());
@@ -63,16 +89,6 @@ public class DefaultCamelSwaggerServletTest extends CamelTestSupport {
         assertEquals("get", rest.getVerbs().get(1).asVerb());
         assertEquals("/bye", rest.getVerbs().get(2).getUri());
         assertEquals("post", rest.getVerbs().get(2).asVerb());
-
-        RestDefinition rest2 = context.getRestDefinitions().get(0);
-        assertNotNull(rest2);
-        assertEquals("/hello", rest2.getPath());
-        assertEquals("/hi", rest2.getVerbs().get(0).getUri());
-        assertEquals("get", rest2.getVerbs().get(0).asVerb());
-        assertEquals("/bye", rest2.getVerbs().get(1).getUri());
-        assertEquals("get", rest2.getVerbs().get(1).asVerb());
-        assertEquals("/bye", rest2.getVerbs().get(2).getUri());
-        assertEquals("post", rest2.getVerbs().get(2).asVerb());
     }
 
 }

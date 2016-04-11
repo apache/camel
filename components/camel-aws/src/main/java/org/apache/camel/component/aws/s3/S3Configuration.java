@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -33,31 +34,42 @@ public class S3Configuration implements Cloneable {
     private String accessKey;
     @UriParam
     private String secretKey;
-    @UriParam
+    @UriParam(label = "consumer")
     private String fileName;
-    @UriParam
+    @UriParam(label = "consumer")
     private String prefix;
-    @UriParam
+    @UriParam(label = "producer")
     private String region;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean deleteAfterWrite;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean multiPartUpload;
-    @UriParam(defaultValue = "" + 25 * 1024 * 1024)
+    @UriParam(label = "producer", defaultValue = "" + 25 * 1024 * 1024)
     private long partSize = 25 * 1024 * 1024;
     @UriParam
     private String amazonS3Endpoint;
     @UriParam
     private String policy;
-    @UriParam
+    @UriParam(label = "producer")
     private String storageClass;
+    @UriParam(label = "producer")
+    private String serverSideEncryption;
+    @UriParam
+    private String proxyHost;
+    @UriParam
+    private Integer proxyPort;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean includeBody = true;
 
     public long getPartSize() {
         return partSize;
     }
 
+    /**
+     * *Camel 2.15.0*: Setup the partSize which is used in multi part upload, the default size is 25M.
+     */
     public void setPartSize(long partSize) {
         this.partSize = partSize;
     }
@@ -66,10 +78,16 @@ public class S3Configuration implements Cloneable {
         return multiPartUpload;
     }
 
+    /**
+     * *Camel 2.15.0*: If it is true, camel will upload the file with multi part format, the part size is decided by the option of `partSize`
+     */
     public void setMultiPartUpload(boolean multiPartUpload) {
         this.multiPartUpload = multiPartUpload;
     }
 
+    /**
+     * The region with which the AWS-S3 client wants to work with.
+     */
     public void setAmazonS3Endpoint(String amazonS3Endpoint) {
         this.amazonS3Endpoint = amazonS3Endpoint;
     }
@@ -82,6 +100,9 @@ public class S3Configuration implements Cloneable {
         return accessKey;
     }
 
+    /**
+     * Amazon AWS Access Key
+     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -90,6 +111,9 @@ public class S3Configuration implements Cloneable {
         return secretKey;
     }
 
+    /**
+     * Amazon AWS Secret Key
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -98,6 +122,9 @@ public class S3Configuration implements Cloneable {
         return amazonS3Client;
     }
 
+    /**
+     * Reference to a `com.amazonaws.services.sqs.AmazonS3` in the link:registry.html[Registry].
+     */
     public void setAmazonS3Client(AmazonS3 amazonS3Client) {
         this.amazonS3Client = amazonS3Client;
     }
@@ -106,6 +133,10 @@ public class S3Configuration implements Cloneable {
         return prefix;
     }
 
+    /**
+     * *Camel 2.10.1*: The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest
+     * to only consume objects we are interested in.
+     */
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
@@ -114,6 +145,9 @@ public class S3Configuration implements Cloneable {
         return bucketName;
     }
 
+    /**
+     * Name of the bucket. The bucket will be created if it don't already exists.
+     */
     public void setBucketName(String bucketName) {
         this.bucketName = bucketName;
     }
@@ -122,6 +156,9 @@ public class S3Configuration implements Cloneable {
         return fileName;
     }
 
+    /**
+     * To get the object from the bucket with the given file name
+     */
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
@@ -130,6 +167,10 @@ public class S3Configuration implements Cloneable {
         return region;
     }
 
+    /**
+     * The region where the bucket is located. This option is used in the
+     * `com.amazonaws.services.s3.model.CreateBucketRequest`.
+     */
     public void setRegion(String region) {
         this.region = region;
     }
@@ -138,6 +179,22 @@ public class S3Configuration implements Cloneable {
         return deleteAfterRead;
     }
 
+    /**
+     * *Camel 2.17*: If it is true, the exchange body will be set to a stream to the contents of the file.
+     * If false, the headers will be set with the S3 object metadata, but the body will be null.
+     */
+    public void setIncludeBody(boolean includeBody) {
+        this.includeBody = includeBody;
+    }
+
+    public boolean isIncludeBody() {
+        return includeBody;
+    }
+
+    /**
+     * Delete objects from S3 after they have been retrieved.  The delete is only performed if the Exchange is committed.
+     * If a rollback occurs, the object is not deleted.
+     */
     public void setDeleteAfterRead(boolean deleteAfterRead) {
         this.deleteAfterRead = deleteAfterRead;
     }
@@ -146,6 +203,9 @@ public class S3Configuration implements Cloneable {
         return deleteAfterWrite;
     }
 
+    /**
+     * *Camel 2.11.0*: Delete file object after the S3 file has been uploaded
+     */
     public void setDeleteAfterWrite(boolean deleteAfterWrite) {
         this.deleteAfterWrite = deleteAfterWrite;
     }
@@ -154,6 +214,9 @@ public class S3Configuration implements Cloneable {
         return policy;
     }
 
+    /**
+     * *Camel 2.8.4*: The policy for this queue to set in the `com.amazonaws.services.s3.AmazonS3#setBucketPolicy()` method.
+     */
     public void setPolicy(String policy) {
         this.policy = policy;
     }
@@ -162,7 +225,44 @@ public class S3Configuration implements Cloneable {
         return storageClass;
     }
 
+    /**
+     * *Camel 2.8.4*: The storage class to set in the `com.amazonaws.services.s3.model.PutObjectRequest` request.
+     */
     public void setStorageClass(String storageClass) {
         this.storageClass = storageClass;
+    }
+
+    public String getServerSideEncryption() {
+        return serverSideEncryption;
+    }
+
+    /**
+     * *Camel 2.16*: Sets the server-side encryption algorithm when encrypting the object using AWS-managed keys.
+     * For example use <tt>AES256</tt>.
+     */
+    public void setServerSideEncryption(String serverSideEncryption) {
+        this.serverSideEncryption = serverSideEncryption;
+    }
+    
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * *Camel 2.16*: To define a proxy host when instantiating the SQS client
+     */
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * *Camel 2.16*: Specify a proxy port to be used inside the client definition.
+     */
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
     }
 }

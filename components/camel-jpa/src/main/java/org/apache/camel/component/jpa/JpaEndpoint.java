@@ -19,6 +19,7 @@ package org.apache.camel.component.jpa;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.LockModeType;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -43,13 +44,15 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
+/**
+ * The jpa component enables you to store and retrieve Java objects from databases using JPA.
+ */
 @UriEndpoint(scheme = "jpa", title = "JPA", syntax = "jpa:entityType", consumerClass = JpaConsumer.class, label = "database,sql")
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
     private Expression producerExpression;
-    private Map<String, Object> entityManagerProperties;
 
     @UriPath(description = "Entity class name") @Metadata(required = "true")
     private Class<?> entityType;
@@ -68,12 +71,39 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
 
+    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    private String query;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    private String namedQuery;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    private String nativeQuery;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.", defaultValue = "PESSIMISTIC_WRITE")
+    private LockModeType lockModeType = LockModeType.PESSIMISTIC_WRITE;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.", multiValue = true)
+    private Map<String, Object> parameters;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    private Class<?> resultClass;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    private boolean transacted;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    private boolean skipLockedEntity;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    private DeleteHandler<Object> deleteHandler;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    private DeleteHandler<Object> preDeleteHandler;
+
     @UriParam(label = "producer", defaultValue = "true")
     private boolean flushOnSend = true;
     @UriParam(label = "producer")
     private boolean usePersist;
     @UriParam(label = "producer")
     private boolean usePassedInEntityManager;
+    @UriParam(label = "producer")
+    private boolean remove;
+
+    @UriParam(label = "advanced", prefix = "emf.", multiValue = true)
+    private Map<String, Object> entityManagerProperties;
+
 
     public JpaEndpoint() {
     }
@@ -120,6 +150,16 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         validate();
         JpaConsumer consumer = new JpaConsumer(this, processor);
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
+        consumer.setQuery(getQuery());
+        consumer.setNamedQuery(getNamedQuery());
+        consumer.setNativeQuery(getNativeQuery());
+        consumer.setLockModeType(getLockModeType());
+        consumer.setParameters(getParameters());
+        consumer.setResultClass(getResultClass());
+        consumer.setTransacted(isTransacted());
+        consumer.setSkipLockedEntity(isSkipLockedEntity());
+        consumer.setDeleteHandler(getDeleteHandler());
+        consumer.setPreDeleteHandler(getPreDeleteHandler());
         configureConsumer(consumer);
         return consumer;
     }
@@ -134,7 +174,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     @Override
@@ -290,6 +330,17 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         this.usePersist = usePersist;
     }
 
+    public boolean isRemove() {
+        return remove;
+    }
+
+    /**
+     * Indicates to use entityManager.remove(entity).
+     */
+    public void setRemove(boolean isRemove) {
+        this.remove = isRemove;
+    }
+
     public boolean isJoinTransaction() {
         return joinTransaction;
     }
@@ -327,6 +378,122 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      */
     public void setSharedEntityManager(boolean sharedEntityManager) {
         this.sharedEntityManager = sharedEntityManager;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    /**
+     * To use a custom query when consuming data.
+     */
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public String getNamedQuery() {
+        return namedQuery;
+    }
+
+    /**
+     * To use a named query when consuming data.
+     */
+    public void setNamedQuery(String namedQuery) {
+        this.namedQuery = namedQuery;
+    }
+
+    public String getNativeQuery() {
+        return nativeQuery;
+    }
+
+    /**
+     * To use a custom native query when consuming data. You may want to use the option consumer.resultClass also when using native queries.
+     */
+    public void setNativeQuery(String nativeQuery) {
+        this.nativeQuery = nativeQuery;
+    }
+
+    public LockModeType getLockModeType() {
+        return lockModeType;
+    }
+
+    /**
+     * To configure the lock mode on the consumer.
+     */
+    public void setLockModeType(LockModeType lockModeType) {
+        this.lockModeType = lockModeType;
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    /**
+     * This key/value mapping is used for building the query parameters.
+     * It's is expected to be of the generic type java.util.Map<String, Object> where the keys are the named parameters
+     * of a given JPA query and the values are their corresponding effective values you want to select for.
+     */
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
+    }
+
+    public Class<?> getResultClass() {
+        return resultClass;
+    }
+
+    /**
+     * Defines the type of the returned payload (we will call entityManager.createNativeQuery(nativeQuery, resultClass)
+     * instead of entityManager.createNativeQuery(nativeQuery)). Without this option, we will return an object array.
+     * Only has an affect when using in conjunction with native query when consuming data.
+     */
+    public void setResultClass(Class<?> resultClass) {
+        this.resultClass = resultClass;
+    }
+
+    public boolean isTransacted() {
+        return transacted;
+    }
+
+    /**
+     * Whether to run the consumer in transacted mode, by which all messages will either commit or rollback,
+     * when the entire batch has been processed. The default behavior (false) is to commit all the previously
+     * successfully processed messages, and only rollback the last failed message.
+     */
+    public void setTransacted(boolean transacted) {
+        this.transacted = transacted;
+    }
+
+    public boolean isSkipLockedEntity() {
+        return skipLockedEntity;
+    }
+
+    /**
+     * To configure whether to use NOWAIT on lock and silently skip the entity.
+     */
+    public void setSkipLockedEntity(boolean skipLockedEntity) {
+        this.skipLockedEntity = skipLockedEntity;
+    }
+
+    public DeleteHandler<Object> getDeleteHandler() {
+        return deleteHandler;
+    }
+
+    /**
+     * To use a custom DeleteHandler to delete the row after the consumer is done processing the exchange
+     */
+    public void setDeleteHandler(DeleteHandler<Object> deleteHandler) {
+        this.deleteHandler = deleteHandler;
+    }
+
+    public DeleteHandler<Object> getPreDeleteHandler() {
+        return preDeleteHandler;
+    }
+
+    /**
+     * To use a custom Pre-DeleteHandler to delete the row after the consumer has read the entity.
+     */
+    public void setPreDeleteHandler(DeleteHandler<Object> preDeleteHandler) {
+        this.preDeleteHandler = preDeleteHandler;
     }
 
     // Implementation methods

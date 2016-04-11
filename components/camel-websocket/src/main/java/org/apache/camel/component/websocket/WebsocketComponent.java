@@ -23,7 +23,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.management.MBeanServer;
 import javax.servlet.DispatcherType;
 
@@ -80,6 +79,7 @@ public class WebsocketComponent extends UriEndpointComponent {
     protected String sslKeyPassword;
     protected String sslPassword;
     protected String sslKeystore;
+    protected Map<String, WebSocketFactory> socketFactory; 
 
     /**
      * Map for storing servlets. {@link WebsocketComponentServlet} is identified by pathSpec {@link String}.
@@ -90,12 +90,14 @@ public class WebsocketComponent extends UriEndpointComponent {
         Server server;
         Connector connector;
         WebsocketComponentServlet servlet;
+        MemoryWebsocketStore memoryStore;
         int refCount;
 
-        public ConnectorRef(Server server, Connector connector, WebsocketComponentServlet servlet) {
+        public ConnectorRef(Server server, Connector connector, WebsocketComponentServlet servlet, MemoryWebsocketStore memoryStore) {
             this.server = server;
             this.connector = connector;
             this.servlet = servlet;
+            this.memoryStore = memoryStore;
             increment();
         }
 
@@ -114,6 +116,11 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     public WebsocketComponent() {
         super(WebsocketEndpoint.class);
+
+        if (this.socketFactory == null) {
+            this.socketFactory = new HashMap<String, WebSocketFactory>();
+            this.socketFactory.put("default", new DefaultWebsocketFactory());
+        }
     }
 
     /**
@@ -136,8 +143,6 @@ public class WebsocketComponent extends UriEndpointComponent {
                     connector = new SelectChannelConnector();
                 }
 
-                LOG.trace("Jetty Connector added: {}", connector.getName());
-
                 if (endpoint.getPort() != null) {
                     connector.setPort(endpoint.getPort());
                 } else {
@@ -156,6 +161,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                     enableJmx(server);
                 }
                 server.addConnector(connector);
+                LOG.trace("Jetty Connector added: {}", connector.getName());
 
                 // Create ServletContextHandler
                 ServletContextHandler context = createContext(server, connector, endpoint.getHandlers());
@@ -171,14 +177,17 @@ public class WebsocketComponent extends UriEndpointComponent {
                     server = createStaticResourcesServer(server, context, endpoint.getStaticResources());
                 }
 
+                MemoryWebsocketStore memoryStore = new MemoryWebsocketStore();
+                
                 // Don't provide a Servlet object as Producer/Consumer will create them later on
-                connectorRef = new ConnectorRef(server, connector, null);
+                connectorRef = new ConnectorRef(server, connector, null, memoryStore);
 
                 // must enable session before we start
                 if (endpoint.isSessionSupport()) {
                     enableSessionSupport(connectorRef.server, connectorKey);
                 }
                 LOG.info("Jetty Server starting on host: {}:{}", connector.getHost(), connector.getPort());
+                connectorRef.memoryStore.start();
                 connectorRef.server.start();
 
                 CONNECTORS.put(connectorKey, connectorRef);
@@ -192,8 +201,21 @@ public class WebsocketComponent extends UriEndpointComponent {
                 enableSessionSupport(connectorRef.server, connectorKey);
             }
 
+            NodeSynchronization sync = new DefaultNodeSynchronization(connectorRef.memoryStore);
+            WebsocketComponentServlet servlet = addServlet(sync, prodcon, endpoint.getResourceUri());
+            if (prodcon instanceof WebsocketConsumer) {
+                WebsocketConsumer consumer = WebsocketConsumer.class.cast(prodcon);
+                if (servlet.getConsumer() == null) {
+                    servlet.setConsumer(consumer);
+                }
+                // register the consumer here
+                servlet.connect(consumer);
+            }
+            if (prodcon instanceof WebsocketProducer) {
+                WebsocketProducer producer = WebsocketProducer.class.cast(prodcon);
+                producer.setStore(connectorRef.memoryStore);
+            }
         }
-
     }
 
     /**
@@ -209,12 +231,17 @@ public class WebsocketComponent extends UriEndpointComponent {
             ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
             if (connectorRef != null) {
                 if (connectorRef.decrement() == 0) {
+                    LOG.info("Stopping Jetty Server as the last connector is disconnecting: {}:{}"
+                            , connectorRef.connector.getHost()
+                            , connectorRef.connector.getPort());
+                    servlets.remove(createPathSpec(endpoint.getResourceUri()));
                     connectorRef.server.removeConnector(connectorRef.connector);
                     if (connectorRef.connector != null) {
                         // static server may not have set a connector
                         connectorRef.connector.stop();
                     }
                     connectorRef.server.stop();
+                    connectorRef.memoryStore.stop();
                     CONNECTORS.remove(connectorKey);
                     // Camel controls the lifecycle of these entities so remove the
                     // registered MBeans when Camel is done with the managed objects.
@@ -225,6 +252,9 @@ public class WebsocketComponent extends UriEndpointComponent {
                 }
                 if (prodcon instanceof WebsocketConsumer) {
                     connectorRef.servlet.disconnect((WebsocketConsumer) prodcon);
+                }
+                if (prodcon instanceof WebsocketProducer) {
+                    ((WebsocketProducer) prodcon).setStore(null);
                 }
             }
         }
@@ -402,35 +432,10 @@ public class WebsocketComponent extends UriEndpointComponent {
         return createStaticResourcesServer(server, context, home);
     }
 
-    protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketProducer producer, String remaining) throws Exception {
+    protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketProducerConsumer prodcon, String resourceUri) throws Exception {
 
         // Get Connector from one of the Jetty Instances to add WebSocket Servlet
-        WebsocketEndpoint endpoint = producer.getEndpoint();
-        String key = getConnectorKey(endpoint);
-        ConnectorRef connectorRef = getConnectors().get(key);
-
-        WebsocketComponentServlet servlet;
-
-        if (connectorRef != null) {
-            String pathSpec = createPathSpec(remaining);
-            servlet = servlets.get(pathSpec);
-            if (servlet == null) {
-                // Retrieve Context
-                ServletContextHandler context = (ServletContextHandler) connectorRef.server.getHandler();
-                servlet = createServlet(sync, pathSpec, servlets, context);
-                connectorRef.servlet = servlet;
-                LOG.debug("WebSocket Producer Servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
-            }
-            return servlet;
-        } else {
-            throw new Exception("Jetty instance has not been retrieved for : " + key);
-        }
-    }
-
-    protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketConsumer consumer, String resourceUri) throws Exception {
-
-        // Get Connector from one of the Jetty Instances to add WebSocket Servlet
-        WebsocketEndpoint endpoint = consumer.getEndpoint();
+        WebsocketEndpoint endpoint = prodcon.getEndpoint();
         String key = getConnectorKey(endpoint);
         ConnectorRef connectorRef = getConnectors().get(key);
 
@@ -444,15 +449,9 @@ public class WebsocketComponent extends UriEndpointComponent {
                 ServletContextHandler context = (ServletContextHandler) connectorRef.server.getHandler();
                 servlet = createServlet(sync, pathSpec, servlets, context);
                 connectorRef.servlet = servlet;
-                servlets.put(pathSpec, servlet);
                 LOG.debug("WebSocket servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
             }
 
-            if (servlet.getConsumer() == null) {
-                servlet.setConsumer(consumer);
-            }
-            // register the consumer here
-            servlet.connect(consumer);
             return servlet;
         } else {
             throw new Exception("Jetty instance has not been retrieved for : " + key);
@@ -460,7 +459,7 @@ public class WebsocketComponent extends UriEndpointComponent {
     }
 
     protected WebsocketComponentServlet createServlet(NodeSynchronization sync, String pathSpec, Map<String, WebsocketComponentServlet> servlets, ServletContextHandler handler) {
-        WebsocketComponentServlet servlet = new WebsocketComponentServlet(sync);
+        WebsocketComponentServlet servlet = new WebsocketComponentServlet(sync, socketFactory);
         servlets.put(pathSpec, servlet);
         handler.addServlet(new ServletHolder(servlet), pathSpec);
         return servlet;
@@ -650,8 +649,6 @@ public class WebsocketComponent extends UriEndpointComponent {
      * <tt>classpath:WEB-INF/static</tt>
      * <p/>
      * If not configured (eg <tt>null</tt>) then no static resource is in use.
-     *
-     * @param staticResources the base path
      */
     public void setStaticResources(String staticResources) {
         this.staticResources = staticResources;
@@ -661,6 +658,9 @@ public class WebsocketComponent extends UriEndpointComponent {
         return host;
     }
 
+    /**
+     * The hostname. The default value is <tt>0.0.0.0</tt>
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -669,6 +669,9 @@ public class WebsocketComponent extends UriEndpointComponent {
         return port;
     }
 
+    /**
+     * The port number. The default value is <tt>9292</tt>
+     */
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -685,18 +688,30 @@ public class WebsocketComponent extends UriEndpointComponent {
         return sslKeystore;
     }
 
+    /**
+     * The password for the keystore when using SSL.
+     */
     public void setSslKeyPassword(String sslKeyPassword) {
         this.sslKeyPassword = sslKeyPassword;
     }
 
+    /**
+     * The password when using SSL.
+     */
     public void setSslPassword(String sslPassword) {
         this.sslPassword = sslPassword;
     }
 
+    /**
+     * The path to the keystore.
+     */
     public void setSslKeystore(String sslKeystore) {
         this.sslKeystore = sslKeystore;
     }
 
+    /**
+     * If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.
+     */
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
     }
@@ -709,6 +724,9 @@ public class WebsocketComponent extends UriEndpointComponent {
         return minThreads;
     }
 
+    /**
+     * To set a value for minimum number of threads in server thread pool.
+     */
     public void setMinThreads(Integer minThreads) {
         this.minThreads = minThreads;
     }
@@ -717,6 +735,9 @@ public class WebsocketComponent extends UriEndpointComponent {
         return maxThreads;
     }
 
+    /**
+     * To set a value for maximum number of threads in server thread pool.
+     */
     public void setMaxThreads(Integer maxThreads) {
         this.maxThreads = maxThreads;
     }
@@ -725,6 +746,9 @@ public class WebsocketComponent extends UriEndpointComponent {
         return threadPool;
     }
 
+    /**
+     * To use a custom thread pool for the server.
+     */
     public void setThreadPool(ThreadPool threadPool) {
         this.threadPool = threadPool;
     }
@@ -733,8 +757,28 @@ public class WebsocketComponent extends UriEndpointComponent {
         return sslContextParameters;
     }
 
+    /**
+     * To configure security using SSLContextParameters
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public Map<String, WebSocketFactory> getSocketFactory() {
+        return socketFactory;
+    }
+
+    /**
+     * To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol.
+     * <p/>
+     * The <tt>default</tt> key is reserved for the default implementation.
+     */
+    public void setSocketFactory(Map<String, WebSocketFactory> socketFactory) {
+        this.socketFactory = socketFactory;
+
+        if (!this.socketFactory.containsKey("default")) {
+            this.socketFactory.put("default", new DefaultWebsocketFactory());
+        }
     }
 
     public static HashMap<String, ConnectorRef> getConnectors() {
@@ -758,7 +802,8 @@ public class WebsocketComponent extends UriEndpointComponent {
 
             // must add static resource server to CONNECTORS in case the websocket producers/consumers
             // uses the same port number, and therefore we must be part of this
-            ConnectorRef ref = new ConnectorRef(staticResourcesServer, connector, null);
+            MemoryWebsocketStore memoryStore = new MemoryWebsocketStore();
+            ConnectorRef ref = new ConnectorRef(staticResourcesServer, connector, null, memoryStore);
             String key = "websocket:" + host + ":" + port;
             CONNECTORS.put(key, ref);
         }
@@ -774,6 +819,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                     connectorRef.server.removeConnector(connectorRef.connector);
                     connectorRef.connector.stop();
                     connectorRef.server.stop();
+                    connectorRef.memoryStore.stop();
                     connectorRef.servlet = null;
                 }
                 CONNECTORS.remove(connectorKey);

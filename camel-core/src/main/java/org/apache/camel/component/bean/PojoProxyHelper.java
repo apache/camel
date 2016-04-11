@@ -27,6 +27,7 @@ import org.apache.camel.util.ServiceHelper;
  * receives a reply. Unlike the ProxyHelper this works only with methods that have only one parameter.
  */
 public final class PojoProxyHelper {
+
     private PojoProxyHelper() {
     }
 

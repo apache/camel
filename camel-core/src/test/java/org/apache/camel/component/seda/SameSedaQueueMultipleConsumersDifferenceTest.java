@@ -17,6 +17,7 @@
 package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -51,8 +52,9 @@ public class SameSedaQueueMultipleConsumersDifferenceTest extends ContextTestSup
                 }
             });
             fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Cannot use existing queue seda://foo as the existing queue multiple consumers true does not match given multiple consumers false", e.getMessage());
+        } catch (FailedToCreateRouteException e) {
+            assertEquals("fail", e.getRouteId());
+            assertEquals("Cannot use existing queue seda://foo as the existing queue multiple consumers true does not match given multiple consumers false", e.getCause().getMessage());
         }
     }
 

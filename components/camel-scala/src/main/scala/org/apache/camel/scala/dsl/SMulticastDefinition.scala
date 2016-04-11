@@ -51,7 +51,4 @@ case class SMulticastDefinition(override val target: MulticastDefinition)(implic
   def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))
   
   def timeout(timeout: Long) = wrap(target.timeout(timeout))
-
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SMulticastDefinition]
-  
 }

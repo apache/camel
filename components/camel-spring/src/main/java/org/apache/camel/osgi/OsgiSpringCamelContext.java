@@ -45,7 +45,7 @@ public class OsgiSpringCamelContext extends SpringCamelContext {
             ctx = bundleContext;
         }
         FactoryFinder finder = new OsgiFactoryFinderResolver(bundleContext).resolveDefaultFactoryFinder(getClassResolver());
-        return new OsgiTypeConverter(ctx, getInjector(), finder);
+        return new OsgiTypeConverter(ctx, this, getInjector(), finder);
     }
 
     @Override

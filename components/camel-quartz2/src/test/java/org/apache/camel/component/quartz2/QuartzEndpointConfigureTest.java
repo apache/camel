@@ -58,9 +58,9 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
         JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(triggerKey.getName(), triggerKey.getGroup()));
 
         assertEquals("getName()", "myName", triggerKey.getName());
-        assertEquals("getGroup()", "Camel", triggerKey.getGroup());
+        assertEquals("getGroup()", "Camel_" + context.getManagementName(), triggerKey.getGroup());
         assertEquals("getJobName", "myName", jobDetail.getKey().getName());
-        assertEquals("getJobGroup", "Camel", jobDetail.getKey().getGroup());
+        assertEquals("getJobGroup", "Camel_" + context.getManagementName(), jobDetail.getKey().getGroup());
     }
 
     @Test

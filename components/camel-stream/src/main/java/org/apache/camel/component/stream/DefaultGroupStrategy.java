@@ -18,7 +18,9 @@ package org.apache.camel.component.stream;
 
 import java.util.List;
 
-
+/**
+ * A default GroupStrategy that just group the lines by returning the lines as a list as-is
+ */
 public class DefaultGroupStrategy implements GroupStrategy {
 
     @Override

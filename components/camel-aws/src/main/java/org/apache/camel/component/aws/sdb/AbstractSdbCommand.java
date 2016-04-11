@@ -39,15 +39,6 @@ public abstract class AbstractSdbCommand {
     }
 
     public abstract void execute();
-    
-    protected Message getMessageForResponse(Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
-    }
 
     protected String determineDomainName() {
         String domainName = exchange.getIn().getHeader(SdbConstants.DOMAIN_NAME, String.class);
@@ -63,11 +54,7 @@ public abstract class AbstractSdbCommand {
     }
     
     protected Boolean determineConsistentRead() {
-        Boolean consistentRead = exchange.getIn().getHeader(SdbConstants.CONSISTENT_READ, Boolean.class);
-        if (consistentRead == null) {
-            consistentRead = this.configuration.getConsistentRead();
-        }
-        return consistentRead;
+        return exchange.getIn().getHeader(SdbConstants.CONSISTENT_READ, this.configuration.isConsistentRead(), Boolean.class);
     }
     
     protected UpdateCondition determineUpdateCondition() {

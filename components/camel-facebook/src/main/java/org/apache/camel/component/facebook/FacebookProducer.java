@@ -31,6 +31,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
 import org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper;
+import org.apache.camel.component.facebook.data.FacebookPropertiesHelper;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ThreadPoolProfile;
@@ -64,8 +65,10 @@ public class FacebookProducer extends DefaultAsyncProducer {
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // properties for method arguments
         final Map<String, Object> properties = new HashMap<String, Object>();
-        getEndpointProperties(endpoint.getConfiguration(), properties);
+
         getExchangeProperties(exchange, properties);
+        FacebookPropertiesHelper.configureReadingProperties(endpoint.getConfiguration(), properties);
+        getEndpointProperties(endpoint.getConfiguration(), properties);
 
         // decide which method to invoke
         final FacebookMethodsType method = findMethod(exchange, properties);
@@ -123,6 +126,15 @@ public class FacebookProducer extends DefaultAsyncProducer {
         return false;
     }
 
+    private boolean hasReadingParameters(Map<String, Object> properties) {
+        for (String parameterName : properties.keySet()) {
+            if (parameterName.startsWith(FacebookConstants.READING_PREFIX)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private FacebookMethodsType findMethod(Exchange exchange, Map<String, Object> properties) {
 
         FacebookMethodsType method = null;
@@ -136,10 +148,10 @@ public class FacebookProducer extends DefaultAsyncProducer {
 
             // get the method to call
             if (filteredMethods.isEmpty()) {
-                final Set<String> missing = getMissingProperties(endpoint.getMethodName(),
+                final Set<String> missing = getMissingProperties(endpoint.getMethod(),
                     endpoint.getNameStyle(), argNames);
                 throw new RuntimeCamelException(String.format("Missing properties for %s, need one or more from %s",
-                        endpoint.getMethodName(), missing));
+                        endpoint.getMethod(), missing));
             } else if (filteredMethods.size() == 1) {
                 // found an exact match
                 method = filteredMethods.get(0);

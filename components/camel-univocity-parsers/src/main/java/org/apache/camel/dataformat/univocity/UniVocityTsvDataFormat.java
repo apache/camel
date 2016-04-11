@@ -51,7 +51,6 @@ public class UniVocityTsvDataFormat extends AbstractUniVocityDataFormat<TsvForma
      */
     public UniVocityTsvDataFormat setEscapeChar(Character escapeChar) {
         this.escapeChar = escapeChar;
-        reset();
         return this;
     }
 
@@ -97,5 +96,10 @@ public class UniVocityTsvDataFormat extends AbstractUniVocityDataFormat<TsvForma
         if (escapeChar != null) {
             format.setEscapeChar(escapeChar);
         }
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "univocity-tsv";
     }
 }

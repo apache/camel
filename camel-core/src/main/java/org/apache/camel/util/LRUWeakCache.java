@@ -16,15 +16,10 @@
  */
 package org.apache.camel.util;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-
 /**
- * A Least Recently Used Cache which uses {@link java.lang.ref.WeakReference}.
+ * A cache that uses a near optional LRU Cache using {@link java.lang.ref.WeakReference}.
+ * <p/>
+ * The Cache is implemented by Caffeine which provides an <a href="https://github.com/ben-manes/caffeine/wiki/Efficiency">efficient cache</a>.
  * <p/>
  * This implementation uses {@link java.lang.ref.WeakReference} for stored values in the cache, to support the JVM
  * when it wants to reclaim objects for example during garbage collection. Therefore this implementation does
@@ -54,119 +49,13 @@ import java.util.Set;
  * @see LRUSoftCache
  */
 public class LRUWeakCache<K, V> extends LRUCache<K, V> {
-    private static final long serialVersionUID = 1L;
 
     public LRUWeakCache(int maximumCacheSize) {
-        super(maximumCacheSize);
+        this(16, maximumCacheSize);
     }
 
     public LRUWeakCache(int initialCapacity, int maximumCacheSize) {
-        super(initialCapacity, maximumCacheSize);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public V put(K key, V value) {
-        WeakReference<V> put = new WeakReference<V>(value);
-        WeakReference<V> prev = (WeakReference<V>) super.put(key, (V) put);
-        return prev != null ? prev.get() : null;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public V get(Object o) {
-        WeakReference<V> ref = (WeakReference<V>) super.get(o);
-        return ref != null ? ref.get() : null;
-    }
-
-    @Override
-    public void putAll(Map<? extends K, ? extends V> map) {
-        for (Entry<? extends K, ? extends V> entry : map.entrySet()) {
-            put(entry.getKey(), entry.getValue());
-        }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public V remove(Object o) {
-        WeakReference<V> ref = (WeakReference<V>) super.remove(o);
-        return ref != null ? ref.get() : null;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Collection<V> values() {
-        // return a copy of all the active values
-        Collection<WeakReference<V>> col = (Collection<WeakReference<V>>) super.values();
-        Collection<V> answer = new ArrayList<V>();
-        for (WeakReference<V> ref : col) {
-            V value = ref.get();
-            if (value != null) {
-                answer.add(value);
-            }
-        }
-        return answer;
-    }
-
-    @Override
-    public int size() {
-        // only count as a size if there is a value
-        int size = 0;
-        for (V value : super.values()) {
-            WeakReference<?> ref = (WeakReference<?>) value;
-            if (ref != null && ref.get() != null) {
-                size++;
-            }
-        }
-        return size;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return size() == 0;
-    }
-
-    @Override
-    public boolean containsKey(Object o) {
-        // must lookup if the key has a value, as we only regard a key to be contained
-        // if the value is still there (the JVM can remove the soft reference if it need memory)
-        return get(o) != null;
-    }
-
-    @Override
-    public Set<Entry<K, V>> entrySet() {
-        Set<Entry<K, V>> original = super.entrySet();
-
-        // must use a copy to avoid concurrent modifications and be able to get/set value using
-        // the soft reference so the returned set is without the soft reference, and thus is
-        // use able for the caller to use
-        Set<Entry<K, V>> answer = new LinkedHashSet<Entry<K, V>>(original.size());
-        for (final Entry<K, V> entry : original) {
-            Entry<K, V> view = new Entry<K, V>() {
-                @Override
-                public K getKey() {
-                    return entry.getKey();
-                }
-
-                @Override
-                @SuppressWarnings("unchecked")
-                public V getValue() {
-                    WeakReference<V> ref = (WeakReference<V>) entry.getValue();
-                    return ref != null ? ref.get() : null;
-                }
-
-                @Override
-                @SuppressWarnings("unchecked")
-                public V setValue(V v) {
-                    V put = (V) new WeakReference<V>(v);
-                    WeakReference<V> prev = (WeakReference<V>) entry.setValue(put);
-                    return prev != null ? prev.get() : null;
-                }
-            };
-            answer.add(view);
-        }
-
-        return answer;
+        super(initialCapacity, maximumCacheSize, false, false, true, false);
     }
 
     @Override

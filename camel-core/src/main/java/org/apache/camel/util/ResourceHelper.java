@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,6 +31,8 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ClassResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +46,46 @@ public final class ResourceHelper {
 
     private ResourceHelper() {
         // utility class
+    }
+
+    /**
+     * Resolves the expression/predicate whether it refers to an external script on the file/classpath etc.
+     * This requires to use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * <tt>resource:file:/var/myscript.groovy</tt>.
+     * <p/>
+     * If not then the returned value is returned as-is.
+     */
+    public static String resolveOptionalExternalScript(CamelContext camelContext, String expression) {
+        if (expression == null) {
+            return null;
+        }
+        String external = expression;
+
+        // must be one line only
+        int newLines = StringHelper.countChar(expression, '\n');
+        if (newLines > 1) {
+            // okay then just use as-is
+            return expression;
+        }
+
+        // must start with resource: to denote an external resource
+        if (external.startsWith("resource:")) {
+            external = external.substring(9);
+
+            if (hasScheme(external)) {
+                InputStream is = null;
+                try {
+                    is = resolveMandatoryResourceAsInputStream(camelContext, external);
+                    expression = camelContext.getTypeConverter().convertTo(String.class, is);
+                } catch (IOException e) {
+                    throw new RuntimeCamelException("Cannot load resource " + external, e);
+                } finally {
+                    IOHelper.close(is);
+                }
+            }
+        }
+
+        return expression;
     }
 
     /**
@@ -76,13 +119,49 @@ public final class ResourceHelper {
     /**
      * Resolves the mandatory resource.
      * <p/>
+     * The resource uri can refer to the following systems to be loaded from
+     * <ul>
+     *     <il>file:nameOfFile - to refer to the file system</il>
+     *     <il>classpath:nameOfFile - to refer to the classpath (default)</il>
+     *     <il>http:uri - to load the resoufce using HTTP</il>
+     *     <il>ref:nameOfBean - to lookup the resource in the {@link org.apache.camel.spi.Registry}</il>
+     * </ul>
+     * If no prefix has been given, then the resource is loaded from the classpath
+     * <p/>
+     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
+     *
+     * @param camelContext the Camel Context
+     * @param uri URI of the resource
+     * @return the resource as an {@link InputStream}.  Remember to close this stream after usage.
+     * @throws java.io.IOException is thrown if the resource file could not be found or loaded as {@link InputStream}
+     */
+    public static InputStream resolveMandatoryResourceAsInputStream(CamelContext camelContext, String uri) throws IOException {
+        if (uri.startsWith("ref:")) {
+            String ref = uri.substring(4);
+            String value = CamelContextHelper.mandatoryLookup(camelContext, ref, String.class);
+            return new ByteArrayInputStream(value.getBytes());
+        }
+        InputStream is = resolveResourceAsInputStream(camelContext.getClassResolver(), uri);
+        if (is == null) {
+            String resolvedName = resolveUriPath(uri);
+            throw new FileNotFoundException("Cannot find resource: " + resolvedName + " in classpath for URI: " + uri);
+        } else {
+            return is;
+        }
+    }
+
+    /**
+     * Resolves the mandatory resource.
+     * <p/>
      * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
      *
      * @param classResolver the class resolver to load the resource from the classpath
      * @param uri URI of the resource
      * @return the resource as an {@link InputStream}.  Remember to close this stream after usage.
      * @throws java.io.IOException is thrown if the resource file could not be found or loaded as {@link InputStream}
+     * @deprecated use {@link #resolveMandatoryResourceAsInputStream(CamelContext, String)}
      */
+    @Deprecated
     public static InputStream resolveMandatoryResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
         InputStream is = resolveResourceAsInputStream(classResolver, uri);
         if (is == null) {

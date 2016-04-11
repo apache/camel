@@ -18,6 +18,7 @@ package org.apache.camel.component.mina2;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
@@ -194,8 +195,9 @@ public class Mina2EncodingTest extends BaseMina2Test {
                 }
             });
             fail("Should have thrown a ResolveEndpointFailedException due invalid encoding parameter");
-        } catch (IllegalArgumentException e) {
-            // We were suppose to get here.
+        } catch (FailedToCreateRouteException e) {
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("The encoding: XXX is not supported", iae.getMessage());
         }
     }
 }

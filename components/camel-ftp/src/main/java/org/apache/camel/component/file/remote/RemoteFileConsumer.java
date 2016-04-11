@@ -185,7 +185,18 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     }
 
     protected void connectIfNecessary() throws IOException {
-        if (!loggedIn) {
+        // We need to send a noop first to check if the connection is still open 
+        boolean isConnected = false;
+        try {
+            isConnected = getOperations().sendNoop();
+        } catch (Exception ex) {
+            // here we just ignore the exception and try to reconnect
+            if (log.isDebugEnabled()) {
+                log.debug("Exception checking connection status: " + ex.getMessage());
+            }
+        }
+
+        if (!loggedIn || !isConnected) {
             if (log.isDebugEnabled()) {
                 log.debug("Not connected/logged in, connecting to: {}", remoteServer());
             }

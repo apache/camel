@@ -30,7 +30,8 @@
         <jmxAgent id="agent" registryPort="{{myjmx.port}}" disabled="{{myjmx.disabled}}"
                   usePlatformMBeanServer="{{myjmx.usePlatform}}"
                   createConnector="true"
-                  statisticsLevel="RoutesOnly"/>
+                  statisticsLevel="RoutesOnly"
+                  useHostIPAddress="true"/>
 
         <route id="foo" autoStartup="false">
             <from uri="seda:start"/>

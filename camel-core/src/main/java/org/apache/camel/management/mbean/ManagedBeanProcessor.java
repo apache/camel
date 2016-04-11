@@ -17,15 +17,20 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedBeanMBean;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
  */
 @ManagedResource(description = "Managed Bean Processor")
-public class ManagedBeanProcessor extends ManagedProcessor {
+public class ManagedBeanProcessor extends ManagedProcessor implements ManagedBeanMBean {
+
+    private transient String beanClassName;
 
     public ManagedBeanProcessor(CamelContext context, BeanProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
@@ -40,4 +45,27 @@ public class ManagedBeanProcessor extends ManagedProcessor {
     public Object getInstance() {
         return getProcessor().getBean();
     }
+
+    @Override
+    public String getMethod() {
+        return getProcessor().getMethod();
+    }
+
+    @Override
+    public String getBeanClassName() {
+        if (beanClassName != null) {
+            return beanClassName;
+        }
+        try {
+            Object bean = getProcessor().getBean();
+            if (bean != null) {
+                beanClassName = ObjectHelper.className(bean);
+            }
+        } catch (NoSuchBeanException e) {
+            // ignore
+        }
+
+        return beanClassName;
+    }
+
 }

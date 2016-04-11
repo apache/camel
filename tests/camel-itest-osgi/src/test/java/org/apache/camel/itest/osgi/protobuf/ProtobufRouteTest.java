@@ -72,7 +72,7 @@ public class ProtobufRouteTest extends OSGiIntegrationTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.class);
-        mock.message(0).body().equals(input);
+        mock.message(0).body().isEqualTo(input);
 
         Object marshalled = template.requestBody(inURI, input);
 

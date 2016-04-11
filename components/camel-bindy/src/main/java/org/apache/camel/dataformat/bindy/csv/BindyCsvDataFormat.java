@@ -35,7 +35,6 @@ import org.apache.camel.dataformat.bindy.BindyCsvFactory;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -51,18 +50,19 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     public BindyCsvDataFormat() {
     }
 
-    public BindyCsvDataFormat(String... packages) {
-        super(packages);
-    }
-
     public BindyCsvDataFormat(Class<?> type) {
         super(type);
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "bindy-csv";
     }
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
 
-        BindyCsvFactory factory = (BindyCsvFactory)getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyCsvFactory factory = (BindyCsvFactory)getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
 
         // Get CRLF
@@ -117,7 +117,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        BindyCsvFactory factory = (BindyCsvFactory)getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyCsvFactory factory = (BindyCsvFactory)getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
 
         // List of Pojos
@@ -165,7 +165,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
                 // Split the CSV record according to the separator defined in
                 // annotated class @CSVRecord
-                String[] tokens = line.split(separator, -1);
+                String[] tokens = line.split(separator, factory.getAutospanLine() ? factory.getMaxpos() : -1);
                 List<String> result = Arrays.asList(tokens);
                 // must unquote tokens before use
                 result = unquoteTokens(result, separator, quote);
@@ -175,10 +175,6 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 } else {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Size of the record splitted : {}", result.size());
-                    }
-
-                    if (factory.getAutospanLine()) {
-                        result = autospanLine(result, factory.getMaxpos(), separator);
                     }
 
                     // Bind data from CSV record with model classes
@@ -207,38 +203,6 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             IOHelper.close(in, "in", LOG);
         }
 
-    }
-
-    /**
-     * Concatenate "the rest of the line" as the last record. Works similar as if quoted
-     *
-     * @param result    input result set
-     * @param maxpos    position of maximum record
-     * @param separator csv separator char
-     * @return List<String> with concatenated last record
-     */
-    private static List<String> autospanLine(final List<String> result, final int maxpos, final String separator) {
-        if (result.size() <= maxpos) {
-            return result;
-        }
-
-        final List<String> answer = new ArrayList<String>();
-        final StringBuilder lastRecord = new StringBuilder();
-
-        final Iterator<String> it = result.iterator();
-        for (int counter = 0; counter < maxpos - 1; counter++) {
-            answer.add(it.next());
-        }
-
-        while (it.hasNext()) {
-            lastRecord.append(it.next());
-            if (it.hasNext()) {
-                lastRecord.append(separator);
-            }
-        }
-        answer.add(lastRecord.toString());
-
-        return answer;
     }
 
     /**
@@ -313,11 +277,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     @Override
-    protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
-        if (getClassType() != null) {
-            return new BindyCsvFactory(resolver, getClassType());
-        } else {
-            return new BindyCsvFactory(resolver, getPackages());
-        }
+    protected BindyAbstractFactory createModelFactory() throws Exception {
+        return new BindyCsvFactory(getClassType());
     }
 }

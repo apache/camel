@@ -36,6 +36,7 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<Str
     private String queryString = "SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
     private String insertString = "INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)";
     private String deleteString = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
+    private String clearString = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
 
     public JdbcMessageIdRepository() {
     }
@@ -97,6 +98,11 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<Str
     @Override
     protected int delete(String key) {
         return jdbcTemplate.update(deleteString, processorName, key);
+    }
+    
+    @Override
+    protected int delete() {
+        return jdbcTemplate.update(clearString, processorName);
     }
 
     public boolean isCreateTableIfNotExists() {

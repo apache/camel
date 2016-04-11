@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.twitter;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -35,105 +31,54 @@ import twitter4j.conf.ConfigurationBuilder;
 @UriParams
 public class TwitterConfiguration {
 
-    /**
-     * Defines the Twitter API endpoint.
-     */
-    @UriPath(description = "What kind of type to use") @Metadata(required = "true")
+    @UriPath(description = "The kind of endpoint", enums = "directmessage,search,streaming/filter,streaming/sample,streaming/user"
+            + ",timeline/home,timeline/mentions,timeline/retweetsofme,timeline/user") @Metadata(required = "true")
+    private String kind;
+    @UriParam(label = "consumer", defaultValue = "direct", enums = "polling,direct,event")
     private EndpointType type = EndpointType.DIRECT;
-
-    /**
-     * OAuth
-     */
+    @UriParam
+    private String accessToken;
+    @UriParam
+    private String accessTokenSecret;
     @UriParam
     private String consumerKey;
     @UriParam
     private String consumerSecret;
     @UriParam
-    private String accessToken;
-    @UriParam
-    private String accessTokenSecret;
-
-    /**
-     * Polling delay.
-     */
-    @UriParam(defaultValue = "60")
-    private int delay = 60;
-
-    /**
-     * Username -- used for searching, etc.
-     */
-    @UriParam
     private String user;
-
-    /**
-     * Keywords used for search and filters.
-     */
-    @UriParam
+    @UriParam(label = "filter")
     private String keywords;
-
-    /**
-     * Lon/Lat bounding boxes used for filtering.
-     */
-    @UriParam
-    private String locations;
-
-    /**
-     * List of userIds used for searching, etc.
-     */
-    @UriParam
+    @UriParam(label = "filter")
     private String userIds;
-
-    /**
-     * Filter out old tweets that have been previously polled.
-     */
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "filter", defaultValue = "true")
     private boolean filterOld = true;
-
-    /**
-     * Used for time-based endpoints (trends, etc.)
-     */
-    @UriParam
-    private String date;
-    
-    /**
-     * Used to set the sinceId from pulling
-     */
-    @UriParam(defaultValue = "1")
+    @UriParam(label = "filter", defaultValue = "1")
     private long sinceId  = 1;
-
-    /**
-     * Used to set the preferred language on which to search
-     */
-    @UriParam
+    @UriParam(label = "filter")
     private String lang;
-
-    /**
-     * Used to set the maximum tweets per page (max = 100)
-     */
-    @UriParam
+    @UriParam(label = "filter")
     private Integer count;
-
-    @UriParam
-    private Date parsedDate;
-
-    /**
-     * Number of page to iterate before stop (default is 1)
-     */
-    @UriParam(defaultValue = "1")
+    @UriParam(label = "filter", defaultValue = "1")
     private Integer numberOfPages = 1;
-    
-    @UriParam
+    @UriParam(label = "proxy")
     private String httpProxyHost;
-
-    @UriParam
+    @UriParam(label = "proxy")
     private String httpProxyUser;
-
-    @UriParam
+    @UriParam(label = "proxy")
     private String httpProxyPassword;
-
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer httpProxyPort;
-    
+    @UriParam(label = "consumer,advanced")
+    private String locations;
+    @UriParam(label = "consumer,advanced")
+    private Double latitude;
+    @UriParam(label = "consumer,advanced")
+    private Double longitude;
+    @UriParam(label = "consumer,advanced")
+    private Double radius;
+    @UriParam(label = "consumer,advanced", defaultValue = "km", enums = "km,mi")
+    private String distanceMetric;
+
     /**
      * Singleton, on demand instances of Twitter4J's Twitter & TwitterStream.
      * This should not be created by an endpoint's doStart(), etc., since
@@ -142,6 +87,8 @@ public class TwitterConfiguration {
      * if we only need twitterStream.
      */
     private Twitter twitter;
+
+    @UriParam(label = "consumer,advanced")
     private TwitterStream twitterStream;
 
     /**
@@ -182,94 +129,6 @@ public class TwitterConfiguration {
         return confBuilder.build();
     }
 
-    public String getConsumerKey() {
-        return consumerKey;
-    }
-
-    public void setConsumerKey(String consumerKey) {
-        this.consumerKey = consumerKey;
-    }
-
-    public String getConsumerSecret() {
-        return consumerSecret;
-    }
-
-    public void setConsumerSecret(String consumerSecret) {
-        this.consumerSecret = consumerSecret;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public String getAccessTokenSecret() {
-        return accessTokenSecret;
-    }
-
-    public void setAccessTokenSecret(String accessTokenSecret) {
-        this.accessTokenSecret = accessTokenSecret;
-    }
-    
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getKeywords() {
-        return keywords;
-    }
-
-    public void setKeywords(String keywords) {
-        this.keywords = keywords;
-    }
-
-    public int getDelay() {
-        return delay;
-    }
-
-    public void setDelay(int delay) {
-        this.delay = delay;
-    }
-
-    public EndpointType getType() {
-        return type;
-    }
-
-    public void setType(EndpointType type) {
-        this.type = type;
-    }
-
-    public String getLocations() {
-        return locations;
-    }
-
-    public void setLocations(String locations) {
-        this.locations = locations;
-    }
-
-    public String getUserIds() {
-        return userIds;
-    }
-
-    public void setUserIds(String userIds) {
-        this.userIds = userIds;
-    }
-
-    public boolean isFilterOld() {
-        return filterOld;
-    }
-
-    public void setFilterOld(boolean filterOld) {
-        this.filterOld = filterOld;
-    }
-
     public Twitter getTwitter() {
         if (twitter == null) {
             twitter = new TwitterFactory(getConfiguration()).getInstance();
@@ -285,40 +144,150 @@ public class TwitterConfiguration {
         return twitterStream;
     }
 
+    /**
+     * To use a custom instance of TwitterStream
+     */
     public void setTwitterStream(TwitterStream twitterStream) {
         this.twitterStream = twitterStream;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public Date parseDate() {
-        return parsedDate;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            parsedDate = sdf.parse(date);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("date must be in yyyy-mm-dd format!");
-        }
     }
 
     public TwitterStream createTwitterStream() {
         if (twitterStream == null) {
             twitterStream = new TwitterStreamFactory(getConfiguration()).getInstance();
         }
-
         return twitterStream;
     }
+
+    public String getKind() {
+        return kind;
+    }
+
+    /**
+     * What polling mode to use, direct, polling or event based.
+     * The event mode is only supported when the endpoint kind is event based.
+     */
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
+
+    public String getConsumerKey() {
+        return consumerKey;
+    }
+
+    /**
+     * The consumer key. Can also be configured on the TwitterComponent level instead.
+     */
+    public void setConsumerKey(String consumerKey) {
+        this.consumerKey = consumerKey;
+    }
+
+    public String getConsumerSecret() {
+        return consumerSecret;
+    }
+
+    /**
+     * The consumer secret. Can also be configured on the TwitterComponent level instead.
+     */
+    public void setConsumerSecret(String consumerSecret) {
+        this.consumerSecret = consumerSecret;
+    }
+
+    /**
+     * The access token. Can also be configured on the TwitterComponent level instead.
+     */
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    /**
+     * The access secret. Can also be configured on the TwitterComponent level instead.
+     */
+    public String getAccessTokenSecret() {
+        return accessTokenSecret;
+    }
+
+    public void setAccessTokenSecret(String accessTokenSecret) {
+        this.accessTokenSecret = accessTokenSecret;
+    }
     
+    public String getUser() {
+        return user;
+    }
+
+    /**
+     * Username, used for user timeline consumption, direct message production, etc.
+     */
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getKeywords() {
+        return keywords;
+    }
+
+    /**
+     * Can be used for search and streaming/filter. Multiple values can be separated with comma.
+     */
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
+
+    public EndpointType getType() {
+        return type;
+    }
+
+    /**
+     * Endpoint type to use. Only streaming supports event type.
+     */
+    public void setType(EndpointType type) {
+        this.type = type;
+    }
+
+    public String getLocations() {
+        return locations;
+    }
+
+    /**
+     * Bounding boxes, created by pairs of lat/lons. Can be used for streaming/filter. A pair is defined as lat,lon. And multiple paris can be separated by semi colon.
+     */
+    public void setLocations(String locations) {
+        this.locations = locations;
+    }
+
+    public String getUserIds() {
+        return userIds;
+    }
+
+    /**
+     * To filter by user ids for streaming/filter. Multiple values can be separated by comma.
+     */
+    public void setUserIds(String userIds) {
+        this.userIds = userIds;
+    }
+
+    public boolean isFilterOld() {
+        return filterOld;
+    }
+
+    /**
+     * Filter out old tweets, that has previously been polled.
+     * This state is stored in memory only, and based on last tweet id.
+     */
+    public void setFilterOld(boolean filterOld) {
+        this.filterOld = filterOld;
+    }
+
     public long getSinceId() {
         return sinceId;
     }
 
+    /**
+     * The last tweet id which will be used for pulling the tweets. It is useful when the camel route is restarted after a long running.
+     */
     public void setSinceId(long sinceId) {
         this.sinceId = sinceId;
     }
@@ -327,6 +296,9 @@ public class TwitterConfiguration {
         return lang;
     }
 
+    /**
+     * The lang string ISO_639-1 which will be used for searching
+     */
     public void setLang(String lang) {
         this.lang = lang;
     }
@@ -335,6 +307,9 @@ public class TwitterConfiguration {
         return count;
     }
 
+    /**
+     * Limiting number of results per page.
+     */
     public void setCount(Integer count) {
         this.count = count;
     }
@@ -343,10 +318,16 @@ public class TwitterConfiguration {
         return numberOfPages;
     }
 
+    /**
+     * The number of pages result which you want camel-twitter to consume.
+     */
     public void setNumberOfPages(Integer numberOfPages) {
         this.numberOfPages = numberOfPages;
     }
-    
+
+    /**
+     * The http proxy host which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
+     */
     public void setHttpProxyHost(String httpProxyHost) {
         this.httpProxyHost = httpProxyHost;
     }
@@ -354,7 +335,10 @@ public class TwitterConfiguration {
     public String getHttpProxyHost() {
         return httpProxyHost;
     }
-    
+
+    /**
+     * The http proxy user which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
+     */
     public void setHttpProxyUser(String httpProxyUser) {
         this.httpProxyUser = httpProxyUser;
     }
@@ -362,7 +346,10 @@ public class TwitterConfiguration {
     public String getHttpProxyUser() {
         return httpProxyUser;
     }
-    
+
+    /**
+     * The http proxy password which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
+     */
     public void setHttpProxyPassword(String httpProxyPassword) {
         this.httpProxyPassword = httpProxyPassword;
     }
@@ -370,15 +357,70 @@ public class TwitterConfiguration {
     public String getHttpProxyPassword() {
         return httpProxyPassword;
     }
-    
-    public void setHttpProxyPort(int httpProxyPort) {
+
+    /**
+     * The http proxy port which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
+     */
+    public void setHttpProxyPort(Integer httpProxyPort) {
         this.httpProxyPort = httpProxyPort;
     }
 
-    public int getHttpProxyPort() {
+    public Integer getHttpProxyPort() {
         return httpProxyPort;
     }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    /**
+     * Used by the non-stream geography search to search by longitude.
+     * <p/>
+     * You need to configure all the following options: longitude, latitude, radius, and distanceMetric.
+     */
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    /**
+     * Used by the non-stream geography search to search by latitude.
+     * <p/>
+     * You need to configure all the following options: longitude, latitude, radius, and distanceMetric.
+     */
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getRadius() {
+        return radius;
+    }
+
+    /**
+     * Used by the non-stream geography search to search by radius.
+     * <p/>
+     * You need to configure all the following options: longitude, latitude, radius, and distanceMetric.
+     */
+    public void setRadius(Double radius) {
+        this.radius = radius;
+    }
+
+    public String getDistanceMetric() {
+        return distanceMetric;
+    }
+
+    /**
+     * Used by the non-stream geography search, to search by radius using the configured metrics.
+     * <p/>
+     * The unit can either be mi for miles, or km for kilometers.
+     * <p/>
+     * You need to configure all the following options: longitude, latitude, radius, and distanceMetric.
+     */
+    public void setDistanceMetric(String distanceMetric) {
+        this.distanceMetric = distanceMetric;
+    }
+
 }
-
-
-

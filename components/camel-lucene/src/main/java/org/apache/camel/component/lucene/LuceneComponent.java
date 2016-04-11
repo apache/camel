@@ -24,7 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 public class LuceneComponent extends UriEndpointComponent {
-    LuceneConfiguration config;
+    private LuceneConfiguration config;
     
     public LuceneComponent() {
         super(LuceneEndpoint.class);
@@ -45,4 +45,14 @@ public class LuceneComponent extends UriEndpointComponent {
         return luceneEndpoint;
     }
 
+    public LuceneConfiguration getConfig() {
+        return config;
+    }
+
+    /**
+     * To use a shared lucene configuration
+     */
+    public void setConfig(LuceneConfiguration config) {
+        this.config = config;
+    }
 }

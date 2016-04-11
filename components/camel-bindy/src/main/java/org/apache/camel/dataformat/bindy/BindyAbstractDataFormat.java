@@ -21,31 +21,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 
-public abstract class BindyAbstractDataFormat implements DataFormat {
-    private String[] packages;
+public abstract class BindyAbstractDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private String locale;
     private BindyAbstractFactory modelFactory;
     private Class<?> classType;
 
     public BindyAbstractDataFormat() {
     }
-
-    public BindyAbstractDataFormat(String... packages) {
-        this.packages = packages;
-    }
-
+    
     protected BindyAbstractDataFormat(Class<?> classType) {
         this.classType = classType;
-    }
-
-    public String[] getPackages() {
-        return packages;
-    }
-
-    public void setPackages(String... packages) {
-        this.packages = packages;
     }
 
     public Class<?> getClassType() {
@@ -64,9 +52,9 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
         this.locale = locale;
     }
     
-    public BindyAbstractFactory getFactory(PackageScanClassResolver resolver) throws Exception {
+    public BindyAbstractFactory getFactory() throws Exception {
         if (modelFactory == null) {
-            modelFactory = createModelFactory(resolver);
+            modelFactory = createModelFactory();
             modelFactory.setLocale(locale);
         }
         return modelFactory;
@@ -76,7 +64,7 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
         this.modelFactory = modelFactory;
     }
     
-    protected abstract BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception;
+    protected abstract BindyAbstractFactory createModelFactory() throws Exception;
 
     protected Object extractUnmarshalResult(List<Map<String, Object>> models) {
         if (getClassType() != null) {
@@ -97,5 +85,15 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
         } else {
             return models;
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

@@ -39,6 +39,14 @@ public class ReactiveCamel {
         this.camelContext = camelContext;
     }
 
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public Endpoint endpoint(String endpointUri) {
+        return CamelContextHelper.getMandatoryEndpoint(camelContext, endpointUri);
+    }
+
     /**
      * Returns an {@link rx.Observable < org.apache.camel.Message >} to allow the messages sent on the endpoint
      * to be processed using  <a href="https://rx.codeplex.com/">Reactive Extensions</a>
@@ -79,6 +87,7 @@ public class ReactiveCamel {
     public <T> void sendTo(Observable<T> observable, String endpointUri) {
         sendTo(observable, endpoint(endpointUri));
     }
+
     /**
      * Sends events on the given {@link Observable} to the given camel endpoint
      */
@@ -119,20 +128,12 @@ public class ReactiveCamel {
         return new CamelOperator(endpoint);
     }
 
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public Endpoint endpoint(String endpointUri) {
-        return CamelContextHelper.getMandatoryEndpoint(camelContext, endpointUri);
-    }
-
     /**
      * Returns a newly created {@link Observable} given a function which converts
      * the {@link Exchange} from the Camel consumer to the required type
      */
-    protected <T> Observable<T> createEndpointObservable(final Endpoint endpoint,
-                                                         final Func1<Exchange, T> converter) {
+    private <T> Observable<T> createEndpointObservable(final Endpoint endpoint,
+                                                       final Func1<Exchange, T> converter) {
         Observable.OnSubscribe<T> func = new EndpointSubscribeFunc<T>(endpoint, converter);
         return new EndpointObservable<T>(endpoint, func);
     }
@@ -140,12 +141,7 @@ public class ReactiveCamel {
     /**
      * Return a newly created {@link Observable} without conversion
      */
-    protected Observable<Exchange> createEndpointObservable(final Endpoint endpoint) {
-        return new EndpointObservable<Exchange>(endpoint, new EndpointSubscribeFunc<>(endpoint, new Func1<Exchange, Exchange>() {
-            @Override
-            public Exchange call(Exchange exchange) {
-                return exchange;
-            }
-        }));
+    private Observable<Exchange> createEndpointObservable(final Endpoint endpoint) {
+        return new EndpointObservable<Exchange>(endpoint, new EndpointSubscribeFunc<Exchange>(endpoint, exchange -> exchange));
     }
 }

@@ -68,6 +68,14 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
         assertTrue(customRepo.contains("3"));
         assertTrue(customRepo.contains("4"));
         assertFalse(customRepo.contains("5"));
+        
+        customRepo.clear();
+        
+        assertFalse(customRepo.contains("1"));
+        assertFalse(customRepo.contains("2"));
+        assertFalse(customRepo.contains("3"));
+        assertFalse(customRepo.contains("4"));
+        assertFalse(customRepo.contains("5"));
     }
 
     protected void sendMessage(final Object messageId, final Object body) {
@@ -103,6 +111,11 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
                 cache.put(key, key);
                 return true;
             }
+        }
+        
+        @Override
+        public void clear() {
+            cache.clear();
         }
 
         public boolean contains(String key) {

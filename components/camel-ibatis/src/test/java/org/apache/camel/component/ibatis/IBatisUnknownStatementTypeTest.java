@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.ibatis;
 
-import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -39,9 +39,9 @@ public class IBatisUnknownStatementTypeTest extends CamelTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateProducerException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("statementType must be specified on: Endpoint[ibatis://selectAllAccounts]", e.getCause().getMessage());
+        } catch (FailedToCreateRouteException e) {
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            assertEquals("statementType must be specified on: Endpoint[ibatis://selectAllAccounts]", e.getCause().getCause().getMessage());
         }
     }
 

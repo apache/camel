@@ -63,7 +63,7 @@ public final class JGroupsFilters {
                     return channelAddress.equals(coordinatorNodeAddress);
                 }
                 LOG.debug("Body {} is not an instance of org.jgroups.View . Skipping filter.", body);
-                return true;
+                return false;
             }
         };
     }

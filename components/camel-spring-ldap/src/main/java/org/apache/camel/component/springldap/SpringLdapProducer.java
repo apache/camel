@@ -84,7 +84,7 @@ public class SpringLdapProducer extends DefaultProducer {
         switch (operation) {
         case SEARCH:
             String filter = (String) body.get(FILTER);
-            exchange.getIn().setBody(ldapTemplate.search(dn, filter, endpoint.getScope(), mapper));
+            exchange.getIn().setBody(ldapTemplate.search(dn, filter, endpoint.scopeValue(), mapper));
             break;
         case BIND:
             Attributes attributes = (Attributes) body.get(ATTRIBUTES);

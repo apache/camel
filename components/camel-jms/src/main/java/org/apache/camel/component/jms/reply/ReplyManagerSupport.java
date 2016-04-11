@@ -23,11 +23,13 @@ import java.util.concurrent.TimeUnit;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.jms.JmsMessageHelper;
@@ -114,7 +116,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected abstract ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                 String originalCorrelationId, String correlationId, long requestTimeout);
 
-    public void onMessage(Message message) {
+    public void onMessage(Message message, Session session) throws JMSException {
         String correlationID = null;
         try {
             correlationID = message.getJMSCorrelationID();
@@ -129,14 +131,13 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         log.debug("Received reply message with correlationID [{}] -> {}", correlationID, message);
 
         // handle the reply message
-        handleReplyMessage(correlationID, message);
+        handleReplyMessage(correlationID, message, session);
     }
 
     public void processReply(ReplyHolder holder) {
         if (holder != null && isRunAllowed()) {
             try {
                 Exchange exchange = holder.getExchange();
-                Message message = holder.getMessage();
 
                 boolean timeout = holder.isTimeout();
                 if (timeout) {
@@ -151,7 +152,9 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     String msg = "reply message with correlationID: " + holder.getCorrelationId() + " not received on destination: " + replyTo;
                     exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
                 } else {
-                    JmsMessage response = new JmsMessage(message, endpoint.getBinding());
+                    Message message = holder.getMessage();
+                    Session session = holder.getSession();
+                    JmsMessage response = new JmsMessage(message, session, endpoint.getBinding());
                     // the JmsBinding is designed to be "pull-based": it will populate the Camel message on demand
                     // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full access 
                     // to everything it may need, and can populate headers, properties, etc. accordingly (solves CAMEL-6218).
@@ -165,6 +168,17 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                         exchange.setException((Exception) body);
                     } else {
                         log.debug("Reply received. OUT message body set to reply payload: {}", body);
+                    }
+                    if (endpoint.isTransferFault()) {
+                        // remove the header as we do not want to keep it on the Camel Message either
+                        Object faultHeader = response.removeHeader(JmsConstants.JMS_TRANSFER_FAULT);
+                        if (faultHeader != null) {
+                            boolean isFault = exchange.getContext().getTypeConverter().tryConvertTo(boolean.class, faultHeader);
+                            log.debug("Transfer fault on OUT message: {}", isFault);
+                            if (isFault) {
+                                exchange.getOut().setFault(true);
+                            }
+                        }
                     }
 
                     // restore correlation id in case the remote server messed with it
@@ -181,7 +195,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         }
     }
 
-    protected abstract void handleReplyMessage(String correlationID, Message message);
+    protected abstract void handleReplyMessage(String correlationID, Message message, Session session);
 
     protected abstract AbstractMessageListenerContainer createListenerContainer() throws Exception;
 

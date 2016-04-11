@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.sparkrest;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
-public class SparkConfiguration {
+public class SparkConfiguration implements Cloneable {
 
     @UriParam(defaultValue = "true")
     private boolean mapHeaders = true;
@@ -30,9 +31,23 @@ public class SparkConfiguration {
     private boolean urlDecodeHeaders;
     @UriParam
     private boolean transferException;
+    @UriParam(label = "advanced")
+    private boolean matchOnUriPrefix;
 
     public boolean isMapHeaders() {
         return mapHeaders;
+    }
+
+    /**
+     * Returns a copy of this configuration
+     */
+    public SparkConfiguration copy() {
+        try {
+            SparkConfiguration copy = (SparkConfiguration) clone();
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     /**
@@ -80,8 +95,23 @@ public class SparkConfiguration {
     /**
      * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized
      * in the response as a application/x-java-serialized-object content type.
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
     }
+
+    public boolean isMatchOnUriPrefix() {
+        return matchOnUriPrefix;
+    }
+
+    /**
+     * Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
+     */
+    public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
+        this.matchOnUriPrefix = matchOnUriPrefix;
+    }
+
 }

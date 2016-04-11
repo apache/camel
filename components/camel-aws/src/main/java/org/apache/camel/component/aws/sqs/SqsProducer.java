@@ -34,6 +34,8 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
+
 /**
  * A Producer which sends messages to the Amazon Web Service Simple Queue Service
  * <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
@@ -43,6 +45,8 @@ public class SqsProducer extends DefaultProducer {
     
     private static final Logger LOG = LoggerFactory.getLogger(SqsProducer.class);
     
+    private transient String sqsProducerToString;
+
     public SqsProducer(SqsEndpoint endpoint) throws NoFactoryAvailableException {
         super(endpoint);
     }
@@ -66,7 +70,7 @@ public class SqsProducer extends DefaultProducer {
 
     private void addDelay(SendMessageRequest request, Exchange exchange) {
         Integer headerValue = exchange.getIn().getHeader(SqsConstants.DELAY_HEADER, Integer.class);
-        Integer delayValue = Integer.valueOf(0);
+        Integer delayValue;
         if (headerValue == null) {
             LOG.trace("Using the config delay");
             delayValue = getEndpoint().getConfiguration().getDelaySeconds();
@@ -76,16 +80,6 @@ public class SqsProducer extends DefaultProducer {
         }
         LOG.trace("found delay: " + delayValue);
         request.setDelaySeconds(delayValue == null ? Integer.valueOf(0) : delayValue);
-    }
-
-    private Message getMessageForResponse(Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        
-        return exchange.getIn();
     }
     
     protected AmazonSQS getClient() {
@@ -103,7 +97,10 @@ public class SqsProducer extends DefaultProducer {
     
     @Override
     public String toString() {
-        return "SqsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (sqsProducerToString == null) {
+            sqsProducerToString = "SqsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return sqsProducerToString;
     }
     
     private Map<String, MessageAttributeValue> translateAttributes(Map<String, Object> headers, Exchange exchange) {
@@ -125,7 +122,7 @@ public class SqsProducer extends DefaultProducer {
                     result.put(entry.getKey(), mav);
                 } else {
                     // cannot translate the message header to message attribute value
-                    LOG.warn("Cannot put the message header key={0}, value={1} into Sqs MessageAttribute", entry.getKey(), entry.getValue());
+                    LOG.warn("Cannot put the message header key={}, value={} into Sqs MessageAttribute", entry.getKey(), entry.getValue());
                 }
             }
         }

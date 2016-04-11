@@ -80,7 +80,7 @@ public class WireTapUsingFireAndForgetCopyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .wireTap("direct:foo").copy().newExchange(new Processor() {
+                    .wireTap("direct:foo", true, new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String body = exchange.getIn().getBody(String.class);
                             exchange.getIn().setBody("Bye " + body);
@@ -156,7 +156,7 @@ public class WireTapUsingFireAndForgetCopyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .wireTap("direct:foo").copy().newExchangeBody(simple("Bye ${body}"))
+                    .wireTap("direct:foo", true, simple("Bye ${body}"))
                     .to("mock:result");
 
                 from("direct:foo").to("mock:foo");

@@ -59,7 +59,7 @@ public class DropboxProducerSearchQueryTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://search?" + getAuthParams() + "&remotePath=/XXX&query=XXX")
+                        .to("dropbox://search?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/XXX&query=XXX")
                         .to("mock:result");
             }
         };

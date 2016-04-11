@@ -16,24 +16,22 @@
  */
 package org.apache.camel.component.pgevent;
 
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.impossibl.postgres.api.jdbc.PGConnection;
-import com.impossibl.postgres.api.jdbc.PGNotificationListener;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The PgEvent producer.
  */
 public class PgEventProducer extends DefaultAsyncProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(PgEventProducer.class);
     private final PgEventEndpoint endpoint;
     private PGConnection dbConnection;
-    private PGNotificationListener listener;
 
     public PgEventProducer(PgEventEndpoint endpoint) throws Exception {
         super(endpoint);
@@ -53,7 +51,19 @@ public class PgEventProducer extends DefaultAsyncProducer {
         }
 
         try {
-            dbConnection.createStatement().execute("NOTIFY " + endpoint.getChannel() + ", '" + exchange.getOut().getBody(String.class) + "'");
+            String payload = exchange.getIn().getBody(String.class);
+            if (dbConnection.isServerMinimumVersion(9, 0)) {
+                try (CallableStatement statement = dbConnection.prepareCall("{call pg_notify(?, ?)}")) {
+                    statement.setString(1, endpoint.getChannel());
+                    statement.setString(2, payload);
+                    statement.execute();
+                }
+            } else {
+                String sql = String.format("NOTIFY %s, '%s'", endpoint.getChannel(), payload);
+                try (PreparedStatement statement = dbConnection.prepareStatement(sql)) {
+                    statement.execute();
+                }
+            }
         } catch (SQLException e) {
             exchange.setException(e);
         }
@@ -68,9 +78,11 @@ public class PgEventProducer extends DefaultAsyncProducer {
     }
 
     @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        dbConnection.close();
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (dbConnection != null) {
+            dbConnection.close();
+        }
     }
 
 }

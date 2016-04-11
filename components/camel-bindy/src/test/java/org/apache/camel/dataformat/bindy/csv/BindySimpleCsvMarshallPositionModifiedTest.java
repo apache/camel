@@ -86,7 +86,7 @@ public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest 
 
             getContext().addInterceptStrategy(tracer);
 
-            BindyCsvDataFormat csvBindyDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition");
+            BindyCsvDataFormat csvBindyDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order.class);
             csvBindyDataFormat.setLocale("en");
 
             // default should errors go to mock:error

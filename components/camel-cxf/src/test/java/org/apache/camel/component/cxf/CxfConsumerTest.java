@@ -96,7 +96,6 @@ public class CxfConsumerTest extends CamelTestSupport {
                         exchange.getOut().setBody(parameter.get(0));
                     }
                 });
-
             }
         };
     }

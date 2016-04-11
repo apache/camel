@@ -26,9 +26,8 @@
         <route>
             <from uri="direct:start"/>
             <doTry>
-                <to uri="rng:org/apache/camel/component/validator/jing/schema.rng"/>
+                <to uri="jing:org/apache/camel/component/validator/jing/schema.rng"/>
                 <to uri="mock:valid"/>
-
                 <doCatch>
                     <exception>org.apache.camel.ValidationException</exception>
                     <to uri="mock:invalid"/>

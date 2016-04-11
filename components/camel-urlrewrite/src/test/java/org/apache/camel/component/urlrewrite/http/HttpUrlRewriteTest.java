@@ -18,6 +18,7 @@ package org.apache.camel.component.urlrewrite.http;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.urlrewrite.BaseUrlRewriteTest;
+import org.apache.camel.component.urlrewrite.HttpUrlRewrite;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 

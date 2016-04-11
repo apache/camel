@@ -48,6 +48,7 @@ public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // filter headers begin with "Camel" or "org.apache.camel"
         // must ignore case for Http based transports
         setOutFilterPattern("(?i)(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
+        setInFilterPattern("(?i)(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
     }
 
 }

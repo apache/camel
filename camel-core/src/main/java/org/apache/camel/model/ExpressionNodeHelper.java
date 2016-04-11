@@ -58,6 +58,7 @@ public final class ExpressionNodeHelper {
             answer.setResultType(builder.getResultType());
             return answer;
         } else if (expression instanceof ValueBuilder) {
+            // ValueBuilder wraps the actual expression so unwrap
             ValueBuilder builder = (ValueBuilder) expression;
             expression = builder.getExpression();
         }
@@ -90,6 +91,13 @@ public final class ExpressionNodeHelper {
             XPathExpression answer = new XPathExpression(builder);
             answer.setExpression(builder.getText());
             return answer;
+        } else if (predicate instanceof ValueBuilder) {
+            // ValueBuilder wraps the actual predicate so unwrap
+            ValueBuilder builder = (ValueBuilder) predicate;
+            Expression expression = builder.getExpression();
+            if (expression instanceof Predicate) {
+                predicate = (Predicate) expression;
+            }
         }
 
         if (predicate instanceof ExpressionDefinition) {

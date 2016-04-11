@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -32,6 +33,8 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "contextScan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ContextScanDefinition {
+    @XmlAttribute
+    private Boolean includeNonSingletons;
     @XmlElement(name = "excludes")
     private List<String> excludes = new ArrayList<String>();
     @XmlElement(name = "includes")
@@ -40,12 +43,21 @@ public class ContextScanDefinition {
     public ContextScanDefinition() {
     }
 
-    public List<String> getExcludes() {
-        return excludes;
+    public Boolean getIncludeNonSingletons() {
+        return includeNonSingletons;
     }
 
-    public List<String> getIncludes() {
-        return includes;
+    /**
+     * Whether to include non-singleton beans (prototypes)
+     * <p/>
+     * By default only singleton beans is included in the context scan
+     */
+    public void setIncludeNonSingletons(Boolean includeNonSingletons) {
+        this.includeNonSingletons = includeNonSingletons;
+    }
+
+    public List<String> getExcludes() {
+        return excludes;
     }
 
     /**
@@ -53,6 +65,10 @@ public class ContextScanDefinition {
      */
     public void setExcludes(List<String> excludes) {
         this.excludes = excludes;
+    }
+
+    public List<String> getIncludes() {
+        return includes;
     }
 
     /**

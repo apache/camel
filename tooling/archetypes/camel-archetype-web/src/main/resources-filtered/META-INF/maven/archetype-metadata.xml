@@ -24,11 +24,11 @@
     <requiredProperty key="camel-version">
       <defaultValue>${project.version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="jetty-version">
-      <defaultValue>${jetty-version}</defaultValue>
+    <requiredProperty key="jetty9-version">
+      <defaultValue>${jetty9-version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="log4j-version">
-      <defaultValue>${log4j-version}</defaultValue>
+    <requiredProperty key="jetty-plugin-version">
+      <defaultValue>${jetty-plugin-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="maven-compiler-plugin-version">
       <defaultValue>${maven-compiler-plugin-version}</defaultValue>
@@ -38,9 +38,6 @@
     </requiredProperty>
     <requiredProperty key="maven-jboss-as-maven-plugin-version">
       <defaultValue>${maven-jboss-as-maven-plugin-version}</defaultValue>
-    </requiredProperty>
-    <requiredProperty key="slf4j-version">
-      <defaultValue>${slf4j-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="spring-version">
       <defaultValue>${spring-version}</defaultValue>
@@ -71,7 +68,7 @@
         <include>**/*.java</include>
       </includes>
     </fileSet>
-    <fileSet encoding="UTF-8">
+    <fileSet filtered="true" encoding="UTF-8">
       <directory></directory>
       <includes>
         <include>ReadMe.txt</include>

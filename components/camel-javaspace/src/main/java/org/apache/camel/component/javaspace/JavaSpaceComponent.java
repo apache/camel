@@ -40,7 +40,7 @@ public class JavaSpaceComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        JavaSpaceEndpoint endpoint = new JavaSpaceEndpoint(uri, remaining, parameters, this);
+        JavaSpaceEndpoint endpoint = new JavaSpaceEndpoint(uri, remaining, this);
         endpoint.setExchangePattern(ExchangePattern.InOnly);
         return endpoint;
     }

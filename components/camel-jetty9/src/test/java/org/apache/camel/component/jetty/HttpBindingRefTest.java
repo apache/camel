@@ -22,8 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.DefaultHttpBinding;
-import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
@@ -47,9 +46,8 @@ public class HttpBindingRefTest extends BaseJettyTest {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        HttpEndpoint ep = new HttpEndpoint();
-        jndi.bind("default", new DefaultHttpBinding(ep));
-        jndi.bind("myownbinder", new MyHttpBinding(ep));
+        jndi.bind("default", new DefaultHttpBinding());
+        jndi.bind("myownbinder", new MyHttpBinding());
         return jndi;
     }
 
@@ -73,9 +71,7 @@ public class HttpBindingRefTest extends BaseJettyTest {
 
     // START SNIPPET: e1
     public class MyHttpBinding extends DefaultHttpBinding {
-        public MyHttpBinding(HttpEndpoint ep) {
-            super(ep);
-        }
+
         @Override
         public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
             // we override the doWriteExceptionResponse as we only want to alter the binding how exceptions is

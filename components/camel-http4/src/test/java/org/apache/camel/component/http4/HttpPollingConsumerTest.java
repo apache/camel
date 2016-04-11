@@ -20,7 +20,10 @@ import java.net.SocketTimeoutException;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http4.handler.DelayValidationHandler;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -29,30 +32,52 @@ import org.junit.Test;
  */
 public class HttpPollingConsumerTest extends BaseHttpTest {
 
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/", new DelayValidationHandler("GET", null, null, getExpectedContent(), 1000)).create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
+    
     @Test
     public void testReceive() throws Exception {
-        String body = consumer.receiveBody("http4://" + getHostName() + ":" + getPort() + "/", String.class);
+        String body = consumer.receiveBody("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", String.class);
         assertEquals(getExpectedContent(), body);
     }
 
     @Test
     public void testReceiveTimeout() throws Exception {
-        String body = consumer.receiveBody("http4://" + getHostName() + ":" + getPort() + "/", 5000, String.class);
+        String body = consumer.receiveBody("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", 5000, String.class);
         assertEquals(getExpectedContent(), body);
     }
 
     @Test
     public void testReceiveTimeoutTriggered() throws Exception {
         try {
-            consumer.receiveBody("http4://" + getHostName() + ":" + getPort() + "/", 250, String.class);
+            consumer.receiveBody("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", 250, String.class);
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(SocketTimeoutException.class, e.getCause());
         }
-    }
-
-    @Override
-    protected void registerHandler(LocalTestServer server) {
-        server.register("/", new DelayValidationHandler("GET", null, null, getExpectedContent(), 1000));
     }
 }

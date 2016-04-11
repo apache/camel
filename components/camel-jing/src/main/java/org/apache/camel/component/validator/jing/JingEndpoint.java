@@ -36,8 +36,9 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
-
-
+/**
+ * Validates the payload of a message using RelaxNG Syntax using Jing library.
+ */
 @UriEndpoint(scheme = "jing", title = "Jing", syntax = "jing:resourceUri", producerOnly = true, label = "validation")
 public class JingEndpoint extends DefaultEndpoint {
 
@@ -75,6 +76,9 @@ public class JingEndpoint extends DefaultEndpoint {
         return resourceUri;
     }
 
+    /**
+     * URL to a local resource on the classpath or a full URL to a remote resource or resource on the file system which contains the schema to validate against.
+     */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
     }
@@ -83,6 +87,12 @@ public class JingEndpoint extends DefaultEndpoint {
         return compactSyntax;
     }
 
+    /**
+     * Whether to validate using RelaxNG compact syntax or not.
+     * <p/>
+     * By default this is <tt>false</tt> for using RelaxNG XML Syntax (rng)
+     * And <tt>true</tt> is for using  RelaxNG Compact Syntax (rnc)
+     */
     public void setCompactSyntax(boolean compactSyntax) {
         this.compactSyntax = compactSyntax;
     }
@@ -117,7 +127,7 @@ public class JingEndpoint extends DefaultEndpoint {
 
         if (inputSource == null) {
             ObjectHelper.notEmpty(resourceUri, "resourceUri", this);
-            InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
+            InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), resourceUri);
             inputSource = new InputSource(inputStream);
         }
 

@@ -191,11 +191,26 @@ public final class Olingo2AppImpl implements Olingo2App {
             new AbstractFutureCallback<T>(responseHandler) {
 
                 @Override
-                @SuppressWarnings("unchecked")
                 public void onCompleted(HttpResponse result) throws IOException {
-
                     readContent(uriInfo, result.getEntity() != null ? result.getEntity().getContent() : null,
                         responseHandler);
+                }
+
+            });
+    }
+
+    @Override
+    public void uread(final Edm edm, final String resourcePath, final Map<String, String> queryParams,
+                      final Olingo2ResponseHandler<InputStream> responseHandler) {
+
+        final UriInfoWithType uriInfo = parseUri(edm, resourcePath, queryParams);
+
+        execute(new HttpGet(createUri(resourcePath, queryParams)), getResourceContentType(uriInfo),
+            new AbstractFutureCallback<InputStream>(responseHandler) {
+
+                @Override
+                public void onCompleted(HttpResponse result) throws IOException {
+                    responseHandler.onResponse(result.getEntity() != null ? result.getEntity().getContent() : null);
                 }
 
             });
@@ -665,13 +680,7 @@ public final class Olingo2AppImpl implements Olingo2App {
 
         final String boundary = BOUNDARY_PREFIX + UUID.randomUUID();
         InputStream batchRequest = EntityProvider.writeBatchRequest(parts, boundary);
-        // add two blank lines before all --batch boundaries
-        // otherwise Olingo2 EntityProvider parser barfs in the server!!!
-        final byte[] bytes = EntityProvider.readBinary(batchRequest);
-        final String batchRequestBody = new String(bytes, Consts.UTF_8);
-        batchRequest = new ByteArrayInputStream(batchRequestBody.replaceAll(
-            "--(batch_)", "\r\n\r\n--$1").getBytes(Consts.UTF_8));
-
+        // two blank lines are already added. No need to add extra blank lines
         final String contentHeader = BATCH_CONTENT_TYPE + BOUNDARY_PARAMETER + boundary;
         return ODataResponse.entity(batchRequest).contentHeader(contentHeader).build();
     }

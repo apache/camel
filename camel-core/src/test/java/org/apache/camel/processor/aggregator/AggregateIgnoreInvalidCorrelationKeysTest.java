@@ -77,7 +77,7 @@ public class AggregateIgnoreInvalidCorrelationKeysTest extends ContextTestSuppor
             fail("Should throw an exception");
         } catch (CamelExecutionException e) {
             CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertEquals("Invalid correlation key. Exchange[Message: B]", cause.getMessage());
+            assertTrue(cause.getMessage().startsWith("Invalid correlation key"));
         }
 
         template.sendBodyAndHeader("direct:start", "C", "id", 1);

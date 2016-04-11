@@ -17,18 +17,24 @@
 package org.apache.camel.component.stomp;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 @UriParams
 public class StompConfiguration implements Cloneable {
-
     @UriParam(defaultValue = "tcp://localhost:61613")
+    @Metadata(required = "true")
     private String brokerURL = "tcp://localhost:61613";
     @UriParam
     private String login;
     @UriParam
     private String passcode;
+    @UriParam
+    private String host;
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
 
     /**
      * Returns a copy of this configuration
@@ -45,7 +51,21 @@ public class StompConfiguration implements Cloneable {
     public String getBrokerURL() {
         return brokerURL;
     }
+    
+    public String getHost() {
+        return host;
+    }
+    
+    /**
+     * The virtual host name
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }
 
+    /**
+     * The URI of the Stomp broker to connect to
+     */
     public void setBrokerURL(String brokerURL) {
         this.brokerURL = brokerURL;
     }
@@ -54,6 +74,9 @@ public class StompConfiguration implements Cloneable {
         return login;
     }
 
+    /**
+     * The username
+     */
     public void setLogin(String login) {
         this.login = login;
     }
@@ -62,8 +85,22 @@ public class StompConfiguration implements Cloneable {
         return passcode;
     }
 
+    /**
+     * The password
+     */
     public void setPasscode(String passcode) {
         this.passcode = passcode;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
 }

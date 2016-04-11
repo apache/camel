@@ -88,6 +88,18 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
     public void testRemove() throws Exception {
         // add key to remove
         assertTrue(repo.add(key01));
+        assertTrue(repo.add(key02));
+        assertEquals(2, cache.size());
+
+        // clear repo
+        repo.clear();
+        assertEquals(0, cache.size());
+    }
+    
+    @Test
+    public void testClear() throws Exception {
+        // add key to remove
+        assertTrue(repo.add(key01));
         assertEquals(1, cache.size());
 
         // remove key

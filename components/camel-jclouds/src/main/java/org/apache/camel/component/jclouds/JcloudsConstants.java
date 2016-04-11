@@ -22,17 +22,27 @@ public final class JcloudsConstants {
     public static final String COMPUTE = "compute";
     public static final String BLOB_NAME = "CamelJcloudsBlobName";
     public static final String CONTAINER_NAME = "CamelJcloudsContainerName";
+    public static final String BLOB_NAME_LIST = "CamelJcloudsBlobNameList";
 
     public static final String NODE_STATE = "CamelJcloudsNodeState";
 
     public static final String OPERATION = "CamelJcloudsOperation";
     public static final String PUT = "CamelJcloudsPut";
     public static final String GET = "CamelJcloudsGet";
+    public static final String COUNT_BLOBS = "CamelJcloudsCountBlobs";
+    public static final String REMOVE_BLOB = "CamelJcloudsRemoveBlob";
+    public static final String REMOVE_BLOBS = "CamelJcloudsRemoveBlobs";
+    public static final String CLEAR_CONTAINER = "CamelJcloudsClearContainer";
+    public static final String DELETE_CONTAINER = "CamelJcloudsDeleteContainer";
+    public static final String CONTAINER_EXISTS = "CamelJcloudsExistsContainer";
     public static final String LIST_IMAGES = "CamelJcloudsListImages";
     public static final String LIST_HARDWARE = "CamelJcloudsListHardware";
     public static final String LIST_NODES = "CamelJcloudsListNodes";
     public static final String CREATE_NODE = "CamelJcloudsCreateNode";
     public static final String DESTROY_NODE = "CamelJcloudsDestroyNode";
+    public static final String REBOOT_NODE = "CamelJcloudsRebootNode";
+    public static final String SUSPEND_NODE = "CamelJcloudsSuspendNode";
+    public static final String RESUME_NODE = "CamelJcloudsResumeNode";
     public static final String RUN_SCRIPT = "CamelJcloudsRunScript";
     
     public static final String CONTENT_LANGUAGE = "CamelJcloudsContentLanguage";

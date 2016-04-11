@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty4.http;
 
+import java.util.Map;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import org.apache.camel.Consumer;
@@ -36,22 +38,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * HTTP based {@link NettyEndpoint}
+ * Netty HTTP server and client using the Netty 4.x library.
  */
-@UriEndpoint(scheme = "netty4-http", title = "Netty4 HTTP", syntax = "netty4-http:host:port/path", consumerClass = NettyHttpConsumer.class, label = "http")
+@UriEndpoint(scheme = "netty4-http", extendsScheme = "netty4", title = "Netty4 HTTP",
+        syntax = "netty4-http:protocol:host:port/path", consumerClass = NettyHttpConsumer.class, label = "http", lenientProperties = true,
+        excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
+                + ",clientMode,reconnect,reconnectInterval,useByteBuf,udpByteArrayCodec,broadcast")
 public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
-    private NettyHttpBinding nettyHttpBinding;
-    private HeaderFilterStrategy headerFilterStrategy;
     @UriParam
     private NettyHttpConfiguration configuration;
-    @UriParam
+    @UriParam(label = "advanced", name = "configuration", javaType = "org.apache.camel.component.netty4.http.NettyHttpConfiguration",
+            description = "To use a custom configured NettyHttpConfiguration for configuring this endpoint.")
+    private Object httpConfiguration; // to include in component docs as NettyHttpConfiguration is a @UriParams class
+    @UriParam(label = "advanced")
+    private NettyHttpBinding nettyHttpBinding;
+    @UriParam(label = "advanced")
+    private HeaderFilterStrategy headerFilterStrategy;
+    @UriParam(label = "consumer,advanced")
     private boolean traceEnabled;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private String httpMethodRestrict;
+    @UriParam(label = "consumer,advanced")
     private NettySharedHttpServer nettySharedHttpServer;
+    @UriParam(label = "consumer,security")
     private NettyHttpSecurityConfiguration securityConfiguration;
+    @UriParam(label = "consumer,security", prefix = "securityConfiguration.", multiValue = true)
+    private Map<String, Object> securityOptions; // to include in component docs
 
     public NettyHttpEndpoint(String endpointUri, NettyHttpComponent component, NettyConfiguration configuration) {
         super(endpointUri, component, configuration);
@@ -138,6 +152,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         return nettyHttpBinding;
     }
 
+    /**
+     * To use a custom org.apache.camel.component.netty4.http.NettyHttpBinding for binding to/from Netty and Camel Message API.
+     */
     public void setNettyHttpBinding(NettyHttpBinding nettyHttpBinding) {
         this.nettyHttpBinding = nettyHttpBinding;
     }
@@ -146,6 +163,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
         getNettyHttpBinding().setHeaderFilterStrategy(headerFilterStrategy);
@@ -155,6 +175,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         return traceEnabled;
     }
 
+    /**
+     * Specifies whether to enable HTTP TRACE for this Netty HTTP consumer. By default TRACE is turned off.
+     */
     public void setTraceEnabled(boolean traceEnabled) {
         this.traceEnabled = traceEnabled;
     }
@@ -163,6 +186,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         return httpMethodRestrict;
     }
 
+    /**
+     * To disable HTTP methods on the Netty HTTP consumer. You can specify multiple separated by comma.
+     */
     public void setHttpMethodRestrict(String httpMethodRestrict) {
         this.httpMethodRestrict = httpMethodRestrict;
     }
@@ -171,6 +197,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         return nettySharedHttpServer;
     }
 
+    /**
+     * To use a shared Netty HTTP server. See Netty HTTP Server Example for more details.
+     */
     public void setNettySharedHttpServer(NettySharedHttpServer nettySharedHttpServer) {
         this.nettySharedHttpServer = nettySharedHttpServer;
     }
@@ -179,8 +208,22 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         return securityConfiguration;
     }
 
+    /**
+     * Refers to a org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration for configuring secure web resources.
+     */
     public void setSecurityConfiguration(NettyHttpSecurityConfiguration securityConfiguration) {
         this.securityConfiguration = securityConfiguration;
+    }
+
+    public Map<String, Object> getSecurityOptions() {
+        return securityOptions;
+    }
+
+    /**
+     * To configure NettyHttpSecurityConfiguration using key/value pairs from the map
+     */
+    public void setSecurityOptions(Map<String, Object> securityOptions) {
+        this.securityOptions = securityOptions;
     }
 
     @Override

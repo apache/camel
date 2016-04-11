@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.swf;
 
+import java.util.Arrays;
+
 import com.amazonaws.services.simpleworkflow.flow.worker.GenericActivityWorker;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,6 +31,8 @@ public class SWFActivityConsumer extends DefaultConsumer {
     private SWFEndpoint endpoint;
     private final SWFConfiguration configuration;
     private GenericActivityWorker genericWorker;
+    
+    private transient String swfActivityConsumerToString;
 
     public SWFActivityConsumer(SWFEndpoint endpoint, Processor processor, SWFConfiguration configuration) {
         super(endpoint, processor);
@@ -37,7 +41,7 @@ public class SWFActivityConsumer extends DefaultConsumer {
     }
 
     public Object processActivity(Object[] inputParameters, String taskToken) throws Exception {
-        LOGGER.debug("Processing activity task: " + inputParameters);
+        LOGGER.debug("Processing activity task: " + Arrays.toString(inputParameters));
 
         Exchange exchange = endpoint.createExchange(inputParameters, SWFConstants.EXECUTE_ACTION);
         exchange.getIn().setHeader(SWFConstants.TASK_TOKEN, taskToken);
@@ -65,6 +69,9 @@ public class SWFActivityConsumer extends DefaultConsumer {
 
     @Override
     public String toString() {
-        return "SWFActivityConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (swfActivityConsumerToString == null) {
+            swfActivityConsumerToString = "SWFActivityConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return swfActivityConsumerToString;
     }
 }

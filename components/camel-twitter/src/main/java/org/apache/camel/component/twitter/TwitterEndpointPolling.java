@@ -19,10 +19,9 @@ package org.apache.camel.component.twitter;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
+import org.apache.camel.component.twitter.consumer.TwitterConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerPolling;
 import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.impl.DefaultPollingEndpoint;
@@ -30,11 +29,15 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Twitter polling endpoint
+ * This component integrates with Twitter to send tweets or search for tweets and more.
  */
 @ManagedResource(description = "Managed Twitter Endpoint")
-@UriEndpoint(scheme = "twitter", title = "Twitter", syntax = "twitter:type", consumerClass = Twitter4JConsumer.class, label = "api,social")
+@UriEndpoint(scheme = "twitter", title = "Twitter", syntax = "twitter:kind", consumerClass = TwitterConsumer.class, label = "api,social")
 public class TwitterEndpointPolling extends DefaultPollingEndpoint implements TwitterEndpoint {
+
+    @UriParam(optionalPrefix = "consumer.", defaultValue = "" + TwitterConsumerPolling.DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",
+            description = "Milliseconds before the next poll.")
+    private long delay = TwitterConsumerPolling.DEFAULT_CONSUMER_DELAY;
 
     @UriParam
     private TwitterConfiguration properties;
@@ -46,20 +49,20 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        Twitter4JConsumer twitter4jConsumer = Twitter4JFactory.getConsumer(this, getEndpointUri());
+        TwitterConsumer twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri());
         // update the pulling lastID with sinceId
         twitter4jConsumer.setLastId(properties.getSinceId());
-        Consumer tc = new TwitterConsumerPolling(this, processor, twitter4jConsumer);
+        TwitterConsumerPolling tc = new TwitterConsumerPolling(this, processor, twitter4jConsumer);
         configureConsumer(tc);
         return tc;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return Twitter4JFactory.getProducer(this, getEndpointUri());
+        return TwitterHelper.createProducer(this, getEndpointUri());
     }
 
-    @ManagedAttribute
+    @Override
     public boolean isSingleton() {
         return true;
     }
@@ -70,32 +73,6 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
 
     public void setProperties(TwitterConfiguration properties) {
         this.properties = properties;
-    }
-
-    @ManagedAttribute(description = "Camel ID")
-    public String getCamelId() {
-        return getCamelContext().getName();
-    }
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    public String getCamelManagementName() {
-        return getCamelContext().getManagementName();
-    }
-
-    @ManagedAttribute(description = "Endpoint Uri", mask = true)
-    @Override
-    public String getEndpointUri() {
-        return super.getEndpointUri();
-    }
-
-    @ManagedAttribute(description = "Service State")
-    public String getState() {
-        ServiceStatus status = this.getStatus();
-        // if no status exists then its stopped
-        if (status == null) {
-            status = ServiceStatus.Stopped;
-        }
-        return status.name();
     }
 
     @ManagedAttribute
@@ -126,16 +103,6 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     @ManagedAttribute
     public boolean isFilterOld() {
         return getProperties().isFilterOld();
-    }
-
-    @ManagedAttribute
-    public void setDate(String date) {
-        getProperties().setDate(date);
-    }
-
-    @ManagedAttribute
-    public String getDate() {
-        return getProperties().getDate();
     }
 
     @ManagedAttribute
@@ -181,6 +148,15 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     @Override
     public EndpointType getEndpointType() {
         return EndpointType.POLLING;
+    }
+
+    /**
+     * Milliseconds before the next poll.
+     */
+    @Override
+    public void setDelay(long delay) {
+        super.setDelay(delay);
+        this.delay = delay;
     }
 
 }

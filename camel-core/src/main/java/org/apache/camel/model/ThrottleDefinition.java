@@ -134,7 +134,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @param maximumRequestsPerPeriod  the maximum request count number per time period
      * @return the builder
      */
-    public ThrottleDefinition maximumRequestsPerPeriod(Long maximumRequestsPerPeriod) {
+    public ThrottleDefinition maximumRequestsPerPeriod(long maximumRequestsPerPeriod) {
         setExpression(ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(maximumRequestsPerPeriod)));
         return this;
     }
@@ -153,7 +153,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     /**
-     * Enables asynchronous delay which means the thread will <b>no</b> block while delaying.
+     * Enables asynchronous delay which means the thread will <b>not</b> block while delaying.
      *
      * @return the builder
      */

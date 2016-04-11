@@ -81,7 +81,7 @@ public class IBatisComponent extends UriEndpointComponent {
     }
 
     protected SqlMapClient createSqlMapClient() throws IOException {
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), sqlMapConfig);
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), sqlMapConfig);
         return SqlMapClientBuilder.buildSqlMapClient(is);
     }
 

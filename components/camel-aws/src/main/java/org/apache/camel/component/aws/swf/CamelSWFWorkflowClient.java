@@ -22,6 +22,8 @@ import java.util.Map;
 
 import com.amazonaws.services.simpleworkflow.flow.DynamicWorkflowClientExternal;
 import com.amazonaws.services.simpleworkflow.flow.DynamicWorkflowClientExternalImpl;
+import com.amazonaws.services.simpleworkflow.flow.StartWorkflowOptions;
+import com.amazonaws.services.simpleworkflow.flow.common.FlowHelpers;
 import com.amazonaws.services.simpleworkflow.flow.common.WorkflowExecutionUtils;
 import com.amazonaws.services.simpleworkflow.flow.worker.GenericWorkflowClientExternalImpl;
 import com.amazonaws.services.simpleworkflow.model.ChildPolicy;
@@ -70,6 +72,10 @@ public class CamelSWFWorkflowClient {
         workflowType.setVersion(version);
         dynamicWorkflowClientExternal.setWorkflowType(workflowType);
         dynamicWorkflowClientExternal.startWorkflowExecution(toArray(arguments));
+        StartWorkflowOptions startWorkflowOptions = new StartWorkflowOptions();
+        startWorkflowOptions.setTaskStartToCloseTimeoutSeconds(FlowHelpers.durationToSeconds(configuration.getTaskStartToCloseTimeout()));
+        startWorkflowOptions.setExecutionStartToCloseTimeoutSeconds(FlowHelpers.durationToSeconds(configuration.getExecutionStartToCloseTimeout()));
+        dynamicWorkflowClientExternal.setSchedulingOptions(startWorkflowOptions);
 
         String newWorkflowId = dynamicWorkflowClientExternal.getWorkflowExecution().getWorkflowId();
         String newRunId = dynamicWorkflowClientExternal.getWorkflowExecution().getRunId();

@@ -43,6 +43,8 @@ public final class DockerConstants {
     public static final String DOCKER_MAX_PER_ROUTE_CONNECTIONS = "CamelDockerMaxPerRouteConnections";
     public static final String DOCKER_MAX_TOTAL_CONNECTIONS = "CamelDockerMaxTotalConnections";
     public static final String DOCKER_SECURE = "CamelDockerSecure";
+    public static final String DOCKER_FOLLOW_REDIRECT_FILTER = "CamelDockerFollowRedirectFilter";
+    public static final String DOCKER_LOGGING_FILTER = "CamelDockerLoggingFilter";
 
     /**
      * List Images *
@@ -192,6 +194,7 @@ public final class DockerConstants {
     public static final String DOCKER_MEMORY_LIMIT = "CamelDockerMemoryLimit";
     public static final String DOCKER_STD_IN_OPEN = "CamelDockerStdInOpen";
     public static final String DOCKER_VOLUMES_FROM = "CamelDockerVolumesFrom";
+    public static final String DOCKER_DOMAIN_NAME = "CamelDockerDomainName";
 
 
     /**

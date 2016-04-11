@@ -19,8 +19,6 @@ package scala
 
 import reflect.{ClassTag, classTag}
 import org.apache.camel.spi.{UnitOfWork, Synchronization}
-import org.apache.camel.{ExchangePattern, Message, Endpoint, Exchange}
-import java.lang.{String, Class}
 
 /**
  * Rich wrapper for Camel's Exchange implementations
@@ -126,6 +124,8 @@ class RichExchange(val exchange : Exchange) extends Exchange {
   def getContext = exchange.getContext
 
   def copy = new RichExchange(exchange.copy)
+
+  def copy(safeCopy: Boolean) = new RichExchange(exchange.copy(safeCopy))
 
   def addOnCompletion(onCompletion: Synchronization) { exchange.addOnCompletion(onCompletion) }
   

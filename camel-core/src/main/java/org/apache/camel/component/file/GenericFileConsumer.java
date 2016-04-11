@@ -22,13 +22,13 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.regex.Pattern;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -48,14 +48,26 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
     protected Processor customProcessor;
-    @UriParam
     protected boolean eagerLimitMaxMessagesPerPoll = true;
     protected volatile boolean prepareOnStartup;
+    private final Pattern includePattern;
+    private final Pattern excludePattern;
 
     public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.operations = operations;
+
+        if (endpoint.getInclude() != null) {
+            this.includePattern = Pattern.compile(endpoint.getInclude(), Pattern.CASE_INSENSITIVE);
+        } else {
+            this.includePattern = null;
+        }
+        if (endpoint.getExclude() != null) {
+            this.excludePattern = Pattern.compile(endpoint.getExclude(), Pattern.CASE_INSENSITIVE);
+        } else {
+            this.excludePattern = null;
+        }
     }
 
     public Processor getCustomProcessor() {
@@ -152,6 +164,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // sort files using exchange comparator if provided
         if (endpoint.getSortBy() != null) {
             Collections.sort(exchanges, endpoint.getSortBy());
+        }
+        if (endpoint.isShuffle()) {
+            Collections.shuffle(exchanges);
         }
 
         // use a queue for the exchanges
@@ -429,17 +444,22 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
             log.debug("About to process file: {} using exchange: {}", target, exchange);
 
-            // process the exchange using the async consumer to support async routing engine
-            // which can be supported by this file consumer as all the done work is
-            // provided in the GenericFileOnCompletion
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                public void done(boolean doneSync) {
-                    // noop
-                    if (log.isTraceEnabled()) {
-                        log.trace("Done processing file: {} {}", target, doneSync ? "synchronously" : "asynchronously");
+            if (endpoint.isSynchronous()) {
+                // process synchronously
+                getProcessor().process(exchange);
+            } else {
+                // process the exchange using the async consumer to support async routing engine
+                // which can be supported by this file consumer as all the done work is
+                // provided in the GenericFileOnCompletion
+                getAsyncProcessor().process(exchange, new AsyncCallback() {
+                    public void done(boolean doneSync) {
+                        // noop
+                        if (log.isTraceEnabled()) {
+                            log.trace("Done processing file: {} {}", target, doneSync ? "synchronously" : "asynchronously");
+                        }
                     }
-                }
-            });
+                });
+            }
 
         } catch (Exception e) {
             // remove file from the in progress list due to failure
@@ -589,14 +609,14 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             return true;
         }
 
-        if (ObjectHelper.isNotEmpty(endpoint.getExclude())) {
-            if (name.matches(endpoint.getExclude())) {
+        // exclude take precedence over include
+        if (excludePattern != null)  {
+            if (excludePattern.matcher(name).matches()) {
                 return false;
             }
         }
-
-        if (ObjectHelper.isNotEmpty(endpoint.getInclude())) {
-            if (!name.matches(endpoint.getInclude())) {
+        if (includePattern != null)  {
+            if (!includePattern.matcher(name).matches()) {
                 return false;
             }
         }

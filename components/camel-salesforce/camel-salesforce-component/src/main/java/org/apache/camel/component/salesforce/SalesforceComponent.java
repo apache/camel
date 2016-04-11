@@ -357,6 +357,9 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return loginConfig;
     }
 
+    /**
+     * To use the shared SalesforceLoginConfig as login configuration
+     */
     public void setLoginConfig(SalesforceLoginConfig loginConfig) {
         this.loginConfig = loginConfig;
     }
@@ -365,6 +368,9 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return config;
     }
 
+    /**
+     * To use the shared SalesforceLoginConfig as configuration
+     */
     public void setConfig(SalesforceEndpointConfig config) {
         this.config = config;
     }
@@ -373,6 +379,9 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpClientProperties;
     }
 
+    /**
+     * Used for configuring HTTP client properties as key/value pairs
+     */
     public void setHttpClientProperties(Map<String, Object> httpClientProperties) {
         this.httpClientProperties = httpClientProperties;
     }
@@ -381,6 +390,9 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return sslContextParameters;
     }
 
+    /**
+     * To configure security using SSLContextParameters
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -389,6 +401,9 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpProxyHost;
     }
 
+    /**
+     * To configure HTTP proxy host
+     */
     public void setHttpProxyHost(String httpProxyHost) {
         this.httpProxyHost = httpProxyHost;
     }
@@ -397,6 +412,9 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpProxyPort;
     }
 
+    /**
+     * To configure HTTP proxy port
+     */
     public void setHttpProxyPort(Integer httpProxyPort) {
         this.httpProxyPort = httpProxyPort;
     }
@@ -405,6 +423,9 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpProxyUsername;
     }
 
+    /**
+     * To configure HTTP proxy username
+     */
     public void setHttpProxyUsername(String httpProxyUsername) {
         this.httpProxyUsername = httpProxyUsername;
     }
@@ -413,6 +434,9 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpProxyPassword;
     }
 
+    /**
+     * To configure HTTP proxy password
+     */
     public void setHttpProxyPassword(String httpProxyPassword) {
         this.httpProxyPassword = httpProxyPassword;
     }
@@ -421,10 +445,16 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return packages;
     }
 
+    /**
+     * Package names to scan for DTO classes (multiple packages can be separated by comma).
+     */
     public void setPackages(String[] packages) {
         this.packages = packages;
     }
 
+    /**
+     * Package names to scan for DTO classes (multiple packages can be separated by comma).
+     */
     public void setPackages(String packages) {
         // split using comma
         if (packages != null) {

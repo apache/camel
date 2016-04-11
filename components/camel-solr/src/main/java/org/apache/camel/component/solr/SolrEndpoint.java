@@ -28,19 +28,21 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.solr.client.solrj.impl.CloudSolrServer;
-import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 
 /**
- * Represents a Solr endpoint.
+ * The solr component allows you to interface with an Apache Lucene Solr server.
  */
-@UriEndpoint(scheme = "solr", title = "Solr", syntax = "solr:url", producerOnly = true, label = "monitoring,search")
+@UriEndpoint(scheme = "solr,solrs,solrCloud", title = "Solr", syntax = "solr:url", producerOnly = true, label = "monitoring,search")
 public class SolrEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
-    private String url;
     private String scheme = "http://";
+
+    @UriPath(description = "Hostname and port for the solr server")
+    @Metadata(required = "true")
+    private String url;
     @UriParam(defaultValue = "" + SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE)
     private int streamingQueueSize = SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE;
     @UriParam(defaultValue = "" + SolrConstants.DEFAULT_STREAMING_THREAD_COUNT)
@@ -59,9 +61,9 @@ public class SolrEndpoint extends DefaultEndpoint {
     private Boolean followRedirects;
     @UriParam
     private Boolean allowCompression;
-    @UriParam
+    @UriParam(label = "solrCloud")
     private String zkHost;
-    @UriParam
+    @UriParam(label = "solrCloud")
     private String collection;
     @UriParam
     private String requestHandler;
@@ -74,7 +76,10 @@ public class SolrEndpoint extends DefaultEndpoint {
         URL url = new URL(scheme + address);
         this.url = url.toString();
     }
-   
+
+    /**
+     * Set the ZooKeeper host information which the solrCloud could use, such as "zkhost=localhost:8123".
+     */
     public void setZkHost(String zkHost) throws UnsupportedEncodingException {
         String decoded = URLDecoder.decode(zkHost, "UTF-8");
         this.zkHost = decoded;
@@ -84,6 +89,9 @@ public class SolrEndpoint extends DefaultEndpoint {
         return this.zkHost;
     }
 
+    /**
+     * Set the collection name which the solrCloud server could use
+     */
     public void setCollection(String collection) {
         this.collection = collection;
     }
@@ -96,16 +104,16 @@ public class SolrEndpoint extends DefaultEndpoint {
     public SolrComponent getComponent() {
         return (SolrComponent) super.getComponent();
     }
-    
-    private CloudSolrServer getCloudServer() {
-        CloudSolrServer rVal = null;
+
+    private CloudSolrClient getCloudServer() {
+        CloudSolrClient rVal = null;
         if (this.getZkHost() != null && this.getCollection() != null) {
-            rVal = new CloudSolrServer(zkHost);
+            rVal = new CloudSolrClient(zkHost);
             rVal.setDefaultCollection(this.getCollection());
         }
         return rVal;
     }
-    
+
     @Override
     public Producer createProducer() throws Exception {
         // do we have servers?
@@ -113,10 +121,10 @@ public class SolrEndpoint extends DefaultEndpoint {
         if (ref == null) {
             // no then create new servers
             ref = new SolrComponent.SolrServerReference();
-            CloudSolrServer cloudServer = getCloudServer();
+            CloudSolrClient cloudServer = getCloudServer();
             if (cloudServer == null) {
-                HttpSolrServer solrServer = new HttpSolrServer(url);
-                ConcurrentUpdateSolrServer solrStreamingServer = new ConcurrentUpdateSolrServer(url, streamingQueueSize, streamingThreadCount);
+                HttpSolrClient solrServer = new HttpSolrClient(url);
+                ConcurrentUpdateSolrClient solrStreamingServer = new ConcurrentUpdateSolrClient(url, streamingQueueSize, streamingThreadCount);
 
                 // set the properties on the solr server
                 if (maxRetries != null) {
@@ -172,6 +180,9 @@ public class SolrEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    /**
+     * Set the request handler to be used
+     */
     public void setRequestHandler(String requestHandler) {
         this.requestHandler = requestHandler;
     }
@@ -184,6 +195,9 @@ public class SolrEndpoint extends DefaultEndpoint {
         return streamingThreadCount;
     }
 
+    /**
+     * Set the number of threads for the StreamingUpdateSolrServer
+     */
     public void setStreamingThreadCount(int streamingThreadCount) {
         this.streamingThreadCount = streamingThreadCount;
     }
@@ -192,6 +206,9 @@ public class SolrEndpoint extends DefaultEndpoint {
         return streamingQueueSize;
     }
 
+    /**
+     * Set the queue size for the StreamingUpdateSolrServer
+     */
     public void setStreamingQueueSize(int streamingQueueSize) {
         this.streamingQueueSize = streamingQueueSize;
     }
@@ -200,6 +217,9 @@ public class SolrEndpoint extends DefaultEndpoint {
         return maxRetries;
     }
 
+    /**
+     * Maximum number of retries to attempt in the event of transient errors
+     */
     public void setMaxRetries(Integer maxRetries) {
         this.maxRetries = maxRetries;
     }
@@ -208,6 +228,9 @@ public class SolrEndpoint extends DefaultEndpoint {
         return soTimeout;
     }
 
+    /**
+     * Read timeout on the underlying HttpConnectionManager. This is desirable for queries, but probably not for indexing
+     */
     public void setSoTimeout(Integer soTimeout) {
         this.soTimeout = soTimeout;
     }
@@ -216,6 +239,9 @@ public class SolrEndpoint extends DefaultEndpoint {
         return connectionTimeout;
     }
 
+    /**
+     * connectionTimeout on the underlying HttpConnectionManager
+     */
     public void setConnectionTimeout(Integer connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
@@ -224,6 +250,9 @@ public class SolrEndpoint extends DefaultEndpoint {
         return defaultMaxConnectionsPerHost;
     }
 
+    /**
+     * maxConnectionsPerHost on the underlying HttpConnectionManager
+     */
     public void setDefaultMaxConnectionsPerHost(Integer defaultMaxConnectionsPerHost) {
         this.defaultMaxConnectionsPerHost = defaultMaxConnectionsPerHost;
     }
@@ -232,6 +261,9 @@ public class SolrEndpoint extends DefaultEndpoint {
         return maxTotalConnections;
     }
 
+    /**
+     * maxTotalConnection on the underlying HttpConnectionManager
+     */
     public void setMaxTotalConnections(Integer maxTotalConnections) {
         this.maxTotalConnections = maxTotalConnections;
     }
@@ -240,6 +272,9 @@ public class SolrEndpoint extends DefaultEndpoint {
         return followRedirects;
     }
 
+    /**
+     * indicates whether redirects are used to get to the Solr server
+     */
     public void setFollowRedirects(Boolean followRedirects) {
         this.followRedirects = followRedirects;
     }
@@ -248,6 +283,9 @@ public class SolrEndpoint extends DefaultEndpoint {
         return allowCompression;
     }
 
+    /**
+     * Server side must support gzip or deflate for this to have any effect
+     */
     public void setAllowCompression(Boolean allowCompression) {
         this.allowCompression = allowCompression;
     }

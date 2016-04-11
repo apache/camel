@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "language", title = "PHP")
+@Metadata(label = "language,script", title = "PHP")
 @XmlRootElement(name = "php")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PhpExpression extends ExpressionDefinition {

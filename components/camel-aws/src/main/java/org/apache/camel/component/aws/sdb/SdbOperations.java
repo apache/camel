@@ -26,5 +26,5 @@ public enum SdbOperations {
     GetAttributes,
     ListDomains,
     PutAttributes,
-    Select;
+    Select
 }

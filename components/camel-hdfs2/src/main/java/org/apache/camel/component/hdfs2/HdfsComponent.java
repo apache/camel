@@ -67,6 +67,9 @@ public class HdfsComponent extends UriEndpointComponent {
         return auth;
     }
 
+    /**
+     * To use the given configuration for security with JAAS.
+     */
     static void setJAASConfiguration(Configuration auth) {
         if (auth != null) {
             LOG.trace("Restoring existing JAAS Configuration {}", auth);

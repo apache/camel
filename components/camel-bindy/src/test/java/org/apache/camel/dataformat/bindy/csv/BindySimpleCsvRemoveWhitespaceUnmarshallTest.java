@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.bindy.csv;
 
 
 import java.util.List;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -54,7 +55,7 @@ public class BindySimpleCsvRemoveWhitespaceUnmarshallTest extends AbstractJUnit4
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassandremovewhitespace");
+        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassandremovewhitespace.Order.class);
 
         public void configure() {
             // from("file://src/test/data2")

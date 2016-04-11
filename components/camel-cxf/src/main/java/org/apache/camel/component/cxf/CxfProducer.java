@@ -34,6 +34,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.model.SoapHeaderInfo;
 import org.apache.cxf.endpoint.Client;
@@ -72,6 +73,9 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     
     @Override
     protected void doStart() throws Exception {
+        // failsafe as cxf may not ensure the endpoint is started (CAMEL-8956)
+        ServiceHelper.startService(endpoint);
+
         if (client == null) {
             client = endpoint.createClient();
         }

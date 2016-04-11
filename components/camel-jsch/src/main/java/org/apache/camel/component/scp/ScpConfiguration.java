@@ -32,28 +32,20 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     public static final String DEFAULT_MOD = "664";
     @UriParam(defaultValue = "true")
     private boolean useUserKnownHostsFile = true;
-    @UriParam(defaultValue = "true")
-    private boolean verboseLogging = true;
     @UriParam
     private String knownHostsFile;
     @UriParam
     private String privateKeyFile;
     @UriParam
     private String privateKeyFilePassphrase;
-    @UriParam
+    @UriParam(enums = "no,yes", defaultValue = "no")
     private String strictHostKeyChecking;
-    @UriParam
-    private int serverAliveInterval;
-    @UriParam(defaultValue = "1")
-    private int serverAliveCountMax = 1;
     @UriParam(defaultValue = DEFAULT_MOD)
     private String chmod = DEFAULT_MOD;
     // comma separated list of ciphers. 
     // null means default jsch list will be used
     @UriParam
     private String ciphers;
-    @UriParam
-    private int compression;
 
     public ScpConfiguration() {
         setProtocol("scp");
@@ -72,6 +64,9 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return knownHostsFile;
     }
 
+    /**
+     * Sets the known_hosts file, so that the jsch endpoint can do host key verification.
+     */
     public void setKnownHostsFile(String knownHostsFile) {
         this.knownHostsFile = knownHostsFile;
     }
@@ -80,6 +75,9 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return useUserKnownHostsFile;
     }
 
+    /**
+     * If knownHostFile has not been explicit configured, then use the host file from System.getProperty("user.home") + "/.ssh/known_hosts"
+     */
     public void setUseUserKnownHostsFile(boolean useUserKnownHostsFile) {
         this.useUserKnownHostsFile = useUserKnownHostsFile;
     }
@@ -88,6 +86,9 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return privateKeyFile;
     }
 
+    /**
+     * Set the private key file to that the SFTP endpoint can do private key verification.
+     */
     public void setPrivateKeyFile(String privateKeyFile) {
         this.privateKeyFile = privateKeyFile;
     }
@@ -96,6 +97,9 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return privateKeyFilePassphrase;
     }
 
+    /**
+     * Set the private key file passphrase to that the SFTP endpoint can do private key verification.
+     */
     public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
         this.privateKeyFilePassphrase = privateKeyFilePassphrase;
     }
@@ -104,26 +108,16 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return strictHostKeyChecking;
     }
 
+    /**
+     * Sets whether to use strict host key checking. Possible values are: no, yes
+     */
     public void setStrictHostKeyChecking(String strictHostKeyChecking) {
         this.strictHostKeyChecking = strictHostKeyChecking;
     }
 
-    public void setServerAliveInterval(int serverAliveInterval) {
-        this.serverAliveInterval = serverAliveInterval;
-    }
-
-    public int getServerAliveInterval() {
-        return serverAliveInterval;
-    }
-
-    public void setServerAliveCountMax(int serverAliveCountMax) {
-        this.serverAliveCountMax = serverAliveCountMax;
-    }
-
-    public int getServerAliveCountMax() {
-        return serverAliveCountMax;
-    }
-
+    /**
+     * Allows you to set chmod on the stored file. For example chmod=664.
+     */
     public void setChmod(String chmod) {
         if (chmod.length() == 3) {
             for (byte c : chmod.getBytes()) {
@@ -143,6 +137,11 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return chmod;
     }
 
+    /**
+     * Set a comma separated list of ciphers that will be used in order of preference.
+     * Possible cipher names are defined by JCraft JSCH. Some examples include: aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc.
+     * If not specified the default list from JSCH will be used.
+     */
     public void setCiphers(String ciphers) {
         this.ciphers = ciphers;
     }
@@ -151,11 +150,4 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return ciphers;
     }
 
-    public int getCompression() {
-        return compression;
-    }
-
-    public void setCompression(int compression) {
-        this.compression = compression;
-    }
 }

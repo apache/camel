@@ -16,9 +16,12 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import org.apache.camel.api.management.ManagedAttribute;
+import javax.management.openmbean.TabularData;
 
-public interface ManagedSendProcessorMBean extends ManagedProcessorMBean {
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
+
+public interface ManagedSendProcessorMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
 
     @ManagedAttribute(description = "Destination as Endpoint URI", mask = true)
     String getDestination();
@@ -32,5 +35,8 @@ public interface ManagedSendProcessorMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Message Exchange Pattern")
     String getMessageExchangePattern();
+
+    @ManagedOperation(description = "Statistics of the endpoint which has been sent to")
+    TabularData extendedInformation();
 
 }

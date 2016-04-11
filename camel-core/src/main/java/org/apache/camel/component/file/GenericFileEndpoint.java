@@ -38,6 +38,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
@@ -58,57 +59,51 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected static final String DEFAULT_STRATEGYFACTORY_CLASS = "org.apache.camel.component.file.strategy.GenericFileProcessStrategyFactory";
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
     
-    private static final Integer CHMOD_WRITE_MASK = 02;
-    private static final Integer CHMOD_READ_MASK = 04;
-    private static final Integer CHMOD_EXECUTE_MASK = 01;
-
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     // common options
 
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "advanced", defaultValue = "true")
     protected boolean autoCreate = true;
-    @UriParam(defaultValue = "" + FileUtil.BUFFER_SIZE)
+    @UriParam(label = "advanced", defaultValue = "" + FileUtil.BUFFER_SIZE)
     protected int bufferSize = FileUtil.BUFFER_SIZE;
     @UriParam
-    protected boolean flatten;
-    @UriParam
     protected String charset;
-    @UriParam
+    @UriParam(javaType = "java.lang.String")
     protected Expression fileName;
 
     // producer options
 
+    @UriParam(label = "producer")
+    protected boolean flatten;
     @UriParam(label = "producer", defaultValue = "Override")
     protected GenericFileExist fileExist = GenericFileExist.Override;
     @UriParam(label = "producer")
     protected String tempPrefix;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", javaType = "java.lang.String")
     protected Expression tempFileName;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     protected boolean eagerDeleteTargetFile = true;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced")
     protected boolean keepLastModified;
     @UriParam(label = "producer")
     protected String doneFileName;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced")
     protected boolean allowNullBody;
-    @UriParam(label = "producer")
-    protected String chmod;
 
     // consumer options
 
     @UriParam
     protected GenericFileConfiguration configuration;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     protected GenericFileProcessStrategy<T> processStrategy;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     protected IdempotentRepository<String> inProgressRepository = new MemoryIdempotentRepository();
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     protected String localWorkDirectory;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     protected boolean startingDirectoryMustExist;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     protected boolean directoryMustExist;
     @UriParam(label = "consumer")
     protected boolean noop;
@@ -116,59 +111,71 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected boolean recursive;
     @UriParam(label = "consumer")
     protected boolean delete;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,filter")
     protected int maxMessagesPerPoll;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer,filter", defaultValue = "true")
     protected boolean eagerMaxMessagesPerPoll = true;
-    @UriParam(label = "consumer", defaultValue = "" + Integer.MAX_VALUE)
+    @UriParam(label = "consumer,filter", defaultValue = "" + Integer.MAX_VALUE)
     protected int maxDepth = Integer.MAX_VALUE;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,filter")
     protected int minDepth;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,filter")
     protected String include;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,filter")
     protected String exclude;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,filter", javaType = "java.lang.String")
     protected Expression move;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", javaType = "java.lang.String")
     protected Expression moveFailed;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", javaType = "java.lang.String")
     protected Expression preMove;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", javaType = "java.lang.String")
     protected Expression moveExisting;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,filter", defaultValue = "false")
     protected Boolean idempotent;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,filter", javaType = "java.lang.String")
     protected Expression idempotentKey;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,filter")
     protected IdempotentRepository<String> idempotentRepository;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,filter")
     protected GenericFileFilter<T> filter;
+    @UriParam(label = "consumer,filter", defaultValue = "true")
+    protected boolean antFilterCaseSensitive = true;
     protected volatile AntPathMatcherGenericFileFilter<T> antFilter;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,filter")
     protected String antInclude;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,filter")
     protected String antExclude;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,sort")
     protected Comparator<GenericFile<T>> sorter;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,sort", javaType = "java.lang.String")
     protected Comparator<Exchange> sortBy;
-    @UriParam(label = "consumer", enums = "none,markerFile,fileLock,rename,changed")
+    @UriParam(label = "consumer,sort")
+    protected boolean shuffle;
+    @UriParam(label = "consumer,lock", enums = "none,markerFile,fileLock,rename,changed,idempotent")
     protected String readLock = "none";
-    @UriParam(label = "consumer", defaultValue = "1000")
+    @UriParam(label = "consumer,lock", defaultValue = "1000")
     protected long readLockCheckInterval = 1000;
-    @UriParam(label = "consumer", defaultValue = "10000")
+    @UriParam(label = "consumer,lock", defaultValue = "10000")
     protected long readLockTimeout = 10000;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer,lock", defaultValue = "true")
     protected boolean readLockMarkerFile = true;
-    @UriParam(label = "consumer", defaultValue = "WARN")
+    @UriParam(label = "consumer,lock", defaultValue = "true")
+    protected boolean readLockDeleteOrphanLockFiles = true;
+    @UriParam(label = "consumer,lock", defaultValue = "WARN")
     protected LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
-    @UriParam(label = "consumer", defaultValue = "1")
+    @UriParam(label = "consumer,lock", defaultValue = "1")
     protected long readLockMinLength = 1;
-    @UriParam(label = "consumer", defaultValue = "0")
+    @UriParam(label = "consumer,lock", defaultValue = "0")
     protected long readLockMinAge;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,lock", defaultValue = "true")
+    protected boolean readLockRemoveOnRollback = true;
+    @UriParam(label = "consumer,lock")
+    protected boolean readLockRemoveOnCommit;
+    @UriParam(label = "consumer,lock")
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
+    @UriParam(label = "consumer,advanced")
+    protected ExceptionHandler onCompletionExceptionHandler;
 
     public GenericFileEndpoint() {
     }
@@ -298,84 +305,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         }
     }
 
-    /**
-     * Chmod value must be between 000 and 777; If there is a leading digit like in 0755 we will ignore it.
-     */
-    public boolean chmodPermissionsAreValid(String chmod) {
-        if (chmod == null || chmod.length() < 3 || chmod.length() > 4) {
-            return false;
-        }
-        String permissionsString = chmod.trim().substring(chmod.length() - 3);  // if 4 digits chop off leading one
-        for (int i = 0; i < permissionsString.length(); i++) {
-            Character c = permissionsString.charAt(i);
-            if (!Character.isDigit(c) || Integer.parseInt(c.toString()) > 7) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public Set<PosixFilePermission> getPermissions() {
-        Set<PosixFilePermission> permissions = new HashSet<PosixFilePermission>();
-        if (ObjectHelper.isEmpty(chmod)) {
-            return permissions;
-        }
-
-        String chmodString = chmod.substring(chmod.length() - 3);  // if 4 digits chop off leading one
-
-        Integer ownerValue = Integer.parseInt(chmodString.substring(0, 1));
-        Integer groupValue = Integer.parseInt(chmodString.substring(1, 2));
-        Integer othersValue = Integer.parseInt(chmodString.substring(2, 3));
-
-        if ((ownerValue & CHMOD_WRITE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OWNER_WRITE);
-        }
-        if ((ownerValue & CHMOD_READ_MASK) > 0) {
-            permissions.add(PosixFilePermission.OWNER_READ);
-        }
-        if ((ownerValue & CHMOD_EXECUTE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OWNER_EXECUTE);
-        }
-
-        if ((groupValue & CHMOD_WRITE_MASK) > 0) {
-            permissions.add(PosixFilePermission.GROUP_WRITE);
-        }
-        if ((groupValue & CHMOD_READ_MASK) > 0) {
-            permissions.add(PosixFilePermission.GROUP_READ);
-        }
-        if ((groupValue & CHMOD_EXECUTE_MASK) > 0) {
-            permissions.add(PosixFilePermission.GROUP_EXECUTE);
-        }
-
-        if ((othersValue & CHMOD_WRITE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_WRITE);
-        }
-        if ((othersValue & CHMOD_READ_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_READ);
-        }
-        if ((othersValue & CHMOD_EXECUTE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_EXECUTE);
-        }
-
-        return permissions;
-    }
-
-    public String getChmod() {
-        return chmod;
-    }
-
-    /**
-     * Specify the file permissions which is sent by the producer, the chmod value must be between 000 and 777;
-     * If there is a leading digit like in 0755 we will ignore it.
-     */
-    public void setChmod(String chmod) throws Exception {
-        if (ObjectHelper.isNotEmpty(chmod) && chmodPermissionsAreValid(chmod)) {
-            this.chmod = chmod.trim();
-        } else {
-            throw new IllegalArgumentException("chmod option [" + chmod + "] is not valid");
-        }
-    }
-
     public boolean isNoop() {
         return noop;
     }
@@ -405,7 +334,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Is used to include files, if filename matches the regex pattern.
+     * Is used to include files, if filename matches the regex pattern (matching is case in-senstive).
+     * <p/>
+     * Notice if you use symbols such as plus sign and others you would need to configure
+     * this using the RAW() syntax if configuring this as an endpoint uri.
+     * See more details at <a href="http://camel.apache.org/how-do-i-configure-endpoints.html">configuring endpoint uris</a>
      */
     public void setInclude(String include) {
         this.include = include;
@@ -416,7 +349,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Is used to exclude files, if filename matches the regex pattern.
+     * Is used to exclude files, if filename matches the regex pattern (matching is case in-senstive).
+     * <p/>
+     * Notice if you use symbols such as plus sign and others you would need to configure
+     * this using the RAW() syntax if configuring this as an endpoint uri.
+     * See more details at <a href="http://camel.apache.org/how-do-i-configure-endpoints.html">configuring endpoint uris</a>
      */
     public void setExclude(String exclude) {
         this.exclude = exclude;
@@ -432,10 +369,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setAntInclude(String antInclude) {
         this.antInclude = antInclude;
-        if (this.antFilter == null) {
-            this.antFilter = new AntPathMatcherGenericFileFilter<T>();
-        }
-        this.antFilter.setIncludes(antInclude);
     }
 
     public String getAntExclude() {
@@ -448,20 +381,17 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setAntExclude(String antExclude) {
         this.antExclude = antExclude;
-        if (this.antFilter == null) {
-            this.antFilter = new AntPathMatcherGenericFileFilter<T>();
-        }
-        this.antFilter.setExcludes(antExclude);
+    }
+
+    public boolean isAntFilterCaseSensitive() {
+        return antFilterCaseSensitive;
     }
 
     /**
-     * Sets case sensitive flag on {@link org.apache.camel.component.file.AntPathMatcherFileFilter}
+     * Sets case sensitive flag on ant fiter
      */
     public void setAntFilterCaseSensitive(boolean antFilterCaseSensitive) {
-        if (this.antFilter == null) {
-            this.antFilter = new AntPathMatcherGenericFileFilter<T>();
-        }
-        this.antFilter.setCaseSensitive(antFilterCaseSensitive);
+        this.antFilterCaseSensitive = antFilterCaseSensitive;
     }
 
     public GenericFileFilter<T> getAntFilter() {
@@ -715,6 +645,17 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         setSortBy(GenericFileDefaultSorter.sortByFileLanguage(getCamelContext(), expression, reverse));
     }
 
+    public boolean isShuffle() {
+        return shuffle;
+    }
+
+    /**
+     * To shuffle the list of files (sort in random order)
+     */
+    public void setShuffle(boolean shuffle) {
+        this.shuffle = shuffle;
+    }
+
     public String getTempPrefix() {
         return tempPrefix;
     }
@@ -804,10 +745,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      *     <li>fileLock - is for using java.nio.channels.FileLock. This option is not avail for the FTP component. This approach should be avoided when accessing
      *     a remote file system via a mount/share unless that file system supports distributed file locks.</li>
      *     <li>rename - rename is for using a try to rename the file as a test if we can get exclusive read-lock.</li>
+     *     <li>idempotent - (only for file component) idempotent is for using a idempotentRepository as the read-lock.
+     *     This allows to use read locks that supports clustering if the idempotent repository implementation supports that.</li>
      * </ul>
      * Notice: The various read locks is not all suited to work in clustered mode, where concurrent consumers on different nodes is competing
      * for the same files on a shared file system. The markerFile using a close to atomic operation to create the empty marker file,
      * but its not guaranteed to work in a cluster. The fileLock may work better but then the file system need to support distributed file locks, and so on.
+     * Using the idempotent read lock can support clustering if the idempotent repository supports clustering, such as Hazelcast Component or Infinispan.
      */
     public void setReadLock(String readLock) {
         this.readLock = readLock;
@@ -867,13 +811,29 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.readLockMarkerFile = readLockMarkerFile;
     }
 
+    public boolean isReadLockDeleteOrphanLockFiles() {
+        return readLockDeleteOrphanLockFiles;
+    }
+
+    /**
+     * Whether or not read lock with marker files should upon startup delete any orphan read lock files, which may
+     * have been left on the file system, if Camel was not properly shutdown (such as a JVM crash).
+     * <p/>
+     * If turning this option to <tt>false</tt> then any orphaned lock file will cause Camel to not attempt to pickup
+     * that file, this could also be due another node is concurrently reading files from the same shared directory.
+     */
+    public void setReadLockDeleteOrphanLockFiles(boolean readLockDeleteOrphanLockFiles) {
+        this.readLockDeleteOrphanLockFiles = readLockDeleteOrphanLockFiles;
+    }
+
     public LoggingLevel getReadLockLoggingLevel() {
         return readLockLoggingLevel;
     }
 
     /**
      * Logging level used when a read lock could not be acquired.
-     * By default a WARN is logged. You can change this level, for example to OFF to not have any logging.
+     * By default a WARN is logged.
+     * You can change this level, for example to OFF to not have any logging.
      * This option is only applicable for readLock of types: changed, fileLock, rename.
      */
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
@@ -899,12 +859,43 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * This option applied only for readLock=change.
-     * This options allows to specify a minimum age the file must be before attempting to acquire the read lock.
+     * This option allows to specify a minimum age the file must be before attempting to acquire the read lock.
      * For example use readLockMinAge=300s to require the file is at last 5 minutes old.
      * This can speedup the changed read lock as it will only attempt to acquire files which are at least that given age.
      */
     public void setReadLockMinAge(long readLockMinAge) {
         this.readLockMinAge = readLockMinAge;
+    }
+
+    public boolean isReadLockRemoveOnRollback() {
+        return readLockRemoveOnRollback;
+    }
+
+    /**
+     * This option applied only for readLock=idempotent.
+     * This option allows to specify whether to remove the file name entry from the idempotent repository
+     * when processing the file failed and a rollback happens.
+     * If this option is false, then the file name entry is confirmed (as if the file did a commit).
+     */
+    public void setReadLockRemoveOnRollback(boolean readLockRemoveOnRollback) {
+        this.readLockRemoveOnRollback = readLockRemoveOnRollback;
+    }
+
+    public boolean isReadLockRemoveOnCommit() {
+        return readLockRemoveOnCommit;
+    }
+
+    /**
+     * This option applied only for readLock=idempotent.
+     * This option allows to specify whether to remove the file name entry from the idempotent repository
+     * when processing the file is succeeded and a commit happens.
+     * <p/>
+     * By default the file is not removed which ensures that any race-condition do not occur so another active
+     * node may attempt to grab the file. Instead the idempotent repository may support eviction strategies
+     * that you can configure to evict the file name entry after X minutes - this ensures no problems with race conditions.
+     */
+    public void setReadLockRemoveOnCommit(boolean readLockRemoveOnCommit) {
+        this.readLockRemoveOnCommit = readLockRemoveOnCommit;
     }
 
     public int getBufferSize() {
@@ -1011,7 +1002,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Tlo define a maximum messages to gather per poll.
+     * To define a maximum messages to gather per poll.
      * By default no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files.
      * Set a value of 0 or negative to disabled it.
      * Notice: If this option is in use then the File and FTP components will limit before any sorting.
@@ -1098,6 +1089,19 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setAllowNullBody(boolean allowNullBody) {
         this.allowNullBody = allowNullBody;
+    }
+
+    public ExceptionHandler getOnCompletionExceptionHandler() {
+        return onCompletionExceptionHandler;
+    }
+
+    /**
+     * To use a custom {@link org.apache.camel.spi.ExceptionHandler} to handle any thrown exceptions that happens
+     * during the file on completion process where the consumer does either a commit or rollback. The default
+     * implementation will log any exception at WARN level and ignore.
+     */
+    public void setOnCompletionExceptionHandler(ExceptionHandler onCompletionExceptionHandler) {
+        this.onCompletionExceptionHandler = onCompletionExceptionHandler;
     }
 
     /**
@@ -1194,6 +1198,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         if (readLock != null) {
             params.put("readLock", readLock);
         }
+        if ("idempotent".equals(readLock)) {
+            params.put("readLockIdempotentRepository", idempotentRepository);
+        }
         if (readLockCheckInterval > 0) {
             params.put("readLockCheckInterval", readLockCheckInterval);
         }
@@ -1201,10 +1208,12 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
             params.put("readLockTimeout", readLockTimeout);
         }
         params.put("readLockMarkerFile", readLockMarkerFile);
+        params.put("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
         params.put("readLockMinLength", readLockMinLength);
         params.put("readLockLoggingLevel", readLockLoggingLevel);
         params.put("readLockMinAge", readLockMinAge);
-
+        params.put("readLockRemoveOnRollback", readLockRemoveOnRollback);
+        params.put("readLockRemoveOnCommit", readLockRemoveOnCommit);
         return params;
     }
 
@@ -1315,14 +1324,37 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                         + " to ensure that the read lock procedure has enough time to acquire the lock.");
             }
         }
+        if ("idempotent".equals(readLock) && idempotentRepository == null) {
+            throw new IllegalArgumentException("IdempotentRepository must be configured when using readLock=idempotent");
+        }
 
-        ServiceHelper.startServices(inProgressRepository, idempotentRepository);
+        if (antInclude != null) {
+            if (antFilter == null) {
+                antFilter = new AntPathMatcherGenericFileFilter<>();
+            }
+            antFilter.setIncludes(antInclude);
+        }
+        if (antExclude != null) {
+            if (antFilter == null) {
+                antFilter = new AntPathMatcherGenericFileFilter<>();
+            }
+            antFilter.setExcludes(antExclude);
+        }
+        if (antFilter != null) {
+            antFilter.setCaseSensitive(antFilterCaseSensitive);
+        }
+
+        // idempotent repository may be used by others, so add it as a service so its stopped when CamelContext stops
+        if (idempotentRepository != null) {
+            getCamelContext().addService(idempotentRepository, true);
+        }
+        ServiceHelper.startServices(inProgressRepository);
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        ServiceHelper.stopServices(inProgressRepository, idempotentRepository);
+        ServiceHelper.stopServices(inProgressRepository);
     }
 }

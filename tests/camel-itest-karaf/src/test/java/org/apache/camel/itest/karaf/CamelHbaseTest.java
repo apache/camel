@@ -16,13 +16,14 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.apache.camel.test.karaf.AbstractFeatureTest;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
+@Ignore("Need OSGi bundles of hadoop, and it does not run well in OSGi neither")
 public class CamelHbaseTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelHbaseTest.class);
@@ -30,11 +31,6 @@ public class CamelHbaseTest extends AbstractFeatureTest {
     @Test
     public void test() throws Exception {
         testComponent(COMPONENT);
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
     }
 
 }

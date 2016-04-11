@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpConverter;
-import org.apache.camel.component.http.HttpMessage;
+import org.apache.camel.http.common.HttpConverter;
+import org.apache.camel.http.common.HttpMessage;
 import org.junit.Test;
 
 /**

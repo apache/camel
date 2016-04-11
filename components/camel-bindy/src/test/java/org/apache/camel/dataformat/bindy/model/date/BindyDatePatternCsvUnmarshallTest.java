@@ -58,7 +58,7 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.date");
+        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(Order.class);
 
         public void configure() {
             from(URI_DIRECT_START)

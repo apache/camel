@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -68,6 +69,8 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
     private boolean groupExchanges;
     private boolean batchConsumer;
     private boolean ignoreInvalidExchanges;
+    private boolean reverse;
+    private boolean allowDuplicates;
     private Predicate completionPredicate;
     private Expression expression;
 
@@ -100,6 +103,12 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
 
     // Properties
     // -------------------------------------------------------------------------
+
+
+    public Expression getExpression() {
+        return expression;
+    }
+
     public ExceptionHandler getExceptionHandler() {
         return exceptionHandler;
     }
@@ -174,6 +183,22 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
 
     public void setIgnoreInvalidExchanges(boolean ignoreInvalidExchanges) {
         this.ignoreInvalidExchanges = ignoreInvalidExchanges;
+    }
+
+    public boolean isReverse() {
+        return reverse;
+    }
+
+    public void setReverse(boolean reverse) {
+        this.reverse = reverse;
+    }
+
+    public boolean isAllowDuplicates() {
+        return allowDuplicates;
+    }
+
+    public void setAllowDuplicates(boolean allowDuplicates) {
+        this.allowDuplicates = allowDuplicates;
     }
 
     public Predicate getCompletionPredicate() {
@@ -311,11 +336,11 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
 
         private Queue<Exchange> queue;
         private Lock queueLock = new ReentrantLock();
-        private boolean exchangeEnqueued;
+        private final AtomicBoolean exchangeEnqueued = new AtomicBoolean();
         private final Queue<String> completionPredicateMatched = new ConcurrentLinkedQueue<String>();
         private Condition exchangeEnqueuedCondition = queueLock.newCondition();
 
-        public BatchSender() {
+        BatchSender() {
             super(camelContext.getExecutorServiceManager().resolveThreadName("Batch Sender"));
             this.queue = new LinkedList<Exchange>();
         }
@@ -348,7 +373,7 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
             try {
                 do {
                     try {
-                        if (!exchangeEnqueued) {
+                        if (!exchangeEnqueued.get()) {
                             LOG.trace("Waiting for new exchange to arrive or batchTimeout to occur after {} ms.", batchTimeout);
                             exchangeEnqueuedCondition.await(batchTimeout, TimeUnit.MILLISECONDS);
                         }
@@ -359,7 +384,7 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
                             id = completionPredicateMatched.poll();
                         }
 
-                        if (id != null || !exchangeEnqueued) {
+                        if (id != null || !exchangeEnqueued.get()) {
                             if (id != null) {
                                 LOG.trace("Collecting exchanges to be aggregated triggered by completion predicate");
                             } else {
@@ -367,7 +392,7 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
                             }
                             drainQueueTo(collection, batchSize, id);
                         } else {
-                            exchangeEnqueued = false;
+                            exchangeEnqueued.set(false);
                             boolean drained = false;
                             while (isInBatchCompleted(queue.size())) {
                                 drained = true;
@@ -447,7 +472,7 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
                     }
                 }
                 queue.add(exchange);
-                exchangeEnqueued = true;
+                exchangeEnqueued.set(true);
                 exchangeEnqueuedCondition.signal();
             } finally {
                 queueLock.unlock();

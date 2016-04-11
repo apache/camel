@@ -32,7 +32,7 @@ public class FopEndpointTest extends CamelTestSupport {
 
     @Test
     public void generatePdfFromXslfoWithSpecificText() throws Exception {
-        Endpoint endpoint = context().getEndpoint("fop:application/pdf");
+        Endpoint endpoint = context().getEndpoint("fop:pdf");
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(FopHelper.decorateTextWithXSLFO("Test Content"));
@@ -46,7 +46,7 @@ public class FopEndpointTest extends CamelTestSupport {
     @Test
     public void specifyCustomUserConfigurationFile() throws Exception {
         FopEndpoint customConfiguredEndpoint = context()
-                .getEndpoint("fop:application/pdf?userConfigURL=file:src/test/data/conf/testcfg.xml",
+                .getEndpoint("fop:pdf?userConfigURL=file:src/test/data/conf/testcfg.xml",
                         FopEndpoint.class);
         float customSourceResolution = customConfiguredEndpoint.getFopFactory().getSourceResolution();
         assertEquals(96.0, customSourceResolution, 0.1);
@@ -55,7 +55,7 @@ public class FopEndpointTest extends CamelTestSupport {
     @Test
     public void specifyCustomUserConfigurationFileClasspath() throws Exception {
         FopEndpoint customConfiguredEndpoint = context()
-                .getEndpoint("fop:application/pdf?userConfigURL=myconf/testcfg.xml",
+                .getEndpoint("fop:pdf?userConfigURL=myconf/testcfg.xml",
                         FopEndpoint.class);
         float customSourceResolution = customConfiguredEndpoint.getFopFactory().getSourceResolution();
         assertEquals(96.0, customSourceResolution, 0.1);
@@ -63,7 +63,7 @@ public class FopEndpointTest extends CamelTestSupport {
 
     @Test
     public void setPDFRenderingMetadataPerDocument() throws Exception {
-        Endpoint endpoint = context().getEndpoint("fop:application/pdf");
+        Endpoint endpoint = context().getEndpoint("fop:pdf");
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("CamelFop.Render.Creator", "Test User");
@@ -77,7 +77,7 @@ public class FopEndpointTest extends CamelTestSupport {
 
     @Test
     public void encryptPdfWithUserPassword() throws Exception {
-        Endpoint endpoint = context().getEndpoint("fop:application/pdf");
+        Endpoint endpoint = context().getEndpoint("fop:pdf");
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("CamelFop.Encrypt.userPassword", "secret");
@@ -90,11 +90,11 @@ public class FopEndpointTest extends CamelTestSupport {
 
     @Test
     public void overridePdfOutputFormatToPlainText() throws Exception {
-        String defaultOutputFormat = "application/pdf";
+        String defaultOutputFormat = "pdf";
         Endpoint endpoint = context().getEndpoint("fop:" + defaultOutputFormat);
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, org.apache.xmlgraphics.util.MimeConstants.MIME_PLAIN_TEXT);
+        exchange.getIn().setHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, "txt");
         exchange.getIn().setBody(FopHelper.decorateTextWithXSLFO("Test Content"));
 
         producer.process(exchange);

@@ -22,6 +22,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +34,7 @@ import rx.functions.Func1;
 /**
  * An RX {@link Subscription} on a Camel {@link Endpoint}
  */
-public class EndpointSubscription<T> implements Subscription {
+public class EndpointSubscription<T> extends ServiceSupport implements Subscription {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointSubscription.class);
 
@@ -48,9 +50,15 @@ public class EndpointSubscription<T> implements Subscription {
 
         // lets create the consumer
         Processor processor = new ProcessorToObserver<T>(func, observer);
+        // must ensure the consumer is being executed in an unit of work so synchronization callbacks etc is invoked
+        CamelInternalProcessor internal = new CamelInternalProcessor(processor);
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
         try {
-            this.consumer = endpoint.createConsumer(processor);
-            ServiceHelper.startService(consumer);
+            // need to start endpoint before we create producer
+            ServiceHelper.startService(endpoint);
+            this.consumer = endpoint.createConsumer(internal);
+            // add as service so we ensure it gets stopped when CamelContext stops
+            endpoint.getCamelContext().addService(consumer, true, true);
         } catch (Exception e) {
             observer.onError(e);
         }
@@ -87,4 +95,15 @@ public class EndpointSubscription<T> implements Subscription {
         return observer;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(consumer);
+        unsubscribed.set(false);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(consumer);
+        unsubscribed.set(true);
+    }
 }

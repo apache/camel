@@ -31,6 +31,9 @@ public class ConsumerTemplateJmsSelectorTest extends CamelTestSupport {
 
     @Test
     public void testJmsSelector() throws Exception {
+        // must start CamelContext because use route builder is false
+        context.start();
+
         template.sendBodyAndHeader("activemq:foo", "Hello World", "foo", "123");
         template.sendBodyAndHeader("activemq:foo", "Bye World", "foo", "456");
 

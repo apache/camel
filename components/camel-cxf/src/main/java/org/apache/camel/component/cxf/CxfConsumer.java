@@ -172,7 +172,12 @@ public class CxfConsumer extends DefaultConsumer {
                     if (boi.getOperationInfo().isOneWay()) {
                         camelExchange.setPattern(ExchangePattern.InOnly);
                     }
+                } else {
+                    if (cxfEndpoint.getExchangePattern().equals(ExchangePattern.InOnly)) {
+                        camelExchange.setPattern(ExchangePattern.InOnly);
+                    }
                 }
+
                 
                 // set data format mode in Camel exchange
                 camelExchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);   

@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.cxf.common.message;
 
-import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -68,7 +69,7 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
         answer.put(org.apache.cxf.message.Message.ENCODING, enc);
         answer.put(org.apache.cxf.message.Message.QUERY_STRING, queryString);
         
-        Object request = camelMessage.getHeader(Exchange.HTTP_SERVLET_REQUEST);
+        HttpServletRequest request = (HttpServletRequest) camelMessage.getHeader(Exchange.HTTP_SERVLET_REQUEST);
         answer.put(CXF_HTTP_REQUEST, request);
         
         if (request != null) {
@@ -84,35 +85,19 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
         return answer;
     }
     
-    protected void setSecurityContext(Message cxfMessage, final Object request) {
-        try {
-            final Method getPrincipalMethod = request.getClass()
-                .getMethod("getUserPrincipal", new Class[] {});
-            final Method userInRoleMethod = request.getClass()
-                .getMethod("isUserInRole", new Class[] {String.class});
-            cxfMessage.put(SecurityContext.class, new SecurityContext() {
+    protected void setSecurityContext(Message cxfMessage, final HttpServletRequest request) {
+        cxfMessage.put(SecurityContext.class, new SecurityContext() {
 
-                public Principal getUserPrincipal() {
-                    try {
-                        return (Principal)getPrincipalMethod.invoke(request, new Object[] {});
-                    } catch (Throwable t) {
-                        return null;
-                    }
-                }
+            public Principal getUserPrincipal() {
+                return request.getUserPrincipal();
+            }
 
-                @Override
-                public boolean isUserInRole(String role) {
-                    try {
-                        return (Boolean)userInRoleMethod.invoke(request, new Object[] {role});
-                    } catch (Throwable t) {
-                        return false;
-                    }
-                }
+            @Override
+            public boolean isUserInRole(String role) {
+                return request.isUserInRole(role);
+            }
 
-            });
-        } catch (Throwable t) {
-            // not expected
-        }
+        });
     }
 
     public void propagateResponseHeadersToCamel(Message cxfMessage, Exchange exchange,

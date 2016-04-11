@@ -1,0 +1,36 @@
+[[Endpoint-Endpoints]]
+Endpoints
+~~~~~~~~~
+
+Camel supports the link:message-endpoint.html[Message Endpoint] pattern
+using the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html[Endpoint]
+interface. Endpoints are usually created by a
+link:component.html[Component] and Endpoints are usually referred to in
+the link:dsl.html[DSL] via their link:uris.html[URIs].
+
+From an Endpoint you can use the following methods
+
+* http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createProducer()[createProducer()]
+will create a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
+for sending message exchanges to the endpoint
+* http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createConsumer(org.apache.camel.Processor)[createConsumer()]
+implements the link:event-driven-consumer.html[Event Driven Consumer]
+pattern for consuming message exchanges from the endpoint via a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
+when creating a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Consumer.html[Consumer]
+* http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createPollingConsumer()[createPollingConsumer()]
+implements the link:polling-consumer.html[Polling Consumer] pattern for
+consuming message exchanges from the endpoint via a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/PollingConsumer.html[PollingConsumer]
+
+[[Endpoint-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:message-endpoint.html[Message Endpoint] pattern
+* link:uris.html[URIs]
+* link:writing-components.html[Writing Components]

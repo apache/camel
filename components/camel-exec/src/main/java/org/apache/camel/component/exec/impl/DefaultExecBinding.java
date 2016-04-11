@@ -29,7 +29,6 @@ import org.apache.camel.component.exec.ExecResult;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.apache.camel.component.exec.impl.ExecParseUtils.splitToWhiteSpaceSeparatedTokens;
 
 /**
@@ -55,8 +54,12 @@ public class DefaultExecBinding implements ExecBinding {
         boolean useStderrOnEmptyStdout = getAndRemoveHeader(exchange.getIn(), EXEC_USE_STDERR_ON_EMPTY_STDOUT, endpoint.isUseStderrOnEmptyStdout(), Boolean.class);
         InputStream input = exchange.getIn().getBody(InputStream.class);
 
-        // try to convert args to list at fist
-        List<String> argsList = exchange.getContext().getTypeConverter().convertTo(List.class, exchange, args);
+        // If the args is a list of strings already..
+        List<String> argsList = null;
+        if (isListOfStrings(args)) {
+            argsList = (List<String>) args;
+        }
+
         if (argsList == null) {
             // no we could not do that, then parse it as a string to a list
             String s = endpoint.getArgs();
@@ -70,6 +73,23 @@ public class DefaultExecBinding implements ExecBinding {
 
         File outFile = outFilePath == null ? null : new File(outFilePath);
         return new ExecCommand(cmd, argsList, dir, timeout, input, outFile, useStderrOnEmptyStdout);
+    }
+
+    private boolean isListOfStrings(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (!(o instanceof List)) {
+            return false;
+        }
+        @SuppressWarnings("rawtypes")
+        List argsList = (List)o;
+        for (Object s : argsList) {
+            if (s.getClass() != String.class) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void writeOutput(Exchange exchange, ExecResult result) {

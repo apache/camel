@@ -1,0 +1,267 @@
+[[Kafka-KafkaComponent]]
+Kafka Component
+~~~~~~~~~~~~~~~
+
+*Available as of Camel 2.13*
+
+The *kafka:* component is used for communicating with
+http://kafka.apache.org/[Apache Kafka] message broker.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-kafka</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+[[Kafka-Camel2.17ornewer]]
+Camel 2.17 or newer
++++++++++++++++++++
+
+Scala is no longer used, as we use the kafka java client.
+
+[[Kafka-Camel2.16orolder]]
+Camel 2.16 or older
++++++++++++++++++++
+
+And then the Scala libraries of choice. camel-kafka does not include
+that dependency, but assumes it is provided. For example to use Scala
+2.10.4 add:
+
+[source,xml]
+--------------------------------------------
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>2.10.4</version>
+    </dependency>
+--------------------------------------------
+
+[[Kafka-URIformat]]
+URI format
+^^^^^^^^^^
+
+[source,java]
+---------------------------
+kafka:server:port[?options]
+---------------------------
+
+ 
+
+[[Kafka-Options]]
+Options (Camel 2.16 or older)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+// component options: START
+The Kafka component has no options.
+// component options: END
+
+
+
+
+// endpoint options: START
+The Kafka component supports 71 endpoint options which are listed below:
+
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| brokers | common |  | String | *Required* This is for bootstrapping and the producer will only use it for getting metadata (topics partitions and replicas). The socket connections for sending the actual data will be established based on the broker information returned in the metadata. The format is host1:port1host2:port2 and the list can be a subset of brokers or a VIP pointing to a subset of brokers. This option is known as metadata.broker.list in the Kafka documentation.
+| bridgeEndpoint | common | false | boolean | If the option is true then KafkaProducer will ignore the KafkaConstants.TOPIC header setting of the inbound message.
+| clientId | common |  | String | The client id is a user-specified string sent in each request to help trace calls. It should logically identify the application making the request.
+| groupId | common |  | String | A string that uniquely identifies the group of consumer processes to which this consumer belongs. By setting the same group id multiple processes indicate that they are all part of the same consumer group.
+| partitioner | common | org.apache.kafka.clients.producer.internals.DefaultPartitioner | String | The partitioner class for partitioning messages amongst sub-topics. The default partitioner is based on the hash of the key.
+| topic | common |  | String | *Required* Name of the topic to use.
+| autoCommitEnable | consumer | true | Boolean | If true periodically commit to ZooKeeper the offset of messages already fetched by the consumer. This committed offset will be used when the process fails as the position from which the new consumer will begin.
+| autoCommitIntervalMs | consumer | 5000 | Integer | The frequency in ms that the consumer offsets are committed to zookeeper.
+| autoOffsetReset | consumer | latest | String | What to do when there is no initial offset in ZooKeeper or if an offset is out of range: smallest : automatically reset the offset to the smallest offset largest : automatically reset the offset to the largest offset fail: throw exception to the consumer
+| barrierAwaitTimeoutMs | consumer | 10000 | int | If the BatchingConsumerTask processes exchange exceed the batchSize it will wait for barrierAwaitTimeoutMs.
+| batchSize | consumer | 100 | int | The batchSize that the BatchingConsumerTask processes once.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| checkCrcs | consumer | true | Boolean | Automatically check the CRC32 of the records consumed. This ensures no on-the-wire or on-disk corruption to the messages occurred. This check adds some overhead so it may be disabled in cases seeking extreme performance.
+| consumerId | consumer |  | String | Generated automatically if not set.
+| consumerRequestTimeoutMs | consumer | 40000 | Integer | The configuration controls the maximum amount of time the client will wait for the response of a request. If the response is not received before the timeout elapses the client will resend the request if necessary or fail the request if retries are exhausted.
+| consumersCount | consumer | 1 | int | The number of consumers that connect to kafka server
+| consumerStreams | consumer | 10 | int | Number of concurrent consumers on the consumer
+| fetchMinBytes | consumer | 1024 | Integer | The minimum amount of data the server should return for a fetch request. If insufficient data is available the request will wait for that much data to accumulate before answering the request.
+| fetchWaitMaxMs | consumer | 500 | Integer | The maximum amount of time the server will block before answering the fetch request if there isn't sufficient data to immediately satisfy fetch.min.bytes
+| heartbeatIntervalMs | consumer | 3000 | Integer | The expected time between heartbeats to the consumer coordinator when using Kafka's group management facilities. Heartbeats are used to ensure that the consumer's session stays active and to facilitate rebalancing when new consumers join or leave the group. The value must be set lower than session.timeout.ms but typically should be set no higher than 1/3 of that value. It can be adjusted even lower to control the expected time for normal rebalances.
+| keyDeserializer | consumer | org.apache.kafka.common.serialization.StringDeserializer | String | Deserializer class for key that implements the Deserializer interface.
+| maxPartitionFetchBytes | consumer | 1048576 | Integer | The maximum amount of data per-partition the server will return. The maximum total memory used for a request will be partitions max.partition.fetch.bytes. This size must be at least as large as the maximum message size the server allows or else it is possible for the producer to send messages larger than the consumer can fetch. If that happens the consumer can get stuck trying to fetch a large message on a certain partition.
+| partitionAssignor | consumer | org.apache.kafka.clients.consumer.RangeAssignor | String | The class name of the partition assignment strategy that the client will use to distribute partition ownership amongst consumer instances when group management is used
+| seekToBeginning | consumer | false | boolean | If the option is true then KafkaConsumer will read from beginning on startup.
+| sessionTimeoutMs | consumer | 30000 | Integer | The timeout used to detect failures when using Kafka's group management facilities.
+| valueDeserializer | consumer | org.apache.kafka.common.serialization.StringDeserializer | String | Deserializer class for value that implements the Deserializer interface.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bufferMemorySize | producer | 33554432 | Integer | The total bytes of memory the producer can use to buffer records waiting to be sent to the server. If records are sent faster than they can be delivered to the server the producer will either block or throw an exception based on the preference specified by block.on.buffer.full.This setting should correspond roughly to the total memory the producer will use but is not a hard bound since not all memory the producer uses is used for buffering. Some additional memory will be used for compression (if compression is enabled) as well as for maintaining in-flight requests.
+| compressionCodec | producer | none | String | This parameter allows you to specify the compression codec for all data generated by this producer. Valid values are none gzip and snappy.
+| connectionMaxIdleMs | producer | 540000 | Integer | Close idle connections after the number of milliseconds specified by this config.
+| kerberosBeforeReloginMinTime | producer | 60000 | Integer | Login thread sleep time between refresh attempts.
+| kerberosInitCmd | producer | /usr/bin/kinit | String | Kerberos kinit command path. Default is /usr/bin/kinit
+| kerberosRenewJitter | producer | 0.05 | Double | Percentage of random jitter added to the renewal time.
+| kerberosRenewWindowFactor | producer | 0.8 | Double | Login thread will sleep until the specified window factor of time from last refresh to ticket's expiry has been reached at which time it will try to renew the ticket.
+| keySerializerClass | producer |  | String | The serializer class for keys (defaults to the same as for messages if nothing is given).
+| lingerMs | producer | 0 | Integer | The producer groups together any records that arrive in between request transmissions into a single batched request. Normally this occurs only under load when records arrive faster than they can be sent out. However in some circumstances the client may want to reduce the number of requests even under moderate load. This setting accomplishes this by adding a small amount of artificial delaythat is rather than immediately sending out a record the producer will wait for up to the given delay to allow other records to be sent so that the sends can be batched together. This can be thought of as analogous to Nagle's algorithm in TCP. This setting gives the upper bound on the delay for batching: once we get batch.size worth of records for a partition it will be sent immediately regardless of this setting however if we have fewer than this many bytes accumulated for this partition we will 'linger' for the specified time waiting for more records to show up. This setting defaults to 0 (i.e. no delay). Setting linger.ms=5 for example would have the effect of reducing the number of requests sent but would add up to 5ms of latency to records sent in the absense of load.
+| maxBlockMs | producer | 60000 | Integer | The configuration controls how long sending to kafka will block. These methods can be blocked for multiple reasons. For e.g: buffer full metadata unavailable.This configuration imposes maximum limit on the total time spent in fetching metadata serialization of key and value partitioning and allocation of buffer memory when doing a send(). In case of partitionsFor() this configuration imposes a maximum time threshold on waiting for metadata
+| maxInFlightRequest | producer | 5 | Integer | The maximum number of unacknowledged requests the client will send on a single connection before blocking. Note that if this setting is set to be greater than 1 and there are failed sends there is a risk of message re-ordering due to retries (i.e. if retries are enabled).
+| maxRequestSize | producer | 1048576 | Integer | The maximum size of a request. This is also effectively a cap on the maximum record size. Note that the server has its own cap on record size which may be different from this. This setting will limit the number of record batches the producer will send in a single request to avoid sending huge requests.
+| metadataMaxAgeMs | producer | 300000 | Integer | The period of time in milliseconds after which we force a refresh of metadata even if we haven't seen any partition leadership changes to proactively discover any new brokers or partitions.
+| metricReporters | producer |  | String | A list of classes to use as metrics reporters. Implementing the MetricReporter interface allows plugging in classes that will be notified of new metric creation. The JmxReporter is always included to register JMX statistics.
+| metricsSampleWindowMs | producer | 30000 | Integer | The number of samples maintained to compute metrics.
+| noOfMetricsSample | producer | 2 | Integer | The number of samples maintained to compute metrics.
+| producerBatchSize | producer | 16384 | Integer | The producer will attempt to batch records together into fewer requests whenever multiple records are being sent to the same partition. This helps performance on both the client and the server. This configuration controls the default batch size in bytes. No attempt will be made to batch records larger than this size.Requests sent to brokers will contain multiple batches one for each partition with data available to be sent.A small batch size will make batching less common and may reduce throughput (a batch size of zero will disable batching entirely). A very large batch size may use memory a bit more wastefully as we will always allocate a buffer of the specified batch size in anticipation of additional records.
+| queueBufferingMaxMessages | producer | 10000 | Integer | The maximum number of unsent messages that can be queued up the producer when using async mode before either the producer must be blocked or data must be dropped.
+| receiveBufferBytes | producer | 32768 | Integer | The size of the TCP receive buffer (SO_RCVBUF) to use when reading data.
+| reconnectBackoffMs | producer | 50 | Integer | The amount of time to wait before attempting to reconnect to a given host. This avoids repeatedly connecting to a host in a tight loop. This backoff applies to all requests sent by the consumer to the broker.
+| requestRequiredAcks | producer | 1 | Integer | The number of acknowledgments the producer requires the leader to have received before considering a request complete. This controls the durability of records that are sent. The following settings are common: acks=0 If set to zero then the producer will not wait for any acknowledgment from the server at all. The record will be immediately added to the socket buffer and considered sent. No guarantee can be made that the server has received the record in this case and the retries configuration will not take effect (as the client won't generally know of any failures). The offset given back for each record will always be set to -1. acks=1 This will mean the leader will write the record to its local log but will respond without awaiting full acknowledgement from all followers. In this case should the leader fail immediately after acknowledging the record but before the followers have replicated it then the record will be lost. acks=all This means the leader will wait for the full set of in-sync replicas to acknowledge the record. This guarantees that the record will not be lost as long as at least one in-sync replica remains alive. This is the strongest available guarantee.
+| requestTimeoutMs | producer | 30000 | Integer | The amount of time the broker will wait trying to meet the request.required.acks requirement before sending back an error to the client.
+| retries | producer | 0 | Integer | Setting a value greater than zero will cause the client to resend any record whose send fails with a potentially transient error. Note that this retry is no different than if the client resent the record upon receiving the error. Allowing retries will potentially change the ordering of records because if two records are sent to a single partition and the first fails and is retried but the second succeeds then the second record may appear first.
+| retryBackoffMs | producer | 100 | Integer | Before each retry the producer refreshes the metadata of relevant topics to see if a new leader has been elected. Since leader election takes a bit of time this property specifies the amount of time that the producer waits before refreshing the metadata.
+| saslKerberosServiceName | producer |  | String | The Kerberos principal name that Kafka runs as. This can be defined either in Kafka's JAAS config or in Kafka's config.
+| securityProtocol | producer | PLAINTEXT | String | Protocol used to communicate with brokers. Currently only PLAINTEXT and SSL are supported.
+| sendBufferBytes | producer | 131072 | Integer | Socket write buffer size
+| serializerClass | producer |  | String | The serializer class for messages. The default encoder takes a byte and returns the same byte. The default class is kafka.serializer.DefaultEncoder
+| sslCipherSuites | producer |  | String | A list of cipher suites. This is a named combination of authentication encryption MAC and key exchange algorithm used to negotiate the security settings for a network connection using TLS or SSL network protocol.By default all the available cipher suites are supported.
+| sslEnabledProtocols | producer | TLSv1.2,TLSv1.1,TLSv1 | String | The list of protocols enabled for SSL connections. TLSv1.2 TLSv1.1 and TLSv1 are enabled by default.
+| sslEndpointAlgorithm | producer |  | String | The endpoint identification algorithm to validate server hostname using server certificate.
+| sslKeymanagerAlgorithm | producer | SunX509 | String | The algorithm used by key manager factory for SSL connections. Default value is the key manager factory algorithm configured for the Java Virtual Machine.
+| sslKeyPassword | producer |  | String | The password of the private key in the key store file. This is optional for client.
+| sslKeystoreLocation | producer |  | String | The location of the key store file. This is optional for client and can be used for two-way authentication for client.
+| sslKeystorePassword | producer |  | String | The store password for the key store file.This is optional for client and only needed if ssl.keystore.location is configured.
+| sslKeystoreType | producer | JKS | String | The file format of the key store file. This is optional for client. Default value is JKS
+| sslProtocol | producer | TLS | String | The SSL protocol used to generate the SSLContext. Default setting is TLS which is fine for most cases. Allowed values in recent JVMs are TLS TLSv1.1 and TLSv1.2. SSL SSLv2 and SSLv3 may be supported in older JVMs but their usage is discouraged due to known security vulnerabilities.
+| sslProvider | producer |  | String | The name of the security provider used for SSL connections. Default value is the default security provider of the JVM.
+| sslTrustmanagerAlgorithm | producer | PKIX | String | The algorithm used by trust manager factory for SSL connections. Default value is the trust manager factory algorithm configured for the Java Virtual Machine.
+| sslTruststoreLocation | producer |  | String | The location of the trust store file.
+| sslTruststorePassword | producer |  | String | The password for the trust store file.
+| sslTruststoreType | producer | JKS | String | The file format of the trust store file. Default value is JKS.
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+// endpoint options: END
+
+
+
+For more information about Producer/Consumer configuration:
+
+http://kafka.apache.org/documentation.html#newconsumerconfigs[http://kafka.apache.org/documentation.html#newconsumerconfigs]
+http://kafka.apache.org/documentation.html#producerconfigs[http://kafka.apache.org/documentation.html#producerconfigs]
+
+[[Kafka-Samples]]
+Samples
+^^^^^^^
+
+[[Kafka-Camel2.16orolder.1]]
+Camel 2.16 or older
++++++++++++++++++++
+
+Consuming messages:
+
+[source,java]
+------------------------------------------------------------------------------------------------------------------
+from("kafka:localhost:9092?topic=test&zookeeperHost=localhost&zookeeperPort=2181&groupId=group1").to("log:input");
+------------------------------------------------------------------------------------------------------------------
+
+Producing messages:
+
+See unit tests of camel-kafka for more examples
+
+[[Kafka-Camel2.17ornewer]]
+Camel 2.17 or newer
++++++++++++++++++++
+
+Consuming messages:
+
+[source,java]
+-------------------------------------------------------------------------------------------------
+from("kafka:localhost:9092?topic=test&groupId=testing&autoOffsetReset=earliest&consumersCount=1")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange)
+                                    throws Exception {
+                                String messageKey = "";
+                                if (exchange.getIn() != null) {
+                                    Message message = exchange.getIn();
+                                    Integer partitionId = (Integer) message
+                                            .getHeader(KafkaConstants.PARTITION);
+                                    String topicName = (String) message
+                                            .getHeader(KafkaConstants.TOPIC);
+                                    if (message.getHeader(KafkaConstants.KEY) != null)
+                                        messageKey = (String) message
+                                                .getHeader(KafkaConstants.KEY);
+                                    Object data = message.getBody();
+
+
+                                    System.out.println("topicName :: "
+                                            + topicName + " partitionId :: "
+                                            + partitionId + " messageKey :: "
+                                            + messageKey + " message :: "
+                                            + data + "\n");
+                                }
+                            }
+                        }).to("log:input");
+-------------------------------------------------------------------------------------------------
+
+ 
+
+Producing messages:
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------
+from("direct:start").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setBody("Test Message from Camel Kafka Component Final",String.class);
+                        exchange.getIn().setHeader(KafkaConstants.PARTITION_KEY, 0);
+                        exchange.getIn().setHeader(KafkaConstants.KEY, "1");
+                    }
+                }).to("kafka:localhost:9092?topic=test");
+---------------------------------------------------------------------------------------------------------------
+
+ 
+
+[[Kafka-Endpoints]]
+Endpoints
+~~~~~~~~~
+
+Camel supports the link:message-endpoint.html[Message Endpoint] pattern
+using the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html[Endpoint]
+interface. Endpoints are usually created by a
+link:component.html[Component] and Endpoints are usually referred to in
+the link:dsl.html[DSL] via their link:uris.html[URIs].
+
+From an Endpoint you can use the following methods
+
+* http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createProducer()[createProducer()]
+will create a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
+for sending message exchanges to the endpoint
+
+* http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createConsumer(org.apache.camel.Processor)[createConsumer()]
+implements the link:event-driven-consumer.html[Event Driven Consumer]
+pattern for consuming message exchanges from the endpoint via a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
+when creating a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Consumer.html[Consumer]
+
+* http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createPollingConsumer()[createPollingConsumer()]
+implements the link:polling-consumer.html[Polling Consumer] pattern for
+consuming message exchanges from the endpoint via a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/PollingConsumer.html[PollingConsumer]
+
+[[Kafka-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:message-endpoint.html[Message Endpoint] pattern
+* link:uris.html[URIs]
+* link:writing-components.html[Writing Components]
+

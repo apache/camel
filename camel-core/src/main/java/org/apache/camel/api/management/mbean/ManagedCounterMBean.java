@@ -26,6 +26,9 @@ public interface ManagedCounterMBean {
     @ManagedOperation(description = "Reset counters")
     void reset();
 
+    @ManagedAttribute(description = "Timestamp when the stats was initially started")
+    Date getStartTimestamp();
+
     @ManagedAttribute(description = "Timestamp when the stats was last reset or initially started")
     Date getResetTimestamp();
 

@@ -17,6 +17,8 @@
 package org.apache.camel.component.rest;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.rest.CollectionFormat;
+import org.apache.camel.model.rest.RestParamType;
 
 public class FromRestExplicitComponentTest extends FromRestGetTest {
 
@@ -32,7 +34,18 @@ public class FromRestExplicitComponentTest extends FromRestGetTest {
                         .get().to("direct:hello");
 
                 rest("dummy-rest").path("/say/bye")
-                        .get().consumes("application/json").to("direct:bye")
+                        .get().consumes("application/json")
+                        .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues("1", "2", "3", "4")
+                        .defaultValue("1").name("header_count").required(true)
+                        .endParam().
+                        param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
+                        .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
+                        .endParam()
+                        .responseMessage().code(300).message("test msg").responseModel(Integer.class)
+                            .header("rate").description("Rate limit").dataType("integer").endHeader()
+                        .endResponseMessage()
+                        .responseMessage().code("error").message("does not work").endResponseMessage()
+                        .to("direct:bye")
                         .post().to("mock:update");
 
                 from("direct:hello")
@@ -40,6 +53,7 @@ public class FromRestExplicitComponentTest extends FromRestGetTest {
 
                 from("direct:bye")
                     .transform().constant("Bye World");
+
             }
         };
     }

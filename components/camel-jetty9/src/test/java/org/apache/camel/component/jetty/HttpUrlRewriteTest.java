@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -38,7 +39,7 @@ public class HttpUrlRewriteTest extends BaseJettyTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        String response = template.requestBody("http://localhost:" + port1 + "/foo?phrase=Bye", "Camel", String.class);
+        String response = template.requestBodyAndHeader("http://localhost:" + port1 + "/foo?phrase=Bye", "Camel", Exchange.HTTP_METHOD, "POST", String.class);
         assertEquals("Get a wrong response", "Bye Camel", response);
 
         assertMockEndpointsSatisfied();

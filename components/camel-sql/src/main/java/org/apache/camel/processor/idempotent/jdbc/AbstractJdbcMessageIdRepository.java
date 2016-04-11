@@ -94,6 +94,14 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
      * @return int number of rows deleted
      */
     protected abstract int delete(final T key);
+    
+    /**
+     * Operations that deletes all the rows
+     *
+     * @param key  the key
+     * @return int number of rows deleted
+     */
+    protected abstract int delete();
 
     /**
      * Creates the transaction template
@@ -163,6 +171,17 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
             }
         });
         return rc.booleanValue();
+    }
+    
+    @ManagedOperation(description = "Clear the store")
+    @Override
+    public void clear() {
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            public Boolean doInTransaction(TransactionStatus status) {
+                delete();
+                return Boolean.TRUE;
+            }
+        });
     }
 
     @Override

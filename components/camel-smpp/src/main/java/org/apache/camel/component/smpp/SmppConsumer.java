@@ -129,10 +129,11 @@ public class SmppConsumer extends DefaultConsumer {
             try {
                 Thread.sleep(1000);
                 session.unbindAndClose();
+                // clear session as we closed it successfully
+                session = null;
             } catch (Exception e) {
-                LOG.warn("Could not close session " + session);
+                LOG.warn("Cannot close session due " + e.getMessage());
             }
-            session = null;
         }
     }
 
@@ -147,6 +148,7 @@ public class SmppConsumer extends DefaultConsumer {
                         try {
                             Thread.sleep(initialReconnectDelay);
                         } catch (InterruptedException e) {
+                            // ignore
                         }
 
                         int attempt = 0;

@@ -18,17 +18,10 @@ package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.RouteInfoCommand;
 import org.apache.camel.commands.StringEscape;
-import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
 @Command(scope = "camel", name = "route-info", description = "Display information about a Camel route.")
-public class RouteInfo extends CamelCommandSupport {
-
-    @Argument(index = 0, name = "route", description = "The Camel route ID.", required = true, multiValued = false)
-    String route;
-
-    @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
-    String context;
+public class RouteInfo extends AbstractRouteCommand {
 
     private StringEscape stringEscape;
 

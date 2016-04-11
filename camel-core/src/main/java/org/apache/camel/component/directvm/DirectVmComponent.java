@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -41,6 +42,9 @@ public class DirectVmComponent extends UriEndpointComponent {
     private boolean block;
     @Metadata(defaultValue = "30000")
     private long timeout = 30000L;
+    private HeaderFilterStrategy headerFilterStrategy;
+    @Metadata(defaultValue = "true")
+    private Boolean propagateProperties = Boolean.TRUE;
 
     public DirectVmComponent() {
         super(DirectVmEndpoint.class);
@@ -65,6 +69,7 @@ public class DirectVmComponent extends UriEndpointComponent {
         answer.setBlock(block);
         answer.setTimeout(timeout);
         answer.configureProperties(parameters);
+        setProperties(answer, parameters);
         return answer;
     }
 
@@ -132,4 +137,31 @@ public class DirectVmComponent extends UriEndpointComponent {
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    /**
+     * Sets a {@link HeaderFilterStrategy} that will only be applied on producer endpoints (on both directions: request and response).
+     * <p>Default value: none.</p>
+     * @param headerFilterStrategy
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public boolean isPropagateProperties() {
+        return propagateProperties;
+    }
+
+    /**
+     * Whether to propagate or not properties from the producer side to the consumer side, and viceversa.
+     * <p>Default value: true.</p>
+     * @param propagateProperties
+     */
+    public void setPropagateProperties(boolean propagateProperties) {
+        this.propagateProperties = propagateProperties;
+    }
+
 }

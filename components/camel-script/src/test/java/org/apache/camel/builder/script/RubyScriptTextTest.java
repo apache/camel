@@ -54,7 +54,7 @@ public class RubyScriptTextTest extends CamelTestSupport {
             template.sendBody("seda:jruby", "BODY" + i);
         }
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
 
     @Test
@@ -77,6 +77,6 @@ public class RubyScriptTextTest extends CamelTestSupport {
             template.sendBody("seda:jruby", "BODY" + i);
         }
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
 }

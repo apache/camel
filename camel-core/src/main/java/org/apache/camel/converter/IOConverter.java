@@ -496,7 +496,7 @@ public final class IOConverter {
          * @param in file to read
          * @param charset character set to use
          */
-        public EncodingFileReader(FileInputStream in, String charset)
+        EncodingFileReader(FileInputStream in, String charset)
             throws FileNotFoundException, UnsupportedEncodingException {
             super(in, charset);
             this.in = in;
@@ -523,7 +523,7 @@ public final class IOConverter {
          * @param out file to write
          * @param charset character set to use
          */
-        public EncodingFileWriter(FileOutputStream out, String charset)
+        EncodingFileWriter(FileOutputStream out, String charset)
             throws FileNotFoundException, UnsupportedEncodingException {
             super(out, charset);
             this.out = out;

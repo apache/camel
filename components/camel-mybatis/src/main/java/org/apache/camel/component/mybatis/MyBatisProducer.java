@@ -227,14 +227,18 @@ public class MyBatisProducer extends DefaultProducer {
 
     private void doProcessResult(Exchange exchange, Object result, SqlSession session) {
         final String outputHeader = getEndpoint().getOutputHeader();
-        if (endpoint.getStatementType() == StatementType.SelectList || endpoint.getStatementType() == StatementType.SelectOne) {
-            Message answer = exchange.getIn();
-            if (ExchangeHelper.isOutCapable(exchange)) {
-                answer = exchange.getOut();
-                // preserve headers
-                answer.getHeaders().putAll(exchange.getIn().getHeaders());
-            }
+        Message answer = exchange.getIn();
 
+        if (ExchangeHelper.isOutCapable(exchange)) {
+            answer = exchange.getOut();
+            // preserve headers
+            answer.getHeaders().putAll(exchange.getIn().getHeaders());
+            if (outputHeader != null) {
+                //if we put the MyBatis result into a header we should preserve the body as well
+                answer.setBody(exchange.getIn().getBody());
+            }
+        }
+        if (endpoint.getStatementType() == StatementType.SelectList || endpoint.getStatementType() == StatementType.SelectOne) {
             // we should not set the body if its a stored procedure as the result is already in its OUT parameter
             MappedStatement ms = session.getConfiguration().getMappedStatement(statement);
             if (ms != null && ms.getStatementType() == org.apache.ibatis.mapping.StatementType.CALLABLE) {
@@ -265,16 +269,11 @@ public class MyBatisProducer extends DefaultProducer {
                 }
             }
 
-            answer.setHeader(MyBatisConstants.MYBATIS_STATEMENT_NAME, statement);
         } else {
-            Message msg = exchange.getIn();
-            if (outputHeader != null) {
-                msg.setHeader(outputHeader, result);
-            } else {
-                msg.setHeader(MyBatisConstants.MYBATIS_RESULT, result);
-            }
-            msg.setHeader(MyBatisConstants.MYBATIS_STATEMENT_NAME, statement);
+            final String headerName = (outputHeader != null) ? outputHeader : MyBatisConstants.MYBATIS_RESULT;
+            answer.setHeader(headerName, result);
         }
+        answer.setHeader(MyBatisConstants.MYBATIS_STATEMENT_NAME, statement);
     }
 
     @Override
@@ -290,5 +289,5 @@ public class MyBatisProducer extends DefaultProducer {
             return exchange.getIn().getBody();
         }
     }
-    
+
 }

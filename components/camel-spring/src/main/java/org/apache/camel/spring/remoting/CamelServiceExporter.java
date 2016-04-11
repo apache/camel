@@ -20,10 +20,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -97,14 +99,19 @@ public class CamelServiceExporter extends RemoteExporter implements Initializing
         notNull(getService(), "service");
         Object proxy = getProxyForService();
 
-        consumer = endpoint.createConsumer(new BeanProcessor(proxy, camelContext));
-        consumer.start();
+        try {
+            // need to start endpoint before we create consumer
+            ServiceHelper.startService(endpoint);
+            consumer = endpoint.createConsumer(new BeanProcessor(proxy, camelContext));
+            // add and start consumer
+            camelContext.addService(consumer, true, true);
+        } catch (Exception e) {
+            throw new FailedToCreateConsumerException(endpoint, e);
+        }
     }
 
     public void destroy() throws Exception {
-        if (consumer != null) {
-            consumer.stop();
-        }
+        // we let CamelContext manage the lifecycle of the consumer and shut it down when Camel stops
     }
 
 }

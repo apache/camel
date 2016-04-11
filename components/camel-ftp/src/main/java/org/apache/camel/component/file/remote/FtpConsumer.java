@@ -34,10 +34,38 @@ import org.apache.commons.net.ftp.FTPFile;
 public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     protected String endpointPath;
+   
+    private transient String ftpConsumerToString;
 
     public FtpConsumer(RemoteFileEndpoint<FTPFile> endpoint, Processor processor, RemoteFileOperations<FTPFile> fileOperations) {
         super(endpoint, processor, fileOperations);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // turn off scheduler first, so autoCreate is handled before scheduler starts
+        boolean startScheduler = isStartScheduler();
+        setStartScheduler(false);
+        try {
+            super.doStart();
+            if (endpoint.isAutoCreate()) {
+                log.debug("Auto creating directory: {}", endpoint.getConfiguration().getDirectory());
+                try {
+                    connectIfNecessary();
+                    operations.buildDirectory(endpoint.getConfiguration().getDirectory(), true);
+                } catch (GenericFileOperationFailedException e) {
+                    // log a WARN as we want to start the consumer.
+                    log.warn("Error auto creating directory: " + endpoint.getConfiguration().getDirectory()
+                            + " due " + e.getMessage() + ". This exception is ignored.", e);
+                }
+            }
+        } finally {
+            if (startScheduler) {
+                setStartScheduler(true);
+                startScheduler();
+            }
+        }
     }
 
     @Override
@@ -237,6 +265,9 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     @Override
     public String toString() {
-        return "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (ftpConsumerToString == null) {
+            ftpConsumerToString = "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return ftpConsumerToString;
     }
 }

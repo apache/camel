@@ -38,7 +38,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  * @version 
  */
 // START SNIPPET: example
-
+// tag::example[]
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {FilterTest.ContextConfig.class}, loader = CamelSpringDelegatingTestContextLoader.class)
 public class FilterTest extends AbstractJUnit4SpringContextTests {
@@ -83,5 +83,6 @@ public class FilterTest extends AbstractJUnit4SpringContextTests {
         }
     }
 }
+// end::example[]
 // END SNIPPET: example
 

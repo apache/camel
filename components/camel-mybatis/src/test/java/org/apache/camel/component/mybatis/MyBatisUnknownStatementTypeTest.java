@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mybatis;
 
-import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -39,9 +38,9 @@ public class MyBatisUnknownStatementTypeTest extends CamelTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateProducerException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("statementType must be specified on: Endpoint[mybatis://selectAllAccounts]", e.getCause().getMessage());
+        } catch (Exception e) {
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            assertEquals("statementType must be specified on: Endpoint[mybatis://selectAllAccounts]", e.getCause().getCause().getMessage());
         }
     }
 

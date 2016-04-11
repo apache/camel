@@ -38,8 +38,8 @@ public class RestletRouteBuilderAuthTest extends CamelSpringTestSupport {
         headers.put(RestletConstants.RESTLET_PASSWORD, "foo");
         headers.put("id", id);
         
-        String response = (String)template.requestBodyAndHeaders(
-            "direct:start-auth", "<order foo='1'/>", headers);
+        String response = template.requestBodyAndHeaders(
+            "direct:start-auth", "<order foo='1'/>", headers, String.class);
         // END SNIPPET: auth_request
 
         assertEquals("received [<order foo='1'/>] as an order id = " + id, response);

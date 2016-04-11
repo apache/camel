@@ -32,11 +32,14 @@ public class KafkaComponent extends UriEndpointComponent {
     }
 
     @Override
-    protected KafkaEndpoint createEndpoint(String uri,
-                                           String remaining,
-                                           Map<String, Object> params) throws Exception {
-        KafkaEndpoint endpoint = new KafkaEndpoint(uri, remaining, this);
+    protected KafkaEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {
+        KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
+        String brokers = remaining.split("\\?")[0];
+        if (brokers != null) {
+            endpoint.getConfiguration().setBrokers(brokers);
+        }
         setProperties(endpoint, params);
         return endpoint;
     }
+
 }

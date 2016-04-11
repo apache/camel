@@ -80,6 +80,11 @@ public class ValueBuilder implements Expression, Predicate {
         return onNewPredicate(PredicateBuilder.isEqualTo(expression, right));
     }
 
+    public Predicate isEqualToIgnoreCase(Object value) {
+        Expression right = asExpression(value);
+        return onNewPredicate(PredicateBuilder.isEqualToIgnoreCase(expression, right));
+    }
+
     public Predicate isLessThan(Object value) {
         Expression right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isLessThan(expression, right));

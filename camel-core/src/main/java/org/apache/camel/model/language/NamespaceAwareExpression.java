@@ -61,11 +61,13 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
     @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
         configureNamespaceAware(expression);
+        super.configureExpression(camelContext, expression);
     }
 
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
         configureNamespaceAware(predicate);
+        super.configurePredicate(camelContext, predicate);
     }
 
     protected void configureNamespaceAware(Object builder) {

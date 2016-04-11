@@ -219,7 +219,7 @@ public class ZooKeeperElection {
              * status changes. This will require enhancing the consumer to allow
              * custom operation lists.
              */
-            from(zep).id("election-route-" + candidateName.substring(0, 8)).sort(body(), comparator).process(new Processor() {
+            from(zep).id("election-route-" + candidateName).sort(body(), comparator).process(new Processor() {
                 @Override
                 public void process(Exchange e) throws Exception {
                     @SuppressWarnings("unchecked")

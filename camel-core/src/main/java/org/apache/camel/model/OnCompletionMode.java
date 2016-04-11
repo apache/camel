@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType
-@XmlEnum(String.class)
+@XmlEnum
 public enum OnCompletionMode {
 
     AfterConsumer, BeforeConsumer

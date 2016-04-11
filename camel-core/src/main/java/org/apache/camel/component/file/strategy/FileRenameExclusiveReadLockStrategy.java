@@ -49,18 +49,40 @@ public class FileRenameExclusiveReadLockStrategy extends GenericFileRenameExclus
     }
 
     @Override
-    public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
-                                         GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         // must call marker first
         try {
             if (markerFile) {
-                marker.releaseExclusiveReadLock(operations, file, exchange);
+                marker.releaseExclusiveReadLockOnAbort(operations, file, exchange);
             }
         } finally {
-            super.releaseExclusiveReadLock(operations, file, exchange);
+            super.releaseExclusiveReadLockOnAbort(operations, file, exchange);
         }
     }
 
+    @Override
+    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        // must call marker first
+        try {
+            if (markerFile) {
+                marker.releaseExclusiveReadLockOnRollback(operations, file, exchange);
+            }
+        } finally {
+            super.releaseExclusiveReadLockOnRollback(operations, file, exchange);
+        }
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        // must call marker first
+        try {
+            if (markerFile) {
+                marker.releaseExclusiveReadLockOnCommit(operations, file, exchange);
+            }
+        } finally {
+            super.releaseExclusiveReadLockOnCommit(operations, file, exchange);
+        }
+    }
 
     @Override
     public void setMarkerFiler(boolean markerFile) {

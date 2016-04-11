@@ -45,14 +45,15 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.GZIPHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.MessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultAhcBinding implements AhcBinding {
 
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    protected HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
 
-    @Override
     public Request prepareRequest(AhcEndpoint endpoint, Exchange exchange) throws CamelExchangeException {
         if (endpoint.isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
@@ -125,6 +126,11 @@ public class DefaultAhcBinding implements AhcBinding {
                 Object data = in.getBody();
                 if (data != null) {
                     if (contentType != null && AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
+
+                        if (!endpoint.getComponent().isAllowJavaSerializedObject()) {
+                            throw new CamelExchangeException("Content-type " + AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed", exchange);
+                        }
+
                         // serialized java object
                         Serializable obj = in.getMandatoryBody(Serializable.class);
                         // write object to output stream
@@ -185,8 +191,12 @@ public class DefaultAhcBinding implements AhcBinding {
 
     @Override
     public void onStatusReceived(AhcEndpoint endpoint, Exchange exchange, HttpResponseStatus responseStatus) throws Exception {
-        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+        // preserve headers from in by copying any non existing headers
+        // to avoid overriding existing headers with old values
+        // Just filter the http protocol headers 
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), httpProtocolHeaderFilterStrategy, false);
         exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, responseStatus.getStatusCode());
+        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_TEXT, responseStatus.getStatusText());
     }
 
     @Override
@@ -223,9 +233,12 @@ public class DefaultAhcBinding implements AhcBinding {
         }
 
         Object body = is;
-        // if content type is a serialized java object then de-serialize it back to a Java object
+        // if content type is a serialized java object then de-serialize it back to a Java object but only if its allowed
+        // an exception can also be transffered as java object
         if (contentType != null && contentType.equals(AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
-            body = AhcHelper.deserializeJavaObjectFromStream(is);
+            if (endpoint.getComponent().isAllowJavaSerializedObject() || endpoint.isTransferException()) {
+                body = AhcHelper.deserializeJavaObjectFromStream(is);
+            }
         }
 
         if (!endpoint.isThrowExceptionOnFailure()) {

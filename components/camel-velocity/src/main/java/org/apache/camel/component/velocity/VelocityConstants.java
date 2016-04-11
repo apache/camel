@@ -24,8 +24,10 @@ public final class VelocityConstants {
     public static final String VELOCITY_RESOURCE_URI = "CamelVelocityResourceUri";
 
     public static final String VELOCITY_TEMPLATE = "CamelVelocityTemplate";
-    
+
     public static final String VELOCITY_CONTEXT = "CamelVelocityContext";
+
+    public static final String VELOCITY_SUPPLEMENTAL_CONTEXT = "CamelVelocitySupplementalContext";
 
     private VelocityConstants() {
         // Utility class

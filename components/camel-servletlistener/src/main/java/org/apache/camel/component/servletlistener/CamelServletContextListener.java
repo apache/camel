@@ -119,11 +119,7 @@ public abstract class CamelServletContextListener<R extends Registry> implements
                 throw new RuntimeException("Error creating CamelContextLifecycle class with name " + lifecycle, e);
             }
         }
-        // just log if we could not use all the parameters, as they may be used by others
-        if (!map.isEmpty()) {
-            LOG.info("There are {} ServletContext init parameters, unknown to Camel. Maybe they are used by other frameworks? [{}]", map.size(), map);
-        }
-
+        
         try {
             if (camelContextLifecycle != null) {
                 camelContextLifecycle.beforeAddRoutes(camelContext, registry);
@@ -166,6 +162,11 @@ public abstract class CamelServletContextListener<R extends Registry> implements
             } else {
                 throw new IllegalArgumentException("Unsupported route: " + route);
             }
+        }
+        
+        // just log if we could not use all the parameters, as they may be used by others
+        if (!map.isEmpty()) {
+            LOG.info("There are {} ServletContext init parameters, unknown to Camel. Maybe they are used by other frameworks? [{}]", map.size(), map);
         }
 
         try {
@@ -416,7 +417,7 @@ public abstract class CamelServletContextListener<R extends Registry> implements
                             // XML resource from classpath or file system
                             InputStream is = null;
                             try {
-                                is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), value);
+                                is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, value);
                                 target = camelContext.loadRoutesDefinition(is);
                             } catch (Exception e) {
                                 throw new RuntimeException("Error loading routes from resource: " + value, e);

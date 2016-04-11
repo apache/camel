@@ -29,11 +29,11 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain; charset=\"iso-8859-1\"");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, "iso-8859-1");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://0.0.0.0:" + getPort() + "/foo");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/foo");
         getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
 
         byte[] data = "Hello World".getBytes(Charset.forName("iso-8859-1"));
-        String out = template.requestBodyAndHeader("netty4-http:http://0.0.0.0:{{port}}/foo", data,
+        String out = template.requestBodyAndHeader("netty4-http:http://localhost:{{port}}/foo", data,
                 "content-type", "text/plain; charset=\"iso-8859-1\"", String.class);
         assertEquals("Bye World", out);
 
@@ -45,11 +45,11 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain;charset=\"iso-8859-1\";action=\"http://somewhere.com/foo\"");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, "iso-8859-1");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://0.0.0.0:" + getPort() + "/foo");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/foo");
         getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
 
         byte[] data = "Hello World".getBytes(Charset.forName("iso-8859-1"));
-        String out = template.requestBodyAndHeader("netty4-http:http://0.0.0.0:{{port}}/foo", data,
+        String out = template.requestBodyAndHeader("netty4-http:http://localhost:{{port}}/foo", data,
                 "content-type", "text/plain;charset=\"iso-8859-1\";action=\"http://somewhere.com/foo\"", String.class);
         assertEquals("Bye World", out);
 
@@ -61,11 +61,11 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/soap+xml;charset=\"utf-8\";action=\"http://somewhere.com/foo\"");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, "utf-8");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://0.0.0.0:" + getPort() + "/foo");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/foo");
         getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "utf-8");
 
         byte[] data = "Hello World".getBytes(Charset.forName("utf-8"));
-        String out = template.requestBodyAndHeader("netty4-http:http://0.0.0.0:{{port}}/foo", data,
+        String out = template.requestBodyAndHeader("netty4-http:http://localhost:{{port}}/foo", data,
                 "content-type", "application/soap+xml;charset=\"utf-8\";action=\"http://somewhere.com/foo\"", String.class);
         assertEquals("Bye World", out);
 

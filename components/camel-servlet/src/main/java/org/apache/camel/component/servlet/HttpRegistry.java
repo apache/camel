@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.servlet;
 
-import org.apache.camel.component.http.CamelServlet;
-import org.apache.camel.component.http.HttpConsumer;
+import org.apache.camel.http.common.CamelServlet;
+import org.apache.camel.http.common.HttpConsumer;
 
 /**
  * Keeps track of HttpConsumers and CamelServlets and 

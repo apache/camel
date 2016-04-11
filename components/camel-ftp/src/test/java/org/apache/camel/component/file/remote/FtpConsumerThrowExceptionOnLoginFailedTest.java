@@ -37,7 +37,7 @@ public class FtpConsumerThrowExceptionOnLoginFailedTest extends FtpServerTestSup
 
     private String getFtpUrl() {
         return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremember"
-                + "&throwExceptionOnConnectFailed=true&maximumReconnectAttempts=0&pollStrategy=#myPoll";
+                + "&throwExceptionOnConnectFailed=true&maximumReconnectAttempts=0&pollStrategy=#myPoll&autoCreate=false";
     }
 
     @Override

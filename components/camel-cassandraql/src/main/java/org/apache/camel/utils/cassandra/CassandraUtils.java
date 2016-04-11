@@ -20,7 +20,9 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.Insert;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
+import com.datastax.driver.core.querybuilder.Truncate;
 
 import static com.datastax.driver.core.querybuilder.QueryBuilder.bindMarker;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
@@ -159,6 +161,14 @@ public final class CassandraUtils {
 
     private static boolean isWhereClause(String[] whereColumns, int whereColumnsMaxIndex) {
         return !isEmpty(whereColumns) && whereColumnsMaxIndex > 0;
+    }
+    
+    /**
+     * Generate delete where columns = ? CQL.
+     */
+    public static Truncate generateTruncate(String table) {
+        Truncate truncate = QueryBuilder.truncate(table);
+        return truncate;
     }
 
     /**

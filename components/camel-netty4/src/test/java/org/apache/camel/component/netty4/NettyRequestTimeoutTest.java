@@ -46,6 +46,17 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
     }
 
     @Test
+    public void testRequestTimeoutViaHeader() throws Exception {
+        try {
+            template.requestBodyAndHeader("netty4:tcp://localhost:{{port}}?textline=true&sync=true", "Hello Camel", NettyConstants.NETTY_REQUEST_TIMEOUT, 1000, String.class);
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            ReadTimeoutException cause = assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
+            assertNotNull(cause);
+        }
+    }
+    
+    @Test
     public void testRequestTimeoutAndOk() throws Exception {
         try {
             template.requestBody("netty4:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=1000", "Hello Camel", String.class);

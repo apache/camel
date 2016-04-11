@@ -20,8 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
+    transient int lastIndex;
+
     private List<Integer> distributionRatioList = new ArrayList<Integer>();
     private List<DistributionRatio> runtimeRatios = new ArrayList<DistributionRatio>();
+
     
     public WeightedLoadBalancer(List<Integer> distributionRatios) {
         deepCloneDistributionRatios(distributionRatios);
@@ -32,6 +35,10 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
         for (Integer value : distributionRatios) {
             this.distributionRatioList.add(value);
         }
+    }
+
+    public int getLastChosenProcessorIndex() {
+        return lastIndex;
     }
 
     @Override

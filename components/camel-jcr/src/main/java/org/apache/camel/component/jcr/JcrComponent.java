@@ -37,6 +37,8 @@ public class JcrComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> properties) throws Exception {
-        return new JcrEndpoint(uri, this);
+        JcrEndpoint endpoint = new JcrEndpoint(uri, this);
+        setProperties(endpoint, properties);
+        return endpoint;
     }
 }

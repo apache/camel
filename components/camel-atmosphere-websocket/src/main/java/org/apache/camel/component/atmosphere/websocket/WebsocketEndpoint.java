@@ -22,22 +22,22 @@ import java.net.URISyntaxException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
- *
+ * To exchange data with external Websocket clients using Atmosphere.
  */
-@UriEndpoint(scheme = "atmosphere-websocket", title = "Atmosphere Websocket", syntax = "atmosphere-websocket:servicePath", consumerClass = WebsocketConsumer.class, label = "http,websocket")
+@UriEndpoint(scheme = "atmosphere-websocket", extendsScheme = "servlet", title = "Atmosphere Websocket",
+        syntax = "atmosphere-websocket:servicePath", consumerClass = WebsocketConsumer.class, label = "websocket",
+        excludeProperties = "httpUri,contextPath")
 public class WebsocketEndpoint extends ServletEndpoint {
 
     private WebSocketStore store;
+    private WebsocketConsumer websocketConsumer;
 
     @UriPath(description = "Name of websocket endpoint") @Metadata(required = "true")
     private String servicePath;
@@ -46,9 +46,8 @@ public class WebsocketEndpoint extends ServletEndpoint {
     @UriParam
     private boolean useStreaming;
     
-    public WebsocketEndpoint(String endPointURI, WebsocketComponent component, URI httpUri, HttpClientParams params, HttpConnectionManager httpConnectionManager,
-                             HttpClientConfigurer clientConfigurer) throws URISyntaxException {
-        super(endPointURI, component, httpUri, params, httpConnectionManager, clientConfigurer);
+    public WebsocketEndpoint(String endPointURI, WebsocketComponent component, URI httpUri) throws URISyntaxException {
+        super(endPointURI, component, httpUri);
 
         //TODO find a better way of assigning the store
         int idx = endPointURI.indexOf('?');
@@ -65,7 +64,8 @@ public class WebsocketEndpoint extends ServletEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new WebsocketConsumer(this, processor);
+        websocketConsumer = new WebsocketConsumer(this, processor);
+        return websocketConsumer;
     }
 
     @Override
@@ -97,5 +97,9 @@ public class WebsocketEndpoint extends ServletEndpoint {
 
     WebSocketStore getWebSocketStore() {
         return store;
+    }
+
+    public WebsocketConsumer getWebsocketConsumer() {
+        return websocketConsumer;
     }
 }

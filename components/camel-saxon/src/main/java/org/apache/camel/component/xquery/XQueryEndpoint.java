@@ -35,6 +35,9 @@ import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Transforms the message using a XQuery template using Saxon.
+ */
 @UriEndpoint(scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri", label = "transformation")
 public class XQueryEndpoint extends ProcessorEndpoint {
 
@@ -75,6 +78,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         return resourceUri;
     }
 
+    /**
+     * The name of the template to load from classpath or file system
+     */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
     }
@@ -83,6 +89,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         return configuration;
     }
 
+    /**
+     * To use a custom Saxon configuration
+     */
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
     }
@@ -91,6 +100,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         return staticQueryContext;
     }
 
+    /**
+     * To use a custom Saxon StaticQueryContext
+     */
     public void setStaticQueryContext(StaticQueryContext staticQueryContext) {
         this.staticQueryContext = staticQueryContext;
     }
@@ -99,6 +111,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         return parameters;
     }
 
+    /**
+     * Additional parameters
+     */
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
     }
@@ -107,6 +122,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         return namespacePrefixes;
     }
 
+    /**
+     * Allows to control which namespace prefixes to use for a set of namespace mappings
+     */
     public void setNamespacePrefixes(Map<String, String> namespacePrefixes) {
         this.namespacePrefixes = namespacePrefixes;
     }
@@ -115,6 +133,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         return resultsFormat;
     }
 
+    /**
+     * What output result to use
+     */
     public void setResultsFormat(ResultFormat resultsFormat) {
         this.resultsFormat = resultsFormat;
     }
@@ -123,6 +144,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         return properties;
     }
 
+    /**
+     * Properties to configure the serialization parameters
+     */
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
@@ -131,6 +155,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         return resultType;
     }
 
+    /**
+     * What output result to use defined as a class
+     */
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
     }
@@ -139,6 +166,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         return stripsAllWhiteSpace;
     }
 
+    /**
+     * Whether to strip all whitespaces
+     */
     public void setStripsAllWhiteSpace(boolean stripsAllWhiteSpace) {
         this.stripsAllWhiteSpace = stripsAllWhiteSpace;
     }
@@ -147,6 +177,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         return moduleURIResolver;
     }
 
+    /**
+     * To use the custom {@link ModuleURIResolver}
+     */
     public void setModuleURIResolver(ModuleURIResolver moduleURIResolver) {
         this.moduleURIResolver = moduleURIResolver;
     }
@@ -155,6 +188,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         return allowStAX;
     }
 
+    /**
+     * Whether to allow using StAX mode
+     */
     public void setAllowStAX(boolean allowStAX) {
         this.allowStAX = allowStAX;
     }
@@ -163,6 +199,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         return headerName;
     }
 
+    /**
+     * To use a Camel Message header as the input source instead of Message body.
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }

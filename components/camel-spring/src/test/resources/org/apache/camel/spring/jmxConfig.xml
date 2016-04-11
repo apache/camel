@@ -27,7 +27,8 @@
         <!-- enable JMX -->
         <jmxAgent id="agent" registryPort="20008"
                   usePlatformMBeanServer="true"
-                  createConnector="true"/>
+                  createConnector="true"
+                  />
 
         <route id="foo" autoStartup="false">
             <from uri="seda:start"/>

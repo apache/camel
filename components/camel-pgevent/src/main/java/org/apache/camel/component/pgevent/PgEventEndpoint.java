@@ -19,7 +19,6 @@ package org.apache.camel.component.pgevent;
 import java.io.InvalidClassException;
 import java.sql.DriverManager;
 import java.util.Properties;
-import javax.naming.directory.InvalidAttributesException;
 import javax.sql.DataSource;
 
 import com.impossibl.postgres.api.jdbc.PGConnection;
@@ -37,7 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a PgEvent endpoint.
+ * The pgevent component allows for producing/consuming  PostgreSQL events related to the LISTEN/NOTIFY commands.
+ *
+ * This requires using PostgreSQL 8.3 or newer.
  */
 @UriEndpoint(scheme = "pgevent", title = "PostgresSQL Event", syntax = "pgevent:host:port/database/channel", consumerClass = PgEventConsumer.class, label = "database,sql")
 public class PgEventEndpoint extends DefaultEndpoint {
@@ -56,7 +57,6 @@ public class PgEventEndpoint extends DefaultEndpoint {
     private String database;
     @UriPath @Metadata(required = "true")
     private String channel;
-
     @UriParam(defaultValue = "postgres")
     private String user = "postgres";
     @UriParam
@@ -68,13 +68,13 @@ public class PgEventEndpoint extends DefaultEndpoint {
 
     private PGConnection dbConnection;
 
-    public PgEventEndpoint(String uri, PgEventComponent component) throws InvalidAttributesException {
+    public PgEventEndpoint(String uri, PgEventComponent component)  {
         super(uri, component);
         this.uri = uri;
         parseUri();
     }
 
-    public PgEventEndpoint(String uri, PgEventComponent component, DataSource dataSource) throws InvalidAttributesException {
+    public PgEventEndpoint(String uri, PgEventComponent component, DataSource dataSource) {
         super(uri, component);
         this.uri = uri;
         this.datasource = dataSource;
@@ -98,9 +98,9 @@ public class PgEventEndpoint extends DefaultEndpoint {
     /**
      * Parse the provided URI and extract available parameters
      *
-     * @throws InvalidAttributesException if there is an error in the parameters
+     * @throws IllegalArgumentException if there is an error in the parameters
      */
-    protected final void parseUri() throws InvalidAttributesException {
+    protected final void parseUri() throws IllegalArgumentException {
         LOG.info("URI: " + uri);
         if (uri.matches(FORMAT1)) {
             LOG.info("FORMAT1");
@@ -129,7 +129,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
             database = parts[0];
             channel = parts[1];
         } else {
-            throw new InvalidAttributesException("The provided URL does not match the acceptable patterns.");
+            throw new IllegalArgumentException("The provided URL does not match the acceptable patterns.");
         }
     }
 
@@ -139,9 +139,9 @@ public class PgEventEndpoint extends DefaultEndpoint {
         return new PgEventProducer(this);
     }
 
-    private void validateInputs() throws InvalidClassException, InvalidAttributesException {
+    private void validateInputs() throws InvalidClassException, IllegalArgumentException {
         if (getChannel() == null || getChannel().length() == 0) {
-            throw new InvalidAttributesException("A required parameter was not set when creating this Endpoint (channel)");
+            throw new IllegalArgumentException("A required parameter was not set when creating this Endpoint (channel)");
         }
         if (datasource != null) {
             LOG.debug("******Datasource detected*****");
@@ -152,7 +152,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
             }
         } else {
             if (user == null) {
-                throw new InvalidAttributesException("A required parameter was "
+                throw new IllegalArgumentException("A required parameter was "
                         + "not set when creating this Endpoint (pgUser or pgDataSource)");
             }
         }
@@ -162,6 +162,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         validateInputs();
         PgEventConsumer consumer = new PgEventConsumer(this, processor);
+        configureConsumer(consumer);
         return consumer;
     }
 
@@ -170,99 +171,78 @@ public class PgEventEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    /**
-     * @return the host
-     */
     public String getHost() {
         return host;
     }
 
     /**
-     * @param host the host to set
+     * To connect using hostname and port to the database.
      */
     public void setHost(String host) {
         this.host = host;
     }
 
-    /**
-     * @return the port
-     */
     public Integer getPort() {
         return port;
     }
 
     /**
-     * @param port the port to set
+     * To connect using hostname and port to the database.
      */
     public void setPort(Integer port) {
         this.port = port;
     }
 
-    /**
-     * @return the database
-     */
     public String getDatabase() {
         return database;
     }
 
     /**
-     * @param database the database to set
+     * The database name
      */
     public void setDatabase(String database) {
         this.database = database;
     }
 
-    /**
-     * @return the channel
-     */
     public String getChannel() {
         return channel;
     }
 
     /**
-     * @param channel the channel to set
+     * The channel name
      */
     public void setChannel(String channel) {
         this.channel = channel;
     }
 
-    /**
-     * @return the user
-     */
     public String getUser() {
         return user;
     }
 
     /**
-     * @param user the user to set
+     * Username for login
      */
     public void setUser(String user) {
         this.user = user;
     }
 
-    /**
-     * @return the pass
-     */
     public String getPass() {
         return pass;
     }
 
     /**
-     * @param pass the pass to set
+     * Password for login
      */
     public void setPass(String pass) {
         this.pass = pass;
     }
 
-    /**
-     * @return the datasource
-     */
     public DataSource getDatasource() {
         return datasource;
     }
 
     /**
-     * @param datasource the datasource to set
+     * To connect using the given {@link javax.sql.DataSource} instead of using hostname and port.
      */
     public void setDatasource(DataSource datasource) {
         this.datasource = datasource;

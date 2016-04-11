@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
@@ -39,21 +40,40 @@ import org.springframework.context.annotation.Import;
 public class CamelAutoConfiguration {
 
     /**
-     * Spring-aware Camel context for the application. Auto-detects and loads all routes available in the Spring
-     * context.
+     * Spring-aware Camel context for the application. Auto-detects and loads all routes available in the Spring context.
      */
     @Bean
+    @ConditionalOnMissingBean(CamelContext.class)
     CamelContext camelContext(ApplicationContext applicationContext,
-                              CamelConfigurationProperties configurationProperties) {
+                              CamelConfigurationProperties config) {
+
         CamelContext camelContext = new SpringCamelContext(applicationContext);
         SpringCamelContext.setNoStart(true);
 
-        if (!configurationProperties.isJmxEnabled()) {
+        if (!config.isJmxEnabled()) {
             camelContext.disableJMX();
         }
 
-        if (configurationProperties.getName() != null) {
-            ((SpringCamelContext) camelContext).setName(configurationProperties.getName());
+        if (config.getName() != null) {
+            ((SpringCamelContext) camelContext).setName(config.getName());
+        }
+
+        if (config.getLogDebugMaxChars() > 0) {
+            camelContext.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "" + config.getLogDebugMaxChars());
+        }
+
+        camelContext.setStreamCaching(config.isStreamCaching());
+        camelContext.setTracing(config.isTracing());
+        camelContext.setMessageHistory(config.isMessageHistory());
+        camelContext.setHandleFault(config.isHandleFault());
+        camelContext.setAutoStartup(config.isAutoStartup());
+        camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
+
+        if (camelContext.getManagementStrategy().getManagementAgent() != null) {
+            camelContext.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(config.isEndpointRuntimeStatisticsEnabled());
+            camelContext.getManagementStrategy().getManagementAgent().setStatisticsLevel(config.getJmxManagementStatisticsLevel());
+            camelContext.getManagementStrategy().getManagementAgent().setManagementNamePattern(config.getJmxManagementNamePattern());
+            camelContext.getManagementStrategy().getManagementAgent().setCreateConnector(config.isJmxCreateConnector());
         }
 
         return camelContext;
@@ -66,27 +86,31 @@ public class CamelAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(RoutesCollector.class)
-    RoutesCollector routesCollector(ApplicationContext applicationContext) {
+    RoutesCollector routesCollector(ApplicationContext applicationContext, CamelConfigurationProperties config) {
         Collection<CamelContextConfiguration> configurations = applicationContext.getBeansOfType(CamelContextConfiguration.class).values();
-        return new RoutesCollector(new ArrayList<CamelContextConfiguration>(configurations));
+        return new RoutesCollector(applicationContext, new ArrayList<CamelContextConfiguration>(configurations), config);
     }
 
     /**
      * Default producer template for the bootstrapped Camel context.
      */
-    @Bean
+    @Bean(initMethod = "", destroyMethod = "")
+    // Camel handles the lifecycle of this bean
+    @ConditionalOnMissingBean(ProducerTemplate.class)
     ProducerTemplate producerTemplate(CamelContext camelContext,
-                                      CamelConfigurationProperties configurationProperties) {
-        return camelContext.createProducerTemplate(configurationProperties.getProducerTemplateCacheSize());
+                                      CamelConfigurationProperties config) {
+        return camelContext.createProducerTemplate(config.getProducerTemplateCacheSize());
     }
 
     /**
      * Default consumer template for the bootstrapped Camel context.
      */
-    @Bean
+    @Bean(initMethod = "", destroyMethod = "")
+    // Camel handles the lifecycle of this bean
+    @ConditionalOnMissingBean(ConsumerTemplate.class)
     ConsumerTemplate consumerTemplate(CamelContext camelContext,
-                                      CamelConfigurationProperties configurationProperties) {
-        return camelContext.createConsumerTemplate(configurationProperties.getConsumerTemplateCacheSize());
+                                      CamelConfigurationProperties config) {
+        return camelContext.createConsumerTemplate(config.getConsumerTemplateCacheSize());
     }
 
     // SpringCamelContext integration
@@ -96,11 +120,17 @@ public class CamelAutoConfiguration {
         return new SpringPropertiesParser();
     }
 
-    @Bean
-    PropertiesComponent properties() {
-        PropertiesComponent properties = new PropertiesComponent();
-        properties.setPropertiesParser(propertiesParser());
-        return properties;
+    @Bean(initMethod = "", destroyMethod = "")
+    // Camel handles the lifecycle of this bean
+    PropertiesComponent properties(CamelContext camelContext, PropertiesParser parser) {
+        if (camelContext.hasComponent("properties") != null) {
+            return camelContext.getComponent("properties", PropertiesComponent.class);
+        } else {
+            PropertiesComponent pc = new PropertiesComponent();
+            pc.setPropertiesParser(parser);
+            camelContext.addComponent("properties", pc);
+            return pc;
+        }
     }
 
     /**

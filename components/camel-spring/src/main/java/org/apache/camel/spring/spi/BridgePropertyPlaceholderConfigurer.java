@@ -51,6 +51,10 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_FALLBACK;
     private Boolean ignoreResourceNotFound;
 
+    public int getSystemPropertiesMode() {
+        return systemPropertiesMode;
+    }
+
     @Override
     protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
         super.processProperties(beanFactoryToProcess, props);
@@ -220,13 +224,13 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
 
         private final Properties properties;
 
-        public BridgePropertyPlaceholderResolver(Properties properties) {
+        BridgePropertyPlaceholderResolver(Properties properties) {
             this.properties = properties;
         }
 
         public String resolvePlaceholder(String placeholderName) {
             String propVal = null;
-            if (systemPropertiesMode  == SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+            if (systemPropertiesMode == SYSTEM_PROPERTIES_MODE_OVERRIDE) {
                 propVal = resolveSystemProperty(placeholderName);
             }
             if (propVal == null) {

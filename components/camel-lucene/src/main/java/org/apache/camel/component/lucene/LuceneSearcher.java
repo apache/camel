@@ -45,9 +45,9 @@ public class LuceneSearcher {
 
     public void open(File indexDirectory, Analyzer analyzer) throws IOException {
         if (indexDirectory != null) {
-            indexReader = DirectoryReader.open(new NIOFSDirectory(indexDirectory));
+            indexReader = DirectoryReader.open(new NIOFSDirectory(indexDirectory.toPath()));
         } else {
-            indexReader = DirectoryReader.open(new NIOFSDirectory(new File("./indexDirectory")));
+            indexReader = DirectoryReader.open(new NIOFSDirectory(new File("./indexDirectory").toPath()));
         }
         indexSearcher = new IndexSearcher(indexReader);
         this.analyzer = analyzer;
@@ -59,7 +59,7 @@ public class LuceneSearcher {
     }
     
     public Hits search(String searchPhrase, int maxNumberOfHits) throws Exception {
-        return search(searchPhrase, maxNumberOfHits, Version.LUCENE_4_10_3, false);
+        return search(searchPhrase, maxNumberOfHits, LuceneConstants.LUCENE_VERSION, false);
     }
 
     public Hits search(String searchPhrase, int maxNumberOfHits, Version luceneVersion, boolean returnLuceneDocs) throws Exception {
@@ -88,7 +88,7 @@ public class LuceneSearcher {
 
         QueryParser parser = new QueryParser("contents", analyzer);
         Query query = parser.parse(searchPhrase);
-        TopScoreDocCollector collector = TopScoreDocCollector.create(maxNumberOfHits, true);
+        TopScoreDocCollector collector = TopScoreDocCollector.create(maxNumberOfHits);
         indexSearcher.search(query, collector);
         hits = collector.topDocs().scoreDocs;
         

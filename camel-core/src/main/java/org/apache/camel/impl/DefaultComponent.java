@@ -64,7 +64,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         String encodedUri = UnsafeUriCharactersEncoder.encode(uri);
         if (!encodedUri.equals(uri)) {
             // uri supplied is not really valid
-            LOG.warn("Supplied URI '{}' contains unsafe characters, please check encoding", uri);
+            // we just don't want to log the password setting here
+            LOG.warn("Supplied URI '{}' contains unsafe characters, please check encoding", URISupport.sanitizeUri(uri));
         }
         return encodedUri;
     }
@@ -195,12 +196,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
      */
     protected void validateURI(String uri, String path, Map<String, Object> parameters) {
-        // check for uri containing & but no ? marker
-        if (uri.contains("&") && !uri.contains("?")) {
-            throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: no ? marker however the uri "
-                + "has & parameter separators. Check the uri if its missing a ? marker.");
-        }
-
         // check for uri containing double && markers without include by RAW
         if (uri.contains("&&")) {
             Pattern pattern = Pattern.compile("RAW(.*&&.*)");

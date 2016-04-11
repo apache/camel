@@ -36,6 +36,7 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
 
     private final JmsEndpoint endpoint;
     private final boolean allowQuickStop;
+    private volatile TaskExecutor taskExecutor;
 
     public DefaultJmsMessageListenerContainer(JmsEndpoint endpoint) {
         this(endpoint, true);
@@ -96,23 +97,28 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
         String pattern = endpoint.getCamelContext().getExecutorServiceManager().getThreadNamePattern();
         String beanName = getBeanName() == null ? endpoint.getThreadName() : getBeanName();
 
+        TaskExecutor answer;
+
         if (endpoint.getDefaultTaskExecutorType() == DefaultTaskExecutorType.ThreadPool) {
-            ThreadPoolTaskExecutor answer = new ThreadPoolTaskExecutor();
-            answer.setBeanName(beanName);
-            answer.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
-            answer.setCorePoolSize(endpoint.getConcurrentConsumers());
+            ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+            executor.setBeanName(beanName);
+            executor.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
+            executor.setCorePoolSize(endpoint.getConcurrentConsumers());
             // Direct hand-off mode. Do not queue up tasks: assign it to a thread immediately.
             // We set no upper-bound on the thread pool (no maxPoolSize) as it's already implicitly constrained by
             // maxConcurrentConsumers on the DMLC itself (i.e. DMLC will only grow up to a level of concurrency as
             // defined by maxConcurrentConsumers).
-            answer.setQueueCapacity(0);
-            answer.initialize();
-            return answer;
+            executor.setQueueCapacity(0);
+            executor.initialize();
+            answer = executor;
         } else {
-            SimpleAsyncTaskExecutor answer = new SimpleAsyncTaskExecutor(beanName);
-            answer.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
-            return answer;
+            SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor(beanName);
+            executor.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
+            answer = executor;
         }
+
+        taskExecutor = answer;
+        return answer;
     }
 
     @Override
@@ -122,6 +128,11 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
                     + " and sharedConnectionEnabled: " + sharedConnectionEnabled());
         }
         super.stop();
+
+        if (taskExecutor instanceof ThreadPoolTaskExecutor) {
+            ThreadPoolTaskExecutor executor = (ThreadPoolTaskExecutor) taskExecutor;
+            executor.destroy();
+        }
     }
 
     @Override
@@ -131,6 +142,11 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
                     + " and sharedConnectionEnabled: " + sharedConnectionEnabled());
         }
         super.destroy();
+
+        if (taskExecutor instanceof ThreadPoolTaskExecutor) {
+            ThreadPoolTaskExecutor executor = (ThreadPoolTaskExecutor) taskExecutor;
+            executor.destroy();
+        }
     }
 
     @Override

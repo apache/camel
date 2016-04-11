@@ -52,10 +52,8 @@ public class ZookeeperProducer extends DefaultProducer {
     public static final String ZK_OPERATION_WRITE  = "WRITE";
     public static final String ZK_OPERATION_DELETE = "DELETE";
 
-    private ZooKeeperConfiguration configuration;
-
+    private final ZooKeeperConfiguration configuration;
     private ZooKeeperConnectionManager zkm;
-    
     private ZooKeeper connection;
 
     public ZookeeperProducer(ZooKeeperEndpoint endpoint) {
@@ -117,6 +115,7 @@ public class ZookeeperProducer extends DefaultProducer {
         if (log.isTraceEnabled()) {
             log.trace(String.format("Shutting down zookeeper producer of '%s'", configuration.getPath()));
         }
+        zkm.shutdown();
     }
 
     private void asynchronouslyDeleteNode(ZooKeeper connection, ProductionContext context) {

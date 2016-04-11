@@ -39,23 +39,39 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
     private int threshold;
     private long halfOpenAfter;
     private long lastFailure;
+
+    // stateful statistics
     private AtomicInteger failures = new AtomicInteger();
     private AtomicInteger state = new AtomicInteger(STATE_CLOSED);
+    private final ExceptionFailureStatistics statistics = new ExceptionFailureStatistics();
+
+    public CircuitBreakerLoadBalancer() {
+        this(null);
+    }
 
     public CircuitBreakerLoadBalancer(List<Class<?>> exceptions) {
         this.exceptions = exceptions;
-    }
-
-    public CircuitBreakerLoadBalancer() {
-        this.exceptions = null;
+        statistics.init(exceptions);
     }
 
     public void setHalfOpenAfter(long halfOpenAfter) {
         this.halfOpenAfter = halfOpenAfter;
     }
 
+    public long getHalfOpenAfter() {
+        return halfOpenAfter;
+    }
+
     public void setThreshold(int threshold) {
         this.threshold = threshold;
+    }
+
+    public int getThreshold() {
+        return threshold;
+    }
+
+    public int getState() {
+        return state.get();
     }
 
     @Override
@@ -72,21 +88,38 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
         return exceptions;
     }
 
+    /**
+     * Has the given Exchange failed
+     */
     protected boolean hasFailed(Exchange exchange) {
+        if (exchange == null) {
+            return false;
+        }
+
         boolean answer = false;
 
         if (exchange.getException() != null) {
             if (exceptions == null || exceptions.isEmpty()) {
+                // always failover if no exceptions defined
                 answer = true;
             } else {
                 for (Class<?> exception : exceptions) {
+                    // will look in exception hierarchy
                     if (exchange.getException(exception) != null) {
                         answer = true;
                         break;
                     }
                 }
             }
+
+            if (answer) {
+                // record the failure in the statistics
+                statistics.onHandledFailure(exchange.getException());
+            }
         }
+
+        log.trace("Failed: {} for exchangeId: {}", answer, exchange.getExchangeId());
+
         return answer;
     }
 
@@ -115,7 +148,7 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
     }
 
     private boolean calculateState(final Exchange exchange, final AsyncCallback callback) {
-        boolean output = false;
+        boolean output;
         if (state.get() == STATE_HALF_OPEN) {
             if (failures.get() == 0) {
                 output = closeCircuit(exchange, callback);
@@ -164,7 +197,19 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
     }
 
     private void logState() {
-        log.debug("State {}, failures {}, closed since {}", new Object[]{state.get(), failures.get(), System.currentTimeMillis() - lastFailure});
+        if (log.isDebugEnabled()) {
+            log.debug(dumpState());
+        }
+    }
+
+    public String dumpState() {
+        int num = state.get();
+        String state = stateAsString(num);
+        if (lastFailure > 0) {
+            return String.format("State %s, failures %d, closed since %d", state, failures.get(), System.currentTimeMillis() - lastFailure);
+        } else {
+            return String.format("State %s, failures %d", state, failures.get());
+        }
     }
 
     private boolean executeProcessor(final Exchange exchange, final AsyncCallback callback) {
@@ -172,6 +217,9 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
         if (processor == null) {
             throw new IllegalStateException("No processors could be chosen to process CircuitBreaker");
         }
+
+        // store state as exchange property
+        exchange.setProperty(Exchange.CIRCUIT_BREAKER_STATE, stateAsString(state.get()));
 
         AsyncProcessor albp = AsyncProcessorConverterHelper.convert(processor);
         // Added a callback for processing the exchange in the callback
@@ -204,6 +252,16 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
         return true;
     }
 
+    private static String stateAsString(int num) {
+        if (num == STATE_CLOSED) {
+            return "closed";
+        } else if (num == STATE_HALF_OPEN) {
+            return "half opened";
+        } else {
+            return "opened";
+        }
+    }
+
     public String toString() {
         return "CircuitBreakerLoadBalancer[" + getProcessors() + "]";
     }
@@ -211,6 +269,32 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
     public String getTraceLabel() {
         return "circuitbreaker";
     }
+
+    public ExceptionFailureStatistics getExceptionFailureStatistics() {
+        return statistics;
+    }
+
+    public void reset() {
+        // reset state
+        failures.set(0);
+        state.set(STATE_CLOSED);
+        statistics.reset();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // reset state
+        reset();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // noop
+    }
+
 
     class CircuitBreakerCallback implements AsyncCallback {
         private final AsyncCallback callback;

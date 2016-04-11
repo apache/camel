@@ -39,6 +39,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
@@ -62,6 +63,7 @@ import org.apache.camel.util.TimeUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +71,7 @@ import org.slf4j.LoggerFactory;
  * A useful base class which creates a {@link org.apache.camel.CamelContext} with some routes
  * along with a {@link org.apache.camel.ProducerTemplate} for use in the test case
  *
- * @version 
+ * @version
  */
 public abstract class CamelTestSupport extends TestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
@@ -82,11 +84,12 @@ public abstract class CamelTestSupport extends TestSupport {
     protected volatile ProducerTemplate template;
     protected volatile ConsumerTemplate consumer;
     protected volatile Service camelContextService;
+    protected boolean dumpRouteStats;
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
     private final Map<String, String> fromEndpoints = new HashMap<String, String>();
-    protected boolean dumpRouteStats;
+    private CamelTestWatcher camelTestWatcher = new CamelTestWatcher();
 
     /**
      * Use the RouteBuilder or not
@@ -317,8 +320,8 @@ public abstract class CamelTestSupport extends TestSupport {
         postProcessTest();
 
         if (isUseRouteBuilder()) {
-            RouteBuilder[] builders = createRouteBuilders();
-            for (RouteBuilder builder : builders) {
+            RoutesBuilder[] builders = createRouteBuilders();
+            for (RoutesBuilder builder : builders) {
                 log.debug("Using created route builder: " + builder);
                 context.addRoutes(builder);
             }
@@ -372,12 +375,15 @@ public abstract class CamelTestSupport extends TestSupport {
                 log.warn("Cannot dump route coverage to file as JMX is not enabled. Override useJmx() method to enable JMX in the unit test classes.");
             } else {
                 String xml = managedCamelContext.dumpRoutesCoverageAsXml();
+                String combined = "<camelRouteCoverage>\n" + gatherTestDetailsAsXml() + xml + "\n</camelRouteCoverage>";
+
                 File file = new File(dir);
                 // ensure dir exists
                 file.mkdirs();
                 file = new File(dir, name);
+
                 log.info("Dumping route coverage to file: " + file);
-                InputStream is = new ByteArrayInputStream(xml.getBytes());
+                InputStream is = new ByteArrayInputStream(combined.getBytes());
                 OutputStream os = new FileOutputStream(file, false);
                 IOHelper.copyAndCloseInput(is, os);
                 IOHelper.close(os);
@@ -401,6 +407,19 @@ public abstract class CamelTestSupport extends TestSupport {
         LOG.debug("tearDownAfterClass test");
         doStopTemplates(threadConsumer.get(), threadTemplate.get());
         doStopCamelContext(threadCamelContext.get(), threadService.get());
+    }
+
+    /**
+     * Gathers test details as xml
+     */
+    private String gatherTestDetailsAsXml() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<test>\n");
+        sb.append("  <class>").append(getClass().getName()).append("</class>\n");
+        sb.append("  <method>").append(getTestMethodName()).append("</method>\n");
+        sb.append("  <time>").append(getCamelTestWatcher().timeTaken()).append("</time>\n");
+        sb.append("</test>\n");
+        return sb.toString();
     }
 
     /**
@@ -441,6 +460,11 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     protected Properties useOverridePropertiesWithPropertiesComponent() {
         return null;
+    }
+
+    @Rule
+    public CamelTestWatcher getCamelTestWatcher() {
+        return camelTestWatcher;
     }
 
     /**
@@ -555,8 +579,9 @@ public abstract class CamelTestSupport extends TestSupport {
      * Factory method which derived classes can use to create a {@link RouteBuilder}
      * to define the routes for testing
      */
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() {
                 // no routes added by default
             }
@@ -569,8 +594,8 @@ public abstract class CamelTestSupport extends TestSupport {
      *
      * @see #createRouteBuilder()
      */
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {createRouteBuilder()};
+    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+        return new RoutesBuilder[] {createRouteBuilder()};
     }
 
     /**

@@ -22,9 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * Defines the <a href="http://aws.amazon.com/simpledb/">AWS SDB component</a> 
- */
 public class SdbComponent extends UriEndpointComponent {
 
     public SdbComponent() {

@@ -36,5 +36,7 @@ public class CamelProxyFactoryDefinition extends IdentifiedType {
     private Class<?> serviceInterface;
     @XmlAttribute
     private String camelContextId;
+    @XmlAttribute
+    private Boolean binding;
 
 }

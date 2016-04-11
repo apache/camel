@@ -18,15 +18,15 @@ package org.apache.camel.component.jetty;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.camel.component.http.DefaultHttpBinding;
-import org.apache.camel.component.http.HttpEndpoint;
-import org.apache.camel.component.http.HttpMessage;
+import org.apache.camel.http.common.DefaultHttpBinding;
+import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.camel.http.common.HttpMessage;
 
 public class JettyRestHttpBinding extends DefaultHttpBinding {
     @Deprecated
     public JettyRestHttpBinding() {
     }
-    public JettyRestHttpBinding(HttpEndpoint ep) {
+    public JettyRestHttpBinding(HttpCommonEndpoint ep) {
         super(ep);
     }
 

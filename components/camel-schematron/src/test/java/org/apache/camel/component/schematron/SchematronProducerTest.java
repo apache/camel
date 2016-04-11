@@ -17,10 +17,13 @@
 package org.apache.camel.component.schematron;
 
 import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerFactory;
 
+import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.schematron.constant.Constants;
+import org.apache.camel.component.schematron.processor.ClassPathURIResolver;
 import org.apache.camel.component.schematron.processor.TemplatesFactory;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -29,7 +32,7 @@ import org.junit.Test;
 
 /**
  * Schematron Producer Unit Test.
- * 
+ *
  */
 public class SchematronProducerTest extends CamelTestSupport {
 
@@ -38,8 +41,10 @@ public class SchematronProducerTest extends CamelTestSupport {
     @BeforeClass
     public static void setUP() {
         SchematronEndpoint endpoint = new SchematronEndpoint();
-        Templates templates = TemplatesFactory.newInstance().newTemplates(ClassLoader.
-                getSystemResourceAsStream("sch/schematron-1.sch"));
+        TransformerFactory fac = new TransformerFactoryImpl();
+        fac.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR));
+        Templates templates = TemplatesFactory.newInstance().getTemplates(ClassLoader.
+                getSystemResourceAsStream("sch/schematron-1.sch"), fac);
         endpoint.setRules(templates);
         producer = new SchematronProducer(endpoint);
     }
@@ -54,20 +59,19 @@ public class SchematronProducerTest extends CamelTestSupport {
 
         // assert
         assertTrue(exc.getOut().getHeader(Constants.VALIDATION_STATUS).equals(Constants.SUCCESS));
-        assertNotNull("We should get the report here.", exc.getOut().getHeader(Constants.VALIDATION_REPORT));
     }
 
     @Test
     public void testProcessInValidXML() throws Exception {
-        Exchange exc = new DefaultExchange(context, ExchangePattern.InOnly);
+        Exchange exc = new DefaultExchange(context, ExchangePattern.InOut);
         exc.getIn().setBody(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"));
 
         // process xml payload
         producer.process(exc);
 
         // assert
-        assertTrue("The validation status should be failed.", exc.getIn().getHeader(Constants.VALIDATION_STATUS).equals(Constants.FAILED));
-        assertNotNull("We should get the report here.", exc.getIn().getHeader(Constants.VALIDATION_REPORT));
+        assertTrue(exc.getOut().getHeader(Constants.VALIDATION_STATUS).equals(Constants.FAILED));
+
     }
 
 }

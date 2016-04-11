@@ -58,7 +58,7 @@ public class DropboxProducerGetSingleTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://get?" + getAuthParams() + "&remotePath=/XXX")
+                        .to("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/XXX")
                         .to("file:///XXX?fileName=XXX")
                         .to("mock:result");
             }

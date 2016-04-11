@@ -19,6 +19,7 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.PushImageCmd;
+
 import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -41,7 +42,6 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
     private String serverAddress = "http://docker.io/v1";
     private String name = "imagename";
     private String tag = "1.0";
-
 
     @Test
     public void pushImageHeaderTest() {

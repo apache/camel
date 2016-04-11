@@ -16,10 +16,9 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.apache.camel.test.karaf.AbstractFeatureTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
@@ -32,9 +31,5 @@ public class CamelNetty4Test extends AbstractFeatureTest {
         testComponent(COMPONENT);
     }
 
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
-    }
 
 }

@@ -17,8 +17,8 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpProducer;
+import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.eclipse.jetty.client.HttpClient;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class JettyHttpClientOptionsTest extends BaseJettyTest {
     @Test
     public void testCustomHttpBinding() throws Exception {
         // assert jetty was configured with our timeout
-        HttpEndpoint jettyEndpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice?httpClient.soTimeout=5555", HttpEndpoint.class);
+        HttpCommonEndpoint jettyEndpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice?httpClient.soTimeout=5555", HttpCommonEndpoint.class);
         assertNotNull("Jetty endpoint should not be null ", jettyEndpoint);
         HttpProducer producer = (HttpProducer)jettyEndpoint.createProducer();
         assertEquals("Get the wrong http client parameter", 5555, producer.getHttpClient().getParams().getSoTimeout());
@@ -43,7 +43,7 @@ public class JettyHttpClientOptionsTest extends BaseJettyTest {
     @Test
     public void testProxySettingOfJettyHttpClient() throws Exception {
         // setup the Proxy setting through the URI
-        HttpEndpoint jettyEndpoint = context.getEndpoint("jetty://http://localhost:{{port}}/proxy/setting?proxyHost=192.168.0.1&proxyPort=9090", HttpEndpoint.class);
+        HttpCommonEndpoint jettyEndpoint = context.getEndpoint("jetty://http://localhost:{{port}}/proxy/setting?proxyHost=192.168.0.1&proxyPort=9090", HttpCommonEndpoint.class);
         assertNotNull("Jetty endpoint should not be null ", jettyEndpoint);
         JettyHttpProducer producer = (JettyHttpProducer)jettyEndpoint.createProducer();
         assertProxyAddress(producer.getClient(), "192.168.0.1", 9090);
@@ -51,7 +51,7 @@ public class JettyHttpClientOptionsTest extends BaseJettyTest {
         // setup the context properties
         context.getProperties().put("http.proxyHost", "192.168.0.2");
         context.getProperties().put("http.proxyPort", "8080");
-        jettyEndpoint = context.getEndpoint("jetty://http://localhost:{{port}}/proxy2/setting", HttpEndpoint.class);
+        jettyEndpoint = context.getEndpoint("jetty://http://localhost:{{port}}/proxy2/setting", HttpCommonEndpoint.class);
         producer = (JettyHttpProducer)jettyEndpoint.createProducer();
         assertProxyAddress(producer.getClient(), "192.168.0.2", 8080);
         context.getProperties().clear();

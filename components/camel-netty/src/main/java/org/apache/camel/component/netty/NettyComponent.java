@@ -33,10 +33,10 @@ import org.jboss.netty.util.Timer;
 
 public class NettyComponent extends UriEndpointComponent {
     // use a shared timer for Netty (see javadoc for HashedWheelTimer)
-    private static volatile Timer timer;
+    private Timer timer;
     private NettyConfiguration configuration;
     private int maximumPoolSize = 16;
-    private OrderedMemoryAwareThreadPoolExecutor executorService;
+    private volatile OrderedMemoryAwareThreadPoolExecutor executorService;
 
     public NettyComponent() {
         super(NettyEndpoint.class);
@@ -92,6 +92,9 @@ public class NettyComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use the NettyConfiguration as configuration when creating endpoints.
+     */
     public void setConfiguration(NettyConfiguration configuration) {
         this.configuration = configuration;
     }
@@ -100,11 +103,16 @@ public class NettyComponent extends UriEndpointComponent {
         return maximumPoolSize;
     }
 
+    /**
+     * The core pool size for the ordered thread pool, if its in use.
+     * <p/>
+     * The default value is 16.
+     */
     public void setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
     }
 
-    public static Timer getTimer() {
+    public Timer getTimer() {
         return timer;
     }
 
@@ -138,14 +146,23 @@ public class NettyComponent extends UriEndpointComponent {
         // replies in the expected order. eg this is required by TCP.
         // and use a Camel thread factory so we have consistent thread namings
         // we should use a shared thread pool as recommended by Netty
+        
+        // NOTE: if we don't specify the MaxChannelMemorySize and MaxTotalMemorySize, the thread pool
+        // could eat up all the heap memory when the tasks are added very fast
+        
         String pattern = getCamelContext().getExecutorServiceManager().getThreadNamePattern();
         ThreadFactory factory = new CamelThreadFactory(pattern, "NettyOrderedWorker", true);
         return new OrderedMemoryAwareThreadPoolExecutor(getMaximumPoolSize(),
-                0L, 0L, 30, TimeUnit.SECONDS, factory);
+                configuration.getMaxChannelMemorySize(), configuration.getMaxTotalMemorySize(),
+                30, TimeUnit.SECONDS, factory);
     }
 
     @Override
     protected void doStop() throws Exception {
+        if (timer != null) {
+            timer.stop();
+            timer = null;
+        }
         if (executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
             executorService = null;

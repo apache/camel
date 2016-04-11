@@ -53,7 +53,7 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
         }
     }
     
-    private StreamSourceCache(StreamCache streamCache) {
+    public StreamSourceCache(StreamCache streamCache) {
         this.streamCache = streamCache;
         if (streamCache instanceof InputStream) {
             setInputStream((InputStream) streamCache);
@@ -83,12 +83,12 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
         }
     }
 
-    public StreamCache copy() throws IOException {
+    public StreamCache copy(Exchange exchange) throws IOException {
         if (streamCache != null) {
-            return new StreamSourceCache(streamCache.copy());
+            return new StreamSourceCache(streamCache.copy(exchange));
         }
         if (readCache != null) {
-            return new StreamSourceCache(readCache.copy());
+            return new StreamSourceCache(readCache.copy(exchange));
         }
         return null;
     }

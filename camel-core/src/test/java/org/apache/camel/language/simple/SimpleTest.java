@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +104,10 @@ public class SimpleTest extends LanguageTestSupport {
 
     public void testNull() throws Exception {
         assertNull(SimpleLanguage.simple("${null}").evaluate(exchange, Object.class));
+    }
+
+    public void testSimpleFileDir() throws Exception {
+        assertExpression("file:mydir", "file:mydir");
     }
 
     public void testEmptyExpression() throws Exception {
@@ -1097,7 +1102,7 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.getLines[0]?.getRating}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
+            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
             assertEquals("getRating", cause.getMethodName());
         }
     }
@@ -1114,7 +1119,7 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.lines[0]?.rating}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
+            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
             assertEquals("rating", cause.getMethodName());
         }
     }
@@ -1139,8 +1144,8 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.getFriend.getFriend.getName}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            assertEquals("Failed to invoke method: .getFriend.getFriend.getName on null due to: java.lang.NullPointerException", e.getMessage());
-            assertIsInstanceOf(NullPointerException.class, e.getCause());
+            assertEquals("Failed to invoke method: .getFriend.getFriend.getName on org.apache.camel.language.simple.SimpleTest.Animal"
+                    + " due last method returned null and therefore cannot continue to invoke method .getName on a null instance", e.getMessage());
         }
     }
 
@@ -1165,8 +1170,8 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.friend.friend.name}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            assertEquals("Failed to invoke method: .friend.friend.name on null due to: java.lang.NullPointerException", e.getMessage());
-            assertIsInstanceOf(NullPointerException.class, e.getCause());
+            assertEquals("Failed to invoke method: .friend.friend.name on org.apache.camel.language.simple.SimpleTest.Animal"
+                    + " due last method returned null and therefore cannot continue to invoke method .name on a null instance", e.getMessage());
         }
     }
 
@@ -1379,6 +1384,11 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${type:org.apache.camel.ExchangePattern.UNKNOWN}", null);
     }
 
+    public void testTypeConstantInnerClass() throws Exception {
+        assertExpression("${type:org.apache.camel.language.simple.Constants$MyInnerStuff.FOO}", 123);
+        assertExpression("${type:org.apache.camel.language.simple.Constants.BAR}", 456);
+    }
+
     public void testStringArrayLength() throws Exception {
         exchange.getIn().setBody(new String[]{"foo", "bar"});
         assertExpression("${body[0]}", "foo");
@@ -1386,6 +1396,14 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.length}", 2);
 
         exchange.getIn().setBody(new String[]{"foo", "bar", "beer"});
+        assertExpression("${body.length}", 3);
+    }
+
+    public void testByteArrayLength() throws Exception {
+        exchange.getIn().setBody(new byte[]{65, 66, 67});
+        assertExpression("${body[0]}", 65);
+        assertExpression("${body[1]}", 66);
+        assertExpression("${body[2]}", 67);
         assertExpression("${body.length}", 3);
     }
 
@@ -1407,6 +1425,143 @@ public class SimpleTest extends LanguageTestSupport {
         assertPredicate("${body[isCredit]} == false", true);
         assertPredicate("${body['isCredit']} == true", false);
         assertPredicate("${body['isCredit']} == false", true);
+    }
+
+    public void testSimpleRegexp() throws Exception {
+        exchange.getIn().setBody("12345678");
+        assertPredicate("${body} regex '\\d+'", true);
+        assertPredicate("${body} regex '\\w{1,4}'", false);
+
+        exchange.getIn().setBody("tel:+97444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", true);
+
+        exchange.getIn().setBody("97444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", true);
+
+        exchange.getIn().setBody("tel:+87444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", false);
+
+        exchange.getIn().setBody("87444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", false);
+    }
+
+    public void testCollateEven() throws Exception {
+        List<Object> data = new ArrayList<Object>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        data.add("D");
+        data.add("E");
+        data.add("F");
+        exchange.getIn().setBody(data);
+
+        Iterator it = (Iterator) evaluateExpression("${collate(3)}", null);
+        List chunk = (List) it.next();
+        List chunk2 = (List) it.next();
+        assertFalse(it.hasNext());
+
+        assertEquals(3, chunk.size());
+        assertEquals(3, chunk2.size());
+
+        assertEquals("A", chunk.get(0));
+        assertEquals("B", chunk.get(1));
+        assertEquals("C", chunk.get(2));
+        assertEquals("D", chunk2.get(0));
+        assertEquals("E", chunk2.get(1));
+        assertEquals("F", chunk2.get(2));
+    }
+    
+    public void testCollateOdd() throws Exception {
+        List<Object> data = new ArrayList<Object>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        data.add("D");
+        data.add("E");
+        data.add("F");
+        data.add("G");
+        exchange.getIn().setBody(data);
+
+        Iterator it = (Iterator) evaluateExpression("${collate(3)}", null);
+        List chunk = (List) it.next();
+        List chunk2 = (List) it.next();
+        List chunk3 = (List) it.next();
+        assertFalse(it.hasNext());
+
+        assertEquals(3, chunk.size());
+        assertEquals(3, chunk2.size());
+        assertEquals(1, chunk3.size());
+
+        assertEquals("A", chunk.get(0));
+        assertEquals("B", chunk.get(1));
+        assertEquals("C", chunk.get(2));
+        assertEquals("D", chunk2.get(0));
+        assertEquals("E", chunk2.get(1));
+        assertEquals("F", chunk2.get(2));
+        assertEquals("G", chunk3.get(0));
+    }
+
+    public void testRandomExpression() throws Exception {
+        int min = 1;
+        int max = 10;
+        int iterations = 30;
+        int i = 0;
+        for (i = 0; i < iterations; i++) {
+            Expression expression = SimpleLanguage.simple("random(1,10)", Integer.class);
+            assertTrue(min <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
+        }
+        for (i = 0; i < iterations; i++) {
+            Expression expression = SimpleLanguage.simple("random(10)", Integer.class);
+            assertTrue(0 <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
+        }
+        Expression expression = SimpleLanguage.simple("random(1, 10)", Integer.class);
+        assertTrue(min <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
+        
+        Expression expression1 = SimpleLanguage.simple("random( 10)", Integer.class);
+        assertTrue(0 <= expression1.evaluate(exchange, Integer.class) && expression1.evaluate(exchange, Integer.class) < max);
+        
+        try {
+            assertExpression("random(10,21,30)", null);
+            fail("Should have thrown exception");
+        } catch (SimpleParserException e) {
+            assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random(10,21,30)", e.getMessage());
+        }
+        try {
+            assertExpression("random()", null);
+            fail("Should have thrown exception");
+        } catch (SimpleParserException e) {
+            assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random()", e.getMessage());
+        }
+    }
+
+    public void testListRemoveByInstance() throws Exception {
+        List<Object> data = new ArrayList<Object>();
+        data.add("A");
+        data.add("B");
+        exchange.getIn().setBody(data);
+
+        assertEquals(2, data.size());
+
+        Expression expression = SimpleLanguage.simple("${body.remove('A')}");
+        expression.evaluate(exchange, Object.class);
+
+        assertEquals(1, data.size());
+        assertEquals("B", data.get(0));
+    }
+
+    public void testListRemoveIndex() throws Exception {
+        List<Object> data = new ArrayList<Object>();
+        data.add("A");
+        data.add("B");
+        exchange.getIn().setBody(data);
+
+        assertEquals(2, data.size());
+
+        Expression expression = SimpleLanguage.simple("${body.remove(0)}");
+        expression.evaluate(exchange, Object.class);
+
+        assertEquals(1, data.size());
+        assertEquals("B", data.get(0));
     }
 
     protected String getLanguageName() {

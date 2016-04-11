@@ -25,7 +25,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
@@ -43,6 +45,8 @@ import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.model.language.MethodCallExpression;
+import org.apache.camel.processor.DefaultExchangeFormatter;
+import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
@@ -50,12 +54,17 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.TokenPairExpressionIterator;
 import org.apache.camel.support.TokenXMLExpressionIterator;
 import org.apache.camel.support.XMLTokenExpressionIterator;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.GroupIterator;
+import org.apache.camel.util.GroupTokenIterator;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
+import org.apache.camel.util.StringHelper;
+
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
@@ -1270,6 +1279,30 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression that skips the first element
+     */
+    public static Expression skipFirstExpression(final Expression expression) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Object value = expression.evaluate(exchange, Object.class);
+                Iterator it = exchange.getContext().getTypeConverter().tryConvertTo(Iterator.class, exchange, value);
+                if (it != null) {
+                    // skip first
+                    it.next();
+                    return it;
+                } else {
+                    return value;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "skipFirst(" + expression + ")";
+            }
+        };
+    }
+
+    /**
      * Returns an {@link TokenPairExpressionIterator} expression
      */
     public static Expression tokenizePairExpression(String startToken, String endToken, boolean includeTokens) {
@@ -1335,13 +1368,34 @@ public final class ExpressionBuilder {
         };
     }
 
-    public static Expression groupIteratorExpression(final Expression expression, final String token, final int group) {
+    public static Expression groupXmlIteratorExpression(final Expression expression, final int group) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
                 ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
-                return new GroupIterator(exchange, it, token, group);
+                // must use GroupTokenIterator in xml mode as we want to concat the xml parts into a single message
+                return new GroupTokenIterator(exchange, it, null, group, false);
+            }
+
+            @Override
+            public String toString() {
+                return "group " + expression + " " + group + " times";
+            }
+        };
+    }
+
+    public static Expression groupIteratorExpression(final Expression expression, final String token, final int group, final boolean skipFirst) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // evaluate expression as iterator
+                Iterator<?> it = expression.evaluate(exchange, Iterator.class);
+                ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
+                if (token != null) {
+                    return new GroupTokenIterator(exchange, it, token, group, skipFirst);
+                } else {
+                    return new GroupIterator(exchange, it, group, skipFirst);
+                }
             }
 
             @Override
@@ -1727,6 +1781,20 @@ public final class ExpressionBuilder {
         };
     }
 
+    public static Expression fileNameNoExtensionSingleExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+                return FileUtil.stripExt(name, true);
+            }
+
+            @Override
+            public String toString() {
+                return "file:name.noext.single";
+            }
+        };
+    }
+
     public static Expression fileOnlyNameNoExtensionExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -1741,6 +1809,20 @@ public final class ExpressionBuilder {
         };
     }
 
+    public static Expression fileOnlyNameNoExtensionSingleExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String name = fileOnlyNameExpression().evaluate(exchange, String.class);
+                return FileUtil.stripExt(name, true);
+            }
+
+            @Override
+            public String toString() {
+                return "file:onlyname.noext.single";
+            }
+        };
+    }
+
     public static Expression fileExtensionExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -1751,6 +1833,20 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "file:ext";
+            }
+        };
+    }
+
+    public static Expression fileExtensionSingleExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+                return FileUtil.onlyExt(name, true);
+            }
+
+            @Override
+            public String toString() {
+                return "file:ext.single";
             }
         };
     }
@@ -1833,6 +1929,16 @@ public final class ExpressionBuilder {
         };
     }
 
+    /**
+     * Returns Simple expression or fallback to Constant expression if expression str is not Simple expression.
+     */
+    public static Expression parseSimpleOrFallbackToConstantExpression(String str, CamelContext camelContext) {
+        if (StringHelper.hasStartToken(str, "simple")) {
+            return camelContext.resolveLanguage("simple").createExpression(str);
+        }
+        return constantExpression(str);
+    }
+
     public static Expression propertiesComponentExpression(final String key, final String locations) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -1869,6 +1975,110 @@ public final class ExpressionBuilder {
             }
         };
     }
+    
+    /**
+     * Returns a random number between min and max
+     */
+    public static Expression randomExpression(final int min, final int max) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Random random = new Random();
+                int randomNum = random.nextInt(max - min) + min;
+                return randomNum;
+            }
+
+            @Override
+            public String toString() {
+                return "random";
+            }
+        };
+    }
+    
+    /**
+     * Returns a random number between 0 and upperbound (exclusive)
+     */
+    public static Expression randomExpression(final int upperbound) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Random random = new Random();
+                int randomNum = random.nextInt(upperbound);
+                return randomNum;
+            }
+
+            @Override
+            public String toString() {
+                return "random";
+            }
+        };
+    }
+
+    /**
+     * Returns an iterator to collate (iterate) the given expression
+     */
+    public static Expression collateExpression(final String expression, final int group) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // use simple language
+                Expression exp = exchange.getContext().resolveLanguage("simple").createExpression(expression);
+                return ExpressionBuilder.groupIteratorExpression(exp, null, group, false).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "collate(" + expression + "," + group + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the message history (including exchange details or not)
+     */
+    public static Expression messageHistoryExpression(final boolean detailed) {
+        return new ExpressionAdapter() {
+
+            private ExchangeFormatter formatter;
+
+            public Object evaluate(Exchange exchange) {
+                ExchangeFormatter ef = null;
+                if (detailed) {
+                    // use the exchange formatter to log exchange details
+                    ef = getOrCreateExchangeFormatter(exchange.getContext());
+                }
+                return MessageHelper.dumpMessageHistoryStacktrace(exchange, ef, false);
+            }
+
+            private ExchangeFormatter getOrCreateExchangeFormatter(CamelContext camelContext) {
+                if (formatter == null) {
+                    Set<ExchangeFormatter> formatters = camelContext.getRegistry().findByType(ExchangeFormatter.class);
+                    if (formatters != null && formatters.size() == 1) {
+                        formatter = formatters.iterator().next();
+                    } else {
+                        // setup exchange formatter to be used for message history dump
+                        DefaultExchangeFormatter def = new DefaultExchangeFormatter();
+                        def.setShowExchangeId(true);
+                        def.setMultiline(true);
+                        def.setShowHeaders(true);
+                        def.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
+                        try {
+                            Integer maxChars = CamelContextHelper.parseInteger(camelContext, camelContext.getProperty(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
+                            if (maxChars != null) {
+                                def.setMaxChars(maxChars);
+                            }
+                        } catch (Exception e) {
+                            throw ObjectHelper.wrapRuntimeCamelException(e);
+                        }
+                        formatter = def;
+                    }
+                }
+                return formatter;
+            }
+
+            @Override
+            public String toString() {
+                return "messageHistory(" + detailed + ")";
+            }
+        };
+    }
 
     /**
      * Expression adapter for OGNL expression from Message Header or Exchange property
@@ -1878,8 +2088,8 @@ public final class ExpressionBuilder {
         private final String toStringValue;
         private final KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy;
 
-        public KeyedOgnlExpressionAdapter(String ognl, String toStringValue, 
-                                          KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy) {
+        KeyedOgnlExpressionAdapter(String ognl, String toStringValue, 
+                                   KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy) {
             this.ognl = ognl;
             this.toStringValue = toStringValue;
             this.keyedEntityRetrievalStrategy = keyedEntityRetrievalStrategy;

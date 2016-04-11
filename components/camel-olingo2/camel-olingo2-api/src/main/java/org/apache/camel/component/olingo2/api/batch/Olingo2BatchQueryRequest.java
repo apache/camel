@@ -68,7 +68,7 @@ public class Olingo2BatchQueryRequest extends Olingo2BatchRequest {
         }
 
         public Olingo2BatchQueryRequestBuilder queryParams(Map<String, String> queryParams) {
-            queryParams = queryParams;
+            request.queryParams = queryParams;
             return this;
         }
     }

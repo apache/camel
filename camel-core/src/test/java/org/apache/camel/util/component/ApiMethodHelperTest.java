@@ -175,7 +175,7 @@ public class ApiMethodHelperTest {
         assertEquals("Derived sayHi(name)", "Howdy Dave", ApiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI_1, properties));
     }
 
-    static enum TestMethod implements ApiMethod {
+    enum TestMethod implements ApiMethod {
 
         SAYHI(String.class, "sayHi"),
         SAYHI_1(String.class, "sayHi", String.class, "name"),
@@ -188,24 +188,34 @@ public class ApiMethodHelperTest {
 
         private final ApiMethod apiMethod;
 
-        private TestMethod(Class<?> resultType, String name, Object... args) {
+        TestMethod(Class<?> resultType, String name, Object... args) {
             this.apiMethod = new ApiMethodImpl(TestProxy.class, resultType, name, args);
         }
 
         @Override
-        public String getName() { return apiMethod.getName(); }
+        public String getName() {
+            return apiMethod.getName();
+        }
 
         @Override
-        public Class<?> getResultType() { return apiMethod.getResultType(); }
+        public Class<?> getResultType() {
+            return apiMethod.getResultType();
+        }
 
         @Override
-        public List<String> getArgNames() { return apiMethod.getArgNames(); }
+        public List<String> getArgNames() {
+            return apiMethod.getArgNames();
+        }
 
         @Override
-        public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }
+        public List<Class<?>> getArgTypes() {
+            return apiMethod.getArgTypes();
+        }
 
         @Override
-        public Method getMethod() { return apiMethod.getMethod(); }
+        public Method getMethod() {
+            return apiMethod.getMethod();
+        }
     }
 
 }

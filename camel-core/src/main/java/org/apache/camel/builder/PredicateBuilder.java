@@ -105,6 +105,36 @@ public final class PredicateBuilder {
     }
 
     /**
+     * Concat the given predicates into a single predicate, which matches
+     * if at least one predicates matches.
+     *
+     * @param predicates predicates
+     * @return a single predicate containing all the predicates
+     */
+    public static Predicate or(List<Predicate> predicates) {
+        Predicate answer = null;
+        for (Predicate predicate : predicates) {
+            if (answer == null) {
+                answer = predicate;
+            } else {
+                answer = or(answer, predicate);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Concat the given predicates into a single predicate, which matches
+     * if at least one predicates matches.
+     *
+     * @param predicates predicates
+     * @return a single predicate containing all the predicates
+     */
+    public static Predicate or(Predicate... predicates) {
+        return or(Arrays.asList(predicates));
+    }
+
+    /**
      * A helper method to return true if any of the predicates matches.
      */
     public static Predicate in(final Predicate... predicates) {
@@ -151,6 +181,27 @@ public final class PredicateBuilder {
 
             protected String getOperationText() {
                 return "==";
+            }
+        };
+    }
+
+    public static Predicate isEqualToIgnoreCase(final Expression left, final Expression right) {
+        return new BinaryPredicateSupport(left, right) {
+
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
+                if (leftValue == null && rightValue == null) {
+                    // they are equal
+                    return true;
+                } else if (leftValue == null || rightValue == null) {
+                    // only one of them is null so they are not equal
+                    return false;
+                }
+
+                return ObjectHelper.typeCoerceEquals(exchange.getContext().getTypeConverter(), leftValue, rightValue, true);
+            }
+
+            protected String getOperationText() {
+                return "=~";
             }
         };
     }

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 
@@ -33,7 +32,7 @@ import org.apache.commons.httpclient.protocol.SecureProtocolSocketFactory;
 
 /**
  * A {@code SecureProtocolSocketFactory} implementation to allow configuration
- * of Commons HTTP SSL/TLS options based on a {@link #JSSEClientParameters}
+ * of Commons HTTP SSL/TLS options based on a JSSEClientParameters
  * instance or a provided {@code SSLSocketFactory} instance.
  */
 public class SSLContextParametersSecureProtocolSocketFactory implements SecureProtocolSocketFactory {

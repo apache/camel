@@ -23,5 +23,5 @@ package org.apache.camel.component.http;
  */
 public enum AuthMethod {
 
-    Basic, Digest, NTLM;
+    Basic, Digest, NTLM
 }

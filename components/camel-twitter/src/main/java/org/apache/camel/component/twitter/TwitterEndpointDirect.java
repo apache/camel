@@ -23,19 +23,17 @@ import org.apache.camel.Producer;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.component.direct.DirectEndpoint;
-import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
+import org.apache.camel.component.twitter.consumer.TwitterConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerDirect;
 import org.apache.camel.component.twitter.data.EndpointType;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
 
 /**
  * Twitter direct endpoint
  */
-@UriEndpoint(scheme = "twitter", title = "Twitter", syntax = "twitter:type", consumerClass = Twitter4JConsumer.class, label = "api,social")
 public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndpoint {
 
-    @UriParam
+    // only TwitterEndpointPolling is annotated
+
     private TwitterConfiguration properties;
 
     public TwitterEndpointDirect(String uri, TwitterComponent component, TwitterConfiguration properties) {
@@ -45,7 +43,7 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        Twitter4JConsumer twitter4jConsumer = Twitter4JFactory.getConsumer(this, getEndpointUri());
+        TwitterConsumer twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri());
         TwitterConsumerDirect answer = new TwitterConsumerDirect(this, processor, twitter4jConsumer);
         configureConsumer(answer);
         return answer;
@@ -53,7 +51,7 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
 
     @Override
     public Producer createProducer() throws Exception {
-        return Twitter4JFactory.getProducer(this, getEndpointUri());
+        return TwitterHelper.createProducer(this, getEndpointUri());
     }
 
     @ManagedAttribute
@@ -123,16 +121,6 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
     @ManagedAttribute
     public boolean isFilterOld() {
         return getProperties().isFilterOld();
-    }
-
-    @ManagedAttribute
-    public void setDate(String date) {
-        getProperties().setDate(date);
-    }
-
-    @ManagedAttribute
-    public String getDate() {
-        return getProperties().getDate();
     }
 
     @ManagedAttribute

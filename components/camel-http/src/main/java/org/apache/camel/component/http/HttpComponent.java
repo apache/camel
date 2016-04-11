@@ -25,7 +25,10 @@ import java.util.Set;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.http.common.HttpBinding;
+import org.apache.camel.http.common.HttpCommonComponent;
+import org.apache.camel.http.common.HttpConfiguration;
+import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IntrospectionSupport;
@@ -42,11 +45,9 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
  *
  * @version 
  */
-public class HttpComponent extends HeaderFilterStrategyComponent {
+public class HttpComponent extends HttpCommonComponent {
     protected HttpClientConfigurer httpClientConfigurer;
     protected HttpConnectionManager httpConnectionManager;
-    protected HttpBinding httpBinding;
-    protected HttpConfiguration httpConfiguration;
 
     public HttpComponent() {
         super(HttpEndpoint.class);
@@ -57,24 +58,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     }
 
     /**
-     * Connects the URL specified on the endpoint to the specified processor.
-     *
-     * @param consumer the consumer
-     * @throws Exception can be thrown
-     */
-    public void connect(HttpConsumer consumer) throws Exception {
-    }
-
-    /**
-     * Disconnects the URL specified on the endpoint from the specified processor.
-     *
-     * @param consumer the consumer
-     * @throws Exception can be thrown
-     */
-    public void disconnect(HttpConsumer consumer) throws Exception {
-    }
-
-    /** 
      * Creates the HttpClientConfigurer based on the given parameters
      * 
      * @param parameters the map of parameters 
@@ -82,12 +65,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      */
     protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, Set<AuthMethod> authMethods) {
         // prefer to use endpoint configured over component configured
-        // TODO cmueller: remove the "httpClientConfigurerRef" look up in Camel 3.0
-        HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
-        if (configurer == null) {
-            // try without ref
-            configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
-        }
+        HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
         if (configurer == null) {
             // fallback to component configured
             configurer = getHttpClientConfigurer();
@@ -95,7 +73,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
         // authentication can be endpoint configured
         String authUsername = getAndRemoveParameter(parameters, "authUsername", String.class);
-        AuthMethod authMethod = getAndRemoveParameter(parameters, "authMethod", AuthMethod.class);
+        String authMethod = getAndRemoveParameter(parameters, "authMethod", String.class);
         // validate that if auth username is given then the auth method is also provided
         if (authUsername != null && authMethod == null) {
             throw new IllegalArgumentException("Option authMethod must be provided to use authentication");
@@ -113,7 +91,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
         // proxy authentication can be endpoint configured
         String proxyAuthUsername = getAndRemoveParameter(parameters, "proxyAuthUsername", String.class);
-        AuthMethod proxyAuthMethod = getAndRemoveParameter(parameters, "proxyAuthMethod", AuthMethod.class);
+        String proxyAuthMethod = getAndRemoveParameter(parameters, "proxyAuthMethod", String.class);
         // validate that if proxy auth username is given then the proxy auth method is also provided
         if (proxyAuthUsername != null && proxyAuthMethod == null) {
             throw new IllegalArgumentException("Option proxyAuthMethod must be provided to use proxy authentication");
@@ -137,7 +115,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      *
      * @return configurer to used
      */
-    protected HttpClientConfigurer configureAuth(HttpClientConfigurer configurer, AuthMethod authMethod, String username,
+    protected HttpClientConfigurer configureAuth(HttpClientConfigurer configurer, String authMethod, String username,
                                                  String password, String domain, String host, Set<AuthMethod> authMethods) {
 
         // no auth is in use
@@ -153,13 +131,15 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         ObjectHelper.notNull(username, "authUsername");
         ObjectHelper.notNull(password, "authPassword");
 
-        // add it as a auth method used
-        authMethods.add(authMethod);
+        AuthMethod auth = getCamelContext().getTypeConverter().convertTo(AuthMethod.class, authMethod);
 
-        if (authMethod == AuthMethod.Basic || authMethod == AuthMethod.Digest) {
+        // add it as a auth method used
+        authMethods.add(auth);
+
+        if (auth == AuthMethod.Basic || auth == AuthMethod.Digest) {
             return CompositeHttpConfigurer.combineConfigurers(configurer,
                     new BasicAuthenticationHttpClientConfigurer(false, username, password));
-        } else if (authMethod == AuthMethod.NTLM) {
+        } else if (auth == AuthMethod.NTLM) {
             // domain is mandatory for NTLM
             ObjectHelper.notNull(domain, "authDomain");
             return CompositeHttpConfigurer.combineConfigurers(configurer,
@@ -174,7 +154,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      *
      * @return configurer to used
      */
-    protected HttpClientConfigurer configureProxyAuth(HttpClientConfigurer configurer, AuthMethod authMethod, String username,
+    protected HttpClientConfigurer configureProxyAuth(HttpClientConfigurer configurer, String authMethod, String username,
                                                       String password, String domain, String host, Set<AuthMethod> authMethods) {
         // no proxy auth is in use
         if (username == null && authMethod == null) {
@@ -189,13 +169,15 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         ObjectHelper.notNull(username, "proxyAuthUsername");
         ObjectHelper.notNull(password, "proxyAuthPassword");
 
-        // add it as a auth method used
-        authMethods.add(authMethod);
+        AuthMethod auth = getCamelContext().getTypeConverter().convertTo(AuthMethod.class, authMethod);
 
-        if (authMethod == AuthMethod.Basic || authMethod == AuthMethod.Digest) {
+        // add it as a auth method used
+        authMethods.add(auth);
+
+        if (auth == AuthMethod.Basic || auth == AuthMethod.Digest) {
             return CompositeHttpConfigurer.combineConfigurers(configurer,
                     new BasicAuthenticationHttpClientConfigurer(true, username, password));
-        } else if (authMethod == AuthMethod.NTLM) {
+        } else if (auth == AuthMethod.NTLM) {
             // domain is mandatory for NTML
             ObjectHelper.notNull(domain, "proxyAuthDomain");
             return CompositeHttpConfigurer.combineConfigurers(configurer,
@@ -213,12 +195,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
         // must extract well known parameters before we create the endpoint
-        // TODO cmueller: remove the "httpBindingRef" look up in Camel 3.0
-        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
-        if (binding == null) {
-            // try without ref
-            binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
-        }
+        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
         String authMethodPriority = getAndRemoveParameter(parameters, "authMethodPriority", String.class);
@@ -226,14 +203,17 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
         // http client can be configured from URI options
         HttpClientParams clientParams = new HttpClientParams();
-        IntrospectionSupport.setProperties(clientParams, parameters, "httpClient.");
+        Map<String, Object> httpClientOptions = IntrospectionSupport.extractProperties(parameters, "httpClient.");
+        IntrospectionSupport.setProperties(clientParams, httpClientOptions);
         // validate that we could resolve all httpClient. parameters as this component is lenient
-        validateParameters(uri, parameters, "httpClient.");       
+        validateParameters(uri, httpClientOptions, null);
         // http client can be configured from URI options
         HttpConnectionManagerParams connectionManagerParams = new HttpConnectionManagerParams();
         // setup the httpConnectionManagerParams
-        IntrospectionSupport.setProperties(connectionManagerParams, parameters, "httpConnectionManager.");
-        validateParameters(uri, parameters, "httpConnectionManager.");
+        Map<String, Object> httpConnectionManagerOptions = IntrospectionSupport.extractProperties(parameters, "httpConnectionManager.");
+        IntrospectionSupport.setProperties(connectionManagerParams, httpConnectionManagerOptions);
+        // validate that we could resolve all httpConnectionManager. parameters as this component is lenient
+        validateParameters(uri, httpConnectionManagerOptions, null);
         // make sure the component httpConnectionManager is take effect
         HttpConnectionManager thisHttpConnectionManager = httpConnectionManager;
         if (thisHttpConnectionManager == null) {
@@ -303,6 +283,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             }
         }
         endpoint.setHttpUri(httpUri);
+        endpoint.setHttpClientOptions(httpClientOptions);
         return endpoint;
     }
 
@@ -311,15 +292,13 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return new HttpEndpoint(uri, component, clientParams, connectionManager, configurer);
     }
     
-    @Override
-    protected boolean useIntrospectionOnEndpoint() {
-        return false;
-    }
-
     public HttpClientConfigurer getHttpClientConfigurer() {
         return httpClientConfigurer;
     }
 
+    /**
+     * To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.
+     */
     public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
         this.httpClientConfigurer = httpClientConfigurer;
     }
@@ -328,24 +307,40 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return httpConnectionManager;
     }
 
+    /**
+     * To use a custom HttpConnectionManager to manage connections
+     */
     public void setHttpConnectionManager(HttpConnectionManager httpConnectionManager) {
         this.httpConnectionManager = httpConnectionManager;
     }
 
-    public HttpBinding getHttpBinding() {
-        return httpBinding;
-    }
-
+    /**
+     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+     */
+    @Override
     public void setHttpBinding(HttpBinding httpBinding) {
-        this.httpBinding = httpBinding;
+        // need to override and call super for component docs
+        super.setHttpBinding(httpBinding);
     }
 
-    public HttpConfiguration getHttpConfiguration() {
-        return httpConfiguration;
-    }
-
+    /**
+     * To use the shared HttpConfiguration as base configuration.
+     */
+    @Override
     public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
-        this.httpConfiguration = httpConfiguration;
+        // need to override and call super for component docs
+        super.setHttpConfiguration(httpConfiguration);
     }
 
+    /**
+     * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
+     */
+    @Override
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        // need to override and call super for component docs
+        super.setAllowJavaSerializedObject(allowJavaSerializedObject);
+    }
 }

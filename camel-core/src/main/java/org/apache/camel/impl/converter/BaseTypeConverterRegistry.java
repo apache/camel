@@ -29,12 +29,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverterExists;
+import org.apache.camel.TypeConverterExistsException;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.spi.FactoryFinder;
@@ -44,6 +49,7 @@ import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -56,7 +62,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
+public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry, CamelContextAware {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final ConcurrentMap<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
     // for misses use a soft reference cache map, as the classes may be un-deployed at runtime
@@ -64,8 +70,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
     protected final List<FallbackTypeConverter> fallbackConverters = new CopyOnWriteArrayList<FallbackTypeConverter>();
     protected final PackageScanClassResolver resolver;
+    protected CamelContext camelContext;
     protected Injector injector;
     protected final FactoryFinder factoryFinder;
+    protected TypeConverterExists typeConverterExists = TypeConverterExists.Override;
+    protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.WARN;
     protected final Statistics statistics = new UtilizationStatistics();
     protected final AtomicLong noopCounter = new AtomicLong();
     protected final AtomicLong attemptCounter = new AtomicLong();
@@ -91,6 +100,16 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         addFallbackTypeConverter(new FutureTypeConverter(this), false);
         // add sync processor to async processor converter is to be promoted
         addFallbackTypeConverter(new AsyncProcessorTypeConverter(), true);
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public List<TypeConverterLoader> getTypeConverterLoaders() {
@@ -374,13 +393,32 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         TypeConverter converter = typeMappings.get(key);
         // only override it if its different
         // as race conditions can lead to many threads trying to promote the same fallback converter
+
         if (typeConverter != converter) {
+
+            // add the converter unless we should ignore
+            boolean add = true;
+
+            // if converter is not null then a duplicate exists
             if (converter != null) {
-                log.warn("Overriding type converter from: " + converter + " to: " + typeConverter);
+                if (typeConverterExists == TypeConverterExists.Override) {
+                    CamelLogger logger = new CamelLogger(log, typeConverterExistsLoggingLevel);
+                    logger.log("Overriding type converter from: " + converter + " to: " + typeConverter);
+                } else if (typeConverterExists == TypeConverterExists.Ignore) {
+                    CamelLogger logger = new CamelLogger(log, typeConverterExistsLoggingLevel);
+                    logger.log("Ignoring duplicate type converter from: " + converter + " to: " + typeConverter);
+                    add = false;
+                } else {
+                    // we should fail
+                    throw new TypeConverterExistsException(toType, fromType);
+                }
             }
-            typeMappings.put(key, typeConverter);
-            // remove any previous misses, as we added the new type converter
-            misses.remove(key);
+
+            if (add) {
+                typeMappings.put(key, typeConverter);
+                // remove any previous misses, as we added the new type converter
+                misses.remove(key);
+            }
         }
     }
 
@@ -418,6 +456,12 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         if (typeConverter instanceof TypeConverterAware) {
             TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
             typeConverterAware.setTypeConverter(this);
+        }
+        if (typeConverter instanceof CamelContextAware) {
+            CamelContextAware camelContextAware = (CamelContextAware) typeConverter;
+            if (camelContext != null) {
+                camelContextAware.setCamelContext(camelContext);
+            }
         }
     }
 
@@ -593,6 +637,22 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     @Override
     public int size() {
         return typeMappings.size();
+    }
+
+    public LoggingLevel getTypeConverterExistsLoggingLevel() {
+        return typeConverterExistsLoggingLevel;
+    }
+
+    public void setTypeConverterExistsLoggingLevel(LoggingLevel typeConverterExistsLoggingLevel) {
+        this.typeConverterExistsLoggingLevel = typeConverterExistsLoggingLevel;
+    }
+
+    public TypeConverterExists getTypeConverterExists() {
+        return typeConverterExists;
+    }
+
+    public void setTypeConverterExists(TypeConverterExists typeConverterExists) {
+        this.typeConverterExists = typeConverterExists;
     }
 
     @Override

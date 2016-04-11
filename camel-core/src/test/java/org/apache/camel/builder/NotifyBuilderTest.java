@@ -335,7 +335,7 @@ public class NotifyBuilderTest extends ContextTestSupport {
                 .filter(body().contains("World")).whenDone(3)
                 .create();
 
-        assertEquals("filter(body contains World).whenDone(3)", notify.toString());
+        assertEquals("filter(simple{${body}} contains World).whenDone(3)", notify.toString());
 
         assertEquals(false, notify.matches());
 

@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.StringHelper;
 import org.snmp4j.PDU;
 import org.snmp4j.PDUv1;
 import org.snmp4j.smi.OID;
@@ -46,26 +47,34 @@ public final class SnmpConverters {
     }
 
     @Converter
+    // Camel could use this method to convert the String into a List
     public static OIDList toOIDList(String s, Exchange exchange) {
-        OIDList list = new OIDList();
+        try {
+            OIDList list = new OIDList();
 
-        if (s != null && s.indexOf(",") != -1) {
-            // seems to be a comma separated oid list
-            StringTokenizer strTok = new StringTokenizer(s, ",");
-            while (strTok.hasMoreTokens()) {
-                String tok = strTok.nextToken();
-                if (tok != null && tok.trim().length() > 0) {
-                    list.add(new OID(tok.trim()));
-                } else {
-                    // empty token - skip
+            if (s != null && s.contains(",")) {
+                // seems to be a comma separated oid list
+                StringTokenizer strTok = new StringTokenizer(s, ",");
+                while (strTok.hasMoreTokens()) {
+                    String tok = strTok.nextToken();
+                    if (tok != null && tok.trim().length() > 0) {
+                        list.add(new OID(tok.trim()));
+                    } else {
+                        // empty token - skip
+                    }
                 }
+            } else if (s != null) {
+                // maybe a single oid
+                list.add(new OID(s.trim()));
             }
-        } else if (s != null) {
-            // maybe a single oid
-            list.add(new OID(s.trim()));
-        }
 
-        return list;
+            return list;
+        } catch (Throwable e) {
+            // return null if we can't convert without an error 
+            // and it could let camel to choice the other converter to do the job
+            // new OID(...) will throw NumberFormatException if it's not a valid OID
+            return null;
+        }
     }
 
     private static void entryAppend(StringBuilder sb, String tag, String value) {
@@ -113,7 +122,7 @@ public final class SnmpConverters {
             sb.append(b.getOid().toString());
             sb.append(OID_TAG_CLOSE);
             sb.append(VALUE_TAG_OPEN);
-            sb.append(getXmlSafeString(b.getVariable().toString()));
+            sb.append(StringHelper.xmlEncode(b.getVariable().toString()));
             sb.append(VALUE_TAG_CLOSE);
             sb.append(ENTRY_TAG_CLOSE);
         }
@@ -124,7 +133,4 @@ public final class SnmpConverters {
         return sb.toString();
     }
 
-    private static String getXmlSafeString(String string) {
-        return string.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("'", "&apos;");
-    }
 }

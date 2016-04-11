@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class IrcComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(IrcComponent.class);
-    private final Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
+    private final transient Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
 
     public IrcComponent() {
         super(IrcEndpoint.class);

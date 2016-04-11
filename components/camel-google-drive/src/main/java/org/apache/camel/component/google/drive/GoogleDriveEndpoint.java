@@ -33,15 +33,18 @@ import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 
 /**
- * Represents a GoogleDrive endpoint.
+ * The google-drive component provides access to Google Drive file storage service.
  */
-@UriEndpoint(scheme = "google-drive", title = "Google Drive", syntax = "google:drive:apiName/methodName",
+@UriEndpoint(scheme = "google-drive", title = "Google Drive", syntax = "google-drive:apiName/methodName",
 consumerClass = GoogleDriveConsumer.class, consumerPrefix = "consumer", label = "api,cloud,file")
 public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration> {
     private Object apiProxy;
 
     @UriParam
     private GoogleDriveConfiguration configuration;
+
+    @UriParam
+    private GoogleDriveClientFactory clientFactory;
 
     public GoogleDriveEndpoint(String uri, GoogleDriveComponent component,
                          GoogleDriveApiName apiName, String methodName, GoogleDriveConfiguration endpointConfiguration) {
@@ -129,5 +132,15 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
         return apiProxy;
     }
 
+    public GoogleDriveClientFactory getClientFactory() {
+        return clientFactory;
+    }
 
+    /**
+     * To use the GoogleCalendarClientFactory as factory for creating the client.
+     * Will by default use {@link BatchGoogleDriveClientFactory}
+     */
+    public void setClientFactory(GoogleDriveClientFactory clientFactory) {
+        this.clientFactory = clientFactory;
+    }
 }

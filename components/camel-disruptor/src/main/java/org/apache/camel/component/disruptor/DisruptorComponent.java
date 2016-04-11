@@ -172,6 +172,9 @@ public class DisruptorComponent extends UriEndpointComponent {
         return defaultConcurrentConsumers;
     }
 
+    /**
+     * To configure the default number of concurrent consumers
+     */
     public void setDefaultConcurrentConsumers(final int defaultConcurrentConsumers) {
         this.defaultConcurrentConsumers = defaultConcurrentConsumers;
     }
@@ -180,6 +183,9 @@ public class DisruptorComponent extends UriEndpointComponent {
         return defaultMultipleConsumers;
     }
 
+    /**
+     * To configure the default value for multiple consumers
+     */
     public void setDefaultMultipleConsumers(final boolean defaultMultipleConsumers) {
         this.defaultMultipleConsumers = defaultMultipleConsumers;
     }
@@ -188,6 +194,11 @@ public class DisruptorComponent extends UriEndpointComponent {
         return defaultProducerType;
     }
 
+    /**
+     * To configure the default value for DisruptorProducerType
+     * <p/>
+     * The default value is Multi.
+     */
     public void setDefaultProducerType(final DisruptorProducerType defaultProducerType) {
         this.defaultProducerType = defaultProducerType;
     }
@@ -196,6 +207,11 @@ public class DisruptorComponent extends UriEndpointComponent {
         return defaultWaitStrategy;
     }
 
+    /**
+     * To configure the default value for DisruptorWaitStrategy
+     * <p/>
+     * The default value is Blocking.
+     */
     public void setDefaultWaitStrategy(final DisruptorWaitStrategy defaultWaitStrategy) {
         this.defaultWaitStrategy = defaultWaitStrategy;
     }
@@ -204,22 +220,31 @@ public class DisruptorComponent extends UriEndpointComponent {
         return defaultBlockWhenFull;
     }
 
+    /**
+     * To configure the default value for block when full
+     * <p/>
+     * The default value is true.
+     */
     public void setDefaultBlockWhenFull(boolean defaultBlockWhenFull) {
         this.defaultBlockWhenFull = defaultBlockWhenFull;
     }
 
+    /**
+     * To configure the ring buffer size
+     */
     @Deprecated
     public void setQueueSize(final int size) {
-        LOGGER.warn("Using deprecated queueSize parameter for SEDA compatibility, use bufferSize instead");
         queueSize = size;
     }
 
     @Deprecated
     public int getQueueSize() {
-        LOGGER.warn("Using deprecated queueSize parameter for SEDA compatibility, use bufferSize instead");
         return queueSize;
     }
 
+    /**
+     * To configure the ring buffer size
+     */
     public void setBufferSize(final int size) {
         bufferSize = size;
     }

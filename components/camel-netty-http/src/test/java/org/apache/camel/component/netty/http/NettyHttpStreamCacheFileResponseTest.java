@@ -64,7 +64,7 @@ public class NettyHttpStreamCacheFileResponseTest extends BaseNettyTest {
                 context.getStreamCachingStrategy().setSpoolThreshold(16);
                 context.setStreamCaching(true);
 
-                from("netty-http://http://localhost:{{port}}/myserver")
+                from("netty-http:http://localhost:{{port}}/myserver")
                         // wrap the response in 2 input streams so it will force caching to disk
                         .transform().constant(new BufferedInputStream(new ByteArrayInputStream(body2.getBytes())))
                         .to("log:reply");

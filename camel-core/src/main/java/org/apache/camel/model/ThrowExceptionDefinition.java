@@ -35,11 +35,16 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "throwException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionDefinition> {
-    @XmlAttribute(required = true)
-    // the ref is required from tooling and XML DSL
+    @XmlAttribute
     private String ref;
+    @XmlAttribute
+    private String message;
     @XmlTransient
     private Exception exception;
+    @XmlAttribute
+    private String exceptionType;
+    @XmlTransient
+    private Class<? extends Exception> exceptionClass;
 
     public ThrowExceptionDefinition() {
     }
@@ -64,8 +69,18 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
             this.exception = routeContext.getCamelContext().getRegistry().lookupByNameAndType(ref, Exception.class);
         }
 
-        ObjectHelper.notNull(exception, "exception or ref", this);
-        return new ThrowExceptionProcessor(exception);
+        if (exceptionType != null && exceptionClass == null) {
+            try {
+                this.exceptionClass = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(exceptionType, Exception.class);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
+        if (exception == null && exceptionClass == null) {
+            throw new IllegalArgumentException("exception or exceptionClass/exceptionType must be configured on: " + this);
+        }
+        return new ThrowExceptionProcessor(exception, exceptionClass, message);
     }
 
     public String getRef() {
@@ -85,5 +100,42 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
 
     public void setException(Exception exception) {
         this.exception = exception;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * To create a new exception instance and use the given message as caused message (supports simple language)
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getExceptionType() {
+        return exceptionType;
+    }
+
+    /**
+     * The class of the exception to create using the message.
+     *
+     * @see #setMessage(String)
+     */
+    public void setExceptionType(String exceptionType) {
+        this.exceptionType = exceptionType;
+    }
+
+    public Class<? extends Exception> getExceptionClass() {
+        return exceptionClass;
+    }
+
+    /**
+     * The class of the exception to create using the message.
+     *
+     * @see #setMessage(String)
+     */
+    public void setExceptionClass(Class<? extends Exception> exceptionClass) {
+        this.exceptionClass = exceptionClass;
     }
 }

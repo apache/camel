@@ -52,12 +52,14 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     @Override
     public String parseProperty(String key, String value, Properties properties) {
         log.trace(format("Parsing property '%s=%s'", key, value));
-        initEncryptor();
-        Matcher matcher = pattern.matcher(value);
-        while (matcher.find()) {
-            log.trace(format("Decrypting part '%s'", matcher.group(0)));
-            String decrypted = encryptor.decrypt(matcher.group(1));
-            value = value.replace(matcher.group(0), decrypted);
+        if (value != null) {
+            initEncryptor();
+            Matcher matcher = pattern.matcher(value);
+            while (matcher.find()) {
+                log.trace(format("Decrypting part '%s'", matcher.group(0)));
+                String decrypted = encryptor.decrypt(matcher.group(1));
+                value = value.replace(matcher.group(0), decrypted);
+            }
         }
         return value;
     }

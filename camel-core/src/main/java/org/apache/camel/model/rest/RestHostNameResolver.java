@@ -26,9 +26,9 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "rest")
 @XmlType
-@XmlEnum(String.class)
+@XmlEnum
 public enum RestHostNameResolver {
 
-    localIp, localHostName
+    allLocalIp, localIp, localHostName
 
 }

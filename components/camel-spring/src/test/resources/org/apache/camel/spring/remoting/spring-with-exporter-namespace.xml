@@ -29,7 +29,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
      <!-- START SNIPPET: proxy -->
      <!--  Creates a proxy to the direct:say endpoint. -->
-     <camel:proxy id="sayProxy" serviceUrl="direct:say"
+     <camel:proxy id="sayProxy" serviceUrl="direct:say" binding="false"
                       serviceInterface="org.apache.camel.spring.remoting.ISay"/>
      <!-- END SNIPPET: proxy -->
      <!-- START SNIPPET: export --> 

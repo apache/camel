@@ -24,9 +24,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
+import org.jivesoftware.smack.packet.DefaultPacketExtension;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.pubsub.packet.PubSub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,12 +134,12 @@ public class XmppBinding {
     public Map<String, Object> extractHeadersFromXmpp(Packet xmppPacket, Exchange exchange) {
         Map<String, Object> answer = new HashMap<String, Object>();
 
-        for (String name : JivePropertiesManager.getPropertiesNames(xmppPacket)) {
-            Object value = JivePropertiesManager.getProperty(xmppPacket, name);
-
-            if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
-                answer.put(name, value);
-            }
+        PacketExtension jpe = xmppPacket.getExtension(JivePropertiesExtension.NAMESPACE);
+        if (jpe != null && jpe instanceof JivePropertiesExtension) {
+            extractHeadersFrom((JivePropertiesExtension)jpe, exchange, answer);
+        }
+        if (jpe != null && jpe instanceof DefaultPacketExtension) {
+            extractHeadersFrom((DefaultPacketExtension)jpe, exchange, answer);
         }
 
         if (xmppPacket instanceof Message) {
@@ -154,4 +157,23 @@ public class XmppBinding {
 
         return answer;
     }
+
+    private void extractHeadersFrom(JivePropertiesExtension jpe, Exchange exchange, Map<String, Object> answer) {
+        for (String name : jpe.getPropertyNames()) {
+            Object value = jpe.getProperty(name);
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                answer.put(name, value);
+            }
+        }
+    }
+
+    private void extractHeadersFrom(DefaultPacketExtension jpe, Exchange exchange, Map<String, Object> answer) {
+        for (String name : jpe.getNames()) {
+            Object value = jpe.getValue(name);
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                answer.put(name, value);
+            }
+        }
+    }
+
 }

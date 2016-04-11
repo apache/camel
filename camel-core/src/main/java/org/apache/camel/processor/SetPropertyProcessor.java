@@ -24,18 +24,21 @@ import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which sets the property on the exchange with an {@link org.apache.camel.Expression}
  */
 public class SetPropertyProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
     private String id;
-    private final String propertyName;
+    private final Expression propertyName;
     private final Expression expression;
 
-    public SetPropertyProcessor(String propertyName, Expression expression) {
+    public SetPropertyProcessor(Expression propertyName, Expression expression) {
         this.propertyName = propertyName;
         this.expression = expression;
+        ObjectHelper.notNull(propertyName, "propertyName");
+        ObjectHelper.notNull(expression, "expression");
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -46,8 +49,16 @@ public class SetPropertyProcessor extends ServiceSupport implements AsyncProcess
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             Object newProperty = expression.evaluate(exchange, Object.class);
-            exchange.setProperty(propertyName, newProperty);
-        } catch (Exception e) {
+
+            if (exchange.getException() != null) {
+                // the expression threw an exception so we should break-out
+                callback.done(true);
+                return true;
+            }
+
+            String key = propertyName.evaluate(exchange, String.class);
+            exchange.setProperty(key, newProperty);
+        } catch (Throwable e) {
             exchange.setException(e);
         }
 
@@ -73,7 +84,7 @@ public class SetPropertyProcessor extends ServiceSupport implements AsyncProcess
     }
 
     public String getPropertyName() {
-        return propertyName;
+        return propertyName.toString();
     }
 
     public Expression getExpression() {

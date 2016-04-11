@@ -17,7 +17,6 @@
 package org.apache.camel.component.atom;
 
 import java.text.SimpleDateFormat;
-
 import javax.naming.Context;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -59,13 +58,13 @@ public class AtomEntryPollingConsumerTest extends CamelTestSupport {
         jndi.bind("myDate", df.parse("2007-11-13 14:35:00 +0100"));
         return jndi;
     }
-    
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("atom:file:src/test/data/feed.atom?splitEntries=true&consumer.delay=500").to("mock:result1");
 
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&filter=false&consumer.delay=500").to("mock:result2");                
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&filter=false&consumer.delay=500").to("mock:result2");
 
                 from("atom:file:src/test/data/feed.atom?splitEntries=true&filter=true&lastUpdate=#myDate&consumer.delay=500").to("mock:result3");
             }

@@ -74,6 +74,7 @@ public class SObjectField extends AbstractDTOBase {
     private String maskType;
     private Boolean queryByDistance;
     private String referenceTargetField;
+    private Boolean encrypted;
 
     public Integer getLength() {
         return length;
@@ -473,5 +474,13 @@ public class SObjectField extends AbstractDTOBase {
 
     public void setReferenceTargetField(String referenceTargetField) {
         this.referenceTargetField = referenceTargetField;
+    }
+
+    public Boolean getEncrypted() {
+        return encrypted;
+    }
+
+    public void setEncrypted(Boolean encrypted) {
+        this.encrypted = encrypted;
     }
 }

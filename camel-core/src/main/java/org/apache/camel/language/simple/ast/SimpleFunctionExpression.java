@@ -141,8 +141,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // file: prefix
         remainder = ifStartsWithReturnRemainder("file:", function);
         if (remainder != null) {
-            Expression fileExpression = createSimpleFileExpression(remainder);
-            if (function != null) {
+            Expression fileExpression = createSimpleFileExpression(remainder, strict);
+            if (fileExpression != null) {
                 return fileExpression;
             }
         }
@@ -204,6 +204,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
             Expression exp = ExpressionBuilder.typeExpression(remainder);
             // we want to cache this expression so we wont re-evaluate it as the type/constant wont change
             return ExpressionBuilder.cacheExpression(exp);
+        }
+
+        // miscellaneous functions
+        Expression misc = createSimpleExpressionMisc(function);
+        if (misc != null) {
+            return misc;
         }
 
         if (strict) {
@@ -355,19 +361,23 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return null;
     }
 
-    private Expression createSimpleFileExpression(String remainder) {
+    private Expression createSimpleFileExpression(String remainder, boolean strict) {
         if (ObjectHelper.equal(remainder, "name")) {
             return ExpressionBuilder.fileNameExpression();
         } else if (ObjectHelper.equal(remainder, "name.noext")) {
             return ExpressionBuilder.fileNameNoExtensionExpression();
-        } else if (ObjectHelper.equal(remainder, "name.ext")) {
+        } else if (ObjectHelper.equal(remainder, "name.noext.single")) {
+            return ExpressionBuilder.fileNameNoExtensionSingleExpression();
+        } else if (ObjectHelper.equal(remainder, "name.ext") || ObjectHelper.equal(remainder, "ext")) {
             return ExpressionBuilder.fileExtensionExpression();
+        } else if (ObjectHelper.equal(remainder, "name.ext.single")) {
+            return ExpressionBuilder.fileExtensionSingleExpression();
         } else if (ObjectHelper.equal(remainder, "onlyname")) {
             return ExpressionBuilder.fileOnlyNameExpression();
         } else if (ObjectHelper.equal(remainder, "onlyname.noext")) {
             return ExpressionBuilder.fileOnlyNameNoExtensionExpression();
-        } else if (ObjectHelper.equal(remainder, "ext")) {
-            return ExpressionBuilder.fileExtensionExpression();
+        } else if (ObjectHelper.equal(remainder, "onlyname.noext.single")) {
+            return ExpressionBuilder.fileOnlyNameNoExtensionSingleExpression();
         } else if (ObjectHelper.equal(remainder, "parent")) {
             return ExpressionBuilder.fileParentExpression();
         } else if (ObjectHelper.equal(remainder, "path")) {
@@ -381,7 +391,63 @@ public class SimpleFunctionExpression extends LiteralExpression {
         } else if (ObjectHelper.equal(remainder, "modified")) {
             return ExpressionBuilder.fileLastModifiedExpression();
         }
-        throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());
+        if (strict) {
+            throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());
+        }
+        return null;
+    }
+
+    private Expression createSimpleExpressionMisc(String function) {
+        String remainder;
+
+        // random function
+        remainder = ifStartsWithReturnRemainder("random", function);
+        if (remainder != null) {
+            String values = ObjectHelper.between(remainder, "(", ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = values.split(",", -1);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
+                }
+                int min = Integer.parseInt(tokens[0].trim());
+                int max = Integer.parseInt(tokens[1].trim());
+                return ExpressionBuilder.randomExpression(min, max);
+            } else {
+                int max = Integer.parseInt(values.trim());
+                return ExpressionBuilder.randomExpression(max);
+            }
+        }
+
+        // collate function
+        remainder = ifStartsWithReturnRemainder("collate", function);
+        if (remainder != null) {
+            String values = ObjectHelper.between(remainder, "(", ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException("Valid syntax: ${collate(group)} was: " + function, token.getIndex());
+            }
+            String exp = "${body}";
+            int num = Integer.parseInt(values.trim());
+            return ExpressionBuilder.collateExpression(exp, num);
+        }
+
+        // messageHistory function
+        remainder = ifStartsWithReturnRemainder("messageHistory", function);
+        if (remainder != null) {
+            boolean detailed;
+            String values = ObjectHelper.between(remainder, "(", ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                detailed = true;
+            } else {
+                detailed = Boolean.valueOf(values);
+            }
+            return ExpressionBuilder.messageHistoryExpression(detailed);
+        } else if (ObjectHelper.equal(function, "messageHistory")) {
+            return ExpressionBuilder.messageHistoryExpression(true);
+        }
+        return null;
     }
 
     private String ifStartsWithReturnRemainder(String prefix, String text) {

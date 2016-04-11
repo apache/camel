@@ -17,7 +17,6 @@
 package org.apache.camel.dataformat.bindy.csv;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -34,7 +33,6 @@ import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -122,7 +120,7 @@ public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTes
 
         template.sendBody(expected);
 
-        List<Map<String, Order>> orders = (List<Map<String, Order>>) result.getExchanges().get(0).getIn().getBody();
+        List<Order> orders = (List<Order>) result.getExchanges().get(0).getIn().getBody();
         
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
@@ -130,11 +128,11 @@ public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTes
         assertNotNull(orders);
         // As the @DataField defines a default value for the firstName, the
         // value might not be empty
-        assertFalse(orders.get(0).get(Order.class.getName()).getFirstName().isEmpty());
+        assertFalse(orders.get(0).getFirstName().isEmpty());
     }
     
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
+        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
 
         public void configure() {
             // from("file://src/test/data?move=./target/done").unmarshal(camelDataFormat).to("mock:result");

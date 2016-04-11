@@ -86,7 +86,17 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
     @Override
     protected Endpoint createEndpoint(String uri, String methodName, Olingo2ApiName apiName,
                                       Olingo2Configuration endpointConfiguration) {
+        endpointConfiguration.setApiName(apiName);
+        endpointConfiguration.setMethodName(methodName);
         return new Olingo2Endpoint(uri, this, apiName, methodName, endpointConfiguration);
+    }
+
+    /**
+     * To use the shared configuration
+     */
+    @Override
+    public void setConfiguration(Olingo2Configuration configuration) {
+        super.setConfiguration(configuration);
     }
 
     public Olingo2AppWrapper createApiProxy(Olingo2Configuration endpointConfiguration) {

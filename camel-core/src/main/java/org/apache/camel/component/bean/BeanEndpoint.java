@@ -30,24 +30,24 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Endpoint for the bean component.
- *
- * @version 
+ * The <a href="http://camel.apache.org/bean.html">bean component</a> is for invoking Java beans from Camel.
  */
 @UriEndpoint(scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true, label = "core,java")
 public class BeanEndpoint extends DefaultEndpoint {
     private transient BeanHolder beanHolder;
     private transient BeanProcessor processor;
-    @UriPath @Metadata(required = "true")
+    @UriPath(description = "Sets the name of the bean to invoke") @Metadata(required = "true")
     private String beanName;
-    @UriParam
+    @UriParam(description = "Sets the name of the method to invoke on the bean")
+    private String method;
+    @UriParam(label = "advanced", description = "If enabled, Camel will cache the result of the first Registry look-up."
+            + " Cache can be enabled if the bean in the Registry is defined as a singleton scope.")
     private boolean cache;
-    @UriParam
+    @UriParam(label = "advanced", description = "How to treat the parameters which are passed from the message body."
+            + "true means the message body should be an array of parameters. Note: This option is used internally by Camel, and is not intended for end users to use.")
     @Deprecated
     private boolean multiParameterArray;
-    @UriParam
-    private String method;
-    @UriParam
+    @UriParam(prefix = "bean.", label = "advanced", description = "Used for configuring additional properties on the bean", multiValue = true)
     private Map<String, Object> parameters;
 
     public BeanEndpoint() {

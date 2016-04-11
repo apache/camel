@@ -31,7 +31,7 @@
   <!-- Optimization algorithms configuration -->
   <termination>
     <terminationCompositionStyle>AND</terminationCompositionStyle>
-    <secondsSpentLimit>10</secondsSpentLimit>
+    <secondsSpentLimit>2</secondsSpentLimit>
     <bestScoreFeasible>true</bestScoreFeasible>
   </termination>
   <constructionHeuristic>

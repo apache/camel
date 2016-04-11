@@ -28,6 +28,7 @@ import org.eclipse.jetty.server.Response;
  */
 @Converter
 public final class JettyConverter {
+
     private JettyConverter() {
         //Helper class
     }

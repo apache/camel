@@ -333,7 +333,21 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T jsonpath(String text) {
-        return expression(new JsonPathExpression(text));
+        return jsonpath(text, false);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonpath(String text, boolean suppressExceptions) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setSuppressExceptions(suppressExceptions);
+        return expression(expression);
     }
 
     /**
@@ -346,6 +360,23 @@ public class ExpressionClauseSupport<T> {
      */
     public T jsonpath(String text, Class<?> resultType) {
         JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setResultType(resultType);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param resultType the return type expected by the expression
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonpath(String text, boolean suppressExceptions, Class<?> resultType) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setSuppressExceptions(suppressExceptions);
         expression.setResultType(resultType);
         setExpressionType(expression);
         return result;
@@ -524,6 +555,18 @@ public class ExpressionClauseSupport<T> {
      * Evaluates a token expression on the message body
      *
      * @param token the token
+     * @param group to group by the given number
+     * @param skipFirst whether to skip the very first element
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, int group, boolean skipFirst) {
+        return tokenize(token, null, false, group, skipFirst);
+    }
+
+    /**
+     * Evaluates a token expression on the message body
+     *
+     * @param token the token
      * @param regex whether the token is a regular expression or not
      * @return the builder to continue processing the DSL
      */
@@ -581,11 +624,45 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T tokenize(String token, String headerName, boolean regex, int group) {
+        return tokenize(token, headerName, regex, group, false);
+    }
+
+    /**
+     * Evaluates a token expression on the given header
+     *
+     * @param token the token
+     * @param headerName name of header to tokenize
+     * @param regex whether the token is a regular expression or not
+     * @param skipFirst whether to skip the very first element
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, String headerName, boolean regex, boolean skipFirst) {
+        TokenizerExpression expression = new TokenizerExpression();
+        expression.setToken(token);
+        expression.setHeaderName(headerName);
+        expression.setRegex(regex);
+        expression.setSkipFirst(skipFirst);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates a token expression on the given header
+     *
+     * @param token the token
+     * @param headerName name of header to tokenize
+     * @param regex whether the token is a regular expression or not
+     * @param group to group by number of parts
+     * @param skipFirst whether to skip the very first element
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, String headerName, boolean regex, int group, boolean skipFirst) {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(token);
         expression.setHeaderName(headerName);
         expression.setRegex(regex);
         expression.setGroup(group);
+        expression.setSkipFirst(skipFirst);
         setExpressionType(expression);
         return result;
     }

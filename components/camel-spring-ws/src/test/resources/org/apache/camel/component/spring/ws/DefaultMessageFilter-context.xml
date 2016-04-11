@@ -42,12 +42,12 @@
 		<route>
 			<from uri="direct:sendWithLocalFilter" />
 			<to
-				uri="spring-ws:http://localhost/testSender?endpointMapping=#endpointMapping&amp;messageFilter=local&amp;webServiceTemplate=#webServiceTemplate" />
+				uri="spring-ws:http://localhost/testSender?endpointMapping=#endpointMapping&amp;messageFilter=#local&amp;webServiceTemplate=#webServiceTemplate" />
 		</route>
 		<route>
 			<from uri="direct:sendWithoutFilter" />
 			<to
-				uri="spring-ws:http://localhost/testSender?endpointMapping=#endpointMapping&amp;messageFilter=empty&amp;webServiceTemplate=#webServiceTemplate" />
+				uri="spring-ws:http://localhost/testSender?endpointMapping=#endpointMapping&amp;messageFilter=#empty&amp;webServiceTemplate=#webServiceTemplate" />
 		</route>
 		<route>
 			<from uri="direct:sendDefault" />

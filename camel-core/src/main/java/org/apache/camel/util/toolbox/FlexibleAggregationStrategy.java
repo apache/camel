@@ -53,7 +53,6 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
         CompletionAwareAggregationStrategy, TimeoutAwareAggregationStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(FlexibleAggregationStrategy.class);
-    private static final String COLLECTION_AGGR_GUARD_PROPERTY = "CamelFlexAggrStrCollectionGuard";
 
     private Expression pickExpression = ExpressionBuilder.bodyExpression();
     private Predicate conditionPredicate;
@@ -270,14 +269,14 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
     private Collection<E> safeInsertIntoCollection(Exchange oldExchange, Collection<E> oldValue, E toInsert) {
         Collection<E> collection = null;
         try {
-            if (oldValue == null || oldExchange.getProperty(COLLECTION_AGGR_GUARD_PROPERTY, Boolean.class) == null) {
+            if (oldValue == null || oldExchange.getProperty(Exchange.AGGREGATED_COLLECTION_GUARD, Boolean.class) == null) {
                 try {
                     collection = collectionType.newInstance();
                 } catch (Exception e) {
                     LOG.warn("Could not instantiate collection of type {}. Aborting aggregation.", collectionType);
                     throw ObjectHelper.wrapCamelExecutionException(oldExchange, e);
                 }
-                oldExchange.setProperty(COLLECTION_AGGR_GUARD_PROPERTY, Boolean.FALSE);
+                oldExchange.setProperty(Exchange.AGGREGATED_COLLECTION_GUARD, Boolean.FALSE);
             } else {
                 collection = collectionType.cast(oldValue);
             }
@@ -305,7 +304,7 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
     private abstract class FlexibleAggregationStrategyInjector {
         protected Class<E> type;
         
-        public FlexibleAggregationStrategyInjector(Class<E> type) {
+        FlexibleAggregationStrategyInjector(Class<E> type) {
             this.type = type;
         }
         
@@ -323,7 +322,7 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
     private class PropertyInjector extends FlexibleAggregationStrategyInjector {
         private String propertyName;
         
-        public PropertyInjector(Class<E> type, String propertyName) {
+        PropertyInjector(Class<E> type, String propertyName) {
             super(type);
             this.propertyName = propertyName;
         }
@@ -358,7 +357,7 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
     private class HeaderInjector extends FlexibleAggregationStrategyInjector {
         private String headerName;
         
-        public HeaderInjector(Class<E> type, String headerName) {
+        HeaderInjector(Class<E> type, String headerName) {
             super(type);
             this.headerName = headerName;
         }
@@ -390,7 +389,7 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
     }
     
     private class BodyInjector extends FlexibleAggregationStrategyInjector {
-        public BodyInjector(Class<E> type) {
+        BodyInjector(Class<E> type) {
             super(type);
         }
 

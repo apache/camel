@@ -34,6 +34,7 @@ import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -192,13 +193,19 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
                 throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + strategyRef);
             }
         }
+
         if (strategy == null) {
-            // fallback to use latest
+            // default to use latest aggregation strategy
             strategy = new UseLatestAggregationStrategy();
         }
 
         if (strategy instanceof CamelContextAware) {
             ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
+        }
+
+        if (shareUnitOfWork != null && shareUnitOfWork) {
+            // wrap strategy in share unit of work
+            strategy = new ShareUnitOfWorkAggregationStrategy(strategy);
         }
 
         return strategy;
@@ -286,6 +293,18 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      */
     public RecipientListDefinition<Type> parallelProcessing() {
         setParallelProcessing(true);
+        return this;
+    }
+
+    /**
+     * If enabled then sending messages to the recipients occurs concurrently.
+     * Note the caller thread will still wait until all messages has been fully processed, before it continues.
+     * Its only the sending and processing the replies from the recipients which happens concurrently.
+     *
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> parallelProcessing(boolean parallelProcessing) {
+        setParallelProcessing(parallelProcessing);
         return this;
     }
 

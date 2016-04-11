@@ -112,4 +112,17 @@ public final class ReadingBuilder {
         }
     }
 
+    public static Reading merge(Reading reading, Reading readingUpdate) throws NoSuchFieldException, IllegalAccessException {
+        Reading mergedReading = new Reading();
+
+        Field field = Reading.class.getDeclaredField("parameterMap");
+        field.setAccessible(true);
+        final LinkedHashMap<String, Object> readingParameters = (LinkedHashMap<String, Object>) field.get(reading);
+        readingParameters.putAll((LinkedHashMap<String, Object>) field.get(readingUpdate));
+        field.setAccessible(false);
+
+        setProperties(mergedReading, readingParameters);
+
+        return mergedReading;
+    }
 }

@@ -23,7 +23,7 @@ public abstract class AbstractRouteCommand extends CamelCommandSupport {
     @Argument(index = 0, name = "route", description = "The Camel route ID or a wildcard expression", required = true, multiValued = false)
     String route;
 
-    @Argument(index = 1, name = "context", description = "The Camel context name.", required = true, multiValued = false)
+    @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
     String context;
 
 }

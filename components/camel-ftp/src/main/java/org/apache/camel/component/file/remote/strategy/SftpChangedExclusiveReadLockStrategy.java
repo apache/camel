@@ -83,7 +83,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
             LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.size());
             for (ChannelSftp.LsEntry f : files) {
                 if (f.getFilename().equals(file.getFileNameOnly())) {
-                    newLastModified = f.getAttrs().getMTime();
+                    newLastModified = f.getAttrs().getMTime() * 1000;
                     newLength = f.getAttrs().getSize();
                 }
             }
@@ -124,7 +124,17 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
     }
 
     @Override
-    public void releaseExclusiveReadLock(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange) throws Exception {
         // noop
     }
 
@@ -177,6 +187,11 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
 
     @Override
     public void setMarkerFiler(boolean markerFiler) {
+        // noop - not supported by ftp
+    }
+
+    @Override
+    public void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles) {
         // noop - not supported by ftp
     }
 }

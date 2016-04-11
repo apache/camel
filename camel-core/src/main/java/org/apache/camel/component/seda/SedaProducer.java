@@ -122,7 +122,8 @@ public class SedaProducer extends DefaultAsyncProducer {
 
             log.trace("Adding Exchange to queue: {}", copy);
             try {
-                addToQueue(copy);
+                // do not copy as we already did the copy
+                addToQueue(copy, false);
             } catch (SedaConsumerNotAvailableException e) {
                 exchange.setException(e);
                 callback.done(true);
@@ -160,11 +161,8 @@ public class SedaProducer extends DefaultAsyncProducer {
             }
         } else {
             // no wait, eg its a InOnly then just add to queue and return
-            // handover the completion so its the copy which performs that, as we do not wait
-            Exchange copy = prepareCopy(exchange, true);
-            log.trace("Adding Exchange to queue: {}", copy);
             try {
-                addToQueue(copy);
+                addToQueue(exchange, true);
             } catch (SedaConsumerNotAvailableException e) {
                 exchange.setException(e);
                 callback.done(true);
@@ -205,8 +203,9 @@ public class SedaProducer extends DefaultAsyncProducer {
      * simply add which will throw exception if the queue is full
      * 
      * @param exchange the exchange to add to the queue
+     * @param copy     whether to create a copy of the exchange to use for adding to the queue
      */
-    protected void addToQueue(Exchange exchange) throws SedaConsumerNotAvailableException {
+    protected void addToQueue(Exchange exchange, boolean copy) throws SedaConsumerNotAvailableException {
         BlockingQueue<Exchange> queue = null;
         QueueReference queueReference = endpoint.getQueueReference();
         if (queueReference != null) {
@@ -216,18 +215,33 @@ public class SedaProducer extends DefaultAsyncProducer {
             throw new SedaConsumerNotAvailableException("No queue available on endpoint: " + endpoint, exchange);
         }
 
-        if (endpoint.isFailIfNoConsumers() && !queueReference.hasConsumers()) {
-            throw new SedaConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
+        boolean empty = !queueReference.hasConsumers();
+        if (empty) {
+            if (endpoint.isFailIfNoConsumers()) {
+                throw new SedaConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
+            } else if (endpoint.isDiscardIfNoConsumers()) {
+                log.debug("Discard message as no active consumers on endpoint: " + endpoint);
+                return;
+            }
         }
+
+        Exchange target = exchange;
+
+        // handover the completion so its the copy which performs that, as we do not wait
+        if (copy) {
+            target = prepareCopy(exchange, true);
+        }
+
+        log.trace("Adding Exchange to queue: {}", target);
         if (blockWhenFull) {
             try {
-                queue.put(exchange);
+                queue.put(target);
             } catch (InterruptedException e) {
                 // ignore
                 log.debug("Put interrupted, are we stopping? {}", isStopping() || isStopped());
             }
         } else {
-            queue.add(exchange);
+            queue.add(target);
         }
     }
 

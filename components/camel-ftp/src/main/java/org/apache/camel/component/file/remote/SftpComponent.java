@@ -51,6 +51,8 @@ public class SftpComponent extends RemoteFileComponent<ChannelSftp.LsEntry> {
         // customize its own version
         SftpConfiguration config = new SftpConfiguration(new URI(baseUri));
 
+        FtpUtils.ensureRelativeFtpDirectory(this, config);
+
         return new SftpEndpoint(uri, this, config);
     }
 

@@ -37,6 +37,9 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
+    
+    @EndpointInject(uri = "mock:resultlist")
+    protected MockEndpoint resultlist;
 
     @After
     public void tearDown() throws Exception {
@@ -153,6 +156,66 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
             }
         }
     }
+    
+    @Test
+    public void testCreateAndRebootNode() throws InterruptedException {
+        result.expectedMessageCount(1);
+        template.sendBodyAndHeaders("direct:start", null, createHeaders("1", "default"));
+        result.assertIsSatisfied();
+
+        List<Exchange> exchanges = result.getExchanges();
+        if (exchanges != null && !exchanges.isEmpty()) {
+            for (Exchange exchange : exchanges) {
+                Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
+                assertEquals("There should be one node running", 1, nodeMetadatas.size());
+
+                for (Object obj : nodeMetadatas) {
+                    NodeMetadata nodeMetadata = (NodeMetadata) obj;
+                    template.sendBodyAndHeaders("direct:start", null, rebootHeaders(nodeMetadata.getId(), null));
+                }
+            }
+        }
+    }
+    
+    @Test
+    public void testCreateAndSuspendNode() throws InterruptedException {
+        result.expectedMessageCount(1);
+        template.sendBodyAndHeaders("direct:start", null, createHeaders("1", "default"));
+        result.assertIsSatisfied();
+
+        List<Exchange> exchanges = result.getExchanges();
+        if (exchanges != null && !exchanges.isEmpty()) {
+            for (Exchange exchange : exchanges) {
+                Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
+                assertEquals("There should be one node running", 1, nodeMetadatas.size());
+
+                for (Object obj : nodeMetadatas) {
+                    NodeMetadata nodeMetadata = (NodeMetadata) obj;
+                    template.sendBodyAndHeaders("direct:start", null, suspendHeaders(nodeMetadata.getId(), null));
+                }
+            }
+        }
+    }
+    
+    @Test
+    public void testCreateSuspendAndResumeNode() throws InterruptedException {
+        result.expectedMessageCount(1);
+        template.sendBodyAndHeaders("direct:start", null, createHeaders("1", "default"));
+        result.assertIsSatisfied();
+
+        List<Exchange> exchanges = result.getExchanges();
+        if (exchanges != null && !exchanges.isEmpty()) {
+            for (Exchange exchange : exchanges) {
+                Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
+                assertEquals("There should be one node running", 1, nodeMetadatas.size());
+
+                for (Object obj : nodeMetadatas) {
+                    NodeMetadata nodeMetadata = (NodeMetadata) obj;
+                    template.sendBodyAndHeaders("direct:start", null, resumeHeaders(nodeMetadata.getId(), null));
+                }
+            }
+        }
+    }   
 
     @SuppressWarnings("unchecked")
     @Ignore("For now not possible to combine stub provider with ssh module, required for runScript")
@@ -226,5 +289,59 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         }
 
         return listHeaders;
+    }
+    
+    /**
+     * Returns a {@Map} with the reboot headers.
+     *
+     * @param nodeId The id of the node to reboot.
+     * @param group  The group of the node to reboot.
+     */
+    protected Map<String, Object> rebootHeaders(String nodeId, String group) {
+        Map<String, Object> rebootHeaders = new HashMap<String, Object>();
+        rebootHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.REBOOT_NODE);
+        if (nodeId != null) {
+            rebootHeaders.put(JcloudsConstants.NODE_ID, nodeId);
+        }
+        if (group != null) {
+            rebootHeaders.put(JcloudsConstants.GROUP, group);
+        }
+        return rebootHeaders;
+    }
+    
+    /**
+     * Returns a {@Map} with the suspend headers.
+     *
+     * @param nodeId The id of the node to suspend.
+     * @param group  The group of the node to suspend.
+     */
+    protected Map<String, Object> suspendHeaders(String nodeId, String group) {
+        Map<String, Object> rebootHeaders = new HashMap<String, Object>();
+        rebootHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.SUSPEND_NODE);
+        if (nodeId != null) {
+            rebootHeaders.put(JcloudsConstants.NODE_ID, nodeId);
+        }
+        if (group != null) {
+            rebootHeaders.put(JcloudsConstants.GROUP, group);
+        }
+        return rebootHeaders;
+    }
+    
+    /**
+     * Returns a {@Map} with the suspend headers.
+     *
+     * @param nodeId The id of the node to resume.
+     * @param group  The group of the node to resume.
+     */
+    protected Map<String, Object> resumeHeaders(String nodeId, String group) {
+        Map<String, Object> rebootHeaders = new HashMap<String, Object>();
+        rebootHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.RESUME_NODE);
+        if (nodeId != null) {
+            rebootHeaders.put(JcloudsConstants.NODE_ID, nodeId);
+        }
+        if (group != null) {
+            rebootHeaders.put(JcloudsConstants.GROUP, group);
+        }
+        return rebootHeaders;
     }
 }

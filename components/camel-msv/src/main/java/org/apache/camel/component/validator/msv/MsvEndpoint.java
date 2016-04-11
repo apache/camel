@@ -24,6 +24,9 @@ import org.apache.camel.processor.validation.ValidatingProcessor;
 import org.apache.camel.spi.UriEndpoint;
 import org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl;
 
+/**
+ * Validates the payload of a message using the MSV Library.
+ */
 @UriEndpoint(scheme = "msv", title = "MSV", syntax = "msv:resourceUri", producerOnly = true, label = "validation")
 public class MsvEndpoint extends ValidatorEndpoint {
 

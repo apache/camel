@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.mongodb;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.Bytes;
 import com.mongodb.DBCollection;
@@ -36,7 +39,7 @@ public class MongoDbTailingProcess implements Runnable {
 
     public volatile boolean keepRunning = true;
     public volatile boolean stopped; // = false
-    
+
     private final DBCollection dbCol;
     private final MongoDbEndpoint endpoint;
     private final MongoDbTailableCursorConsumer consumer;
@@ -81,7 +84,7 @@ public class MongoDbTailingProcess implements Runnable {
             tailTracking.recoverFromStore();
             cursor = initializeCursor();
         } catch (Exception e) {
-            throw new CamelMongoDbException("Exception ocurred while initializing tailable cursor", e);
+            throw new CamelMongoDbException("Exception occurred while initializing tailable cursor", e);
         }
 
         if (cursor == null) {
@@ -103,19 +106,19 @@ public class MongoDbTailingProcess implements Runnable {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Regenerating cursor with lastVal: {}, waiting {}ms first", tailTracking.lastVal, cursorRegenerationDelay);
                 }
-                
+
                 if (cursorRegenerationDelayEnabled) {
                     try {
                         Thread.sleep(cursorRegenerationDelay);
                     } catch (InterruptedException e) {
-                        LOG.error("Thread was interrupted", e);
+                        // ignore
                     }
                 }
-                    
+
                 cursor = initializeCursor();
             }
         }
-        
+
         stopped = true;
     }
 

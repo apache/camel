@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.cmis;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,7 +32,6 @@ import org.apache.camel.util.MessageHelper;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -43,11 +44,13 @@ import org.slf4j.LoggerFactory;
  */
 public class CMISProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(CMISProducer.class);
-    private final CMISSessionFacade cmisSessionFacade;
+    private final CMISSessionFacadeFactory sessionFacadeFactory;
+    private CMISSessionFacade sessionFacade;
 
-    public CMISProducer(CMISEndpoint endpoint, CMISSessionFacade cmisSessionFacade) {
+    public CMISProducer(CMISEndpoint endpoint, CMISSessionFacadeFactory sessionFacadeFactory) {
         super(endpoint);
-        this.cmisSessionFacade = cmisSessionFacade;
+        this.sessionFacadeFactory = sessionFacadeFactory;
+        this.sessionFacade = null;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -56,14 +59,25 @@ public class CMISProducer extends DefaultProducer {
         exchange.getOut().setBody(cmisObject.getId());
     }
 
-    private Map<String, Object> filterTypeProperties(Map<String, Object> properties) {
-        Map<String, Object> result = new HashMap<String, Object>(properties.size());
+    private Map<String, Object> filterTypeProperties(Map<String, Object> properties) throws Exception {
+        Map<String, Object> result = new HashMap<>(properties.size());
+
         String objectTypeName = CamelCMISConstants.CMIS_DOCUMENT;
         if (properties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
             objectTypeName = (String) properties.get(PropertyIds.OBJECT_TYPE_ID);
         }
 
-        Set<String> types = cmisSessionFacade.getPropertiesFor(objectTypeName);
+        Set<String> types = new HashSet<>();
+        types.addAll(getSessionFacade().getPropertiesFor(objectTypeName));
+
+        if (getSessionFacade().supportsSecondaries() && properties.containsKey(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
+            @SuppressWarnings("unchecked")
+            Collection<String> secondaryTypes = (Collection<String>) properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
+            for (String secondaryType : secondaryTypes) {
+                types.addAll(getSessionFacade().getPropertiesFor(secondaryType));
+            }
+        }
+
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             if (types.contains(entry.getKey())) {
                 result.put(entry.getKey(), entry.getValue());
@@ -84,32 +98,32 @@ public class CMISProducer extends DefaultProducer {
             String fileName = message.getHeader(PropertyIds.NAME, String.class);
             String mimeType = getMimeType(message);
             byte[] buf = getBodyData(message);
-            ContentStream contentStream = cmisSessionFacade.createContentStream(fileName, buf, mimeType);
+            ContentStream contentStream = getSessionFacade().createContentStream(fileName, buf, mimeType);
             return storeDocument(parentFolder, cmisProperties, contentStream);
         } else if (isFolder(message)) {
             return storeFolder(parentFolder, cmisProperties);
-        } else {  //other types
+        } else { // other types
             return storeDocument(parentFolder, cmisProperties, null);
         }
     }
 
-    private Folder getFolderOnPath(Exchange exchange, String path) {
+    private Folder getFolderOnPath(Exchange exchange, String path) throws Exception {
         try {
-            return (Folder)cmisSessionFacade.getObjectByPath(path);
+            return (Folder) getSessionFacade().getObjectByPath(path);
         } catch (CmisObjectNotFoundException e) {
             throw new RuntimeExchangeException("Path not found " + path, exchange, e);
         }
     }
 
-    private String parentFolderPathFor(Message message) {
+    private String parentFolderPathFor(Message message) throws Exception {
         String customPath = message.getHeader(CamelCMISConstants.CMIS_FOLDER_PATH, String.class);
         if (customPath != null) {
             return customPath;
         }
 
         if (isFolder(message)) {
-            String path = (String)message.getHeader(PropertyIds.PATH);
-            String name = (String)message.getHeader(PropertyIds.NAME);
+            String path = (String) message.getHeader(PropertyIds.PATH);
+            String name = (String) message.getHeader(PropertyIds.NAME);
             if (path != null && path.length() > name.length()) {
                 return path.substring(0, path.length() - name.length());
             }
@@ -118,15 +132,15 @@ public class CMISProducer extends DefaultProducer {
         return "/";
     }
 
-    private boolean isFolder(Message message) {
+    private boolean isFolder(Message message) throws Exception {
         String baseTypeId = message.getHeader(PropertyIds.OBJECT_TYPE_ID, String.class);
         if (baseTypeId != null) {
-            return CamelCMISConstants.CMIS_FOLDER.equals(cmisSessionFacade.getCMISTypeFor(baseTypeId));
+            return CamelCMISConstants.CMIS_FOLDER.equals(getSessionFacade().getCMISTypeFor(baseTypeId));
         }
         return message.getBody() == null;
     }
 
-    private Folder storeFolder(Folder parentFolder, Map<String, Object> cmisProperties) {
+    private Folder storeFolder(Folder parentFolder, Map<String, Object> cmisProperties) throws Exception {
         if (!cmisProperties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
             cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
         }
@@ -134,15 +148,13 @@ public class CMISProducer extends DefaultProducer {
         return parentFolder.createFolder(cmisProperties);
     }
 
-    private Document storeDocument(Folder parentFolder, Map<String, Object> cmisProperties,
-                                   ContentStream contentStream) {
+    private Document storeDocument(Folder parentFolder, Map<String, Object> cmisProperties, ContentStream contentStream) throws Exception {
         if (!cmisProperties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
             cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         }
 
         VersioningState versioningState = VersioningState.NONE;
-        if (cmisSessionFacade
-                .isObjectTypeVersionable((String)cmisProperties.get(PropertyIds.OBJECT_TYPE_ID))) {
+        if (getSessionFacade().isObjectTypeVersionable((String) cmisProperties.get(PropertyIds.OBJECT_TYPE_ID))) {
             versioningState = VersioningState.MAJOR;
         }
         LOG.debug("Creating document with properties: {}", cmisProperties);
@@ -153,10 +165,10 @@ public class CMISProducer extends DefaultProducer {
         ExchangeHelper.getMandatoryHeader(exchange, name, String.class);
     }
 
-    private boolean isDocument(Exchange exchange) {
+    private boolean isDocument(Exchange exchange) throws Exception {
         String baseTypeId = exchange.getIn().getHeader(PropertyIds.OBJECT_TYPE_ID, String.class);
         if (baseTypeId != null) {
-            return CamelCMISConstants.CMIS_DOCUMENT.equals(cmisSessionFacade.getCMISTypeFor(baseTypeId));
+            return CamelCMISConstants.CMIS_DOCUMENT.equals(getSessionFacade().getCMISTypeFor(baseTypeId));
         }
         return exchange.getIn().getBody() != null;
     }
@@ -171,5 +183,14 @@ public class CMISProducer extends DefaultProducer {
             mimeType = MessageHelper.getContentType(message);
         }
         return mimeType;
+    }
+
+    private CMISSessionFacade getSessionFacade() throws Exception {
+        if (sessionFacade == null) {
+            sessionFacade = sessionFacadeFactory.create();
+            sessionFacade.initSession();
+        }
+
+        return sessionFacade;
     }
 }

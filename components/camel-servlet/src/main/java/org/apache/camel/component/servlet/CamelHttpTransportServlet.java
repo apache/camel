@@ -19,9 +19,10 @@ package org.apache.camel.component.servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
-import org.apache.camel.component.http.CamelServlet;
-import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.http.common.CamelServlet;
+import org.apache.camel.http.common.HttpConsumer;
+import org.apache.camel.http.common.HttpRestServletResolveConsumerStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,7 @@ public class CamelHttpTransportServlet extends CamelServlet {
         super.init(config);
 
         // use rest enabled resolver in case we use rest
-        this.setServletResolveConsumerStrategy(new ServletRestServletResolveConsumerStrategy());
+        this.setServletResolveConsumerStrategy(new HttpRestServletResolveConsumerStrategy());
 
         String ignore = config.getInitParameter("ignoreDuplicateServletName");
         Boolean bool = ObjectConverter.toBoolean(ignore);

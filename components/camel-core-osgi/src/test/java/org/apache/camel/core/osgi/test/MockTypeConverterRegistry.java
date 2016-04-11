@@ -19,7 +19,9 @@ package org.apache.camel.core.osgi.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -75,6 +77,22 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
 
     public int size() {
         return typeConverters.size();
+    }
+
+    public LoggingLevel getTypeConverterExistsLoggingLevel() {
+        return LoggingLevel.WARN;
+    }
+
+    public void setTypeConverterExistsLoggingLevel(LoggingLevel loggingLevel) {
+        // noop
+    }
+
+    public TypeConverterExists getTypeConverterExists() {
+        return TypeConverterExists.Override;
+    }
+
+    public void setTypeConverterExists(TypeConverterExists typeConverterExists) {
+        // noop
     }
 
     public void start() throws Exception {

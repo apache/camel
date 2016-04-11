@@ -56,7 +56,7 @@ public class ManagedErrorHandlerRedeliveryTest extends ManagementTestSupport {
         assertEquals(60000, delay.longValue());
 
         delay = (Long) mbeanServer.getAttribute(on, "RedeliveryDelay");
-        assertEquals(0, delay.longValue());
+        assertEquals(1000, delay.longValue());
 
         String camelId = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", camelId);
@@ -124,7 +124,6 @@ public class ManagedErrorHandlerRedeliveryTest extends ManagementTestSupport {
         } catch (CamelExecutionException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Forced", cause.getMessage());
-
         }
 
         assertEquals(1, counter);
@@ -145,7 +144,7 @@ public class ManagedErrorHandlerRedeliveryTest extends ManagementTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         counter++;
                         if (counter < 3) {
-                            throw new  IllegalArgumentException("Forced");
+                            throw new IllegalArgumentException("Forced");
                         }
                     }
                 }).to("mock:result");

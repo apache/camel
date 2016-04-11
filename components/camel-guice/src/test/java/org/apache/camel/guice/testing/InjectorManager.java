@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.guice.testing;
+
 import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,7 +37,6 @@ import org.apache.camel.guice.util.CloseableScope;
 
 /**
  * Used to manage the injectors for the various injection points
- * 
  */
 public class InjectorManager {
     private static final String NESTED_MODULE_CLASS = "TestModule";
@@ -97,14 +97,11 @@ public class InjectorManager {
         Class<? extends Object> testType = test.getClass();
         moduleType = getModuleForTestClass(testType);
 
-        Injector classInjector;
-        synchronized (injectors) {
-            classInjector = injectors.get(moduleType);
-            if (classInjector == null) {
-                classInjector = createInjector(moduleType);
-                Preconditions.checkNotNull(classInjector, "classInjector");
-                injectors.put(moduleType, classInjector);
-            }
+        Injector classInjector = injectors.get(moduleType);
+        if (classInjector == null) {
+            classInjector = createInjector(moduleType);
+            Preconditions.checkNotNull(classInjector, "classInjector");
+            injectors.put(moduleType, classInjector);
         }
         injectors.put(testType, classInjector);
 
@@ -147,7 +144,6 @@ public class InjectorManager {
         CloseErrors errors = new CloseErrorsImpl(this);
         Set<Entry<Object, Injector>> entries = injectors.entrySet();
         for (Entry<Object, Injector> entry : entries) {
-            // Object key = entry.getKey();
             Injector injector = entry.getValue();
             Injectors.close(injector, errors);
         }

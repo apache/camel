@@ -18,7 +18,6 @@ package ${package};
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.component.AbstractApiComponent;
 
 import ${package}.internal.${name}ApiCollection;
@@ -27,7 +26,6 @@ import ${package}.internal.${name}ApiName;
 /**
  * Represents the component that manages {@link ${name}Endpoint}.
  */
-@UriEndpoint(scheme = "${scheme}", consumerClass = ${name}Consumer.class, consumerPrefix = "consumer")
 public class ${name}Component extends AbstractApiComponent<${name}ApiName, ${name}Configuration, ${name}ApiCollection> {
 
     public ${name}Component() {
@@ -46,6 +44,17 @@ public class ${name}Component extends AbstractApiComponent<${name}ApiName, ${nam
     @Override
     protected Endpoint createEndpoint(String uri, String methodName, ${name}ApiName apiName,
                                       ${name}Configuration endpointConfiguration) {
-        return new ${name}Endpoint(uri, this, apiName, methodName, endpointConfiguration);
+        ${name}Endpoint endpoint = new ${name}Endpoint(uri, this, apiName, methodName, endpointConfiguration);
+        endpoint.setName(methodName);
+        return endpoint;
     }
+
+    /**
+     * To use the shared configuration
+     */
+    @Override
+    public void setConfiguration(${name}Configuration configuration) {
+        super.setConfiguration(configuration);
+    }
+
 }

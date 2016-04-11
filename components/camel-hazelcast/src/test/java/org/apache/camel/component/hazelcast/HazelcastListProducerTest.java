@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import com.hazelcast.core.HazelcastInstance;
+import java.util.ArrayList;
+import java.util.Collection;
 
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-
 import org.junit.After;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -102,6 +104,39 @@ public class HazelcastListProducerTest extends HazelcastCamelTestSupport {
         template.sendBody("direct:removevalue", "foo1");
         verify(list).remove("foo1");
     }
+    
+    @Test
+    public void clearList() {
+        template.sendBody("direct:clear", "");
+        verify(list).clear();
+    }
+    
+    @Test
+    public void addAll() throws InterruptedException {
+        Collection t = new ArrayList();
+        t.add("test1");
+        t.add("test2");
+        template.sendBody("direct:addAll", t);
+        verify(list).addAll(t);
+    }
+    
+    @Test
+    public void removeAll() throws InterruptedException {
+        Collection t = new ArrayList();
+        t.add("test1");
+        t.add("test2");
+        template.sendBody("direct:removeAll", t);
+        verify(list).removeAll(t);
+    }
+    
+    @Test
+    public void retainAll() throws InterruptedException {
+        Collection t = new ArrayList();
+        t.add("test1");
+        t.add("test2");
+        template.sendBody("direct:retainAll", t);
+        verify(list).retainAll(t);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -120,7 +155,18 @@ public class HazelcastListProducerTest extends HazelcastCamelTestSupport {
 
                 from("direct:removevalue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMOVEVALUE_OPERATION)).to(
                         String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+                
+                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CLEAR_OPERATION)).toF("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX);
 
+                from("direct:addAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.ADD_ALL_OPERATION)).to(
+                        String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+                
+                from("direct:removeAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMOVE_ALL_OPERATION)).to(
+                        String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+                
+                from("direct:retainAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.RETAIN_ALL_OPERATION)).to(
+                        String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+                
                 from("direct:addWithOperationNumber").toF("hazelcast:%sbar?operation=%s", HazelcastConstants.LIST_PREFIX, HazelcastConstants.ADD_OPERATION);
                 from("direct:addWithOperationName").toF("hazelcast:%sbar?operation=add", HazelcastConstants.LIST_PREFIX);
             }

@@ -30,21 +30,28 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * @version
+ * The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
  */
-@UriEndpoint(scheme = "jdbc", title = "JDBC", syntax = "jdbc:dataSource", producerOnly = true, label = "database,sql")
+@UriEndpoint(scheme = "jdbc", title = "JDBC", syntax = "jdbc:dataSourceName", producerOnly = true, label = "database,sql")
 public class JdbcEndpoint extends DefaultEndpoint {
-    @UriPath @Metadata(required = "true")
+
     private DataSource dataSource;
+
+    @UriPath
+    @Metadata(required = "true")
+    private String dataSourceName;
     @UriParam
     private int readSize;
     @UriParam
     private boolean transacted;
     @UriParam(defaultValue = "true")
     private boolean resetAutoCommit = true;
+    @UriParam(prefix = "statement.", multiValue = true)
     private Map<String, Object> parameters;
     @UriParam(defaultValue = "true")
     private boolean useJDBC4ColumnNameAndLabelSemantics = true;
+    @UriParam
+    private boolean useGetBytesForBlob;
     @UriParam
     private JdbcPrepareStatementStrategy prepareStatementStrategy = new DefaultJdbcPrepareStatementStrategy();
     @UriParam(defaultValue = "true")
@@ -76,6 +83,17 @@ public class JdbcEndpoint extends DefaultEndpoint {
 
     public Producer createProducer() throws Exception {
         return new JdbcProducer(this, dataSource, readSize, parameters);
+    }
+
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+
+    /**
+     * Name of DataSource to lookup in the Registry.
+     */
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
     }
 
     public int getReadSize() {
@@ -227,8 +245,21 @@ public class JdbcEndpoint extends DefaultEndpoint {
         this.beanRowMapper = beanRowMapper;
     }
 
+    public boolean isUseGetBytesForBlob() {
+        return this.useGetBytesForBlob;
+    }
+
+    /**
+     * To read BLOB columns as bytes instead of string data.
+     * <p/>
+     * This may be needed for certain databases such as Oracle where you must read BLOB columns as bytes.
+     */
+    public void setUseGetBytesForBlob(boolean useGetBytesForBlob) {
+        this.useGetBytesForBlob = useGetBytesForBlob;
+    }
+
     @Override
     protected String createEndpointUri() {
-        return "jdbc";
+        return dataSourceName != null ? "jdbc:" + dataSourceName : "jdbc";
     }
 }

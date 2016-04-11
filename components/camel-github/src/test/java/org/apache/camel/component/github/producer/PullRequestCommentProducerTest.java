@@ -46,7 +46,7 @@ public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
                 context.addComponent("github", new GitHubComponent());
                 from("direct:validPullRequest")
                         .process(new MockPullRequestCommentProducerProcessor())
-                        .to("github://pullRequestComment?" + GITHUB_CREDENTIALS_STRING);
+                        .to("github://pullRequestComment?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
 
 

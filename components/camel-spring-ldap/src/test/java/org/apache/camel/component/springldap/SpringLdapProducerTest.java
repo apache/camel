@@ -137,7 +137,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         body.put(SpringLdapProducer.FILTER, filter);
 
         when(ldapEndpoint.getOperation()).thenReturn(LdapOperation.SEARCH);
-        when(ldapEndpoint.getScope()).thenReturn(scope);
+        when(ldapEndpoint.scopeValue()).thenReturn(scope);
 
         processBody(exchange, in, body);
         verify(ldapTemplate).search(eq(dn), eq(filter), eq(scope),

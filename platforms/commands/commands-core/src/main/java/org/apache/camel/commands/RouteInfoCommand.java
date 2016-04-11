@@ -76,6 +76,15 @@ public class RouteInfoCommand extends AbstractRouteCommand {
             out.println(stringEscape.unescapeJava("\tLast Processing Time: " + route.getLastProcessingTime() + " ms"));
             out.println(stringEscape.unescapeJava("\tDelta Processing Time: " + route.getDeltaProcessingTime() + " ms"));
 
+            if (isEmpty(route.getStartTimestamp())) {
+                // Print an empty value for scripting
+                out.println(stringEscape.unescapeJava("\tStart Statistics Date:"));
+            } else {
+                Date date = new SimpleDateFormat(XML_TIMESTAMP_FORMAT).parse(route.getStartTimestamp());
+                String text = new SimpleDateFormat(OUTPUT_TIMESTAMP_FORMAT).format(date);
+                out.println(stringEscape.unescapeJava("\tStart Statistics Date: " + text));
+            }
+
             // Test for null to see if a any exchanges have been processed first to avoid NPE
             if (isEmpty(route.getResetTimestamp())) {
                 // Print an empty value for scripting

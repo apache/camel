@@ -21,8 +21,8 @@ import javax.naming.Context;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;

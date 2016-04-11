@@ -23,7 +23,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 class ClosureAggregationStrategy implements AggregationStrategy {
 
-    private Closure<Exchange> closure;
+    private final Closure<Exchange> closure;
 
     ClosureAggregationStrategy(Closure<Exchange> closure) {
         this.closure = closure;
@@ -33,6 +33,5 @@ class ClosureAggregationStrategy implements AggregationStrategy {
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         return ClosureSupport.call(closure, oldExchange, newExchange);
     }
-
 
 }

@@ -83,8 +83,11 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         Integer size = (Integer) mbeanServer.getAttribute(on, "CompletionSize");
         assertEquals(10, size.longValue());
 
+        String lan = (String) mbeanServer.getAttribute(on, "CorrelationExpressionLanguage");
+        assertEquals("header", lan);
+
         String cor = (String) mbeanServer.getAttribute(on, "CorrelationExpression");
-        assertEquals("header(id)", cor);
+        assertEquals("id", cor);
 
         Integer inflight = (Integer) mbeanServer.getAttribute(on, "InProgressCompleteExchanges");
         assertEquals(0, inflight.intValue());
@@ -144,8 +147,11 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         Integer size = (Integer) mbeanServer.getAttribute(on, "CompletionSize");
         assertEquals(10, size.longValue());
 
+        String lan = (String) mbeanServer.getAttribute(on, "CorrelationExpressionLanguage");
+        assertEquals("header", lan);
+
         String cor = (String) mbeanServer.getAttribute(on, "CorrelationExpression");
-        assertEquals("header(id)", cor);
+        assertEquals("id", cor);
 
         Integer inflight = (Integer) mbeanServer.getAttribute(on, "InProgressCompleteExchanges");
         assertEquals(0, inflight.intValue());

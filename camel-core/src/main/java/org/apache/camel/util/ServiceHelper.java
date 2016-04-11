@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.StatefulService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -260,7 +261,7 @@ public final class ServiceHelper {
      * If there's any exception being thrown while resuming the elements one after the
      * other this method would rethrow the <b>first</b> such exception being thrown.
      * 
-     * @see #resumeService(Service)
+     * @see #resumeService(Object)
      */
     public static void resumeServices(Collection<?> services) throws Exception {
         if (services == null) {
@@ -308,7 +309,7 @@ public final class ServiceHelper {
      * @throws Exception is thrown if error occurred
      * @see #startService(Service)
      */
-    public static boolean resumeService(Service service) throws Exception {
+    public static boolean resumeService(Object service) throws Exception {
         if (service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             if (ss.isSuspended()) {
@@ -331,7 +332,7 @@ public final class ServiceHelper {
      * If there's any exception being thrown while suspending the elements one after the
      * other this method would rethrow the <b>first</b> such exception being thrown.
      * 
-     * @see #suspendService(Service)
+     * @see #suspendService(Object)
      */
     public static void suspendServices(Collection<?> services) throws Exception {
         if (services == null) {
@@ -361,13 +362,13 @@ public final class ServiceHelper {
     /**
      * Suspends the given {@code service}.
      * <p/>
-     * If {@code service} is a {@link org.apache.camel.SuspendableService} then
+     * If {@code service} is both {@link org.apache.camel.Suspendable} and {@link org.apache.camel.SuspendableService} then
      * it's {@link org.apache.camel.SuspendableService#suspend()} is called but
      * <b>only</b> if {@code service} is <b>not</b> already
      * {@link #isSuspended(Object) suspended}.
      * <p/>
      * If {@code service} is <b>not</b> a
-     * {@link org.apache.camel.SuspendableService} then it's
+     * {@link org.apache.camel.Suspendable} and {@link org.apache.camel.SuspendableService} then it's
      * {@link org.apache.camel.Service#stop()} is called.
      * <p/>
      * Calling this method has no effect if {@code service} is {@code null}.
@@ -379,8 +380,8 @@ public final class ServiceHelper {
      * @throws Exception is thrown if error occurred
      * @see #stopService(Object)
      */
-    public static boolean suspendService(Service service) throws Exception {
-        if (service instanceof SuspendableService) {
+    public static boolean suspendService(Object service) throws Exception {
+        if (service instanceof Suspendable && service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             if (!ss.isSuspended()) {
                 LOG.trace("Suspending service {}", service);

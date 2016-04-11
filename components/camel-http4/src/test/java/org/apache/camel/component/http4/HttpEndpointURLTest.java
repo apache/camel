@@ -18,6 +18,7 @@ package org.apache.camel.component.http4;
 
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.URISupport;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.Test;
@@ -60,6 +61,13 @@ public class HttpEndpointURLTest extends CamelTestSupport {
         PoolingHttpClientConnectionManager poolManager = (PoolingHttpClientConnectionManager)connectionManager;
         assertEquals("Get a wrong setting of maxTotalConnections", 40, poolManager.getMaxTotal());
         assertEquals("Get a wrong setting of connectionsPerRoute", 5, poolManager.getDefaultMaxPerRoute());
+    }
+    
+    @Test
+    // Just for CAMEL-8607
+    public void testRawWithUnsafeCharacters() throws Exception {
+        HttpEndpoint http1 = context.getEndpoint("http4://www.google.com?authenticationPreemptive=true&authPassword=RAW(foo%bar)&authUsername=RAW(username)", HttpEndpoint.class);
+        assertTrue("The password is not loggged", URISupport.sanitizeUri(http1.getEndpointUri()).indexOf("authPassword=xxxxxx") > 0);
     }
 
 }

@@ -36,8 +36,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -46,6 +44,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Component for working with documents stored in MongoDB database.
+ */
 @UriEndpoint(scheme = "mongodb", title = "MongoDB", syntax = "mongodb:connectionBean", consumerClass = MongoDbTailableCursorConsumer.class, label = "database,nosql")
 public class MongoDbEndpoint extends DefaultEndpoint {
 
@@ -65,7 +66,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private MongoDbOperation operation;
     @UriParam(defaultValue = "true")
     private boolean createCollection = true;
-    @UriParam
+    @UriParam(enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY,SAFE")
     private WriteConcern writeConcern;
     private WriteConcern writeConcernRef;
     @UriParam
@@ -93,6 +94,9 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     @UriParam
     private String tailTrackField;
     private MongoDbTailTrackingConfig tailTrackingConfig;
+
+    @UriParam
+    private MongoDbOutputType outputType;
 
     private DBCollection dbCollection;
     private DB db;
@@ -141,6 +145,23 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
+    /**
+     * Check if outputType is compatible with operation. DbCursor and DBObjectList applies to findAll. DBObject applies to others.
+     */
+    private void validateOutputType() {
+        if (!ObjectHelper.isEmpty(outputType)) {
+            if (MongoDbOutputType.DBObjectList.equals(outputType) && !(MongoDbOperation.findAll.equals(operation))) {
+                throw new IllegalArgumentException("outputType DBObjectList is only compatible with operation findAll");
+            }
+            if (MongoDbOutputType.DBCursor.equals(outputType) && !(MongoDbOperation.findAll.equals(operation))) {
+                throw new IllegalArgumentException("outputType DBCursor is only compatible with operation findAll");
+            }
+            if (MongoDbOutputType.DBObject.equals(outputType) && (MongoDbOperation.findAll.equals(operation))) {
+                throw new IllegalArgumentException("outputType DBObject is not compatible with operation findAll");
+            }
+        }
+    }
+
     private void validateOptions(char role) throws IllegalArgumentException {
         // make our best effort to validate, options with defaults are checked against their defaults, which is not always a guarantee that
         // they haven't been explicitly set, but it is enough
@@ -151,11 +172,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             }
         } else if (role == 'C') {
             if (!ObjectHelper.isEmpty(operation) || !ObjectHelper.isEmpty(writeConcern) || writeConcernRef != null
-                   || dynamicity) {
-                throw new IllegalArgumentException("operation, writeConcern, writeConcernRef, dynamicity, invokeGetLastError "
+                   || dynamicity || outputType != null) {
+                throw new IllegalArgumentException("operation, writeConcern, writeConcernRef, dynamicity, outputType "
                         + "options cannot appear on a consumer endpoint");
             }
-
             if (consumerType == MongoDbConsumerType.tailable) {
                 if (tailTrackIncreasingField == null) {
                     throw new IllegalArgumentException("tailTrackIncreasingField option must be set for tailable cursor MongoDB consumer endpoint");
@@ -263,13 +283,12 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     public Exchange createMongoDbExchange(DBObject dbObj) {
-        Exchange exchange = new DefaultExchange(this.getCamelContext(), getExchangePattern());
-        Message message = new DefaultMessage();
+        Exchange exchange = super.createExchange();
+        Message message = exchange.getIn();
         message.setHeader(MongoDbConstants.DATABASE, database);
         message.setHeader(MongoDbConstants.COLLECTION, collection);
         message.setHeader(MongoDbConstants.FROM_TAILABLE, true);
         message.setBody(dbObj);
-        exchange.setIn(message);
         return exchange;
     }
 
@@ -304,7 +323,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     /**
      * Sets the name of the MongoDB collection to bind to this endpoint
-     * 
+     *
      * @param collection collection name
      */
     public void setCollection(String collection) {
@@ -328,8 +347,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     /**
      * Sets the operation this endpoint will execute against MongoDB. For possible values, see {@link MongoDbOperation}.
+     *
      * @param operation name of the operation as per catalogued values
-     * 
      * @throws CamelMongoDbException
      */
     public void setOperation(String operation) throws CamelMongoDbException {
@@ -605,4 +624,17 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         this.writeResultAsHeader = writeResultAsHeader;
     }
 
+    public MongoDbOutputType getOutputType() {
+        return outputType;
+    }
+
+    /**
+     * Convert the output of the producer to the selected type : "DBObjectList", "DBObject" or "DBCursor".
+     * DBObjectList or DBObject applies to findAll.
+     * DBCursor applies to all other operations.
+     * @param outputType
+     */
+    public void setOutputType(MongoDbOutputType outputType) {
+        this.outputType = outputType;
+    }
 }

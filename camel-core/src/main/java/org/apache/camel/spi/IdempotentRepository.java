@@ -80,5 +80,12 @@ public interface IdempotentRepository<E> extends Service {
      * @return <tt>true</tt> if the key was confirmed
      */
     boolean confirm(E key);
+    
+    /**
+     * Clear the repository.
+     * <p/>
+     * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
+     */
+    void clear();
 
 }

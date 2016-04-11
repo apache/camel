@@ -34,9 +34,10 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A JCR endpoint
+ * The jcr component allows you to add/read nodes to/from a JCR compliant content repository.
  */
-@UriEndpoint(scheme = "jcr", title = "JCR", syntax = "jcr:host/base", consumerClass = JcrConsumer.class, label = "cms,database")
+@UriEndpoint(scheme = "jcr", title = "JCR", syntax = "jcr:host/base", alternativeSyntax = "jcr:username:password@host/base",
+        consumerClass = JcrConsumer.class, label = "cms,database")
 public class JcrEndpoint extends DefaultEndpoint {
 
     private Credentials credentials;
@@ -44,7 +45,7 @@ public class JcrEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
     private String host;
-    @UriPath @Metadata(required = "true")
+    @UriPath
     private String base;
     @UriParam
     private String username;
@@ -64,6 +65,8 @@ public class JcrEndpoint extends DefaultEndpoint {
     private long sessionLiveCheckIntervalOnStart = 3000L;
     @UriParam(defaultValue = "60000")
     private long sessionLiveCheckInterval = 60000L;
+    @UriParam
+    private String workspaceName;
 
     protected JcrEndpoint(String endpointUri, JcrComponent component) {
         super(endpointUri, component);
@@ -155,6 +158,9 @@ public class JcrEndpoint extends DefaultEndpoint {
         return username;
     }
 
+    /**
+     * Username for login
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -163,6 +169,9 @@ public class JcrEndpoint extends DefaultEndpoint {
         return password;
     }
 
+    /**
+     * Password for login
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -268,6 +277,17 @@ public class JcrEndpoint extends DefaultEndpoint {
         }
 
         this.sessionLiveCheckInterval = sessionLiveCheckInterval;
+    }
+    
+    /**
+     * The workspace to access. If it's not specified then the default one will be used
+     */
+    public String getWorkspaceName() {
+        return workspaceName;
+    }
+
+    public void setWorkspaceName(String workspaceName) {
+        this.workspaceName = workspaceName;
     }
 
     /**

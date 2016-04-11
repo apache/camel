@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -57,7 +55,6 @@ public class BindySimpleCsvUnmarshallBadIntegerTest extends AbstractJUnit4Spring
     @EndpointInject(uri = URI_MOCK_ERROR)
     private MockEndpoint error;
 
-    @SuppressWarnings("unchecked")
     @Test
     @DirtiesContext
     public void testIntegerMessage() throws Exception {
@@ -68,12 +65,10 @@ public class BindySimpleCsvUnmarshallBadIntegerTest extends AbstractJUnit4Spring
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
-
-        List<Map<String, org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math>> model = (List<Map<String, org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math>>)result
-            .getExchanges().get(0).getIn().getBody();
-
-        LOG.info(">>> Model generated : " + model.get(0).get("org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math").toString());
-
+       
+        Object data = result.getReceivedExchanges().get(0).getIn().getBody();
+        
+        LOG.info(">>> Model generated : " + data.getClass().getName());
     }
 
     @Test
@@ -101,7 +96,7 @@ public class BindySimpleCsvUnmarshallBadIntegerTest extends AbstractJUnit4Spring
 
     public static class ContextConfig extends RouteBuilder {
 
-        BindyCsvDataFormat orderBindyDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassmath");
+        BindyCsvDataFormat orderBindyDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math.class);
 
         public void configure() {
 

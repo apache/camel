@@ -21,12 +21,42 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest {
 
     private int port2;
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                create();
+        localServer.start();
 
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
+    
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
@@ -50,10 +80,10 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                port2 = AvailablePortFinder.getNextAvailable(getPort());
+                port2 = AvailablePortFinder.getNextAvailable(localServer.getLocalPort());
 
                 from("direct:foo")
-                        .to("http4s-foo://127.0.0.1:" + getPort() + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParametersRef=sslContextParameters");
+                        .to("http4s-foo://127.0.0.1:" + localServer.getLocalPort() + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParametersRef=sslContextParameters");
 
                 from("direct:bar")
                         .to("http4s-bar://127.0.0.1:" + port2 + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParametersRef=sslContextParameters2");

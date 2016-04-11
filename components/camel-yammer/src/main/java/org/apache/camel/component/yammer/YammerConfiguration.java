@@ -27,25 +27,25 @@ public class YammerConfiguration {
     @UriPath(name = "function") @Metadata(required = "true")
     private YammerFunctionType functionType;
     private String function;
-    @UriParam
+    @UriParam  @Metadata(required = "true")
     private String consumerKey;
-    @UriParam
+    @UriParam  @Metadata(required = "true")
     private String consumerSecret;
-    @UriParam
+    @UriParam  @Metadata(required = "true")
     private String accessToken;
     @UriParam
     private boolean useJson;
-    @UriParam(defaultValue = "5000")
+    @UriParam(label = "consumer", defaultValue = "5000")
     private long delay = 3000 + 2000; // 3 sec per poll is enforced by yammer; add 2 sec for safety
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "consumer", defaultValue = "-1")
     private int limit = -1; // default is unlimited
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "consumer", defaultValue = "-1")
     private int olderThan = -1;
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "consumer", defaultValue = "-1")
     private int newerThan = -1;
-    @UriParam
+    @UriParam(label = "consumer", enums = "true,extended")
     private String threaded;
-    @UriParam
+    @UriParam(label = "consumer")
     private String userId;
     private ApiRequestor requestor;
 
@@ -53,6 +53,9 @@ public class YammerConfiguration {
         return consumerKey;
     }
 
+    /**
+     * The consumer key
+     */
     public void setConsumerKey(String consumerKey) {
         this.consumerKey = consumerKey;
     }
@@ -61,6 +64,9 @@ public class YammerConfiguration {
         return consumerSecret;
     }
 
+    /**
+     * The consumer secret
+     */
     public void setConsumerSecret(String consumerSecret) {
         this.consumerSecret = consumerSecret;
     }
@@ -69,6 +75,9 @@ public class YammerConfiguration {
         return delay;
     }
 
+    /**
+     * Delay between polling in millis
+     */
     public void setDelay(long delay) {
         this.delay = delay;
     }
@@ -77,6 +86,9 @@ public class YammerConfiguration {
         return accessToken;
     }
 
+    /**
+     * The access token
+     */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
@@ -85,6 +97,9 @@ public class YammerConfiguration {
         return functionType;
     }
 
+    /**
+     * The function to use
+     */
     public void setFunctionType(YammerFunctionType functionType) {
         this.functionType = functionType;
     }
@@ -93,6 +108,9 @@ public class YammerConfiguration {
         return function;
     }
 
+    /**
+     * The function to use
+     */
     public void setFunction(String function) {
         this.function = function;
     }
@@ -101,6 +119,9 @@ public class YammerConfiguration {
         return useJson;
     }
 
+    /**
+     * Set to true if you want to use raw JSON rather than converting to POJOs.
+     */
     public void setUseJson(boolean useJson) {
         this.useJson = useJson;
     }
@@ -120,6 +141,9 @@ public class YammerConfiguration {
         return limit;
     }
 
+    /**
+     * Return only the specified number of messages. Works for threaded=true and threaded=extended.
+     */
     public void setLimit(int limit) {
         this.limit = limit;
     }
@@ -128,6 +152,11 @@ public class YammerConfiguration {
         return olderThan;
     }
 
+    /**
+     * Returns messages older than the message ID specified as a numeric string.
+     * This is useful for paginating messages. For example, if you're currently viewing 20 messages and the oldest is number 2912,
+     * you could append "?olderThan=2912″ to your request to get the 20 messages prior to those you're seeing.
+     */
     public void setOlderThan(int olderThan) {
         this.olderThan = olderThan;
     }
@@ -136,6 +165,11 @@ public class YammerConfiguration {
         return newerThan;
     }
 
+    /**
+     * Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages.
+     * If you're looking at messages, and the most recent message returned is 3516, you can make a request with the parameter "?newerThan=3516″
+     * to ensure that you do not get duplicate copies of messages already on your page.
+     */
     public void setNewerThan(int newerThan) {
         this.newerThan = newerThan;
     }
@@ -144,6 +178,12 @@ public class YammerConfiguration {
         return threaded;
     }
 
+    /**
+     * threaded=true will only return the first message in each thread.
+     * This parameter is intended for apps which display message threads collapsed.
+     * threaded=extended will return the thread starter messages in order of most recently active as well as the
+     * two most recent messages, as they are viewed in the default view on the Yammer web interface.
+     */
     public void setThreaded(String threaded) {
         this.threaded = threaded;
     }
@@ -152,6 +192,9 @@ public class YammerConfiguration {
         return userId;
     }
 
+    /**
+     * The user id
+     */
     public void setUserId(String userId) {
         this.userId = userId;
     }

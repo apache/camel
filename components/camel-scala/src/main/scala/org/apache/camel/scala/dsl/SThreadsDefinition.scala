@@ -22,7 +22,6 @@ import builder.RouteBuilder
 import org.apache.camel.ThreadPoolRejectedPolicy
 import org.apache.camel.model.ThreadsDefinition
 
-
 /**
  * Scala enrichment for Camel's ThreadsDefinition
  */
@@ -44,8 +43,6 @@ case class SThreadsDefinition(override val target: ThreadsDefinition)(implicit v
   
   def callerRunsWhenRejected(callerRunsWhenRejected: Boolean) = wrap(target.callerRunsWhenRejected(callerRunsWhenRejected))
 
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SThreadsDefinition]
-  
   def executorService(executorService: ExecutorService) = wrap(target.setExecutorService(executorService))
   
   def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))

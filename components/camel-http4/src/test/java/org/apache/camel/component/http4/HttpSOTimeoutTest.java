@@ -19,7 +19,10 @@ package org.apache.camel.component.http4;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.DelayValidationHandler;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -28,9 +31,36 @@ import org.junit.Test;
  */
 public class HttpSOTimeoutTest extends BaseHttpTest {
 
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/", new DelayValidationHandler("GET", null, null, getExpectedContent(), 2000)).create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
+    
     @Test
     public void httpGet() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "?httpClient.SocketTimeout=5000", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?httpClient.SocketTimeout=5000", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
@@ -40,16 +70,11 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
 
     @Test
     public void httpGetShouldThrowASocketTimeoutException() throws Exception {
-        Exchange reply = template.request("http4://" + getHostName() + ":" + getPort() + "?httpClient.SocketTimeout=1000", new Processor() {
+        Exchange reply = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?httpClient.SocketTimeout=1000", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
         Exception e = reply.getException();
         assertNotNull("Should have thrown an exception", e);
-    }
-
-    @Override
-    protected void registerHandler(LocalTestServer server) {
-        server.register("/", new DelayValidationHandler("GET", null, null, getExpectedContent(), 2000));
     }
 }

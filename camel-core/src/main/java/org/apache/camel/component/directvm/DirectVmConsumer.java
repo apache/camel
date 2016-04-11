@@ -17,13 +17,13 @@
 package org.apache.camel.component.directvm;
 
 import org.apache.camel.Processor;
-import org.apache.camel.SuspendableService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
  * The direct-vm consumer
  */
-public class DirectVmConsumer extends DefaultConsumer implements SuspendableService {
+public class DirectVmConsumer extends DefaultConsumer implements Suspendable {
 
     public DirectVmConsumer(DirectVmEndpoint endpoint, Processor processor) {
         super(endpoint, processor);

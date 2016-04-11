@@ -26,6 +26,8 @@ import org.apache.camel.util.URISupport;
 public class RedisProducer extends DefaultProducer {
     private final RedisClient redisClient;
 
+    private transient String redisProducerToString;
+    
     public RedisProducer(RedisEndpoint endpoint, RedisConfiguration configuration) {
         super(endpoint);
         redisClient = new RedisClient(configuration.getRedisTemplate());
@@ -46,6 +48,9 @@ public class RedisProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        return "RedisProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (redisProducerToString == null) {
+            redisProducerToString = "RedisProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return redisProducerToString;
     }
 }

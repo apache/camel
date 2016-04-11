@@ -58,6 +58,9 @@ public class LocalContextComponent extends DefaultComponent {
         return localCamelContext;
     }
 
+    /**
+     * Sets the local CamelContext to use.
+     */
     public void setLocalCamelContext(CamelContext localCamelContext) {
         this.localCamelContext = localCamelContext;
     }

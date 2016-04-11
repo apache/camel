@@ -136,6 +136,9 @@ public class JcloudsComponent extends UriEndpointComponent {
         return blobStores;
     }
 
+    /**
+     * To use the given BlobStore which must be configured when using blobstore.
+     */
     public void setBlobStores(List<BlobStore> blobStores) {
         this.blobStores = blobStores;
     }
@@ -144,6 +147,9 @@ public class JcloudsComponent extends UriEndpointComponent {
         return computeServices;
     }
 
+    /**
+     * To use the given ComputeService which must be configured when use compute.
+     */
     public void setComputeServices(List<ComputeService> computeServices) {
         this.computeServices = computeServices;
     }

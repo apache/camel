@@ -25,7 +25,7 @@ public class CurrentWeatherConsumerTest extends BaseWeatherConsumerTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("weather:foo").to("mock:result");
+                from("weather:foo?appid=9162755b2efa555823cfe0451d7fff38").to("mock:result");
             }
         };
     }

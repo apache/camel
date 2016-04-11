@@ -35,7 +35,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version 
+ * The rmi component is for invoking Java RMI beans from Camel.
  */
 @UriEndpoint(scheme = "rmi", title = "RMI", syntax = "rmi:hostname:port/name", consumerClass = RmiConsumer.class, label = "messaging")
 public class RmiEndpoint extends DefaultEndpoint {
@@ -43,11 +43,11 @@ public class RmiEndpoint extends DefaultEndpoint {
     private ClassLoader classLoader;
     private URI uri;
 
-    @UriPath(defaultValue = "localhost")
+    @UriPath(description = "Hostname of RMI server", defaultValue = "localhost")
     private String hostname;
-    @UriPath(defaultValue = "" + Registry.REGISTRY_PORT)
+    @UriPath(description = "Port number of RMI server", defaultValue = "" + Registry.REGISTRY_PORT)
     private int port;
-    @UriPath @Metadata(required = "true")
+    @UriPath(description = "Name to use when binding to RMI server") @Metadata(required = "true")
     private String name;
     @UriParam
     private List<Class<?>> remoteInterfaces;
@@ -120,6 +120,9 @@ public class RmiEndpoint extends DefaultEndpoint {
         return remoteInterfaces;
     }
 
+    /**
+     * To specific the remote interfaces.
+     */
     public void setRemoteInterfaces(List<Class<?>> remoteInterfaces) {
         this.remoteInterfaces = remoteInterfaces;
         if (classLoader == null && !remoteInterfaces.isEmpty()) {
@@ -151,6 +154,9 @@ public class RmiEndpoint extends DefaultEndpoint {
         return method;
     }
 
+    /**
+     * You can set the name of the method to invoke.
+     */
     public void setMethod(String method) {
         this.method = method;
     }

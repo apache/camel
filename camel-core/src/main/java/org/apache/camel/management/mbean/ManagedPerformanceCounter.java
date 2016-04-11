@@ -109,7 +109,9 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         return exchangesFailed.getValue();
     }
 
-    public long getExchangesInflight() { return exchangesInflight.getValue(); }
+    public long getExchangesInflight() {
+        return exchangesInflight.getValue();
+    }
 
     public long getFailuresHandled() throws Exception {
         return failuresHandled.getValue();
@@ -272,6 +274,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         sb.append(String.format(" meanProcessingTime=\"%s\"", meanProcessingTime.getValue()));
 
         if (fullStats) {
+            sb.append(String.format(" startTimestamp=\"%s\"", dateAsString(startTimestamp.getValue())));
             sb.append(String.format(" resetTimestamp=\"%s\"", dateAsString(resetTimestamp.getValue())));
             sb.append(String.format(" firstExchangeCompletedTimestamp=\"%s\"", dateAsString(firstExchangeCompletedTimestamp.getValue())));
             sb.append(String.format(" firstExchangeCompletedExchangeId=\"%s\"", nullSafe(firstExchangeCompletedExchangeId)));

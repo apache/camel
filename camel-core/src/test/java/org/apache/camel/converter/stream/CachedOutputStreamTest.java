@@ -84,7 +84,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         File file = new File("target/cachedir");
         String[] files = file.list();
         assertEquals("we should have a temp file", 1, files.length);
-        assertTrue("The file name should start with cos" , files[0].startsWith("cos"));
+        assertTrue("The file name should start with cos", files[0].startsWith("cos"));
         
         InputStream is = cos.getWrappedInputStream();
         exchange.getUnitOfWork().done(exchange);
@@ -106,7 +106,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         File file = new File("target/cachedir");
         String[] files = file.list();
         assertEquals("we should have a temp file", 1, files.length);
-        assertTrue("The file name should start with cos" , files[0].startsWith("cos"));
+        assertTrue("The file name should start with cos", files[0].startsWith("cos"));
 
         StreamCache cache = cos.newStreamCache();
         assertTrue("Should get the FileInputStreamCache", cache instanceof FileInputStreamCache);
@@ -146,7 +146,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         File file = new File("target/cachedir");
         String[] files = file.list();
         assertEquals("we should have a temp file", 1, files.length);
-        assertTrue("The content is written" , new File(file, files[0]).length() > 10);
+        assertTrue("The content is written", new File(file, files[0]).length() > 10);
         
         java.io.FileInputStream tmpin = new java.io.FileInputStream(new File(file, files[0]));
         String temp = toString(tmpin);
@@ -186,7 +186,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         File file = new File("target/cachedir");
         String[] files = file.list();
         assertEquals("we should have a temp file", 1, files.length);
-        assertTrue("The file name should start with cos" , files[0].startsWith("cos"));
+        assertTrue("The file name should start with cos", files[0].startsWith("cos"));
         
         StreamCache cache = cos.newStreamCache();
         assertTrue("Should get the FileInputStreamCache", cache instanceof FileInputStreamCache);
@@ -264,7 +264,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         File file = new File("target/cachedir");
         String[] files = file.list();
         assertEquals("we should have a temp file", 1, files.length);
-        assertTrue("The file name should start with cos" , files[0].startsWith("cos"));              
+        assertTrue("The file name should start with cos", files[0].startsWith("cos"));              
         
         StreamCache cache = cos.newStreamCache();
         assertTrue("Should get the FileInputStreamCache", cache instanceof FileInputStreamCache);

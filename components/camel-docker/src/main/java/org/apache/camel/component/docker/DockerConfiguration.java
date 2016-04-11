@@ -28,41 +28,37 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class DockerConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(enums = "events,stats,auth,info,ping,version,imagebuild,imagecreate,imageinspect,imagelist,imagepull,imagepush"
+            + "imageremove,imagesearch,imagetag,containerattach,containercommit,containercopyfile,containercreate,containerdiff"
+            + "inspectcontainer,containerkill,containerlist,containerlog,containerpause,containerrestart,containerremove,containerstart"
+            + "containerstop,containertop,containerunpause,containerwait,execcreate,execstart") @Metadata(required = "true")
     private DockerOperation operation;
-
-    @UriParam(defaultValue = "localhost")
+    @UriParam(defaultValue = "localhost") @Metadata(required = "true")
     private String host = "localhost";
-
-    @UriParam(defaultValue = "2375")
+    @UriParam(defaultValue = "2375") @Metadata(required = "true")
     private Integer port = 2375;
-
     @UriParam
     private String username;
-
     @UriParam
     private String password;
-
     @UriParam
     private String email;
-
     @UriParam(defaultValue = "https://index.docker.io/v1/")
     private String serverAddress = "https://index.docker.io/v1/";
-
     @UriParam
     private Integer requestTimeout;
-
     @UriParam
-    private Boolean secure;
-
+    private boolean secure;
     @UriParam
     private String certPath;
-
     @UriParam(defaultValue = "100")
     private Integer maxTotalConnections = 100;
-
     @UriParam(defaultValue = "100")
     private Integer maxPerRouteConnections = 100;
+    @UriParam
+    private boolean loggingFilter;
+    @UriParam
+    private boolean followRedirectFilter;
 
     private Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -70,6 +66,9 @@ public class DockerConfiguration implements Cloneable {
         return host;
     }
 
+    /**
+     * Docker host
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -78,6 +77,9 @@ public class DockerConfiguration implements Cloneable {
         return port;
     }
 
+    /**
+     * Docker port
+     */
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -86,6 +88,9 @@ public class DockerConfiguration implements Cloneable {
         return username;
     }
 
+    /**
+     * User name to authenticate with
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -94,6 +99,9 @@ public class DockerConfiguration implements Cloneable {
         return password;
     }
 
+    /**
+     * Password to authenticate with
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -102,6 +110,9 @@ public class DockerConfiguration implements Cloneable {
         return email;
     }
 
+    /**
+     * Email address associated with the user
+     */
     public void setEmail(String email) {
         this.email = email;
     }
@@ -110,6 +121,9 @@ public class DockerConfiguration implements Cloneable {
         return serverAddress;
     }
 
+    /**
+     * Server address for docker registry.
+     */
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
     }
@@ -118,15 +132,21 @@ public class DockerConfiguration implements Cloneable {
         return requestTimeout;
     }
 
+    /**
+     * Request timeout for response (in seconds)
+     */
     public void setRequestTimeout(Integer requestTimeout) {
         this.requestTimeout = requestTimeout;
     }
 
-    public Boolean isSecure() {
+    public boolean isSecure() {
         return secure;
     }
 
-    public void setSecure(Boolean secure) {
+    /**
+     * Use HTTPS communication
+     */
+    public void setSecure(boolean secure) {
         this.secure = secure;
     }
 
@@ -134,6 +154,9 @@ public class DockerConfiguration implements Cloneable {
         return certPath;
     }
 
+    /**
+     * Location containing the SSL certificate chain
+     */
     public void setCertPath(String certPath) {
         this.certPath = certPath;
     }
@@ -142,6 +165,9 @@ public class DockerConfiguration implements Cloneable {
         return maxTotalConnections;
     }
 
+    /**
+     * Maximum total connections
+     */
     public void setMaxTotalConnections(Integer maxTotalConnections) {
         this.maxTotalConnections = maxTotalConnections;
     }
@@ -150,15 +176,42 @@ public class DockerConfiguration implements Cloneable {
         return maxPerRouteConnections;
     }
 
+    /**
+     * Maximum route connections
+     */
     public void setMaxPerRouteConnections(Integer maxPerRouteConnections) {
         this.maxPerRouteConnections = maxPerRouteConnections;
     }
 
+    public boolean isLoggingFilterEnabled() {
+        return loggingFilter;
+    }
+
+    /**
+     * Whether to use logging filter
+     */
+    public void setLoggingFilter(boolean loggingFilterEnabled) {
+        this.loggingFilter = loggingFilterEnabled;
+    }
+
+    public boolean isFollowRedirectFilterEnabled() {
+        return followRedirectFilter;
+    }
+
+    /**
+     * Whether to follow redirect filter
+     */
+    public void setFollowRedirectFilter(boolean followRedirectFilterEnabled) {
+        this.followRedirectFilter = followRedirectFilterEnabled;
+    }
 
     public Map<String, Object> getParameters() {
         return parameters;
     }
 
+    /**
+     * Additional configuration parameters as key/value pairs
+     */
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
     }
@@ -167,6 +220,9 @@ public class DockerConfiguration implements Cloneable {
         return operation;
     }
 
+    /**
+     * Which operation to use
+     */
     public void setOperation(DockerOperation operation) {
         this.operation = operation;
     }
@@ -178,6 +234,5 @@ public class DockerConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
-
 
 }

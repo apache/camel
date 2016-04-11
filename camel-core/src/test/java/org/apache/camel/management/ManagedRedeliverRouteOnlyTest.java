@@ -61,7 +61,7 @@ public class ManagedRedeliverRouteOnlyTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.getManagementStrategy().setStatisticsLevel(ManagementStatisticsLevel.RoutesOnly);
+                context.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.RoutesOnly);
 
                 onException(Exception.class).handled(true)
                     .maximumRedeliveries(4).logStackTrace(false)

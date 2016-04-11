@@ -19,6 +19,7 @@ package org.apache.camel.component.timer;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncCallback;
@@ -40,6 +41,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener {
     private final TimerEndpoint endpoint;
     private volatile TimerTask task;
     private volatile boolean configured;
+    private ExecutorService executorService;
 
     public TimerConsumer(TimerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -53,41 +55,60 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener {
 
     @Override
     protected void doStart() throws Exception {
-        task = new TimerTask() {
-            // counter
-            private final AtomicLong counter = new AtomicLong();
+        if (endpoint.getDelay() >= 0) { 
+            task = new TimerTask() {
+                // counter
+                private final AtomicLong counter = new AtomicLong();
 
-            @Override
-            public void run() {
-                if (!isTaskRunAllowed()) {
-                    // do not run timer task as it was not allowed
-                    LOG.debug("Run now allowed for timer: {}", endpoint);
-                    return;
-                }
-
-                try {
-                    long count = counter.incrementAndGet();
-
-                    boolean fire = endpoint.getRepeatCount() <= 0 || count <= endpoint.getRepeatCount();
-                    if (fire) {
-                        sendTimerExchange(count);
-                    } else {
-                        // no need to fire anymore as we exceeded repeat count
-                        LOG.debug("Cancelling {} timer as repeat count limit reached after {} counts.", endpoint.getTimerName(), endpoint.getRepeatCount());
-                        cancel();
+                @Override
+                public void run() {
+                    if (!isTaskRunAllowed()) {
+                        // do not run timer task as it was not allowed
+                        LOG.debug("Run now allowed for timer: {}", endpoint);
+                        return;
                     }
-                } catch (Throwable e) {
-                    // catch all to avoid the JVM closing the thread and not firing again
-                    LOG.warn("Error processing exchange. This exception will be ignored, to let the timer be able to trigger again.", e);
-                }
-            }
-        };
 
-        // only configure task if CamelContext already started, otherwise the StartupListener
-        // is configuring the task later
-        if (!configured && endpoint.getCamelContext().getStatus().isStarted()) {
-            Timer timer = endpoint.getTimer(this);
-            configureTask(task, timer);
+                    try {
+                        long count = counter.incrementAndGet();
+
+                        boolean fire = endpoint.getRepeatCount() <= 0 || count <= endpoint.getRepeatCount();
+                        if (fire) {
+                            sendTimerExchange(count);
+                        } else {
+                            // no need to fire anymore as we exceeded repeat
+                            // count
+                            LOG.debug("Cancelling {} timer as repeat count limit reached after {} counts.", endpoint.getTimerName(), endpoint.getRepeatCount());
+                            cancel();
+                        }
+                    } catch (Throwable e) {
+                        // catch all to avoid the JVM closing the thread and not
+                        // firing again
+                        LOG.warn("Error processing exchange. This exception will be ignored, to let the timer be able to trigger again.", e);
+                    }
+                }
+            };
+
+            // only configure task if CamelContext already started, otherwise
+            // the StartupListener
+            // is configuring the task later
+            if (!configured && endpoint.getCamelContext().getStatus().isStarted()) {
+                Timer timer = endpoint.getTimer(this);
+                configureTask(task, timer);
+            }
+        } else {
+            // if the delay is negative then we use an ExecutorService and fire messages as soon as possible
+            executorService = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, endpoint.getEndpointUri());
+
+            executorService.execute(new Runnable() {
+                public void run() {
+                    final AtomicLong counter = new AtomicLong();
+                    long count = counter.incrementAndGet();
+                    while ((endpoint.getRepeatCount() <= 0 || count <= endpoint.getRepeatCount()) && isRunAllowed()) {
+                        sendTimerExchange(count);
+                        count = counter.incrementAndGet();
+                    }
+                }
+            });
         }
     }
 
@@ -101,6 +122,12 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener {
 
         // remove timer
         endpoint.removeTimer(this);
+        
+        // if executorService is instantiated then we shutdown it
+        if (executorService != null) {
+            endpoint.getCamelContext().getExecutorServiceManager().shutdown(executorService);
+            executorService = null;
+        }
     }
 
     @Override
@@ -108,7 +135,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener {
         if (task != null && !configured) {
             Timer timer = endpoint.getTimer(this);
             configureTask(task, timer);
-        }
+        } 
     }
 
     /**

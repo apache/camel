@@ -19,9 +19,9 @@ package org.apache.camel.component.jetty.jettyproducer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.http.common.HttpMessage;
 import org.junit.Test;
 
 /**

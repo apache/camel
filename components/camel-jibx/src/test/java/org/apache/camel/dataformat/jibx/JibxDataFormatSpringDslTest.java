@@ -29,6 +29,7 @@ import org.xml.sax.SAXException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.jibx.model.PurchaseOrder;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;

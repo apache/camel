@@ -69,4 +69,5 @@ public class ExpressionMappingTest {
         Assert.assertEquals(customerNumber, result.getCustId());
         Assert.assertEquals(orderNumber, result.getOrderId());
     }
+
 }

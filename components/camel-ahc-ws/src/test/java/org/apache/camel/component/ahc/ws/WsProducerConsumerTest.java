@@ -87,19 +87,64 @@ public class WsProducerConsumerTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
-    
+    @Test
+    public void testTwoRoutesRestartConsumer() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived(TEST_MESSAGE);
+
+        template.sendBody("direct:input", TEST_MESSAGE);
+
+        mock.assertIsSatisfied();
+
+        resetMocks();
+
+        log.info("Restarting bar route");
+        context.stopRoute("bar");
+        Thread.sleep(500);
+        context.startRoute("bar");
+
+        mock.expectedBodiesReceived(TEST_MESSAGE);
+
+        template.sendBody("direct:input", TEST_MESSAGE);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testTwoRoutesRestartProducer() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived(TEST_MESSAGE);
+
+        template.sendBody("direct:input", TEST_MESSAGE);
+
+        mock.assertIsSatisfied();
+
+        resetMocks();
+
+        log.info("Restarting foo route");
+        context.stopRoute("foo");
+        Thread.sleep(500);
+        context.startRoute("foo");
+
+        mock.expectedBodiesReceived(TEST_MESSAGE);
+
+        template.sendBody("direct:input", TEST_MESSAGE);
+
+        mock.assertIsSatisfied();
+    }
+
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         RouteBuilder[] rbs = new RouteBuilder[2];
         rbs[0] = new RouteBuilder() {
             public void configure() {
-                from("direct:input")
+                from("direct:input").routeId("foo")
                     .to("ahc-ws://localhost:" + PORT);
             }
         };
         rbs[1] = new RouteBuilder() {
             public void configure() {
-                from("ahc-ws://localhost:" + PORT)
+                from("ahc-ws://localhost:" + PORT).routeId("bar")
                     .to("mock:result");
             }
         };

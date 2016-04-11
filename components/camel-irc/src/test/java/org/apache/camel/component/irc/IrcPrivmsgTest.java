@@ -40,7 +40,7 @@ public class IrcPrivmsgTest extends CamelTestSupport {
 
     private boolean sentMessages;    
 
-    @Ignore("test manual")
+    @Ignore("test manual, irc.codehaus.org has been closed")
     @Test
     public void testIrcPrivateMessages() throws Exception {
         resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);

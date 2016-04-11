@@ -17,17 +17,10 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.RouteShowCommand;
-import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
 @Command(scope = "camel", name = "route-show", description = "Display the Camel route definition in XML")
-public class RouteShow extends CamelCommandSupport {
-
-    @Argument(index = 0, name = "route", description = "The Camel route ID.", required = true, multiValued = false)
-    String route;
-
-    @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
-    String context;
+public class RouteShow extends AbstractRouteCommand {
 
     public Object doExecute() throws Exception {
         RouteShowCommand command = new RouteShowCommand(route, context);

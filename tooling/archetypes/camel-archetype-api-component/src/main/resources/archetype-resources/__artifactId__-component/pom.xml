@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>${artifactId}</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel ${name} Component</name>
   <description>Camel Component for ${name}</description>
 
@@ -49,6 +49,13 @@
       <groupId>${groupId}</groupId>
       <artifactId>${artifactId}-api</artifactId>
       <version>${version}</version>
+    </dependency>
+
+    <!-- support camel documentation -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>apt</artifactId>
+      <version>${camel-version}</version>
     </dependency>
 
     <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
@@ -106,8 +113,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin-version}</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       
@@ -219,6 +226,29 @@
               <aliases/>
               -->
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- generate components meta-data and validate component includes documentation etc -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${camel-version}</version>
+        <executions>
+          <execution>
+            <id>prepare</id>
+            <goals>
+              <goal>prepare-components</goal>
+            </goals>
+            <phase>generate-resources</phase>
+          </execution>
+          <execution>
+            <id>validate</id>
+            <goals>
+              <goal>validate-components</goal>
+            </goals>
+            <phase>prepare-package</phase>
           </execution>
         </executions>
       </plugin>

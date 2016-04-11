@@ -82,7 +82,7 @@ public class BindySimpleKeyValuePairMarshallDslTest extends AbstractJUnit4Spring
         
         public void configure() {
             from("direct:start").marshal()
-                .bindy(BindyType.KeyValue, "org.apache.camel.dataformat.bindy.model.fix.simple")
+                .bindy(BindyType.KeyValue, org.apache.camel.dataformat.bindy.model.fix.simple.Order.class)
                 .to("mock:result");
         }
 

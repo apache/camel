@@ -54,6 +54,11 @@ public final class SqlConstants {
      */
     public static final String SQL_GENERATED_KEYS_DATA = "CamelSqlGeneratedKeyRows";
 
+    /**
+     * The SQL parameters when using the option useMessageBodyForSql
+     */
+    public static final String SQL_PARAMETERS = "CamelSqlParameters";
+
     private SqlConstants() {
         // Utility class
     }

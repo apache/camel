@@ -22,6 +22,9 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
+/**
+ * The routebox component allows to send/receive messages between Camel routes in a black box way.
+ */
 @UriEndpoint(scheme = "routebox", title = "RouteBox", syntax = "routebox:routeboxName", consumerClass = RouteboxConsumer.class, label = "eventbus")
 public abstract class RouteboxEndpoint extends DefaultEndpoint {
 

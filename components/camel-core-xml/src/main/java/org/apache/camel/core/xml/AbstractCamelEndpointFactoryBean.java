@@ -97,6 +97,7 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
      *
      * @deprecated set the pattern in the uri
      */
+    @Deprecated
     public void setPattern(ExchangePattern pattern) {
         this.pattern = pattern;
     }

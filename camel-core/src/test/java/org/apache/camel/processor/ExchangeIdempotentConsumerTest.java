@@ -128,6 +128,11 @@ public class ExchangeIdempotentConsumerTest extends ContextTestSupport {
             exchanges.add(exchange.getExchangeId());
             return delegate.confirm(key);
         }
+        
+        @Override
+        public void clear() {
+            delegate.clear();           
+        }
 
         @Override
         public boolean add(String key) {

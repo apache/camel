@@ -21,12 +21,12 @@ package ${package};
 
 import java.util.List;
 
-import org.apache.camel.scr.internal.ScrHelper;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.scr.ScrHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -46,7 +46,7 @@ public class ${className}Test {
     public TestName testName = new TestName();
 
     ${className} integration;
-    ModelCamelContext context;
+    CamelContext context;
 
     @Before
     public void setUp() throws Exception {
@@ -64,9 +64,6 @@ public class ${className}Test {
 
         // Disable JMX for test
         context.disableJMX();
-
-        // Fake a component for test
-        // context.addComponent("amq", new MockComponent());
     }
 
     @After
@@ -90,8 +87,7 @@ public class ${className}Test {
         });
 
         MockEndpoint resultEndpoint = context.getEndpoint("mock:log:foo", MockEndpoint.class);
-        // resultEndpoint.expectedMessageCount(1); // If you want to just check the number of messages
-        resultEndpoint.expectedBodiesReceived("hello"); // If you want to check the contents
+        resultEndpoint.expectedBodiesReceived("hello");
 
         // Start the integration
         integration.run();

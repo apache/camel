@@ -16,60 +16,42 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-
-import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
-
 public class ActionOverride extends AbstractDTOBase {
 
-    private String actionName;
+    private String name;
+    private String pageId;
+    private String url;
+    private Boolean isAvailableInTouch;
 
-    private String comment;
-
-    private String content;
-
-    private Boolean skipRecordTypeSelect;
-
-    @XStreamConverter(PicklistEnumConverter.class)
-    private ActionOverrideTypeEnum type;
-
-    public String getActionName() {
-        return actionName;
+    public String getName() {
+        return name;
     }
 
-    public void setActionName(String actionName) {
-        this.actionName = actionName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getComment() {
-        return comment;
+    public String getPageId() {
+        return pageId;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setPageId(String pageId) {
+        this.pageId = pageId;
     }
 
-    public String getContent() {
-        return content;
+    public String getUrl() {
+        return url;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public Boolean getSkipRecordTypeSelect() {
-        return skipRecordTypeSelect;
+    public Boolean getIsAvailableInTouch() {
+        return isAvailableInTouch;
     }
 
-    public void setSkipRecordTypeSelect(Boolean skipRecordTypeSelect) {
-        this.skipRecordTypeSelect = skipRecordTypeSelect;
-    }
-
-    public ActionOverrideTypeEnum getType() {
-        return type;
-    }
-
-    public void setType(ActionOverrideTypeEnum type) {
-        this.type = type;
+    public void setIsAvailableInTouch(Boolean isAvailableInTouch) {
+        this.isAvailableInTouch = isAvailableInTouch;
     }
 }

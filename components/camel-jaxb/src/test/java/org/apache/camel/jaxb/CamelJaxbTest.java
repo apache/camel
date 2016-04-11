@@ -48,6 +48,20 @@ public class CamelJaxbTest extends CamelTestSupport {
         String xml = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>";
         template.sendBody("direct:getJAXBElementValue", xml);
     }
+    
+    @Test
+    public void testFilterNonXmlChars() throws Exception {
+        String xmlUTF = "<Person><firstName>FOO</firstName><lastName>BAR \u20AC </lastName></Person>";
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xmlUTF;
+        PersonType expected = new PersonType();
+        expected.setFirstName("FOO");
+        expected.setLastName("BAR \u20AC ");
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedBodiesReceived(expected);
+        template.sendBody("direct:unmarshalFilteringEnabled", xml);
+        resultEndpoint.assertIsSatisfied();
+       
+    }
 
     @Test
     public void testMarshalBadCharsWithFiltering() throws Exception {

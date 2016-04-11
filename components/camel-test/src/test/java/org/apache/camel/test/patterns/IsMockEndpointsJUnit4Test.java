@@ -24,6 +24,7 @@ import org.junit.Test;
  * @version 
  */
 // START SNIPPET: e1
+// tag::e1[]
 public class IsMockEndpointsJUnit4Test extends CamelTestSupport {
 
     @Override
@@ -68,4 +69,5 @@ public class IsMockEndpointsJUnit4Test extends CamelTestSupport {
         };
     }
 }
+// end::e1[]
 // END SNIPPET: e1

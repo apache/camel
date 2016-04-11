@@ -21,9 +21,8 @@ import org.junit.Test;
 
 import rx.Observable;
 
-/**
- */
 public class SendToTest extends RxTestSupport {
+
     @Test
     public void testSendObservableToEndpoint() throws Exception {
         Order[] expectedBodies = {new Order("o1", 1.10), new Order("o2", 2.20), new Order("o3", 3.30)};
@@ -36,6 +35,5 @@ public class SendToTest extends RxTestSupport {
         reactiveCamel.sendTo(someObservable, "mock:results");
 
         mockEndpoint.assertIsSatisfied();
-
     }
 }

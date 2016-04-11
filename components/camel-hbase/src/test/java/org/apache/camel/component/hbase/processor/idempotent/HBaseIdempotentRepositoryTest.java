@@ -24,7 +24,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.hadoop.hbase.TableExistsException;
-import org.apache.hadoop.hbase.client.HTable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +31,6 @@ import org.junit.Test;
 public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
 
     IdempotentRepository<Object> repository;
-    HTable table;
 
     private String key01 = "123";
     private String key02 = "456";
@@ -46,7 +44,6 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
                 //Ignore if table exists
             }
             this.repository = new HBaseIdempotentRepository(hbaseUtil.getConfiguration(), PERSON_TABLE, INFO_FAMILY, "mycolumn");
-            table = new HTable(hbaseUtil.getConfiguration(), PERSON_TABLE);
             super.setUp();
         }
     }
@@ -100,6 +97,23 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
 
             // try to remove a key that isn't there
             assertFalse(repository.remove(key02));
+        }
+    }
+    
+    @Test
+    public void testClear() throws Exception {
+        if (systemReady) {
+            // add key to remove
+            assertTrue(repository.add(key01));
+            assertTrue(repository.add(key02));
+            assertTrue(repository.contains(key01));
+            assertTrue(repository.contains(key02));
+
+            // remove key
+            repository.clear();
+
+            assertFalse(repository.contains(key01));
+            assertFalse(repository.contains(key02));
         }
     }
 

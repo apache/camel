@@ -15,3 +15,6 @@ dependency-reduced-pom.xml
 id_file
 components/camel-solr/data
 *.epoch
+.factorypath
+.pmd
+

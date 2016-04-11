@@ -60,6 +60,9 @@ public class EjbComponent extends BeanComponent {
         return context;
     }
 
+    /**
+     * The Context to use for looking up the EJBs
+     */
     public void setContext(Context context) {
         this.context = context;
     }
@@ -68,6 +71,9 @@ public class EjbComponent extends BeanComponent {
         return properties;
     }
 
+    /**
+     * Properties for creating javax.naming.Context if a context has not been configured.
+     */
     public void setProperties(Properties properties) {
         this.properties = properties;
     }

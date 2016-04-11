@@ -51,7 +51,7 @@ public class PurchaseOrderConverter implements TypeConverterAware {
         String s3 = s.substring(20).trim();
 
         BigDecimal price = new BigDecimal(s2);
-        price.setScale(2);
+        price = price.setScale(2);
 
         Integer amount = converter.convertTo(Integer.class, s3);
 

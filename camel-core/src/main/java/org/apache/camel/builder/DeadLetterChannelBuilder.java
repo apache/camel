@@ -23,7 +23,6 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
-import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelLogger;
@@ -45,6 +44,8 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 
     public DeadLetterChannelBuilder(Endpoint deadLetter) {
         setDeadLetter(deadLetter);
+        // DLC do not log exhausted by default
+        getRedeliveryPolicy().setLogExhausted(false);
     }
 
     public DeadLetterChannelBuilder(String uri) {
@@ -56,7 +57,8 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 
         DeadLetterChannel answer = new DeadLetterChannel(routeContext.getCamelContext(), processor, getLogger(), getOnRedelivery(), 
                 getRedeliveryPolicy(), getExceptionPolicyStrategy(), getFailureProcessor(), getDeadLetterUri(), isDeadLetterHandleNewException(),
-                isUseOriginalMessage(), getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorService(routeContext.getCamelContext()), getOnPrepareFailure());
+                isUseOriginalMessage(), getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorService(routeContext.getCamelContext()),
+                getOnPrepareFailure(), getOnExceptionOccurred());
         // configure error handler before we can use it
         configure(routeContext, answer);
         return answer;
@@ -94,11 +96,6 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
                 throw new NoSuchEndpointException(deadLetterUri);
             }
         }
-    }
-
-    @Override
-    protected RedeliveryPolicy createRedeliveryPolicy() {
-        return new RedeliveryPolicy();
     }
 
     protected CamelLogger createLogger() {

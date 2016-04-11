@@ -91,5 +91,60 @@ public class HazelcastAggregationRepositoryRoutesTest extends HazelcastAggregati
 
         mock.assertIsSatisfied();
     }
+    
+    @Test
+    public void checkAggregationFromTwoRoutesNoRecovery() throws Exception {
+        final HazelcastAggregationRepository repoOne =
+                new HazelcastAggregationRepository(REPO_NAME, false, getFirstInstance());
+        
+
+        final HazelcastAggregationRepository repoTwo =
+                new HazelcastAggregationRepository(REPO_NAME, false, getSecondInstance());
+        
+        repoOne.setUseRecovery(false);
+        repoTwo.setUseRecovery(false);
+        
+        final int completionSize = 4;
+        final String correlator = "CORRELATOR";
+        RouteBuilder rbOne = new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+
+                from(DIRECT_ONE).routeId("AggregatingRouteOne")
+                        .aggregate(header(correlator))
+                        .aggregationRepository(repoOne)
+                        .aggregationStrategy(new SumOfIntsAggregationStrategy())
+                        .completionSize(completionSize)
+                        .to(MOCK_GOTCHA);
+            }
+        };
+
+        RouteBuilder rbTwo = new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+
+                from(DIRECT_TWO).routeId("AggregatingRouteTwo")
+                        .aggregate(header(correlator))
+                        .aggregationRepository(repoTwo)
+                        .aggregationStrategy(new SumOfIntsAggregationStrategy())
+                        .completionSize(completionSize)
+                        .to(MOCK_GOTCHA);
+            }
+        };
+
+        context().addRoutes(rbOne);
+        context().addRoutes(rbTwo);
+        context().start();
+
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived(1 + 2 + 3 + 4);
+
+        produceOne.sendBodyAndHeader(1, correlator, correlator);
+        produceTwo.sendBodyAndHeader(2, correlator, correlator);
+        produceOne.sendBodyAndHeader(3, correlator, correlator);
+        produceOne.sendBodyAndHeader(4, correlator, correlator);
+
+        mock.assertIsSatisfied();
+    }
 
 }

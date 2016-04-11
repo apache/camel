@@ -22,8 +22,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
+import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.http.HttpStatus;
-import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -32,9 +36,36 @@ import org.junit.Test;
  */
 public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
 
+    private HttpServer localServer;
+    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        localServer = ServerBootstrap.bootstrap().
+                setHttpProcessor(getBasicHttpProcessor()).
+                setConnectionReuseStrategy(getConnectionReuseStrategy()).
+                setResponseFactory(getHttpResponseFactory()).
+                setExpectationVerifier(getHttpExpectationVerifier()).
+                setSslContext(getSSLContext()).
+                registerHandler("/", new BasicValidationHandler("GET", null, null, getExpectedContent())).create();
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
+    
     @Test
     public void httpGetWhichReturnsHttp501() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/XXX?throwExceptionOnFailure=false", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/XXX?throwExceptionOnFailure=false", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
@@ -51,7 +82,7 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
 
     @Test
     public void httpGetWhichReturnsHttp501ShouldThrowAnException() throws Exception {
-        Exchange reply = template.request("http4://" + getHostName() + ":" + getPort() + "/XXX?throwExceptionOnFailure=true", new Processor() {
+        Exchange reply = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/XXX?throwExceptionOnFailure=true", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
@@ -61,9 +92,38 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
         HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e);
         assertEquals(501, cause.getStatusCode());
     }
+    
+    @Test
+    public void httpGetWhichReturnsHttp501WithIgnoreResponseBody() throws Exception {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" 
+            + localServer.getLocalPort() + "/XXX?throwExceptionOnFailure=false&ignoreResponseBody=true", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                }
+            });
 
-    @Override
-    protected void registerHandler(LocalTestServer server) {
-        server.register("/", new BasicValidationHandler("GET", null, null, getExpectedContent()));
+        assertNotNull(exchange);
+
+        Message out = exchange.getOut();
+        assertNotNull(out);
+        assertNull(out.getBody());
+
+        Map<String, Object> headers = out.getHeaders();
+        assertEquals(HttpStatus.SC_NOT_IMPLEMENTED, headers.get(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("0", headers.get("Content-Length"));
     }
+
+    @Test
+    public void httpGetWhichReturnsHttp501ShouldThrowAnExceptionWithIgnoreResponseBody() throws Exception {
+        Exchange reply = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" 
+            + localServer.getLocalPort() + "/XXX?throwExceptionOnFailure=true&ignoreResponseBody=true", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                }
+            });
+
+        Exception e = reply.getException();
+        assertNotNull("Should have thrown an exception", e);
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e);
+        assertEquals(501, cause.getStatusCode());
+    }
+    
 }

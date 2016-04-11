@@ -21,6 +21,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -37,10 +38,10 @@ import org.slf4j.LoggerFactory;
 public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(BeanProcessor.class);
 
+    private final BeanHolder beanHolder;
     private Processor processor;
     private boolean multiParameterArray;
     private String method;
-    private BeanHolder beanHolder;
     private boolean shorthandMethod;
 
     public BeanProcessor(Object pojo, BeanInfo beanInfo) {
@@ -94,7 +95,7 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
             Processor processor = getProcessor();
             if (processor == null) {
                 // so if there is a custom type converter for the bean to processor
-                processor = exchange.getContext().getTypeConverter().convertTo(Processor.class, exchange, bean);
+                processor = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, bean);
             }
             if (processor != null) {
                 LOG.trace("Using a custom adapter as bean invocation: {}", processor);
@@ -131,9 +132,15 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
                 LOG.debug("BeanHolder bean: {} and beanInvocation bean: {} is same instance: {}", new Object[]{bean.getClass(), clazz, sameBean});
             }
             if (sameBean) {
-                beanInvoke.invoke(bean, exchange);
-                // propagate headers
-                exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                try {
+                    beanInvoke.invoke(bean, exchange);
+                    if (exchange.hasOut()) {
+                        // propagate headers
+                        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                    }
+                } catch (Throwable e) {
+                    exchange.setException(e);
+                }
                 callback.done(true);
                 return true;
             }
@@ -173,6 +180,10 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
 
     protected Processor getProcessor() {
         return processor;
+    }
+
+    protected BeanHolder getBeanHolder() {
+        return this.beanHolder;
     }
 
     public Object getBean() {
@@ -222,11 +233,29 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         if (beanHolder.supportProcessor() && allowProcessor(method, beanHolder.getBeanInfo())) {
             processor = beanHolder.getProcessor();
             ServiceHelper.startService(processor);
+        } else if (beanHolder instanceof ConstantBeanHolder) {
+            try {
+                // Start the bean if it implements Service interface and if cached
+                // so meant to be reused
+                ServiceHelper.startService(beanHolder.getBean());
+            } catch (NoSuchBeanException e) {
+                // ignore
+            }
         }
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(processor);
+        if (processor != null) {
+            ServiceHelper.stopService(processor);
+        } else if (beanHolder instanceof ConstantBeanHolder) {
+            try {
+                // Stop the bean if it implements Service interface and if cached
+                // so meant to be reused
+                ServiceHelper.stopService(beanHolder.getBean());
+            } catch (NoSuchBeanException e) {
+                // ignore
+            }
+        }
     }
 
     private boolean allowProcessor(String explicitMethodName, BeanInfo info) {

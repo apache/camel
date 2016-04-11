@@ -85,6 +85,17 @@ public class KratiIdempotentRepositoryTest extends CamelTestSupport {
         assertFalse(repository.remove(key02));
     }
 
+    @Test
+    public void testClear() throws Exception {
+        // add keys to clear
+        assertTrue(repository.add(key01));
+        assertTrue(repository.add(key02));
+
+        repository.clear();
+        
+        assertFalse(repository.contains(key01));
+        assertFalse(repository.contains(key02));
+    }
 
     @Test
     public void testRepositoryInRoute() throws Exception {

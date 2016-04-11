@@ -31,7 +31,7 @@
     xmlns:s="http://www.example.com/test">
     <cxf:properties>
       <entry key="dataFormat" value="MESSAGE"/>
-      <entry key="setDefaultBus" value="true"/>
+      <entry key="defaultBus" value="true"/>
     </cxf:properties>
 
   </cxf:cxfEndpoint>

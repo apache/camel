@@ -47,8 +47,14 @@ public class SpringBatchComponent extends UriEndpointComponent {
         allResolvedJobLaunchers = getCamelContext().getRegistry().findByTypeWithName(JobLauncher.class);
     }
 
+    public JobLauncher getJobLauncher() {
+        return jobLauncher;
+    }
+
+    /**
+     * Explicitly specifies a JobLauncher to be used.
+     */
     public void setJobLauncher(JobLauncher jobLauncher) {
         this.jobLauncher = jobLauncher;
     }
-
 }

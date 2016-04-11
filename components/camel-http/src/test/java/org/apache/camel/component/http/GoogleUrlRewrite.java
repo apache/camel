@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.Producer;
+import org.apache.camel.http.common.UrlRewrite;
 
 // START SNIPPET: e1
 /**

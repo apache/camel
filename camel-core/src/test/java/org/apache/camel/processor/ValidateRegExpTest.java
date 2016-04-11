@@ -55,11 +55,14 @@ public class ValidateRegExpTest extends ContextTestSupport {
             fail("CamelExecutionException expected");
         } catch (CamelExecutionException e) {
             // expected
-            assertIsInstanceOf(PredicateValidationException.class, e.getCause());
+            PredicateValidationException cause = assertIsInstanceOf(PredicateValidationException.class, e.getCause());
+
             // as the Expression could be different between the DSL and simple language, here we just check part of the message 
-            assertTrue("Get a wrong exception message", e.getCause().getMessage().startsWith("Validation failed for Predicate"));
-            assertTrue(e.getCause().getMessage().contains("^\\d{2}\\.\\d{2}\\.\\d{4}$"));
-            assertTrue("Get a wrong exception message", e.getCause().getMessage().endsWith("Exchange[Message: 1.1.2010]"));
+            assertTrue("Get a wrong exception message", cause.getMessage().startsWith("Validation failed for Predicate"));
+            assertTrue(cause.getMessage().contains("^\\d{2}\\.\\d{2}\\.\\d{4}$"));
+
+            String body = cause.getExchange().getIn().getBody(String.class);
+            assertEquals("1.1.2010", body);
         }
 
         assertMockEndpointsSatisfied();
@@ -70,7 +73,7 @@ public class ValidateRegExpTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .validate(body(String.class).regex("^\\d{2}\\.\\d{2}\\.\\d{4}$"))
+                    .validate(bodyAs(String.class).regex("^\\d{2}\\.\\d{2}\\.\\d{4}$"))
                     .to("mock:result");
             }
         };

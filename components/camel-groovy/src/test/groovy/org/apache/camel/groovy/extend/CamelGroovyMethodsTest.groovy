@@ -18,12 +18,10 @@ package org.apache.camel.groovy.extend
 
 import org.apache.camel.EndpointInject
 import org.apache.camel.Exchange
-import org.apache.camel.ProducerTemplate
 import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.test.junit4.CamelTestSupport
 import org.junit.Test
-
 
 /**
  * Test a few DSL extensions. 
@@ -125,6 +123,9 @@ class CamelGroovyMethodsTest extends CamelTestSupport {
                         e.in.body.reverse()
                     }
                     .to('mock:test1')
+
+                from('direct:toD')
+                    .toD('mock:${header.foo}')
 
             }
             
@@ -232,4 +233,12 @@ class CamelGroovyMethodsTest extends CamelTestSupport {
         // The created XML differs in terms of white spaces and line feeds.
         assertEquals(text.replaceAll('\\s+', ''), resultEndpoint.exchanges[0].in.body.replaceAll('\\s+', ''))
     }
+
+    @Test
+    void testToD() {
+        resultEndpoint.expectedMessageCount(1)
+        template.sendBodyAndHeader('direct:toD', WORLD, "foo", "test1")
+        resultEndpoint.assertIsSatisfied()
+    }
+
 }

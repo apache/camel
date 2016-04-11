@@ -17,7 +17,6 @@
 package org.apache.camel.component.jetty;
 
 import java.io.File;
-
 import javax.activation.DataHandler;
 
 import org.apache.camel.Exchange;

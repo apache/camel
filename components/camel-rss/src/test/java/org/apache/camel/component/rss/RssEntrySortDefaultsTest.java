@@ -18,12 +18,12 @@ package org.apache.camel.component.rss;
 
 import org.apache.camel.builder.RouteBuilder;
 
-public class RssEntrySortDefaultsTest extends RssEntrySortTest {   
+public class RssEntrySortDefaultsTest extends RssEntrySortTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&consumer.delay=50").to("mock:sorted");
-                
+
                 // should NOT sort by default
                 from("rss:file:src/test/data/rss20.xml?splitEntries=true&consumer.delay=50").to("mock:unsorted");
             }

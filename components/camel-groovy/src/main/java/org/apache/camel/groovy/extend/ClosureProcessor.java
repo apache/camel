@@ -26,7 +26,7 @@ import org.apache.camel.Processor;
  */
 class ClosureProcessor implements Processor {
 
-    private Closure<?> closure;
+    private final Closure<?> closure;
 
     ClosureProcessor(Closure<?> closure) {
         this.closure = closure;

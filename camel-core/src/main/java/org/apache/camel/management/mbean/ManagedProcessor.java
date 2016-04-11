@@ -25,7 +25,6 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -34,7 +33,9 @@ import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -56,8 +57,12 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         this.processor = processor;
         this.definition = definition;
         this.id = definition.idOrCreate(context.getNodeIdFactory());
+    }
 
-        boolean enabled = context.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.All;
+    @Override
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+        boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel().isDefaultOrExtended();
         setStatisticsEnabled(enabled);
     }
 
@@ -83,6 +88,10 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
 
     public Integer getIndex() {
         return definition.getIndex();
+    }
+
+    public Boolean getSupportExtendedInformation() {
+        return false;
     }
 
     public Route getRoute() {
@@ -170,5 +179,10 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
+    }
+
+    @Override
+    public String dumpProcessorAsXml() throws Exception {
+        return ModelHelper.dumpModelAsXml(context, definition);
     }
 }

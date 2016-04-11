@@ -75,6 +75,9 @@ public final class RouteStatDump {
     private Long selfProcessingTime;
 
     @XmlAttribute
+    private String startTimestamp;
+
+    @XmlAttribute
     private String resetTimestamp;
 
     @XmlAttribute
@@ -104,7 +107,7 @@ public final class RouteStatDump {
     @XmlElementWrapper(name = "processorStats")
     @XmlElements({
             @XmlElement(type = ProcessorStatDump.class, name = "processorStat")
-    })
+        })
     private List<ProcessorStatDump> processorStats;
 
     public String getId() {
@@ -217,6 +220,14 @@ public final class RouteStatDump {
 
     public void setExchangesInflight(Long exchangesInflight) {
         this.exchangesInflight = exchangesInflight;
+    }
+
+    public String getStartTimestamp() {
+        return startTimestamp;
+    }
+
+    public void setStartTimestamp(String startTimestamp) {
+        this.startTimestamp = startTimestamp;
     }
 
     public String getResetTimestamp() {

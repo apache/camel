@@ -49,7 +49,7 @@ public class RecipientListNoCacheTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:a").recipientList(
-                        header("recipientListHeader").tokenize(",")).cacheSize(0);
+                        header("recipientListHeader").tokenize(",")).cacheSize(-1);
             }
         };
 

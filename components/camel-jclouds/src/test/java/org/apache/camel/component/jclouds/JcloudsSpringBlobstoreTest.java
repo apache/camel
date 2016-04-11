@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.jclouds;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
@@ -66,5 +71,50 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
         resultBar.expectedMessageCount(1);
         template.sendBody("direct:start-with-url-parameters", "Some message");
         resultBar.assertIsSatisfied();
+    }
+    
+    @Test
+    public void testBlobStoreCount() throws InterruptedException {
+        Long count = template.requestBody("direct:count", "Some message", Long.class);
+        assertEquals(new Long(1), count);
+    }
+    
+    @Test
+    public void testBlobStoreRemove() throws InterruptedException {
+        Long count = template.requestBody("direct:remove", "Some message", Long.class);
+        assertEquals(new Long(0), count);
+    }
+    
+    @Test
+    public void testBlobStoreClear() throws InterruptedException {
+        Long count = template.requestBody("direct:clear", "Some message", Long.class);
+        assertEquals(new Long(0), count);
+    }
+    
+    @Test
+    public void testBlobStoreDelete() throws InterruptedException {
+        Boolean result = template.requestBody("direct:delete", "Some message", Boolean.class);
+        assertEquals(false, result);
+    }
+    
+    @Test
+    public void testBlobStoreContainerExists() throws InterruptedException {
+        Boolean result = template.requestBody("direct:exists", "Some message", Boolean.class);
+        assertEquals(true, result);
+    }
+    
+    @Test
+    public void testBlobStoreRemoveBlobs() throws InterruptedException {
+        Boolean result = template.requestBody("direct:exists", "Some message", Boolean.class);
+        assertEquals(true, result);
+        List blobsToRemove = new ArrayList<>();
+        blobsToRemove.add("testName");
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(JcloudsConstants.OPERATION, JcloudsConstants.REMOVE_BLOBS);
+        headers.put(JcloudsConstants.CONTAINER_NAME, "foo");
+        headers.put(JcloudsConstants.BLOB_NAME_LIST, blobsToRemove);
+        template.sendBodyAndHeaders("direct:remove-blobs", null, headers);
+        Long count = template.requestBody("direct:count-after-remove-blobs", null, Long.class);
+        assertEquals(new Long(0), count);
     }
 }

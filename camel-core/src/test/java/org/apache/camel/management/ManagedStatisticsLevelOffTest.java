@@ -34,7 +34,7 @@ public class ManagedStatisticsLevelOffTest extends ManagementTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         // disable it by default
-        context.getManagementStrategy().setStatisticsLevel(ManagementStatisticsLevel.Off);
+        context.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.Off);
         return context;
     }
 
@@ -59,7 +59,7 @@ public class ManagedStatisticsLevelOffTest extends ManagementTestSupport {
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(0, completed.longValue());
 
-        // disable statistics
+        // enable statistics
         mbeanServer.setAttribute(on, new Attribute("StatisticsEnabled", true));
 
         // send in another message

@@ -132,6 +132,11 @@ public interface ProducerTemplate extends Service {
      */
     boolean isEventNotifierEnabled();
 
+    /**
+     * Cleanup the cache (purging stale entries)
+     */
+    void cleanUp();
+
     // Synchronous methods
     // -----------------------------------------------------------------------
 

@@ -72,6 +72,7 @@ public class ConsumerExceptionPropagationRouteTest extends CamelTestSupport {
     }
 
     @Ignore("For now getEndpointUri does not return the initial uri. Info like the endpoint scheme is lost")
+    @Test
     public void testValidUri() throws Exception {
         String deprecate = "spring-ws:rootqname:{http://www.webserviceX.NET/}GetQuote?endpointMapping=#endpointMapping";
         String sanitized = "spring-ws:rootqname:(http://www.webserviceX.NET/)GetQuote?endpointMapping=#endpointMapping";

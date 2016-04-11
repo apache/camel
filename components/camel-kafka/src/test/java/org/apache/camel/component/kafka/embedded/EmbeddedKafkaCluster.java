@@ -26,7 +26,8 @@ import java.util.Properties;
 import kafka.admin.AdminUtils;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
-import org.I0Itec.zkclient.ZkClient;
+import kafka.utils.ZkUtils;
+import scala.Option;
 
 public class EmbeddedKafkaCluster {
     private final List<Integer> ports;
@@ -56,16 +57,16 @@ public class EmbeddedKafkaCluster {
         this.brokerList = constructBrokerList(this.ports);
     }
 
-    public ZkClient getZkClient() {
+    public ZkUtils getZkUtils() {
         for (KafkaServer server : brokers) {
-            return server.zkClient();
+            return server.zkUtils();
         }
         return null;
     }
 
-    public void createTopics(String...topics) {
+    public void createTopics(String... topics) {
         for (String topic : topics) {
-            AdminUtils.createTopic(getZkClient(), topic, 2, 1, new Properties());
+            AdminUtils.createTopic(getZkUtils(), topic, 2, 1, new Properties());
         }
     }
 
@@ -107,8 +108,8 @@ public class EmbeddedKafkaCluster {
             properties.setProperty("host.name", "localhost");
             properties.setProperty("port", Integer.toString(port));
             properties.setProperty("log.dir", logDir.getAbsolutePath());
-            properties.setProperty("num.partitions",  String.valueOf(1));
-            properties.setProperty("auto.create.topics.enable",  String.valueOf(Boolean.TRUE));
+            properties.setProperty("num.partitions", String.valueOf(1));
+            properties.setProperty("auto.create.topics.enable", String.valueOf(Boolean.TRUE));
             System.out.println("EmbeddedKafkaCluster: local directory: " + logDir.getAbsolutePath());
             properties.setProperty("log.flush.interval.messages", String.valueOf(1));
 
@@ -121,7 +122,7 @@ public class EmbeddedKafkaCluster {
 
 
     private KafkaServer startBroker(Properties props) {
-        KafkaServer server = new KafkaServer(new KafkaConfig(props), new SystemTime());
+        KafkaServer server = new KafkaServer(new KafkaConfig(props), new SystemTime(), Option.<String>empty());
         server.startup();
         return server;
     }

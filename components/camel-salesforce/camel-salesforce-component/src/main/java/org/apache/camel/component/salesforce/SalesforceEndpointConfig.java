@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata;
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum;
@@ -63,6 +64,12 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String JOB_ID = "jobId";
     public static final String BATCH_ID = "batchId";
     public static final String RESULT_ID = "resultId";
+    
+    // parameters for Analytics API
+    public static final String REPORT_ID = "reportId";
+    public static final String INCLUDE_DETAILS = "includeDetails";
+    public static final String REPORT_METADATA = "reportMetadata";
+    public static final String INSTANCE_ID = "instanceId";
 
     // general properties
     @UriParam
@@ -121,6 +128,16 @@ public class SalesforceEndpointConfig implements Cloneable {
     private Boolean notifyForOperationDelete;
     @UriParam
     private Boolean notifyForOperationUndelete;
+    
+    // Analytics API properties
+    @UriParam
+    private String reportId;
+    @UriParam
+    private Boolean includeDetails;
+    @UriParam
+    private ReportMetadata reportMetadata;
+    @UriParam
+    private String instanceId;
 
     // Jetty HttpClient, set using reference
     @UriParam
@@ -140,6 +157,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return format;
     }
 
+    /**
+     * Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON
+     */
     public void setFormat(PayloadFormat format) {
         this.format = format;
     }
@@ -148,6 +168,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return apiVersion;
     }
 
+    /**
+     * Salesforce API version, defaults to SalesforceEndpointConfig.DEFAULT_VERSION
+     */
     public void setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
     }
@@ -156,6 +179,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return sObjectName;
     }
 
+    /**
+     * SObject name if required or supported by API
+     */
     public void setSObjectName(String sObjectName) {
         this.sObjectName = sObjectName;
     }
@@ -164,6 +190,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return sObjectId;
     }
 
+    /**
+     * SObject ID if required by API
+     */
     public void setSObjectId(String sObjectId) {
         this.sObjectId = sObjectId;
     }
@@ -172,6 +201,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return sObjectFields;
     }
 
+    /**
+     * SObject fields to retrieve
+     */
     public void setSObjectFields(String sObjectFields) {
         this.sObjectFields = sObjectFields;
     }
@@ -180,6 +212,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return sObjectIdName;
     }
 
+    /**
+     * SObject external ID field name
+     */
     public void setSObjectIdName(String sObjectIdName) {
         this.sObjectIdName = sObjectIdName;
     }
@@ -188,6 +223,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return sObjectIdValue;
     }
 
+    /**
+     * SObject external ID field value
+     */
     public void setSObjectIdValue(String sObjectIdValue) {
         this.sObjectIdValue = sObjectIdValue;
     }
@@ -196,6 +234,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return sObjectBlobFieldName;
     }
 
+    /**
+     * SObject blob field name
+     */
     public void setSObjectBlobFieldName(String sObjectBlobFieldName) {
         this.sObjectBlobFieldName = sObjectBlobFieldName;
     }
@@ -204,6 +245,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return sObjectClass;
     }
 
+    /**
+     * Fully qualified SObject class name, usually generated using camel-salesforce-maven-plugin
+     */
     public void setSObjectClass(String sObjectClass) {
         this.sObjectClass = sObjectClass;
     }
@@ -212,6 +256,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return sObjectQuery;
     }
 
+    /**
+     * Salesforce SOQL query string
+     */
     public void setSObjectQuery(String sObjectQuery) {
         this.sObjectQuery = sObjectQuery;
     }
@@ -220,6 +267,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return sObjectSearch;
     }
 
+    /**
+     * Salesforce SOSL search string
+     */
     public void setSObjectSearch(String sObjectSearch) {
         this.sObjectSearch = sObjectSearch;
     }
@@ -228,6 +278,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return apexMethod;
     }
 
+    /**
+     * APEX method name
+     */
     public void setApexMethod(String apexMethod) {
         this.apexMethod = apexMethod;
     }
@@ -236,6 +289,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return apexUrl;
     }
 
+    /**
+     * APEX method URL
+     */
     public void setApexUrl(String apexUrl) {
         this.apexUrl = apexUrl;
     }
@@ -244,6 +300,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return apexQueryParams == null ? Collections.EMPTY_MAP : Collections.unmodifiableMap(apexQueryParams);
     }
 
+    /**
+     * Query params for APEX method
+     */
     public void setApexQueryParams(Map<String, Object> apexQueryParams) {
         this.apexQueryParams = apexQueryParams;
     }
@@ -252,6 +311,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return contentType;
     }
 
+    /**
+     * Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV
+     */
     public void setContentType(ContentType contentType) {
         this.contentType = contentType;
     }
@@ -260,6 +322,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return jobId;
     }
 
+    /**
+     * Bulk API Job ID
+     */
     public void setJobId(String jobId) {
         this.jobId = jobId;
     }
@@ -268,6 +333,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return batchId;
     }
 
+    /**
+     * Bulk API Batch ID
+     */
     public void setBatchId(String batchId) {
         this.batchId = batchId;
     }
@@ -276,6 +344,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return resultId;
     }
 
+    /**
+     * Bulk API Result ID
+     */
     public void setResultId(String resultId) {
         this.resultId = resultId;
     }
@@ -284,6 +355,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return updateTopic;
     }
 
+    /**
+     * Whether to update an existing Push Topic when using the Streaming API, defaults to false
+     */
     public void setUpdateTopic(boolean updateTopic) {
         this.updateTopic = updateTopic;
     }
@@ -292,6 +366,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return notifyForFields;
     }
 
+    /**
+     * Notify for fields, options are ALL, REFERENCED, SELECT, WHERE
+     */
     public void setNotifyForFields(NotifyForFieldsEnum notifyForFields) {
         this.notifyForFields = notifyForFields;
     }
@@ -300,6 +377,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return notifyForOperations;
     }
 
+    /**
+     * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version < 29.0)
+     */
     public void setNotifyForOperations(NotifyForOperationsEnum notifyForOperations) {
         this.notifyForOperations = notifyForOperations;
     }
@@ -308,6 +388,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return notifyForOperationCreate;
     }
 
+    /**
+     * Notify for create operation, defaults to false (API version >= 29.0)
+     */
     public void setNotifyForOperationCreate(Boolean notifyForOperationCreate) {
         this.notifyForOperationCreate = notifyForOperationCreate;
     }
@@ -316,6 +399,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return notifyForOperationUpdate;
     }
 
+    /**
+     * Notify for update operation, defaults to false (API version >= 29.0)
+     */
     public void setNotifyForOperationUpdate(Boolean notifyForOperationUpdate) {
         this.notifyForOperationUpdate = notifyForOperationUpdate;
     }
@@ -324,6 +410,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return notifyForOperationDelete;
     }
 
+    /**
+     * Notify for delete operation, defaults to false (API version >= 29.0)
+     */
     public void setNotifyForOperationDelete(Boolean notifyForOperationDelete) {
         this.notifyForOperationDelete = notifyForOperationDelete;
     }
@@ -332,10 +421,60 @@ public class SalesforceEndpointConfig implements Cloneable {
         return notifyForOperationUndelete;
     }
 
+    /**
+     * Notify for un-delete operation, defaults to false (API version >= 29.0)
+     */
     public void setNotifyForOperationUndelete(Boolean notifyForOperationUndelete) {
         this.notifyForOperationUndelete = notifyForOperationUndelete;
     }
 
+    public String getReportId() {
+        return reportId;
+    }
+
+    /**
+     * Salesforce1 Analytics report Id
+     */
+    public void setReportId(String reportId) {
+        this.reportId = reportId;
+    }
+
+    public Boolean getIncludeDetails() {
+        return includeDetails;
+    }
+
+    /**
+     * Include details in Salesforce1 Analytics report, defaults to false.
+     */
+    public void setIncludeDetails(Boolean includeDetails) {
+        this.includeDetails = includeDetails;
+    }
+
+    public ReportMetadata getReportMetadata() {
+        return reportMetadata;
+    }
+
+    /**
+     * Salesforce1 Analytics report metadata for filtering
+     */
+    public void setReportMetadata(ReportMetadata reportMetadata) {
+        this.reportMetadata = reportMetadata;
+    }
+
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    /**
+     * Salesforce1 Analytics report execution instance ID
+     */
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
+    }
+
+    /**
+     * Custom Jetty Http Client to use to connect to Salesforce.
+     */
     public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
     }
@@ -344,9 +483,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         return httpClient;
     }
 
-    public Map<String, String> toValueMap() {
+    public Map<String, Object> toValueMap() {
 
-        final Map<String, String> valueMap = new HashMap<String, String>();
+        final Map<String, Object> valueMap = new HashMap<String, Object>();
         valueMap.put(FORMAT, format.toString().toLowerCase());
         valueMap.put(API_VERSION, apiVersion);
 
@@ -370,6 +509,12 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(JOB_ID, jobId);
         valueMap.put(BATCH_ID, batchId);
         valueMap.put(RESULT_ID, resultId);
+        
+        // add analytics API properties
+        valueMap.put(REPORT_ID, reportId);
+        valueMap.put(INCLUDE_DETAILS, includeDetails);
+        valueMap.put(REPORT_METADATA, reportMetadata);
+        valueMap.put(INSTANCE_ID, instanceId);
 
         return Collections.unmodifiableMap(valueMap);
     }

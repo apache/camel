@@ -17,12 +17,23 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Expression;
+import org.apache.camel.model.language.ConstantExpression;
+import org.apache.camel.model.language.ExchangePropertyExpression;
+import org.apache.camel.model.language.HeaderExpression;
+import org.apache.camel.model.language.LanguageExpression;
+import org.apache.camel.model.language.MethodCallExpression;
+import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A helper class for including portions of the <a
  * href="http://camel.apache.org/expression.html">expression</a> and
  * <a href="http://camel.apache.org/predicate.html">predicate</a> <a
  * href="http://camel.apache.org/dsl.html">Java DSL</a>
+ * <p/>
+ * Implementation of this builder should favor build expressions using the definition classes
+ * from the <tt>org.apache.camel.model.language</tt> package, to build the routes using the same
+ * types as it would happen when using XML DSL.
  *
  * @version 
  */
@@ -58,13 +69,13 @@ public final class Builder {
      * @return the builder
      */
     public static ValueBuilder bean(Object beanOrBeanRef, String method) {
-        Expression expression;
+        Expression exp;
         if (beanOrBeanRef instanceof String) {
-            expression = ExpressionBuilder.beanExpression((String) beanOrBeanRef, method);
+            exp = new MethodCallExpression((String) beanOrBeanRef, method);
         } else {
-            expression = ExpressionBuilder.beanExpression(beanOrBeanRef, method);
+            exp = new MethodCallExpression(beanOrBeanRef, method);
         }
-        return new ValueBuilder(expression);
+        return new ValueBuilder(exp);
     }
     
     /**
@@ -76,23 +87,28 @@ public final class Builder {
      * @return the builder
      */
     public static ValueBuilder bean(Class<?> beanType, String method) {
-        Expression expression = ExpressionBuilder.beanExpression(beanType, method);
-        return new ValueBuilder(expression);
+        Expression exp = new MethodCallExpression(beanType, method);
+        return new ValueBuilder(exp);
     }
 
     /**
      * Returns a constant expression
      */
     public static ValueBuilder constant(Object value) {
-        Expression expression = ExpressionBuilder.constantExpression(value);
-        return new ValueBuilder(expression);
+        Expression exp;
+        if (value instanceof String) {
+            exp = new ConstantExpression((String) value);
+        } else {
+            exp = ExpressionBuilder.constantExpression(value);
+        }
+        return new ValueBuilder(exp);
     }
     
     /**
      * Returns a constant expression
      */
     public static ValueBuilder language(String language, String expression) {
-        Expression exp = ExpressionBuilder.languageExpression(language, expression);
+        Expression exp = new LanguageExpression(language, expression);
         return new ValueBuilder(exp);
     }
 
@@ -100,25 +116,25 @@ public final class Builder {
      * Returns a simple expression  
      */
     public static ValueBuilder simple(String value) {
-        Expression expression = ExpressionBuilder.simpleExpression(value);
-        return new ValueBuilder(expression);
+        Expression exp = new SimpleExpression(value);
+        return new ValueBuilder(exp);
     }
     
     /**
      * Returns a simple expression
      */
     public static ValueBuilder simple(String value, Class<?> resultType) {
-        Expression expression = ExpressionBuilder.simpleExpression(value);
-        expression = ExpressionBuilder.convertToExpression(expression, resultType);
-        return new ValueBuilder(expression);
+        SimpleExpression exp = new SimpleExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
     }
 
     /**
      * Returns a predicate and value builder for headers on an exchange
      */
     public static ValueBuilder header(String name) {
-        Expression expression = ExpressionBuilder.headerExpression(name);
-        return new ValueBuilder(expression);
+        Expression exp = new HeaderExpression(name);
+        return new ValueBuilder(exp);
     }
 
     /**
@@ -135,16 +151,16 @@ public final class Builder {
      * Returns a predicate and value builder for properties on an exchange
      */
     public static ValueBuilder exchangeProperty(String name) {
-        Expression expression = ExpressionBuilder.exchangePropertyExpression(name);
-        return new ValueBuilder(expression);
+        Expression exp = new ExchangePropertyExpression(name);
+        return new ValueBuilder(exp);
     }
 
     /**
      * Returns a predicate and value builder for the inbound body on an exchange
      */
     public static ValueBuilder body() {
-        Expression expression = ExpressionBuilder.bodyExpression();
-        return new ValueBuilder(expression);
+        Expression exp = new SimpleExpression("${body}");
+        return new ValueBuilder(exp);
     }
 
     /**
@@ -152,23 +168,30 @@ public final class Builder {
      * specific type
      */
     public static <T> ValueBuilder bodyAs(Class<T> type) {
-        Expression expression = ExpressionBuilder.bodyExpression(type);
-        return new ValueBuilder(expression);
+        ObjectHelper.notNull(type, "type");
+        Expression exp = new SimpleExpression(String.format("${bodyAs(%s)}", type.getCanonicalName()));
+        return new ValueBuilder(exp);
     }
 
     /**
      * Returns a predicate and value builder for the outbound body on an
      * exchange
+     *
+     * @deprecated use {@link #body()}
      */
+    @Deprecated
     public static ValueBuilder outBody() {
-        Expression expression = ExpressionBuilder.outBodyExpression();
-        return new ValueBuilder(expression);
+        Expression exp = new SimpleExpression("${out.body}");
+        return new ValueBuilder(exp);
     }
 
     /**
      * Returns a predicate and value builder for the outbound message body as a
      * specific type
+     *
+     * @deprecated use {@link #bodyAs(Class)}
      */
+    @Deprecated
     public static <T> ValueBuilder outBodyAs(Class<T> type) {
         Expression expression = ExpressionBuilder.outBodyExpression(type);
         return new ValueBuilder(expression);
@@ -186,7 +209,10 @@ public final class Builder {
     /**
      * Returns a predicate and value builder for the fault message body as a
      * specific type
+     *
+     * @deprecated use {@link #bodyAs(Class)}
      */
+    @Deprecated
     public static <T> ValueBuilder faultBodyAs(Class<T> type) {
         Expression expression = ExpressionBuilder.faultBodyExpression(type);
         return new ValueBuilder(expression);
@@ -196,7 +222,8 @@ public final class Builder {
      * Returns an expression for the given system property
      */
     public static ValueBuilder systemProperty(final String name) {
-        return systemProperty(name, null);
+        Expression exp = new SimpleExpression(String.format("${sys.%s}", name));
+        return new ValueBuilder(exp);
     }
 
     /**
@@ -210,16 +237,16 @@ public final class Builder {
      * Returns a predicate and value builder for the exception message on an exchange
      */
     public static ValueBuilder exceptionMessage() {
-        Expression expression = ExpressionBuilder.exchangeExceptionMessageExpression();
-        return new ValueBuilder(expression);
+        Expression exp = new SimpleExpression("${exception.message}");
+        return new ValueBuilder(exp);
     }
     
     /**
      * Returns a predicate and value builder for the exception stacktrace on an exchange
      */
     public static ValueBuilder exceptionStackTrace() {
-        Expression expression = ExpressionBuilder.exchangeExceptionStackTraceExpression();
-        return new ValueBuilder(expression);
+        Expression exp = new SimpleExpression("${exception.stacktrace}");
+        return new ValueBuilder(exp);
     }
 
     /**
@@ -245,7 +272,9 @@ public final class Builder {
      *
      * @param uri   endpoint uri
      * @return the builder
+     * @deprecated not in use, and not available in XML DSL
      */
+    @Deprecated
     public static ValueBuilder sendTo(String uri) {
         Expression expression = ExpressionBuilder.toExpression(uri);
         return new ValueBuilder(expression);

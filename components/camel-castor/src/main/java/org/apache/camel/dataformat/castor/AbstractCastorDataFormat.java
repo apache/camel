@@ -28,6 +28,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.exolab.castor.mapping.Mapping;
@@ -41,7 +42,7 @@ import org.exolab.castor.xml.XMLContext;
  * interface which leverage the Castor library for XML marshaling and
  * unmarshaling
  */
-public abstract class AbstractCastorDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+public abstract class AbstractCastorDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     /**
      * The default encoding used for stream access.
@@ -61,6 +62,11 @@ public abstract class AbstractCastorDataFormat extends ServiceSupport implements
 
     public AbstractCastorDataFormat(XMLContext xmlContext) {
         this.xmlContext = xmlContext;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "castor";
     }
 
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {

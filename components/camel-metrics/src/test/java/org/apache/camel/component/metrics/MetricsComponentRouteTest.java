@@ -93,7 +93,7 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start-1")
                         .to("metrics:timer:T?action=start")
-                        .to("metrics:A")
+                        .to("metrics:counter://A")
                         .to("metrics:counter://B")
                         .to("metrics:counter:C?increment=19291")
                         .to("metrics:counter:C?decrement=19292")

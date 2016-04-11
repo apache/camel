@@ -117,11 +117,11 @@
         </route>
         <route errorHandlerRef="noErrorHandler">
             <from uri="cxf:bean:encryptionRoute"/>
-            <to uri="cxf:bean:encryptionService?DefaultOperationName=greetMe"/>
+            <to uri="cxf:bean:encryptionService?defaultOperationName=greetMe"/>
         </route>
         <route errorHandlerRef="noErrorHandler">
             <from uri="cxf:bean:securityPolicyRoute"/>
-            <to uri="cxf:bean:securityPolicyService?DefaultOperationName=greetMe"/>
+            <to uri="cxf:bean:securityPolicyService?defaultOperationName=greetMe"/>
         </route>
     </camelContext>
     

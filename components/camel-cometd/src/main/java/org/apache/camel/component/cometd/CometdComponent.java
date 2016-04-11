@@ -256,18 +256,30 @@ public class CometdComponent extends UriEndpointComponent {
         return sslKeystore;
     }
 
+    /**
+     * The password for the keystore when using SSL.
+     */
     public void setSslKeyPassword(String sslKeyPassword) {
         this.sslKeyPassword = sslKeyPassword;
     }
 
+    /**
+     * The password when using SSL.
+     */
     public void setSslPassword(String sslPassword) {
         this.sslPassword = sslPassword;
     }
 
+    /**
+     * The path to the keystore.
+     */
     public void setSslKeystore(String sslKeystore) {
         this.sslKeystore = sslKeystore;
     }
 
+    /**
+     * To use a custom configured SecurityPolicy to control authorization
+     */
     public void setSecurityPolicy(SecurityPolicy securityPolicy) {
         this.securityPolicy = securityPolicy;
     }
@@ -280,6 +292,9 @@ public class CometdComponent extends UriEndpointComponent {
         return extensions;
     }
 
+    /**
+     * To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests.
+     */
     public void setExtensions(List<BayeuxServer.Extension> extensions) {
         this.extensions = extensions;
     }
@@ -302,6 +317,9 @@ public class CometdComponent extends UriEndpointComponent {
         return sslContextParameters;
     }
 
+    /**
+     * To configure security using SSLContextParameters
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }

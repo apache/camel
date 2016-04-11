@@ -217,7 +217,7 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
         int killAfterMillis = 1000;
         output.setExpectedMessageCount(1);
         // add some tolerance
-        output.setMinimumResultWaitTime(800);
+        output.setResultMinimumWaitTime(800);
         // max (the test program sleeps 60 000)
         output.setResultWaitTime(30000);
 

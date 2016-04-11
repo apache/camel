@@ -77,7 +77,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
         private final String propertySuffix;
         private final boolean fallbackToUnaugmentedProperty;
 
-        public ParsingContext(Properties properties, String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
+        ParsingContext(Properties properties, String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
                               boolean fallbackToUnaugmentedProperty) {
             this.properties = properties;
             this.prefixToken = prefixToken;
@@ -297,12 +297,32 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
          * @return Value of the property or {@code null} if not found
          */
         private String doGetPropertyValue(String key) {
-            String value = System.getProperty(key);
-            if (value != null) {
-                log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
-            } else if (properties != null) {
-                value = properties.getProperty(key);
+            String value = null;
+
+            // override is the default mode
+            int mode = propertiesComponent != null ? propertiesComponent.getSystemPropertiesMode() : PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE;
+
+            if (mode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+                value = System.getProperty(key);
+                if (value != null) {
+                    log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
+                }
             }
+
+            if (value == null && properties != null) {
+                value = properties.getProperty(key);
+                if (value != null) {
+                    log.debug("Found property: {} with value: {} to be used.", key, value);
+                }
+            }
+
+            if (value == null && mode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_FALLBACK) {
+                value = System.getProperty(key);
+                if (value != null) {
+                    log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
+                }
+            }
+
             return parseProperty(key, value, properties);
         }
     }

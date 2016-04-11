@@ -43,6 +43,15 @@ public interface CamelController {
     List<Map<String, String>> getCamelContexts() throws Exception;
 
     /**
+     * Get the list of Camel context filter by reg ex.
+     *
+     * @param filter           the filter which supports * and ? as wildcards
+     * @return a list of key/value pairs with CamelContext information
+     * @throws java.lang.Exception can be thrown
+     */
+    List<Map<String, String>> getCamelContexts(String filter) throws Exception;
+
+    /**
      * Returns detailed CamelContext and route statistics as XML identified by a ID and a Camel context.
      *
      * @param camelContextName  the Camel context.
@@ -191,6 +200,15 @@ public interface CamelController {
     List<Map<String, String>> getEndpoints(String camelContextName) throws Exception;
 
     /**
+     * Return endpoint runtime statistics
+     *
+     * @param camelContextName the Camel context
+     * @return a list of key/value pairs with endpoint runtime statistics
+     * @throws java.lang.Exception can be thrown
+     */
+    List<Map<String, String>> getEndpointRuntimeStatistics(String camelContextName) throws Exception;
+
+    /**
      * Return the definition of the REST services as XML for the given Camel context.
      *
      * @param camelContextName the Camel context.
@@ -198,6 +216,15 @@ public interface CamelController {
      * @throws java.lang.Exception can be thrown
      */
     String getRestModelAsXml(String camelContextName) throws Exception;
+
+    /**
+     * Return the REST services API documentation as JSon (requires camel-swagger-java on classpath)
+     *
+     * @param camelContextName the Camel context.
+     * @return the REST API documentation as JSon
+     * @throws java.lang.Exception can be thrown
+     */
+    String getRestApiDocAsJson(String camelContextName) throws Exception;
 
     /**
      * Return the REST services for the given Camel context.
@@ -255,6 +282,15 @@ public interface CamelController {
      * @throws java.lang.Exception can be thrown
      */
     Map<String, Set<String>> listEipsLabelCatalog() throws Exception;
+
+    /**
+     * Collects information about a Camel component from catalog
+     *
+     * @param name the component name
+     * @return a map of key/value pairs with component information
+     * @throws java.lang.Exception can be thrown
+     */
+    Map<String, Object> componentInfo(String name) throws Exception;
 
     /**
      * Lists all components from the Camel components catalog

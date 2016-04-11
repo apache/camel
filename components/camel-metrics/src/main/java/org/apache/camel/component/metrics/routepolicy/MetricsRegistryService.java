@@ -108,8 +108,6 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
     public void setDurationUnit(TimeUnit durationUnit) {
         this.durationUnit = durationUnit;
     }
-    
-    
 
     @Override
     protected void doStart() throws Exception {
@@ -177,6 +175,5 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
-    
-   
+
 }

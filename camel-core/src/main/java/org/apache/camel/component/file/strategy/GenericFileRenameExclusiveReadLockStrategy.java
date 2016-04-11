@@ -88,8 +88,17 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
     }
 
     @Override
-    public void releaseExclusiveReadLock(GenericFileOperations<T> operations, GenericFile<T> file,
-                                         Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception {
         // noop
     }
 
@@ -125,6 +134,11 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
 
     @Override
     public void setMarkerFiler(boolean markerFile) {
+        // noop - we do not use marker file with the rename strategy
+    }
+
+    @Override
+    public void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles) {
         // noop - we do not use marker file with the rename strategy
     }
 }

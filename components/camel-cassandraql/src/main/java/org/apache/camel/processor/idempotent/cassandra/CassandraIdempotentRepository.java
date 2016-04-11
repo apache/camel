@@ -25,6 +25,8 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.Select;
+import com.datastax.driver.core.querybuilder.Truncate;
+
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
@@ -36,6 +38,7 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.applyConsistencyLe
 import static org.apache.camel.utils.cassandra.CassandraUtils.generateDelete;
 import static org.apache.camel.utils.cassandra.CassandraUtils.generateInsert;
 import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
+import static org.apache.camel.utils.cassandra.CassandraUtils.generateTruncate;
 
 /**
  * Implementation of {@link IdempotentRepository} using Cassandra table to store
@@ -82,6 +85,7 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
     private PreparedStatement insertStatement;
     private PreparedStatement selectStatement;
     private PreparedStatement deleteStatement;
+    private PreparedStatement truncateStatement;
 
     public CassandraIdempotentRepository() {
     }
@@ -122,6 +126,7 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
         initInsertStatement();
         initSelectStatement();
         initDeleteStatement();
+        initClearStatement();
     }
 
     @Override
@@ -183,6 +188,23 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
         LOGGER.debug("Deleting key {}", (Object) idValues);
         return isApplied(getSession().execute(deleteStatement.bind(idValues)));
     }
+    
+    // -------------------------------------------------------------------------
+    // Clear the repository
+    
+    protected void initClearStatement() {
+        Truncate truncate = generateTruncate(table);
+        truncate = applyConsistencyLevel(truncate, writeConsistencyLevel);
+        LOGGER.debug("Generated truncate for clear operation {}", truncate);
+        truncateStatement = getSession().prepare(truncate);
+    }
+    
+    @Override
+    public void clear() {
+        LOGGER.debug("Clear table {}", table);
+        getSession().execute(truncateStatement.bind());        
+    }
+    
     // -------------------------------------------------------------------------
     // Getters & Setters
 

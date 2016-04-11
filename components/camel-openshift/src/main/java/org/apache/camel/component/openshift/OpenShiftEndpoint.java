@@ -22,7 +22,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -30,7 +29,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "openshift", title = "OpenShift", syntax = "openshift:clientId", consumerClass = OpenShiftConsumer.class, label = "cloud")
+/**
+ * To manage your Openshift 2.x applications.
+ */
+@UriEndpoint(scheme = "openshift", title = "OpenShift", syntax = "openshift:clientId", consumerClass = OpenShiftConsumer.class, label = "cloud,paas")
 public class OpenShiftEndpoint extends ScheduledPollEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -43,7 +45,9 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
     private String domain;
     @UriParam
     private String server;
-    @UriParam(label = "producer", enums = "list,start,stop,restart,state")
+    @UriParam(label = "producer", enums = "list,start,stop,restart,state,getStandaloneCartridge,getEmbeddedCartridges,addEmbeddedCartridge,removeEmbeddedCartridge,"
+            + "scaleUp,scaleDown,getGitUrl,getDeploymentType,setDeploymentType,getAllEnvironmentVariables,addEnvironmentVariable,addMultipleEnvironmentVariables,"
+            + "updateEnvironmentVariable,getEnvironmentVariableValue,removeEnvironmentVariable,getGearProfile,addAlias,removeAlias,getAliases")
     private String operation;
     @UriParam(label = "producer")
     private String application;
@@ -75,7 +79,7 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
     }
 
     public Exchange createExchange(IApplication application) {
-        Exchange exchange = new DefaultExchange(this);
+        Exchange exchange = super.createExchange();
         exchange.getIn().setBody(application);
         return exchange;
     }

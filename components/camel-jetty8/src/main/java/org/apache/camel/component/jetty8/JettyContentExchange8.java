@@ -44,8 +44,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Jetty specific exchange which keeps track of the the request and response.
- *
- * @version 
  */
 public class JettyContentExchange8 implements JettyContentExchange {
 
@@ -57,12 +55,12 @@ public class JettyContentExchange8 implements JettyContentExchange {
     private volatile HttpClient client;
     private final CountDownLatch done = new CountDownLatch(1);
     private final ContentExchange ce;
-    
+
     public JettyContentExchange8() {
         this.ce = new ContentExchange(true);
     }
 
-    public void init(Exchange exchange, JettyHttpBinding jettyBinding, 
+    public void init(Exchange exchange, JettyHttpBinding jettyBinding,
                      final HttpClient client, AsyncCallback callback) {
         this.exchange = exchange;
         this.jettyBinding = jettyBinding;
@@ -107,13 +105,13 @@ public class JettyContentExchange8 implements JettyContentExchange {
                     JettyContentExchange8.this.onExpire();
                 }
             }
-            
+
         });
     }
 
     protected void onRequestComplete() throws IOException {
         LOG.trace("onRequestComplete");
-        
+
         closeRequestContentSource();
     }
 
@@ -153,11 +151,11 @@ public class JettyContentExchange8 implements JettyContentExchange {
 
     public String getUrl() {
         String params = ce.getRequestFields().getStringField(HttpHeaders.CONTENT_ENCODING);
-        return ce.getScheme() + "://" 
-            + ce.getAddress().toString() 
-            + ce.getRequestURI() + (params != null ? "?" + params : "");
+        return ce.getScheme() + "://"
+                + ce.getAddress().toString()
+                + ce.getRequestURI() + (params != null ? "?" + params : "");
     }
-    
+
     protected void closeRequestContentSource() {
         // close the input stream when its not needed anymore
         InputStream is = ce.getRequestContentSource();
@@ -230,14 +228,15 @@ public class JettyContentExchange8 implements JettyContentExchange {
     public void setMethod(String method) {
         ce.setMethod(method);
     }
-    
+
     public void setURL(String url) {
         ce.setURL(url);
     }
 
     public void setRequestContent(byte[] byteArray) {
-        ce.setRequestContent(new org.eclipse.jetty.io.ByteArrayBuffer(byteArray));        
+        ce.setRequestContent(new org.eclipse.jetty.io.ByteArrayBuffer(byteArray));
     }
+
     public void setRequestContent(String data, String charset) throws UnsupportedEncodingException {
         if (charset == null) {
             ce.setRequestContent(new org.eclipse.jetty.io.ByteArrayBuffer(data));
@@ -245,8 +244,9 @@ public class JettyContentExchange8 implements JettyContentExchange {
             ce.setRequestContent(new org.eclipse.jetty.io.ByteArrayBuffer(data, charset));
         }
     }
+
     public void setRequestContent(InputStream ins) {
-        ce.setRequestContentSource(ins);        
+        ce.setRequestContentSource(ins);
     }
 
     public void addRequestHeader(String key, String s) {
@@ -260,14 +260,22 @@ public class JettyContentExchange8 implements JettyContentExchange {
     public byte[] getResponseContentBytes() {
         return ce.getResponseContentBytes();
     }
-    
-    public Map<String, Collection<String>> getResponseHeaders() {
-        final HttpFields f = ce.getResponseFields();
-        Map<String, Collection<String>> ret = new TreeMap<String, Collection<String>>(String.CASE_INSENSITIVE_ORDER);
-        for (String n : f.getFieldNamesCollection()) {
-            ret.put(n,  f.getValuesCollection(n));
+
+    private Map<String, Collection<String>> getFieldsAsMap(HttpFields fields) {
+        final Map<String, Collection<String>> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        for (String name : fields.getFieldNamesCollection()) {
+            result.put(name, fields.getValuesCollection(name));
         }
-        return ret;
+        return result;
+    }
+
+    public Map<String, Collection<String>> getRequestHeaders() {
+        return getFieldsAsMap(ce.getRequestFields());
+    }
+
+
+    public Map<String, Collection<String>> getResponseHeaders() {
+        return getFieldsAsMap(ce.getResponseFields());
     }
 
     @Override

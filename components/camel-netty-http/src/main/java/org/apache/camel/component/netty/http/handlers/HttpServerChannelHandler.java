@@ -20,6 +20,7 @@ import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
 import java.util.Iterator;
+import java.util.Locale;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
@@ -161,8 +162,13 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
             // strip the starting endpoint path so the target is relative to the endpoint uri
             String path = consumer.getConfiguration().getPath();
-            if (path != null && target.startsWith(path)) {
-                target = target.substring(path.length());
+            if (path != null) {
+                // need to match by lower case as we want to ignore case on context-path
+                path = path.toLowerCase(Locale.US);
+                String match = target.toLowerCase(Locale.US);
+                if (match.startsWith(path)) {
+                    target = target.substring(path.length());
+                }
             }
 
             // is it a restricted resource?
@@ -308,7 +314,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             if (exceptionEvent.getCause() instanceof ClosedChannelException) {
                 LOG.debug("Channel already closed. Ignoring this exception.");
             } else {
-                LOG.warn("Closing channel as an exception was thrown from Netty", exceptionEvent.getCause());
+                LOG.debug("Closing channel as an exception was thrown from Netty", exceptionEvent.getCause());
                 // close channel in case an exception was thrown
                 NettyHelper.close(exceptionEvent.getChannel());
             }

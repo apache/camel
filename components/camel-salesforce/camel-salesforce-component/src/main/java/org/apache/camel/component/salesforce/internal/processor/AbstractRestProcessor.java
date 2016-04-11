@@ -64,7 +64,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         final PayloadFormat payloadFormat = endpoint.getConfiguration().getFormat();
 
-        this.restClient = new DefaultRestClient(httpClient, endpointConfigMap.get(API_VERSION),
+        this.restClient = new DefaultRestClient(httpClient, (String) endpointConfigMap.get(API_VERSION),
                 payloadFormat, session);
 
         this.classMap = endpoint.getComponent().getClassMap();
@@ -151,19 +151,19 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 processApexCall(exchange, callback);
                 break;
             default:
-                throw new SalesforceException("Unknow operation name: " + operationName, null);
+                throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
         } catch (SalesforceException e) {
             exchange.setException(new SalesforceException(
                     String.format("Error processing %s: [%s] \"%s\"",
-                            operationName, e.getStatusCode(), e.getMessage()),
+                            operationName.value(), e.getStatusCode(), e.getMessage()),
                     e));
             callback.done(true);
             return true;
         } catch (RuntimeException e) {
             exchange.setException(new SalesforceException(
                     String.format("Unexpected Error processing %s: \"%s\"",
-                            operationName, e.getMessage()),
+                            operationName.value(), e.getMessage()),
                     e));
             callback.done(true);
             return true;
@@ -446,7 +446,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     private void processQuery(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         final String sObjectQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
 
-        // use sObject name to load class
+        // use custom response class property
         setResponseClass(exchange, null);
 
         restClient.query(sObjectQuery, new RestClient.ResponseCallback() {

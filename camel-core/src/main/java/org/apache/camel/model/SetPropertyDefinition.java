@@ -27,7 +27,6 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.SetPropertyProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -73,7 +72,8 @@ public class SetPropertyDefinition extends NoOutputExpressionNode {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getPropertyName(), "propertyName", this);
         Expression expr = getExpression().createExpression(routeContext);
-        return new SetPropertyProcessor(getPropertyName(), expr);
+        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(getPropertyName(), routeContext.getCamelContext());
+        return new SetPropertyProcessor(nameExpr, expr);
     }
 
     /**
@@ -86,9 +86,11 @@ public class SetPropertyDefinition extends NoOutputExpressionNode {
     }
 
     /**
-     * Name of exchange property to set a new value
+     * Name of exchange property to set a new value.
+     * <p/>
+     * The <tt>simple</tt> language can be used to define a dynamic evaluated exchange property name to be used.
+     * Otherwise a constant name will be used.
      */
-    @Required
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
     }

@@ -87,6 +87,8 @@ public class DefaultLanguageResolver implements LanguageResolver {
             type = findLanguageResolver("default", context);
         } catch (NoFactoryAvailableException e) {
             // ignore
+        } catch (ClassNotFoundException e) {
+            // ignore
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid URI, no LanguageResolver registered for scheme: " + name, e);
         }

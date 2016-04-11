@@ -23,6 +23,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -41,6 +42,7 @@ public class KestrelSpringXmlTest extends AbstractJUnit4SpringContextTests {
     private ProducerTemplate producerTemplate;
 
     @DirtiesContext
+    @Test
     public void testProduceAndConsume() throws Exception {
         List<String> bodies = new ArrayList<String>();
         for (int k = 0; k < 10; ++k) {

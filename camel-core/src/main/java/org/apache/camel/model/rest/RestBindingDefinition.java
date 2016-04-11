@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
@@ -30,7 +31,9 @@ import org.apache.camel.model.NoOutputDefinition;
 import org.apache.camel.processor.binding.RestBindingProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
@@ -41,13 +44,17 @@ import org.apache.camel.util.IntrospectionSupport;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinition> {
 
+    @XmlTransient
+    private Map<String, String> defaultValues;
+
     @XmlAttribute
     private String consumes;
 
     @XmlAttribute
     private String produces;
 
-    @XmlAttribute @Metadata(defaultValue = "auto")
+    @XmlAttribute
+    @Metadata(defaultValue = "auto")
     private RestBindingMode bindingMode;
 
     @XmlAttribute
@@ -62,6 +69,12 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
     @XmlAttribute
     private Boolean enableCORS;
 
+    @XmlAttribute
+    private String component;
+
+    public RestBindingDefinition() {
+    }
+
     @Override
     public String toString() {
         return "RestBinding";
@@ -71,31 +84,32 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
     public Processor createProcessor(RouteContext routeContext) throws Exception {
 
         CamelContext context = routeContext.getCamelContext();
+        RestConfiguration config = context.getRestConfiguration(component, true);
 
-        // these options can be overriden per rest verb
-        String mode = context.getRestConfiguration().getBindingMode().name();
+        // these options can be overridden per rest verb
+        String mode = config.getBindingMode().name();
         if (bindingMode != null) {
             mode = bindingMode.name();
         }
-        boolean cors = context.getRestConfiguration().isEnableCORS();
+        boolean cors = config.isEnableCORS();
         if (enableCORS != null) {
             cors = enableCORS;
         }
-        boolean skip = context.getRestConfiguration().isSkipBindingOnErrorCode();
+        boolean skip = config.isSkipBindingOnErrorCode();
         if (skipBindingOnErrorCode != null) {
             skip = skipBindingOnErrorCode;
         }
 
         // cors headers
-        Map<String, String> corsHeaders = context.getRestConfiguration().getCorsHeaders();
+        Map<String, String> corsHeaders = config.getCorsHeaders();
 
         if (mode == null || "off".equals(mode)) {
             // binding mode is off, so create a off mode binding processor
-            return new RestBindingProcessor(null, null, null, null, consumes, produces, mode, skip, cors, corsHeaders);
+            return new RestBindingProcessor(context, null, null, null, null, consumes, produces, mode, skip, cors, corsHeaders, defaultValues);
         }
 
         // setup json data format
-        String name = context.getRestConfiguration().getJsonDataFormat();
+        String name = config.getJsonDataFormat();
         if (name != null) {
             // must only be a name, not refer to an existing instance
             Object instance = context.getRegistry().lookupByName(name);
@@ -124,8 +138,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 IntrospectionSupport.setProperty(context.getTypeConverter(), json, "unmarshalType", clazz);
                 IntrospectionSupport.setProperty(context.getTypeConverter(), json, "useList", type.endsWith("[]"));
             }
-            setAdditionalConfiguration(context, json, "json.in.");
-            context.addService(json);
+            setAdditionalConfiguration(config, context, json, "json.in.");
 
             Class<?> outClazz = null;
             if (outType != null) {
@@ -136,12 +149,11 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "unmarshalType", outClazz);
                 IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "useList", outType.endsWith("[]"));
             }
-            setAdditionalConfiguration(context, outJson, "json.out.");
-            context.addService(outJson);
+            setAdditionalConfiguration(config, context, outJson, "json.out.");
         }
 
         // setup xml data format
-        name = context.getRestConfiguration().getXmlDataFormat();
+        name = config.getXmlDataFormat();
         if (name != null) {
             // must only be a name, not refer to an existing instance
             Object instance = context.getRegistry().lookupByName(name);
@@ -170,8 +182,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 JAXBContext jc = JAXBContext.newInstance(clazz);
                 IntrospectionSupport.setProperty(context.getTypeConverter(), jaxb, "context", jc);
             }
-            setAdditionalConfiguration(context, jaxb, "xml.in.");
-            context.addService(jaxb);
+            setAdditionalConfiguration(config, context, jaxb, "xml.in.");
 
             Class<?> outClazz = null;
             if (outType != null) {
@@ -186,22 +197,22 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 JAXBContext jc = JAXBContext.newInstance(clazz);
                 IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
             }
-            setAdditionalConfiguration(context, outJaxb, "xml.out.");
-            context.addService(outJaxb);
+            setAdditionalConfiguration(config, context, outJaxb, "xml.out.");
         }
 
-        return new RestBindingProcessor(json, jaxb, outJson, outJaxb, consumes, produces, mode, skip, cors, corsHeaders);
+        return new RestBindingProcessor(context, json, jaxb, outJson, outJaxb, consumes, produces, mode, skip, cors, corsHeaders, defaultValues);
     }
 
-    private void setAdditionalConfiguration(CamelContext context, DataFormat dataFormat, String prefix) throws Exception {
-        if (context.getRestConfiguration().getDataFormatProperties() != null && !context.getRestConfiguration().getDataFormatProperties().isEmpty()) {
+    private void setAdditionalConfiguration(RestConfiguration config, CamelContext context,
+                                            DataFormat dataFormat, String prefix) throws Exception {
+        if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during introspection setProperties
             Map<String, Object> copy = new HashMap<String, Object>();
 
             // filter keys on prefix
             // - either its a known prefix and must match the prefix parameter
             // - or its a common configuration that we should always use
-            for (Map.Entry<String, Object> entry : context.getRestConfiguration().getDataFormatProperties().entrySet()) {
+            for (Map.Entry<String, Object> entry : config.getDataFormatProperties().entrySet()) {
                 String key = entry.getKey();
                 String copyKey;
                 boolean known = isKeyKnownPrefix(key);
@@ -217,7 +228,9 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 }
             }
 
-            IntrospectionSupport.setProperties(context.getTypeConverter(), dataFormat, copy);
+            // set reference properties first as they use # syntax that fools the regular properties setter
+            EndpointHelper.setReferenceProperties(context, dataFormat, copy);
+            EndpointHelper.setProperties(context, dataFormat, copy);
         }
     }
 
@@ -227,6 +240,38 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
 
     public String getConsumes() {
         return consumes;
+    }
+
+    /**
+     * Adds a default value for the query parameter
+     *
+     * @param paramName   query parameter name
+     * @param defaultValue the default value
+     */
+    public void addDefaultValue(String paramName, String defaultValue) {
+        if (defaultValues == null) {
+            defaultValues = new HashMap<String, String>();
+        }
+        defaultValues.put(paramName, defaultValue);
+    }
+
+
+    /**
+     * Gets the registered default values for query parameters
+     */
+    public Map<String, String> getDefaultValues() {
+        return defaultValues;
+    }
+
+    /**
+     * Sets the component name that this definition will apply to  
+     */
+    public void setComponent(String component) {
+        this.component = component;
+    }
+
+    public String getComponent() {
+        return component;
     }
 
     /**

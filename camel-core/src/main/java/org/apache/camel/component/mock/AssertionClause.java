@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.mock;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -38,7 +38,7 @@ public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuild
 
     protected final MockEndpoint mock;
     protected volatile int currentIndex;
-    private final List<Predicate> predicates = new ArrayList<Predicate>();
+    private final Set<Predicate> predicates = new LinkedHashSet<Predicate>();
     private final Expression previous = new PreviousTimestamp();
     private final Expression next = new NextTimestamp();
 

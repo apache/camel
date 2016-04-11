@@ -20,7 +20,6 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 import org.junit.Test;
@@ -40,13 +39,8 @@ public class SjmsEndpointNameOverrideTest extends CamelTestSupport {
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
         SjmsEndpoint sjms = (SjmsEndpoint)endpoint;
-        assertEquals(sjms.getEndpointUri(), BEAN_NAME + "://queue:test");
+        assertEquals(sjms.getEndpointUri(), BEAN_NAME + "://test");
         assertEquals(sjms.createExchange().getPattern(), ExchangePattern.InOnly);
-    }
-
-    @Test(expected = ResolveEndpointFailedException.class)
-    public void testUnsupportedProtocol() throws Exception {
-        context.getEndpoint("sjms:bad-queue:test");
     }
 
     @Test

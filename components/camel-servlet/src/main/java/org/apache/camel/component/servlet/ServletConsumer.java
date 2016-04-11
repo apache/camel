@@ -17,11 +17,8 @@
 package org.apache.camel.component.servlet;
 
 import org.apache.camel.Processor;
-import org.apache.camel.component.http.HttpConsumer;
+import org.apache.camel.http.common.HttpConsumer;
 
-/**
- *
- */
 public class ServletConsumer extends HttpConsumer {
 
     public ServletConsumer(ServletEndpoint endpoint, Processor processor) {

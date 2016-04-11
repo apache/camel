@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.Servlet;
 
-import org.apache.camel.component.http.CamelServlet;
-import org.apache.camel.component.http.HttpConsumer;
+import org.apache.camel.http.common.CamelServlet;
+import org.apache.camel.http.common.HttpConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

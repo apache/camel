@@ -24,6 +24,9 @@ import org.apache.camel.impl.DefaultExchange;
 /**
  * Aggregate all exchanges into a single combined Exchange holding all the aggregated exchanges
  * in a {@link List} of {@link Exchange} as the message body.
+ * <p/>
+ * <b>Important:</b> This strategy is not to be used with the <a href="http://camel.apache.org/content-enricher.html">Content Enricher</a> EIP
+ * which is enrich or pollEnrich.
  *
  * @version 
  */

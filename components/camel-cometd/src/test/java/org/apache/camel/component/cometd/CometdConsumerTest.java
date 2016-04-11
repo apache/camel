@@ -96,7 +96,7 @@ public class CometdConsumerTest {
     @Test
     public void testSessionHeadersAdded() throws Exception {
         // setup
-        when(endpoint.areSessionHeadersEnabled()).thenReturn(true);
+        when(endpoint.isSessionHeadersEnabled()).thenReturn(true);
         testObj.start();
         ServerMessage cometdMessage = mock(ServerMessage.class);
         Exchange exchange = mock(Exchange.class);

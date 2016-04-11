@@ -21,6 +21,7 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Message;
@@ -31,10 +32,13 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.utils.cassandra.CassandraLoadBalancingPolicies;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 
 /**
- * Cassandra 2 CQL3 endpoint
+ * The cql component aims at integrating Cassandra 2.0+ using the CQL3 API (not the Thrift API).
+ *
+ * It's based on Cassandra Java Driver provided by DataStax.
  */
 @UriEndpoint(scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace", consumerClass = CassandraConsumer.class, label = "database,nosql")
 public class CassandraEndpoint extends DefaultEndpoint {
@@ -65,11 +69,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
     private Session session;
     @UriParam
     private ConsistencyLevel consistencyLevel;
-
-    /**
-     * How many rows should be retrieved in message body
-     */
     @UriParam
+    private String loadBalancingPolicy;
+    @UriParam(javaType = "java.lang.String")
     private ResultSetConversionStrategy resultSetConversionStrategy = ResultSetConversionStrategies.all();
 
     public CassandraEndpoint(String endpointUri, Component component) {
@@ -140,6 +142,7 @@ public class CassandraEndpoint extends DefaultEndpoint {
     }
 
     protected Cluster.Builder createClusterBuilder() throws Exception {
+        CassandraLoadBalancingPolicies cassLoadBalancingPolicies = new CassandraLoadBalancingPolicies();
         Cluster.Builder clusterBuilder = Cluster.builder();
         for (String host : hosts.split(",")) {
             clusterBuilder = clusterBuilder.addContactPoint(host);
@@ -152,6 +155,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         }
         if (username != null && !username.isEmpty() && password != null) {
             clusterBuilder.withCredentials(username, password);
+        }
+        if (loadBalancingPolicy != null && !loadBalancingPolicy.isEmpty()) {
+            clusterBuilder.withLoadBalancingPolicy(cassLoadBalancingPolicies.getLoadBalancingPolicy(loadBalancingPolicy));
         }
         return clusterBuilder;
     }
@@ -185,6 +191,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return beanRef;
     }
 
+    /**
+     * Instead of using a hostname:port, refer to an existing configured Session or Cluster from the Camel registry to be used.
+     */
     public void setBean(String beanRef) {
         this.beanRef = beanRef;
     }
@@ -203,6 +212,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return hosts;
     }
 
+    /**
+     * Hostname(s) cassansdra server(s). Multiple hosts can be separated by comma.
+     */
     public void setHosts(String hosts) {
         this.hosts = hosts;
     }
@@ -211,6 +223,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return port;
     }
 
+    /**
+     * Port number of cassansdra server(s)
+     */
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -219,6 +234,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return keyspace;
     }
 
+    /**
+     * Keyspace to use
+     */
     public void setKeyspace(String keyspace) {
         this.keyspace = keyspace;
     }
@@ -227,6 +245,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return cql;
     }
 
+    /**
+     * CQL query to perform. Can be overridden with the message header with key CamelCqlQuery.
+     */
     public void setCql(String cql) {
         this.cql = cql;
     }
@@ -235,6 +256,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return cluster;
     }
 
+    /**
+     * To use the Cluster instance (you would normally not use this option)
+     */
     public void setCluster(Cluster cluster) {
         this.cluster = cluster;
     }
@@ -247,6 +271,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         }
     }
 
+    /**
+     * To use the Session instance (you would normally not use this option)
+     */
     public void setSession(Session session) {
         this.session = session;
     }
@@ -255,6 +282,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return clusterName;
     }
 
+    /**
+     * Cluster name
+     */
     public void setClusterName(String clusterName) {
         this.clusterName = clusterName;
     }
@@ -263,6 +293,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return username;
     }
 
+    /**
+     * Username for session authentication
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -271,6 +304,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return password;
     }
 
+    /**
+     * Password for session authentication
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -279,6 +315,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return consistencyLevel;
     }
 
+    /**
+     * Consistency level to use
+     */
     public void setConsistencyLevel(ConsistencyLevel consistencyLevel) {
         this.consistencyLevel = consistencyLevel;
     }
@@ -287,6 +326,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return resultSetConversionStrategy;
     }
 
+    /**
+     * To use a custom class that implements logic for converting ResultSet into message body ALL, ONE, LIMIT_10, LIMIT_100...
+     */
     public void setResultSetConversionStrategy(ResultSetConversionStrategy resultSetConversionStrategy) {
         this.resultSetConversionStrategy = resultSetConversionStrategy;
     }
@@ -301,4 +343,17 @@ public class CassandraEndpoint extends DefaultEndpoint {
     public void setPrepareStatements(boolean prepareStatements) {
         this.prepareStatements = prepareStatements;
     }
+
+    /**
+     * To use a specific LoadBalancingPolicy
+     */
+    public String getLoadBalancingPolicy() {
+        return loadBalancingPolicy;
+    }
+
+    public void setLoadBalancingPolicy(String loadBalancingPolicy) {
+        this.loadBalancingPolicy = loadBalancingPolicy;
+    }
+    
+    
 }

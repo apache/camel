@@ -47,6 +47,50 @@
             <from uri="jclouds:blobstore:transient?container=bar"/>
             <to uri="mock:result-bar"/>
         </route>
+        
+        <route>
+            <from uri="direct:count"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName&amp;operation=CamelJcloudsCountBlobs"/>
+        </route>
+        
+        <route>
+            <from uri="direct:remove"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName&amp;operation=CamelJcloudsRemoveBlob"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName&amp;operation=CamelJcloudsCountBlobs"/>
+        </route>
+        
+        <route>
+            <from uri="direct:clear"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName&amp;operation=CamelJcloudsClearContainer"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName&amp;operation=CamelJcloudsCountBlobs"/>
+        </route>
+        
+        <route>
+            <from uri="direct:delete"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName&amp;operation=CamelJcloudsCountBlobs"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName&amp;operation=CamelJcloudsDeleteContainer"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName&amp;operation=CamelJcloudsExistsContainer"/>
+        </route>
+        
+        <route>
+            <from uri="direct:exists"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName&amp;operation=CamelJcloudsExistsContainer"/>
+        </route>
+        
+        <route>
+            <from uri="direct:remove-blobs"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName&amp;operation=CamelJcloudsExistsContainer"/>
+        </route>
+        
+        <route>
+            <from uri="direct:count-after-remove-blobs"/>
+            <to uri="jclouds:blobstore:transient?container=foo&amp;blobName=testName&amp;operation=CamelJcloudsCountBlobs"/>
+        </route>
 
     </camelContext>
 

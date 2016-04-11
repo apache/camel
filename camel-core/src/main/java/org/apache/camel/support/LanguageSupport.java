@@ -64,7 +64,7 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
             String uri = expression.substring(RESOURCE.length());
             InputStream is = null;
             try {
-                is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), uri);
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, uri);
                 expression = camelContext.getTypeConverter().mandatoryConvertTo(String.class, is);
             } catch (Exception e) {
                 throw new ExpressionIllegalSyntaxException(expression, e);

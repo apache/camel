@@ -36,12 +36,13 @@ import org.springframework.test.context.ContextConfiguration;
  * 
  */
 //START SNIPPET: example
+// tag::example[]
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @ContextConfiguration(
         classes = {CamelSpringDelegatingTestContextLoaderTest.TestConfig.class},
         // Since Camel 2.11.0 
         loader = CamelSpringDelegatingTestContextLoader.class
-)
+    )
 @MockEndpoints
 public class CamelSpringDelegatingTestContextLoaderTest {
     @EndpointInject(uri = "mock:direct:end")
@@ -82,5 +83,6 @@ public class CamelSpringDelegatingTestContextLoaderTest {
         errorEndpoint.assertIsSatisfied();
     }
 }
+// end::example[]
 //END SNIPPET: example
 

@@ -85,6 +85,20 @@ public class InfinispanIdempotentRepositoryTest {
     public void doesntRemoveMissingKey() throws Exception {
         assertFalse(idempotentRepository.remove("One"));
     }
+    
+    @Test
+    public void clearCache() throws Exception {
+        assertTrue(idempotentRepository.add("One"));
+        assertTrue(idempotentRepository.add("Two"));
+
+        assertTrue(getCache().containsKey("One"));
+        assertTrue(getCache().containsKey("Two"));
+        
+        idempotentRepository.clear();
+        
+        assertFalse(getCache().containsKey("One"));
+        assertFalse(getCache().containsKey("Two"));
+    }
 
     private BasicCache<Object, Object> getCache() {
         return basicCacheContainer.getCache(cacheName);

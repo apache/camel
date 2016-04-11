@@ -18,20 +18,16 @@ package org.apache.camel.component.kafka;
 
 import java.util.Properties;
 
-import kafka.javaapi.producer.Producer;
-import kafka.producer.KeyedMessage;
-import kafka.producer.ProducerConfig;
 import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
 
-/**
- *
- */
 public class KafkaProducer extends DefaultProducer {
 
-    protected Producer<String, String> producer;
+    private org.apache.kafka.clients.producer.KafkaProducer kafkaProducer;
     private final KafkaEndpoint endpoint;
 
     public KafkaProducer(KafkaEndpoint endpoint) {
@@ -39,49 +35,70 @@ public class KafkaProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        if (producer != null) {
-            producer.close();
-        }
-    }
-
     Properties getProps() {
         Properties props = endpoint.getConfiguration().createProducerProperties();
-        props.put("metadata.broker.list", endpoint.getBrokers());
+        if (endpoint.getBrokers() != null) {
+            props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, endpoint.getBrokers());
+        }
         return props;
+    }
+
+    public org.apache.kafka.clients.producer.KafkaProducer getKafkaProducer() {
+        return kafkaProducer;
+    }
+
+    /**
+     * To use a custom {@link org.apache.kafka.clients.producer.KafkaProducer} instance.
+     */
+    public void setKafkaProducer(org.apache.kafka.clients.producer.KafkaProducer kafkaProducer) {
+        this.kafkaProducer = kafkaProducer;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (kafkaProducer != null) {
+            kafkaProducer.close();
+        }
     }
 
     @Override
     protected void doStart() throws Exception {
         Properties props = getProps();
-        ProducerConfig config = new ProducerConfig(props);
-        producer = new Producer<String, String>(config);
+        if (kafkaProducer == null) {
+            kafkaProducer = new org.apache.kafka.clients.producer.KafkaProducer(props);
+        }
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws CamelException {
-        String topic = exchange.getIn().getHeader(KafkaConstants.TOPIC, endpoint.getTopic(), String.class);
+        String topic = endpoint.getTopic();
+        if (!endpoint.isBridgeEndpoint()) {
+            topic = exchange.getIn().getHeader(KafkaConstants.TOPIC, topic, String.class);
+        }
         if (topic == null) {
             throw new CamelExchangeException("No topic key set", exchange);
         }
-        String partitionKey = exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY, String.class);
+        Object partitionKey = exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY);
         boolean hasPartitionKey = partitionKey != null;
-        String messageKey = exchange.getIn().getHeader(KafkaConstants.KEY, String.class);
+
+        Object messageKey = exchange.getIn().getHeader(KafkaConstants.KEY);
         boolean hasMessageKey = messageKey != null;
-        String msg = exchange.getIn().getBody(String.class);
-        KeyedMessage<String, String> data;
+
+        Object msg = exchange.getIn().getBody();
+
+        ProducerRecord record;
         if (hasPartitionKey && hasMessageKey) {
-            data = new KeyedMessage<String, String>(topic, messageKey, partitionKey, msg);
-        } else if (hasPartitionKey) {
-            data = new KeyedMessage<String, String>(topic, partitionKey, msg);
+            record = new ProducerRecord(topic, new Integer(partitionKey.toString()), messageKey, msg);
         } else if (hasMessageKey) {
-            data = new KeyedMessage<String, String>(topic, messageKey, msg);
+            record = new ProducerRecord(topic, messageKey, msg);
         } else {
             log.warn("No message key or partition key set");
-            data = new KeyedMessage<String, String>(topic, messageKey, partitionKey, msg);
+            record = new ProducerRecord(topic, msg);
         }
-        producer.send(data);
+
+        // TODO: add support for async callback in the send
+        kafkaProducer.send(record);
     }
 
 }

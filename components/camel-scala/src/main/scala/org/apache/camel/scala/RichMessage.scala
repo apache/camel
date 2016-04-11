@@ -17,7 +17,6 @@
 package org.apache.camel.scala
 
 import org.apache.camel.Message
-import java.lang.{Class, String}
 import javax.activation.DataHandler
 import java.util
 
@@ -26,15 +25,13 @@ class RichMessage(val message: Message) extends Message {
   // Delegate methods
   //-------------------------------------------------------------------------
 
-  def addAttachment(id: String, content: DataHandler) {
-    message.addAttachment(id, content)
-  }
+  def addAttachment(id: String, content: DataHandler) = message.addAttachment(id, content)
 
   def copy = new RichMessage(message.copy)
 
-  def copyFrom(message: Message) {
-    message.copyFrom(message)
-  }
+  def copyAttachments(other: Message) = message.copyAttachments(other)
+
+  def copyFrom(other: Message) = message.copyFrom(other)
 
   @Deprecated
   def createExchangeId = message.createExchangeId

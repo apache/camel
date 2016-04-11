@@ -26,36 +26,30 @@ public class MyLifecycle implements CamelContextLifecycle<JndiRegistry> {
     public void beforeStart(ServletCamelContext camelContext, JndiRegistry registry) throws Exception {
         // enlist our bean(s) in the registry
         registry.bind("myBean", new HelloBean());
-        
     }
     
     @Override
     public void beforeStop(ServletCamelContext camelContext, JndiRegistry registry) throws Exception {
-        // TODO Auto-generated method stub
-        
+        // noop
     }
 
     @Override
     public void afterStop(ServletCamelContext camelContext, JndiRegistry registry) throws Exception {
-        // TODO Auto-generated method stub
-        
+        // noop
     }
 
     @Override
     public void beforeAddRoutes(ServletCamelContext camelContext, JndiRegistry registry) throws Exception {
-        // TODO Auto-generated method stub
-        
+        // noop
     }
 
     @Override
     public void afterAddRoutes(ServletCamelContext camelContext, JndiRegistry registry) throws Exception {
-        // TODO Auto-generated method stub
-        
+        // noop
     }
 
     @Override
     public void afterStart(ServletCamelContext camelContext, JndiRegistry registry) throws Exception {
-        // TODO Auto-generated method stub
-        
+        // noop
     }
 }

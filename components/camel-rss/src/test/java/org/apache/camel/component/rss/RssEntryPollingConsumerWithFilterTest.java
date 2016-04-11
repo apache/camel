@@ -19,12 +19,10 @@ package org.apache.camel.component.rss;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-
 import javax.naming.Context;
 
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -41,29 +39,29 @@ public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
         mock.expectedMessageCount(2);
         mock.assertIsSatisfied();
     }
-    
+
     @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
-        
+
         // timestamp from the feed to use as base
         // Fri, 31 Oct 2008 12:02:21 -0500
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-5:00"));
         cal.set(2008, Calendar.OCTOBER, 31, 12, 02, 21);
-        
+
         answer.bind("myBean", new MyBean(cal.getTime()));
         return answer;
     }
-    
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("rss:file:src/test/data/rss20.xml?splitEntries=true&consumer.delay=100").
-                    filter().method("myBean", "isAfterDate").to("mock:result");
+                        filter().method("myBean", "isAfterDate").to("mock:result");
             }
         };
     }
-    
+
     public static class MyBean {
         private final Date time;
 
@@ -75,7 +73,7 @@ public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
             SyndFeed feed = ex.getIn().getBody(SyndFeed.class);
             assertTrue(feed.getEntries().size() == 1);
             SyndEntry entry = (SyndEntry) feed.getEntries().get(0);
-            return entry.getPublishedDate().after(time);     
+            return entry.getPublishedDate().after(time);
         }
     }
 }

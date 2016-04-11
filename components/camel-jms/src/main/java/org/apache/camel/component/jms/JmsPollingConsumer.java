@@ -65,7 +65,7 @@ public class JmsPollingConsumer extends PollingConsumerSupport implements Servic
             message = template.receive();
         }
         if (message != null) {
-            return getEndpoint().createExchange(message);
+            return getEndpoint().createExchange(message, null);
         }
         return null;
     }

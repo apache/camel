@@ -51,7 +51,7 @@ public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
                     Enumeration<?> iter = browser.getEnumeration();
                     for (int i = 0; i < size && iter.hasMoreElements(); i++) {
                         Message message = (Message) iter.nextElement();
-                        Exchange exchange = endpoint.createExchange(message);
+                        Exchange exchange = endpoint.createExchange(message, session);
                         answer.add(exchange);
                     }
                     return answer;
@@ -71,7 +71,7 @@ public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
                     Enumeration<?> iter = browser.getEnumeration();
                     for (int i = 0; i < size && iter.hasMoreElements(); i++) {
                         Message message = (Message) iter.nextElement();
-                        Exchange exchange = endpoint.createExchange(message);
+                        Exchange exchange = endpoint.createExchange(message, session);
                         answer.add(exchange);
                     }
                     return answer;

@@ -30,9 +30,6 @@ public class BatchTransactionCommitStrategy implements TransactionCommitStrategy
     private final AtomicInteger current = new AtomicInteger(0);
     private final int count;
 
-    /**
-     * @param count
-     */
     public BatchTransactionCommitStrategy(int count) {
         this.count = count;
     }

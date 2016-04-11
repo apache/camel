@@ -16,15 +16,32 @@
  */
 package org.apache.camel.test.blueprint;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Arrays;
 import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import org.apache.aries.blueprint.compendium.cm.CmNamespaceHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.ModelCamelContext;
@@ -35,13 +52,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.BlueprintEvent;
-import org.osgi.service.blueprint.container.BlueprintListener;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.osgi.service.cm.ConfigurationEvent;
-import org.osgi.service.cm.ConfigurationListener;
 
 /**
  * Base class for OSGi Blueprint unit tests with Camel.
@@ -53,24 +66,57 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     private static ThreadLocal<BundleContext> threadLocalBundleContext = new ThreadLocal<BundleContext>();
     private volatile BundleContext bundleContext;
     private final Set<ServiceRegistration<?>> services = new LinkedHashSet<ServiceRegistration<?>>();
-    
+
     /**
      * Override this method if you don't want CamelBlueprintTestSupport create the test bundle
      * @return includeTestBundle
      * If the return value is true CamelBlueprintTestSupport creates the test bundle which includes blueprint configuration files
      * If the return value is false CamelBlueprintTestSupport won't create the test bundle
-     * 
      */
     protected boolean includeTestBundle() {
         return true;
     }
 
-   
+    /**
+     * <p>Override this method if you want to start Blueprint containers asynchronously using the thread
+     * that starts the bundles itself.
+     * By default this method returns <code>true</code> which means Blueprint Extender will use thread pool
+     * (threads named "<code>Blueprint Extender: N</code>") to startup Blueprint containers.</p>
+     * <p>Karaf and Fuse OSGi containers use synchronous startup.</p>
+     * <p>Asynchronous startup is more in the <em>spirit</em> of OSGi and usually means that if everything works fine
+     * asynchronously, it'll work synchronously as well. This isn't always true otherwise.</p>
+     * @return
+     */
+    protected boolean useAsynchronousBlueprintStartup() {
+        return true;
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected BundleContext createBundleContext() throws Exception {
+        System.setProperty("org.apache.aries.blueprint.synchronous", Boolean.toString(!useAsynchronousBlueprintStartup()));
+
+        // load configuration file
+        String[] file = loadConfigAdminConfigurationFile();
+        if (file != null) {
+            if (file.length != 2) {
+                throw new IllegalArgumentException("The returned String[] from loadConfigAdminConfigurationFile must be of length 2, was " + file.length);
+            }
+            if (!new File(file[0]).exists()) {
+                throw new IllegalArgumentException("The provided file \"" + file[0] + "\" from loadConfigAdminConfigurationFile doesn't exist");
+            }
+        }
+        // fetch initial configadmin configuration if provided programmatically
+        Properties initialConfiguration = new Properties();
+        String pid = setConfigAdminInitialConfiguration(initialConfiguration);
+        if (pid != null) {
+            file = new String[] {prepareInitialConfigFile(initialConfiguration), pid};
+        }
+
         final String symbolicName = getClass().getSimpleName();
         final BundleContext answer = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
-            includeTestBundle(), getBundleFilter(), getBundleVersion(), getBundleDirectives());
+            includeTestBundle(), getBundleFilter(), getBundleVersion(), getBundleDirectives(), file);
+
+        boolean expectReload = expectBlueprintContainerReloadOnConfigAdminUpdate();
 
         // must register override properties early in OSGi containers
         Properties extra = useOverridePropertiesWithPropertiesComponent();
@@ -80,10 +126,18 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
         Map<String, KeyValueHolder<Object, Dictionary>> map = new LinkedHashMap<String, KeyValueHolder<Object, Dictionary>>();
         addServicesOnStartup(map);
+
+        List<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>> servicesList = new LinkedList<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>>();
         for (Map.Entry<String, KeyValueHolder<Object, Dictionary>> entry : map.entrySet()) {
-            String clazz = entry.getKey();
-            Object service = entry.getValue().getKey();
-            Dictionary dict = entry.getValue().getValue();
+            servicesList.add(asKeyValueService(entry.getKey(), entry.getValue().getKey(), entry.getValue().getValue()));
+        }
+
+        addServicesOnStartup(servicesList);
+
+        for (KeyValueHolder<String, KeyValueHolder<Object, Dictionary>> item : servicesList) {
+            String clazz = item.getKey();
+            Object service = item.getValue().getKey();
+            Dictionary dict = item.getValue().getValue();
             log.debug("Registering service {} -> {}", clazz, service);
             ServiceRegistration<?> reg = answer.registerService(clazz, service, dict);
             if (reg != null) {
@@ -91,72 +145,68 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             }
         }
 
+        // if blueprint XML uses <cm:property-placeholder> (any update-strategy and any default properties)
+        // - org.apache.aries.blueprint.compendium.cm.ManagedObjectManager.register() is called
+        // - ManagedServiceUpdate is scheduled in felix.cm
+        // - org.apache.felix.cm.impl.ConfigurationImpl.setDynamicBundleLocation() is called
+        // - CM_LOCATION_CHANGED event is fired
+        // - if BP was alredy created, it's <cm:property-placeholder> receives the event and
+        // - org.apache.aries.blueprint.compendium.cm.CmPropertyPlaceholder.updated() is called,
+        //   but no BP reload occurs
+        // we will however wait for BP container of the test bundle to become CREATED for the first time
+        // each configadmin update *may* lead to reload of BP container, if it uses <cm:property-placeholder>
+        // with update-strategy="reload"
+
+        // we will gather timestamps of BP events. We don't want to be fooled but repeated events related
+        // to the same state of BP container
+        Set<Long> bpEvents = new HashSet<>();
+
+        CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, answer, symbolicName, BlueprintEvent.CREATED, null);
+
         // must reuse props as we can do both load from .cfg file and override afterwards
-        Dictionary props = new Properties();
-
-        // load configuration file
-        String[] file = loadConfigAdminConfigurationFile();
-        if (file != null && file.length != 2) {
-            throw new IllegalArgumentException("The returned String[] from loadConfigAdminConfigurationFile must be of length 2, was " + file.length);
-        }
-
-        if (file != null) {
-            CamelBlueprintHelper.setPersistentFileForConfigAdmin(answer, file[1], file[0], props);
-        }
+        final Dictionary props = new Properties();
 
         // allow end user to override properties
-        String pid = useOverridePropertiesWithConfigAdmin(props);
+        pid = useOverridePropertiesWithConfigAdmin(props);
         if (pid != null) {
-            // we will update the configuration now. As OSGi is highly asynchronous, we need to make the tests as repeatable as possible
-            // the problem is when blueprint container defines cm:property-placeholder with update-strategy="reload"
-            // updating the configuration leads to (felix framework + aries blueprint):
-            // 1. schedule org.apache.felix.cm.impl.ConfigurationManager.UpdateConfiguration object to run in config admin thread
-            // 2. this thread calls org.apache.felix.cm.impl.ConfigurationImpl#tryBindLocation()
-            // 3. org.osgi.service.cm.ConfigurationEvent#CM_LOCATION_CHANGED is send
-            // 4. org.apache.aries.blueprint.compendium.cm.ManagedObjectManager.ConfigurationWatcher#updated() is invoked
-            // 5. new Thread().start() is called
-            // 6. org.apache.aries.blueprint.compendium.cm.ManagedObject#updated() is called
-            // 7. org.apache.aries.blueprint.compendium.cm.CmPropertyPlaceholder#updated() is called
-            // 8. new Thread().start() is called
-            // 9. org.apache.aries.blueprint.services.ExtendedBlueprintContainer#reload() is called which destroys everything in BP container
-            // 10. finally reload of BP container is scheduled (in yet another thread)
-            //
-            // if we start/use camel context between point 9 and 10 we may get many different errors described in https://issues.apache.org/jira/browse/ARIES-961
-
-            // to synchronize this (main) thread of execution with the asynchronous series of events, we can register the following listener.
-            // this way be sure that we got to point 3
-            final CountDownLatch latch = new CountDownLatch(2);
-            answer.registerService(ConfigurationListener.class, new ConfigurationListener() {
-                @Override
-                public void configurationEvent(ConfigurationEvent event) {
-                    if (event.getType() == ConfigurationEvent.CM_LOCATION_CHANGED) {
-                        latch.countDown();
-                    }
-                    // when we update the configuration, BP container will be reloaded as well
-                    // hoping that we get the event after *second* restart, let's register the listener
-                    answer.registerService(BlueprintListener.class, new BlueprintListener() {
-                        @Override
-                        public void blueprintEvent(BlueprintEvent event) {
-                            if (event.getType() == BlueprintEvent.CREATED && event.getBundle().getSymbolicName().equals(symbolicName)) {
-                                latch.countDown();
-                            }
-                        }
-                    }, null);
-                }
-            }, null);
-
+            // we will update the configuration again
             ConfigurationAdmin configAdmin = CamelBlueprintHelper.getOsgiService(answer, ConfigurationAdmin.class);
             // passing null as second argument ties the configuration to correct bundle.
             // using single-arg method causes:
-            // *ERROR* Cannot use configuration xxx.properties for [org.osgi.service.cm.ManagedService, id=N, bundle=N/jar:file:xyz.jar!/]: No visibility to configuration bound to file:pojosr
-            Configuration config = configAdmin.getConfiguration(pid, null);
+            // *ERROR* Cannot use configuration xxx.properties for [org.osgi.service.cm.ManagedService, id=N, bundle=N/jar:file:xyz.jar!/]: No visibility to configuration bound to felix-connect
+            final Configuration config = configAdmin.getConfiguration(pid, null);
             if (config == null) {
                 throw new IllegalArgumentException("Cannot find configuration with pid " + pid + " in OSGi ConfigurationAdmin service.");
             }
-            log.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
-            config.update(props);
+            // lets merge configurations
+            Dictionary<String, Object> currentProperties = config.getProperties();
+            final Dictionary newProps = new Properties();
+            if (currentProperties == null) {
+                currentProperties = newProps;
+            }
+            for (Enumeration<String> ek = currentProperties.keys(); ek.hasMoreElements();) {
+                String k = ek.nextElement();
+                newProps.put(k, currentProperties.get(k));
+            }
+            for (String p : ((Properties) props).stringPropertyNames()) {
+                newProps.put(p, ((Properties) props).getProperty(p));
+            }
 
-            latch.await(CamelBlueprintHelper.DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
+            log.info("Updating ConfigAdmin {} by overriding properties {}", config, newProps);
+            if (expectReload) {
+                CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, answer, symbolicName, BlueprintEvent.CREATED, new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            config.update(newProps);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e.getMessage(), e);
+                        }
+                    }
+                });
+            } else {
+                config.update(newProps);
+            }
         }
 
         return answer;
@@ -182,13 +232,12 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
         super.setUp();
 
-        // start context when we are ready
-        log.debug("Staring CamelContext: {}", context.getName());
-        context.start();
+        // we don't have to wait for BP container's OSGi service - we've already waited
+        // for BlueprintEvent.CREATED
 
-        // must wait for blueprint container to be published then the namespace parser is complete and we are ready for testing
-        log.debug("Waiting for BlueprintContainer to be published with symbolicName: {}", symbolicName);
-        getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=" + symbolicName + ")");
+        // start context when we are ready
+        log.debug("Starting CamelContext: {}", context.getName());
+        context.start();
     }
 
     /**
@@ -202,11 +251,71 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     }
 
     /**
+     * This method may be overriden to instruct BP test support that BP container will reloaded when
+     * Config Admin configuration is updated. By default, this is expected, when blueprint XML definition
+     * contains <code>&lt;cm:property-placeholder persistent-id="PID" update-strategy="reload"&gt;</code>
+     */
+    protected boolean expectBlueprintContainerReloadOnConfigAdminUpdate() {
+        boolean expectedReload = false;
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        try {
+            // cm-1.0 doesn't define update-strategy attribute
+            Set<String> cmNamesaces = new HashSet<>(Arrays.asList(
+                    CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_1,
+                    CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_2,
+                    CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_3
+            ));
+            for (URL descriptor : CamelBlueprintHelper.getBlueprintDescriptors(getBlueprintDescriptor())) {
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                try (InputStream is = descriptor.openStream()) {
+                    Document doc = db.parse(is);
+                    NodeList nl = doc.getDocumentElement().getChildNodes();
+                    for (int i = 0; i < nl.getLength(); i++) {
+                        Node node = nl.item(i);
+                        if (node instanceof Element) {
+                            Element pp = (Element) node;
+                            if (cmNamesaces.contains(pp.getNamespaceURI())) {
+                                String us = pp.getAttribute("update-strategy");
+                                if (us != null && us.equals("reload")) {
+                                    expectedReload = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        return expectedReload;
+    }
+
+    /**
+     * Override this method to add services to be registered on startup.
+     * <p/>
+     * You can use the builder methods {@link #asKeyValueService(String, Object, Dictionary)}
+     * to make it easy to add the services to the List.
+     */
+    protected void addServicesOnStartup(List<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>> services) {
+        // noop
+    }
+
+    /**
      * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.Map)}
      */
     protected KeyValueHolder<Object, Dictionary> asService(Object service, Dictionary dict) {
         return new KeyValueHolder<Object, Dictionary>(service, dict);
     }
+
+    /**
+     * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.List)}
+     */
+    protected KeyValueHolder<String, KeyValueHolder<Object, Dictionary>> asKeyValueService(String name, Object service, Dictionary dict) {
+        return new KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>(name, new KeyValueHolder<Object, Dictionary>(service, dict));
+    }
+
 
     /**
      * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.Map)}
@@ -220,22 +329,39 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     }
 
     /**
-     * Override this method to override config admin properties.
+     * <p>Override this method to override config admin properties. Overriden properties will be passed to
+     * {@link Configuration#update(Dictionary)} and may or may not lead to reload of Blueprint container - this
+     * depends on <code>update-strategy="reload|none"</code> in <code>&lt;cm:property-placeholder&gt;</code></p>
+     * <p>This method should be used to simulate configuration update <strong>after</strong> Blueprint container
+     * is already initialized and started. Don't use this method to initialized ConfigAdmin configuration.</p>
      *
      * @param props properties where you add the properties to override
      * @return the PID of the OSGi {@link ConfigurationAdmin} which are defined in the Blueprint XML file.
      */
-    protected String useOverridePropertiesWithConfigAdmin(Dictionary props) throws Exception {
+    protected String useOverridePropertiesWithConfigAdmin(Dictionary<String, String> props) throws Exception {
         return null;
     }
 
     /**
      * Override this method and provide the name of the .cfg configuration file to use for
-     * Blueprint ConfigAdmin service.
+     * ConfigAdmin service. Provided file will be used to initialize ConfigAdmin configuration before Blueprint
+     * container is loaded.
      *
      * @return the name of the path for the .cfg file to load, and the persistence-id of the property placeholder.
      */
     protected String[] loadConfigAdminConfigurationFile() {
+        return null;
+    }
+
+    /**
+     * Override this method as an alternative to {@link #loadConfigAdminConfigurationFile()} if there's a need
+     * to set initial ConfigAdmin configuration without using files.
+     *
+     * @param props always non-null. Tests may initialize ConfigAdmin configuration by returning PID.
+     * @return persistence-id of the property placeholder. If non-null, <code>props</code> will be used as
+     * initial ConfigAdmin configuration
+     */
+    protected String setConfigAdminInitialConfiguration(Properties props) {
         return null;
     }
 
@@ -377,6 +503,22 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         return CamelBlueprintHelper.getOsgiService(bundleContext, type, filter, timeout);
     }
 
+    /**
+     * Create a temporary File with persisted configuration for ConfigAdmin
+     * @param initialConfiguration
+     * @return
+     */
+    private String prepareInitialConfigFile(Properties initialConfiguration) throws IOException {
+        File dir = new File("target/etc");
+        dir.mkdirs();
+        File cfg = File.createTempFile("properties-", ".cfg", dir);
+        FileWriter writer = new FileWriter(cfg);
+        try {
+            initialConfiguration.store(writer, null);
+        } finally {
+            writer.close();
+        }
+        return cfg.getAbsolutePath();
+    }
+
 }
-
-

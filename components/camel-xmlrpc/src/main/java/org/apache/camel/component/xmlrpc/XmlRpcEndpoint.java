@@ -35,7 +35,7 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 /**
- * Represents a xmlrpc endpoint.
+ * The xmlrpc component is used for sending messages to a XML RPC service.
  */
 @UriEndpoint(scheme = "xmlrpc", title = "XML RPC", syntax = "xmlrpc:address", producerOnly = true, label = "transformation")
 public class XmlRpcEndpoint extends DefaultEndpoint {
@@ -104,10 +104,16 @@ public class XmlRpcEndpoint extends DefaultEndpoint {
         return clientConfigurer;
     }
 
+    /**
+     * To use a custom XmlRpcClientConfigurer to configure the client
+     */
     public void setClientConfigurer(XmlRpcClientConfigurer configurer) {
         this.clientConfigurer = configurer;
     }
-    
+
+    /**
+     * To use the given XmlRpcClientConfigImpl as configuration for the client.
+     */
     public void setClientConfig(XmlRpcClientConfigImpl config) {
         this.clientConfig = config;
     }
@@ -120,6 +126,9 @@ public class XmlRpcEndpoint extends DefaultEndpoint {
         return defaultMethodName;
     }
 
+    /**
+     * The method name which would be used for the xmlrpc requests by default, if the Message header CamelXmlRpcMethodName is not set.
+     */
     public void setDefaultMethodName(String defaultMethodName) {
         this.defaultMethodName = defaultMethodName;
     }
@@ -141,7 +150,8 @@ public class XmlRpcEndpoint extends DefaultEndpoint {
         }
 
         Map<String, Object> params = new HashMap<String, Object>();
-        IntrospectionSupport.getProperties(configuration, params, null);
+        // do not include null values
+        IntrospectionSupport.getProperties(configuration, params, null, false);
         setProperties(clientConfig, params);
     }
 }

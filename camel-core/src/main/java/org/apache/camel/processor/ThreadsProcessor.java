@@ -71,7 +71,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
         private final Exchange exchange;
         private final AsyncCallback callback;
 
-        public ProcessCall(Exchange exchange, AsyncCallback callback) {
+        ProcessCall(Exchange exchange, AsyncCallback callback) {
             this.exchange = exchange;
             this.callback = callback;
         }
@@ -92,11 +92,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
             if (abort) {
                 exchange.setException(new RejectedExecutionException());
             }
-
             LOG.trace("{} routing exchange {} ", abort ? "Aborted" : "Rejected", exchange);
-            // we should not continue routing, and no redelivery should be performed
-            exchange.setProperty(Exchange.ROUTE_STOP, true);
-            exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, true);
 
             if (shutdown.get()) {
                 exchange.setException(new RejectedExecutionException("ThreadsProcessor is not running."));
@@ -170,6 +166,10 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
 
     public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
         this.rejectedPolicy = rejectedPolicy;
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
     }
 
     public String toString() {

@@ -36,6 +36,7 @@ import javax.security.auth.x500.X500Principal;
 import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.DigestMethod;
 import javax.xml.crypto.dsig.Reference;
+import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,7 +52,6 @@ import org.xml.sax.SAXException;
 
 import org.apache.camel.Message;
 import org.apache.commons.codec.binary.Base64;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -611,8 +611,9 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
             return result;
         }
         String signedPropertiesId = "_" + UUID.randomUUID().toString();
+        List<Transform> transforms = Collections.emptyList();
         Reference ref = input.getSignatureFactory().newReference("#" + signedPropertiesId,
-                input.getSignatureFactory().newDigestMethod(input.getContentDigestAlgorithm(), null), Collections.emptyList(),
+                input.getSignatureFactory().newDigestMethod(input.getContentDigestAlgorithm(), null), transforms,
                 "http://uri.etsi.org/01903#SignedProperties", null);
 
         Node parent = input.getParent();

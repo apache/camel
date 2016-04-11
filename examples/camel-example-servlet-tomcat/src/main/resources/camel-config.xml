@@ -28,14 +28,14 @@
 
     <route id="helloRoute">
       <!-- incoming requests from the servlet is routed -->
-      <from uri="servlet:///hello"/>
+      <from uri="servlet:hello"/>
       <choice>
         <when>
           <!-- is there a header with the key name? -->
           <header>name</header>
           <!-- yes so return back a message to the user -->
           <transform>
-            <simple>Hello ${header.name} how are you?</simple>
+            <simple>Hi I am ${sysenv.HOSTNAME}. Hello ${header.name} how are you today?</simple>
           </transform>
         </when>
         <otherwise>

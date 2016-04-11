@@ -67,7 +67,7 @@ public class ProtobufMarshalAndUnmarshallTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Person.class);
-        mock.message(0).body().equals(input);
+        mock.message(0).body().isEqualTo(input);
 
         Object marshalled = template.requestBody(inURI, input);
 

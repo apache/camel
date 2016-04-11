@@ -85,14 +85,14 @@ public class ECDSASignatureTest extends CamelTestSupport {
                 // START SNIPPET: ecdsa-sha1
 
                 // we can set the keys explicitly on the endpoint instances.
-                context.getEndpoint("crypto:sign://ecdsa-sha1?algorithm=SHA1withECDSA", DigitalSignatureEndpoint.class)
+                context.getEndpoint("crypto:sign:ecdsa-sha1?algorithm=SHA1withECDSA", DigitalSignatureEndpoint.class)
                         .setPrivateKey(privateKey);
-                context.getEndpoint("crypto:verify://ecdsa-sha1?algorithm=SHA1withECDSA", DigitalSignatureEndpoint.class)
+                context.getEndpoint("crypto:verify:ecdsa-sha1?algorithm=SHA1withECDSA", DigitalSignatureEndpoint.class)
                         .setPublicKey(x509.getPublicKey());
 
                 from("direct:ecdsa-sha1")
-                    .to("crypto:sign://ecdsa-sha1?algorithm=SHA1withECDSA")
-                    .to("crypto:verify://ecdsa-sha1?algorithm=SHA1withECDSA")
+                    .to("crypto:sign:ecdsa-sha1?algorithm=SHA1withECDSA")
+                    .to("crypto:verify:ecdsa-sha1?algorithm=SHA1withECDSA")
                     .to("mock:result");
                 // END SNIPPET: ecdsa-sha1
             }

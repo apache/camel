@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.gora;
 
 import java.lang.reflect.InvocationTargetException;
@@ -84,22 +83,16 @@ public class GoraConsumer extends ScheduledPollConsumer {
                         final DataStore<Object, Persistent> dataStore) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         super(endpoint, processor);
-
         this.configuration = configuration;
         this.dataStore = dataStore;
-
         this.query = GoraUtils.constractQueryFromConfiguration(this.dataStore, this.configuration);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected int poll() throws Exception {
-
         final Exchange exchange = this.getEndpoint().createExchange();
 
-        // compute time (aprox) since last update
+        // compute time (approx) since last update
         if (firstRun) {
             this.query.setStartTime(System.currentTimeMillis());
         } else {
@@ -112,12 +105,9 @@ public class GoraConsumer extends ScheduledPollConsumer {
         LOG.trace("Processing exchange [{}]...", exchange);
 
         try {
-
             getProcessor().process(exchange);
         } finally {
-
             if (exchange.getException() != null) {
-
                 getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }
         }

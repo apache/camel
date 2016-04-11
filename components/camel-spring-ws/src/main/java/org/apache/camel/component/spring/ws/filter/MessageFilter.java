@@ -23,25 +23,23 @@ import org.springframework.ws.WebServiceMessage;
  * A strategy instance that filters a WebServiceMessage response.
  * 
  * This class provides an additional configuration that can be managed in your Spring's context.
- * 
- * 
  */
 public interface MessageFilter {
 
     /**
      * Calls filter for a producer
-     * 
-     * @param exchange
+     *
+     * @param exchange the exchange
      * @param response provided by the producer
      */
-    void filterProducer(Exchange exchange, WebServiceMessage produceRresponse);
+    void filterProducer(Exchange exchange, WebServiceMessage response);
 
     /**
      * Calls filter for a consumer
      * 
-     * @param exchange
+     * @param exchange the exchange
      * @param response provided by the consumer
      */
-    void filterConsumer(Exchange exchange, WebServiceMessage consumerResponse);
+    void filterConsumer(Exchange exchange, WebServiceMessage response);
 
 }

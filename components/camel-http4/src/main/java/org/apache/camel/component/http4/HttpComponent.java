@@ -25,8 +25,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.component.http4.helper.HttpHelper;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.http.common.HttpBinding;
+import org.apache.camel.http.common.HttpCommonComponent;
+import org.apache.camel.http.common.HttpConfiguration;
+import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -56,12 +59,12 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class HttpComponent extends HeaderFilterStrategyComponent {
+public class HttpComponent extends HttpCommonComponent {
+
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
 
     protected HttpClientConfigurer httpClientConfigurer;
     protected HttpClientConnectionManager clientConnectionManager;
-    protected HttpBinding httpBinding;
     protected HttpContext httpContext;
     protected SSLContextParameters sslContextParameters;
     protected X509HostnameVerifier x509HostnameVerifier = new BrowserCompatHostnameVerifier();
@@ -77,22 +80,8 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         super(HttpEndpoint.class);
     }
 
-    /**
-     * Connects the URL specified on the endpoint to the specified processor.
-     *
-     * @param consumer the consumer
-     * @throws Exception can be thrown
-     */
-    public void connect(HttpConsumer consumer) throws Exception {
-    }
-
-    /**
-     * Disconnects the URL specified on the endpoint from the specified processor.
-     *
-     * @param consumer the consumer
-     * @throws Exception can be thrown
-     */
-    public void disconnect(HttpConsumer consumer) throws Exception {
+    public HttpComponent(Class<? extends HttpEndpoint> endpointClass) {
+        super(endpointClass);
     }
 
     /**
@@ -105,16 +94,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      */
     protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, boolean secure) throws Exception {
         // prefer to use endpoint configured over component configured
-        // TODO cmueller: remove the "httpClientConfigurerRef" look up in Camel 3.0
-        HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
+        HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
         if (configurer == null) {
-            // try without ref
-            configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
-            
-            if (configurer == null) {
-                // fallback to component configured
-                configurer = getHttpClientConfigurer();
-            }
+            // fallback to component configured
+            configurer = getHttpClientConfigurer();
         }
 
         configurer = configureBasicAuthentication(parameters, configurer);
@@ -169,38 +152,25 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // http client can be configured from URI options
         HttpClientBuilder clientBuilder = HttpClientBuilder.create();
         // allow the builder pattern
-        IntrospectionSupport.setProperties(clientBuilder, parameters, "httpClient.", true);
+        Map<String, Object> httpClientOptions = IntrospectionSupport.extractProperties(parameters, "httpClient.");
+        IntrospectionSupport.setProperties(clientBuilder, httpClientOptions);
         // set the Request configure this way and allow the builder pattern
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
-        IntrospectionSupport.setProperties(requestConfigBuilder, parameters, "httpClient.", true);
+        IntrospectionSupport.setProperties(requestConfigBuilder, httpClientOptions);
         clientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
         
         // validate that we could resolve all httpClient. parameters as this component is lenient
-        validateParameters(uri, parameters, "httpClient.");
+        validateParameters(uri, httpClientOptions, null);
         
-        // TODO cmueller: remove the "httpBindingRef" look up in Camel 3.0
-        HttpBinding httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
-        if (httpBinding == null) {
-            httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
-        }
-
-        // TODO cmueller: remove the "httpContextRef" look up in Camel 3.0
-        HttpContext httpContext = resolveAndRemoveReferenceParameter(parameters, "httpContextRef", HttpContext.class);
-        if (httpContext == null) {
-            httpContext = resolveAndRemoveReferenceParameter(parameters, "httpContext", HttpContext.class);
-        }
+        HttpBinding httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
+        HttpContext httpContext = resolveAndRemoveReferenceParameter(parameters, "httpContext", HttpContext.class);
 
         X509HostnameVerifier x509HostnameVerifier = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", X509HostnameVerifier.class);
         if (x509HostnameVerifier == null) {
             x509HostnameVerifier = getX509HostnameVerifier();
         }
-        
 
-        // TODO cmueller: remove the "sslContextParametersRef" look up in Camel 3.0
-        SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
-        if (sslContextParameters == null) {
-            sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
-        }
+        SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
         if (sslContextParameters == null) {
             sslContextParameters = getSslContextParameters();
         }
@@ -288,7 +258,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         endpoint.setBinding(getHttpBinding());
         if (httpBinding != null) {
-            endpoint.setHttpBinding(httpBinding);
+            endpoint.setBinding(httpBinding);
         }
         if (httpMethodRestrict != null) {
             endpoint.setHttpMethodRestrict(httpMethodRestrict);
@@ -300,6 +270,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (endpoint.getCookieStore() == null) {
             endpoint.setCookieStore(getCookieStore());
         }
+        endpoint.setHttpClientOptions(httpClientOptions);
         
         return endpoint;
     }
@@ -357,6 +328,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return httpClientConfigurer;
     }
 
+    /**
+     * To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.
+     */
     public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
         this.httpClientConfigurer = httpClientConfigurer;
     }
@@ -365,22 +339,49 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return clientConnectionManager;
     }
 
+    /**
+     * To use a custom HttpClientConnectionManager to manage connections
+     */
     public void setClientConnectionManager(HttpClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
     }
 
-    public HttpBinding getHttpBinding() {
-        return httpBinding;
+    /**
+     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+     */
+    public void setHttpBinding(HttpBinding httpBinding) {
+        // need to override and call super for component docs
+        super.setHttpBinding(httpBinding);
     }
 
-    public void setHttpBinding(HttpBinding httpBinding) {
-        this.httpBinding = httpBinding;
+    /**
+     * To use the shared HttpConfiguration as base configuration.
+     */
+    @Override
+    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
+        // need to override and call super for component docs
+        super.setHttpConfiguration(httpConfiguration);
+    }
+
+    /**
+     * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
+     */
+    @Override
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        // need to override and call super for component docs
+        super.setAllowJavaSerializedObject(allowJavaSerializedObject);
     }
 
     public HttpContext getHttpContext() {
         return httpContext;
     }
 
+    /**
+     * To use a custom org.apache.http.protocol.HttpContext when executing requests.
+     */
     public void setHttpContext(HttpContext httpContext) {
         this.httpContext = httpContext;
     }
@@ -389,6 +390,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return sslContextParameters;
     }
 
+    /**
+     * To configure security using SSLContextParameters.
+     * Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent.
+     * If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -397,6 +403,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return x509HostnameVerifier;
     }
 
+    /**
+     * To use a custom X509HostnameVerifier such as org.apache.http.conn.ssl.StrictHostnameVerifier
+     * or org.apache.http.conn.ssl.AllowAllHostnameVerifier.
+     */
     public void setX509HostnameVerifier(X509HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
     }
@@ -405,6 +415,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return maxTotalConnections;
     }
 
+    /**
+     * The maximum number of connections.
+     */
     public void setMaxTotalConnections(int maxTotalConnections) {
         this.maxTotalConnections = maxTotalConnections;
     }
@@ -413,6 +426,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return connectionsPerRoute;
     }
 
+    /**
+     * The maximum number of connections per route.
+     */
     public void setConnectionsPerRoute(int connectionsPerRoute) {
         this.connectionsPerRoute = connectionsPerRoute;
     }
@@ -420,7 +436,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     public long getConnectionTimeToLive() {
         return connectionTimeToLive;
     }
-    
+
+    /**
+     * The time for connection to live, the time unit is millisecond, the default value is always keep alive.
+     */
     public void setConnectionTimeToLive(long connectionTimeToLive) {
         this.connectionTimeToLive = connectionTimeToLive;
     }
@@ -429,6 +448,12 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return cookieStore;
     }
 
+    /**
+     * To use a custom org.apache.http.client.CookieStore.
+     * By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store.
+     * Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie
+     * shouldn't be stored as we are just bridging (eg acting as a proxy).
+     */
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;
     }

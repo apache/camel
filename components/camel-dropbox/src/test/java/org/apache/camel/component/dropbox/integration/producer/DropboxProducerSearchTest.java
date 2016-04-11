@@ -51,7 +51,6 @@ public class DropboxProducerSearchTest extends DropboxTestSupport {
         Object body = exchange.getIn().getBody();
         assertNotNull(header);
         assertNotNull(body);
-
     }
 
     @Override
@@ -59,7 +58,7 @@ public class DropboxProducerSearchTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://search?" + getAuthParams() + "&remotePath=/XXX")
+                        .to("dropbox://search?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/XXX")
                         .to("mock:result");
             }
         };

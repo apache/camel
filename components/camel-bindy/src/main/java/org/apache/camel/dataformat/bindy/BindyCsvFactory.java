@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.apache.camel.dataformat.bindy.annotation.BindyConverter;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
@@ -34,7 +35,6 @@ import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 import org.apache.camel.dataformat.bindy.annotation.Section;
 import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,15 +68,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private boolean quoting;
     private boolean autospanLine;
 
-    public BindyCsvFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
-        super(resolver, packageNames);
-
-        // initialize specific parameters of the csv model
-        initCsvModel();
-    }
-
-    public BindyCsvFactory(PackageScanClassResolver resolver, Class<?> type) throws Exception {
-        super(resolver, type);
+    public BindyCsvFactory(Class<?> type) throws Exception {
+        super(type);
 
         // initialize specific parameters of the csv model
         initCsvModel();
@@ -163,6 +156,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
     }
 
+    @Override
     public void bind(List<String> tokens, Map<String, Object> model, int line) throws Exception {
 
         int pos = 1;
@@ -198,7 +192,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             }
 
             // Create format object to format the field
-            Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), dataField);
+            Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), dataField, field.getAnnotation(BindyConverter.class));
 
             // field object to be set
             Object modelField = model.get(field.getDeclaringClass().getName());
@@ -240,6 +234,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     }
 
+    @Override
     public String unbind(Map<String, Object> model) throws Exception {
 
         StringBuilder buffer = new StringBuilder();
@@ -258,8 +253,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             if (model.containsKey(clazz.getName())) {
 
                 Object obj = model.get(clazz.getName());
-                
-                if (obj != null && LOG.isDebugEnabled()) {
+                if (LOG.isDebugEnabled()) {
                     LOG.debug("Model object: {}, class: {}", obj, obj.getClass().getName());
                 }
                 if (obj != null) {
@@ -402,7 +396,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     Class<?> type = field.getType();
 
                     // Create format
-                    Format<?> format = FormatFactory.getFormat(type, getLocale(), datafield);
+                    Format<?> format = FormatFactory.getFormat(type, getLocale(), datafield, field.getAnnotation(BindyConverter.class));
 
                     // Get field value
                     Object value = field.get(obj);
@@ -595,7 +589,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             DataField dataField = dataFields.get(i);
             Object modelField = model.get(field.getDeclaringClass().getName());
             if (field.get(modelField) == null && !dataField.defaultValue().isEmpty()) {
-                Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), dataField);
+                Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), dataField, field.getAnnotation(BindyConverter.class));
                 Object value = format.parse(dataField.defaultValue());
                 field.set(modelField, value);
             }
