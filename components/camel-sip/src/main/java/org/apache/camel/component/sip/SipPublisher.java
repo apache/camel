@@ -91,6 +91,12 @@ public class SipPublisher extends DefaultProducer implements ServicePoolAware {
         provider.sendRequest(request);
     }
 
+    public void sendMessage(String message) throws Exception
+    {
+        Request request = configuration.createSipRequest(sequenceNumber, Request.MESSAGE, message);
+        provider.sendRequest(request);
+    }
+
     public void setConfiguration(SipConfiguration configuration) {
         this.configuration = configuration;
     }
