@@ -210,7 +210,7 @@ public class WeatherConfiguration {
     }
 
     private String getCurrentGeoLocation() throws Exception {
-        String geoLocation = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, new URL("http://freegeoip.net/json/"));
+        String geoLocation = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, new URL("http://freegeoip.io/json/"));
         if (isEmpty(geoLocation)) {
             throw new IllegalStateException("Got the unexpected value '" + geoLocation + "' for the geolocation");
         }
