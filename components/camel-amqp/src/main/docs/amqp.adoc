@@ -98,7 +98,7 @@ registry. For example for Spring Boot you just have to define bean:
 -------------------------------------------------------------------------------------
 @Bean
 AMQPConnectionDetails amqpConnection() {
-  return new AMQPConnectionDetails("amqp://lcoalhost:5672"); 
+  return new AMQPConnectionDetails("amqp://localhost:5672"); 
 }
  
 @Bean
@@ -107,7 +107,17 @@ AMQPConnectionDetails securedAmqpConnection() {
 }
 -------------------------------------------------------------------------------------
 
- 
+Likewise, you can also use CDI producer methods when using Camel-CDI
+
+*AMQP connection details auto-configuration for CDI*
+
+[source,java]
+-------------------------------------------------------------------------------------
+@Produces
+AMQPConnectionDetails amqpConnection() {
+  return new AMQPConnectionDetails("amqp://localhost:5672");
+}
+------------------------------------------------------------------------------------- 
 
 You can also rely on the link:properties.html[Camel properties] to read
 the AMQP connection details. Factory
