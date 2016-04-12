@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty4;
 
 import java.net.InetSocketAddress;
+import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -33,6 +34,8 @@ import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Suspendable;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.EndpointHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,12 +166,23 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
             serverBootstrap.option(ChannelOption.SO_BACKLOG, configuration.getBacklog());
         }
 
-        // TODO set any additional netty options and child options
-        /*if (configuration.getOptions() != null) {
-            for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
-                serverBootstrap.setOption(entry.getKey(), entry.getValue());
+        Map<String, Object> options = configuration.getOptions();
+        if (options != null) {
+            for (Map.Entry<String, Object> entry : options.entrySet()) {
+                Object value = entry.getValue();
+                ChannelOption<Object> option = ChannelOption.valueOf(entry.getKey());
+                //For all netty options that aren't of type String
+                //TODO: find a way to add primitive Netty options without having to add them to the Camel registry.
+                if (EndpointHelper.isReferenceParameter(value.toString())) {
+                    String name =  ((String)value).substring(1);
+                    Object o = CamelContextHelper.mandatoryLookup(camelContext, name);;
+                    serverBootstrap.option(option, o);
+                } else {
+                    serverBootstrap.option(ChannelOption.valueOf(entry.getKey()), value);
+                    serverBootstrap.option(option, value);
+                }
             }
-        }*/
+        }
 
         // set the pipeline factory, which creates the pipeline for each newly created channels
         serverBootstrap.childHandler(pipelineFactory);
