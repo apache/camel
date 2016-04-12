@@ -21,7 +21,6 @@ import java.util.Map;
 import io.fabric8.kubernetes.api.model.DoneablePersistentVolume;
 import io.fabric8.kubernetes.api.model.PersistentVolume;
 import io.fabric8.kubernetes.api.model.PersistentVolumeList;
-import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
 import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.ClientResource;
 
@@ -82,7 +81,7 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
 
     protected void doList(Exchange exchange, String operation) throws Exception {
         PersistentVolumeList persistentVolumeList = getEndpoint()
-                .getKubernetesClient().persistentVolumes().inAnyNamespace().list();
+                .getKubernetesClient().persistentVolumes().list();
         exchange.getOut().setBody(persistentVolumeList.getItems());
     }
 
@@ -92,24 +91,12 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS,
                 Map.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        if (!ObjectHelper.isEmpty(namespaceName)) {
-            ClientNonNamespaceOperation<PersistentVolume, PersistentVolumeList, DoneablePersistentVolume, ClientResource<PersistentVolume, DoneablePersistentVolume>> pvs; 
-            pvs = getEndpoint().getKubernetesClient().persistentVolumes()
-                    .inNamespace(namespaceName);
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                pvs.withLabel(entry.getKey(), entry.getValue());
-            }
-            pvList = pvs.list();
-        } else {
-            ClientMixedOperation<PersistentVolume, PersistentVolumeList, DoneablePersistentVolume, ClientResource<PersistentVolume, DoneablePersistentVolume>> pvs; 
-            pvs = getEndpoint().getKubernetesClient().persistentVolumes();
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                pvs.withLabel(entry.getKey(), entry.getValue());
-            }
-            pvList = pvs.list();
+        ClientNonNamespaceOperation<PersistentVolume, PersistentVolumeList, DoneablePersistentVolume, ClientResource<PersistentVolume, DoneablePersistentVolume>> pvs; 
+        pvs = getEndpoint().getKubernetesClient().persistentVolumes();
+        for (Map.Entry<String, String> entry : labels.entrySet()) {
+            pvs.withLabel(entry.getKey(), entry.getValue());
         }
+        pvList = pvs.list();
         exchange.getOut().setBody(pvList.getItems());
     }
 
@@ -119,20 +106,12 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
         String pvName = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_NAME,
                 String.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(pvName)) {
             LOG.error("Get a specific Persistent Volume require specify a Persistent Volume name");
             throw new IllegalArgumentException(
                     "Get a specific Persistent Volume require specify a Persistent Volume name");
         }
-        if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Get a specific Persistent Volume require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Get a specific Persistent Volume require specify a namespace name");
-        }
-        pv = getEndpoint().getKubernetesClient().persistentVolumes()
-                .inNamespace(namespaceName).withName(pvName).get();
+        pv = getEndpoint().getKubernetesClient().persistentVolumes().withName(pvName).get();
         exchange.getOut().setBody(pv);
     }
 }
