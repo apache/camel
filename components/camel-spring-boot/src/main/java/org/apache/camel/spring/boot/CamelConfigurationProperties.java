@@ -98,6 +98,13 @@ public class CamelConfigurationProperties {
     private boolean messageHistory = true;
 
     /**
+     * Sets whether to log exhausted message body with message history.
+     *
+     * Default is false.
+     */
+    private boolean logExhaustedMessageBody;
+
+    /**
      * Sets whether fault handling is enabled or not.
      *
      * Default is false.
@@ -250,6 +257,14 @@ public class CamelConfigurationProperties {
 
     public void setMessageHistory(boolean messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public boolean isLogExhaustedMessageBody() {
+        return logExhaustedMessageBody;
+    }
+
+    public void setLogExhaustedMessageBody(boolean logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
     }
 
     public boolean isHandleFault() {

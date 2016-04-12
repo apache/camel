@@ -67,14 +67,14 @@ public interface RuntimeConfiguration {
     Boolean isMessageHistory();
 
     /**
-     * Sets whether the message body should be logged (default is disabled).
+     * Sets whether to log exhausted message body with message history.
      *
      * @param logExhaustedMessageBody whether message body should be logged
      */
     void setLogExhaustedMessageBody(Boolean logExhaustedMessageBody);
 
     /**
-     * Returns whether the message body should be logged
+     * Returns whether to log exhausted message body with message history.
      * 
      * @return <tt>true</tt> if logging of message body is enabled
      */

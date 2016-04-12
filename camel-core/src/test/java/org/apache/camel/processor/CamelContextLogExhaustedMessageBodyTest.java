@@ -34,18 +34,15 @@ public class CamelContextLogExhaustedMessageBodyTest extends ContextTestSupport 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.setLogExhaustedMessageBody(Boolean.TRUE);
+        context.setLogExhaustedMessageBody(true);
         return context;
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        
         return new RouteBuilder() {
-
             @Override
             public void configure() throws Exception {
-
                 from("direct:start")
                     .log("Incoming ${body}")
                     .throwException(new IllegalArgumentException("Forced"));

@@ -87,6 +87,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute(required = false)
     private String messageHistory;
     @XmlAttribute(required = false)
+    private String logExhaustedMessageBody;
+    @XmlAttribute(required = false)
     private String streamCache = "false";
     @XmlAttribute(required = false)
     private String delayer;
@@ -507,6 +509,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public String getLogExhaustedMessageBody() {
+        return logExhaustedMessageBody;
+    }
+
+    public void setLogExhaustedMessageBody(String logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
     }
 
     public String getStreamCache() {

@@ -65,6 +65,7 @@ public class CamelAutoConfiguration {
         camelContext.setStreamCaching(config.isStreamCaching());
         camelContext.setTracing(config.isTracing());
         camelContext.setMessageHistory(config.isMessageHistory());
+        camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
         camelContext.setHandleFault(config.isHandleFault());
         camelContext.setAutoStartup(config.isAutoStartup());
         camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
