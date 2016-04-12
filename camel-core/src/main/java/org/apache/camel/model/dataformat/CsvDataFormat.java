@@ -396,17 +396,17 @@ public class CsvDataFormat extends DataFormatDefinition {
     }
 
     public String getQuoteMode() {
-		return quoteMode;
-	}
+        return quoteMode;
+    }
 
     /**
      * Sets the quote mode
      */
-	public void setQuoteMode(String quoteMode) {
-		this.quoteMode = quoteMode;
-	}
+    public void setQuoteMode(String quoteMode) {
+        this.quoteMode = quoteMode;
+    }
 
-	public Boolean getLazyLoad() {
+    public Boolean getLazyLoad() {
         return lazyLoad;
     }
 

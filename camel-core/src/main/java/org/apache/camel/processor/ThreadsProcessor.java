@@ -112,7 +112,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
         this.camelContext = camelContext;
         this.executorService = executorService;
         this.shutdownExecutorService = shutdownExecutorService;
-        this.rejectedPolicy =rejectedPolicy;
+        this.rejectedPolicy = rejectedPolicy;
     }
 
     public void process(final Exchange exchange) throws Exception {
