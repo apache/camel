@@ -58,7 +58,7 @@
     <atmos-client-version>2.2.2</atmos-client-version>
     <atmosphere-version>2.4.3</atmosphere-version>
     <atmosphere-version-range>[2.4,3.0)</atmosphere-version-range>
-    <atomikos-transactions-version>3.9.3</atomikos-transactions-version>
+    <atomikos-transactions-version>4.0.2</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
     <avalon-version>4.3.1</avalon-version>
     <avro-version>1.8.0</avro-version>
