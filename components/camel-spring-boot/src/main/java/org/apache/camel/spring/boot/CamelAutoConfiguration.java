@@ -129,7 +129,6 @@ public class CamelAutoConfiguration {
         } else {
             PropertiesComponent pc = new PropertiesComponent();
             pc.setPropertiesParser(parser);
-            camelContext.addComponent("properties", pc);
             return pc;
         }
     }
