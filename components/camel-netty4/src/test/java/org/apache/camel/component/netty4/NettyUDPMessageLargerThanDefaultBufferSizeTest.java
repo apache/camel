@@ -62,7 +62,7 @@ public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4:udp://localhost:{{port}}?option."+ ChannelOption.RCVBUF_ALLOCATOR.name() +"=#"+ChannelOption.RCVBUF_ALLOCATOR.name())
+                from("netty4:udp://localhost:{{port}}?option." + ChannelOption.RCVBUF_ALLOCATOR.name() + "=#" + ChannelOption.RCVBUF_ALLOCATOR.name())
                     .to("mock:result");
             }
         };
