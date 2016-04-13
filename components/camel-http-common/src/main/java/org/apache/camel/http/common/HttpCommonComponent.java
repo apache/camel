@@ -86,5 +86,4 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
-
 }

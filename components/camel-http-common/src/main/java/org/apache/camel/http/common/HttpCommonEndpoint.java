@@ -16,15 +16,11 @@
  */
 package org.apache.camel.http.common;
 
+import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.*;
+
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 
 public abstract class HttpCommonEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
@@ -124,6 +120,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             description = "Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints."
                     + " See more details at http://camel.apache.org/urlrewrite.html")
     private UrlRewrite urlRewrite;
+    @UriParam(label = "consumer", defaultValue = "false",
+            description = "Configure the consumer to work in async mode")
+    private boolean async;
 
     public HttpCommonEndpoint() {
     }
@@ -506,9 +505,21 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * If this option is true then IN exchange Form Encoded body will be mapped to HTTP 
+     * If this option is true then IN exchange Form Encoded body will be mapped to HTTP
      */
     public void setMapHttpMessageFormUrlEncodedBody(boolean mapHttpMessageFormUrlEncodedBody) {
         this.mapHttpMessageFormUrlEncodedBody = mapHttpMessageFormUrlEncodedBody;
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+
+    /**
+     * If this option is true, the consumer will work in async mode
+     * @param async
+     */
+    public void setAsync(boolean async) {
+        this.async = async;
     }
 }

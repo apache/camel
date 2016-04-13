@@ -16,28 +16,23 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.http.common.CamelServlet;
-import org.apache.camel.http.common.HttpCommonEndpoint;
-import org.apache.camel.http.common.HttpConstants;
-import org.apache.camel.http.common.HttpConsumer;
-import org.apache.camel.http.common.HttpHelper;
-import org.apache.camel.http.common.HttpMessage;
+import org.apache.camel.http.common.*;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Servlet which leverage <a href="http://wiki.eclipse.org/Jetty/Feature/Continuations">Jetty Continuations</a>.
@@ -56,7 +51,7 @@ public class CamelContinuationServlet extends CamelServlet {
     private final Map<String, String> expiredExchanges = new ConcurrentHashMap<String, String>();
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    protected void doService(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         log.trace("Service: {}", request);
 
         // is there a consumer registered for the request.
@@ -89,7 +84,7 @@ public class CamelContinuationServlet extends CamelServlet {
             log.trace("Start request with continuation timeout of {}", continuationTimeout != null ? continuationTimeout : "jetty default");
         } else {
             log.trace("Usage of continuation is disabled, either by component or endpoint configuration, fallback to normal servlet processing instead");
-            super.service(request, response);
+            super.doService(request, response);
             return;
         }
 

@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.servlet;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -27,6 +24,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * To use a HTTP Servlet as entry for Camel routes when running in a servlet container.

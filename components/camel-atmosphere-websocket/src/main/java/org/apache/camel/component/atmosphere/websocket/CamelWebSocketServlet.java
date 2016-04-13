@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.atmosphere.websocket;
 
-import java.io.IOException;
+import org.apache.camel.component.servlet.CamelHttpTransportServlet;
+import org.apache.camel.http.common.HttpConsumer;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.camel.component.servlet.CamelHttpTransportServlet;
-import org.apache.camel.http.common.HttpConsumer;
+import java.io.IOException;
 
 /**
  * This servlet is used to add some websocket specific handling at the moment.
@@ -50,7 +50,7 @@ public class CamelWebSocketServlet extends CamelHttpTransportServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.trace("Service: {}", request);
 
         // Is there a consumer registered for the request.

@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.servlet;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -36,6 +31,12 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 public class ServletComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
@@ -61,6 +62,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         String servletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        Optional<Boolean> async = Optional.ofNullable(getAndRemoveParameter(parameters, "async", Boolean.class));
 
         if (lenientContextPath()) {
             // the uri must have a leading slash for the context-path matching to work with servlet, and it can be something people
@@ -80,6 +82,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
         ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri);
         endpoint.setServletName(servletName);
+        async.ifPresent(endpoint::setAsync);
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         } else {
