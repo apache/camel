@@ -149,13 +149,13 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         Map<String, Object> options = configuration.getOptions();
         if (options != null) {
             for (Map.Entry<String, Object> entry : options.entrySet()) {
-                Object value = entry.getValue();
+                String value = entry.getValue().toString();
                 ChannelOption<Object> option = ChannelOption.valueOf(entry.getKey());
                 //For all netty options that aren't of type String
                 //TODO: find a way to add primitive Netty options without having to add them to the Camel registry.
-                if (EndpointHelper.isReferenceParameter(value.toString())) {
-                    String name =  ((String)value).substring(1);
-                    Object o = CamelContextHelper.mandatoryLookup(camelContext, name);;
+                if (EndpointHelper.isReferenceParameter(value)) {
+                    String name = value.substring(1);
+                    Object o = CamelContextHelper.mandatoryLookup(camelContext, name);
                     bootstrap.option(option, o);
                 } else {
                     bootstrap.option(ChannelOption.valueOf(entry.getKey()), value);
