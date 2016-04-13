@@ -30,30 +30,31 @@
   <packaging>jar</packaging>
 
   <properties>
-      <camel.osgi.import>
-        !org.apache.camel.spring.*,
-        !org.apache.camel.component,
-        !org.apache.camel.component.event,
-        !org.apache.camel.language.spel,
-        !org.apache.camel.core.xml*,
-        org.apache.camel.*;${camel.osgi.import.strict.version},
-        org.springframework*;version="${spring-all-version-range}",
-        org.osgi.service.event;resolution:=optional,
-        ${camel.osgi.import.defaults},
-        *
-      </camel.osgi.import>
-      <camel.osgi.export>
-        org.apache.camel.spring.*;${camel.osgi.version},
-        org.apache.camel.util.spring.*;${camel.osgi.version},
-        org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
-        org.apache.camel.language.spel;${camel.osgi.split.pkg};${camel.osgi.version}
-      </camel.osgi.export>
-      <camel.osgi.export.service>
-        org.apache.camel.spi.ComponentResolver;component=spring-event,
-        org.apache.camel.spi.LanguageResolver;language=spel
-      </camel.osgi.export.service>
-      <!-- do not skip any tests by default -->
-      <platform.skip.tests/>
+    <!-- use spring-all-version-range to support camel-spring-dm also -->
+    <camel.osgi.import>
+      !org.apache.camel.spring.*,
+      !org.apache.camel.component,
+      !org.apache.camel.component.event,
+      !org.apache.camel.language.spel,
+      !org.apache.camel.core.xml*,
+      org.apache.camel.*;${camel.osgi.import.strict.version},
+      org.springframework*;version="${spring-all-version-range}",
+      org.osgi.service.event;resolution:=optional,
+      ${camel.osgi.import.defaults},
+      *
+    </camel.osgi.import>
+    <camel.osgi.export>
+      org.apache.camel.spring.*;${camel.osgi.version},
+      org.apache.camel.util.spring.*;${camel.osgi.version},
+      org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
+      org.apache.camel.language.spel;${camel.osgi.split.pkg};${camel.osgi.version}
+    </camel.osgi.export>
+    <camel.osgi.export.service>
+      org.apache.camel.spi.ComponentResolver;component=spring-event,
+      org.apache.camel.spi.LanguageResolver;language=spel
+    </camel.osgi.export.service>
+    <!-- do not skip any tests by default -->
+    <platform.skip.tests/>
   </properties>
 
   <dependencies>
@@ -135,31 +136,31 @@
       <scope>test</scope>
     </dependency>
 
-      <!-- for testing Spring AOP at class level -->
-      <dependency>
-        <groupId>org.aspectj</groupId>
-        <artifactId>aspectjrt</artifactId>
-        <version>${aspectj-version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.aspectj</groupId>
-        <artifactId>aspectjweaver</artifactId>
-        <version>${aspectj-version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>cglib</groupId>
-        <artifactId>cglib</artifactId>
-        <version>${cglib-version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>asm</groupId>
-        <artifactId>asm</artifactId>
-        <version>${asm-version}</version>
-        <scope>test</scope>
-      </dependency>
+    <!-- for testing Spring AOP at class level -->
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
+      <version>${aspectj-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+      <version>${aspectj-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>${cglib-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm</artifactId>
+      <version>${asm-version}</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
