@@ -45,7 +45,7 @@ class GrapeEndpoint extends DefaultEndpoint {
         patchesRepository.listPatches().each {
             def coordinates = parseMavenCoordinates(it)
             grab(classLoader: classLoader,
-                    group: coordinates.groupId, module: coordinates.artifactId, version: coordinates.version)
+                 group: coordinates.groupId, module: coordinates.artifactId, version: coordinates.version, classifier: coordinates.classifier)
         }
     }
 
