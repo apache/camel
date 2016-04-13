@@ -178,7 +178,6 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
                     Object o = CamelContextHelper.mandatoryLookup(camelContext, name);
                     serverBootstrap.option(option, o);
                 } else {
-                    serverBootstrap.option(ChannelOption.valueOf(entry.getKey()), value);
                     serverBootstrap.option(option, value);
                 }
             }
