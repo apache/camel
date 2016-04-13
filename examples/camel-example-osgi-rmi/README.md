@@ -35,8 +35,9 @@ from the shell
 
 First the camel-rmi feature must be installed
 
-	features:chooseurl camel ${version}
-	features:install camel-rmi
+	feature:repo-add camel ${version}
+	feature:install camel-spring-dm
+	feature:install camel-rmi
 
 Then install the example
 

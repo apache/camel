@@ -25,7 +25,7 @@ Remarks:
 
 ### Run
 
-To run the example on Apache Karaf 2.4.x
+To run the example on Apache Karaf 3.x or newer
 
 #### Step 1: launch the server
 
@@ -33,12 +33,13 @@ To run the example on Apache Karaf 2.4.x
 
 #### Step 2: Add features required
 
-	features:chooseurl camel ${version}
-	features:install war
-	features:install cxf
-	features:install camel-spring
-	features:install camel-jaxb
-	features:install camel-cxf
+	feature:repo-add camel ${version}
+	feature:install camel
+	feature:install war
+	feature:install cxf
+	feature:install camel-spring-dm
+	feature:install camel-jaxb
+	feature:install camel-cxf
 
 
 #### Step 3: Deploy the example

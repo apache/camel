@@ -24,8 +24,10 @@ You will need to compile and install this example first:
 If using Apache Karaf / Apache ServiceMix you can install this example
 from the shell using this example's "features.xml" for easy provisioning.
 
+	feature:repo-add camel ${version}
+	feature:install camel
 	feature:repo-add mvn:org.apache.camel/camel-example-spring-dm/${version}/xml/features
-	feature:install camel-example-osgi
+	feature:install camel-example-spring-dm
 
 The example outputs to the log, which you can see using
 

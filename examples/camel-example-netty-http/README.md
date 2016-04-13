@@ -22,10 +22,10 @@ You will need to compile and prepared this example first:
 
 This example requires running in Apache Karaf / ServiceMix
 
-To install Apache Camel in Karaf you type in the shell (we use version 2.12.0):
+To install Apache Camel in Karaf you type in the shell
 
-	features:chooseurl camel 2.12.0
-	features:install camel
+	feature:repo-add camel 2.17.0
+	feature:install camel
 
 First you need to install the following features in Karaf/ServiceMix with:
 
@@ -38,12 +38,12 @@ The port number can be changed by editing the following source file:
 
 In the Apache Karaf / ServiceMix shell type:
 
-	osgi:install -s mvn:org.apache.camel/camel-example-netty-http-shared/2.12.0
+	osgi:install -s mvn:org.apache.camel/camel-example-netty-http-shared/2.17.0
 
 Then you can install the Camel applications:
 
-	osgi:install -s mvn:org.apache.camel/camel-example-netty-myapp-one/2.12.0
-	osgi:install -s mvn:org.apache.camel/camel-example-netty-myapp-two/2.12.0
+	osgi:install -s mvn:org.apache.camel/camel-example-netty-myapp-one/2.17.0
+	osgi:install -s mvn:org.apache.camel/camel-example-netty-myapp-two/2.17.0
 
 From a web browser you can then try the example by accessing the followign URLs:
 

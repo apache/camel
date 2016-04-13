@@ -18,7 +18,7 @@ You will need to compile this example first:
 
 ### Run
 
-To run the example on Apache Karaf 2.4.x
+To run the example on Apache Karaf 3.x or newer
 
 #### Step 1: Laraf
 
@@ -30,12 +30,12 @@ Launch the server
 
 Add features required
 
-	features:chooseurl camel ${version}
-	features:install war
-	features:install cxf
-	features:install camel-jaxb
-	features:install camel-blueprint
-	features:install camel-cxf
+	feature:repo-add camel ${version}
+	feature:install war
+	feature:install cxf
+	feature:install camel
+	feature:install camel-jaxb
+	feature:install camel-cxf
 
 #### Step 3: Deploy
 Deploy the example

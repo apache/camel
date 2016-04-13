@@ -36,8 +36,10 @@ You will need to compile and install this example first:
 If using Apache Karaf / Apache ServiceMix you can install this example
 from the shell using this example's "features.xml" for easy provisioning.
 
-	features:addUrl mvn:org.apache.camel/camel-example-etl/${version}/xml/features
-	features:install camel-example-etl
+	feature:repo-add camel ${version}
+	feature:install camel
+	feature:repo-add mvn:org.apache.camel/camel-example-etl/${version}/xml/features
+	feature:install camel-example-etl
 
 The example outputs logs into the console. When you're done just hit <kbd>ctrl</kbd>+<kbd>d</kbd>
 to exit the container. Next time you start the container again use the 'clean' option so that
