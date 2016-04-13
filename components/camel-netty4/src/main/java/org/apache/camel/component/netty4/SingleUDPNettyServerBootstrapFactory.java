@@ -158,7 +158,6 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
                     Object o = CamelContextHelper.mandatoryLookup(camelContext, name);
                     bootstrap.option(option, o);
                 } else {
-                    bootstrap.option(ChannelOption.valueOf(entry.getKey()), value);
                     bootstrap.option(option, value);
                 }
             }
