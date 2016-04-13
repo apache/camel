@@ -22,7 +22,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -36,22 +35,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-public class HttpsRouteTest extends BaseJettyTest {
+public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
-    public static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
-
-    protected String expectedBody = "<hello>world!</hello>";
-    protected String pwd = "changeit";
-    protected Properties originalValues = new Properties();
-    protected int port1;
-    protected int port2;
-
-    public String getHttpProducerScheme() {
-        return "https://";
-    }
-    
     @Override
     @Before
     public void setUp() throws Exception {
@@ -193,16 +179,16 @@ public class HttpsRouteTest extends BaseJettyTest {
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
                 componentJetty.setKeystore(keyStoreUrl.toURI().getPath());
                 
-                from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
+                from("jetty:https://localhost:" + port1 + "/test?async=true&useContinuation=false").to("mock:a");
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody("<b>Hello World</b>");
                     }
                 };
-                from("jetty:https://localhost:" + port1 + "/hello").process(proc);
+                from("jetty:https://localhost:" + port1 + "/hello?async=true&useContinuation=false").process(proc);
                 
-                from("jetty:https://localhost:" + port2 + "/test").to("mock:b");
+                from("jetty:https://localhost:" + port2 + "/test?async=true&useContinuation=false").to("mock:b");
             }
         };
     }

@@ -30,12 +30,25 @@
   <description>Camel servlet transport support</description>
 
   <properties>
+    <tomcat.version>8.5.0</tomcat.version>
     <camel.osgi.import.before.defaults>
       javax.servlet.*;version="${servlet-version-range}"
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.servlet.*</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=servlet</camel.osgi.export.service>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>${arquillian-version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
 
@@ -112,6 +125,69 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jaxb</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.jayway.restassured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <version>${rest-assured-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!--jetty-->
+    <!--https://github.com/GoogleCloudPlatform/appengine-java-vm-runtime/issues/23-->
+    <!--Still not fixed in 9.3.8.v20160314 and 9.3.9.M1, produce 404 NOT FOUND or a 500 if we remove the async-supported flag :-(-->
+    <!--<dependency>
+      <groupId>org.jboss.arquillian.container</groupId>
+      <artifactId>arquillian-jetty-embedded-9</artifactId>
+      <version>1.0.0.CR3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-webapp</artifactId>
+      <version>${jetty9-version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-deploy</artifactId>
+      <version>${jetty9-version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-annotations</artifactId>
+      <version>${jetty9-version}</version>
+      <scope>runtime</scope>
+    </dependency>-->
+    <!--tomcat-->
+    <dependency>
+      <groupId>org.jboss.arquillian.container</groupId>
+      <artifactId>arquillian-tomcat-embedded-8</artifactId>
+      <version>1.0.0.CR7</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-jasper</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-logging-juli</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>runtime</scope>
     </dependency>
   </dependencies>
 

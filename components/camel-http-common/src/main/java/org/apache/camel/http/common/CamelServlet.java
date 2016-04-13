@@ -16,28 +16,33 @@
  */
 package org.apache.camel.http.common;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.AsyncContext;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.impl.DefaultExchange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A servlet to use as a Camel route as entry.
  */
 public class CamelServlet extends HttpServlet {
     private static final long serialVersionUID = -7061982839117697829L;
+    public static final String ASYNC_PARAM = "async";
     protected final Logger log = LoggerFactory.getLogger(getClass());
     
     /**
@@ -45,6 +50,7 @@ public class CamelServlet extends HttpServlet {
      *  sure that it is already set via the init method
      */
     private String servletName;
+    private boolean async = false;
 
     private ServletResolveConsumerStrategy servletResolveConsumerStrategy = new HttpServletResolveConsumerStrategy();
     private final ConcurrentMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
@@ -53,10 +59,61 @@ public class CamelServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         this.servletName = config.getServletName();
+        this.async = Optional.ofNullable(config.getInitParameter(ASYNC_PARAM))
+            .map(ObjectHelper::toBoolean)
+            .orElse(Boolean.FALSE);
+        log.trace("servlet '{}' initialized with: async={}", new Object[]{servletName, async});
     }
 
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected final void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (isAsync()) {
+            final AsyncContext context = req.startAsync();
+            //run async
+            context.start(() -> doServiceAsync(context));
+        }
+        else {
+            doService(req, resp);
+        }
+    }
+
+	/**
+     * This is used to handle request asynchronously
+     * @param context the {@link AsyncContext}
+     */
+    protected void doServiceAsync(AsyncContext context) {
+        final HttpServletRequest request = (HttpServletRequest) context.getRequest();
+        final HttpServletResponse response = (HttpServletResponse) context.getResponse();
+        try {
+            doService(request, response);
+        }
+        //An error shouldn't occur as we should handle most of error in doService
+        catch (Exception e) {
+            log.error("Error processing request", e);
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+            catch (Exception e1) {
+                log.debug("Cannot send reply to client!", e1);
+            }
+            //Need to wrap it in RuntimeException as it occurs in a Runnable
+            throw new RuntimeCamelException(e);
+        }
+        finally {
+            context.complete();
+        }
+    }
+
+	/**
+     * This is the logical implementation to handle request with {@link CamelServlet}
+     * This is where most exceptions should be handled
+     *
+     * @param request the {@link HttpServletRequest}
+     * @param response the {@link HttpServletResponse}
+     * @throws ServletException
+     * @throws IOException
+     */
+    protected void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.trace("Service: {}", request);
 
         // Is there a consumer registered for the request.
@@ -200,6 +257,14 @@ public class CamelServlet extends HttpServlet {
 
     public void setServletResolveConsumerStrategy(ServletResolveConsumerStrategy servletResolveConsumerStrategy) {
         this.servletResolveConsumerStrategy = servletResolveConsumerStrategy;
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+
+    public void setAsync(boolean async) {
+        this.async = async;
     }
 
     public Map<String, HttpConsumer> getConsumers() {

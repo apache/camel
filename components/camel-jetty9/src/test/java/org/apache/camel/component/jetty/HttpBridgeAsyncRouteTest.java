@@ -18,33 +18,9 @@ package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-
-public class HttpBridgeRouteTest extends BaseJettyTest {
-
-    protected int port1;
-    protected int port2;
-
-    @Test
-    public void testHttpClient() throws Exception {
-        String response = template.requestBodyAndHeader("http://localhost:" + port2 + "/test/hello",
-                new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml", String.class);
-        assertEquals("Get a wrong response", "/", response);
-        
-        response = template.requestBody("http://localhost:" + port1 + "/hello/world", "hello", String.class);
-        assertEquals("Get a wrong response", "/hello/world", response);
-        
-        try {
-            template.requestBody("http://localhost:" + port2 + "/hello/world", "hello", String.class);
-            fail("Expect exception here!");
-        } catch (Exception ex) {
-            assertTrue("We should get a RuntimeCamelException", ex instanceof RuntimeCamelException);
-        }
-    }
+public class HttpBridgeAsyncRouteTest extends HttpBridgeRouteTest {
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -61,10 +37,10 @@ public class HttpBridgeRouteTest extends BaseJettyTest {
                         exchange.getOut().setBody(uri);
                     }
                 };
-                from("jetty:http://localhost:" + port2 + "/test/hello")
+                from("jetty:http://localhost:" + port2 + "/test/hello?async=true&useContinuation=false")
                     .to("http://localhost:" + port1 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
                 
-                from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true").process(serviceProc);
+                from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true&async=true&useContinuation=false").process(serviceProc);
             }
         };
     }    
