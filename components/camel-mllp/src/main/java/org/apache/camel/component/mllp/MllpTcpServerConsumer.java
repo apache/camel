@@ -543,7 +543,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         private void populateHl7DataHeaders(Exchange exchange, Message message, byte[] hl7MessageBytes) {
             // Find the end of the MSH and indexes of the fields in the MSH to populate message headers
             final byte fieldSeparator = hl7MessageBytes[3];
-            final byte componentSeparator = hl7MessageBytes[4];
             int endOfMSH = -1;
             List<Integer> fieldSeparatorIndexes = new ArrayList<>(10);  // We need at least 10 fields to create the acknowledgment
 
@@ -551,11 +550,16 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 if (fieldSeparator == hl7MessageBytes[i]) {
                     fieldSeparatorIndexes.add(i);
                 } else if (SEGMENT_DELIMITER == hl7MessageBytes[i]) {
+                    // If the MSH Segment doesn't have a trailing field separator, add one so the field can be extracted into a header
+                    if (fieldSeparator != hl7MessageBytes[i - 1]) {
+                        fieldSeparatorIndexes.add(i);
+                    }
                     endOfMSH = i;
                     break;
                 }
             }
 
+            String messageBodyForDebugging = new String(hl7MessageBytes);
             if (-1 == endOfMSH) {
                 // TODO:  May want to throw some sort of an Exception here
                 log.error("Population of message headers failed - unable to find the end of the MSH segment");
@@ -563,54 +567,71 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 log.debug("Populating the message headers");
                 Charset charset = Charset.forName(IOHelper.getCharsetName(exchange));
 
-                // MSH-3
-                message.setHeader(MLLP_SENDING_APPLICATION, new String(hl7MessageBytes, fieldSeparatorIndexes.get(1) + 1,
-                        fieldSeparatorIndexes.get(2) - fieldSeparatorIndexes.get(1) - 1, charset));
-                // MSH-4
-                message.setHeader(MLLP_SENDING_FACILITY, new String(hl7MessageBytes, fieldSeparatorIndexes.get(2) + 1,
-                        fieldSeparatorIndexes.get(3) - fieldSeparatorIndexes.get(2) - 1, charset));
-                // MSH-5
-                message.setHeader(MLLP_RECEIVING_APPLICATION, new String(hl7MessageBytes, fieldSeparatorIndexes.get(3) + 1,
-                        fieldSeparatorIndexes.get(4) - fieldSeparatorIndexes.get(3) - 1,
-                        charset));
-                // MSH-6
-                message.setHeader(MLLP_RECEIVING_FACILITY, new String(hl7MessageBytes, fieldSeparatorIndexes.get(4) + 1,
-                        fieldSeparatorIndexes.get(5) - fieldSeparatorIndexes.get(4) - 1,
-                        charset));
-                // MSH-7
-                message.setHeader(MLLP_TIMESTAMP, new String(hl7MessageBytes, fieldSeparatorIndexes.get(5) + 1,
-                        fieldSeparatorIndexes.get(6) - fieldSeparatorIndexes.get(5) - 1, charset));
-                // MSH-8
-                message.setHeader(MLLP_SECURITY, new String(hl7MessageBytes, fieldSeparatorIndexes.get(6) + 1,
-                        fieldSeparatorIndexes.get(7) - fieldSeparatorIndexes.get(6) - 1, charset));
-                // MSH-9
-                message.setHeader(MLLP_MESSAGE_TYPE, new String(hl7MessageBytes, fieldSeparatorIndexes.get(7) + 1,
-                        fieldSeparatorIndexes.get(8) - fieldSeparatorIndexes.get(7) - 1, charset));
-                // MSH-10
-                message.setHeader(MLLP_MESSAGE_CONTROL, new String(hl7MessageBytes, fieldSeparatorIndexes.get(8) + 1,
-                        fieldSeparatorIndexes.get(9) - fieldSeparatorIndexes.get(8) - 1, charset));
-                // MSH-11
-                message.setHeader(MLLP_PROCESSING_ID, new String(hl7MessageBytes, fieldSeparatorIndexes.get(9) + 1,
-                        fieldSeparatorIndexes.get(10) - fieldSeparatorIndexes.get(9) - 1, charset));
-                // MSH-12
-                message.setHeader(MLLP_VERSION_ID, new String(hl7MessageBytes, fieldSeparatorIndexes.get(10) + 1,
-                        fieldSeparatorIndexes.get(11) - fieldSeparatorIndexes.get(10) - 1, charset));
-                // MSH-18
-                message.setHeader(MLLP_CHARSET, new String(hl7MessageBytes, fieldSeparatorIndexes.get(16) + 1,
-                        fieldSeparatorIndexes.get(17) - fieldSeparatorIndexes.get(16) - 1, charset));
+                for (int i = 2; i < fieldSeparatorIndexes.size(); ++i) {
+                    int startingFieldSeparatorIndex = fieldSeparatorIndexes.get(i - 1);
+                    int endingFieldSeparatorIndex = fieldSeparatorIndexes.get(i);
 
-                for (int i = fieldSeparatorIndexes.get(7) + 1; i < fieldSeparatorIndexes.get(8); ++i) {
-                    if (componentSeparator == hl7MessageBytes[i]) {
-                        // MSH-9.1
-                        message.setHeader(MLLP_EVENT_TYPE, new String(hl7MessageBytes, fieldSeparatorIndexes.get(7) + 1,
-                                i - fieldSeparatorIndexes.get(7) - 1, charset));
-                        // MSH-9.2
-                        message.setHeader(MLLP_TRIGGER_EVENT, new String(hl7MessageBytes, i + 1,
-                                fieldSeparatorIndexes.get(8) - i - 1, charset));
-                        break;
+                    // Only populate the header if there's data in the HL7 field
+                    if (endingFieldSeparatorIndex - startingFieldSeparatorIndex > 1) {
+                        String headerName = null;
+                        switch (i) {
+                        case 2: // MSH-3
+                            headerName = MLLP_SENDING_APPLICATION;
+                            break;
+                        case 3: // MSH-4
+                            headerName = MLLP_SENDING_FACILITY;
+                            break;
+                        case 4: // MSH-5
+                            headerName = MLLP_RECEIVING_APPLICATION;
+                            break;
+                        case 5: // MSH-6
+                            headerName = MLLP_RECEIVING_FACILITY;
+                            break;
+                        case 6: // MSH-7
+                            headerName = MLLP_TIMESTAMP;
+                            break;
+                        case 7: // MSH-8
+                            headerName = MLLP_SECURITY;
+                            break;
+                        case 8: // MSH-9
+                            headerName = MLLP_MESSAGE_TYPE;
+                            break;
+                        case 9: // MSH-10
+                            headerName = MLLP_MESSAGE_CONTROL;
+                            break;
+                        case 10: // MSH-11
+                            headerName = MLLP_PROCESSING_ID;
+                            break;
+                        case 11: // MSH-12
+                            headerName = MLLP_VERSION_ID;
+                            break;
+                        case 17: // MSH-18
+                            headerName = MLLP_CHARSET;
+                            break;
+                        default:
+                            // Not processing this field
+                            continue;
+                        }
+
+                        String headerValue = new String(hl7MessageBytes, startingFieldSeparatorIndex + 1,
+                                endingFieldSeparatorIndex - startingFieldSeparatorIndex - 1,
+                                charset);
+                        message.setHeader(headerName, headerValue);
+
+                        // For MSH-9, set a couple more headers
+                        if (i == 8) {
+                            // final byte componentSeparator = hl7MessageBytes[4];
+                            String componentSeparator = new String(hl7MessageBytes, 4, 1, charset);
+                            String[] components = headerValue.split(String.format("\\Q%s\\E", componentSeparator), 3);
+                            message.setHeader(MLLP_EVENT_TYPE, components[0]);
+                            if (2 <= components.length) {
+                                message.setHeader(MLLP_TRIGGER_EVENT, components[1]);
+                            }
+                        }
                     }
                 }
             }
+
         }
 
         @Override
