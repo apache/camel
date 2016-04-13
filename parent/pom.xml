@@ -520,6 +520,7 @@
     <spring-retry-version>1.0.3.RELEASE</spring-retry-version>
     <!-- spring-dm only supports spring 3.x -->
     <spring-dm-version-range>[3.2,4)</spring-dm-version-range>
+    <spring-all-version-range>[3.2,5)</spring-all-version-range>
     <!-- karaf 2.x/3.x/4.x supports spring 4.1 onwards -->
     <spring-version-range>[4.1,5)</spring-version-range>
     <!-- and special for only spring 4.0.x -->
@@ -1596,6 +1597,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-dm</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
