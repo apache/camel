@@ -26,10 +26,10 @@
     <version>2.18-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-example-osgi</artifactId>
+  <artifactId>camel-example-spring-dm</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Example :: OSGi</name>
-  <description>A simple OSGi example which creates a bundle that can be dropped into any OSGi container</description>
+  <name>Camel :: Example :: Spring DM</name>
+  <description>A simple OSGi Spring DM example which creates a bundle that can be dropped into any OSGi container</description>
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.example.osgi.*</camel.osgi.export.pkg>

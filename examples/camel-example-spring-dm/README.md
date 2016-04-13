@@ -1,8 +1,8 @@
-# OSGi Example
+# Camel Spring-DM Example
 
 ### Introduction
 
-This example shows how use OSGi with Camel. It can be run using Maven.
+This example shows how use Spring DM (OSGi) with Camel. It can be run using Maven.
 
 ### Build
 You will need to compile this example first:
@@ -24,8 +24,8 @@ You will need to compile and install this example first:
 If using Apache Karaf / Apache ServiceMix you can install this example
 from the shell using this example's "features.xml" for easy provisioning.
 
-	features:addUrl mvn:org.apache.camel/camel-example-osgi/${version}/xml/features
-	features:install camel-example-osgi
+	feature:repo-add mvn:org.apache.camel/camel-example-spring-dm/${version}/xml/features
+	feature:install camel-example-osgi
 
 The example outputs to the log, which you can see using
 

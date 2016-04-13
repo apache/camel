@@ -64,11 +64,17 @@
   </feature>
   <feature name='camel-spring' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
-    <feature version='${spring-dm-version-range}'>spring</feature>
-    <feature version='[1.2,2)'>spring-dm</feature>
-    <feature version='${spring-dm-version-range}'>spring-tx</feature>
+    <feature version='${spring-version-range}'>spring</feature>
+    <feature version='${spring-version-range}'>spring-tx</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-spring/${project.version}</bundle>
+  </feature>
+  <feature name='camel-spring-dm' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='[1.2,2)'>spring-dm</feature>
+    <feature version='${spring-dm-version-range}'>spring</feature>
+    <feature version='${spring-dm-version-range}'>spring-tx</feature>
+    <feature version='${project.version}'>camel-spring</feature>
+    <bundle>mvn:org.apache.camel/camel-spring-dm/${project.version}</bundle>
   </feature>
   <feature name='camel-scr' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
