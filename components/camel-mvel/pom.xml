@@ -30,8 +30,6 @@
   <description>Camel MVEL support</description>
 
   <properties>
-    <!-- need to import spi as felix-bundle-plugin has a bug and do not include this package despite we use in the source code -->
-    <camel.osgi.import.before.defaults>org.apache.camel.spi;${camel.osgi.import.strict.version}</camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>
       org.apache.camel.component.mvel.*,
       org.apache.camel.language.mvel.*

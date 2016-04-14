@@ -177,12 +177,14 @@
                 <feature>framework</feature>
               </framework>
               <features>
+                <!-- camel-blueprint uses blueprint but its feature name is different in karaf 3.x vs 4.x -->
                 <!-- camel-cdi requires to install a cdi provider first -->
+                <!-- camel-cxf uses blueprint but its feature name is different in karaf 3.x vs 4.x -->
                 <!-- camel-ignite requires to install apache ignite first -->
                 <!-- camel-guice does not work in OSGi currently -->
-                <!-- camel-lucene does not work in OSGi currently (new bundle on the way) -->
                 <!-- camel-leveldb uses some wrap magic to install which validator fails but it works -->
-                <feature>camel|camel-(?!(cdi|ignite|guice|lucene|leveldb))*</feature>
+                <!-- camel-zipkin needs an OSGi bundle -->
+                <feature>camel|camel-(?!(blueprint|cdi|cxf|ignite|guice|leveldb|zipkin))*</feature>
               </features>
 			        <configuration>file://${project.build.directory}/classes/config.properties</configuration>
             </configuration>
