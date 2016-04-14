@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-spring-dm</artifactId>
-  <name>Camel :: Spring DM</name>
+  <name>Camel :: Spring DM (deprecated)</name>
   <description>Camel Spring DM support</description>
   <packaging>jar</packaging>
 
