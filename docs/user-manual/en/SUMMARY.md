@@ -149,6 +149,7 @@
     * [Hazelcast](hazelcast.adoc)
     * [Hbase](hbase.adoc)
     * [HDFS](hdfs.adoc)
+    * [HDFS2](hdfs2.adoc)
     * [Http4](http4.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
