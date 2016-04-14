@@ -30,11 +30,6 @@
   <packaging>jar</packaging>
 
   <properties>
-    <!-- camel-spring uses spring-dm that is spring 3.x -->
-    <camel.osgi.import>
-      org.springframework*;version="${spring-dm-version-range}",
-      *
-    </camel.osgi.import>
     <camel.osgi.export.pkg>org.apache.camel.spring.javaconfig.*</camel.osgi.export.pkg>
   </properties>
 
