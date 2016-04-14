@@ -29,13 +29,13 @@ public class CamelHystrixCommand extends HystrixCommand<Exchange> {
     private final String cacheKey;
     private final Endpoint runEndpoint;
     private final Endpoint fallbackEndpoint;
-    private final ProducerCache cache;
+    private final ProducerCache producerCache;
 
-    protected CamelHystrixCommand(Setter setter, Exchange exchange, String cacheKey, ProducerCache cache, Endpoint runEndpoint, Endpoint fallbackEndpoint) {
+    protected CamelHystrixCommand(Setter setter, Exchange exchange, String cacheKey, ProducerCache producerCache, Endpoint runEndpoint, Endpoint fallbackEndpoint) {
         super(setter);
         this.exchange = exchange;
         this.cacheKey = cacheKey;
-        this.cache = cache;
+        this.producerCache = producerCache;
         this.runEndpoint = runEndpoint;
         this.fallbackEndpoint = fallbackEndpoint;
     }
@@ -58,7 +58,7 @@ public class CamelHystrixCommand extends HystrixCommand<Exchange> {
                     exchange.removeProperty(Exchange.ROUTE_STOP);
                 }
             }
-            cache.doInProducer(fallbackEndpoint, exchange, exchange.getPattern(), new ProducerCallback<Exchange>() {
+            producerCache.doInProducer(fallbackEndpoint, exchange, exchange.getPattern(), new ProducerCallback<Exchange>() {
                 @Override
                 public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern exchangePattern) throws Exception {
                     try {
@@ -78,7 +78,7 @@ public class CamelHystrixCommand extends HystrixCommand<Exchange> {
     @Override
     protected Exchange run() {
         try {
-            cache.doInProducer(runEndpoint, exchange, exchange.getPattern(), new ProducerCallback<Exchange>() {
+            producerCache.doInProducer(runEndpoint, exchange, exchange.getPattern(), new ProducerCallback<Exchange>() {
                 @Override
                 public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern exchangePattern) throws Exception {
                     try {

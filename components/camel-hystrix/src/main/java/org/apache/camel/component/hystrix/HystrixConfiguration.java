@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.hystrix;
 
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixRequestCache;
+import com.netflix.hystrix.HystrixRequestLog;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -94,12 +97,18 @@ public class HystrixConfiguration {
     /**
      * Specifies the isolation strategy (thread or semaphore) to use
      */
-    @UriParam(label = "producer", defaultValue = "THREAD")
-    private String  executionIsolationStrategy;
+    @UriParam(label = "producer", defaultValue = "THREAD", enums = "THREAD,SEMAPHORE")
+    private String executionIsolationStrategy;
+
     private Boolean executionIsolationThreadInterruptOnTimeout;
     private Integer executionTimeoutInMilliseconds;
     private Boolean executionTimeoutEnabled;
     private Integer fallbackIsolationSemaphoreMaxConcurrentRequests;
+
+    /**
+     * Whether fallback should be attempted when failure occurs.
+     */
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean fallbackEnabled;
     private Integer metricsHealthSnapshotIntervalInMilliseconds;
     private Integer metricsRollingPercentileBucketSize;
@@ -108,7 +117,18 @@ public class HystrixConfiguration {
     private Integer metricsRollingPercentileWindowBuckets;
     private Integer metricsRollingStatisticalWindowInMilliseconds;
     private Integer metricsRollingStatisticalWindowBuckets;
+
+    /**
+     * Whether cacheKey should be used with HystrixRequestCache to provide de-duplication functionality via request-scoped caching.
+     * Cache is automatic in use if the cacheKey option has been configured.
+     */
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean requestCacheEnabled;
+
+    /**
+     *  Whether HystrixCommand execution and events should be logged to HystrixRequestLog.
+     */
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean requestLogEnabled;
 
     public String getRunEndpoint() {
