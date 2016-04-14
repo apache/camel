@@ -17,21 +17,27 @@
 package org.apache.camel.component.hystrix;
 
 import com.netflix.hystrix.HystrixCommand;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
+import org.apache.camel.ProducerCallback;
+import org.apache.camel.impl.ProducerCache;
 
 public class CamelHystrixCommand extends HystrixCommand<Exchange> {
     private final Exchange exchange;
     private final String cacheKey;
-    private final Producer runProducer;
-    private final Producer fallbackProducer;
+    private final Endpoint runEndpoint;
+    private final Endpoint fallbackEndpoint;
+    private final ProducerCache cache;
 
-    protected CamelHystrixCommand(Setter setter, Exchange exchange, String cacheKey, Producer runProducer, Producer fallbackProducer) {
+    protected CamelHystrixCommand(Setter setter, Exchange exchange, String cacheKey, ProducerCache cache, Endpoint runEndpoint, Endpoint fallbackEndpoint) {
         super(setter);
         this.exchange = exchange;
         this.cacheKey = cacheKey;
-        this.runProducer = runProducer;
-        this.fallbackProducer = fallbackProducer;
+        this.cache = cache;
+        this.runEndpoint = runEndpoint;
+        this.fallbackEndpoint = fallbackEndpoint;
     }
 
     @Override
@@ -41,7 +47,7 @@ public class CamelHystrixCommand extends HystrixCommand<Exchange> {
 
     @Override
     protected Exchange getFallback() {
-        if (fallbackProducer == null) {
+        if (fallbackEndpoint == null) {
             return exchange;
         }
         try {
@@ -52,7 +58,17 @@ public class CamelHystrixCommand extends HystrixCommand<Exchange> {
                     exchange.removeProperty(Exchange.ROUTE_STOP);
                 }
             }
-            fallbackProducer.process(exchange);
+            cache.doInProducer(fallbackEndpoint, exchange, exchange.getPattern(), new ProducerCallback<Exchange>() {
+                @Override
+                public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern exchangePattern) throws Exception {
+                    try {
+                        producer.process(exchange);
+                    } catch (Exception e) {
+                        exchange.setException(e);
+                    }
+                    return exchange;
+                }
+            });
         } catch (Exception e) {
             exchange.setException(e);
         }
@@ -62,7 +78,17 @@ public class CamelHystrixCommand extends HystrixCommand<Exchange> {
     @Override
     protected Exchange run() {
         try {
-            runProducer.process(exchange);
+            cache.doInProducer(runEndpoint, exchange, exchange.getPattern(), new ProducerCallback<Exchange>() {
+                @Override
+                public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern exchangePattern) throws Exception {
+                    try {
+                        producer.process(exchange);
+                    } catch (Exception e) {
+                        exchange.setException(e);
+                    }
+                    return exchange;
+                }
+            });
         } catch (Exception e) {
             exchange.setException(e);
         }
