@@ -43,8 +43,10 @@ import org.apache.camel.impl.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +62,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     private AmazonSQS client;
     private String queueUrl;
 
+    @UriPath(description = "Queue name or ARN")
+    @Metadata(required = "true")
+    private String queueNameOrArn; // to support component docs
     @UriParam
     private SqsConfiguration configuration;
     @UriParam(label = "consumer")

@@ -19,7 +19,7 @@ URI Format
 
 [source,java]
 ------------------------------
-aws-s3://bucket-name[?options]
+aws-s3://bucketNameOrArn[?options]
 ------------------------------
 
 The bucket will be created if it don't already exists. +
@@ -37,13 +37,14 @@ The AWS S3 Storage Service component has no options.
 
 
 
+
 // endpoint options: START
 The AWS S3 Storage Service component supports 38 endpoint options which are listed below:
 
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| bucketName | common |  | String | *Required* Name of the bucket. The bucket will be created if it don't already exists.
+| bucketNameOrArn | common |  | String | *Required* Bucket name or ARN
 | accessKey | common |  | String | Amazon AWS Access Key
 | amazonS3Client | common |  | AmazonS3 | Reference to a com.amazonaws.services.sqs.AmazonS3 in the link:registry.htmlRegistry.
 | amazonS3Endpoint | common |  | String | The region with which the AWS-S3 client wants to work with.
@@ -83,6 +84,7 @@ The AWS S3 Storage Service component supports 38 endpoint options which are list
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
 // endpoint options: END
+
 
 
 
