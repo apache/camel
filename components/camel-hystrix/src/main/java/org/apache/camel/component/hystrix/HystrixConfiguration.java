@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hystrix;
 
-import org.apache.camel.Expression;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -45,10 +44,10 @@ public class HystrixConfiguration {
     private String threadPoolKey;
 
     /**
-     * Specifies the cacheKeyExpression to use
+     * Specifies the cache key to use
      */
     @UriParam(label = "producer")
-    private Expression cacheKeyExpression;
+    private String cacheKey;
 
     /**
      * Specifies the initializeRequestContext to use
@@ -127,14 +126,13 @@ public class HystrixConfiguration {
         this.fallbackEndpoint = fallbackEndpoint;
     }
 
-    public Expression getCacheKeyExpression() {
-        return cacheKeyExpression;
+    public String getCacheKey() {
+        return cacheKey;
     }
 
-    public void setCacheKeyExpression(Expression cacheKeyExpression) {
-        this.cacheKeyExpression = cacheKeyExpression;
+    public void setCacheKey(String cacheKey) {
+        this.cacheKey = cacheKey;
     }
-
 
     public Boolean getInitializeRequestContext() {
         return initializeRequestContext;

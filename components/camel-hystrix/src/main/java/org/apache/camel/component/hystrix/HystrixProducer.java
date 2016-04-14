@@ -29,8 +29,11 @@ import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -280,8 +283,29 @@ public class HystrixProducer extends DefaultProducer {
     }
 
     private String getCacheKey(Exchange exchange) {
-        return configuration.getCacheKeyExpression() != null
-                ? configuration.getCacheKeyExpression().evaluate(exchange, String.class) : null;
+        Object cacheKey = exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_CACHE_KEY, configuration.getCacheKey(), Object.class);
+        if (cacheKey == null) {
+            return null;
+        }
+
+        String answer;
+        Expression expression;
+        if (cacheKey instanceof Expression) {
+            // it may be an expression already
+            expression = (Expression) cacheKey;
+        } else {
+            // otherwise its a string that either refer to an expression to lookup or use the simple languagae
+            String key = cacheKey.toString();
+            if (EndpointHelper.isReferenceParameter(key)) {
+                expression = CamelContextHelper.mandatoryLookup(exchange.getContext(), key.substring(1), Expression.class);
+            } else {
+                // use simple language as default for the expression
+                expression = exchange.getContext().resolveLanguage("simple").createExpression(key);
+            }
+        }
+
+        answer = expression.evaluate(exchange, String.class);
+        return answer;
     }
 
     private synchronized void checkRequestContextPresent(Exchange exchange) {
