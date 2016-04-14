@@ -50,14 +50,20 @@
     <dependency>
       <groupId>org.apache.karaf.shell</groupId>
       <artifactId>org.apache.karaf.shell.console</artifactId>
-      <version>${karaf-version}</version>
+      <version>${karaf4-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.karaf</groupId>
       <artifactId>org.apache.karaf.util</artifactId>
       <version>${karaf-version}</version>
     </dependency>
-    
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+
     <!-- Test -->
     <dependency>
       <groupId>junit</groupId>
@@ -75,10 +81,12 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
+            <Embed-Dependency>*;artifactId=org.apache.karaf.util;inline=true</Embed-Dependency>
             <Import-Package>
-              org.apache.felix.service.command;mandatory:=status;status=provisional;version="[0.6,1)",
-              org.apache.felix.gogo.commands;version="[0.6,1)",
-              org.apache.karaf.shell.console;version="[2.2,4)",
+              !org.apache.felix.utils.properties,
+              org.apache.felix.service.command;version="[0.16,1)",
+              org.apache.felix.gogo.commands;version="[0.16,1)",
+              org.apache.karaf.shell.console;version="[3,5)",
               org.slf4j.*;version="[1.6,2)",
               jline.*;version="[2.1,3)",
               *
