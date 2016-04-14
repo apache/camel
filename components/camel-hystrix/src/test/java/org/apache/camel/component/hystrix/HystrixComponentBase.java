@@ -41,8 +41,6 @@ public class HystrixComponentBase extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         CamelContext context = new DefaultCamelContext(registry);
-        registry.put("run", context.getEndpoint("direct:run"));
-        registry.put("fallback", context.getEndpoint("direct:fallback"));
         registry.put("headerExpression", ExpressionBuilder.headerExpression("key"));
         return context;
     }

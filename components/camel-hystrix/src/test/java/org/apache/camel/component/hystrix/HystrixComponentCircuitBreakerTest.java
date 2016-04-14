@@ -64,7 +64,7 @@ public class HystrixComponentCircuitBreakerTest extends HystrixComponentBase {
                         .to("mock:result");
 
                 from("direct:start")
-                        .to("hystrix:testKey?runEndpointId=run&fallbackEndpointId=fallback&circuitBreakerRequestVolumeThreshold=2");
+                        .to("hystrix:testKey?runEndpoint=direct:run&fallbackEndpoint=direct:fallback&circuitBreakerRequestVolumeThreshold=2");
             }
         };
     }
