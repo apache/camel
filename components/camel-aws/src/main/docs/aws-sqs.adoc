@@ -19,7 +19,7 @@ URI Format
 
 [source,java]
 ------------------------------
-aws-sqs://queue-name[?options]
+aws-sqs://queueNameOrArn[?options]
 ------------------------------
 
 The queue will be created if they don't already exists. +
@@ -37,13 +37,14 @@ The AWS Simple Queue Service component has no options.
 
 
 
+
 // endpoint options: START
 The AWS Simple Queue Service component supports 45 endpoint options which are listed below:
 
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| queueName | common |  | String | *Required* Name of queue. The queue will be created if they don't already exists.
+| queueNameOrArn | common |  | String | *Required* Queue name or ARN
 | accessKey | common |  | String | Amazon AWS Access Key
 | amazonSQSClient | common |  | AmazonSQS | To use the AmazonSQS as client
 | amazonSQSEndpoint | common |  | String | The region with which the AWS-SQS client wants to work with. Only works if Camel creates the AWS-SQS client i.e. if you explicitly set amazonSQSClient then this setting will have no effect. You would have to set it on the client you create directly
@@ -90,6 +91,7 @@ The AWS Simple Queue Service component supports 45 endpoint options which are li
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
 // endpoint options: END
+
 
 
 Required SQS component options

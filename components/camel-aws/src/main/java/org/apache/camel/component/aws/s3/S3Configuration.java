@@ -17,16 +17,12 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
-
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class S3Configuration implements Cloneable {
 
-    @UriPath @Metadata(required = "true")
     private String bucketName;
     @UriParam
     private AmazonS3 amazonS3Client;

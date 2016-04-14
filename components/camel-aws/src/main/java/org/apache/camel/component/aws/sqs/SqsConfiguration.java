@@ -16,19 +16,14 @@
  */
 package org.apache.camel.component.aws.sqs;
 
-import java.util.Collection;
-
 import com.amazonaws.services.sqs.AmazonSQS;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class SqsConfiguration {
 
     // common properties
-    @UriPath @Metadata(required = "true")
     private String queueName;
     @UriParam
     private AmazonSQS amazonSQSClient;
