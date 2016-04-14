@@ -44,7 +44,8 @@ public class HystrixConfiguration {
     private String threadPoolKey;
 
     /**
-     * Specifies the cache key to use
+     * Specifies the cache key to use.
+     * Uses the simple language as the expression. But you can refer to an existing expression using # lookup.
      */
     @UriParam(label = "producer")
     private String cacheKey;
@@ -73,7 +74,7 @@ public class HystrixConfiguration {
      * Whether to include a number of headers with metrics details of the circuit breaker utilization
      */
     @UriParam(label = "producer")
-    private boolean metrics;
+    private boolean metricsEnabled;
 
     private Integer coreSize;
     private Integer keepAliveTime;
@@ -390,11 +391,11 @@ public class HystrixConfiguration {
         this.requestLogEnabled = requestLogEnabled;
     }
 
-    public boolean isMetrics() {
-        return metrics;
+    public boolean isMetricsEnabled() {
+        return metricsEnabled;
     }
 
-    public void setMetrics(boolean metrics) {
-        this.metrics = metrics;
+    public void setMetricsEnabled(boolean metricsEnabled) {
+        this.metricsEnabled = metricsEnabled;
     }
 }
