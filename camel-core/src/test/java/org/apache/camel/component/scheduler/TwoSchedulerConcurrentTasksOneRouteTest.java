@@ -16,17 +16,24 @@
  */
 package org.apache.camel.component.scheduler;
 
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version 
  */
-public class TwoSchedulerConcurrentTasksTest extends ContextTestSupport {
+public class TwoSchedulerConcurrentTasksOneRouteTest extends ContextTestSupport {
+
+    private AtomicBoolean sleep = new AtomicBoolean(true);
 
     public void testTwoScheduler() throws Exception {
-        getMockEndpoint("mock:a").expectedMinimumMessageCount(4);
-        getMockEndpoint("mock:b").expectedMinimumMessageCount(2);
+        getMockEndpoint("mock:done").expectedMinimumMessageCount(10);
 
         assertMockEndpointsSatisfied();
     }
@@ -35,16 +42,24 @@ public class TwoSchedulerConcurrentTasksTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                // number of concurrent task a thread pool should have
                 SchedulerComponent comp = context.getComponent("scheduler", SchedulerComponent.class);
                 comp.setConcurrentTasks(2);
 
-                from("scheduler://foo?delay=100")
-                    .to("log:a")
-                    .to("mock:a");
-
-                from("scheduler://foo?delay=200")
-                    .to("log:b")
-                    .to("mock:b");
+                // let this route scheduler use all 2 concurrent tasks at the same time
+                from("scheduler://foo?delay=250&scheduler.concurrentTasks=2")
+                    .process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            if (sleep.compareAndSet(true, false)) {
+                                log.info("Thread is sleeping");
+                                Thread.sleep(1000);
+                                log.info("Thread is done sleeping");
+                            }
+                        }
+                    })
+                    .to("log:done")
+                    .to("mock:done");
             }
         };
     }
