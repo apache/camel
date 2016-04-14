@@ -40,7 +40,15 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getPrefix());
         assertTrue(endpoint.getConfiguration().isIncludeBody());
     }
-    
+
+    @Test
+    public void createEndpointWithMinimalArnConfiguration() throws Exception {
+        S3Component component = new S3Component(context);
+        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://arn:aws:s3:::MyBucket?accessKey=xxx&secretKey=yyy");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+    }
+
     @Test
     public void createEndpointWithMinimalConfigurationAndProvidedClient() throws Exception {
         AmazonS3ClientMock mock = new AmazonS3ClientMock();

@@ -45,6 +45,17 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
     }
     
     @Test
+    public void createEndpointWithMinimalArnConfiguration() throws Exception {
+        SqsComponent component = new SqsComponent(context);
+        SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://arn:aws:sqs:region:account:MyQueue?accessKey=xxx&secretKey=yyy");
+
+        assertEquals("region", endpoint.getConfiguration().getRegion());
+        assertEquals("account", endpoint.getConfiguration().getQueueOwnerAWSAccountId());
+        assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+    }
+
+    @Test
     public void createEndpointAttributeNames() throws Exception {
         SqsComponent component = new SqsComponent(context);
         SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy&attributeNames=foo,bar");
