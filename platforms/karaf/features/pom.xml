@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.apache.karaf.shell</groupId>
       <artifactId>org.apache.karaf.shell.console</artifactId>
-      <version>${karaf-version}</version>
+      <version>${karaf4-version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -154,42 +154,9 @@
       </repositories>
     </profile>
 
+    <!-- validating using karaf 4.x -->
     <profile>
       <id>validate</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.karaf.tooling</groupId>
-            <artifactId>features-maven-plugin</artifactId>
-            <version>${karaf-version}</version>
-            <configuration>
-              <file>${project.build.directory}/classes/${features.file}</file>
-              <karafConfig>${project.build.directory}/classes/config.properties</karafConfig>
-              <jreVersion>jre-1.6</jreVersion>
-            </configuration>
-            <executions>
-              <execution>
-                <id>validate</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>validate</goal>
-                </goals>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-http-lightweight</artifactId>
-                <version>2.8</version>
-              </dependency>
-            </dependencies>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>validate-karaf4</id>
       <build>
         <plugins>
           <plugin>
