@@ -73,7 +73,7 @@ public class HystrixProducer extends DefaultProducer {
         clearCache(camelHystrixCommand.getCommandKey(), exchange);
         camelHystrixCommand.execute();
 
-        if (configuration.isMetrics()) {
+        if (configuration.isMetricsEnabled()) {
             populateWithMetrics(exchange, camelHystrixCommand);
         }
     }
