@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The aws-s3 component is used for storing and retrieving objetc from Amazon S3 Storage Service.
  */
-@UriEndpoint(scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3:bucketName", consumerClass = S3Consumer.class, label = "cloud,file")
+@UriEndpoint(scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3:bucketNameOrArn", consumerClass = S3Consumer.class, label = "cloud,file")
 public class S3Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);

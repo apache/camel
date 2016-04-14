@@ -39,6 +39,9 @@ public class S3Component extends UriEndpointComponent {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
+        if (remaining.startsWith("arn:")) {
+            remaining = remaining.substring(remaining.lastIndexOf(":") + 1, remaining.length());
+        }
         configuration.setBucketName(remaining);
 
         if (configuration.getAmazonS3Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {

@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
  */
-@UriEndpoint(scheme = "aws-sns", title = "AWS Simple Notification System", syntax = "aws-sns:topicName", producerOnly = true, label = "cloud,mobile,messaging")
+@UriEndpoint(scheme = "aws-sns", title = "AWS Simple Notification System", syntax = "aws-sns:topicNameOrArn", producerOnly = true, label = "cloud,mobile,messaging")
 public class SnsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnsEndpoint.class);
@@ -83,16 +83,18 @@ public class SnsEndpoint extends DefaultEndpoint {
             LOG.trace("Updating the SNS region with : {} " + configuration.getAmazonSNSEndpoint());
             snsClient.setEndpoint(configuration.getAmazonSNSEndpoint());
         }
-        
-        // creates a new topic, or returns the URL of an existing one
-        CreateTopicRequest request = new CreateTopicRequest(configuration.getTopicName());
-        
-        LOG.trace("Creating topic [{}] with request [{}]...", configuration.getTopicName(), request);
-        
-        CreateTopicResult result = snsClient.createTopic(request);
-        configuration.setTopicArn(result.getTopicArn());
-        
-        LOG.trace("Topic created with Amazon resource name: {}", configuration.getTopicArn());
+
+        if (configuration.getTopicArn() == null) {
+            // creates a new topic, or returns the URL of an existing one
+            CreateTopicRequest request = new CreateTopicRequest(configuration.getTopicName());
+
+            LOG.trace("Creating topic [{}] with request [{}]...", configuration.getTopicName(), request);
+
+            CreateTopicResult result = snsClient.createTopic(request);
+            configuration.setTopicArn(result.getTopicArn());
+
+            LOG.trace("Topic created with Amazon resource name: {}", configuration.getTopicArn());
+        }
         
         if (ObjectHelper.isNotEmpty(configuration.getPolicy())) {
             LOG.trace("Updating topic [{}] with policy [{}]", configuration.getTopicArn(), configuration.getPolicy());
