@@ -90,7 +90,7 @@ public class HystrixComponentTimeOutTest extends CamelTestSupport {
                         .to("mock:result");
 
                 from("direct:start")
-                        .to("hystrix:testKey?runEndpointId=run&fallbackEndpointId=fallback&executionTimeoutInMilliseconds=100");
+                        .to("hystrix:testKey?runEndpoint=direct:run&fallbackEndpoint=direct:fallback&executionTimeoutInMilliseconds=100");
             }
         };
     }

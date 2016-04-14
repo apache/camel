@@ -50,7 +50,6 @@ public class HystrixConfiguration {
     @UriParam(label = "producer")
     private Expression cacheKeyExpression;
 
-
     /**
      * Specifies the initializeRequestContext to use
      */
@@ -58,16 +57,24 @@ public class HystrixConfiguration {
     private Boolean initializeRequestContext;
 
     /**
-     * Specifies the endpoint to use
+     * Specifies the endpoint to use.
+     * Specify either an url or name of existing endpoint.
      */
-    @UriParam(label = "producer")
-    private String runEndpointId;
+    @UriParam(label = "producer") @Metadata(required = "true")
+    private String runEndpoint;
 
     /**
-     * Specifies the fallbackEndpointId to use
+     * Specifies the fallback endpoint to use
+     * Specify either an url or name of existing endpoint.
      */
     @UriParam(label = "producer")
-    private String fallbackEndpointId;
+    private String fallbackEndpoint;
+
+    /**
+     * Whether to include a number of headers with metrics details of the circuit breaker utilization
+     */
+    @UriParam(label = "producer")
+    private boolean metrics;
 
     private Integer coreSize;
     private Integer keepAliveTime;
@@ -104,20 +111,20 @@ public class HystrixConfiguration {
     private Boolean requestCacheEnabled;
     private Boolean requestLogEnabled;
 
-    public String getRunEndpointId() {
-        return runEndpointId;
+    public String getRunEndpoint() {
+        return runEndpoint;
     }
 
-    public void setRunEndpointId(String runEndpointId) {
-        this.runEndpointId = runEndpointId;
+    public void setRunEndpoint(String runEndpoint) {
+        this.runEndpoint = runEndpoint;
     }
 
-    public String getFallbackEndpointId() {
-        return fallbackEndpointId;
+    public String getFallbackEndpoint() {
+        return fallbackEndpoint;
     }
 
-    public void setFallbackEndpointId(String fallbackEndpointId) {
-        this.fallbackEndpointId = fallbackEndpointId;
+    public void setFallbackEndpoint(String fallbackEndpoint) {
+        this.fallbackEndpoint = fallbackEndpoint;
     }
 
     public Expression getCacheKeyExpression() {
@@ -383,5 +390,13 @@ public class HystrixConfiguration {
 
     public void setRequestLogEnabled(Boolean requestLogEnabled) {
         this.requestLogEnabled = requestLogEnabled;
+    }
+
+    public boolean isMetrics() {
+        return metrics;
+    }
+
+    public void setMetrics(boolean metrics) {
+        this.metrics = metrics;
     }
 }
