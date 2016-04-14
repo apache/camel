@@ -19,6 +19,8 @@ package org.apache.camel.component.hystrix;
 public interface HystrixConstants {
 
     // in message header
+    String CAMEL_HYSTRIX_RUN_ENDPOINT = "CamelHystrixRunEndpoint";
+    String CAMEL_HYSTRIX_FALLBACK_ENDPOINT = "CamelHystrixFallbackEndpoint";
     String CAMEL_HYSTRIX_CLEAR_CACHE_FIRST = "CamelHystrixClearCacheFirst";
     String CAMEL_HYSTRIX_REQUEST_CONTEXT = "CamelHystrixRequestContex";
     String CAMEL_HYSTRIX_GROUP_KEY = "CamelHystrixGroupKey";

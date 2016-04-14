@@ -29,9 +29,8 @@ import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -40,8 +39,7 @@ import org.apache.camel.util.ServiceHelper;
 public class HystrixProducer extends DefaultProducer {
     private HystrixConfiguration configuration;
     private HystrixRequestContext requestContext;
-    private Producer runProducer;
-    private Producer fallbackProducer;
+    private ProducerCache producerCache;
 
     public HystrixProducer(HystrixEndpoint endpoint, HystrixConfiguration configuration) {
         super(endpoint);
@@ -55,7 +53,18 @@ public class HystrixProducer extends DefaultProducer {
         setCommandPropertiesDefaults(setter, exchange);
         setThreadPoolPropertiesDefaults(setter, exchange);
 
-        CamelHystrixCommand camelHystrixCommand = new CamelHystrixCommand(setter, exchange, getCacheKey(exchange), runProducer, fallbackProducer);
+        // lookup the endpoints to use, which can be overridden from headers
+        String run = exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_RUN_ENDPOINT, configuration.getRunEndpoint(), String.class);
+        String fallback = exchange.getIn().getHeader(HystrixConstants.CAMEL_HYSTRIX_FALLBACK_ENDPOINT, configuration.getFallbackEndpoint(), String.class);
+        Endpoint runEndpoint = exchange.getContext().getEndpoint(run);
+        Endpoint fallbackEndpoint = fallback != null ? exchange.getContext().getEndpoint(fallback) : null;
+
+        if (log.isDebugEnabled()) {
+            log.debug("Run endpoint: {}", runEndpoint);
+            log.debug("Fallback endpoint: {}", fallbackEndpoint);
+        }
+
+        CamelHystrixCommand camelHystrixCommand = new CamelHystrixCommand(setter, exchange, getCacheKey(exchange), producerCache, runEndpoint, fallbackEndpoint);
 
         checkRequestContextPresent(exchange);
         clearCache(camelHystrixCommand.getCommandKey(), exchange);
@@ -332,26 +341,9 @@ public class HystrixProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        // setup the run and fallback producers
-        Endpoint runEndpoint = getEndpoint().getCamelContext().getEndpoint(configuration.getRunEndpoint());
-        Endpoint fallbackEndpoint = null;
-        if (ObjectHelper.isNotEmpty(configuration.getFallbackEndpoint())) {
-            fallbackEndpoint = getEndpoint().getCamelContext().getEndpoint(configuration.getFallbackEndpoint());
-        }
-
-        if (fallbackEndpoint != null) {
-            log.debug("Endpoint run: {}, fallback: {}", runEndpoint, fallbackEndpoint);
-        } else {
-            log.debug("Endpoint run: {}", runEndpoint);
-        }
-
-        // start endpoints before creating producer
-        ServiceHelper.startServices(runEndpoint, fallbackEndpoint);
-        runProducer = runEndpoint.createProducer();
-        fallbackProducer = fallbackEndpoint != null ? fallbackEndpoint.createProducer() : null;
-
-        // start producers
-        ServiceHelper.startServices(runProducer, fallbackProducer);
+        // setup the producer cache
+        producerCache = new ProducerCache(this, getEndpoint().getCamelContext());
+        ServiceHelper.startService(producerCache);
 
         if (configuration.getInitializeRequestContext() != null && configuration.getInitializeRequestContext()) {
             requestContext = HystrixRequestContext.initializeContext();
@@ -364,7 +356,7 @@ public class HystrixProducer extends DefaultProducer {
         if (requestContext != null) {
             requestContext.shutdown();
         }
-        ServiceHelper.stopServices(runProducer, fallbackProducer);
+        ServiceHelper.stopService(producerCache);
         super.doStop();
     }
 
