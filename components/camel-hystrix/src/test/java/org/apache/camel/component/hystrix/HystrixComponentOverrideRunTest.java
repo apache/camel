@@ -60,7 +60,7 @@ public class HystrixComponentOverrideRunTest extends HystrixComponentBase {
                         .to("mock:run2");
 
                 from("direct:start")
-                        .to("hystrix:testKey?runEndpoint=direct:run&fallbackEndpoint=direct:fallback&cacheKeyExpression=#headerExpression&initializeRequestContext=true");
+                        .to("hystrix:testKey?runEndpoint=direct:run&fallbackEndpoint=direct:fallback&cacheKey=header.key&initializeRequestContext=true");
             }
         };
     }

@@ -16,14 +16,10 @@
  */
 package org.apache.camel.component.hystrix;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class HystrixComponentBase extends CamelTestSupport {
@@ -37,12 +33,5 @@ public class HystrixComponentBase extends CamelTestSupport {
     @EndpointInject(uri = "mock:error")
     protected MockEndpoint errorEndpoint;
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        CamelContext context = new DefaultCamelContext(registry);
-        registry.put("headerExpression", ExpressionBuilder.headerExpression("key"));
-        return context;
-    }
 }
 
