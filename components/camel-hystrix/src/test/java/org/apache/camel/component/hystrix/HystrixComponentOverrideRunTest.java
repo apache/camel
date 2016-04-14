@@ -40,7 +40,6 @@ public class HystrixComponentOverrideRunTest extends HystrixComponentBase {
         headers.put(HystrixConstants.CAMEL_HYSTRIX_RUN_ENDPOINT, "direct:run2");
 
         template.sendBodyAndHeaders("body", headers);
-        template.sendBodyAndHeaders("body", headers);
 
         assertMockEndpointsSatisfied();
     }
@@ -60,7 +59,7 @@ public class HystrixComponentOverrideRunTest extends HystrixComponentBase {
                         .to("mock:run2");
 
                 from("direct:start")
-                        .to("hystrix:testKey?runEndpoint=direct:run&fallbackEndpoint=direct:fallback&cacheKey=header.key&initializeRequestContext=true");
+                        .to("hystrix:testKey?runEndpoint=direct:run&fallbackEndpoint=direct:fallback&initializeRequestContext=true");
             }
         };
     }

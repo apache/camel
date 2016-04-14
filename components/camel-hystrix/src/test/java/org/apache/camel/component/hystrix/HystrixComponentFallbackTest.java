@@ -90,7 +90,7 @@ public class HystrixComponentFallbackTest extends HystrixComponentBase {
                         .to("mock:result");
 
                 from("direct:start")
-                        .to("hystrix:testKey?runEndpoint=direct:run&fallbackEndpoint=direct:fallback&cacheKey=header.key&initializeRequestContext=true");
+                        .to("hystrix:testKey?runEndpoint=direct:run&fallbackEndpoint=direct:fallback&initializeRequestContext=true");
             }
         };
     }
