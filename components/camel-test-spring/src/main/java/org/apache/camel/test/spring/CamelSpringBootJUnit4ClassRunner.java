@@ -22,8 +22,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * An implementation bringing the functionality of {@link CamelSpringTestSupport} to
- * Spring Test based test cases.  This approach allows developers to implement tests
- * for their Spring based applications/routes using the typical Spring Test conventions
+ * Spring Boot Test based test cases.  This approach allows developers to implement tests
+ * for their Spring Boot based applications/routes using the typical Spring Test conventions
  * for test development.
  */
 public class CamelSpringBootJUnit4ClassRunner extends SpringJUnit4ClassRunner {
