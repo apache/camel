@@ -113,6 +113,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             description = "If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers."
             + " Setting this to false will avoid the HTTP Headers mapping.")
     boolean mapHttpMessageHeaders = true;
+    @UriParam(label = "advanced", defaultValue = "true",
+            description = "If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP."
+            + " Setting this to false will avoid the HTTP Form Encoded body mapping.")
+    boolean mapHttpMessageFormUrlEncodedBody = true;
     @UriParam(label = "producer", defaultValue = "200-299",
             description = "The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.")
     private String okStatusCodeRange = "200-299";
@@ -184,6 +188,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             httpBinding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
             httpBinding.setMapHttpMessageBody(isMapHttpMessageBody());
             httpBinding.setMapHttpMessageHeaders(isMapHttpMessageHeaders());
+            httpBinding.setMapHttpMessageFormUrlEncodedBody(isMapHttpMessageFormUrlEncodedBody());
         }
         return httpBinding;
     }
@@ -494,5 +499,16 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      */
     public void setMapHttpMessageHeaders(boolean mapHttpMessageHeaders) {
         this.mapHttpMessageHeaders = mapHttpMessageHeaders;
+    }
+
+    public boolean isMapHttpMessageFormUrlEncodedBody() {
+        return mapHttpMessageFormUrlEncodedBody;
+    }
+
+    /**
+     * If this option is true then IN exchange Form Encoded body will be mapped to HTTP 
+     */
+    public void setMapHttpMessageFormUrlEncodedBody(boolean mapHttpMessageFormUrlEncodedBody) {
+        this.mapHttpMessageFormUrlEncodedBody = mapHttpMessageFormUrlEncodedBody;
     }
 }

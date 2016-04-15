@@ -149,6 +149,11 @@ public interface HttpBinding {
     boolean isMapHttpMessageHeaders();
 
     /**
+     * Whether to allow Exchange Form URL Encoded Body HTTP mapping
+     */
+    boolean isMapHttpMessageFormUrlEncodedBody();
+
+    /**
      * Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present.
      * This can be turned on in case HTTP clients do not send streamed data.
      */
@@ -204,5 +209,12 @@ public interface HttpBinding {
      * This is by default turned on. If you disable this then be aware that the Exchange headers won't be mapped to HTTP
      */
     void setMapHttpMessageHeaders(boolean mapHttpMessageHeaders);
+
+    /**
+     * Whether to allow Exchange Form URL Encoded Body HTTP mapping
+     * <p/>
+     * This is by default turned on. If you disable this then be aware that the Exchange Form URL Encoded Body won't be mapped to HTTP
+     */
+    void setMapHttpMessageFormUrlEncodedBody(boolean mapHttpMessageFormUrlEncodedBody);
 
 }
