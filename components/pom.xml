@@ -105,6 +105,7 @@
     <module>camel-exec</module>
     <module>camel-facebook</module>
     <module>camel-flatpack</module>
+    <module>camel-flink</module>
     <module>camel-fop</module>
     <module>camel-freemarker</module>
     <module>camel-ftp</module>
