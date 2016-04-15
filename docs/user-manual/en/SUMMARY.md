@@ -152,6 +152,7 @@
     * [HDFS2](hdfs2.adoc)
     * [Hessian](hessian.adoc)
     * [Hipchat](hipchat.adoc)
+    * [HL7](hl7.adoc)
     * [Http4](http4.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
