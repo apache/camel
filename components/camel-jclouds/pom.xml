@@ -41,7 +41,7 @@
 
     <!-- jclouds requires guice 3 -->
     <google-guava-version>${jclouds-google-guava-version}</google-guava-version>
-    <guice3-version>${guice-version}</guice3-version>
+    <guice-version>${guice3-version}</guice-version>
   </properties>
 
   <dependencies>
