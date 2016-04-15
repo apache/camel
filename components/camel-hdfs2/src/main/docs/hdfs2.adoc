@@ -55,8 +55,11 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The HDFS2 component supports 1 options which are listed below.
+
+
 
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
@@ -64,6 +67,7 @@ The HDFS2 component supports 1 options which are listed below.
 | jAASConfiguration | Configuration | To use the given configuration for security with JAAS.
 |=======================================================================
 // component options: END
+
 
 // endpoint options: START
 The HDFS2 component supports 41 endpoint options which are listed below:
