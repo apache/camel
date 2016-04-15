@@ -17,13 +17,11 @@
 package org.apache.camel.itest.karaf;
 
 import org.apache.camel.test.karaf.AbstractFeatureTest;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-@Ignore("camel-guice does not work in OSGi")
 public class CamelGuiceTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelGuiceTest.class);
