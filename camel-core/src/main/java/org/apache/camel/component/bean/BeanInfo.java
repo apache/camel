@@ -209,6 +209,10 @@ public class BeanInfo {
             String name = methodName;
             if (methodName.contains("(")) {
                 name = ObjectHelper.before(methodName, "(");
+                // the must be a ending parenthesis
+                if (!methodName.endsWith(")")) {
+                    throw new IllegalArgumentException("Method should end with parenthesis, was " + methodName);
+                }
             }
             boolean emptyParameters = methodName.endsWith("()");
 
