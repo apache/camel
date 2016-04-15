@@ -136,8 +136,9 @@ The HTTP component supports 6 options which are listed below.
 
 
 
+
 // endpoint options: START
-The HTTP component supports 24 endpoint options which are listed below:
+The HTTP component supports 25 endpoint options which are listed below:
 
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
@@ -164,10 +165,12 @@ The HTTP component supports 24 endpoint options which are listed below:
 | httpConnectionManager | advanced |  | HttpConnectionManager | To use a custom HttpConnectionManager to manage connections
 | httpConnectionManagerOptions | advanced |  | Map | To configure the HttpConnectionManager using the key/values from the Map.
 | mapHttpMessageBody | advanced | true | boolean | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping.
+| mapHttpMessageFormUrlEncodedBody | advanced | true | boolean | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping.
 | mapHttpMessageHeaders | advanced | true | boolean | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
+
 
 
 [[HTTP-MessageHeaders]]

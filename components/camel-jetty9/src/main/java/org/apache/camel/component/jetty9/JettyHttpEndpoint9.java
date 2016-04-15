@@ -52,6 +52,7 @@ public class JettyHttpEndpoint9 extends JettyHttpEndpoint {
             //this.binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
             this.binding.setMapHttpMessageBody(isMapHttpMessageBody());
             this.binding.setMapHttpMessageHeaders(isMapHttpMessageHeaders());
+            this.binding.setMapHttpMessageFormUrlEncodedBody(isMapHttpMessageFormUrlEncodedBody());
         }
         return this.binding;
     }

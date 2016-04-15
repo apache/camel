@@ -82,8 +82,9 @@ The HTTP4 component supports 13 options which are listed below.
 
 
 
+
 // endpoint options: START
-The HTTP4 component supports 30 endpoint options which are listed below:
+The HTTP4 component supports 31 endpoint options which are listed below:
 
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
@@ -115,11 +116,13 @@ The HTTP4 component supports 30 endpoint options which are listed below:
 | httpClientOptions | advanced |  | Map | To configure the HttpClient using the key/values from the Map.
 | httpContext | advanced |  | HttpContext | To use a custom HttpContext instance
 | mapHttpMessageBody | advanced | true | boolean | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping.
+| mapHttpMessageFormUrlEncodedBody | advanced | true | boolean | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping.
 | mapHttpMessageHeaders | advanced | true | boolean | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | useSystemProperties | advanced | false | boolean | To use System Properties as fallback for configuration
 |=======================================================================
 // endpoint options: END
+
 
 
 
