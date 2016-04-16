@@ -40,7 +40,6 @@
     <module>camel-itest-standalone</module>
     <module>camel-itest</module>
     <module>camel-itest-cdi</module>
-    <module>camel-itest-spring40</module>
     <module>camel-blueprint-cxf-test</module>
     <module>camel-partial-classpath-test</module>
     <module>camel-typeconverterscan-test</module>
