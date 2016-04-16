@@ -16,6 +16,17 @@
  */
 package org.apache.camel.test.spring;
 
-public class CamelSpringJUnit4ClassRunnerLazyLoadTypeConvertersInheritedTest 
-        extends CamelSpringJUnit4ClassRunnerLazyLoadTypeConvertersTest {
+import org.apache.camel.management.DefaultManagementStrategy;
+
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
+@DisableJmx
+public class CamelSpringRunnerDisableJmxInheritedOverrideTest
+        extends CamelSpringRunnerDisableJmxTest {
+
+    @Test
+    public void testJmx() throws Exception {
+        assertEquals(DefaultManagementStrategy.class, camelContext.getManagementStrategy().getClass());
+    }
 }

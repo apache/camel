@@ -16,19 +16,18 @@
  */
 package org.apache.camel.test.spring;
 
-import java.util.concurrent.TimeUnit;
-
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
-@ShutdownTimeout
-public class CamelSpringJUnit4ClassRunnerShutdownTimeoutInheritedOverrideTest
-        extends CamelSpringJUnit4ClassRunnerShutdownTimeoutTest {
+@SuppressWarnings("deprecation")
+@LazyLoadTypeConverters(false)
+public class CamelSpringRunnerLazyLoadTypeConvertersTest
+        extends CamelSpringRunnerPlainTest {
 
     @Test
     @Override
-    public void testShutdownTimeout() throws Exception {
-        assertEquals(10, camelContext.getShutdownStrategy().getTimeout());
-        assertEquals(TimeUnit.SECONDS, camelContext.getShutdownStrategy().getTimeUnit());
+    public void testLazyLoadTypeConverters() {
+        assertFalse(camelContext.isLazyLoadTypeConverters());
+        assertFalse(camelContext2.isLazyLoadTypeConverters());
     }
 }

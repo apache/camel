@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,55 +16,18 @@
  */
 package org.apache.camel.test.spring;
 
-import java.util.List;
-
 import org.junit.runners.model.InitializationError;
-import org.springframework.core.OrderComparator;
-import org.springframework.test.context.TestContextManager;
-import org.springframework.test.context.TestExecutionListener;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * An implementation bringing the functionality of {@link org.apache.camel.test.spring.CamelSpringTestSupport} to
- * Spring Test based test cases.  This approach allows developers to implement tests
- * for their Spring based applications/routes using the typical Spring Test conventions
- * for test development.
+ * The class {@link CamelSpringJUnit4ClassRunner} has been renamed to {@link CamelSpringRunner}
+ * which is a shorter and easier to remember name.
+ *
+ * @deprecated use {@link CamelSpringRunner}
  */
-public class CamelSpringJUnit4ClassRunner extends SpringJUnit4ClassRunner {
+@Deprecated
+public class CamelSpringJUnit4ClassRunner extends CamelSpringRunner {
 
     public CamelSpringJUnit4ClassRunner(Class<?> clazz) throws InitializationError {
         super(clazz);
     }
-
-    /**
-     * Returns the specialized manager instance that provides tight integration between Camel testing
-     * features and Spring.
-     *
-     * @return a new instance of {@link CamelTestContextManager}.
-     */
-    @Override
-    protected TestContextManager createTestContextManager(Class<?> clazz) {
-        return new CamelTestContextManager(clazz);
-    }
-
-    /**
-     * An implementation providing additional integration between Spring Test and Camel
-     * testing features.
-     */
-    public static final class CamelTestContextManager extends TestContextManager {
-
-        public CamelTestContextManager(Class<?> testClass) {
-            super(testClass);
-
-            // inject Camel first, and then disable jmx and add the stop-watch
-            List<TestExecutionListener> list = getTestExecutionListeners();
-            list.add(new CamelSpringTestContextLoaderTestExecutionListener());
-            list.add(new DisableJmxTestExecutionListener());
-            list.add(new StopWatchTestExecutionListener());
-            OrderComparator.sort(list);
-            registerTestExecutionListeners(list);
-        }
-
-    }
-
 }

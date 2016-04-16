@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @UseAdviceWith
-public class CamelSpringJUnit4ClassRunnerUseAdviceWithTest extends CamelSpringJUnit4ClassRunnerPlainTest {
+public class CamelSpringRunnerUseAdviceWithTest extends CamelSpringRunnerPlainTest {
     
     @Before
     public void testContextStarted() throws Exception {

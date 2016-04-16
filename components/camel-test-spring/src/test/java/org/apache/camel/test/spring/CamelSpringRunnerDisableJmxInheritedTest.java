@@ -16,17 +16,6 @@
  */
 package org.apache.camel.test.spring;
 
-import org.apache.camel.management.DefaultManagementStrategy;
-
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-
-@DisableJmx
-public class CamelSpringJUnit4ClassRunnerDisableJmxInheritedOverrideTest
-        extends CamelSpringJUnit4ClassRunnerDisableJmxTest {
-
-    @Test
-    public void testJmx() throws Exception {
-        assertEquals(DefaultManagementStrategy.class, camelContext.getManagementStrategy().getClass());
-    }
+public class CamelSpringRunnerDisableJmxInheritedTest
+        extends CamelSpringRunnerDisableJmxTest {
 }

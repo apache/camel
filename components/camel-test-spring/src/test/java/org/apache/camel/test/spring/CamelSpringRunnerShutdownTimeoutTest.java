@@ -22,8 +22,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 @ShutdownTimeout(value = 11, timeUnit = TimeUnit.MILLISECONDS)
-public class CamelSpringJUnit4ClassRunnerShutdownTimeoutTest
-        extends CamelSpringJUnit4ClassRunnerPlainTest {
+public class CamelSpringRunnerShutdownTimeoutTest
+        extends CamelSpringRunnerPlainTest {
 
     @Test
     @Override

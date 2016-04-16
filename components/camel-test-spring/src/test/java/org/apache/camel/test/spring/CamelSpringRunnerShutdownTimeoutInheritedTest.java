@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.spring;
 
-public class CamelSpringJUnit4ClassRunnerDisableJmxInheritedTest 
-        extends CamelSpringJUnit4ClassRunnerDisableJmxTest {
+public class CamelSpringRunnerShutdownTimeoutInheritedTest
+        extends CamelSpringRunnerShutdownTimeoutTest {
+
 }

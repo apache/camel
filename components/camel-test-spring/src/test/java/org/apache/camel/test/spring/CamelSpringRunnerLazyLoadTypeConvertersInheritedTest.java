@@ -16,18 +16,6 @@
  */
 package org.apache.camel.test.spring;
 
-import org.junit.Test;
-import static org.junit.Assert.assertTrue;
-
-@SuppressWarnings("deprecation")
-@LazyLoadTypeConverters(true)
-public class CamelSpringJUnit4ClassRunnerLazyLoadTypeConvertersInheritedOverrideTest 
-        extends CamelSpringJUnit4ClassRunnerLazyLoadTypeConvertersInheritedTest {
-
-    @Test
-    @Override
-    public void testLazyLoadTypeConverters() {
-        assertTrue(camelContext.isLazyLoadTypeConverters());
-        assertTrue(camelContext2.isLazyLoadTypeConverters());
-    }
+public class CamelSpringRunnerLazyLoadTypeConvertersInheritedTest
+        extends CamelSpringRunnerLazyLoadTypeConvertersTest {
 }

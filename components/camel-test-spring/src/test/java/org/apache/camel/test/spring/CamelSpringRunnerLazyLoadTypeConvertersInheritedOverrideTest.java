@@ -17,17 +17,17 @@
 package org.apache.camel.test.spring;
 
 import org.junit.Test;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("deprecation")
-@LazyLoadTypeConverters(false)
-public class CamelSpringJUnit4ClassRunnerLazyLoadTypeConvertersTest 
-        extends CamelSpringJUnit4ClassRunnerPlainTest {
+@LazyLoadTypeConverters(true)
+public class CamelSpringRunnerLazyLoadTypeConvertersInheritedOverrideTest
+        extends CamelSpringRunnerLazyLoadTypeConvertersInheritedTest {
 
     @Test
     @Override
     public void testLazyLoadTypeConverters() {
-        assertFalse(camelContext.isLazyLoadTypeConverters());
-        assertFalse(camelContext2.isLazyLoadTypeConverters());
+        assertTrue(camelContext.isLazyLoadTypeConverters());
+        assertTrue(camelContext2.isLazyLoadTypeConverters());
     }
 }

@@ -27,8 +27,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class CamelSpringJUnit4ClassRunnerProvidesBreakpointTest 
-        extends CamelSpringJUnit4ClassRunnerPlainTest {
+public class CamelSpringRunnerProvidesBreakpointTest
+        extends CamelSpringRunnerPlainTest {
 
     @ProvidesBreakpoint
     public static Breakpoint createBreakpoint() {

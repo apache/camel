@@ -41,7 +41,7 @@ import static org.junit.Assert.assertTrue;
 
 // START SNIPPET: e1
 // tag::example[]
-@RunWith(CamelSpringJUnit4ClassRunner.class)
+@RunWith(CamelSpringRunner.class)
 // must tell Spring to bootstrap with Camel
 @BootstrapWith(CamelTestContextBootstrapper.class)
 @ContextConfiguration()
@@ -49,7 +49,7 @@ import static org.junit.Assert.assertTrue;
 // from this test and therefore use the same Spring context.  Also because we want to reset the
 // Camel context and mock endpoints between test methods automatically.
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-public class CamelSpringJUnit4ClassRunnerPlainTest {
+public class CamelSpringRunnerPlainTest {
     
     @Autowired
     protected CamelContext camelContext;

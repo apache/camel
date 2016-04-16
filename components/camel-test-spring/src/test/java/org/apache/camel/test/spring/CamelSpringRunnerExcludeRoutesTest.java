@@ -16,7 +16,14 @@
  */
 package org.apache.camel.test.spring;
 
-public class CamelSpringJUnit4ClassRunnerShutdownTimeoutInheritedTest
-        extends CamelSpringJUnit4ClassRunnerShutdownTimeoutTest {
+import static org.junit.Assert.assertNull;
 
+@ExcludeRoutes(TestRouteBuilder.class)
+public class CamelSpringRunnerExcludeRoutesTest
+        extends CamelSpringRunnerPlainTest {
+
+    @Override
+    public void testExcludedRoute() {
+        assertNull(camelContext.getRoute("excludedRoute"));
+    }
 }

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.test.spring;
 
-public class CamelSpringJUnit4ClassRunnerProvidesBreakpointInherritedTest 
-        extends CamelSpringJUnit4ClassRunnerProvidesBreakpointTest {
+public class CamelSpringRunnerProvidesBreakpointInherritedTest
+        extends CamelSpringRunnerProvidesBreakpointTest {
 
 }

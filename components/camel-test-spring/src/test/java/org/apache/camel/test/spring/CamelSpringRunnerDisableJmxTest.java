@@ -22,8 +22,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 @DisableJmx(false)
-public class CamelSpringJUnit4ClassRunnerDisableJmxTest 
-        extends CamelSpringJUnit4ClassRunnerPlainTest {
+public class CamelSpringRunnerDisableJmxTest
+        extends CamelSpringRunnerPlainTest {
 
     @Test
     @Override

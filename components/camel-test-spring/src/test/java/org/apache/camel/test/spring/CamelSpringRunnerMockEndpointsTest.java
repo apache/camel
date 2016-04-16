@@ -22,35 +22,36 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@MockEndpointsAndSkip("{{mock.skip}}")
-public class CamelSpringJUnit4ClassRunnerMockEndpointsAndSkipTest
-        extends CamelSpringJUnit4ClassRunnerPlainTest {
+@MockEndpoints("seda:context2.seda")
+public class CamelSpringRunnerMockEndpointsTest
+        extends CamelSpringRunnerPlainTest {
 
     @EndpointInject(uri = "mock:seda:context2.seda", context = "camelContext2")
     protected MockEndpoint mock;
-
+    
     @EndpointInject(uri = "seda:context2.seda", context = "camelContext2")
     private InterceptSendToEndpoint original;
-
+    
     @Test
     @Override
     public void testPositive() throws Exception {
+        
         assertEquals(ServiceStatus.Started, camelContext.getStatus());
         assertEquals(ServiceStatus.Started, camelContext2.getStatus());
-
+        
         mockA.expectedBodiesReceived("David");
         mockB.expectedBodiesReceived("Hello David");
+        mockC.expectedBodiesReceived("David");
         mock.expectedBodiesReceived("Hello David");
-
+        
         start.sendBody("David");
         start2.sendBody("David");
-
+        
         MockEndpoint.assertIsSatisfied(camelContext);
         MockEndpoint.assertIsSatisfied(camelContext2);
-        assertTrue("Original endpoint was invoked", ((SedaEndpoint) original.getDelegate()).getExchanges().isEmpty());
+        assertTrue("Original endpoint should be invoked", ((SedaEndpoint) original.getDelegate()).getExchanges().size() == 1);
     }
 }
