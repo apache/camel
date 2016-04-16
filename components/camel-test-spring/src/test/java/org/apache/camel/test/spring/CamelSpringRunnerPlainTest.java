@@ -118,12 +118,6 @@ public class CamelSpringRunnerPlainTest {
         assertNull(camelContext2.getDebugger());
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testLazyLoadTypeConverters() {
-        assertTrue(camelContext.isLazyLoadTypeConverters());
-        assertTrue(camelContext2.isLazyLoadTypeConverters());
-    }
 }
 // end::example[]
 // END SNIPPET: e1
