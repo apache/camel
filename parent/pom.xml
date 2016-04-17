@@ -454,7 +454,7 @@
     <qpid-bundle-version>0.28_1</qpid-bundle-version>
     <qpid-version>0.28</qpid-version>
     <qpid-proton-j-version>0.12.0</qpid-proton-j-version>
-    <qpid-jms-client-version>0.8.0</qpid-jms-client-version>
+    <qpid-jms-client-version>0.9.0</qpid-jms-client-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
     <quartz-version-range>[1.8,2)</quartz-version-range>
