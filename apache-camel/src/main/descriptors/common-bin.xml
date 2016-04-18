@@ -228,6 +228,7 @@
         <include>org.apache.camel:camel-test</include>
         <include>org.apache.camel:camel-test-blueprint</include>
         <include>org.apache.camel:camel-test-cdi</include>
+        <include>org.apache.camel:camel-test-test-karaf</include>
         <include>org.apache.camel:camel-test-spring</include>
         <include>org.apache.camel:camel-testng</include>
         <include>org.apache.camel:camel-twitter</include>
