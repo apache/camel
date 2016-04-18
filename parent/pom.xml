@@ -336,7 +336,7 @@
     <json-path-version>2.1.0</json-path-version>
     <json-simple-version>1.1.1</json-simple-version>
     <json-smart-version>2.2.1</json-smart-version>
-    <jsoup-version>1.8.3</jsoup-version>
+    <jsoup-version>1.9.1</jsoup-version>
     <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
     <jsr311-api-version>1.1.1</jsr311-api-version>
     <jsmpp-bundle-version>2.1.0_4</jsmpp-bundle-version>
