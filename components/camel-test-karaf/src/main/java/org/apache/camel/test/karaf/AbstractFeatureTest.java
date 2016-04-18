@@ -119,6 +119,21 @@ public abstract class AbstractFeatureTest {
         return answer;
     }
 
+    protected Bundle installSpringAsBundle(String name, URL url, boolean start) throws BundleException {
+        TinyBundle bundle = TinyBundles.bundle();
+        bundle.add("META-INF/spring/spring-" + name.toLowerCase(Locale.ENGLISH) + ".xml", url);
+        bundle.set("Manifest-Version", "2")
+                .set("Bundle-ManifestVersion", "2")
+                .set("Bundle-SymbolicName", name)
+                .set("Bundle-Version", "1.0.0");
+        Bundle answer = bundleContext.installBundle(name, bundle.build());
+
+        if (start) {
+            answer.start();
+        }
+        return answer;
+    }
+
     protected void installCamelFeature(String mainFeature) throws Exception {
         if (!mainFeature.startsWith("camel-")) {
             mainFeature = "camel-" + mainFeature;
