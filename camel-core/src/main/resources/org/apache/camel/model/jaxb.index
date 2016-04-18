@@ -27,9 +27,11 @@ DescriptionDefinition
 DynamicRouterDefinition
 EnrichDefinition
 ExpressionSubElementDefinition
+FallbackDefinition
 FilterDefinition
 FinallyDefinition
 FromDefinition
+HystrixCircuitBreakerDefinition
 IdempotentConsumerDefinition
 InOnlyDefinition
 InOutDefinition

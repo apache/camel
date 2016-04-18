@@ -1470,6 +1470,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Creates a Circuit Breaker EIP that is using Hystrix.
+     *
+     * @return  the builder
+     */
+    public HystrixCircuitBreakerDefinition hystrixCircuitBreaker() {
+        HystrixCircuitBreakerDefinition answer = new HystrixCircuitBreakerDefinition();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
      * <a href="http://camel.apache.org/load-balancer.html">Load Balancer EIP:</a>
      * Creates a loadbalance
      *
