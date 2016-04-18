@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HystrixCircuitBreakerTest extends CamelTestSupport {
+public class HystrixCircuitBreakerFallbackTest extends CamelTestSupport {
 
     @Test
     public void testHystrixCircuitBreaker() throws Exception {
@@ -38,11 +38,14 @@ public class HystrixCircuitBreakerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .hystrixCircuitBreaker()
-                        .throwException(new IllegalArgumentException("Forced"))
+                        .to("direct:foo")
                     .fallback()
                         .transform().constant("Fallback message")
                     .end()
                     .to("mock:result");
+
+                from("direct:foo")
+                    .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

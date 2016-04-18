@@ -82,14 +82,18 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        HystrixCommandGroupKey key = HystrixCommandGroupKey.Factory.asKey(id);
+        // run this as if we run inside try .. catch so there is no regular Camel error handler
+        exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
 
+        HystrixCommandGroupKey key = HystrixCommandGroupKey.Factory.asKey(id);
         HystrixProcessorCommand command = new HystrixProcessorCommand(key, exchange, callback, processor, fallback);
         try {
             command.execute();
         } catch (Throwable e) {
             exchange.setException(e);
         }
+
+        exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
 
         callback.done(true);
         return true;
