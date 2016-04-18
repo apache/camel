@@ -15,17 +15,28 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<beans version="1.0" bean-discovery-mode="all">
+<camelContext id="test" errorHandlerRef="error-handler"
+              xmlns="http://camel.apache.org/schema/spring">
 
-    <scan>
-        <exclude name="org.apache.camel.cdi.Main"/>
-        <exclude name="org.apache.camel.cdi.xml.*"/>
-        <exclude name="org.apache.camel.cdi.XmlCdiBeanFactory"/>
-        <exclude name="org.apache.camel.cdi.XmlCdiJaxbContexts"/>
-        <exclude name="org.apache.camel.cdi.XmlErrorHandlerFactoryBean"/>
-        <exclude name="org.apache.camel.cdi.XmlFactoryBeanInjectionTarget"/>
-        <exclude name="org.apache.camel.cdi.XmlProxyFactoryBean"/>
-        <exclude name="org.apache.camel.cdi.XmlServiceExporterBean"/>
-    </scan>
+    <errorHandler id="error-handler"
+                  type="LoggingErrorHandler"
+                  logName="error"
+                  level="WARN"/>
 
-</beans>
+    <route>
+        <from uri="direct:inbound"/>
+        <choice>
+            <when>
+                <simple>${body} contains 'exception'</simple>
+                <throwException ref="failure"/>
+            </when>
+            <otherwise>
+                <transform>
+                    <simple>Response to ${body}</simple>
+                </transform>
+                <to uri="mock:outbound"/>
+            </otherwise>
+        </choice>
+    </route>
+
+</camelContext>

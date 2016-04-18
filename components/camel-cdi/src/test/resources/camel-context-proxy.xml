@@ -15,17 +15,17 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<beans version="1.0" bean-discovery-mode="all">
+<camelContext id="test" xmlns="http://camel.apache.org/schema/spring">
 
-    <scan>
-        <exclude name="org.apache.camel.cdi.Main"/>
-        <exclude name="org.apache.camel.cdi.xml.*"/>
-        <exclude name="org.apache.camel.cdi.XmlCdiBeanFactory"/>
-        <exclude name="org.apache.camel.cdi.XmlCdiJaxbContexts"/>
-        <exclude name="org.apache.camel.cdi.XmlErrorHandlerFactoryBean"/>
-        <exclude name="org.apache.camel.cdi.XmlFactoryBeanInjectionTarget"/>
-        <exclude name="org.apache.camel.cdi.XmlProxyFactoryBean"/>
-        <exclude name="org.apache.camel.cdi.XmlServiceExporterBean"/>
-    </scan>
+    <proxy id="proxy"
+           serviceInterface="org.apache.camel.cdi.bean.Service"
+           serviceUrl="direct:service"/>
 
-</beans>
+    <route>
+        <from uri="direct:service"/>
+        <transform>
+            <simple>Service called with: [${body}]</simple>
+        </transform>
+    </route>
+
+</camelContext>

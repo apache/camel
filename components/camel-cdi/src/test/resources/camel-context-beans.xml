@@ -15,17 +15,20 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<beans version="1.0" bean-discovery-mode="all">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <scan>
-        <exclude name="org.apache.camel.cdi.Main"/>
-        <exclude name="org.apache.camel.cdi.xml.*"/>
-        <exclude name="org.apache.camel.cdi.XmlCdiBeanFactory"/>
-        <exclude name="org.apache.camel.cdi.XmlCdiJaxbContexts"/>
-        <exclude name="org.apache.camel.cdi.XmlErrorHandlerFactoryBean"/>
-        <exclude name="org.apache.camel.cdi.XmlFactoryBeanInjectionTarget"/>
-        <exclude name="org.apache.camel.cdi.XmlProxyFactoryBean"/>
-        <exclude name="org.apache.camel.cdi.XmlServiceExporterBean"/>
-    </scan>
+    <camel:endpoint id="inbound" uri="direct:inbound"/>
+    <camel:endpoint id="outbound" uri="mock:outbound"/>
+
+    <camel:camelContext>
+        <camel:route>
+            <camel:from ref="inbound"/>
+            <camel:to ref="outbound"/>
+        </camel:route>
+    </camel:camelContext>
 
 </beans>

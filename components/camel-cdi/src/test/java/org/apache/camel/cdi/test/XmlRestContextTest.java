@@ -16,62 +16,89 @@
  */
 package org.apache.camel.cdi.test;
 
-import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.cdi.CdiCamelExtension;
+import org.apache.camel.cdi.ImportResource;
 import org.apache.camel.cdi.Uri;
+import org.apache.camel.cdi.mock.DummyRestConsumerFactory;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ModelHelper;
-import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
-public class RouteDefinitionsFromXmlTest {
+@ImportResource({
+    "imported-context-restContext.xml",
+    "imported-context-restContextRef.xml"
+})
+public class XmlRestContextTest {
+
+    @Produces
+    private static DummyRestConsumerFactory rest = new DummyRestConsumerFactory();
 
     @Inject
-    @Uri("direct:inbound")
+    @Uri("seda:get-inbound")
     private ProducerTemplate inbound;
 
     @Inject
     @Uri("mock:outbound")
     private MockEndpoint outbound;
 
-    @Produces
-    private RoutesDefinition routes(CamelContext context) throws Exception {
-        try (InputStream routes = getClass().getResourceAsStream("/camel-context-routes.xml")) {
-            return ModelHelper.createModelFromXml(context, routes, RoutesDefinition.class);
-        }
-    }
+    @Inject
+    @Named("rest")
+    private List<RestDefinition> rests;
 
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
             // Camel CDI
             .addPackage(CdiCamelExtension.class.getPackage())
+            // Test Camel XML
+            .addAsResource(
+                Paths.get("src/test/resources/camel-context-restContext.xml").toFile(),
+                "imported-context-restContext.xml")
+            .addAsResource(
+                Paths.get("src/test/resources/camel-context-restContextRef.xml").toFile(),
+                "imported-context-restContextRef.xml")
             // Bean archive deployment descriptor
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
+    public void verifyRestContext() {
+        assertThat("Rest context is incorrect!", rests, hasSize(1));
+        RestDefinition rest = rests.get(0);
+        assertThat("Rest path is incorrect!", rest.getPath(), is(equalTo("/inbound")));
+    }
+
+    @Test
     public void sendMessageToInbound() throws InterruptedException {
         outbound.expectedMessageCount(1);
-        outbound.expectedBodiesReceived("test");
+        outbound.expectedBodiesReceived("Response to request");
 
-        inbound.sendBody("test");
+        inbound.sendBody("request");
 
         assertIsSatisfied(2L, TimeUnit.SECONDS, outbound);
     }

@@ -16,63 +16,74 @@
  */
 package org.apache.camel.cdi.test;
 
-import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
 
-import org.apache.camel.CamelContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.cdi.CdiCamelExtension;
+import org.apache.camel.cdi.ImportResource;
 import org.apache.camel.cdi.Uri;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ModelHelper;
-import org.apache.camel.model.RoutesDefinition;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
-public class RouteDefinitionsFromXmlTest {
+@ImportResource("imported-context.xml")
+public class XmlConsumerTemplateTest {
 
     @Inject
     @Uri("direct:inbound")
     private ProducerTemplate inbound;
 
+    @Named
     @Inject
-    @Uri("mock:outbound")
-    private MockEndpoint outbound;
-
-    @Produces
-    private RoutesDefinition routes(CamelContext context) throws Exception {
-        try (InputStream routes = getClass().getResourceAsStream("/camel-context-routes.xml")) {
-            return ModelHelper.createModelFromXml(context, routes, RoutesDefinition.class);
-        }
-    }
+    private ConsumerTemplate consumer;
 
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
             // Camel CDI
             .addPackage(CdiCamelExtension.class.getPackage())
+            // Test Camel XML
+            .addAsResource(
+                Paths.get("src/test/resources/camel-context-consumer.xml").toFile(),
+                "imported-context.xml")
             // Bean archive deployment descriptor
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
-    public void sendMessageToInbound() throws InterruptedException {
-        outbound.expectedMessageCount(1);
-        outbound.expectedBodiesReceived("test");
+    public void verifyConsumerTemplate() {
+        assertThat("Consumer template Camel context is incorrect!",
+            consumer.getCamelContext().getName(),
+            is(equalTo("test")));
 
-        inbound.sendBody("test");
+        assertThat("Consumer template cache size is incorrect!",
+            consumer.getMaximumCacheSize(),
+            is(equalTo(100)));
+    }
 
-        assertIsSatisfied(2L, TimeUnit.SECONDS, outbound);
+    @Test
+    public void sendMessageToInbound() {
+        inbound.sendBody("seda:foo", "message");
+
+        String body = consumer.receiveBody("seda:foo", TimeUnit.SECONDS.toMillis(1L), String.class);
+
+        assertThat("Body is incorrect!", body, is(equalTo("message")));
     }
 }

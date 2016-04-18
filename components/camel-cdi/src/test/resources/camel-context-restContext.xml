@@ -15,17 +15,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<beans version="1.0" bean-discovery-mode="all">
-
-    <scan>
-        <exclude name="org.apache.camel.cdi.Main"/>
-        <exclude name="org.apache.camel.cdi.xml.*"/>
-        <exclude name="org.apache.camel.cdi.XmlCdiBeanFactory"/>
-        <exclude name="org.apache.camel.cdi.XmlCdiJaxbContexts"/>
-        <exclude name="org.apache.camel.cdi.XmlErrorHandlerFactoryBean"/>
-        <exclude name="org.apache.camel.cdi.XmlFactoryBeanInjectionTarget"/>
-        <exclude name="org.apache.camel.cdi.XmlProxyFactoryBean"/>
-        <exclude name="org.apache.camel.cdi.XmlServiceExporterBean"/>
-    </scan>
-
-</beans>
+<restContext id="rest" xmlns="http://camel.apache.org/schema/spring">
+    <rest path="/inbound">
+        <get>
+            <to uri="direct:inbound"/>
+        </get>
+    </rest>
+</restContext>
