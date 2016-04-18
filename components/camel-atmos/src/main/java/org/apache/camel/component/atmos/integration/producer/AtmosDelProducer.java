@@ -33,8 +33,6 @@ public class AtmosDelProducer extends AtmosProducer {
         AtmosResult result = AtmosAPIFacade.getInstance(configuration.getClient())
                 .del(configuration.getRemotePath());
         result.populateExchange(exchange);
-        log.info("Deleted: " + configuration.getRemotePath());
-
     }
 
 }
