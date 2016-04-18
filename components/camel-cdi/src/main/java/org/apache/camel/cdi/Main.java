@@ -31,6 +31,8 @@ import org.apache.deltaspike.cdise.api.CdiContainerLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.cdi.AnyLiteral.ANY;
+
 /**
  * Camel CDI boot integration. Allows Camel and CDI to be booted up on the command line as a JVM process.
  * See http://camel.apache.org/camel-boot.html.
@@ -81,7 +83,7 @@ public class Main extends MainSupport {
     protected Map<String, CamelContext> getCamelContextMap() {
         BeanManager manager = cdiContainer.getBeanManager();
         Map<String, CamelContext> answer = new HashMap<>();
-        for (Bean<?> bean : manager.getBeans(CamelContext.class, AnyLiteral.INSTANCE)) {
+        for (Bean<?> bean : manager.getBeans(CamelContext.class, ANY)) {
             CamelContext context = (CamelContext) manager.getReference(bean, CamelContext.class, manager.createCreationalContext(bean));
             answer.put(context.getName(), context);
         }

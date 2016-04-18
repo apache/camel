@@ -36,6 +36,9 @@ import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.apache.camel.util.ObjectHelper;
 
+import static org.apache.camel.cdi.AnyLiteral.ANY;
+import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
+
 @Vetoed
 final class CdiSpiHelper {
 
@@ -139,9 +142,9 @@ final class CdiSpiHelper {
             }
         }
         if (qualifiers.isEmpty()) {
-            qualifiers.add(DefaultLiteral.INSTANCE);
+            qualifiers.add(DEFAULT);
         }
-        qualifiers.add(AnyLiteral.INSTANCE);
+        qualifiers.add(ANY);
         return qualifiers;
     }
 }
