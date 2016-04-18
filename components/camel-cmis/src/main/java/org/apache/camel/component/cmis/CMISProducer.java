@@ -56,6 +56,9 @@ public class CMISProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         CmisObject cmisObject = createNode(exchange);
         LOG.debug("Created node with id: {}", cmisObject.getId());
+
+        // copy the header of in message to the out message
+        exchange.getOut().copyFrom(exchange.getIn());
         exchange.getOut().setBody(cmisObject.getId());
     }
 
