@@ -245,7 +245,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ServicePool<Endpoint, Producer> producerServicePool = new SharedProducerServicePool(100);
     private ServicePool<Endpoint, PollingConsumer> pollingConsumerServicePool = new SharedPollingConsumerServicePool(100);
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
-    private ProcessorFactory processorFactory;
+    private ProcessorFactory processorFactory = new DefaultProcessorFactory();
     private MessageHistoryFactory messageHistoryFactory = new DefaultMessageHistoryFactory();
     private InterceptStrategy defaultTracer;
     private InterceptStrategy defaultBacklogTracer;
