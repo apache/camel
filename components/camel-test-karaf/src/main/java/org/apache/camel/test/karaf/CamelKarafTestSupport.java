@@ -41,39 +41,24 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.security.auth.Subject;
 
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.CoreOptions;
-import org.ops4j.pax.exam.MavenUtils;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeBuilder;
 import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
-import org.ops4j.pax.exam.karaf.options.LogLevelOption;
-import org.ops4j.pax.exam.options.UrlReference;
+import org.ops4j.pax.tinybundles.core.TinyBundle;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
-
-import static org.junit.Assert.fail;
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.replaceConfigurationFile;
 
 public class CamelKarafTestSupport extends CamelTestSupport {
 
@@ -94,6 +79,16 @@ public class CamelKarafTestSupport extends CamelTestSupport {
         return probe;
     }
 
+    public void installBlueprintAsBundle(String name, URL url) throws BundleException {
+        TinyBundle bundle = TinyBundles.bundle();
+        bundle.add("OSGI-INF/blueprint/blueprint-" + name, url);
+        bundle.set("Manifest-Version", "2")
+                .set("Bundle-ManifestVersion", "2")
+                .set("Bundle-SymbolicName", name)
+                .set("Bundle-Version", "1.0.0");
+        bundleContext.installBundle(name, bundle.build());
+    }
+
     public File getConfigFile(String path) {
         URL res = this.getClass().getResource(path);
         if (res == null) {
@@ -102,48 +97,9 @@ public class CamelKarafTestSupport extends CamelTestSupport {
         return new File(res.getFile());
     }
 
-    @Configuration
-    public Option[] config() {
-        return new Option[]{
-                karafDistributionConfiguration()
-                        .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").versionAsInProject().type("tar.gz"))
-                        .karafVersion(MavenUtils.getArtifactVersion("org.apache.karaf", "apache-karaf"))
-                        .name("Apache Karaf")
-                        .unpackDirectory(new File("target/karaf")),
-
-                // keep the folder so we can look inside when something fails
-                keepRuntimeFolder(),
-
-                // Disable the SSH port
-                configureConsole().ignoreRemoteShell(),
-
-                // Configure Logging
-                logLevel(LogLevelOption.LogLevel.WARN),
-                replaceConfigurationFile("etc/org.ops4j.pax.logging.cfg", getConfigFile("/etc/org.ops4j.pax.logging.cfg")),
-
-                // Assign unique ports
-                editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port", Integer.toString(AvailablePortFinder.getNextAvailable())),
-                editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiRegistryPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
-                editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiServerPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
-
-                // Install JUnit
-                junitBundles(),
-
-                // Install base camel features
-                KarafDistributionOption.features(getCamelKarafFeatureUrl(), "camel", "camel-test"),
-
-                // Install the support bundle
-                mavenBundle().groupId("org.apache.camel").artifactId("camel-test-karaf").versionAsInProject()
-        };
+    public static Option[] configure(String... extra) {
+        return AbstractFeatureTest.configure(extra);
     }
-
-    public static UrlReference getCamelKarafFeatureUrl() {
-        return mavenBundle().
-                groupId("org.apache.camel.karaf").
-                artifactId("apache-camel").
-                versionAsInProject().type("xml/features");
-    }
-
 
     /**
      * Executes a shell command and returns output as a String.

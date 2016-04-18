@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.EnumSet;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import javax.inject.Inject;
 
@@ -62,6 +63,7 @@ import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.vmOption;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 
@@ -215,8 +217,18 @@ public abstract class AbstractFeatureTest {
         return karafVersion;
     }
 
-    @Configuration
-    public static Option[] configure() {
+    public static Option[] configure(String... extra) {
+
+        List<String> camel = new ArrayList<>();
+        camel.add("camel");
+        camel.add("camel-test-karaf");
+        if (extra != null && extra.length > 0) {
+            for (String e : extra) {
+                camel.add(e);
+            }
+        }
+        final String[] camelFeatures = camel.toArray(new String[camel.size()]);
+
         switchPlatformEncodingToUTF8();
         String karafVersion = getKarafVersion();
         LOG.info("*** Apache Karaf version is " + karafVersion + " ***");
@@ -226,15 +238,12 @@ public abstract class AbstractFeatureTest {
             //org.ops4j.pax.exam.CoreOptions.vmOption("-Xdebug"),
             //org.ops4j.pax.exam.CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
 
-            // we need INFO logging otherwise we cannot see what happens
-            new LogLevelOption(LogLevelOption.LogLevel.INFO),
-
             KarafDistributionOption.karafDistributionConfiguration()
                     .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
                     .karafVersion(karafVersion)
                     .name("Apache Karaf")
                     .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
-            logLevel(LogLevelOption.LogLevel.WARN),
+            logLevel(LogLevelOption.LogLevel.INFO),
 
             // keep the folder so we can look inside when something fails
             keepRuntimeFolder(),
@@ -243,7 +252,7 @@ public abstract class AbstractFeatureTest {
             configureConsole().ignoreRemoteShell(),
 
             // need to modify the jre.properties to export some com.sun packages that some features rely on
-            KarafDistributionOption.replaceConfigurationFile("etc/jre.properties", new File("src/test/resources/jre.properties")),
+//            KarafDistributionOption.replaceConfigurationFile("etc/jre.properties", new File("src/test/resources/jre.properties")),
 
             vmOption("-Dfile.encoding=UTF-8"),
 
@@ -251,16 +260,15 @@ public abstract class AbstractFeatureTest {
             editConfigurationFilePut("etc/custom.properties", "karaf.shutdown.port", "-1"),
 
             // Assign unique ports for Karaf
-            editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port", Integer.toString(AvailablePortFinder.getNextAvailable())),
-            editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiRegistryPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
-            editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiServerPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
+//            editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port", Integer.toString(AvailablePortFinder.getNextAvailable())),
+//            editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiRegistryPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
+//            editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiServerPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
 
-                // install junit
+            // install junit
             CoreOptions.junitBundles(),
 
             // install camel
-            KarafDistributionOption.features(getCamelKarafFeatureUrl(), "camel"),
-            mavenBundle().groupId("org.apache.camel").artifactId("camel-test-karaf").versionAsInProject()
+            features(getCamelKarafFeatureUrl(), camelFeatures),
         };
 
         return options;
