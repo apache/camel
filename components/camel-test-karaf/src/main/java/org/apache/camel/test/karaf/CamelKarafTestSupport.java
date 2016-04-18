@@ -49,10 +49,7 @@ import org.apache.karaf.features.FeaturesService;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeBuilder;
 import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.tinybundles.core.TinyBundle;
-import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
@@ -77,16 +74,6 @@ public class CamelKarafTestSupport extends CamelTestSupport {
     public TestProbeBuilder probeConfiguration(TestProbeBuilder probe) {
         probe.setHeader(Constants.DYNAMICIMPORT_PACKAGE, "*,org.apache.felix.service.*;status=provisional");
         return probe;
-    }
-
-    public void installBlueprintAsBundle(String name, URL url) throws BundleException {
-        TinyBundle bundle = TinyBundles.bundle();
-        bundle.add("OSGI-INF/blueprint/blueprint-" + name, url);
-        bundle.set("Manifest-Version", "2")
-                .set("Bundle-ManifestVersion", "2")
-                .set("Bundle-SymbolicName", name)
-                .set("Bundle-Version", "1.0.0");
-        bundleContext.installBundle(name, bundle.build());
     }
 
     public File getConfigFile(String path) {

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,6 +19,8 @@ package org.apache.camel.itest;
 import java.net.URL;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.karaf.AbstractFeatureTest;
 import org.apache.camel.test.karaf.CamelKarafTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
@@ -28,18 +30,23 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelCoreTest extends CamelKarafTestSupport {
+public class CamelCoreTest extends AbstractFeatureTest {
 
     @Test
     public void testCamelCore() throws Exception {
         URL url = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/CamelCoreTest.xml", CamelCoreTest.class.getClassLoader());
-        System.out.println(">>>> " + url);
-        installBlueprintAsBundle("CamelCoreTest", url);
+        installBlueprintAsBundle("CamelCoreTest", url, true);
 
-        // wait for Camel to be ready
-//        CamelContext camel = getOsgiService(CamelContext.class);
+        // lookup Camel from OSGi
+        CamelContext camel = getOsgiService(bundleContext, CamelContext.class);
 
-//        System.out.println(">>> " + camel);
+        // test camel
+        MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
+        mock.expectedBodiesReceived("Hello World");
+
+        camel.createProducerTemplate().sendBody("direct:start", "World");
+
+        mock.assertIsSatisfied();
     }
 
     @Configuration

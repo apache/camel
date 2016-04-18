@@ -19,6 +19,7 @@ package org.apache.camel.test.karaf;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +28,7 @@ import java.util.Dictionary;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import javax.inject.Inject;
 
@@ -46,7 +48,11 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.options.UrlReference;
+import org.ops4j.pax.tinybundles.core.TinyBundle;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
@@ -69,6 +75,7 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 
 public abstract class AbstractFeatureTest {
 
+    static final Long SERVICE_TIMEOUT = 30000L;
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractFeatureTest.class);
 
     @Inject
@@ -95,6 +102,21 @@ public abstract class AbstractFeatureTest {
     @After
     public void tearDown() throws Exception {
         LOG.info("tearDown()");
+    }
+
+    protected Bundle installBlueprintAsBundle(String name, URL url, boolean start) throws BundleException {
+        TinyBundle bundle = TinyBundles.bundle();
+        bundle.add("OSGI-INF/blueprint/blueprint-" + name.toLowerCase(Locale.ENGLISH) + ".xml", url);
+        bundle.set("Manifest-Version", "2")
+                .set("Bundle-ManifestVersion", "2")
+                .set("Bundle-SymbolicName", name)
+                .set("Bundle-Version", "1.0.0");
+        Bundle answer = bundleContext.installBundle(name, bundle.build());
+
+        if (start) {
+            answer.start();
+        }
+        return answer;
     }
 
     protected void installCamelFeature(String mainFeature) throws Exception {
@@ -272,6 +294,14 @@ public abstract class AbstractFeatureTest {
         };
 
         return options;
+    }
+
+    protected <T> T getOsgiService(BundleContext bundleContext, Class<T> type) {
+        return getOsgiService(bundleContext, type, null, SERVICE_TIMEOUT);
+    }
+
+    protected <T> T getOsgiService(BundleContext bundleContext, Class<T> type, long timeout) {
+        return getOsgiService(bundleContext, type, null, timeout);
     }
 
     @SuppressWarnings("unchecked")
