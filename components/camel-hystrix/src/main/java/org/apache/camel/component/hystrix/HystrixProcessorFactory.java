@@ -17,6 +17,7 @@
 package org.apache.camel.component.hystrix;
 
 import org.apache.camel.Processor;
+import org.apache.camel.model.HystrixCircuitBreakerDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
@@ -25,11 +26,26 @@ public class HystrixProcessorFactory implements ProcessorFactory {
 
     @Override
     public Processor createChildProcessor(RouteContext routeContext, ProcessorDefinition<?> definition, boolean mandatory) throws Exception {
+        // not in use
         return null;
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> definition) throws Exception {
-        return new HystrixDummyProcessor();
+        if (definition instanceof HystrixCircuitBreakerDefinition) {
+            HystrixCircuitBreakerDefinition cb = (HystrixCircuitBreakerDefinition) definition;
+            String id = cb.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+
+            // create the regular processor
+            Processor processor = cb.createChildProcessor(routeContext, true);
+            Processor fallback = null;
+            if (cb.getFallback() != null) {
+                fallback = cb.getFallback().createProcessor(routeContext);
+            }
+
+            return new HystrixProcessor(id, processor, fallback);
+        } else {
+            return null;
+        }
     }
 }

@@ -287,6 +287,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         } else if (defn instanceof OnExceptionDefinition || ProcessorDefinitionHelper.isParentOfType(OnExceptionDefinition.class, defn, true)) {
             log.trace("{} is part of OnException so no error handler is applied", defn);
             // do not use error handler for onExceptions blocks as it will handle errors itself
+        } else if (defn instanceof HystrixCircuitBreakerDefinition || ProcessorDefinitionHelper.isParentOfType(HystrixCircuitBreakerDefinition.class, defn, true)) {
+            log.trace("{} is part of HystrixCircuitBreaker so no error handler is applied", defn);
+            // do not use error handler for hystrixCircuitBreaker blocks as it will handle errors itself
         } else if (defn instanceof MulticastDefinition) {
             // do not use error handler for multicast as it offers fine grained error handlers for its outputs
             // however if share unit of work is enabled, we need to wrap an error handler on the multicast parent

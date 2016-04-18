@@ -80,6 +80,14 @@ public class HystrixCircuitBreakerDefinition extends OutputDefinition<HystrixCir
         return super.end();
     }
 
+    public FallbackDefinition getFallback() {
+        return fallback;
+    }
+
+    public void setFallback(FallbackDefinition fallback) {
+        this.fallback = fallback;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -90,6 +98,7 @@ public class HystrixCircuitBreakerDefinition extends OutputDefinition<HystrixCir
      */
     public HystrixCircuitBreakerDefinition fallback() {
         fallback = new FallbackDefinition();
+        fallback.setParent(this);
         return this;
     }
 

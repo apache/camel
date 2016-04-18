@@ -24,7 +24,7 @@ public class HystrixCircuitBreakerTest extends CamelTestSupport {
 
     @Test
     public void testHystrixCircuitBreaker() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Fallback message");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -38,14 +38,11 @@ public class HystrixCircuitBreakerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .hystrixCircuitBreaker()
-                        .to("direct:foo")
+                        .throwException(new IllegalArgumentException("Forced"))
                     .fallback()
                         .transform().constant("Fallback message")
                     .end()
                     .to("mock:result");
-
-                from("direct:foo")
-                        .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }
