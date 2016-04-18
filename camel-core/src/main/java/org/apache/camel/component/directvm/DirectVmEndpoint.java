@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.directvm;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,7 +34,7 @@ import org.apache.camel.spi.UriPath;
  * This endpoint can be used to connect existing routes in the same JVM between different CamelContexts.
  */
 @UriEndpoint(scheme = "direct-vm", title = "Direct VM", syntax = "direct-vm:name", consumerClass = DirectConsumer.class, label = "core,endpoint")
-public class DirectVmEndpoint extends DefaultEndpoint {
+public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     @UriPath(description = "Name of direct-vm endpoint") @Metadata(required = "true")
     private String name;

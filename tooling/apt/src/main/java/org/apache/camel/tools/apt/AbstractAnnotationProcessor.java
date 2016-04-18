@@ -36,7 +36,9 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
@@ -278,6 +280,38 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
         } else {
             return false;
         }
+    }
+
+    protected boolean implementsInterface(RoundEnvironment roundEnv, TypeElement classElement, String interfaceClassName) {
+        while (true) {
+            // check if the class implements the interface
+            List<? extends TypeMirror> list = classElement.getInterfaces();
+            if (list != null) {
+                for (TypeMirror type : list) {
+                    if (type.getKind().compareTo(TypeKind.DECLARED) == 0) {
+                        String name = type.toString();
+                        if (interfaceClassName.equals(name)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            // check super classes which may implement the interface
+            TypeElement baseTypeElement = null;
+            TypeMirror superclass = classElement.getSuperclass();
+            if (superclass != null) {
+                String superClassName = canonicalClassName(superclass.toString());
+                baseTypeElement = findTypeElement(roundEnv, superClassName);
+            }
+            if (baseTypeElement != null) {
+                classElement = baseTypeElement;
+            } else {
+                break;
+            }
+        }
+
+        return false;
     }
 
     /**

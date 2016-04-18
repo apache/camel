@@ -33,6 +33,7 @@ public final class ComponentModel {
     private boolean producerOnly;
     private boolean deprecated;
     private boolean lenientProperties;
+    private boolean async;
 
     public ComponentModel(String scheme) {
         this.scheme = scheme;
@@ -152,5 +153,13 @@ public final class ComponentModel {
 
     public void setLenientProperties(boolean lenientProperties) {
         this.lenientProperties = lenientProperties;
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+
+    public void setAsync(boolean async) {
+        this.async = async;
     }
 }
