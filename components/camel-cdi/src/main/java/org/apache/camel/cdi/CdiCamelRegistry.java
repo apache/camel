@@ -48,9 +48,11 @@ final class CdiCamelRegistry implements Registry {
         logger.trace("Looking up bean with name [{}]", name);
         // Work-around for WELD-2089
         if ("properties".equals(name) && findByTypeWithName(PropertiesComponent.class).containsKey("properties")) {
-            return BeanManagerHelper.getReferenceByName(manager, name, PropertiesComponent.class);
+            return BeanManagerHelper.getReferenceByName(manager, name, PropertiesComponent.class)
+                .orElse(null);
         }
-        return BeanManagerHelper.getReferenceByName(manager, name, Object.class);
+        return BeanManagerHelper.getReferenceByName(manager, name, Object.class)
+            .orElse(null);
     }
 
     @Override
@@ -58,7 +60,7 @@ final class CdiCamelRegistry implements Registry {
         ObjectHelper.notEmpty(name, "name");
         ObjectHelper.notNull(type, "type");
         logger.trace("Looking up bean with name [{}] of type [{}]", name, type);
-        return BeanManagerHelper.getReferenceByName(manager, name, type);
+        return BeanManagerHelper.getReferenceByName(manager, name, type).orElse(null);
     }
 
     @Override
