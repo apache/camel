@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import java.util.Map;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
         syntax = "netty-http:protocol:host:port/path", consumerClass = NettyHttpConsumer.class, label = "http", lenientProperties = true,
         excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
                 + ",clientMode,reconnect,reconnectInterval,broadcast")
-public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
+public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
     @UriParam

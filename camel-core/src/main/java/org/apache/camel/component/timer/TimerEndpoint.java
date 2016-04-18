@@ -19,7 +19,6 @@ package org.apache.camel.component.timer;
 import java.util.Date;
 import java.util.Timer;
 
-import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
@@ -41,7 +40,7 @@ import org.apache.camel.spi.UriPath;
  */
 @ManagedResource(description = "Managed TimerEndpoint")
 @UriEndpoint(scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true, consumerClass = TimerConsumer.class, label = "core,scheduling")
-public class TimerEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
+public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath @Metadata(required = "true")
     private String timerName;
     @UriParam(defaultValue = "1000")

@@ -19,6 +19,7 @@ package org.apache.camel.component.restlet;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -40,7 +41,7 @@ import org.restlet.data.Method;
  */
 @UriEndpoint(scheme = "restlet", title = "Restlet", syntax = "restlet:protocol:host:port/uriPattern",
         consumerClass = RestletConsumer.class, label = "rest", lenientProperties = true)
-public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
     private static final int DEFAULT_PORT = 80;
     private static final String DEFAULT_PROTOCOL = "http";
     private static final String DEFAULT_HOST = "localhost";

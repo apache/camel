@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty9;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.component.jetty.JettyContentExchange;
 import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.component.jetty.JettyHttpEndpoint;
@@ -31,7 +32,7 @@ import org.apache.camel.spi.UriEndpoint;
  */
 @UriEndpoint(scheme = "jetty", extendsScheme = "http", title = "Jetty 9",
         syntax = "jetty:httpUri", consumerClass = HttpConsumer.class, label = "http", lenientProperties = true)
-public class JettyHttpEndpoint9 extends JettyHttpEndpoint {
+public class JettyHttpEndpoint9 extends JettyHttpEndpoint implements AsyncEndpoint {
     private HttpBinding binding;
 
     public JettyHttpEndpoint9(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {

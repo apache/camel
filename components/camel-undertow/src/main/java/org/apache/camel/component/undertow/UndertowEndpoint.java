@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.net.ssl.SSLContext;
 
 import io.undertow.server.HttpServerExchange;
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -48,7 +49,7 @@ import org.xnio.Options;
  */
 @UriEndpoint(scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
         consumerClass = UndertowConsumer.class, label = "http", lenientProperties = true)
-public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
     private UndertowComponent component;
