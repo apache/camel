@@ -19,6 +19,7 @@ package org.apache.camel.component.hystrix.processor;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandProperties;
+import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -44,7 +45,6 @@ public class HystrixProcessorFactory implements ProcessorFactory {
     public Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> definition) throws Exception {
         if (definition instanceof HystrixDefinition) {
             HystrixDefinition cb = (HystrixDefinition) definition;
-            String id = cb.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
 
             // create the regular and fallback processors
             Processor processor = cb.createChildProcessor(routeContext, true);
@@ -53,8 +53,20 @@ public class HystrixProcessorFactory implements ProcessorFactory {
                 fallback = cb.getFallback().createProcessor(routeContext);
             }
 
+            // group and thread pool keys to use
+            String groupKey = HystrixDefinition.DEFAULT_GROUP_KEY;
+            String threadPoolKey = HystrixDefinition.DEFAULT_THREAD_POOL_KEY;
+            if (cb.getGroupKey() != null) {
+                groupKey = cb.getGroupKey();
+            }
+            if (cb.getThreadPoolKey() != null) {
+                threadPoolKey = cb.getThreadPoolKey();
+            }
+
             // create setter using the default options
-            HystrixCommand.Setter setter = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(id));
+            HystrixCommand.Setter setter = HystrixCommand.Setter
+                    .withGroupKey(HystrixCommandGroupKey.Factory.asKey(groupKey))
+                    .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(threadPoolKey));
             HystrixCommandProperties.Setter command = HystrixCommandProperties.Setter();
             setter.andCommandPropertiesDefaults(command);
             HystrixThreadPoolProperties.Setter threadPool = HystrixThreadPoolProperties.Setter();
@@ -77,7 +89,7 @@ public class HystrixProcessorFactory implements ProcessorFactory {
                 cacheKey = cb.getCacheKey().createExpression(routeContext);
             }
 
-            return new HystrixProcessor(id, setter, processor, fallback, cacheKey);
+            return new HystrixProcessor(setter, processor, fallback, cacheKey);
         } else {
             return null;
         }
@@ -151,7 +163,6 @@ public class HystrixProcessorFactory implements ProcessorFactory {
         if (config.getRequestLogEnabled() != null) {
             command.withRequestLogEnabled(config.getRequestLogEnabled());
         }
-        // thread pool
         if (config.getCorePoolSize() != null) {
             threadPool.withCoreSize(config.getCorePoolSize());
         }

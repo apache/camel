@@ -42,8 +42,7 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
     private final AsyncProcessor fallback;
     private final Expression cacheKey;
 
-    public HystrixProcessor(String id, HystrixCommand.Setter setter, Processor processor, Processor fallback, Expression cacheKey) {
-        this.id = id;
+    public HystrixProcessor(HystrixCommand.Setter setter, Processor processor, Processor fallback, Expression cacheKey) {
         this.setter = setter;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
         this.fallback = AsyncProcessorConverterHelper.convert(fallback);
