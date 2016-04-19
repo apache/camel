@@ -34,6 +34,7 @@ public class CamelCoreTest extends AbstractFeatureTest {
 
     @Test
     public void testCamelCore() throws Exception {
+        // install the camel blueprint xml file we use in this test
         URL url = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/CamelCoreTest.xml", CamelCoreTest.class.getClassLoader());
         installBlueprintAsBundle("CamelCoreTest", url, true);
 
@@ -51,7 +52,7 @@ public class CamelCoreTest extends AbstractFeatureTest {
 
     @Configuration
     public Option[] configure() {
-        return CamelKarafTestSupport.configure();
+        return CamelKarafTestSupport.configure("camel-test-karaf");
     }
 
 }
