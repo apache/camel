@@ -35,29 +35,13 @@ public class HystrixProcessorCommand extends HystrixCommand<Message> {
     private final AsyncCallback callback;
     private final AsyncProcessor processor;
     private final AsyncProcessor fallback;
-    private final Expression cacheKey;
 
-    public HystrixProcessorCommand(Setter setter, Exchange exchange, AsyncCallback callback, AsyncProcessor processor, AsyncProcessor fallback, Expression cacheKey) {
+    public HystrixProcessorCommand(Setter setter, Exchange exchange, AsyncCallback callback, AsyncProcessor processor, AsyncProcessor fallback) {
         super(setter);
         this.exchange = exchange;
         this.callback = callback;
         this.processor = processor;
         this.fallback = fallback;
-        this.cacheKey = cacheKey;
-    }
-
-    @Override
-    protected String getCacheKey() {
-        // TODO: require https://github.com/Netflix/Hystrix/wiki/How-To-Use#Caching
-        if (cacheKey != null) {
-            try {
-                return cacheKey.evaluate(exchange, String.class);
-            } catch (Throwable e) {
-                // ignore
-                LOG.debug("Error evaluating cache key. This exception is ignored.", e);
-            }
-        }
-        return null;
     }
 
     @Override

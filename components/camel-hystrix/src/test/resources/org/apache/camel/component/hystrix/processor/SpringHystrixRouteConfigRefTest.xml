@@ -23,7 +23,7 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-    <hystrixConfiguration id="hysConfig" requestCacheEnabled="false" corePoolSize="5"/>
+    <hystrixConfiguration id="hysConfig" requestLogEnabled="false" corePoolSize="5"/>
 
     <route>
       <from uri="direct:start"/>

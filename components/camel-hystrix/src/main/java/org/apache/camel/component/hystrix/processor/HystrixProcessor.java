@@ -23,7 +23,6 @@ import com.netflix.hystrix.HystrixCommand;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -41,13 +40,11 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
     private final HystrixCommand.Setter setter;
     private final AsyncProcessor processor;
     private final AsyncProcessor fallback;
-    private final Expression cacheKey;
 
-    public HystrixProcessor(HystrixCommand.Setter setter, Processor processor, Processor fallback, Expression cacheKey) {
+    public HystrixProcessor(HystrixCommand.Setter setter, Processor processor, Processor fallback) {
         this.setter = setter;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
         this.fallback = AsyncProcessorConverterHelper.convert(fallback);
-        this.cacheKey = cacheKey;
     }
 
     @Override
@@ -95,7 +92,7 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
 
         try {
             // create command
-            HystrixProcessorCommand command = new HystrixProcessorCommand(setter, exchange, callback, processor, fallback, cacheKey);
+            HystrixProcessorCommand command = new HystrixProcessorCommand(setter, exchange, callback, processor, fallback);
 
             // execute the command asynchronous and observe when its done
             command.observe().subscribe((msg) -> {

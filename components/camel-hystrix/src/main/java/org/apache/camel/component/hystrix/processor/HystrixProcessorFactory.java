@@ -96,13 +96,7 @@ public class HystrixProcessorFactory implements ProcessorFactory {
                 configureHystrix(command, threadPool, config);
             }
 
-            // optional cache-key from expression
-            Expression cacheKey = null;
-            if (cb.getCacheKey() != null) {
-                cacheKey = cb.getCacheKey().createExpression(routeContext);
-            }
-
-            return new HystrixProcessor(setter, processor, fallback, cacheKey);
+            return new HystrixProcessor(setter, processor, fallback);
         } else {
             return null;
         }
@@ -169,9 +163,6 @@ public class HystrixProcessorFactory implements ProcessorFactory {
         }
         if (config.getMetricsRollingStatisticalWindowBuckets() != null) {
             command.withMetricsRollingStatisticalWindowBuckets(config.getMetricsRollingStatisticalWindowBuckets());
-        }
-        if (config.getRequestCacheEnabled() != null) {
-            command.withRequestCacheEnabled(config.getRequestCacheEnabled());
         }
         if (config.getRequestLogEnabled() != null) {
             command.withRequestLogEnabled(config.getRequestLogEnabled());

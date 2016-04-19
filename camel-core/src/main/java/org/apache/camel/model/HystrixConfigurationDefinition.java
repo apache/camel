@@ -103,9 +103,6 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
     private Integer metricsRollingStatisticalWindowBuckets;
     @XmlAttribute
     @Metadata(label = "command", defaultValue = "true")
-    private Boolean requestCacheEnabled;
-    @XmlAttribute
-    @Metadata(label = "command", defaultValue = "true")
     private Boolean requestLogEnabled;
 
     // thread-pool
@@ -313,14 +310,6 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
 
     public void setMetricsRollingStatisticalWindowBuckets(Integer metricsRollingStatisticalWindowBuckets) {
         this.metricsRollingStatisticalWindowBuckets = metricsRollingStatisticalWindowBuckets;
-    }
-
-    public Boolean getRequestCacheEnabled() {
-        return requestCacheEnabled;
-    }
-
-    public void setRequestCacheEnabled(Boolean requestCacheEnabled) {
-        this.requestCacheEnabled = requestCacheEnabled;
     }
 
     public Boolean getRequestLogEnabled() {
@@ -590,15 +579,6 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
      */
     public HystrixConfigurationDefinition metricsRollingStatisticalWindowBuckets(Integer metricsRollingStatisticalWindowBuckets) {
         this.metricsRollingStatisticalWindowBuckets = metricsRollingStatisticalWindowBuckets;
-        return this;
-    }
-
-    /**
-     * Whether HystrixCommand.getCacheKey() should be used with HystrixRequestCache
-     * to provide de-duplication functionality via request-scoped caching.
-     */
-    public HystrixConfigurationDefinition requestCacheEnabled(Boolean requestCacheEnabled) {
-        this.requestCacheEnabled = requestCacheEnabled;
         return this;
     }
 
