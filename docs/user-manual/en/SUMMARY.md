@@ -183,6 +183,7 @@
 * Data Formats
     * [Flatpack](flatpack-dataformat.adoc)
     * [XML JSON](xmljson.adoc)
+    * [Ical](ical.adoc)
 
 * User Guide
     * [Karaf](karaf.adoc)
