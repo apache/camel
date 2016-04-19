@@ -26,6 +26,7 @@ import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
 
 /**
  * To integrate camel-hystrix with the Camel routes using the Hystrix EIP.
@@ -59,8 +60,11 @@ public class HystrixProcessorFactory implements ProcessorFactory {
             setter.andThreadPoolPropertiesDefaults(threadPool);
 
             // any custom configuration then override the setter
-            if (cb.getHystrixConfiguration() != null) {
+            if (cb.getHystrixConfiguration() != null || cb.getHystrixConfigurationRef() != null) {
                 HystrixConfigurationDefinition config = cb.getHystrixConfiguration();
+                if (config == null && cb.getHystrixConfigurationRef() != null) {
+                    config = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), cb.getHystrixConfigurationRef(), HystrixConfigurationDefinition.class);
+                }
 
                 // command
                 if (config.getCircuitBreakerEnabled() != null) {

@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -40,6 +41,8 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
     protected List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
     @XmlElement
     private FallbackDefinition fallback;
+    @XmlAttribute
+    private String hystrixConfigurationRef;
 
     public HystrixDefinition() {
     }
@@ -130,6 +133,14 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
         this.hystrixConfiguration = hystrixConfiguration;
     }
 
+    public String getHystrixConfigurationRef() {
+        return hystrixConfigurationRef;
+    }
+
+    public void setHystrixConfigurationRef(String hystrixConfigurationRef) {
+        this.hystrixConfigurationRef = hystrixConfigurationRef;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -150,6 +161,22 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
     public HystrixConfigurationDefinition configure() {
         hystrixConfiguration = new HystrixConfigurationDefinition(this);
         return hystrixConfiguration;
+    }
+
+    /**
+     * Configures the Hystrix EIP using the given configuration
+     */
+    public HystrixDefinition configure(HystrixConfigurationDefinition configuration) {
+        hystrixConfiguration = configuration;
+        return this;
+    }
+
+    /**
+     * Refers to a hystrix configuration to use for configuring the Hystrix EIP.
+     */
+    public HystrixDefinition configure(String ref) {
+        hystrixConfigurationRef = ref;
+        return this;
     }
 
 }
