@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.Iterator;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -53,10 +54,14 @@ public class HystrixDefinition extends OutputDefinition<HystrixDefinition> {
 
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
-        if (fallback != null) {
-            fallback.addOutput(output);
+        if (output instanceof FallbackDefinition) {
+            fallback = (FallbackDefinition) output;
         } else {
-            super.addOutput(output);
+            if (fallback != null) {
+                fallback.addOutput(output);
+            } else {
+                super.addOutput(output);
+            }
         }
     }
 
@@ -75,6 +80,19 @@ public class HystrixDefinition extends OutputDefinition<HystrixDefinition> {
 
     public void setFallback(FallbackDefinition fallback) {
         this.fallback = fallback;
+    }
+
+    protected void preCreateProcessor() {
+        // move the fallback from outputs to fallback which we need to ensure
+        // such as when using the XML DSL
+        Iterator<ProcessorDefinition<?>> it = outputs.iterator();
+        while (it.hasNext()) {
+            ProcessorDefinition<?> out = it.next();
+            if (out instanceof FallbackDefinition) {
+                fallback = (FallbackDefinition) out;
+                it.remove();
+            }
+        }
     }
 
     // Fluent API
