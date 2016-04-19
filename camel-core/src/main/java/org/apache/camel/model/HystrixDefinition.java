@@ -36,13 +36,6 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
 
-    public static final String DEFAULT_GROUP_KEY = "CamelHystrix";
-    public static final String DEFAULT_THREAD_POOL_KEY = "CamelHystrix";
-
-    @XmlAttribute @Metadata(defaultValue = "CamelHystrix")
-    private String groupKey;
-    @XmlAttribute @Metadata(defaultValue = "CamelHystrix")
-    private String threadPoolKey;
     @XmlElement
     private HystrixConfigurationDefinition hystrixConfiguration;
     @XmlElement
@@ -127,23 +120,6 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
     // Getter/Setter
     // -------------------------------------------------------------------------
 
-
-    public String getGroupKey() {
-        return groupKey;
-    }
-
-    public void setGroupKey(String groupKey) {
-        this.groupKey = groupKey;
-    }
-
-    public String getThreadPoolKey() {
-        return threadPoolKey;
-    }
-
-    public void setThreadPoolKey(String threadPoolKey) {
-        this.threadPoolKey = threadPoolKey;
-    }
-
     public HystrixConfigurationDefinition getHystrixConfiguration() {
         return hystrixConfiguration;
     }
@@ -183,7 +159,7 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
      * Sets the group key to use. The default value is CamelHystrix.
      */
     public HystrixDefinition groupKey(String groupKey) {
-        setGroupKey(groupKey);
+        configure().groupKey(groupKey);
         return this;
     }
 
@@ -191,7 +167,7 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
      * Sets the thread pool key to use. The default value is CamelHystrix.
      */
     public HystrixDefinition threadPoolKey(String threadPoolKey) {
-        setThreadPoolKey(threadPoolKey);
+        configure().threadPoolKey(threadPoolKey);
         return this;
     }
 

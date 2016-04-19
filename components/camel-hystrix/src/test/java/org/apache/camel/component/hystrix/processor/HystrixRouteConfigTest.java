@@ -37,7 +37,7 @@ public class HystrixRouteConfigTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .hystrix().configure().requestCacheEnabled(false).corePoolSize(5).end()
+                    .hystrix().configure().groupKey("myCamelApp").requestCacheEnabled(false).corePoolSize(5).end()
                         .to("direct:foo")
                     .fallback()
                         .transform().constant("Fallback message")

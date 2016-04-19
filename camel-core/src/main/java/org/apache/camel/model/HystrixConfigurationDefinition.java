@@ -33,9 +33,14 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HystrixConfigurationDefinition extends IdentifiedType {
 
+    public static final String DEFAULT_GROUP_KEY = "CamelHystrix";
+
     @XmlTransient
     private HystrixDefinition parent;
-
+    @XmlAttribute @Metadata(defaultValue = "CamelHystrix")
+    private String groupKey;
+    @XmlAttribute @Metadata(defaultValue = "CamelHystrix")
+    private String threadPoolKey;
     @XmlAttribute
     @Metadata(label = "command", defaultValue = "true")
     private Boolean circuitBreakerEnabled;
@@ -133,6 +138,22 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
 
     // Getter/Setter
     // -------------------------------------------------------------------------
+
+    public String getGroupKey() {
+        return groupKey;
+    }
+
+    public void setGroupKey(String groupKey) {
+        this.groupKey = groupKey;
+    }
+
+    public String getThreadPoolKey() {
+        return threadPoolKey;
+    }
+
+    public void setThreadPoolKey(String threadPoolKey) {
+        this.threadPoolKey = threadPoolKey;
+    }
 
     public Boolean getCircuitBreakerEnabled() {
         return circuitBreakerEnabled;
@@ -361,6 +382,22 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
 
     // Fluent API
     // -------------------------------------------------------------------------
+
+    /**
+     * Sets the group key to use. The default value is CamelHystrix.
+     */
+    public HystrixConfigurationDefinition groupKey(String groupKey) {
+        setGroupKey(groupKey);
+        return this;
+    }
+
+    /**
+     * Sets the thread pool key to use. Will by default use the same value as groupKey has been configured to use.
+     */
+    public HystrixConfigurationDefinition threadPoolKey(String threadPoolKey) {
+        setThreadPoolKey(threadPoolKey);
+        return this;
+    }
 
     /**
      * Whether to use a HystrixCircuitBreaker or not. If false no circuit-breaker logic will be used and all requests permitted.

@@ -25,7 +25,7 @@
     <route>
       <from uri="direct:start"/>
       <hystrix>
-        <hystrixConfiguration requestCacheEnabled="false" corePoolSize="5"/>
+        <hystrixConfiguration groupKey="myCamelApp" requestCacheEnabled="false" corePoolSize="5"/>
         <to uri="direct:foo"/>
         <fallback>
           <transform>

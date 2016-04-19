@@ -53,14 +53,29 @@ public class HystrixProcessorFactory implements ProcessorFactory {
                 fallback = cb.getFallback().createProcessor(routeContext);
             }
 
-            // group and thread pool keys to use
-            String groupKey = HystrixDefinition.DEFAULT_GROUP_KEY;
-            String threadPoolKey = HystrixDefinition.DEFAULT_THREAD_POOL_KEY;
-            if (cb.getGroupKey() != null) {
-                groupKey = cb.getGroupKey();
+            HystrixConfigurationDefinition config = cb.getHystrixConfiguration();
+            HystrixConfigurationDefinition configRef = null;
+            if (cb.getHystrixConfigurationRef() != null) {
+                configRef = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), cb.getHystrixConfigurationRef(), HystrixConfigurationDefinition.class);
             }
-            if (cb.getThreadPoolKey() != null) {
-                threadPoolKey = cb.getThreadPoolKey();
+
+            // group and thread pool keys to use they can be configured on configRef and config, so look there first, and if none then use default
+            String groupKey = null;
+            String threadPoolKey = null;
+            if (configRef != null) {
+                groupKey = configRef.getGroupKey();
+                threadPoolKey = configRef.getThreadPoolKey();
+            }
+            if (config != null && config.getGroupKey() != null) {
+                groupKey = config.getGroupKey();
+                threadPoolKey = config.getThreadPoolKey();
+            }
+            if (groupKey == null) {
+                groupKey = HystrixConfigurationDefinition.DEFAULT_GROUP_KEY;
+            }
+            if (threadPoolKey == null) {
+                // thread pool key should use same as group key as default
+                threadPoolKey = groupKey;
             }
 
             // create setter using the default options
@@ -73,13 +88,11 @@ public class HystrixProcessorFactory implements ProcessorFactory {
             setter.andThreadPoolPropertiesDefaults(threadPool);
 
             // at first configure any shared options
-            if (cb.getHystrixConfigurationRef() != null) {
-                HystrixConfigurationDefinition config = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), cb.getHystrixConfigurationRef(), HystrixConfigurationDefinition.class);
-                configureHystrix(command, threadPool, config);
+            if (configRef != null) {
+                configureHystrix(command, threadPool, configRef);
             }
             // then any local configured can override
-            if (cb.getHystrixConfiguration() != null) {
-                HystrixConfigurationDefinition config = cb.getHystrixConfiguration();
+            if (config != null) {
                 configureHystrix(command, threadPool, config);
             }
 
