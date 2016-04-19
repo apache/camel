@@ -16,18 +16,16 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
+import org.apache.camel.test.karaf.AbstractFeatureTest;
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Option;
 
-@RunWith(PaxExam.class)
-public class CamelBeanioTest extends BaseKarafTest {
+public abstract class BaseKarafTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelBeanioTest.class);
-
-    @Test
-    public void test() throws Exception {
-        testDataFormat(COMPONENT);
+    @Configuration
+    public static Option[] configure() {
+        // use the standard from AbstractFeatureTest as we install in each test what we need to test
+        return AbstractFeatureTest.configure();
     }
 
 }
