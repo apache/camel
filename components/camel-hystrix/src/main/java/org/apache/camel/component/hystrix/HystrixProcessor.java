@@ -30,6 +30,9 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 
+/**
+ * Implementation of the Hystrix EIP.
+ */
 public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
 
     private String id;
@@ -54,7 +57,7 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
 
     @Override
     public String getTraceLabel() {
-        return "hystrixCircuitBreaker";
+        return "hystrix";
     }
 
     @Override

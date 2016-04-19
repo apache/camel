@@ -22,44 +22,33 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
-import org.apache.camel.processor.HystrixCircuitBreakerProcessor;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 @Metadata(label = "eip,routing,circuitbreaker")
-@XmlRootElement(name = "hystrixCircuitBreaker")
+@XmlRootElement(name = "hystrix")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HystrixCircuitBreakerDefinition extends OutputDefinition<HystrixCircuitBreakerDefinition> {
-
-    // TODO: we can rename to circuitBreaker and then deprecated the CB in the load balancer
-    // the trick is to avoid a clash in the generated xml schema
-    // so for know we call it hystrixCircuitBreaker
+public class HystrixDefinition extends OutputDefinition<HystrixDefinition> {
 
     @XmlElement
     private FallbackDefinition fallback;
 
-    public HystrixCircuitBreakerDefinition() {
+    public HystrixDefinition() {
     }
 
     @Override
     public String toString() {
-        return "HystrixCircuitBreaker[" + getOutputs() + "]";
+        return "Hystrix[" + getOutputs() + "]";
     }
 
     @Override
     public String getLabel() {
-        return "hystrixCircuitBreaker";
+        return "hystrix";
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor children = this.createChildProcessor(routeContext, true);
-
-        Processor fallbackProcessor = null;
-        if (fallback != null) {
-            fallbackProcessor = createProcessor(routeContext, fallback);
-        }
-        return new HystrixCircuitBreakerProcessor(children, fallbackProcessor);
+        throw new IllegalStateException("Cannot find camel-hystrix on the classpath.");
     }
 
     @Override
@@ -96,7 +85,7 @@ public class HystrixCircuitBreakerDefinition extends OutputDefinition<HystrixCir
      *
      * @return the builder
      */
-    public HystrixCircuitBreakerDefinition fallback() {
+    public HystrixDefinition fallback() {
         fallback = new FallbackDefinition();
         fallback.setParent(this);
         return this;

@@ -287,7 +287,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         } else if (defn instanceof OnExceptionDefinition || ProcessorDefinitionHelper.isParentOfType(OnExceptionDefinition.class, defn, true)) {
             log.trace("{} is part of OnException so no error handler is applied", defn);
             // do not use error handler for onExceptions blocks as it will handle errors itself
-        } else if (defn instanceof HystrixCircuitBreakerDefinition || ProcessorDefinitionHelper.isParentOfType(HystrixCircuitBreakerDefinition.class, defn, true)) {
+        } else if (defn instanceof HystrixDefinition || ProcessorDefinitionHelper.isParentOfType(HystrixDefinition.class, defn, true)) {
             log.trace("{} is part of HystrixCircuitBreaker so no error handler is applied", defn);
             // do not use error handler for hystrixCircuitBreaker blocks as it will handle errors itself
         } else if (defn instanceof MulticastDefinition) {
@@ -1473,12 +1473,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Creates a Circuit Breaker EIP that is using Hystrix.
+     * Creates a Hystrix Circuit Breaker EIP.
+     * <p/>
+     * This requires having camel-hystrix on the classpath.
      *
      * @return  the builder
      */
-    public HystrixCircuitBreakerDefinition hystrixCircuitBreaker() {
-        HystrixCircuitBreakerDefinition answer = new HystrixCircuitBreakerDefinition();
+    public HystrixDefinition hystrix() {
+        HystrixDefinition answer = new HystrixDefinition();
         addOutput(answer);
         return answer;
     }

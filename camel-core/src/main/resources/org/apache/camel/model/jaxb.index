@@ -31,7 +31,7 @@ FallbackDefinition
 FilterDefinition
 FinallyDefinition
 FromDefinition
-HystrixCircuitBreakerDefinition
+HystrixDefinition
 IdempotentConsumerDefinition
 InOnlyDefinition
 InOutDefinition

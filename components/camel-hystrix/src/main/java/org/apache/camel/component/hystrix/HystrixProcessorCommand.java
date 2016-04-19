@@ -21,8 +21,10 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 
+/**
+ * Hystrix Command for the Camel Hystrix EIP.
+ */
 public class HystrixProcessorCommand extends HystrixCommand<Exchange> {
 
     private final Exchange exchange;

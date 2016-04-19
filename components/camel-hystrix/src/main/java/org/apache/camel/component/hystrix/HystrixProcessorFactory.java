@@ -17,11 +17,14 @@
 package org.apache.camel.component.hystrix;
 
 import org.apache.camel.Processor;
-import org.apache.camel.model.HystrixCircuitBreakerDefinition;
+import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
 
+/**
+ * To integrate camel-hystrix with the Camel routes using the Hystrix EIP.
+ */
 public class HystrixProcessorFactory implements ProcessorFactory {
 
     @Override
@@ -32,8 +35,8 @@ public class HystrixProcessorFactory implements ProcessorFactory {
 
     @Override
     public Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> definition) throws Exception {
-        if (definition instanceof HystrixCircuitBreakerDefinition) {
-            HystrixCircuitBreakerDefinition cb = (HystrixCircuitBreakerDefinition) definition;
+        if (definition instanceof HystrixDefinition) {
+            HystrixDefinition cb = (HystrixDefinition) definition;
             String id = cb.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
 
             // create the regular processor
