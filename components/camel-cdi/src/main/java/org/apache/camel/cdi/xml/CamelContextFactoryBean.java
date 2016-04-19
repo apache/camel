@@ -40,6 +40,8 @@ import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
+import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
+import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ContextScanDefinition;
@@ -163,11 +165,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class)
     private List<ErrorHandlerDefinition> errorHandlers;
 
-    @XmlElement(name = "export", type = ServiceExporterDefinition.class)
-    private List<ServiceExporterDefinition> exports;
+    @XmlElement(name = "export", type = CamelServiceExporterDefinition.class)
+    private List<CamelServiceExporterDefinition> exports;
 
     @XmlElement(name = "proxy")
-    private List<ProxyFactoryDefinition> proxies;
+    private List<CamelProxyFactoryDefinition> proxies;
 
     @XmlElement(name = "routeBuilder")
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<>();
@@ -685,19 +687,19 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
         this.dependsOn = dependsOn;
     }
 
-    public List<ProxyFactoryDefinition> getProxies() {
+    public List<CamelProxyFactoryDefinition> getProxies() {
         return proxies;
     }
 
-    public void setProxies(List<ProxyFactoryDefinition> proxies) {
+    public void setProxies(List<CamelProxyFactoryDefinition> proxies) {
         this.proxies = proxies;
     }
 
-    public List<ServiceExporterDefinition> getExports() {
+    public List<CamelServiceExporterDefinition> getExports() {
         return exports;
     }
 
-    public void setExports(List<ServiceExporterDefinition> exports) {
+    public void setExports(List<CamelServiceExporterDefinition> exports) {
         this.exports = exports;
     }
 

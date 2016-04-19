@@ -42,11 +42,11 @@ import org.apache.camel.cdi.xml.CamelContextFactoryBean;
 import org.apache.camel.cdi.xml.ErrorHandlerDefinition;
 import org.apache.camel.cdi.xml.ErrorHandlerType;
 import org.apache.camel.cdi.xml.ImportDefinition;
-import org.apache.camel.cdi.xml.ProxyFactoryDefinition;
 import org.apache.camel.cdi.xml.RestContextDefinition;
 import org.apache.camel.cdi.xml.RouteContextDefinition;
-import org.apache.camel.cdi.xml.ServiceExporterDefinition;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
+import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
+import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -259,7 +259,7 @@ final class XmlCdiBeanFactory {
                 + "with qualifiers " + bean.getQualifiers());
     }
 
-    private SyntheticBean<?> proxyFactoryBean(Bean<?> context, ProxyFactoryDefinition proxy, URL url) {
+    private SyntheticBean<?> proxyFactoryBean(Bean<?> context, CamelProxyFactoryDefinition proxy, URL url) {
         if (ObjectHelper.isEmpty(proxy.getServiceRef()) && ObjectHelper.isEmpty(proxy.getServiceUrl())) {
             throw new CreationException(
                 format("Missing [%s] or [%s] attribute for imported bean [%s] from resource [%s]",
@@ -277,7 +277,7 @@ final class XmlCdiBeanFactory {
             context, proxy);
     }
 
-    private SyntheticBean<?> serviceExporterBean(Bean<?> context, ServiceExporterDefinition exporter, URL url) {
+    private SyntheticBean<?> serviceExporterBean(Bean<?> context, CamelServiceExporterDefinition exporter, URL url) {
         // TODO: replace with CreationException
         Objects.requireNonNull(exporter.getServiceRef(),
             () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
