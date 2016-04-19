@@ -54,6 +54,7 @@ public class HystrixProcessorCommand extends HystrixCommand<Exchange> {
 
         try {
             if (fallback != null) {
+                LOG.debug("Error occurred processing. Will now run fallback. Exception class: {} message: {}.", exception.getClass().getName(), exception.getMessage());
                 // store the last to endpoint as the failure endpoint
                 if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
                     exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
@@ -66,14 +67,15 @@ public class HystrixProcessorCommand extends HystrixCommand<Exchange> {
                 exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
                 // run the fallback processor
                 try {
-                    LOG.debug("Running fallback: {}", exchange);
+                    LOG.debug("Running fallback: {} with exchange: {}", fallback, exchange);
                     fallback.process(exchange, callback);
                 } catch (Exception e) {
                     exchange.setException(e);
                 }
             }
         } finally {
-            LOG.debug("Running fallback: {} success", exchange);
+            LOG.debug("Running fallback: {} with exchange: {} done", fallback, exchange);
+            exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
             callback.done(false);
         }
 
@@ -82,9 +84,9 @@ public class HystrixProcessorCommand extends HystrixCommand<Exchange> {
 
     @Override
     protected Exchange run() throws Exception {
-        LOG.debug("Running processor: {}", exchange);
+        LOG.debug("Running processor: {} with exchange: {}", processor, exchange);
 
-        exchange.setProperty(Exchange.EXCEPTION_HANDLED, null);
+        // run this as if we run inside try .. catch so there is no regular Camel error handler
         exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
         try {
             processor.process(exchange, callback);
@@ -98,7 +100,8 @@ public class HystrixProcessorCommand extends HystrixCommand<Exchange> {
         }
         // no errors we are done
         try {
-            LOG.debug("Running processor: {} success", exchange);
+            LOG.debug("Running processor: {} with exchange: {} done", processor, exchange);
+            exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
             callback.done(false);
         } catch (Throwable e) {
             exchange.setException(e);

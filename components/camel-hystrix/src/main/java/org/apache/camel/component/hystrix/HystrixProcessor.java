@@ -85,20 +85,13 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // run this as if we run inside try .. catch so there is no regular Camel error handler
-        exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
-
-        // use our callback that does some cleanup when done
-        AsyncCallback hystrixCallback = new HystrixAsyncCallback(exchange, callback);
-
         HystrixCommandGroupKey key = HystrixCommandGroupKey.Factory.asKey(id);
-        HystrixProcessorCommand command = new HystrixProcessorCommand(key, exchange, hystrixCallback, processor, fallback);
+        HystrixProcessorCommand command = new HystrixProcessorCommand(key, exchange, callback, processor, fallback);
         try {
             command.queue();
         } catch (Throwable e) {
             // error adding to queue, so set as error and we are done
             exchange.setException(e);
-            exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
             callback.done(true);
             return true;
         }
@@ -116,24 +109,4 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
         // noop
     }
 
-    private static final class HystrixAsyncCallback implements AsyncCallback {
-
-        private final Exchange exchange;
-        private final AsyncCallback delegate;
-
-        public HystrixAsyncCallback(Exchange exchange, AsyncCallback delegate) {
-            this.exchange = exchange;
-            this.delegate = delegate;
-        }
-
-        @Override
-        public void done(boolean doneSync) {
-            if (doneSync) {
-                return;
-            }
-            // we are only done when called with false
-            exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
-            delegate.done(doneSync);
-        }
-    }
 }
