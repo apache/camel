@@ -24,6 +24,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Message;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.IdAware;
@@ -88,10 +89,30 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
     }
 
     @Override
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        HystrixProcessorCommand command = new HystrixProcessorCommand(setter, exchange, callback, processor, fallback, cacheKey);
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        // run this as if we run inside try .. catch so there is no regular Camel error handler
+        exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
+
         try {
-            command.queue();
+            // create command
+            HystrixProcessorCommand command = new HystrixProcessorCommand(setter, exchange, callback, processor, fallback, cacheKey);
+
+            // execute the command asynchronous and observe when its done
+            command.observe().subscribe((msg) -> {
+                    if (command.isResponseFromCache()) {
+                        // its from cache so need to copy it into the exchange
+                        Message target = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+                        target.copyFrom(msg);
+                    } else {
+                        // if it was not from cache then run/fallback was executed and the result
+                        // is already set correctly on the exchange and we do not need to do anything
+                    }
+                }, throwable -> {
+                    exchange.setException(throwable);
+                }, () -> {
+                    exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
+                    callback.done(false);
+                });
         } catch (Throwable e) {
             // error adding to queue, so set as error and we are done
             exchange.setException(e);

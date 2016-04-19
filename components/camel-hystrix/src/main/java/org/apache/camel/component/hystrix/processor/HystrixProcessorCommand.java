@@ -21,13 +21,14 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Hystrix Command for the Camel Hystrix EIP.
  */
-public class HystrixProcessorCommand extends HystrixCommand<Exchange> {
+public class HystrixProcessorCommand extends HystrixCommand<Message> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HystrixProcessorCommand.class);
     private final Exchange exchange;
@@ -60,11 +61,11 @@ public class HystrixProcessorCommand extends HystrixCommand<Exchange> {
     }
 
     @Override
-    protected Exchange getFallback() {
+    protected Message getFallback() {
         // only run fallback if there was an exception
         Exception exception = exchange.getException();
         if (exception == null) {
-            return exchange;
+            return exchange.hasOut() ? exchange.getOut() : exchange.getIn();
         }
 
         try {
@@ -91,18 +92,15 @@ public class HystrixProcessorCommand extends HystrixCommand<Exchange> {
         } finally {
             LOG.debug("Running fallback: {} with exchange: {} done", fallback, exchange);
             exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
-            callback.done(false);
         }
 
-        return exchange;
+        return exchange.hasOut() ? exchange.getOut() : exchange.getIn();
     }
 
     @Override
-    protected Exchange run() throws Exception {
+    protected Message run() throws Exception {
         LOG.debug("Running processor: {} with exchange: {}", processor, exchange);
 
-        // run this as if we run inside try .. catch so there is no regular Camel error handler
-        exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
         try {
             processor.process(exchange, callback);
         } catch (Exception e) {
@@ -116,15 +114,9 @@ public class HystrixProcessorCommand extends HystrixCommand<Exchange> {
         if (fallbackEnabled == null || fallbackEnabled && exchange.getException() != null) {
             throw exchange.getException();
         }
-        // no fallback then we are done
-        try {
-            LOG.debug("Running processor: {} with exchange: {} done", processor, exchange);
-            exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
-            callback.done(false);
-        } catch (Throwable e) {
-            exchange.setException(e);
-        }
 
-        return exchange;
+        LOG.debug("Running processor: {} with exchange: {} done", processor, exchange);
+        // no fallback then we are done
+        return exchange.hasOut() ? exchange.getOut() : exchange.getIn();
     }
 }
