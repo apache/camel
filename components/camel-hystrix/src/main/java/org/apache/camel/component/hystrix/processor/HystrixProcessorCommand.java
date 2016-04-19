@@ -35,9 +35,8 @@ public class HystrixProcessorCommand extends HystrixCommand<Exchange> {
     private final AsyncProcessor processor;
     private final AsyncProcessor fallback;
 
-    public HystrixProcessorCommand(HystrixCommandGroupKey group, Exchange exchange, AsyncCallback callback,
-                                   AsyncProcessor processor, AsyncProcessor fallback) {
-        super(group);
+    public HystrixProcessorCommand(Setter setter, Exchange exchange, AsyncCallback callback, AsyncProcessor processor, AsyncProcessor fallback) {
+        super(setter);
         this.exchange = exchange;
         this.callback = callback;
         this.processor = processor;

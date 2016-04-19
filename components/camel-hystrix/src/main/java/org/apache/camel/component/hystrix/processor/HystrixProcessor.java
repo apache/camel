@@ -19,7 +19,7 @@ package org.apache.camel.component.hystrix.processor;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommand;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
@@ -36,11 +36,13 @@ import org.apache.camel.util.AsyncProcessorHelper;
 public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
 
     private String id;
+    private final HystrixCommand.Setter setter;
     private final AsyncProcessor processor;
     private final AsyncProcessor fallback;
 
-    public HystrixProcessor(String id, Processor processor, Processor fallback) {
+    public HystrixProcessor(String id, HystrixCommand.Setter setter, Processor processor, Processor fallback) {
         this.id = id;
+        this.setter = setter;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
         this.fallback = AsyncProcessorConverterHelper.convert(fallback);
     }
@@ -85,8 +87,7 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        HystrixCommandGroupKey key = HystrixCommandGroupKey.Factory.asKey(id);
-        HystrixProcessorCommand command = new HystrixProcessorCommand(key, exchange, callback, processor, fallback);
+        HystrixProcessorCommand command = new HystrixProcessorCommand(setter, exchange, callback, processor, fallback);
         try {
             command.queue();
         } catch (Throwable e) {

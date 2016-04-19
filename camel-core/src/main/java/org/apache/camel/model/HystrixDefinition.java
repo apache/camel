@@ -16,10 +16,13 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
@@ -31,6 +34,10 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HystrixDefinition extends OutputDefinition<HystrixDefinition> {
 
+    @XmlElement
+    private HystrixConfigurationDefinition hystrixConfiguration;
+    @XmlElementRef
+    protected List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
     @XmlElement
     private FallbackDefinition fallback;
 
@@ -50,6 +57,23 @@ public class HystrixDefinition extends OutputDefinition<HystrixDefinition> {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         throw new IllegalStateException("Cannot find camel-hystrix on the classpath.");
+    }
+
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
+    public boolean isOutputSupported() {
+        return true;
+    }
+
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+        this.outputs = outputs;
+        if (outputs != null) {
+            for (ProcessorDefinition<?> output : outputs) {
+                configureChild(output);
+            }
+        }
     }
 
     @Override
@@ -74,14 +98,6 @@ public class HystrixDefinition extends OutputDefinition<HystrixDefinition> {
         return super.end();
     }
 
-    public FallbackDefinition getFallback() {
-        return fallback;
-    }
-
-    public void setFallback(FallbackDefinition fallback) {
-        this.fallback = fallback;
-    }
-
     protected void preCreateProcessor() {
         // move the fallback from outputs to fallback which we need to ensure
         // such as when using the XML DSL
@@ -95,18 +111,45 @@ public class HystrixDefinition extends OutputDefinition<HystrixDefinition> {
         }
     }
 
+    // Getter/Setter
+    // -------------------------------------------------------------------------
+
+    public FallbackDefinition getFallback() {
+        return fallback;
+    }
+
+    public void setFallback(FallbackDefinition fallback) {
+        this.fallback = fallback;
+    }
+
+    public HystrixConfigurationDefinition getHystrixConfiguration() {
+        return hystrixConfiguration;
+    }
+
+    public void setHystrixConfiguration(HystrixConfigurationDefinition hystrixConfiguration) {
+        this.hystrixConfiguration = hystrixConfiguration;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
     /**
-     * Sets the otherwise node
-     *
-     * @return the builder
+     * Sets the fallback node
      */
     public HystrixDefinition fallback() {
         fallback = new FallbackDefinition();
         fallback.setParent(this);
         return this;
+    }
+
+    /**
+     * Configures the Hystrix EIP
+     * <p/>
+     * Use <tt>end</tt> when configuration is complete, to return back to the Hystrix EIP.
+     */
+    public HystrixConfigurationDefinition configure() {
+        hystrixConfiguration = new HystrixConfigurationDefinition(this);
+        return hystrixConfiguration;
     }
 
 }
