@@ -20,6 +20,7 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.HystrixDefinition;
@@ -45,7 +46,7 @@ public class HystrixProcessorFactory implements ProcessorFactory {
             HystrixDefinition cb = (HystrixDefinition) definition;
             String id = cb.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
 
-            // create the regular processor
+            // create the regular and fallback processors
             Processor processor = cb.createChildProcessor(routeContext, true);
             Processor fallback = null;
             if (cb.getFallback() != null) {
@@ -70,7 +71,13 @@ public class HystrixProcessorFactory implements ProcessorFactory {
                 configureHystrix(command, threadPool, config);
             }
 
-            return new HystrixProcessor(id, setter, processor, fallback);
+            // optional cache-key from expression
+            Expression cacheKey = null;
+            if (cb.getCacheKey() != null) {
+                cacheKey = cb.getCacheKey().createExpression(routeContext);
+            }
+
+            return new HystrixProcessor(id, setter, processor, fallback, cacheKey);
         } else {
             return null;
         }

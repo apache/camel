@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -37,6 +38,8 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
 
     @XmlElement
     private HystrixConfigurationDefinition hystrixConfiguration;
+    @XmlElement
+    private ExpressionSubElementDefinition cacheKey;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
     @XmlElement
@@ -117,14 +120,6 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
     // Getter/Setter
     // -------------------------------------------------------------------------
 
-    public FallbackDefinition getFallback() {
-        return fallback;
-    }
-
-    public void setFallback(FallbackDefinition fallback) {
-        this.fallback = fallback;
-    }
-
     public HystrixConfigurationDefinition getHystrixConfiguration() {
         return hystrixConfiguration;
     }
@@ -141,17 +136,24 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
         this.hystrixConfigurationRef = hystrixConfigurationRef;
     }
 
+    public ExpressionSubElementDefinition getCacheKey() {
+        return cacheKey;
+    }
+
+    public void setCacheKey(ExpressionSubElementDefinition cacheKey) {
+        this.cacheKey = cacheKey;
+    }
+
+    public FallbackDefinition getFallback() {
+        return fallback;
+    }
+
+    public void setFallback(FallbackDefinition fallback) {
+        this.fallback = fallback;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
-
-    /**
-     * Sets the fallback node
-     */
-    public HystrixDefinition fallback() {
-        fallback = new FallbackDefinition();
-        fallback.setParent(this);
-        return this;
-    }
 
     /**
      * Configures the Hystrix EIP
@@ -176,6 +178,28 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
      */
     public HystrixDefinition configure(String ref) {
         hystrixConfigurationRef = ref;
+        return this;
+    }
+
+    /**
+     * Sets the expression to use for generating the cache key.
+     * <p/>
+     * Key to be used for request caching.
+     * By default this returns null which means "do not cache".
+     * To enable caching set an expression that returns a string key uniquely representing the state of a command instance.
+     * If multiple command instances in the same request scope match keys then only the first will be executed and all others returned from cache.
+     */
+    public HystrixDefinition cacheKey(Expression expression) {
+        setCacheKey(new ExpressionSubElementDefinition(expression));
+        return this;
+    }
+
+    /**
+     * Sets the fallback node
+     */
+    public HystrixDefinition fallback() {
+        fallback = new FallbackDefinition();
+        fallback.setParent(this);
         return this;
     }
 

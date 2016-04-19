@@ -23,6 +23,7 @@ import com.netflix.hystrix.HystrixCommand;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.IdAware;
@@ -39,12 +40,14 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
     private final HystrixCommand.Setter setter;
     private final AsyncProcessor processor;
     private final AsyncProcessor fallback;
+    private final Expression cacheKey;
 
-    public HystrixProcessor(String id, HystrixCommand.Setter setter, Processor processor, Processor fallback) {
+    public HystrixProcessor(String id, HystrixCommand.Setter setter, Processor processor, Processor fallback, Expression cacheKey) {
         this.id = id;
         this.setter = setter;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
         this.fallback = AsyncProcessorConverterHelper.convert(fallback);
+        this.cacheKey = cacheKey;
     }
 
     @Override
@@ -87,7 +90,7 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        HystrixProcessorCommand command = new HystrixProcessorCommand(setter, exchange, callback, processor, fallback);
+        HystrixProcessorCommand command = new HystrixProcessorCommand(setter, exchange, callback, processor, fallback, cacheKey);
         try {
             command.queue();
         } catch (Throwable e) {

@@ -17,10 +17,10 @@
 package org.apache.camel.component.hystrix.processor;
 
 import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,13 +34,29 @@ public class HystrixProcessorCommand extends HystrixCommand<Exchange> {
     private final AsyncCallback callback;
     private final AsyncProcessor processor;
     private final AsyncProcessor fallback;
+    private final Expression cacheKey;
 
-    public HystrixProcessorCommand(Setter setter, Exchange exchange, AsyncCallback callback, AsyncProcessor processor, AsyncProcessor fallback) {
+    public HystrixProcessorCommand(Setter setter, Exchange exchange, AsyncCallback callback, AsyncProcessor processor, AsyncProcessor fallback, Expression cacheKey) {
         super(setter);
         this.exchange = exchange;
         this.callback = callback;
         this.processor = processor;
         this.fallback = fallback;
+        this.cacheKey = cacheKey;
+    }
+
+    @Override
+    protected String getCacheKey() {
+        // TODO: require https://github.com/Netflix/Hystrix/wiki/How-To-Use#Caching
+        if (cacheKey != null) {
+            try {
+                return cacheKey.evaluate(exchange, String.class);
+            } catch (Throwable e) {
+                // ignore
+                LOG.debug("Error evaluating cache key. This exception is ignored.", e);
+            }
+        }
+        return null;
     }
 
     @Override
