@@ -90,25 +90,25 @@ public class CdiCamelExtension implements Extension {
 
     private final CdiCamelEnvironment environment = new CdiCamelEnvironment();
 
-    private final Set<Class<?>> converters = newSetFromMap(new ConcurrentHashMap<Class<?>, Boolean>());
+    private final Set<Class<?>> converters = newSetFromMap(new ConcurrentHashMap<>());
 
-    private final Set<AnnotatedType<?>> camelBeans = newSetFromMap(new ConcurrentHashMap<AnnotatedType<?>, Boolean>());
+    private final Set<AnnotatedType<?>> camelBeans = newSetFromMap(new ConcurrentHashMap<>());
 
-    private final Set<AnnotatedType<?>> eagerBeans = newSetFromMap(new ConcurrentHashMap<AnnotatedType<?>, Boolean>());
+    private final Set<AnnotatedType<?>> eagerBeans = newSetFromMap(new ConcurrentHashMap<>());
 
     private final Map<InjectionPoint, ForwardingObserverMethod<?>> cdiEventEndpoints = new ConcurrentHashMap<>();
 
-    private final Set<Bean<?>> contextBeans = newSetFromMap(new ConcurrentHashMap<Bean<?>, Boolean>());
+    private final Set<Bean<?>> contextBeans = newSetFromMap(new ConcurrentHashMap<>());
 
-    private final Set<Annotation> contextQualifiers = newSetFromMap(new ConcurrentHashMap<Annotation, Boolean>());
+    private final Set<Annotation> contextQualifiers = newSetFromMap(new ConcurrentHashMap<>());
 
-    private final Set<Annotation> eventQualifiers = newSetFromMap(new ConcurrentHashMap<Annotation, Boolean>());
+    private final Set<Annotation> eventQualifiers = newSetFromMap(new ConcurrentHashMap<>());
 
     private final Map<Method, Bean<?>> producerBeans = new ConcurrentHashMap<>();
 
     private final Map<Method, Set<Annotation>> producerQualifiers = new ConcurrentHashMap<>();
 
-    private final Set<ContextName> contextNames = newSetFromMap(new ConcurrentHashMap<ContextName, Boolean>());
+    private final Set<ContextName> contextNames = newSetFromMap(new ConcurrentHashMap<>());
 
     private final Set<ImportResource> resources = newSetFromMap(new ConcurrentHashMap<>());
 
