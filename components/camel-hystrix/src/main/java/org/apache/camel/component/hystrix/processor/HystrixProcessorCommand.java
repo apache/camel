@@ -93,11 +93,14 @@ public class HystrixProcessorCommand extends HystrixCommand<Exchange> {
             exchange.setException(e);
         }
 
-        // if we failed then throw an exception
-        if (exchange.getException() != null) {
+        // is fallback enabled
+        Boolean fallbackEnabled = getProperties().fallbackEnabled().get();
+
+        // if we failed then throw an exception if fallback is enabled
+        if (fallbackEnabled == null || fallbackEnabled && exchange.getException() != null) {
             throw exchange.getException();
         }
-        // no errors we are done
+        // no fallback then we are done
         try {
             LOG.debug("Running processor: {} with exchange: {} done", processor, exchange);
             exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
