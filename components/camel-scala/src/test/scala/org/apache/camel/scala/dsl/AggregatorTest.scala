@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.scala.dsl
- 
+
+import org.apache.camel.processor.BodyInAggregatingStrategy
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy
 import org.junit.Test
 import builder.RouteBuilder
@@ -71,6 +72,18 @@ class AggregatorTest extends ScalaTestSupport {
     }
   }
 
+  @Test
+  def testAggregateSimplePredicate() {
+    "mock:e" expect {
+      _.received("A+B+C")
+    }
+    test {
+      "direct:e" ! "A"
+      "direct:e" ! "B"
+      "direct:e" ! "C"
+    }
+  }
+
   val builder =
     new RouteBuilder {
        "direct:a" ==> {
@@ -98,6 +111,10 @@ class AggregatorTest extends ScalaTestSupport {
           case _ => anExchange(newEx.getContext).withBody(oldEx.in[String] + newEx.in[String]).build
         }
         aggregate ("constant", aggregator) completionSize 2 to "mock:d"
+      }
+
+      "direct:e" ==> {
+        aggregate("constant", new BodyInAggregatingStrategy()) completionPredicate(_.in[String].contains("A+B+C")) to "mock:e"
       }
     }
 
