@@ -32,7 +32,7 @@ import org.apache.camel.spi.RouteContext;
 @Metadata(label = "eip,routing,circuitbreaker")
 @XmlRootElement(name = "hystrix")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HystrixDefinition extends OutputDefinition<HystrixDefinition> {
+public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
 
     @XmlElement
     private HystrixConfigurationDefinition hystrixConfiguration;
