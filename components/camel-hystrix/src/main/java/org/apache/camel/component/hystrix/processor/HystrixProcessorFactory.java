@@ -59,104 +59,109 @@ public class HystrixProcessorFactory implements ProcessorFactory {
             HystrixThreadPoolProperties.Setter threadPool = HystrixThreadPoolProperties.Setter();
             setter.andThreadPoolPropertiesDefaults(threadPool);
 
-            // any custom configuration then override the setter
-            if (cb.getHystrixConfiguration() != null || cb.getHystrixConfigurationRef() != null) {
+            // at first configure any shared options
+            if (cb.getHystrixConfigurationRef() != null) {
+                HystrixConfigurationDefinition config = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), cb.getHystrixConfigurationRef(), HystrixConfigurationDefinition.class);
+                configureHystrix(command, threadPool, config);
+            }
+            // then any local configured can override
+            if (cb.getHystrixConfiguration() != null) {
                 HystrixConfigurationDefinition config = cb.getHystrixConfiguration();
-                if (config == null && cb.getHystrixConfigurationRef() != null) {
-                    config = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), cb.getHystrixConfigurationRef(), HystrixConfigurationDefinition.class);
-                }
-
-                // command
-                if (config.getCircuitBreakerEnabled() != null) {
-                    command.withCircuitBreakerEnabled(config.getCircuitBreakerEnabled());
-                }
-                if (config.getCircuitBreakerErrorThresholdPercentage() != null) {
-                    command.withCircuitBreakerErrorThresholdPercentage(config.getCircuitBreakerErrorThresholdPercentage());
-                }
-                if (config.getCircuitBreakerForceClosed() != null) {
-                    command.withCircuitBreakerForceClosed(config.getCircuitBreakerForceClosed());
-                }
-                if (config.getCircuitBreakerForceOpen() != null) {
-                    command.withCircuitBreakerForceOpen(config.getCircuitBreakerForceOpen());
-                }
-                if (config.getCircuitBreakerRequestVolumeThreshold() != null) {
-                    command.withCircuitBreakerRequestVolumeThreshold(config.getCircuitBreakerRequestVolumeThreshold());
-                }
-                if (config.getCircuitBreakerSleepWindowInMilliseconds() != null) {
-                    command.withCircuitBreakerSleepWindowInMilliseconds(config.getCircuitBreakerSleepWindowInMilliseconds());
-                }
-                if (config.getExecutionIsolationSemaphoreMaxConcurrentRequests() != null) {
-                    command.withExecutionIsolationSemaphoreMaxConcurrentRequests(config.getExecutionIsolationSemaphoreMaxConcurrentRequests());
-                }
-                if (config.getExecutionIsolationStrategy() != null) {
-                    command.withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.valueOf(config.getExecutionIsolationStrategy()));
-                }
-                if (config.getExecutionIsolationThreadInterruptOnTimeout() != null) {
-                    command.withExecutionIsolationThreadInterruptOnTimeout(config.getExecutionIsolationThreadInterruptOnTimeout());
-                }
-                if (config.getExecutionTimeoutInMilliseconds() != null) {
-                    command.withExecutionTimeoutInMilliseconds(config.getExecutionTimeoutInMilliseconds());
-                }
-                if (config.getExecutionTimeoutEnabled() != null) {
-                    command.withExecutionTimeoutEnabled(config.getExecutionTimeoutEnabled());
-                }
-                if (config.getFallbackIsolationSemaphoreMaxConcurrentRequests() != null) {
-                    command.withFallbackIsolationSemaphoreMaxConcurrentRequests(config.getFallbackIsolationSemaphoreMaxConcurrentRequests());
-                }
-                if (config.getFallbackEnabled() != null) {
-                    command.withFallbackEnabled(config.getFallbackEnabled());
-                }
-                if (config.getMetricsHealthSnapshotIntervalInMilliseconds() != null) {
-                    command.withMetricsHealthSnapshotIntervalInMilliseconds(config.getMetricsHealthSnapshotIntervalInMilliseconds());
-                }
-                if (config.getMetricsRollingPercentileBucketSize() != null) {
-                    command.withMetricsRollingPercentileBucketSize(config.getMetricsRollingPercentileBucketSize());
-                }
-                if (config.getMetricsRollingPercentileEnabled() != null) {
-                    command.withMetricsRollingPercentileEnabled(config.getMetricsRollingPercentileEnabled());
-                }
-                if (config.getMetricsRollingPercentileWindowInMilliseconds() != null) {
-                    command.withMetricsRollingPercentileWindowInMilliseconds(config.getMetricsRollingPercentileWindowInMilliseconds());
-                }
-                if (config.getMetricsRollingPercentileWindowBuckets() != null) {
-                    command.withMetricsRollingPercentileWindowBuckets(config.getMetricsRollingPercentileWindowBuckets());
-                }
-                if (config.getMetricsRollingStatisticalWindowInMilliseconds() != null) {
-                    command.withMetricsRollingStatisticalWindowInMilliseconds(config.getMetricsRollingStatisticalWindowInMilliseconds());
-                }
-                if (config.getMetricsRollingStatisticalWindowBuckets() != null) {
-                    command.withMetricsRollingStatisticalWindowBuckets(config.getMetricsRollingStatisticalWindowBuckets());
-                }
-                if (config.getRequestCacheEnabled() != null) {
-                    command.withRequestCacheEnabled(config.getRequestCacheEnabled());
-                }
-                if (config.getRequestLogEnabled() != null) {
-                    command.withRequestLogEnabled(config.getRequestLogEnabled());
-                }
-                // thread pool
-                if (config.getCorePoolSize() != null) {
-                    threadPool.withCoreSize(config.getCorePoolSize());
-                }
-                if (config.getKeepAliveTime() != null) {
-                    threadPool.withKeepAliveTimeMinutes(config.getKeepAliveTime());
-                }
-                if (config.getMaxQueueSize() != null) {
-                    threadPool.withMaxQueueSize(config.getMaxQueueSize());
-                }
-                if (config.getQueueSizeRejectionThreshold() != null) {
-                    threadPool.withQueueSizeRejectionThreshold(config.getQueueSizeRejectionThreshold());
-                }
-                if (config.getThreadPoolRollingNumberStatisticalWindowInMilliseconds() != null) {
-                    threadPool.withMetricsRollingStatisticalWindowInMilliseconds(config.getThreadPoolRollingNumberStatisticalWindowInMilliseconds());
-                }
-                if (config.getThreadPoolRollingNumberStatisticalWindowBuckets() != null) {
-                    threadPool.withMetricsRollingStatisticalWindowBuckets(config.getThreadPoolRollingNumberStatisticalWindowBuckets());
-                }
+                configureHystrix(command, threadPool, config);
             }
 
             return new HystrixProcessor(id, setter, processor, fallback);
         } else {
             return null;
+        }
+    }
+
+    private void configureHystrix(HystrixCommandProperties.Setter command, HystrixThreadPoolProperties.Setter threadPool, HystrixConfigurationDefinition config) {
+        // command
+        if (config.getCircuitBreakerEnabled() != null) {
+            command.withCircuitBreakerEnabled(config.getCircuitBreakerEnabled());
+        }
+        if (config.getCircuitBreakerErrorThresholdPercentage() != null) {
+            command.withCircuitBreakerErrorThresholdPercentage(config.getCircuitBreakerErrorThresholdPercentage());
+        }
+        if (config.getCircuitBreakerForceClosed() != null) {
+            command.withCircuitBreakerForceClosed(config.getCircuitBreakerForceClosed());
+        }
+        if (config.getCircuitBreakerForceOpen() != null) {
+            command.withCircuitBreakerForceOpen(config.getCircuitBreakerForceOpen());
+        }
+        if (config.getCircuitBreakerRequestVolumeThreshold() != null) {
+            command.withCircuitBreakerRequestVolumeThreshold(config.getCircuitBreakerRequestVolumeThreshold());
+        }
+        if (config.getCircuitBreakerSleepWindowInMilliseconds() != null) {
+            command.withCircuitBreakerSleepWindowInMilliseconds(config.getCircuitBreakerSleepWindowInMilliseconds());
+        }
+        if (config.getExecutionIsolationSemaphoreMaxConcurrentRequests() != null) {
+            command.withExecutionIsolationSemaphoreMaxConcurrentRequests(config.getExecutionIsolationSemaphoreMaxConcurrentRequests());
+        }
+        if (config.getExecutionIsolationStrategy() != null) {
+            command.withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.valueOf(config.getExecutionIsolationStrategy()));
+        }
+        if (config.getExecutionIsolationThreadInterruptOnTimeout() != null) {
+            command.withExecutionIsolationThreadInterruptOnTimeout(config.getExecutionIsolationThreadInterruptOnTimeout());
+        }
+        if (config.getExecutionTimeoutInMilliseconds() != null) {
+            command.withExecutionTimeoutInMilliseconds(config.getExecutionTimeoutInMilliseconds());
+        }
+        if (config.getExecutionTimeoutEnabled() != null) {
+            command.withExecutionTimeoutEnabled(config.getExecutionTimeoutEnabled());
+        }
+        if (config.getFallbackIsolationSemaphoreMaxConcurrentRequests() != null) {
+            command.withFallbackIsolationSemaphoreMaxConcurrentRequests(config.getFallbackIsolationSemaphoreMaxConcurrentRequests());
+        }
+        if (config.getFallbackEnabled() != null) {
+            command.withFallbackEnabled(config.getFallbackEnabled());
+        }
+        if (config.getMetricsHealthSnapshotIntervalInMilliseconds() != null) {
+            command.withMetricsHealthSnapshotIntervalInMilliseconds(config.getMetricsHealthSnapshotIntervalInMilliseconds());
+        }
+        if (config.getMetricsRollingPercentileBucketSize() != null) {
+            command.withMetricsRollingPercentileBucketSize(config.getMetricsRollingPercentileBucketSize());
+        }
+        if (config.getMetricsRollingPercentileEnabled() != null) {
+            command.withMetricsRollingPercentileEnabled(config.getMetricsRollingPercentileEnabled());
+        }
+        if (config.getMetricsRollingPercentileWindowInMilliseconds() != null) {
+            command.withMetricsRollingPercentileWindowInMilliseconds(config.getMetricsRollingPercentileWindowInMilliseconds());
+        }
+        if (config.getMetricsRollingPercentileWindowBuckets() != null) {
+            command.withMetricsRollingPercentileWindowBuckets(config.getMetricsRollingPercentileWindowBuckets());
+        }
+        if (config.getMetricsRollingStatisticalWindowInMilliseconds() != null) {
+            command.withMetricsRollingStatisticalWindowInMilliseconds(config.getMetricsRollingStatisticalWindowInMilliseconds());
+        }
+        if (config.getMetricsRollingStatisticalWindowBuckets() != null) {
+            command.withMetricsRollingStatisticalWindowBuckets(config.getMetricsRollingStatisticalWindowBuckets());
+        }
+        if (config.getRequestCacheEnabled() != null) {
+            command.withRequestCacheEnabled(config.getRequestCacheEnabled());
+        }
+        if (config.getRequestLogEnabled() != null) {
+            command.withRequestLogEnabled(config.getRequestLogEnabled());
+        }
+        // thread pool
+        if (config.getCorePoolSize() != null) {
+            threadPool.withCoreSize(config.getCorePoolSize());
+        }
+        if (config.getKeepAliveTime() != null) {
+            threadPool.withKeepAliveTimeMinutes(config.getKeepAliveTime());
+        }
+        if (config.getMaxQueueSize() != null) {
+            threadPool.withMaxQueueSize(config.getMaxQueueSize());
+        }
+        if (config.getQueueSizeRejectionThreshold() != null) {
+            threadPool.withQueueSizeRejectionThreshold(config.getQueueSizeRejectionThreshold());
+        }
+        if (config.getThreadPoolRollingNumberStatisticalWindowInMilliseconds() != null) {
+            threadPool.withMetricsRollingStatisticalWindowInMilliseconds(config.getThreadPoolRollingNumberStatisticalWindowInMilliseconds());
+        }
+        if (config.getThreadPoolRollingNumberStatisticalWindowBuckets() != null) {
+            threadPool.withMetricsRollingStatisticalWindowBuckets(config.getThreadPoolRollingNumberStatisticalWindowBuckets());
         }
     }
 }
