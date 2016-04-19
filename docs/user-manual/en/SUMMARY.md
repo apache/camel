@@ -157,6 +157,7 @@
     * [Http4](http4.adoc)
     * [Hystrix](hystrix.adoc)
     * [Ibatis](ibatis.adoc)
+    * [Infinispan](infinispan.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
