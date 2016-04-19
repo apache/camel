@@ -155,6 +155,7 @@
     * [HL7](hl7.adoc)
     * [Http](http.adoc)
     * [Http4](http4.adoc)
+    * [Hystrix](hystrix.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
