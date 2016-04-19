@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hystrix;
+package org.apache.camel.component.hystrix.processor;
 
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
@@ -25,7 +25,7 @@ public class SpringHystrixRouteOkTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/hystrix/SpringHystrixRouteOkTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/hystrix/processor/SpringHystrixRouteOkTest.xml");
     }
 
     @Test
