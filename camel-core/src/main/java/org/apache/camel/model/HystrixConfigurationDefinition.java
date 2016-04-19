@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,circuitbreaker")
 @XmlRootElement(name = "hystrixConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HystrixConfigurationDefinition {
+public class HystrixConfigurationDefinition extends IdentifiedType {
 
     @XmlTransient
     private HystrixDefinition parent;
