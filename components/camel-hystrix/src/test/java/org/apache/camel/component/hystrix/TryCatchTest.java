@@ -20,10 +20,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HystrixRouteFallbackTest extends CamelTestSupport {
+public class TryCatchTest extends CamelTestSupport {
 
     @Test
-    public void testHystrix() throws Exception {
+    public void testTryCatch() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Fallback message");
 
         template.sendBody("direct:start", "Hello World");
@@ -37,9 +37,9 @@ public class HystrixRouteFallbackTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .hystrix()
+                    .doTry()
                         .to("direct:foo")
-                    .fallback()
+                    .doCatch(Exception.class)
                         .transform().constant("Fallback message")
                     .end()
                     .to("mock:result");

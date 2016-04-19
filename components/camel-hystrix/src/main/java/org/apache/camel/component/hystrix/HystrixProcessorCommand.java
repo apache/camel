@@ -21,12 +21,15 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Hystrix Command for the Camel Hystrix EIP.
  */
 public class HystrixProcessorCommand extends HystrixCommand<Exchange> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HystrixProcessorCommand.class);
     private final Exchange exchange;
     private final AsyncCallback callback;
     private final AsyncProcessor processor;
@@ -43,45 +46,62 @@ public class HystrixProcessorCommand extends HystrixCommand<Exchange> {
 
     @Override
     protected Exchange getFallback() {
-        if (fallback != null) {
-            try {
-                Exception e = exchange.getException();
+        // only run fallback if there was an exception
+        Exception exception = exchange.getException();
+        if (exception == null) {
+            return exchange;
+        }
+
+        try {
+            if (fallback != null) {
                 // store the last to endpoint as the failure endpoint
                 if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
                     exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
                 }
                 // give the rest of the pipeline another chance
                 exchange.setProperty(Exchange.EXCEPTION_HANDLED, true);
-                exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
+                exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
                 exchange.setException(null);
                 // and we should not be regarded as exhausted as we are in a try .. catch block
                 exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
-
-                fallback.process(exchange, callback);
-            } catch (Exception e) {
-                exchange.setException(e);
-            } finally {
-                callback.done(true);
+                // run the fallback processor
+                try {
+                    LOG.debug("Running fallback: {}", exchange);
+                    fallback.process(exchange, callback);
+                } catch (Exception e) {
+                    exchange.setException(e);
+                }
             }
-            return exchange;
-        } else {
-            return null;
+        } finally {
+            LOG.debug("Running fallback: {} success", exchange);
+            callback.done(false);
         }
+
+        return exchange;
     }
 
     @Override
     protected Exchange run() throws Exception {
+        LOG.debug("Running processor: {}", exchange);
+
+        exchange.setProperty(Exchange.EXCEPTION_HANDLED, null);
+        exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
         try {
             processor.process(exchange, callback);
         } catch (Exception e) {
             exchange.setException(e);
-        } finally {
-            callback.done(true);
         }
 
         // if we failed then throw an exception
         if (exchange.getException() != null) {
             throw exchange.getException();
+        }
+        // no errors we are done
+        try {
+            LOG.debug("Running processor: {} success", exchange);
+            callback.done(false);
+        } catch (Throwable e) {
+            exchange.setException(e);
         }
 
         return exchange;
