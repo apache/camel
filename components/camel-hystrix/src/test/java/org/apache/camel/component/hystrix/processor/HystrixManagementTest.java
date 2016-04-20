@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hystrix.processor;
 
+import java.util.stream.Stream;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -25,6 +26,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class HystrixManagementTest extends CamelTestSupport {
+
+    private HystrixEventStreamService stream = new HystrixEventStreamService();
 
     @Override
     protected boolean useJmx() {
@@ -73,7 +76,16 @@ public class HystrixManagementTest extends CamelTestSupport {
         Long errorCount = (Long) mbeanServer.getAttribute(on, "HystrixErrorCount");
         assertEquals(0, errorCount.longValue());
 
-        Thread.sleep(5000);
+        // let it gather for a while
+        Thread.sleep(1000);
+
+        String latest = stream.oldestMetricsAsJSon();
+        log.info("Oldest json stream: {}", latest);
+
+        Stream<String> jsons = stream.streamMetrics();
+        jsons.forEach(s -> {
+                log.info("JSon: {}", s);
+            });
     }
 
     @Override
@@ -81,20 +93,21 @@ public class HystrixManagementTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
                 // add the stream
-                context.addService(new HystrixEventStreamService());
+                stream.setQueueSize(10);
+                stream.setDelay(100);
+                context.addService(stream);
 
                 from("direct:start").routeId("start")
-                    .hystrix().id("myHystrix")
+                        .hystrix().id("myHystrix")
                         .to("direct:foo")
-                    .onFallback()
+                        .onFallback()
                         .transform().constant("Fallback message")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
 
                 from("direct:foo")
-                    .transform().constant("Bye World");
+                        .transform().constant("Bye World");
             }
         };
     }
