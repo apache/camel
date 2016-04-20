@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,12 +16,12 @@
  */
 package org.apache.camel.scala.dsl
 
-import org.apache.camel.processor.BodyInAggregatingStrategy
-import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy
-import org.junit.Test
-import builder.RouteBuilder
 import org.apache.camel.Exchange
 import org.apache.camel.builder.ExchangeBuilder.anExchange
+import org.apache.camel.processor.BodyInAggregatingStrategy
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy
+import org.apache.camel.scala.dsl.builder.RouteBuilder
+import org.junit.Test
 
 /**
  * Test case for message aggregator
@@ -88,6 +88,18 @@ class AggregatorTest extends ScalaTestSupport {
     }
   }
 
+  @Test
+  def testAggregatePredicateWithBlock() {
+    "mock:aggregated" expect {
+      _.received("A+B+C")
+    }
+    test {
+      "direct:predicate-block" ! "A"
+      "direct:predicate-block" ! "B"
+      "direct:predicate-block" ! "C"
+    }
+  }
+
   val builder =
     new RouteBuilder {
       "direct:completion-size" ==> {
@@ -118,6 +130,12 @@ class AggregatorTest extends ScalaTestSupport {
 
       "direct:predicate" ==> {
         aggregate("constant", new BodyInAggregatingStrategy()) completionPredicate (_.in[String].contains("A+B+C")) to "mock:aggregated"
+      }
+
+      "direct:predicate-block" ==> {
+        aggregate("constant", new BodyInAggregatingStrategy()).completionPredicate(_.in[String].contains("A+B+C")) {
+          to("mock:aggregated")
+        }
       }
     }
 }

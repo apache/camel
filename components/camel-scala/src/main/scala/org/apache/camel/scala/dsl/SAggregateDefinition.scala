@@ -65,6 +65,6 @@ case class SAggregateDefinition(override val target: AggregateDefinition)(implic
   def completionPredicate(filter: Exchange => Any) = {
      // uses implicit conversion
      val predicate = filter
-     target.completionPredicate(predicate)
+     wrap(target.completionPredicate(predicate))
   }
 }
