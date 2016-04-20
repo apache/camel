@@ -57,19 +57,19 @@ public class HystrixManagementTest extends CamelTestSupport {
         assertEquals("start", routeId);
 
         // should be id of the node
-        String commandKey = (String) mbeanServer.getAttribute(on, "CommandKey");
+        String commandKey = (String) mbeanServer.getAttribute(on, "HystrixCommandKey");
         assertEquals("myHystrix", commandKey);
 
-        String groupKey = (String) mbeanServer.getAttribute(on, "GroupKey");
+        String groupKey = (String) mbeanServer.getAttribute(on, "HystrixGroupKey");
         assertEquals("CamelHystrix", groupKey);
 
         // these metrics need a little time before updating
         Thread.sleep(1000);
 
-        Long totalRequests = (Long) mbeanServer.getAttribute(on, "TotalRequests");
+        Long totalRequests = (Long) mbeanServer.getAttribute(on, "HystrixTotalRequests");
         assertEquals(1, totalRequests.longValue());
 
-        Long errorCount = (Long) mbeanServer.getAttribute(on, "ErrorCount");
+        Long errorCount = (Long) mbeanServer.getAttribute(on, "HystrixErrorCount");
         assertEquals(0, errorCount.longValue());
     }
 

@@ -59,17 +59,17 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
     }
 
     @ManagedAttribute
-    public String getCommandKey() {
+    public String getHystrixCommandKey() {
         return commandKey.name();
     }
 
     @ManagedAttribute
-    public String getGroupKey() {
+    public String getHystrixGroupKey() {
         return groupKey.name();
     }
 
     @ManagedAttribute
-    public int getTotalTimeMean() {
+    public int getHystrixTotalTimeMean() {
         HystrixCommandMetrics metrics = HystrixCommandMetrics.getInstance(commandKey);
         if (metrics != null) {
             return metrics.getTotalTimeMean();
@@ -78,7 +78,7 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
     }
 
     @ManagedAttribute
-    public int getExecutionTimeMean() {
+    public int getHystrixExecutionTimeMean() {
         HystrixCommandMetrics metrics = HystrixCommandMetrics.getInstance(commandKey);
         if (metrics != null) {
             return metrics.getExecutionTimeMean();
@@ -87,7 +87,7 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
     }
 
     @ManagedAttribute
-    public int getCurrentConcurrentExecutionCount() {
+    public int getHystrixCurrentConcurrentExecutionCount() {
         HystrixCommandMetrics metrics = HystrixCommandMetrics.getInstance(commandKey);
         if (metrics != null) {
             return metrics.getCurrentConcurrentExecutionCount();
@@ -96,7 +96,7 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
     }
 
     @ManagedAttribute
-    public long getTotalRequests() {
+    public long getHystrixTotalRequests() {
         HystrixCommandMetrics metrics = HystrixCommandMetrics.getInstance(commandKey);
         if (metrics != null) {
             return metrics.getHealthCounts().getTotalRequests();
@@ -105,7 +105,7 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
     }
 
     @ManagedAttribute
-    public long getErrorCount() {
+    public long getHystrixErrorCount() {
         HystrixCommandMetrics metrics = HystrixCommandMetrics.getInstance(commandKey);
         if (metrics != null) {
             return metrics.getHealthCounts().getErrorCount();
@@ -114,7 +114,7 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
     }
 
     @ManagedAttribute
-    public int getErrorPercentage() {
+    public int getHystrixErrorPercentage() {
         HystrixCommandMetrics metrics = HystrixCommandMetrics.getInstance(commandKey);
         if (metrics != null) {
             return metrics.getHealthCounts().getErrorPercentage();
