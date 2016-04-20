@@ -21,8 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import javax.servlet.http.HttpServletRequest;
 
-import org.eclipse.jetty.websocket.WebSocket;
-import org.eclipse.jetty.websocket.WebSocketServlet;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +60,6 @@ public class WebsocketComponentServlet extends WebSocketServlet {
         consumers.remove(consumer.getPath());
     }
 
-    @Override
     public WebSocket doWebSocketConnect(HttpServletRequest request, String protocol) {
         String protocolKey = protocol;
 
@@ -79,4 +79,10 @@ public class WebsocketComponentServlet extends WebSocketServlet {
     public void setSocketFactory(Map<String, WebSocketFactory> socketFactory) {
         this.socketFactory = socketFactory;
     }
+
+	@Override
+	public void configure(WebSocketServletFactory factory) {
+		// TODO Auto-generated method stub
+		
+	}
 }

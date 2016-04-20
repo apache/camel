@@ -17,6 +17,7 @@
 package org.apache.camel.component.websocket;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 
 import org.apache.camel.CamelExchangeException;
@@ -101,12 +102,13 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
 
     void sendMessage(DefaultWebsocket websocket, Object message) throws IOException {
         // in case there is web socket and socket connection is open - send message
-        if (websocket != null && websocket.getConnection().isOpen()) {
+        if (websocket != null && websocket.getSession().isOpen()) {
             log.trace("Sending to websocket {} -> {}", websocket.getConnectionKey(), message);
             if (message instanceof String) {
-                websocket.getConnection().sendMessage((String) message);
+                websocket.getSession().getRemote().sendString((String) message);
             } else if (message instanceof byte[]) {
-                websocket.getConnection().sendMessage((byte[]) message, 0, ((byte[]) message).length);
+            	ByteBuffer buf = ByteBuffer.wrap((byte[]) message);
+                websocket.getSession().getRemote().sendBytes(buf);
             }
         }
     }

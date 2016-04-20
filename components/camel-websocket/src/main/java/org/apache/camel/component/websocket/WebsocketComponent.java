@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.websocket;
 
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -23,36 +24,33 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.management.MBeanServer;
 import javax.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.spi.ManagementAgent;
-import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.eclipse.jetty.http.ssl.SslContextFactory;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SessionManager;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.server.ssl.SslConnector;
-import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
@@ -88,12 +86,12 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     class ConnectorRef {
         Server server;
-        Connector connector;
+        ServerConnector connector;
         WebsocketComponentServlet servlet;
         MemoryWebsocketStore memoryStore;
         int refCount;
 
-        public ConnectorRef(Server server, Connector connector, WebsocketComponentServlet servlet, MemoryWebsocketStore memoryStore) {
+        public ConnectorRef(Server server, ServerConnector connector, WebsocketComponentServlet servlet, MemoryWebsocketStore memoryStore) {
             this.server = server;
             this.connector = connector;
             this.servlet = servlet;
@@ -136,11 +134,16 @@ public class WebsocketComponent extends UriEndpointComponent {
         synchronized (CONNECTORS) {
             ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
             if (connectorRef == null) {
-                Connector connector;
+                ServerConnector connector;
+                // Create Server and add connector
+                server = createServer();
+                if (endpoint.isEnableJmx()) {
+                    enableJmx(server);
+                }
                 if (endpoint.getSslContextParameters() != null) {
-                    connector = getSslSocketConnector(endpoint.getSslContextParameters());
+                    connector = getSslSocketConnector(server, endpoint.getSslContextParameters());
                 } else {
-                    connector = new SelectChannelConnector();
+                    connector = new ServerConnector(server);
                 }
 
                 if (endpoint.getPort() != null) {
@@ -155,11 +158,6 @@ public class WebsocketComponent extends UriEndpointComponent {
                     connector.setHost(host);
                 }
 
-                // Create Server and add connector
-                server = createServer();
-                if (endpoint.isEnableJmx()) {
-                    enableJmx(server);
-                }
                 server.addConnector(connector);
                 LOG.trace("Jetty Connector added: {}", connector.getName());
 
@@ -246,8 +244,8 @@ public class WebsocketComponent extends UriEndpointComponent {
                     // Camel controls the lifecycle of these entities so remove the
                     // registered MBeans when Camel is done with the managed objects.
                     if (mbContainer != null) {
-                        mbContainer.removeBean(connectorRef.server);
-                        mbContainer.removeBean(connectorRef.connector);
+                        mbContainer.beanRemoved(null, connectorRef.server);
+                        mbContainer.beanRemoved(null,connectorRef.connector);
                     }
                 }
                 if (prodcon instanceof WebsocketConsumer) {
@@ -263,20 +261,7 @@ public class WebsocketComponent extends UriEndpointComponent {
     public synchronized MBeanContainer getMbContainer() {
         // If null, provide the default implementation.
         if (mbContainer == null) {
-            MBeanServer mbs = null;
-
-            final ManagementStrategy mStrategy = this.getCamelContext().getManagementStrategy();
-            final ManagementAgent mAgent = mStrategy.getManagementAgent();
-            if (mAgent != null) {
-                mbs = mAgent.getMBeanServer();
-            }
-
-            if (mbs != null) {
-                mbContainer = new MBeanContainer(mbs);
-                startMbContainer();
-            } else {
-                LOG.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
-            }
+            mbContainer=new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
         }
 
         return this.mbContainer;
@@ -354,9 +339,7 @@ public class WebsocketComponent extends UriEndpointComponent {
     }
 
     protected Server createServer() throws Exception {
-        Server server = new Server();
-        ContextHandlerCollection collection = new ContextHandlerCollection();
-        server.setHandler(collection);
+        Server server = null;
 
         // configure thread pool if min/max given
         if (minThreads != null || maxThreads != null) {
@@ -377,11 +360,15 @@ public class WebsocketComponent extends UriEndpointComponent {
             } catch (Exception e) {
                 throw new RuntimeCamelException("Error starting JettyWebSocketServer thread pool: " + qtp, e);
             }
-            server.setThreadPool(qtp);
+            server = new Server(qtp);
+            ContextHandlerCollection collection = new ContextHandlerCollection();
+            server.setHandler(collection);
         }
 
         if (getThreadPool() != null) {
-            server.setThreadPool(getThreadPool());
+            server = new Server(getThreadPool());
+            ContextHandlerCollection collection = new ContextHandlerCollection();
+            server.setHandler(collection);
         }
 
         return server;
@@ -425,7 +412,8 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     protected Server createStaticResourcesServer(ServletContextHandler context, String host, int port, String home) throws Exception {
         Server server = new Server();
-        Connector connector = new SelectChannelConnector();
+        HttpConfiguration http_config = new HttpConfiguration();
+        ServerConnector connector = new ServerConnector(server, new HttpConnectionFactory(http_config));
         connector.setHost(host);
         connector.setPort(port);
         server.addConnector(connector);
@@ -467,7 +455,7 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     protected ServletContextHandler createContext(Server server, Connector connector, List<Handler> handlers) throws Exception {
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
-        context.setConnectorNames(new String[]{connector.getName()});
+        server.addConnector(connector);
 
         if (handlers != null && !handlers.isEmpty()) {
             for (Handler handler : handlers) {
@@ -486,24 +474,6 @@ public class WebsocketComponent extends UriEndpointComponent {
         return context;
     }
 
-    /**
-     * Starts {@link #mbContainer} and registers the container with itself as a managed bean
-     * logging an error if there is a problem starting the container.
-     * Does nothing if {@link #mbContainer} is {@code null}.
-     */
-    protected void startMbContainer() {
-        if (mbContainer != null && !mbContainer.isStarted()) {
-            try {
-                mbContainer.start();
-                // Publish the container itself for consistency with
-                // traditional embedded Jetty configurations.
-                mbContainer.addBean(mbContainer);
-            } catch (Throwable e) {
-                LOG.warn("Could not start JettyWebSocket MBeanContainer. Jetty JMX extensions will remain disabled.", e);
-            }
-        }
-    }
-
     private void enableSessionSupport(Server server, String connectorKey) throws Exception {
         ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
         if (context.getSessionHandler() == null) {
@@ -516,21 +486,20 @@ public class WebsocketComponent extends UriEndpointComponent {
         }
     }
 
-    private SslConnector getSslSocketConnector(SSLContextParameters sslContextParameters) throws Exception {
-        SslSelectChannelConnector sslSocketConnector = null;
+    private ServerConnector getSslSocketConnector(Server server, SSLContextParameters sslContextParameters) throws Exception {
+        ServerConnector sslSocketConnector = null;
         if (sslContextParameters != null) {
             SslContextFactory sslContextFactory = new WebSocketComponentSslContextFactory();
             sslContextFactory.setSslContext(sslContextParameters.createSSLContext());
-            sslSocketConnector = new SslSelectChannelConnector(sslContextFactory);
+            sslSocketConnector = new ServerConnector(server, sslContextFactory);
         } else {
-            sslSocketConnector = new SslSelectChannelConnector();
-            // with default null values, jetty ssl system properties
-            // and console will be read by jetty implementation
-            sslSocketConnector.getSslContextFactory().setKeyManagerPassword(sslPassword);
-            sslSocketConnector.getSslContextFactory().setKeyStorePassword(sslKeyPassword);
+            SslContextFactory sslContextFactory = new SslContextFactory();
+            sslContextFactory.setKeyStorePassword(sslKeyPassword);
+            sslContextFactory.setKeyManagerPassword(sslPassword);
             if (sslKeystore != null) {
-                sslSocketConnector.getSslContextFactory().setKeyStorePath(sslKeystore);
+            	sslContextFactory.setKeyStorePath(sslKeystore);
             }
+            sslSocketConnector = new ServerConnector(server, sslContextFactory);
 
         }
         return sslSocketConnector;
@@ -549,12 +518,6 @@ public class WebsocketComponent extends UriEndpointComponent {
             } else {
                 return true;
             }
-        }
-
-        // This method is for Jetty 7.5.x
-        @Override
-        public void checkKeyStore() {
-            // here we don't check the SslContext as it is already created
         }
     }
 
@@ -615,7 +578,7 @@ public class WebsocketComponent extends UriEndpointComponent {
         MBeanContainer containerToRegister = getMbContainer();
         if (containerToRegister != null) {
             LOG.info("Jetty JMX Extensions is enabled");
-            server.getContainer().addEventListener(containerToRegister);
+            server.addEventListener(containerToRegister);
             // Since we may have many Servers running, don't tie the MBeanContainer
             // to a Server lifecycle or we end up closing it while it is still in use.
             //server.addBean(mbContainer);
@@ -798,7 +761,7 @@ public class WebsocketComponent extends UriEndpointComponent {
             ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
             staticResourcesServer = createStaticResourcesServer(context, host, port, staticResources);
             staticResourcesServer.start();
-            Connector connector = staticResourcesServer.getConnectors()[0];
+            ServerConnector connector = (ServerConnector) staticResourcesServer.getConnectors()[0];
 
             // must add static resource server to CONNECTORS in case the websocket producers/consumers
             // uses the same port number, and therefore we must be part of this
