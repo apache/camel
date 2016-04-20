@@ -28,9 +28,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.newSetFromMap;
+
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.InjectionException;
@@ -76,10 +78,10 @@ import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.ApplicationScopedLiteral.APPLICATION_SCOPED;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferencesByType;
-import static org.apache.camel.cdi.CdiSpiHelper.excludeElementOfTypes;
 import static org.apache.camel.cdi.CdiSpiHelper.getQualifiers;
 import static org.apache.camel.cdi.CdiSpiHelper.getRawType;
 import static org.apache.camel.cdi.CdiSpiHelper.hasAnnotation;
+import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 import static org.apache.camel.cdi.Excluded.EXCLUDED;
 import static org.apache.camel.cdi.Startup.Literal.STARTUP;
@@ -299,25 +301,21 @@ public class CdiCamelExtension implements Extension {
         // Finally add the beans to the deployment
         beans.forEach(abd::addBean);
 
-        // Then update the Camel producer beans
-        for (Map.Entry<Method, Bean<?>> producer : producerBeans.entrySet()) {
-            Bean<?> bean = producer.getValue();
-            Set<Annotation> qualifiers = new HashSet<>(producerQualifiers.get(producer.getKey()));
-            Class<?> type = producer.getKey().getReturnType();
-            if (CdiEventEndpoint.class.equals(type)) {
-                for (InjectionPoint ip : cdiEventEndpoints.keySet()) {
-                    qualifiers.addAll(ip.getQualifiers());
-                }
-            } else {
-                if (Endpoint.class.isAssignableFrom(type)
-                    || ConsumerTemplate.class.equals(type)
-                    || ProducerTemplate.class.equals(type)) {
-                    qualifiers.addAll(excludeElementOfTypes(contextQualifiers, Default.class, Named.class));
-                }
-            }
-            // TODO: would be more correct to add a bean for each Camel context bean
-            abd.addBean(new BeanDelegate<>(bean, qualifiers));
-        }
+        // Update the CDI Camel factory beans
+        Set<Annotation> endpointQualifiers = cdiEventEndpoints.keySet().stream()
+            .flatMap(ip -> ip.getQualifiers().stream())
+            .collect(Collectors.toSet());
+        Set<Annotation> templateQualifiers = contextQualifiers.stream()
+            .filter(isAnnotationType(Default.class).or(isAnnotationType(Named.class)).negate())
+            .collect(Collectors.toSet());
+        // TODO: would be more correct to add a bean for each Camel context bean
+        producerBeans.entrySet().stream()
+            .map(producer -> new BeanDelegate<>(producer.getValue(),
+                producerQualifiers.get(producer.getKey()),
+                CdiEventEndpoint.class.equals(producer.getKey().getReturnType())
+                    ? endpointQualifiers
+                    : templateQualifiers))
+            .forEach(abd::addBean);
 
         // Add CDI event endpoint observer methods
         for (ObserverMethod method : cdiEventEndpoints.values()) {
