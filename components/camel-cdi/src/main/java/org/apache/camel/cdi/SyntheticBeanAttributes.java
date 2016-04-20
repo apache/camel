@@ -25,6 +25,8 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Named;
 
+import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
+
 class SyntheticBeanAttributes<T> {
 
     private final BeanManager manager;
@@ -56,7 +58,7 @@ class SyntheticBeanAttributes<T> {
 
     public String getName() {
         return annotated.getAnnotations().stream()
-            .filter(a -> Named.class.equals(a.annotationType()))
+            .filter(isAnnotationType(Named.class))
             .map(Named.class::cast)
             .map(Named::value)
             .findFirst()

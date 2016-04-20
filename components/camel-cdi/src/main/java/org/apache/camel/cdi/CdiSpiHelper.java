@@ -29,8 +29,10 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.enterprise.inject.spi.Annotated;
@@ -82,6 +84,11 @@ final class CdiSpiHelper {
             }
         }
         return set;
+    }
+
+    static Predicate<Annotation> isAnnotationType(Class<? extends Annotation> clazz) {
+        Objects.requireNonNull(clazz);
+        return annotation -> clazz.equals(annotation.annotationType());
     }
 
     static Class<?> getRawType(Type type) {

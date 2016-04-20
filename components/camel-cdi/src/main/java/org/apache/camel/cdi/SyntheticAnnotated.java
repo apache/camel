@@ -25,6 +25,8 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.enterprise.inject.spi.Annotated;
 
+import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
+
 @Vetoed
 final class SyntheticAnnotated implements Annotated {
 
@@ -66,7 +68,7 @@ final class SyntheticAnnotated implements Annotated {
     @Override
     public <T extends Annotation> T getAnnotation(Class<T> type) {
         return annotations.stream()
-            .filter(a -> a.annotationType().equals(type))
+            .filter(isAnnotationType(type))
             .findAny()
             .map(type::cast)
             .orElse(null);
@@ -75,7 +77,7 @@ final class SyntheticAnnotated implements Annotated {
     @Override
     public boolean isAnnotationPresent(Class<? extends Annotation> type) {
         return annotations.stream()
-            .filter(a -> a.annotationType().equals(type))
+            .filter(isAnnotationType(type))
             .findAny()
             .isPresent();
     }
