@@ -53,6 +53,7 @@
     <module>camel-example-etl</module>
     <module>camel-example-ftp</module>
     <module>camel-example-guice-jms</module>
+    <module>camel-example-hystrix</module>
     <module>camel-example-jdbc</module>
     <module>camel-example-jmx</module>
     <module>camel-example-jms-file</module>
