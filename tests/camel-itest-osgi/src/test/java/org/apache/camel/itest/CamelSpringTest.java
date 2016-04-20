@@ -34,6 +34,7 @@ public class CamelSpringTest extends AbstractFeatureTest {
 
     @Test
     public void testCamelSpring() throws Exception {
+        // install the camel blueprint xml file we use in this test
         URL url = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/CamelSpringTest.xml", CamelSpringTest.class.getClassLoader());
         installSpringAsBundle("CamelSpringTest", url, true);
 
@@ -51,7 +52,7 @@ public class CamelSpringTest extends AbstractFeatureTest {
 
     @Configuration
     public Option[] configure() {
-        return CamelKarafTestSupport.configure("camel-spring-dm");
+        return CamelKarafTestSupport.configure("camel-test-karaf", "camel-spring-dm");
     }
 
 }

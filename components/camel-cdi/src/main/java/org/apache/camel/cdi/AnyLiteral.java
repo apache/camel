@@ -22,7 +22,7 @@ import javax.enterprise.util.AnnotationLiteral;
 @Vetoed
 final class AnyLiteral extends AnnotationLiteral<Any> implements Any {
 
-    static final Any INSTANCE = new AnyLiteral();
+    static final Any ANY = new AnyLiteral();
 
     private static final long serialVersionUID = 1L;
 

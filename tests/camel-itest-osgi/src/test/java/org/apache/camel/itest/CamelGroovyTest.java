@@ -34,6 +34,7 @@ public class CamelGroovyTest extends AbstractFeatureTest {
 
     @Test
     public void testCamelGroovy() throws Exception {
+        // install the camel blueprint xml file we use in this test
         URL url = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/CamelGroovyTest.xml", CamelGroovyTest.class.getClassLoader());
         installBlueprintAsBundle("CamelGroovyTest", url, true);
 
@@ -51,7 +52,7 @@ public class CamelGroovyTest extends AbstractFeatureTest {
 
     @Configuration
     public Option[] configure() {
-        return CamelKarafTestSupport.configure("camel-script-groovy");
+        return CamelKarafTestSupport.configure("camel-test-karaf", "camel-script-groovy");
     }
 
 }

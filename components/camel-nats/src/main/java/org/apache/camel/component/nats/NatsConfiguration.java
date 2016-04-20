@@ -46,6 +46,8 @@ public class NatsConfiguration {
     private int maxReconnectAttempts = 3;
     @UriParam(defaultValue = "4000")
     private int pingInterval = 4000;
+    @UriParam(label = "producer")
+    private String replySubject;
     @UriParam(defaultValue = "false")
     private boolean noRandomizeServers;
     @UriParam(label = "consumer")
@@ -152,6 +154,18 @@ public class NatsConfiguration {
 
     public void setPingInterval(int pingInterval) {
         this.pingInterval = pingInterval;
+    }
+    
+
+    /**
+     * the subject to which subscribers should send response
+     */
+    public String getReplySubject() {
+        return replySubject;
+    }
+
+    public void setReplySubject(String replySubject) {
+        this.replySubject = replySubject;
     }
 
     /**

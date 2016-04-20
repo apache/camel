@@ -32,6 +32,9 @@ import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.util.ReflectionHelper;
 
+import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByType;
+import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
+
 @Vetoed
 final class CdiCamelBeanPostProcessor extends DefaultCamelBeanPostProcessor {
 
@@ -110,11 +113,13 @@ final class CdiCamelBeanPostProcessor extends DefaultCamelBeanPostProcessor {
 
     private CamelContext getOrLookupCamelContext(String contextName) {
         // TODO: proper support for custom context qualifiers
-        return BeanManagerHelper.getReferenceByType(manager, CamelContext.class, contextName.isEmpty() ? DefaultLiteral.INSTANCE : ContextName.Literal.of(contextName));
+        return getReferenceByType(manager, CamelContext.class,
+            contextName.isEmpty() ? DEFAULT : ContextName.Literal.of(contextName))
+            .orElseThrow(() -> new UnsatisfiedResolutionException("No Camel context with name [" + contextName + "] is deployed!"));
     }
 
     @Override
     public CamelContext getOrLookupCamelContext() {
-        return BeanManagerHelper.getReferenceByType(manager, CamelContext.class);
+        return getReferenceByType(manager, CamelContext.class).orElse(null);
     }
 }

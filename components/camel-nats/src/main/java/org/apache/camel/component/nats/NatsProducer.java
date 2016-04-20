@@ -25,6 +25,7 @@ import io.nats.client.ConnectionFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,13 @@ public class NatsProducer extends DefaultProducer {
         String body = exchange.getIn().getMandatoryBody(String.class);
 
         LOG.debug("Publishing to topic: {}", config.getTopic());
-        connection.publish(config.getTopic(), body.getBytes());
+        
+        if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
+            String replySubject = config.getReplySubject();
+            connection.publish(config.getTopic(), replySubject, body.getBytes());
+        } else {
+            connection.publish(config.getTopic(), body.getBytes());
+        }
     }
     
     @Override

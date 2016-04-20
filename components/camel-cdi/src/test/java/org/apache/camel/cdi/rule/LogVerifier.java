@@ -47,9 +47,13 @@ public class LogVerifier extends Verifier {
 
             @Override
             protected void append(LoggingEvent event) {
-                messages.add(event.getRenderedMessage());
+                LogVerifier.this.append(event);
             }
         };
+    }
+
+    protected void append(LoggingEvent event) {
+        messages.add(event.getRenderedMessage());
     }
 
     public List<String> getMessages() {

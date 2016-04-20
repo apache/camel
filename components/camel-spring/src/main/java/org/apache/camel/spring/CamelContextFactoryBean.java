@@ -45,6 +45,7 @@ import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.model.ContextScanDefinition;
+import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
@@ -150,6 +151,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class, required = false)
     private CamelJMXAgentDefinition camelJMXAgent;
     @XmlElements({
+            @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class, required = false),
             @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
             @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
             @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),

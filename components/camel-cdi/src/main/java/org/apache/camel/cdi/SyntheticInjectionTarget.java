@@ -18,34 +18,60 @@ package org.apache.camel.cdi;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 
-import org.apache.camel.impl.DefaultCamelContext;
-
 @Vetoed
-final class CamelContextDefaultProducer implements InjectionTarget<DefaultCamelContext> {
+class SyntheticInjectionTarget<T> implements InjectionTarget<T> {
 
-    @Override
-    public DefaultCamelContext produce(CreationalContext<DefaultCamelContext> ctx) {
-        return new DefaultCamelContext();
+    private final Supplier<T> produce;
+
+    private final Consumer<T> postConstruct;
+
+    private final Consumer<T> preDestroy;
+
+    SyntheticInjectionTarget(Supplier<T> produce) {
+        this(produce, t -> {
+        });
+    }
+
+    SyntheticInjectionTarget(Supplier<T> produce, Consumer<T> postConstruct) {
+        this(produce, postConstruct, t -> {
+        });
+    }
+
+    SyntheticInjectionTarget(Supplier<T> produce, Consumer<T> postConstruct, Consumer<T> preDestroy) {
+        this.produce = produce;
+        this.postConstruct = postConstruct;
+        this.preDestroy = preDestroy;
     }
 
     @Override
-    public void inject(DefaultCamelContext instance, CreationalContext<DefaultCamelContext> ctx) {
+    public void inject(T instance, CreationalContext<T> ctx) {
+
     }
 
     @Override
-    public void postConstruct(DefaultCamelContext instance) {
+    public void postConstruct(T instance) {
+        postConstruct.accept(instance);
     }
 
     @Override
-    public void preDestroy(DefaultCamelContext instance) {
+    public void preDestroy(T instance) {
+        preDestroy.accept(instance);
     }
 
     @Override
-    public void dispose(DefaultCamelContext instance) {
+    public T produce(CreationalContext<T> ctx) {
+        return produce.get();
+    }
+
+    @Override
+    public void dispose(T instance) {
+
     }
 
     @Override

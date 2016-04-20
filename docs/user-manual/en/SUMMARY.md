@@ -155,6 +155,9 @@
     * [HL7](hl7.adoc)
     * [Http](http.adoc)
     * [Http4](http4.adoc)
+    * [Hystrix](hystrix.adoc)
+    * [Ibatis](ibatis.adoc)
+    * [Infinispan](infinispan.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
@@ -181,6 +184,7 @@
 * Data Formats
     * [Flatpack](flatpack-dataformat.adoc)
     * [XML JSON](xmljson.adoc)
+    * [Ical](ical.adoc)
 
 * User Guide
     * [Karaf](karaf.adoc)

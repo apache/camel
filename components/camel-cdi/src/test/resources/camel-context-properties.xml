@@ -15,10 +15,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+<camelContext id="test" xmlns="http://camel.apache.org/schema/spring">
 
-<routes id="routes" xmlns="http://camel.apache.org/schema/spring">
-    <route id="xml-route">
-        <from uri="direct:inbound"/>
-        <to uri="mock:outbound"/>
-    </route>
-</routes>
+    <propertyPlaceholder location="classpath:placeholder.properties"/>
+
+</camelContext>

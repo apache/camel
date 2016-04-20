@@ -46,7 +46,6 @@ import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
-import org.hamcrest.Matchers;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -59,8 +58,10 @@ import org.junit.runner.RunWith;
 
 import static org.apache.camel.cdi.expression.ExchangeExpression.fromCamelContext;
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.isOneOf;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
@@ -194,19 +195,19 @@ public class MultiContextEventNotifierTest {
 
         assertThat("Events fired for any contexts are incorrect", anyEvents,
             everyItem(
-                Matchers.<Class>isOneOf(
+                isOneOf(
                     CamelContextStartingEvent.class,
                     CamelContextStartedEvent.class)));
         assertThat("Events fired for default context are incorrect", defaultEvents,
-            Matchers.<Class>contains(
+            contains(
                 CamelContextStartingEvent.class,
                 CamelContextStartedEvent.class));
         assertThat("Events fired for first context are incorrect", firstEvents,
-            Matchers.<Class>contains(
+            contains(
                 CamelContextStartingEvent.class,
                 CamelContextStartedEvent.class));
         assertThat("Events fired for second context are incorrect", secondEvents,
-            Matchers.<Class>contains(
+            contains(
                 CamelContextStartingEvent.class,
                 CamelContextStartedEvent.class));
     }
@@ -223,7 +224,7 @@ public class MultiContextEventNotifierTest {
         assertIsSatisfied(2L, TimeUnit.SECONDS, defaultOutbound);
 
         assertThat("Events fired are incorrect", events,
-            Matchers.<Class>contains(
+            contains(
                 CamelContextStartingEvent.class,
                 CamelContextStartedEvent.class,
                 ExchangeSendingEvent.class,
@@ -247,7 +248,7 @@ public class MultiContextEventNotifierTest {
         assertIsSatisfied(2L, TimeUnit.SECONDS, firstOutbound);
 
         assertThat("Events fired are incorrect", events,
-            Matchers.<Class>contains(
+            contains(
                 CamelContextStartingEvent.class,
                 CamelContextStartedEvent.class,
                 ExchangeSendingEvent.class,
@@ -271,7 +272,7 @@ public class MultiContextEventNotifierTest {
         assertIsSatisfied(2L, TimeUnit.SECONDS, secondOutbound);
 
         assertThat("Events fired are incorrect", events,
-            Matchers.<Class>contains(
+            contains(
                 CamelContextStartingEvent.class,
                 CamelContextStartedEvent.class,
                 ExchangeSendingEvent.class,

@@ -153,7 +153,7 @@ public abstract class AbstractFeatureTest {
 
         installCamelFeature(mainFeature);
 
-        CamelContext camelContext = getOsgiService(bundleContext, CamelContext.class, "(camel.context.name=myCamel)", 20000);
+        CamelContext camelContext = getOsgiService(bundleContext, CamelContext.class, "(camel.context.name=myCamel)", SERVICE_TIMEOUT);
         assertNotNull("Cannot find CamelContext with name myCamel", camelContext);
 
         LOG.info("Getting Camel component: {}", component);
@@ -173,7 +173,7 @@ public abstract class AbstractFeatureTest {
 
         installCamelFeature(mainFeature);
 
-        CamelContext camelContext = getOsgiService(bundleContext, CamelContext.class, "(camel.context.name=myCamel)", 20000);
+        CamelContext camelContext = getOsgiService(bundleContext, CamelContext.class, "(camel.context.name=myCamel)", SERVICE_TIMEOUT);
         assertNotNull("Cannot find CamelContext with name myCamel", camelContext);
 
         LOG.info("Getting Camel dataformat: {}", dataFormat);
@@ -258,7 +258,6 @@ public abstract class AbstractFeatureTest {
 
         List<String> camel = new ArrayList<>();
         camel.add("camel");
-        camel.add("camel-test-karaf");
         if (extra != null && extra.length > 0) {
             for (String e : extra) {
                 camel.add(e);
@@ -306,6 +305,9 @@ public abstract class AbstractFeatureTest {
 
             // install camel
             features(getCamelKarafFeatureUrl(), camelFeatures),
+
+            // install camel-test-karaf as bundle (not feature as the feature causes a bundle refresh that invalidates the @Inject bundleContext)
+            mavenBundle().groupId("org.apache.camel").artifactId("camel-test-karaf").versionAsInProject()
         };
 
         return options;

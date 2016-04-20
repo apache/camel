@@ -44,6 +44,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
+
 final class CdiCamelFactory {
 
     @Produces
@@ -194,8 +196,8 @@ final class CdiCamelFactory {
     private static <T extends CamelContext> T selectContext(InjectionPoint ip, Instance<T> instance, CdiCamelExtension extension) {
         Collection<Annotation> qualifiers = new HashSet<>(ip.getQualifiers());
         qualifiers.retainAll(extension.getContextQualifiers());
-        if (qualifiers.isEmpty() && !instance.select(DefaultLiteral.INSTANCE).isUnsatisfied()) {
-            return instance.select(DefaultLiteral.INSTANCE).get();
+        if (qualifiers.isEmpty() && !instance.select(DEFAULT).isUnsatisfied()) {
+            return instance.select(DEFAULT).get();
         }
         return instance.select(qualifiers.toArray(new Annotation[qualifiers.size()])).get();
     }

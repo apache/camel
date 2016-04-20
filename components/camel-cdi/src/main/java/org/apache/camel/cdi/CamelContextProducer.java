@@ -16,9 +16,10 @@
  */
 package org.apache.camel.cdi;
 
-import java.beans.Introspector;
+import  java.beans.Introspector;
 import java.lang.annotation.Annotation;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.Annotated;
@@ -36,6 +37,10 @@ import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.cdi.AnyLiteral.ANY;
+import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
+import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 
 final class CamelContextProducer<T extends CamelContext> extends DelegateProducer<T> {
 
@@ -74,10 +79,13 @@ final class CamelContextProducer<T extends CamelContext> extends DelegateProduce
         }
 
         // Add event notifier if at least one observer is present
-        Set<Annotation> qualifiers = CdiSpiHelper.excludeElementOfTypes(CdiSpiHelper.getQualifiers(annotated, manager), Named.class);
-        qualifiers.add(AnyLiteral.INSTANCE);
+        Set<Annotation> qualifiers = annotated.getAnnotations().stream()
+            .filter(isAnnotationType(Named.class).negate()
+                .and(q -> manager.isQualifier(q.annotationType())))
+            .collect(Collectors.toSet());
+        qualifiers.add(ANY);
         if (qualifiers.size() == 1) {
-            qualifiers.add(DefaultLiteral.INSTANCE);
+            qualifiers.add(DEFAULT);
         }
         qualifiers.retainAll(extension.getObserverEvents());
         if (!qualifiers.isEmpty()) {

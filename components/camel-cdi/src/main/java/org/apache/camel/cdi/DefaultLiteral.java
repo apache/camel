@@ -22,7 +22,7 @@ import javax.enterprise.util.AnnotationLiteral;
 @Vetoed
 final class DefaultLiteral extends AnnotationLiteral<Default> implements Default {
 
-    static final Default INSTANCE = new DefaultLiteral();
+    static final Default DEFAULT = new DefaultLiteral();
 
     private static final long serialVersionUID = 1L;
 

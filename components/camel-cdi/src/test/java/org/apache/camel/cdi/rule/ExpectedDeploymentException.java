@@ -19,8 +19,8 @@ package org.apache.camel.cdi.rule;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -75,7 +75,7 @@ public final class ExpectedDeploymentException implements TestRule {
     }
 
     public ExpectedDeploymentException expect(Class<? extends Throwable> type) {
-        exceptions.add(CoreMatchers.<Throwable>instanceOf(type));
+        exceptions.add(Matchers.instanceOf(type));
         return this;
     }
 
