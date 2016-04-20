@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.hystrix.processor;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.junit.Test;
 
-public class HystrixRouteFallbackTest extends CamelTestSupport {
+public class BlueprintHystrixRouteFallbackTest extends CamelBlueprintTestSupport {
+
+    @Override
+    protected String getBlueprintDescriptor() {
+        return "org/apache/camel/component/hystrix/processor/BlueprintHystrixRouteFallbackTest.xml";
+    }
 
     @Test
     public void testHystrix() throws Exception {
@@ -29,22 +33,6 @@ public class HystrixRouteFallbackTest extends CamelTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                    .hystrix()
-                        .throwException(new IllegalArgumentException("Forced"))
-                    .onFallback()
-                        .transform().constant("Fallback message")
-                    .end()
-                    .to("mock:result");
-            }
-        };
     }
 
 }
