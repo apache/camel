@@ -161,14 +161,14 @@ public class NatsConfiguration {
      * the subject to which subscribers should send response
      */
     public String getReplySubject() {
-		return replySubject;
-	}
+        return replySubject;
+    }
 
-	public void setReplySubject(String replySubject) {
-		this.replySubject = replySubject;
-	}
+    public void setReplySubject(String replySubject) {
+        this.replySubject = replySubject;
+    }
 
-	/**
+    /**
      * Whether or not randomizing the order of servers for the connection attempts
      */
     public boolean getNoRandomizeServers() {

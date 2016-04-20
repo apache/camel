@@ -55,7 +55,7 @@ public class NatsProducer extends DefaultProducer {
             String replySubject = config.getReplySubject();
             connection.publish(config.getTopic(), replySubject, body.getBytes());
         } else {
-            connection.publish(config.getTopic(), body.getBytes());	
+            connection.publish(config.getTopic(), body.getBytes());
         }
     }
     
