@@ -20,6 +20,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.hystrix.metrics.HystrixEventStreamService;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -71,6 +72,8 @@ public class HystrixManagementTest extends CamelTestSupport {
 
         Long errorCount = (Long) mbeanServer.getAttribute(on, "HystrixErrorCount");
         assertEquals(0, errorCount.longValue());
+
+        Thread.sleep(5000);
     }
 
     @Override
@@ -78,6 +81,10 @@ public class HystrixManagementTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+
+                // add the stream
+                context.addService(new HystrixEventStreamService());
+
                 from("direct:start").routeId("start")
                     .hystrix().id("myHystrix")
                         .to("direct:foo")
