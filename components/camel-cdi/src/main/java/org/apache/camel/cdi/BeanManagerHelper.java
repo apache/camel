@@ -19,7 +19,8 @@ package org.apache.camel.cdi;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -33,7 +34,7 @@ final class BeanManagerHelper {
     static <T> Set<T> getReferencesByType(BeanManager manager, Class<T> type, Annotation... qualifiers) {
         return manager.getBeans(type, qualifiers).stream()
             .map(bean -> getReference(manager, type, bean))
-            .collect(Collectors.toSet());
+            .collect(toSet());
     }
 
     static <T> Optional<T> getReferenceByName(BeanManager manager, String name, Class<T> type) {

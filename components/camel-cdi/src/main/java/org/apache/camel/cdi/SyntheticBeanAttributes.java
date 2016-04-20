@@ -18,9 +18,11 @@ package org.apache.camel.cdi;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.Collections.emptySet;
+import static java.util.stream.Collectors.toSet;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Named;
@@ -53,7 +55,7 @@ class SyntheticBeanAttributes<T> {
     public Set<Annotation> getQualifiers() {
         return annotated.getAnnotations().stream()
             .filter(a -> manager.isQualifier(a.annotationType()))
-            .collect(Collectors.toSet());
+            .collect(toSet());
     }
 
     public String getName() {
@@ -66,7 +68,7 @@ class SyntheticBeanAttributes<T> {
     }
 
     public Set<Class<? extends Annotation>> getStereotypes() {
-        return Collections.emptySet();
+        return emptySet();
     }
 
     public Set<Type> getTypes() {

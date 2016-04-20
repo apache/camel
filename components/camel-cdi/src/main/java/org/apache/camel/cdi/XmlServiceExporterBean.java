@@ -30,12 +30,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
-import org.apache.camel.util.ServiceHelper;
 
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
 import static org.apache.camel.util.CamelContextHelper.getMandatoryEndpoint;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+import static org.apache.camel.util.ServiceHelper.startService;
 
 final class XmlServiceExporterBean<T> extends SyntheticBean<T> {
 
@@ -73,7 +73,7 @@ final class XmlServiceExporterBean<T> extends SyntheticBean<T> {
             Endpoint endpoint = getMandatoryEndpoint(context, exporter.getUri());
             try {
                 // need to start endpoint before we create consumer
-                ServiceHelper.startService(endpoint);
+                startService(endpoint);
                 Consumer consumer = endpoint.createConsumer(new BeanProcessor(service, context));
                 // add and start consumer
                 context.addService(consumer, true, true);

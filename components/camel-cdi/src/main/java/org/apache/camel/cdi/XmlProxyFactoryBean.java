@@ -28,14 +28,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Producer;
-import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
+import static org.apache.camel.component.bean.ProxyHelper.createProxy;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+import static org.apache.camel.util.ServiceHelper.startService;
 
 final class XmlProxyFactoryBean<T> extends SyntheticBean<T> {
 
@@ -60,10 +59,10 @@ final class XmlProxyFactoryBean<T> extends SyntheticBean<T> {
                 : getReference(manager, CamelContext.class, this.context);
 
             Endpoint endpoint;
-            if (ObjectHelper.isNotEmpty(proxy.getServiceRef())) {
+            if (isNotEmpty(proxy.getServiceRef())) {
                 endpoint = context.getRegistry().lookupByNameAndType(proxy.getServiceRef(), Endpoint.class);
             } else {
-                if (ObjectHelper.isNotEmpty(proxy.getServiceUrl())) {
+                if (isNotEmpty(proxy.getServiceUrl())) {
                     endpoint = context.getEndpoint(proxy.getServiceUrl());
                 } else {
                     throw new IllegalStateException("serviceUrl or serviceRef must not be empty!");
@@ -72,7 +71,7 @@ final class XmlProxyFactoryBean<T> extends SyntheticBean<T> {
 
             if (endpoint == null) {
                 throw new UnsatisfiedResolutionException("Could not resolve endpoint: "
-                    + (ObjectHelper.isNotEmpty(proxy.getServiceRef())
+                    + (isNotEmpty(proxy.getServiceRef())
                     ? proxy.getServiceRef()
                     : proxy.getServiceUrl()));
             }
@@ -82,11 +81,11 @@ final class XmlProxyFactoryBean<T> extends SyntheticBean<T> {
 
             try {
                 // Start the endpoint before we create the producer
-                ServiceHelper.startService(endpoint);
+                startService(endpoint);
                 Producer producer = endpoint.createProducer();
                 // Add and start the producer
                 context.addService(producer, true, true);
-                return ProxyHelper.createProxy(endpoint, bind, producer, (Class<T>) proxy.getServiceInterface());
+                return createProxy(endpoint, bind, producer, (Class<T>) proxy.getServiceInterface());
             } catch (Exception cause) {
                 throw new FailedToCreateProducerException(endpoint, cause);
             }

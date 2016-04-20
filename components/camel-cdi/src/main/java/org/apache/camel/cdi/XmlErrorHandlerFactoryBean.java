@@ -18,6 +18,7 @@ package org.apache.camel.cdi;
 
 import java.util.function.Function;
 
+import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 
 import javax.enterprise.context.spi.CreationalContext;
@@ -96,7 +97,7 @@ final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder
         if (isNotEmpty(handler.getOnExceptionOccurredRef())) {
             Processor processor = getReferenceByName(manager, handler.getOnExceptionOccurredRef(), Processor.class)
                 .orElseThrow(() -> new UnsatisfiedResolutionException(
-                    String.format("No bean with name [%s] to satisfy attribute [%s]",
+                    format("No bean with name [%s] to satisfy attribute [%s]",
                         handler.getOnPrepareFailureRef(), "onExceptionOccurredRef")));
             builder.setOnExceptionOccurred(processor);
         }
@@ -104,7 +105,7 @@ final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder
         if (isNotEmpty(handler.getOnPrepareFailureRef())) {
             Processor processor = getReferenceByName(manager, handler.getOnPrepareFailureRef(), Processor.class)
                 .orElseThrow(() -> new UnsatisfiedResolutionException(
-                    String.format("No bean with name [%s] to satisfy attribute [%s]",
+                    format("No bean with name [%s] to satisfy attribute [%s]",
                         handler.getOnPrepareFailureRef(), "onPrepareFailureRef")));
             builder.setOnPrepareFailure(processor);
         }
@@ -112,7 +113,7 @@ final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder
         if (isNotEmpty(handler.getOnRedeliveryRef())) {
             Processor processor = getReferenceByName(manager, handler.getOnRedeliveryRef(), Processor.class)
                 .orElseThrow(() -> new UnsatisfiedResolutionException(
-                    String.format("No bean with name [%s] to satisfy attribute [%s]",
+                    format("No bean with name [%s] to satisfy attribute [%s]",
                         handler.getOnPrepareFailureRef(), "onRedeliveryRef")));
             builder.setOnRedelivery(processor);
         }
@@ -126,7 +127,7 @@ final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder
         if (isNotEmpty(handler.getRedeliveryPolicyRef())) {
             RedeliveryPolicy policy = getReferenceByName(manager, handler.getRedeliveryPolicyRef(), RedeliveryPolicy.class)
                 .orElseThrow(() -> new UnsatisfiedResolutionException(
-                    String.format("No bean with name [%s] to satisfy attribute [%s]",
+                    format("No bean with name [%s] to satisfy attribute [%s]",
                         handler.getRedeliveryPolicyRef(), "redeliveryPolicyRef")));
             builder.setRedeliveryPolicy(policy);
         }

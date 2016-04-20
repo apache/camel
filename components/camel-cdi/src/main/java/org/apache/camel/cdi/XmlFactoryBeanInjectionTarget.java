@@ -23,9 +23,9 @@ import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
-import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
+import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 final class XmlFactoryBeanInjectionTarget<T> extends SyntheticInjectionTarget<T> {
 
@@ -33,7 +33,7 @@ final class XmlFactoryBeanInjectionTarget<T> extends SyntheticInjectionTarget<T>
         super(
             () -> {
                 try {
-                    if (ObjectHelper.isEmpty(factory.getCamelContextId()) && context != null) {
+                    if (isEmpty(factory.getCamelContextId()) && context != null) {
                         factory.setCamelContext(getReference(manager, CamelContext.class, context));
                     }
                     factory.afterPropertiesSet();

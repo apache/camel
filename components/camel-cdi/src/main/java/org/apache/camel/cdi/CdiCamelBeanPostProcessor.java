@@ -48,43 +48,41 @@ final class CdiCamelBeanPostProcessor extends DefaultCamelBeanPostProcessor {
     }
 
     protected void injectFields(final Object bean, final String beanName) {
-        ReflectionHelper.doWithFields(bean.getClass(), new ReflectionHelper.FieldCallback() {
-            public void doWith(Field field) throws IllegalAccessException {
-                PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
-                if (propertyInject != null) {
-                    try {
-                        injectFieldProperty(field, propertyInject.value(), propertyInject.defaultValue(), propertyInject.context(), bean, beanName);
-                    } catch (Exception cause) {
-                        throw new InjectionException("Injection of [" + propertyInject + "] for field [" + field + "] failed!", cause);
-                    }
+        ReflectionHelper.doWithFields(bean.getClass(), field -> {
+            PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
+            if (propertyInject != null) {
+                try {
+                    injectFieldProperty(field, propertyInject.value(), propertyInject.defaultValue(), propertyInject.context(), bean, beanName);
+                } catch (Exception cause) {
+                    throw new InjectionException("Injection of [" + propertyInject + "] for field [" + field + "] failed!", cause);
                 }
+            }
 
-                BeanInject beanInject = field.getAnnotation(BeanInject.class);
-                // TODO: proper support for multi Camel contexts
-                if (beanInject != null && getPostProcessorHelper().matchContext(beanInject.context())) {
-                    try {
-                        injectFieldBean(field, beanInject.value(), bean, beanName);
-                    } catch (Exception cause) {
-                        throw new InjectionException("Injection of [" + beanInject + "] for field [" + field + "] failed!", cause);
-                    }
+            BeanInject beanInject = field.getAnnotation(BeanInject.class);
+            // TODO: proper support for multi Camel contexts
+            if (beanInject != null && getPostProcessorHelper().matchContext(beanInject.context())) {
+                try {
+                    injectFieldBean(field, beanInject.value(), bean, beanName);
+                } catch (Exception cause) {
+                    throw new InjectionException("Injection of [" + beanInject + "] for field [" + field + "] failed!", cause);
                 }
+            }
 
-                EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
-                if (endpointInject != null) {
-                    try {
-                        injectField(field, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), endpointInject.context(), bean, beanName);
-                    } catch (Exception cause) {
-                        throw new InjectionException("Injection of [" + endpointInject + "] for field [" + field + "] failed!", cause);
-                    }
+            EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+            if (endpointInject != null) {
+                try {
+                    injectField(field, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), endpointInject.context(), bean, beanName);
+                } catch (Exception cause) {
+                    throw new InjectionException("Injection of [" + endpointInject + "] for field [" + field + "] failed!", cause);
                 }
+            }
 
-                Produce produce = field.getAnnotation(Produce.class);
-                if (produce != null) {
-                    try {
-                        injectField(field, produce.uri(), produce.ref(), produce.property(), produce.context(), bean, beanName);
-                    } catch (Exception cause) {
-                        throw new InjectionException("Injection of [" + produce + "] for field [" + field + "] failed!", cause);
-                    }
+            Produce produce = field.getAnnotation(Produce.class);
+            if (produce != null) {
+                try {
+                    injectField(field, produce.uri(), produce.ref(), produce.property(), produce.context(), bean, beanName);
+                } catch (Exception cause) {
+                    throw new InjectionException("Injection of [" + produce + "] for field [" + field + "] failed!", cause);
                 }
             }
         });

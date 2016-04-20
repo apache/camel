@@ -25,16 +25,20 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
-import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.security.AccessController.doPrivileged;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toSet;
+
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedConstructor;
 import javax.enterprise.inject.spi.AnnotatedField;
@@ -42,9 +46,6 @@ import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.InjectionPoint;
-
-import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
@@ -55,21 +56,8 @@ final class CdiSpiHelper {
     private CdiSpiHelper() {
     }
 
-    static <T extends Annotation> T getQualifierByType(InjectionPoint ip, Class<T> type) {
-        return getFirstElementOfType(ip.getQualifiers(), type);
-    }
-
-    static <E, T extends E> T getFirstElementOfType(Collection<E> collection, Class<T> type) {
-        for (E item : collection) {
-            if ((item != null) && type.isAssignableFrom(item.getClass())) {
-                return ObjectHelper.cast(type, item);
-            }
-        }
-        return null;
-    }
-
     static Predicate<Annotation> isAnnotationType(Class<? extends Annotation> clazz) {
-        Objects.requireNonNull(clazz);
+        requireNonNull(clazz);
         return annotation -> clazz.equals(annotation.annotationType());
     }
 
@@ -101,12 +89,10 @@ final class CdiSpiHelper {
 
     @SafeVarargs
     static boolean hasAnnotation(AnnotatedType<?> type, Class<? extends Annotation>... annotations) {
-        for (Class<? extends Annotation> annotation : annotations) {
-            if (hasAnnotation(type, annotation)) {
-                return true;
-            }
-        }
-        return false;
+        return Stream.of(annotations)
+            .filter(annotation -> hasAnnotation(type, annotation))
+            .findAny()
+            .isPresent();
     }
 
     static boolean hasAnnotation(AnnotatedType<?> type, Class<? extends Annotation> annotation) {
@@ -132,17 +118,17 @@ final class CdiSpiHelper {
     }
 
     static Set<Annotation> getQualifiers(Annotated annotated, BeanManager manager) {
-        Set<Annotation> qualifiers = new HashSet<>();
-        for (Annotation annotation : annotated.getAnnotations()) {
-            if (manager.isQualifier(annotation.annotationType())) {
-                qualifiers.add(annotation);
-            }
-        }
-        if (qualifiers.isEmpty()) {
-            qualifiers.add(DEFAULT);
-        }
-        qualifiers.add(ANY);
-        return qualifiers;
+        return annotated.getAnnotations().stream()
+            .filter(annotation -> manager.isQualifier(annotation.annotationType()))
+            .collect(collectingAndThen(toSet(),
+                qualifiers -> {
+                    if (qualifiers.isEmpty()) {
+                        qualifiers.add(DEFAULT);
+                    }
+                    qualifiers.add(ANY);
+                    return qualifiers;
+                })
+            );
     }
 
     /**
@@ -153,8 +139,8 @@ final class CdiSpiHelper {
             bean.getScope().getName(),
             createAnnotationCollectionId(bean.getQualifiers()),
             createTypeCollectionId(bean.getTypes()))
-            .filter(s -> s != null)
-            .collect(Collectors.joining(","));
+            .filter(Objects::nonNull)
+            .collect(joining(","));
     }
 
     /**
@@ -164,7 +150,7 @@ final class CdiSpiHelper {
         return types.stream()
             .sorted((t1, t2) -> createTypeId(t1).compareTo(createTypeId(t2)))
             .map(CdiSpiHelper::createTypeId)
-            .collect(Collectors.joining(",", "[", "]"));
+            .collect(joining(",", "[", "]"));
     }
 
     /**
@@ -179,7 +165,7 @@ final class CdiSpiHelper {
             return createTypeId(((ParameterizedType) type).getRawType())
                 + Stream.of(((ParameterizedType) type).getActualTypeArguments())
                 .map(CdiSpiHelper::createTypeId)
-                .collect(Collectors.joining(",", "<", ">"));
+                .collect(joining(",", "<", ">"));
         }
 
         if (type instanceof TypeVariable<?>) {
@@ -204,14 +190,14 @@ final class CdiSpiHelper {
         return annotations.stream()
             .sorted((a1, a2) -> a1.annotationType().getName().compareTo(a2.annotationType().getName()))
             .map(CdiSpiHelper::createAnnotationId)
-            .collect(Collectors.joining(",", "[", "]"));
+            .collect(joining(",", "[", "]"));
     }
 
     /**
      * Generates a unique signature for an {@link Annotation}.
      */
     private static String createAnnotationId(Annotation annotation) {
-        Method[] methods = AccessController.doPrivileged(
+        Method[] methods = doPrivileged(
             (PrivilegedAction<Method[]>) () -> annotation.annotationType().getDeclaredMethods());
 
         return Stream.of(methods)

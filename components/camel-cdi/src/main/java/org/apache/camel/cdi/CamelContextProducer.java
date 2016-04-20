@@ -16,10 +16,12 @@
  */
 package org.apache.camel.cdi;
 
-import  java.beans.Introspector;
 import java.lang.annotation.Annotation;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.beans.Introspector.decapitalize;
+import static java.util.stream.Collectors.toSet;
+
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.Annotated;
@@ -34,13 +36,14 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextNameStrategy;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.cdi.AnyLiteral.ANY;
+import static org.apache.camel.cdi.CdiSpiHelper.getRawType;
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 final class CamelContextProducer<T extends CamelContext> extends DelegateProducer<T> {
 
@@ -82,7 +85,7 @@ final class CamelContextProducer<T extends CamelContext> extends DelegateProduce
         Set<Annotation> qualifiers = annotated.getAnnotations().stream()
             .filter(isAnnotationType(Named.class).negate()
                 .and(q -> manager.isQualifier(q.annotationType())))
-            .collect(Collectors.toSet());
+            .collect(toSet());
         qualifiers.add(ANY);
         if (qualifiers.size() == 1) {
             qualifiers.add(DEFAULT);
@@ -104,7 +107,7 @@ final class CamelContextProducer<T extends CamelContext> extends DelegateProduce
             try {
                 context.stop();
             } catch (Exception cause) {
-                throw ObjectHelper.wrapRuntimeCamelException(cause);
+                throw wrapRuntimeCamelException(cause);
             }
         }
     }
@@ -121,10 +124,10 @@ final class CamelContextProducer<T extends CamelContext> extends DelegateProduce
                 } else if (annotated instanceof AnnotatedMethod) {
                     name = ((AnnotatedMethod) annotated).getJavaMember().getName();
                     if (name.startsWith("get")) {
-                        name = Introspector.decapitalize(name.substring(3));
+                        name = decapitalize(name.substring(3));
                     }
                 } else {
-                    name = Introspector.decapitalize(CdiSpiHelper.getRawType(annotated.getBaseType()).getSimpleName());
+                    name = decapitalize(getRawType(annotated.getBaseType()).getSimpleName());
                 }
             }
             return new ExplicitCamelContextNameStrategy(name);
