@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HystrixRouteFallbackTest extends CamelTestSupport {
+public class HystrixRouteFallbackViaNetworkTest extends CamelTestSupport {
 
     @Test
     public void testHystrix() throws Exception {
@@ -40,7 +40,7 @@ public class HystrixRouteFallbackTest extends CamelTestSupport {
                     .to("log:start")
                     .hystrix()
                         .throwException(new IllegalArgumentException("Forced"))
-                    .onFallback()
+                    .onFallbackViaNetwork()
                         .transform().constant("Fallback message")
                     .end()
                     .to("log:result")

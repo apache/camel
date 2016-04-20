@@ -16,11 +16,9 @@
  */
 package sample.camel;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import org.springframework.stereotype.Component;
 
-@Singleton
-@Named("counterBean")
+@Component("counterBean")
 public class CounterBean {
 
     private int counter;

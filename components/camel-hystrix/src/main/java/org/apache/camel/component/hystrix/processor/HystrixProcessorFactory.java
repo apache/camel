@@ -59,6 +59,8 @@ public class HystrixProcessorFactory implements ProcessorFactory {
                 configRef = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), cb.getHystrixConfigurationRef(), HystrixConfigurationDefinition.class);
             }
 
+            String id = cb.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+
             // group and thread pool keys to use they can be configured on configRef and config, so look there first, and if none then use default
             String groupKey = null;
             String threadPoolKey = null;
@@ -74,36 +76,61 @@ public class HystrixProcessorFactory implements ProcessorFactory {
                 groupKey = HystrixConfigurationDefinition.DEFAULT_GROUP_KEY;
             }
             if (threadPoolKey == null) {
-                // thread pool key should use same as group key as default
-                threadPoolKey = groupKey;
+                threadPoolKey = id + "-threadpool";
             }
 
             // use the node id as the command key
-            String id = cb.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
             HystrixCommandKey hcCommandKey = HystrixCommandKey.Factory.asKey(id);
+            HystrixCommandKey hcFallbackCommandKey = HystrixCommandKey.Factory.asKey(id + "-fallback");
             // use the configured group key
             HystrixCommandGroupKey hcGroupKey = HystrixCommandGroupKey.Factory.asKey(groupKey);
+            HystrixThreadPoolKey tpKey = HystrixThreadPoolKey.Factory.asKey(threadPoolKey);
 
             // create setter using the default options
             HystrixCommand.Setter setter = HystrixCommand.Setter
                     .withGroupKey(hcGroupKey)
                     .andCommandKey(hcCommandKey)
-                    .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(threadPoolKey));
-            HystrixCommandProperties.Setter command = HystrixCommandProperties.Setter();
-            setter.andCommandPropertiesDefaults(command);
-            HystrixThreadPoolProperties.Setter threadPool = HystrixThreadPoolProperties.Setter();
-            setter.andThreadPoolPropertiesDefaults(threadPool);
+                    .andThreadPoolKey(tpKey);
+            HystrixCommandProperties.Setter commandSetter = HystrixCommandProperties.Setter();
+            setter.andCommandPropertiesDefaults(commandSetter);
+            HystrixThreadPoolProperties.Setter threadPoolSetter = HystrixThreadPoolProperties.Setter();
+            setter.andThreadPoolPropertiesDefaults(threadPoolSetter);
 
             // at first configure any shared options
             if (configRef != null) {
-                configureHystrix(command, threadPool, configRef);
+                configureHystrix(commandSetter, threadPoolSetter, configRef);
             }
             // then any local configured can override
             if (config != null) {
-                configureHystrix(command, threadPool, config);
+                configureHystrix(commandSetter, threadPoolSetter, config);
             }
 
-            return new HystrixProcessor(hcCommandKey, hcGroupKey, setter, processor, fallback);
+            // create setter for fallback via network
+            HystrixCommand.Setter fallbackSetter = null;
+            boolean fallbackViaNetwork = cb.getOnFallback() != null && cb.getOnFallback().isFallbackViaNetwork();
+            if (fallbackViaNetwork) {
+                HystrixThreadPoolKey tpFallbackKey = HystrixThreadPoolKey.Factory.asKey(threadPoolKey + "-fallback");
+
+                fallbackSetter = HystrixCommand.Setter
+                        .withGroupKey(hcGroupKey)
+                        .andCommandKey(hcFallbackCommandKey)
+                        .andThreadPoolKey(tpFallbackKey);
+                HystrixCommandProperties.Setter commandFallbackSetter = HystrixCommandProperties.Setter();
+                fallbackSetter.andCommandPropertiesDefaults(commandFallbackSetter);
+                HystrixThreadPoolProperties.Setter fallbackThreadPoolSetter = HystrixThreadPoolProperties.Setter();
+                fallbackSetter.andThreadPoolPropertiesDefaults(fallbackThreadPoolSetter);
+
+                // at first configure any shared options
+                if (configRef != null) {
+                    configureHystrix(commandFallbackSetter, fallbackThreadPoolSetter, configRef);
+                }
+                // then any local configured can override
+                if (config != null) {
+                    configureHystrix(commandFallbackSetter, fallbackThreadPoolSetter, config);
+                }
+            }
+
+            return new HystrixProcessor(hcGroupKey, hcCommandKey, hcFallbackCommandKey, setter, fallbackSetter, processor, fallback, fallbackViaNetwork);
         } else {
             return null;
         }

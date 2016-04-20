@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
@@ -34,12 +35,20 @@ import org.apache.camel.util.CollectionStringBuffer;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition> {
 
+    @XmlAttribute
+    @Metadata(label = "command", defaultValue = "false")
+    private Boolean fallbackViaNetwork;
+
     public OnFallbackDefinition() {
     }
 
     @Override
     public String toString() {
-        return "OnFallback[" + getOutputs() + "]";
+        if (fallbackViaNetwork != null && fallbackViaNetwork) {
+            return "OnFallbackViaNetwork[" + getOutputs() + "]";
+        } else {
+            return "OnFallback[" + getOutputs() + "]";
+        }
     }
 
     @Override
@@ -49,7 +58,9 @@ public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition>
 
     @Override
     public String getLabel() {
-        CollectionStringBuffer buffer = new CollectionStringBuffer("onFallback[");
+        String name = fallbackViaNetwork != null && fallbackViaNetwork ? "onFallbackViaNetwork" : "onFallback";
+        CollectionStringBuffer buffer = new CollectionStringBuffer(name);
+        buffer.append("[");
         List<ProcessorDefinition<?>> list = getOutputs();
         for (ProcessorDefinition<?> type : list) {
             buffer.append(type.getLabel());
@@ -57,4 +68,26 @@ public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition>
         buffer.append("]");
         return buffer.toString();
     }
+
+    public Boolean getFallbackViaNetwork() {
+        return fallbackViaNetwork;
+    }
+
+    /**
+     * Whether the fallback goes over the network.
+     * <p/>
+     * If the fallback will go over the network it is another possible point of failure and so it also needs to be
+     * wrapped by a HystrixCommand. It is important to execute the fallback command on a separate thread-pool,
+     * otherwise if the main command were to become latent and fill the thread-pool
+     * this would prevent the fallback from running if the two commands share the same pool.
+     */
+    public void setFallbackViaNetwork(Boolean fallbackViaNetwork) {
+        this.fallbackViaNetwork = fallbackViaNetwork;
+    }
+
+    public boolean isFallbackViaNetwork() {
+        // is default false
+        return fallbackViaNetwork != null && fallbackViaNetwork;
+    }
+
 }

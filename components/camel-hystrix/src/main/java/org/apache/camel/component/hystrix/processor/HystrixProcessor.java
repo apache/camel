@@ -26,15 +26,15 @@ import com.netflix.hystrix.HystrixCommandMetrics;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of the Hystrix EIP.
@@ -42,20 +42,28 @@ import org.apache.camel.util.AsyncProcessorHelper;
 @ManagedResource(description = "Managed Hystrix Processor")
 public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HystrixProcessor.class);
     private String id;
-    private final HystrixCommandKey commandKey;
     private final HystrixCommandGroupKey groupKey;
-    private final HystrixCommand.Setter setter;
-    private final AsyncProcessor processor;
-    private final AsyncProcessor fallback;
+    private final HystrixCommandKey commandKey;
+    private final HystrixCommandKey fallbackCommandKey;
+    private final com.netflix.hystrix.HystrixCommand.Setter setter;
+    private final com.netflix.hystrix.HystrixCommand.Setter fallbackSetter;
+    private final Processor processor;
+    private final Processor fallback;
+    private final boolean fallbackViaNetwork;
 
-    public HystrixProcessor(HystrixCommandKey commandKey, HystrixCommandGroupKey groupKey, HystrixCommand.Setter setter,
-                            Processor processor, Processor fallback) {
-        this.commandKey = commandKey;
+    public HystrixProcessor(HystrixCommandGroupKey groupKey, HystrixCommandKey commandKey, HystrixCommandKey fallbackCommandKey,
+                            HystrixCommand.Setter setter, HystrixCommand.Setter fallbackSetter,
+                            Processor processor, Processor fallback, boolean fallbackViaNetwork) {
         this.groupKey = groupKey;
+        this.commandKey = commandKey;
+        this.fallbackCommandKey = fallbackCommandKey;
         this.setter = setter;
-        this.processor = AsyncProcessorConverterHelper.convert(processor);
-        this.fallback = AsyncProcessorConverterHelper.convert(fallback);
+        this.fallbackSetter = fallbackSetter;
+        this.processor = processor;
+        this.fallback = fallback;
+        this.fallbackViaNetwork = fallbackViaNetwork;
     }
 
     @ManagedAttribute
@@ -64,8 +72,22 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
     }
 
     @ManagedAttribute
+    public String getHystrixFallbackCommandKey() {
+        if (fallbackCommandKey != null) {
+            return fallbackCommandKey.name();
+        } else {
+            return null;
+        }
+    }
+
+    @ManagedAttribute
     public String getHystrixGroupKey() {
         return groupKey.name();
+    }
+
+    @ManagedAttribute
+    public boolean isFallbackViaNetwork() {
+        return isFallbackViaNetwork();
     }
 
     @ManagedAttribute
@@ -161,38 +183,24 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
     }
 
     @Override
-    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         // run this as if we run inside try .. catch so there is no regular Camel error handler
         exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
 
         try {
-            // create command
-            HystrixProcessorCommand command = new HystrixProcessorCommand(setter, exchange, callback, processor, fallback);
-
-            // execute the command asynchronous and observe when its done
-            command.observe().subscribe((msg) -> {
-                    if (command.isResponseFromCache()) {
-                        // its from cache so need to copy it into the exchange
-                        Message target = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-                        target.copyFrom(msg);
-                    } else {
-                        // if it was not from cache then run/fallback was executed and the result
-                        // is already set correctly on the exchange and we do not need to do anything
-                    }
-                }, throwable -> {
-                    exchange.setException(throwable);
-                }, () -> {
-                    exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
-                    callback.done(false);
-                });
+            HystrixProcessorCommandFallbackViaNetwork fallbackCommand = null;
+            if (fallbackViaNetwork) {
+                fallbackCommand = new HystrixProcessorCommandFallbackViaNetwork(fallbackSetter, exchange, fallback);
+            }
+            HystrixProcessorCommand command = new HystrixProcessorCommand(setter, exchange, processor, fallback, fallbackCommand);
+            command.execute();
         } catch (Throwable e) {
-            // error adding to queue, so set as error and we are done
             exchange.setException(e);
-            callback.done(true);
-            return true;
         }
 
-        return false;
+        exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
+        callback.done(true);
+        return true;
     }
 
     @Override

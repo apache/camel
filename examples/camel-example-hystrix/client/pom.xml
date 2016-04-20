@@ -30,9 +30,20 @@
   <name>Camel :: Example :: Hystrix :: Client</name>
   <description>An example showing how to use Hystrix EIP as circuit breaker in Camel routes</description>
 
-  <!-- import Camel BOM -->
+  <properties>
+    <spring.boot-version>${spring-boot-version}</spring.boot-version>
+  </properties>
+
+  <!-- import Spring-Boot and Camel BOM -->
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring.boot-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
@@ -45,66 +56,36 @@
 
   <dependencies>
 
-    <!-- CDI API -->
+    <!-- spring-boot -->
     <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-      <version>${cdi-api-1.2-version}</version>
-      <scope>provided</scope>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
 
-    <!-- camel-cdi -->
+    <!-- camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-cdi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-hystrix</artifactId>
+      <artifactId>camel-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-http</artifactId>
     </dependency>
-
-    <!-- logging -->
-
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-hystrix</artifactId>
+    </dependency>
 
   </dependencies>
 
   <build>
-
     <plugins>
-      <!-- allows the routes to be run via 'mvn camel:run' -->
       <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.deltaspike.cdictrl</groupId>
-            <artifactId>deltaspike-cdictrl-weld</artifactId>
-            <version>${deltaspike-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.jboss.weld.se</groupId>
-            <artifactId>weld-se</artifactId>
-            <version>${weld2-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j-version}</version>
-          </dependency>
-        </dependencies>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot-version}</version>
       </plugin>
     </plugins>
-
   </build>
 
 </project>

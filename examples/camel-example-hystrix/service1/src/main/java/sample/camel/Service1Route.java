@@ -26,7 +26,6 @@ public class Service1Route extends RouteBuilder {
     public void configure() throws Exception {
         from("jetty:http://0.0.0.0:{{service1.port}}/service1").routeId("service1").streamCaching()
             .log("Service1 request: ${body}")
-            .delay(simple("${random(1000,2000)}"))
             .transform(simple("Service1-${body}"))
             .log("Service1 response: ${body}");
     }

@@ -24,9 +24,9 @@ public class HystrixRouteOkTest extends CamelTestSupport {
 
     @Test
     public void testHystrix() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(2);
 
-        template.sendBody("direct:start", "Hello World");
+//        template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -36,12 +36,15 @@ public class HystrixRouteOkTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
+                from("timer:trigger")
+                    .to("log:trigger")
                     .hystrix()
                         .to("direct:foo")
+                        .to("log:foo")
                     .onFallback()
                         .transform().constant("Fallback message")
                     .end()
+                    .to("log:result")
                     .to("mock:result");
 
                 from("direct:foo")

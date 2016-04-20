@@ -17,20 +17,25 @@
 package sample.camel;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ClientRoute extends RouteBuilder {
 
     @Override
     public void configure() {
         // you can configure the route rule with Java DSL here
-        from("timer:trigger?exchangePattern=InOut&period=10s")
+        from("timer:trigger?period=1s").streamCaching()
             .bean("counterBean")
+            .log(" Client request: ${body}")
             .hystrix()
-                .log(" Client request: ${body}")
                 .to("http://localhost:9090/service1")
-            .onFallback()
-                .log(" Client fallback request: ${body}")
-                .to("http://localhost:9090/service2")
+            //.onFallback()
+            // we use a fallback without network that provides a repsonse message immediately
+            //    .transform().simple("Fallback ${body}")
+            .onFallbackViaNetwork()
+                // we use fallback via network where we call a 2nd service
+                .to("http://localhost:7070/service2")
             .end()
             .log("Client response: ${body}");
     }
