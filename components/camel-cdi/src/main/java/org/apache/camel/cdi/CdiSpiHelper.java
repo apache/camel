@@ -34,6 +34,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.security.AccessController.doPrivileged;
+import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.joining;
@@ -148,7 +149,7 @@ final class CdiSpiHelper {
      */
     private static String createTypeCollectionId(Collection<? extends Type> types) {
         return types.stream()
-            .sorted((t1, t2) -> createTypeId(t1).compareTo(createTypeId(t2)))
+            .sorted(comparing(CdiSpiHelper::createTypeId))
             .map(CdiSpiHelper::createTypeId)
             .collect(joining(",", "[", "]"));
     }
@@ -201,7 +202,7 @@ final class CdiSpiHelper {
             (PrivilegedAction<Method[]>) () -> annotation.annotationType().getDeclaredMethods());
 
         return Stream.of(methods)
-            .sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+            .sorted(comparing(Method::getName))
             .collect(() -> new StringJoiner(",", "@(", ")"),
                 (joiner, method) -> {
                     try {
