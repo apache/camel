@@ -20,12 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandKey;
+import com.netflix.hystrix.HystrixCommandMetrics;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
@@ -34,17 +39,87 @@ import org.apache.camel.util.AsyncProcessorHelper;
 /**
  * Implementation of the Hystrix EIP.
  */
+@ManagedResource(description = "Managed Hystrix Processor")
 public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
 
     private String id;
+    private final HystrixCommandKey commandKey;
+    private final HystrixCommandGroupKey groupKey;
     private final HystrixCommand.Setter setter;
     private final AsyncProcessor processor;
     private final AsyncProcessor fallback;
 
-    public HystrixProcessor(HystrixCommand.Setter setter, Processor processor, Processor fallback) {
+    public HystrixProcessor(HystrixCommandKey commandKey, HystrixCommandGroupKey groupKey, HystrixCommand.Setter setter,
+                            Processor processor, Processor fallback) {
+        this.commandKey = commandKey;
+        this.groupKey = groupKey;
         this.setter = setter;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
         this.fallback = AsyncProcessorConverterHelper.convert(fallback);
+    }
+
+    @ManagedAttribute
+    public String getCommandKey() {
+        return commandKey.name();
+    }
+
+    @ManagedAttribute
+    public String getGroupKey() {
+        return groupKey.name();
+    }
+
+    @ManagedAttribute
+    public int getTotalTimeMean() {
+        HystrixCommandMetrics metrics = HystrixCommandMetrics.getInstance(commandKey);
+        if (metrics != null) {
+            return metrics.getTotalTimeMean();
+        }
+        return 0;
+    }
+
+    @ManagedAttribute
+    public int getExecutionTimeMean() {
+        HystrixCommandMetrics metrics = HystrixCommandMetrics.getInstance(commandKey);
+        if (metrics != null) {
+            return metrics.getExecutionTimeMean();
+        }
+        return 0;
+    }
+
+    @ManagedAttribute
+    public int getCurrentConcurrentExecutionCount() {
+        HystrixCommandMetrics metrics = HystrixCommandMetrics.getInstance(commandKey);
+        if (metrics != null) {
+            return metrics.getCurrentConcurrentExecutionCount();
+        }
+        return 0;
+    }
+
+    @ManagedAttribute
+    public long getTotalRequests() {
+        HystrixCommandMetrics metrics = HystrixCommandMetrics.getInstance(commandKey);
+        if (metrics != null) {
+            return metrics.getHealthCounts().getTotalRequests();
+        }
+        return 0;
+    }
+
+    @ManagedAttribute
+    public long getErrorCount() {
+        HystrixCommandMetrics metrics = HystrixCommandMetrics.getInstance(commandKey);
+        if (metrics != null) {
+            return metrics.getHealthCounts().getErrorCount();
+        }
+        return 0;
+    }
+
+    @ManagedAttribute
+    public int getErrorPercentage() {
+        HystrixCommandMetrics metrics = HystrixCommandMetrics.getInstance(commandKey);
+        if (metrics != null) {
+            return metrics.getHealthCounts().getErrorPercentage();
+        }
+        return 0;
     }
 
     @Override

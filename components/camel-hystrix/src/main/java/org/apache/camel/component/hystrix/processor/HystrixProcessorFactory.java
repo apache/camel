@@ -18,6 +18,7 @@ package org.apache.camel.component.hystrix.processor;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
@@ -77,9 +78,16 @@ public class HystrixProcessorFactory implements ProcessorFactory {
                 threadPoolKey = groupKey;
             }
 
+            // use the node id as the command key
+            String id = cb.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+            HystrixCommandKey hcCommandKey = HystrixCommandKey.Factory.asKey(id);
+            // use the configured group key
+            HystrixCommandGroupKey hcGroupKey = HystrixCommandGroupKey.Factory.asKey(groupKey);
+
             // create setter using the default options
             HystrixCommand.Setter setter = HystrixCommand.Setter
-                    .withGroupKey(HystrixCommandGroupKey.Factory.asKey(groupKey))
+                    .withGroupKey(hcGroupKey)
+                    .andCommandKey(hcCommandKey)
                     .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(threadPoolKey));
             HystrixCommandProperties.Setter command = HystrixCommandProperties.Setter();
             setter.andCommandPropertiesDefaults(command);
@@ -95,7 +103,7 @@ public class HystrixProcessorFactory implements ProcessorFactory {
                 configureHystrix(command, threadPool, config);
             }
 
-            return new HystrixProcessor(setter, processor, fallback);
+            return new HystrixProcessor(hcCommandKey, hcGroupKey, setter, processor, fallback);
         } else {
             return null;
         }
