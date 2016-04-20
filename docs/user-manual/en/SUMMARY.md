@@ -171,6 +171,7 @@
     * [SJMS](sjms.adoc)
     * [SJMS Batch](sjms-batch.adoc)
     * [Twitter](twitter.adoc)
+    * [Websocket](websocket.adoc)
     * [XML Security](xmlsecurity.adoc)
     * [Yammer](yammer.adoc)
     * [ZooKeeper](zookeeper.adoc)
