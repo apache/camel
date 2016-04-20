@@ -164,7 +164,9 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-
+                WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
+                websocketComponent.setMinThreads(1);
+                websocketComponent.setMaxThreads(11);
                 from(uri)
                      .log(">>> Message received from WebSocket Client : ${body}")
                      .to("mock:client")

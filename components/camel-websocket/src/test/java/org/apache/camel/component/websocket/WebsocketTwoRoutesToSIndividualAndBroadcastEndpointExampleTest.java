@@ -92,7 +92,10 @@ public class WebsocketTwoRoutesToSIndividualAndBroadcastEndpointExampleTest exte
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-
+                WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
+                websocketComponent.setMinThreads(1);
+                websocketComponent.setMaxThreads(11);
+                
                 from("websocket://localhost:" + port + "/bar")
                         .log(">>> Message received from BAR WebSocket Client : ${body}")
                         .transform().simple("The bar has ${body}")

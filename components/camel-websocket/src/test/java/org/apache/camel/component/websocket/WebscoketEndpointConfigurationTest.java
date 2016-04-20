@@ -43,6 +43,8 @@ public class WebscoketEndpointConfigurationTest extends CamelTestSupport {
         String uri = "websocket://localhost:" + port + "/bar?bufferSize=65000&maxIdleTime=3000";
         WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
         WebsocketComponent component = websocketEndpoint.getComponent();
+        component.setMinThreads(1);
+        component.setMaxThreads(11);
         Consumer consumer = websocketEndpoint.createConsumer(processor);
         component.connect((WebsocketProducerConsumer) consumer);
         

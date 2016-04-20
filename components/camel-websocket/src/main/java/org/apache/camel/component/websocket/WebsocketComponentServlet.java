@@ -22,6 +22,9 @@ import java.util.concurrent.ConcurrentMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
+import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.slf4j.Logger;
@@ -60,7 +63,7 @@ public class WebsocketComponentServlet extends WebSocketServlet {
         consumers.remove(consumer.getPath());
     }
 
-    public WebSocket doWebSocketConnect(HttpServletRequest request, String protocol) {
+    public WebSocket doWebSocketConnect(ServletUpgradeRequest request, String protocol) {
         String protocolKey = protocol;
 
         if (protocol == null || !socketFactory.containsKey(protocol)) {
@@ -82,7 +85,14 @@ public class WebsocketComponentServlet extends WebSocketServlet {
 
 	@Override
 	public void configure(WebSocketServletFactory factory) {
-		// TODO Auto-generated method stub
-		
+		 factory.setCreator(new WebSocketCreator() {
+			    @Override
+			    public Object createWebSocket(ServletUpgradeRequest req, ServletUpgradeResponse resp) {
+	             String protocolKey = "default";
+	
+	              WebSocketFactory factory = socketFactory.get(protocolKey);
+			      return factory.newInstance(req, protocolKey, sync, consumer);
+			    }
+	});
 	}
 }

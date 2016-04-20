@@ -92,6 +92,8 @@ public class WebsocketComponentRouteExampleTest extends CamelTestSupport {
                 WebsocketComponent websocketComponent = getContext().getComponent("websocket", WebsocketComponent.class);
                 websocketComponent.setHost("localhost");
                 websocketComponent.setPort(port);
+                websocketComponent.setMaxThreads(11);
+                websocketComponent.setMinThreads(1);
 
                 from("websocket://echo")
                     .log(">>> Message received from WebSocket Client : ${body}")

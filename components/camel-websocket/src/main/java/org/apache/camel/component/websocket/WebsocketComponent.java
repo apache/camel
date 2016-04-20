@@ -340,7 +340,6 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     protected Server createServer() throws Exception {
         Server server = null;
-
         // configure thread pool if min/max given
         if (minThreads != null || maxThreads != null) {
             if (getThreadPool() != null) {
@@ -354,7 +353,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                 qtp.setMaxThreads(maxThreads.intValue());
             }
             // let the thread names indicate they are from the server
-            qtp.setName("CamelJettyWebSocketServer(" + ObjectHelper.getIdentityHashCode(server) + ")");
+            qtp.setName("CamelJettyWebSocketServer(" + "test" + ")");
             try {
                 qtp.start();
             } catch (Exception e) {

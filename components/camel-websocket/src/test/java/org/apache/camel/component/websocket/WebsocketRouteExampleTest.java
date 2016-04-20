@@ -88,6 +88,8 @@ public class WebsocketRouteExampleTest extends CamelTestSupport {
             public void configure() {
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
                 websocketComponent.setPort(port);
+                websocketComponent.setMinThreads(1);
+                websocketComponent.setMaxThreads(11);
 
                 // START SNIPPET: e1
                 // expose a echo websocket client, that sends back an echo

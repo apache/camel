@@ -120,6 +120,9 @@ public class WebsocketProducerRouteRestartTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
+                websocketComponent.setMaxThreads(11);
+                websocketComponent.setMinThreads(1);
                 from("direct:shop")
                     .id(ROUTE_ID)
                     .log(">>> Message received from Shopping center : ${body}")

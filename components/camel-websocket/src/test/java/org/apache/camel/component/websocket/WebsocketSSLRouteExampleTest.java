@@ -161,6 +161,8 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
                 websocketComponent.setSslContextParameters(defineSSLContextParameters());
                 websocketComponent.setPort(port);
+                websocketComponent.setMinThreads(1);
+                websocketComponent.setMaxThreads(11);
 
                 from("websocket://test")
                         .log(">>> Message received from WebSocket Client : ${body}")

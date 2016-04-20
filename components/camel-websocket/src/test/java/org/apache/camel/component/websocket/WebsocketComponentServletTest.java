@@ -21,7 +21,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.eclipse.jetty.websocket.WebSocket;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +51,7 @@ public class WebsocketComponentServletTest {
     @Mock
     private NodeSynchronization sync;
     @Mock
-    private HttpServletRequest request;
+    private ServletUpgradeRequest request;
 
     private WebsocketComponentServlet websocketComponentServlet;
 
