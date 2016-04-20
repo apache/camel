@@ -233,7 +233,7 @@ public class WebsocketProducerTest {
 
         websocketProducer.sendMessage(defaultWebsocket1, MESSAGE);
 
-        InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage,remoteEndpoint);
+        InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verify(defaultWebsocket1, times(1)).getSession();

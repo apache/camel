@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @WebSocket
-public class DefaultWebsocket implements Serializable, WebSocket {
+public class DefaultWebsocket implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(DefaultWebsocket.class);
 
@@ -96,40 +96,4 @@ public class DefaultWebsocket implements Serializable, WebSocket {
     public void setConnectionKey(String connectionKey) {
         this.connectionKey = connectionKey;
     }
-
-	@Override
-	public Class<? extends Annotation> annotationType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int inputBufferSize() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int maxBinaryMessageSize() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int maxIdleTime() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int maxTextMessageSize() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public BatchMode batchMode() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

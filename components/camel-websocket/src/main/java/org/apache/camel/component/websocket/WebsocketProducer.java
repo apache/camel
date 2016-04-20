@@ -107,7 +107,7 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
             if (message instanceof String) {
                 websocket.getSession().getRemote().sendString((String) message);
             } else if (message instanceof byte[]) {
-            	ByteBuffer buf = ByteBuffer.wrap((byte[]) message);
+                ByteBuffer buf = ByteBuffer.wrap((byte[]) message);
                 websocket.getSession().getRemote().sendBytes(buf);
             }
         }

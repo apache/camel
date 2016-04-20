@@ -245,7 +245,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                     // registered MBeans when Camel is done with the managed objects.
                     if (mbContainer != null) {
                         mbContainer.beanRemoved(null, connectorRef.server);
-                        mbContainer.beanRemoved(null,connectorRef.connector);
+                        mbContainer.beanRemoved(null, connectorRef.connector);
                     }
                 }
                 if (prodcon instanceof WebsocketConsumer) {
@@ -261,7 +261,7 @@ public class WebsocketComponent extends UriEndpointComponent {
     public synchronized MBeanContainer getMbContainer() {
         // If null, provide the default implementation.
         if (mbContainer == null) {
-            mbContainer=new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
+            mbContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
         }
 
         return this.mbContainer;
@@ -411,8 +411,8 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     protected Server createStaticResourcesServer(ServletContextHandler context, String host, int port, String home) throws Exception {
         Server server = new Server();
-        HttpConfiguration http_config = new HttpConfiguration();
-        ServerConnector connector = new ServerConnector(server, new HttpConnectionFactory(http_config));
+        HttpConfiguration httpConfig = new HttpConfiguration();
+        ServerConnector connector = new ServerConnector(server, new HttpConnectionFactory(httpConfig));
         connector.setHost(host);
         connector.setPort(port);
         server.addConnector(connector);
@@ -496,7 +496,7 @@ public class WebsocketComponent extends UriEndpointComponent {
             sslContextFactory.setKeyStorePassword(sslKeyPassword);
             sslContextFactory.setKeyManagerPassword(sslPassword);
             if (sslKeystore != null) {
-            	sslContextFactory.setKeyStorePath(sslKeystore);
+                sslContextFactory.setKeyStorePath(sslKeystore);
             }
             sslSocketConnector = new ServerConnector(server, sslContextFactory);
 

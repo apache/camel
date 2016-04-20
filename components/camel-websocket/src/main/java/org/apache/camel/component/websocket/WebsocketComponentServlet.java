@@ -63,7 +63,7 @@ public class WebsocketComponentServlet extends WebSocketServlet {
         consumers.remove(consumer.getPath());
     }
 
-    public WebSocket doWebSocketConnect(ServletUpgradeRequest request, String protocol) {
+    public DefaultWebsocket doWebSocketConnect(ServletUpgradeRequest request, String protocol) {
         String protocolKey = protocol;
 
         if (protocol == null || !socketFactory.containsKey(protocol)) {
@@ -83,16 +83,15 @@ public class WebsocketComponentServlet extends WebSocketServlet {
         this.socketFactory = socketFactory;
     }
 
-	@Override
-	public void configure(WebSocketServletFactory factory) {
-		 factory.setCreator(new WebSocketCreator() {
-			    @Override
-			    public Object createWebSocket(ServletUpgradeRequest req, ServletUpgradeResponse resp) {
-	             String protocolKey = "default";
-	
-	              WebSocketFactory factory = socketFactory.get(protocolKey);
-			      return factory.newInstance(req, protocolKey, sync, consumer);
-			    }
-	});
-	}
+    @Override
+    public void configure(WebSocketServletFactory factory) {
+        factory.setCreator(new WebSocketCreator() {
+            @Override
+            public Object createWebSocket(ServletUpgradeRequest req, ServletUpgradeResponse resp) {
+                String protocolKey = "default";
+                WebSocketFactory factory = socketFactory.get(protocolKey);
+                return factory.newInstance(req, protocolKey, sync, consumer);
+            }
+        });
+    }
 }

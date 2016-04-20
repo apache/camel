@@ -81,7 +81,7 @@ public class WebsocketComponentServletTest {
     @Test
     public void testDoWebSocketConnect() {
         websocketComponentServlet.setConsumer(consumer);
-        WebSocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
+        DefaultWebsocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
         assertNotNull(webSocket);
         assertEquals(DefaultWebsocket.class, webSocket.getClass());
         DefaultWebsocket defaultWebsocket = (DefaultWebsocket) webSocket;
@@ -94,7 +94,7 @@ public class WebsocketComponentServletTest {
 
     @Test
     public void testDoWebSocketConnectConsumerIsNull() {
-        WebSocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
+        DefaultWebsocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
         assertNotNull(webSocket);
         assertEquals(DefaultWebsocket.class, webSocket.getClass());
         DefaultWebsocket defaultWebsocket = (DefaultWebsocket) webSocket;

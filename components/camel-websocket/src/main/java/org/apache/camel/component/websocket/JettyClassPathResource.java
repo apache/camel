@@ -19,7 +19,6 @@ package org.apache.camel.component.websocket;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
@@ -118,14 +117,13 @@ public class JettyClassPathResource extends Resource {
         return new JettyClassPathResource(resolver, this.path + "/" + path);
     }
 
-	@Override
-	public void close() {
-		// noop
-		
-	}
+    @Override
+    public void close() {
+        // noop
+    }
 
-	@Override
-	public ReadableByteChannel getReadableByteChannel() throws IOException {
-		return null;
-	}
+    @Override
+    public ReadableByteChannel getReadableByteChannel() throws IOException {
+        return null;
+    }
 }
