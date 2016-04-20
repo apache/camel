@@ -27,19 +27,19 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * Route to be executed when circuit breaker executes fallback
+ * Route to be executed when Hystrix EIP executes fallback
  */
 @Metadata(label = "eip,routing,circuitbreaker")
-@XmlRootElement(name = "fallback")
+@XmlRootElement(name = "onFallback")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FallbackDefinition extends OutputDefinition<FallbackDefinition> {
+public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition> {
 
-    public FallbackDefinition() {
+    public OnFallbackDefinition() {
     }
 
     @Override
     public String toString() {
-        return "Fallback[" + getOutputs() + "]";
+        return "OnFallback[" + getOutputs() + "]";
     }
 
     @Override
@@ -49,7 +49,7 @@ public class FallbackDefinition extends OutputDefinition<FallbackDefinition> {
 
     @Override
     public String getLabel() {
-        CollectionStringBuffer buffer = new CollectionStringBuffer("fallback[");
+        CollectionStringBuffer buffer = new CollectionStringBuffer("onFallback[");
         List<ProcessorDefinition<?>> list = getOutputs();
         for (ProcessorDefinition<?> type : list) {
             buffer.append(type.getLabel());

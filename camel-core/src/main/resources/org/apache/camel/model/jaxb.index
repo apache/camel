@@ -27,7 +27,6 @@ DescriptionDefinition
 DynamicRouterDefinition
 EnrichDefinition
 ExpressionSubElementDefinition
-FallbackDefinition
 FilterDefinition
 FinallyDefinition
 FromDefinition
@@ -48,6 +47,7 @@ MulticastDefinition
 OnCompletionDefinition
 OnCompletionMode
 OnExceptionDefinition
+OnFallbackDefinition
 OptimisticLockRetryPolicyDefinition
 OptionalIdentifiedDefinition
 OtherwiseDefinition

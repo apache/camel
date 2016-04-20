@@ -21,7 +21,6 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
-import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.HystrixDefinition;
@@ -49,8 +48,8 @@ public class HystrixProcessorFactory implements ProcessorFactory {
             // create the regular and fallback processors
             Processor processor = cb.createChildProcessor(routeContext, true);
             Processor fallback = null;
-            if (cb.getFallback() != null) {
-                fallback = cb.getFallback().createProcessor(routeContext);
+            if (cb.getOnFallback() != null) {
+                fallback = cb.getOnFallback().createProcessor(routeContext);
             }
 
             HystrixConfigurationDefinition config = cb.getHystrixConfiguration();

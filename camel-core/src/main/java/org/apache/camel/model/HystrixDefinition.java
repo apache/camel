@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
@@ -39,8 +40,8 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
     private HystrixConfigurationDefinition hystrixConfiguration;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
-    @XmlElement
-    private FallbackDefinition fallback;
+    @XmlTransient
+    private OnFallbackDefinition onFallback;
     @XmlAttribute
     private String hystrixConfigurationRef;
 
@@ -81,11 +82,11 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
 
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
-        if (output instanceof FallbackDefinition) {
-            fallback = (FallbackDefinition) output;
+        if (output instanceof OnFallbackDefinition) {
+            onFallback = (OnFallbackDefinition) output;
         } else {
-            if (fallback != null) {
-                fallback.addOutput(output);
+            if (onFallback != null) {
+                onFallback.addOutput(output);
             } else {
                 super.addOutput(output);
             }
@@ -94,9 +95,9 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
 
     @Override
     public ProcessorDefinition<?> end() {
-        if (fallback != null) {
+        if (onFallback != null) {
             // end fallback as well
-            fallback.end();
+            onFallback.end();
         }
         return super.end();
     }
@@ -107,8 +108,8 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
         Iterator<ProcessorDefinition<?>> it = outputs.iterator();
         while (it.hasNext()) {
             ProcessorDefinition<?> out = it.next();
-            if (out instanceof FallbackDefinition) {
-                fallback = (FallbackDefinition) out;
+            if (out instanceof OnFallbackDefinition) {
+                onFallback = (OnFallbackDefinition) out;
                 it.remove();
             }
         }
@@ -133,12 +134,12 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
         this.hystrixConfigurationRef = hystrixConfigurationRef;
     }
 
-    public FallbackDefinition getFallback() {
-        return fallback;
+    public OnFallbackDefinition getOnFallback() {
+        return onFallback;
     }
 
-    public void setFallback(FallbackDefinition fallback) {
-        this.fallback = fallback;
+    public void setOnFallback(OnFallbackDefinition onFallback) {
+        this.onFallback = onFallback;
     }
 
     // Fluent API
@@ -148,7 +149,7 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
      * Sets the group key to use. The default value is CamelHystrix.
      */
     public HystrixDefinition groupKey(String groupKey) {
-        configure().groupKey(groupKey);
+        hystrixConfiguration().groupKey(groupKey);
         return this;
     }
 
@@ -156,7 +157,7 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
      * Sets the thread pool key to use. The default value is CamelHystrix.
      */
     public HystrixDefinition threadPoolKey(String threadPoolKey) {
-        configure().threadPoolKey(threadPoolKey);
+        hystrixConfiguration().threadPoolKey(threadPoolKey);
         return this;
     }
 
@@ -165,7 +166,7 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
      * <p/>
      * Use <tt>end</tt> when configuration is complete, to return back to the Hystrix EIP.
      */
-    public HystrixConfigurationDefinition configure() {
+    public HystrixConfigurationDefinition hystrixConfiguration() {
         hystrixConfiguration = new HystrixConfigurationDefinition(this);
         return hystrixConfiguration;
     }
@@ -173,25 +174,25 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
     /**
      * Configures the Hystrix EIP using the given configuration
      */
-    public HystrixDefinition configure(HystrixConfigurationDefinition configuration) {
+    public HystrixDefinition hystrixConfiguration(HystrixConfigurationDefinition configuration) {
         hystrixConfiguration = configuration;
         return this;
     }
 
     /**
-     * Refers to a hystrix configuration to use for configuring the Hystrix EIP.
+     * Refers to a Hystrix configuration to use for configuring the Hystrix EIP.
      */
-    public HystrixDefinition configure(String ref) {
+    public HystrixDefinition hystrixConfiguration(String ref) {
         hystrixConfigurationRef = ref;
         return this;
     }
 
     /**
-     * Sets the fallback node
+     * The Hystrix fallback route path to execute.
      */
-    public HystrixDefinition fallback() {
-        fallback = new FallbackDefinition();
-        fallback.setParent(this);
+    public HystrixDefinition onFallback() {
+        onFallback = new OnFallbackDefinition();
+        onFallback.setParent(this);
         return this;
     }
 

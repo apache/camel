@@ -39,7 +39,7 @@ public class HystrixRouteFallbackTest extends CamelTestSupport {
                 from("direct:start")
                     .hystrix()
                         .to("direct:foo")
-                    .fallback()
+                    .onFallback()
                         .transform().constant("Fallback message")
                     .end()
                     .to("mock:result");

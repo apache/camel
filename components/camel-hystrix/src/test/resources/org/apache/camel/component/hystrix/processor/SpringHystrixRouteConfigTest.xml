@@ -27,11 +27,11 @@
       <hystrix>
         <hystrixConfiguration groupKey="myCamelApp" requestLogEnabled="false" corePoolSize="5"/>
         <to uri="direct:foo"/>
-        <fallback>
+        <onFallback>
           <transform>
             <constant>Fallback message</constant>
           </transform>
-        </fallback>
+        </onFallback>
       </hystrix>
       <to uri="mock:result"/>
     </route>
