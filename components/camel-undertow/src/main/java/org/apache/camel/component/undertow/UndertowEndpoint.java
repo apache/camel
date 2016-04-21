@@ -71,11 +71,11 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     private Boolean throwExceptionOnFailure;
     @UriParam
     private Boolean transferException;
-    @UriPath(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean keepAlive = Boolean.TRUE;
-    @UriPath(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean tcpNoDelay = Boolean.TRUE;
-    @UriPath(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean reuseAddresses = Boolean.TRUE;
     @UriParam(label = "producer", prefix = "option.", multiValue = true)
     private Map<String, Object> options;
