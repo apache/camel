@@ -147,7 +147,7 @@ final class CdiSpiHelper {
     /**
      * Generates a unique signature of a collection of types.
      */
-    private static String createTypeCollectionId(Collection<? extends Type> types) {
+    private static String createTypeCollectionId(Collection<Type> types) {
         return types.stream()
             .sorted(comparing(CdiSpiHelper::createTypeId))
             .map(CdiSpiHelper::createTypeId)
