@@ -165,6 +165,7 @@
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
     * [JSON](json.adoc)
+    * [Jbpm](jbpm.adoc)
     * [Kafka](kafka.adoc)
     * [Metrics](metrics.adoc)
     * [Mock](mock.adoc)
