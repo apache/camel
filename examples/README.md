@@ -32,6 +32,7 @@ All examples have been sort by type/category
 * [camel-example-aggregate](camel-example-aggregate/README.md)
 * [camel-example-etl](camel-example-etl/README.md)
 * [camel-example-loadbalancing](camel-example-loadbalancing/README.md)
+* [camel-example-hystrix](camel-example-hystrix/README.md)
 
 ##### Tutorials
 
