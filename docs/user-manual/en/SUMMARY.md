@@ -158,6 +158,7 @@
     * [Hystrix](hystrix.adoc)
     * [Ibatis](ibatis.adoc)
     * [Infinispan](infinispan.adoc)
+    * [IRC](irc.adoc)
     * [Ironmq](ironmq.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
