@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.kinesis;
 import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.model.ShardIteratorType;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Before;
@@ -51,12 +52,16 @@ public class KinesisEndpointTest {
                 + "?amazonKinesisClient=#kinesisClient"
                 + "&maxResultsPerRequest=101"
                 + "&iteratorType=latest"
+                + "&shardId=abc"
+                + "&sequenceNumber=123"
         );
 
         assertThat(endpoint.getClient(), is(amazonKinesisClient));
         assertThat(endpoint.getStreamName(), is("some_stream_name"));
         assertThat(endpoint.getIteratorType(), is(ShardIteratorType.LATEST));
         assertThat(endpoint.getMaxResultsPerRequest(), is(101));
+        assertThat(endpoint.getSequenceNumber(), is("123"));
+        assertThat(endpoint.getShardId(), is("abc"));
     }
 
     @Test
@@ -69,5 +74,22 @@ public class KinesisEndpointTest {
         assertThat(endpoint.getStreamName(), is("some_stream_name"));
         assertThat(endpoint.getIteratorType(), is(ShardIteratorType.TRIM_HORIZON));
         assertThat(endpoint.getMaxResultsPerRequest(), is(1));
+    }
+
+    @Test(expected = ResolveEndpointFailedException.class)
+    public void afterSequenceNumberRequiresSequenceNumber() throws Exception {
+        KinesisEndpoint endpoint = (KinesisEndpoint) camelContext.getEndpoint("aws-kinesis://some_stream_name"
+                + "?amazonKinesisClient=#kinesisClient"
+                + "&iteratorType=AFTER_SEQUENCE_NUMBER"
+        );
+
+    }
+
+    @Test(expected = ResolveEndpointFailedException.class)
+    public void atSequenceNumberRequiresSequenceNumber() throws Exception {
+        KinesisEndpoint endpoint = (KinesisEndpoint) camelContext.getEndpoint("aws-kinesis://some_stream_name"
+                + "?amazonKinesisClient=#kinesisClient"
+                + "&iteratorType=AT_SEQUENCE_NUMBER"
+        );
     }
 }
