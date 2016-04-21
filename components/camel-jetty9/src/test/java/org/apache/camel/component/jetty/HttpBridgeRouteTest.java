@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.io.ByteArrayInputStream;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
 
 public class HttpBridgeRouteTest extends BaseJettyTest {
 

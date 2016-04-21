@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.jetty;
 
+import javax.servlet.http.HttpServletRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Unit test for wiki demonstration.

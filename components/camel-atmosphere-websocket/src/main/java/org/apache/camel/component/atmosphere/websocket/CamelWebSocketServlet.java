@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.atmosphere.websocket;
 
-import org.apache.camel.component.servlet.CamelHttpTransportServlet;
-import org.apache.camel.http.common.HttpConsumer;
-
+import java.io.IOException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import org.apache.camel.component.servlet.CamelHttpTransportServlet;
+import org.apache.camel.http.common.HttpConsumer;
 
 /**
  * This servlet is used to add some websocket specific handling at the moment.
