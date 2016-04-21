@@ -1370,6 +1370,13 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("$${body}", "$Something");
     }
 
+    public void testEscapeEndFunction() throws Exception {
+        exchange.getIn().setBody("Something");
+
+        assertExpression("{hello\\}", "{hello}");
+        assertExpression("${body}{hello\\}", "Something{hello}");
+    }
+
     public void testCamelContextOGNL() throws Exception {
         assertExpression("${camelContext.getName()}", context.getName());
         assertExpression("${camelContext.version}", context.getVersion());

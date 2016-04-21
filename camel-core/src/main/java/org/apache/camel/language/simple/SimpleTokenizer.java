@@ -193,6 +193,9 @@ public final class SimpleTokenizer {
                 } else if ('r' == next) {
                     sb.append("\r");
                     special = true;
+                } else if ('}' == next) {
+                    sb.append("}");
+                    special = true;
                 } else {
                     // not special just a regular character
                     sb.append(ch);
