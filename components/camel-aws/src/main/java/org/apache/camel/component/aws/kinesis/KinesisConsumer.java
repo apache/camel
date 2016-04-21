@@ -100,12 +100,11 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
             String shardId;
 
             //If ShardId supplied use it, else choose first one
-            if(!getEndpoint().getShardId().isEmpty()){
+            if (!getEndpoint().getShardId().isEmpty()) {
                 shardId = getEndpoint().getShardId();
-            }
-            else{
+            } else {
                 DescribeStreamRequest req1 = new DescribeStreamRequest()
-                    .withStreamName(getEndpoint().getStreamName());
+                        .withStreamName(getEndpoint().getStreamName());
                 DescribeStreamResult res1 = getClient().describeStream(req1);
                 shardId = res1.getStreamDescription().getShards().get(0).getShardId();
             }
@@ -116,7 +115,7 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
                     .withShardId(shardId)
                     .withShardIteratorType(getEndpoint().getIteratorType());
 
-            if(hasSequenceNumber()){
+            if (hasSequenceNumber()) {
                 req.withStartingSequenceNumber(getEndpoint().getSequenceNumber());
             }
 
@@ -135,9 +134,9 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
         return exchanges;
     }
 
-    private boolean hasSequenceNumber(){
-        return !getEndpoint().getSequenceNumber().isEmpty() &&
-                (getEndpoint().getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
-                        || getEndpoint().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
+    private boolean hasSequenceNumber() {
+        return !getEndpoint().getSequenceNumber().isEmpty()
+                && (getEndpoint().getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
+                    || getEndpoint().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
     }
 }
