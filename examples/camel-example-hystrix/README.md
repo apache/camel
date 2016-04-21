@@ -55,8 +55,14 @@ You can then stop service1 and see that the client should fallback to service2 i
 
 You should be able to visualize the state of the Hystrix Circuit Breaker in the Hystrix Web Console.
 
-TODO: How to run this console
+You can find instructions at Hystrix how to build and run the web console: https://github.com/Netflix/Hystrix/wiki/Dashboard
 
+For example using gradle, you can then access the web console locally at: `http://localhost:7979/hystrix-dashboard`.
+
+The stream is accessinble from the client at: `http://localhost:8080/hystrix.stream` which you can add as stream
+to the web console and then you should see the circuit breakers.
+
+![Hystrix Web Console](images/hystrix-web-console.png "Hystrix Web Console")
 
 ### Forum, Help, etc
 
