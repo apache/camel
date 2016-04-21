@@ -76,7 +76,8 @@ public class HystrixProcessorFactory implements ProcessorFactory {
                 groupKey = HystrixConfigurationDefinition.DEFAULT_GROUP_KEY;
             }
             if (threadPoolKey == null) {
-                threadPoolKey = id + "-threadpool";
+                // by default use the thread pool from the group
+                threadPoolKey = groupKey;
             }
 
             // use the node id as the command key
@@ -109,6 +110,7 @@ public class HystrixProcessorFactory implements ProcessorFactory {
             HystrixCommand.Setter fallbackSetter = null;
             boolean fallbackViaNetwork = cb.getOnFallback() != null && cb.getOnFallback().isFallbackViaNetwork();
             if (fallbackViaNetwork) {
+                // use a different thread pool that is for fallback (should never use the same thread pool as the regular command)
                 HystrixThreadPoolKey tpFallbackKey = HystrixThreadPoolKey.Factory.asKey(threadPoolKey + "-fallback");
 
                 fallbackSetter = HystrixCommand.Setter
