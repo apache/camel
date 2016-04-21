@@ -172,7 +172,17 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
      * may be moved at a dead letter queue on the JMS broker. To avoid this its recommended to enable this option.
      */
     public void setAcceptMessagesWhileStopping(boolean acceptMessagesWhileStopping) {
-        getConfiguration().setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
+        getConfiguration().setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);   
+    }
+    
+    /**
+     * Whether the DefaultMessageListenerContainer used in the reply managers for request-reply messaging allow 
+     * the DefaultMessageListenerContainer.runningAllowed flag to quick stop in case JmsConfiguration#isAcceptMessagesWhileStopping
+     * is enabled, and org.apache.camel.CamelContext is currently being stopped. This quick stop ability is enabled by
+     * default in the regular JMS consumers but to enable for reply managers you must enable this flag.
+      */
+    public void setAllowReplyManagerQuickStop(boolean allowReplyManagerQuickStop) {
+        getConfiguration().setAllowReplyManagerQuickStop(allowReplyManagerQuickStop);
     }
 
     /**
