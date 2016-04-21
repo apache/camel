@@ -21,7 +21,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 //CHECKSTYLE:OFF
 /**
- * A Spring Boot application that starts the Camel Hystrix application.
+ * A Spring Boot application that runs Camel service 1
  */
 @SpringBootApplication
 public class Service1Application {

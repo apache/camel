@@ -18,6 +18,10 @@ package sample.camel;
 
 import org.apache.camel.main.Main;
 
+//CHECKSTYLE:OFF
+/**
+ * A Java main that runs Camel service 2
+ */
 public class Service2Application {
 
     public static void main(String[] args) throws Exception {
@@ -27,3 +31,4 @@ public class Service2Application {
     }
 
 }
+//CHECKSTYLE:ON
