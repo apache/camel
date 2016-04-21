@@ -33,8 +33,7 @@
         <camel.osgi.export.pkg>org.apache.camel.component.cometd.*</camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
             !org.apache.camel.component.cometd.*,
-            org.eclipse.jetty.util.ssl;version="[8,9)";resolution:=optional,
-            javax.servlet.*;version="${servlet-version-range}",
+            org.eclipse.jetty.util.ssl;version="[9,9.5)";resolution:=optional,
             ${camel.osgi.import.defaults},
             *
         </camel.osgi.import.pkg>
@@ -77,7 +76,7 @@
         <dependency>
             <groupId>org.cometd.java</groupId>
             <artifactId>cometd-java-server</artifactId>
-            <version>3.0.9</version>
+            <version>${cometd-java-server}</version>
         </dependency>
 
         <!-- Test Dependencies -->
