@@ -320,6 +320,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals("Foo", endpoint.getEndpointConfiguredDestinationName());
 
         assertFalse(endpoint.isAcceptMessagesWhileStopping());
+        assertFalse(endpoint.isAllowReplyManagerQuickStop());
         assertFalse(endpoint.isAlwaysCopyMessage());
         assertTrue(endpoint.isAllowNullBody());
         assertFalse(endpoint.isAsyncConsumer());
@@ -362,6 +363,9 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
         endpoint.setAcceptMessagesWhileStopping(true);
         assertTrue(endpoint.isAcceptMessagesWhileStopping());
+        
+        endpoint.setAllowReplyManagerQuickStop(true);
+        assertTrue(endpoint.isAllowReplyManagerQuickStop());
 
         endpoint.setAcknowledgementMode(2);
         assertEquals(2, endpoint.getAcknowledgementMode());
