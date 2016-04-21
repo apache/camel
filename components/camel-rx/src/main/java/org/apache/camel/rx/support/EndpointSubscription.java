@@ -16,6 +16,7 @@
  */
 package org.apache.camel.rx.support;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Consumer;
@@ -37,13 +38,15 @@ public class EndpointSubscription<T> implements Subscription {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointSubscription.class);
 
+    private final ExecutorService workerPool;
     private final Endpoint endpoint;
     private final Observer<? super T> observer;
     private Consumer consumer;
     private final AtomicBoolean unsubscribed = new AtomicBoolean(false);
 
-    public EndpointSubscription(Endpoint endpoint, final Observer<? super T> observer,
+    public EndpointSubscription(ExecutorService workerPool, Endpoint endpoint, final Observer<? super T> observer,
                                 final Func1<Exchange, T> func) {
+        this.workerPool = workerPool;
         this.endpoint = endpoint;
         this.observer = observer;
 
@@ -69,11 +72,17 @@ public class EndpointSubscription<T> implements Subscription {
     public void unsubscribe() {
         if (unsubscribed.compareAndSet(false, true)) {
             if (consumer != null) {
-                try {
-                    ServiceHelper.stopServices(consumer);
-                } catch (Exception e) {
-                    LOG.warn("Error stopping consumer: " + consumer + " due " + e.getMessage() + ". This exception is ignored.", e);
-                }
+                // must stop the consumer from the worker pool as we should not stop ourself from a thread from ourself
+                workerPool.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ServiceHelper.stopServices(consumer);
+                        } catch (Exception e) {
+                            LOG.warn("Error stopping consumer: " + consumer + " due " + e.getMessage() + ". This exception is ignored.", e);
+                        }
+                    }
+                });
             }
         }
     }
