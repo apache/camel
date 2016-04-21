@@ -42,14 +42,15 @@ $ cd service2
 $ mvn compile camel:run
 ```
 
-And then start the client that calls service1 every 10th seconds.
+And then start the client that calls service1 every second.
 
 ```sh
 $ cd client
 $ mvn compile camel:run
 ```
 
-You can then stop service1 and see that the client should fallback to service2 in the Hystrix EIP circuit breaker.
+You can then stop service1 and see that the client should fallback to call service2 in the Hystrix EIP circuit breaker.
+And then start service 1 again and see the Hystrix EIP go back to normal.
 
 ### Hystrix web console
 
@@ -60,7 +61,9 @@ You can find instructions at Hystrix how to build and run the web console: https
 For example using gradle, you can then access the web console locally at: `http://localhost:7979/hystrix-dashboard`.
 
 The stream is accessinble from the client at: `http://localhost:8080/hystrix.stream` which you can add as stream
-to the web console and then you should see the circuit breakers.
+to the web console and then you should see the circuit breakers. In the screen shot below, we have just stopped service1, so
+the Hystrix EIP will execute the fallback via network, which is calling service2 instead. If you start service 1 again
+then the Hystrix EIP should go back to green again.
 
 ![Hystrix Web Console](images/hystrix-web-console.png "Hystrix Web Console")
 
