@@ -337,6 +337,15 @@ acknowledgment mode. For the regular modes, it is preferable to use the
 messages with no body. If this option is `false` and the message body is
 null, then an `JMSException` is thrown.
 
+| 'allowReplyManagerQuickStop' | 'false' | Whether the 
+DefaultMessageListenerContainer used in the reply managers for request-
+reply messaging allow the DefaultMessageListenerContainer.runningAllowed
+ flag to quick stop in case link 
+JmsConfigurationisAcceptMessagesWhileStopping() is enabled and 
+org.apache.camel.CamelContext is currently being stopped. This quick 
+stop ability is enabled by default in the regular JMS consumers but to 
+enable for reply managers you must enable this flag.
+
 |`alwaysCopyMessage` |`false` |If `true`, Camel will always make a JMS
 message copy of the message when it is passed to the producer for
 sending. Copying the message is needed in some situations, such as when
