@@ -100,7 +100,7 @@ public class CometdComponent extends UriEndpointComponent {
      * Connects the URL specified on the endpoint to the specified processor.
      */
     public void connect(CometdProducerConsumer prodcon) throws Exception {
-    	Server server = null;
+        Server server = null;
         // Make sure that there is a connector for the requested endpoint.
         CometdEndpoint endpoint = prodcon.getEndpoint();
         String connectorKey = endpoint.getProtocol() + ":" + endpoint.getUri().getHost() + ":" + endpoint.getPort();
@@ -175,7 +175,7 @@ public class CometdComponent extends UriEndpointComponent {
     }
 
     protected CometDServlet createServletForConnector(Server server, Connector connector, CometdEndpoint endpoint) throws Exception {
-    	CometDServlet servlet = new CometDServlet();
+        CometDServlet servlet = new CometDServlet();
 
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
 
