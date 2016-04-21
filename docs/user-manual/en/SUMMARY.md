@@ -161,6 +161,7 @@
     * [IRC](irc.adoc)
     * [Ironmq](ironmq.adoc)
     * [Jasypt](jasypt.adoc)
+    * [Javaspace](javaspace.adoc)
     * [JMS](jms.adoc)
     * [JMX](jmx.adoc)
     * [JSON](json.adoc)
