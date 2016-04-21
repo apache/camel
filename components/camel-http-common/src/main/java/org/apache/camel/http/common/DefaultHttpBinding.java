@@ -16,7 +16,34 @@
  */
 package org.apache.camel.http.common;
 
-import org.apache.camel.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
+import javax.activation.DataHandler;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.GZIPHelper;
@@ -25,15 +52,6 @@ import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.activation.DataHandler;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
@@ -92,11 +110,11 @@ public class DefaultHttpBinding implements HttpBinding {
             readHeaders(request, message);
         }
         if (mapHttpMessageFormUrlEncodedBody) {
-        	try {
-				readFormUrlEncodedBody(request, message);
-			} catch (UnsupportedEncodingException e) {
-	            throw new RuntimeCamelException("Cannot read Form URL encoded body due " + e.getMessage(), e);
-			}
+            try {
+                readFormUrlEncodedBody(request, message);
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeCamelException("Cannot read Form URL encoded body due " + e.getMessage(), e);
+            }
         }
 
         // populate the headers from the request
@@ -212,9 +230,9 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
-	protected void readFormUrlEncodedBody(HttpServletRequest request, HttpMessage message) throws UnsupportedEncodingException {
+    protected void readFormUrlEncodedBody(HttpServletRequest request, HttpMessage message) throws UnsupportedEncodingException {
         LOG.trace("readFormUrlEncodedBody {}", request);
-		// should we extract key=value pairs from form bodies (application/x-www-form-urlencoded)
+        // should we extract key=value pairs from form bodies (application/x-www-form-urlencoded)
         // and map those to Camel headers
         if (mapHttpMessageBody && mapHttpMessageHeaders) {
             LOG.trace("HTTP method {} with Content-Type {}", request.getMethod(), request.getContentType());
@@ -260,16 +278,16 @@ public class DefaultHttpBinding implements HttpBinding {
                 }
             }
         }
-	}
+    }
 
     private String getRawPath(HttpServletRequest request) {
         String uri = request.getRequestURI();
-		/**
+        /**
          * In async case, it seems that request.getContextPath() can return null
          * @see https://dev.eclipse.org/mhonarc/lists/jetty-users/msg04669.html
          */
-        String contextPath = Optional.ofNullable(request.getContextPath()).orElse("");
-        String servletPath = Optional.ofNullable(request.getServletPath()).orElse("");
+        String contextPath = request.getContextPath() == null ? "" : request.getContextPath();
+        String servletPath = request.getServletPath() == null ? "" : request.getServletPath();
         return uri.substring(contextPath.length() + servletPath.length());
     }
 
@@ -619,7 +637,7 @@ public class DefaultHttpBinding implements HttpBinding {
         this.mapHttpMessageFormUrlEncodedBody = mapHttpMessageFormUrlEncodedBody;
     }
 
-	protected static SimpleDateFormat getHttpDateFormat() {
+    protected static SimpleDateFormat getHttpDateFormat() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
         dateFormat.setTimeZone(TIME_ZONE_GMT);
         return dateFormat;

@@ -16,16 +16,61 @@
  */
 package org.apache.camel.component.jetty;
 
-import org.apache.camel.*;
-import org.apache.camel.http.common.*;
-import org.apache.camel.spi.*;
-import org.apache.camel.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import javax.management.MBeanServer;
+import javax.servlet.Filter;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.http.common.CamelServlet;
+import org.apache.camel.http.common.HttpBinding;
+import org.apache.camel.http.common.HttpCommonComponent;
+import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.camel.http.common.HttpConfiguration;
+import org.apache.camel.http.common.HttpConsumer;
+import org.apache.camel.http.common.HttpRestServletResolveConsumerStrategy;
+import org.apache.camel.http.common.UrlRewrite;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.ManagementAgent;
+import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestApiConsumerFactory;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.HostUtils;
+import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.jmx.MBeanContainer;
-import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.server.AbstractConnector;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
@@ -42,21 +87,6 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.management.MBeanServer;
-import javax.servlet.Filter;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.security.GeneralSecurityException;
-import java.util.*;
 
 /**
  * An HttpComponent which starts an embedded Jetty for to handle consuming from
@@ -152,7 +182,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         Integer httpClientMinThreads = getAndRemoveParameter(parameters, "httpClientMinThreads", Integer.class, this.httpClientMinThreads);
         Integer httpClientMaxThreads = getAndRemoveParameter(parameters, "httpClientMaxThreads", Integer.class, this.httpClientMaxThreads);
         HttpClient httpClient = resolveAndRemoveReferenceParameter(parameters, "httpClient", HttpClient.class);
-        Optional<Boolean> async = Optional.ofNullable(getAndRemoveParameter(parameters, "async", Boolean.class));
+        Boolean async = getAndRemoveParameter(parameters, "async", Boolean.class);
 
         // extract httpClient. parameters
         Map<String, Object> httpClientParameters = IntrospectionSupport.extractProperties(parameters, "httpClient.");
@@ -174,7 +204,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         endpointUri = new URI(scheme + ":" + endpointUri);
 
         JettyHttpEndpoint endpoint = createEndpoint(endpointUri, httpUri);
-        async.ifPresent(endpoint::setAsync);
+        if (async != null) {
+            endpoint.setAsync(async);
+        }
 
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);

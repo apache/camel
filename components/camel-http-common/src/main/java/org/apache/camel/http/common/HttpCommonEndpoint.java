@@ -16,11 +16,15 @@
  */
 package org.apache.camel.http.common;
 
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.*;
-
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 public abstract class HttpCommonEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
@@ -43,9 +47,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
                     + " You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.")
     boolean bridgeEndpoint;
     @UriParam(label = "producer",
-            description = "If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, " +
-                    "useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, " +
-                    "this allows applications which use the Host header to generate accurate URL's for a proxied service")
+            description = "If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, "
+                + "useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, "
+                + "this allows applications which use the Host header to generate accurate URL's for a proxied service")
     boolean preserveHostHeader;
     @UriParam(label = "consumer",
             description = "Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.")

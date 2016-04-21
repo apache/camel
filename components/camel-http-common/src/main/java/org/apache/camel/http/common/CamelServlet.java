@@ -16,6 +16,18 @@
  */
 package org.apache.camel.http.common;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import javax.servlet.AsyncContext;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.RuntimeCamelException;
@@ -24,25 +36,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 /**
  * A servlet to use as a Camel route as entry.
  */
 public class CamelServlet extends HttpServlet {
-    private static final long serialVersionUID = -7061982839117697829L;
     public static final String ASYNC_PARAM = "async";
+    private static final long serialVersionUID = -7061982839117697829L;
     protected final Logger log = LoggerFactory.getLogger(getClass());
     
     /**
@@ -50,7 +49,7 @@ public class CamelServlet extends HttpServlet {
      *  sure that it is already set via the init method
      */
     private String servletName;
-    private boolean async = false;
+    private boolean async;
 
     private ServletResolveConsumerStrategy servletResolveConsumerStrategy = new HttpServletResolveConsumerStrategy();
     private final ConcurrentMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
@@ -59,9 +58,9 @@ public class CamelServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         this.servletName = config.getServletName();
-        this.async = Optional.ofNullable(config.getInitParameter(ASYNC_PARAM))
-            .map(ObjectHelper::toBoolean)
-            .orElse(Boolean.FALSE);
+
+        final String asyncParam = config.getInitParameter(ASYNC_PARAM);
+        this.async = asyncParam == null ? false : ObjectHelper.toBoolean(asyncParam);
         log.trace("servlet '{}' initialized with: async={}", new Object[]{servletName, async});
     }
 
@@ -71,13 +70,12 @@ public class CamelServlet extends HttpServlet {
             final AsyncContext context = req.startAsync();
             //run async
             context.start(() -> doServiceAsync(context));
-        }
-        else {
+        } else {
             doService(req, resp);
         }
     }
 
-	/**
+    /**
      * This is used to handle request asynchronously
      * @param context the {@link AsyncContext}
      */
@@ -86,25 +84,22 @@ public class CamelServlet extends HttpServlet {
         final HttpServletResponse response = (HttpServletResponse) context.getResponse();
         try {
             doService(request, response);
-        }
-        //An error shouldn't occur as we should handle most of error in doService
-        catch (Exception e) {
+        } catch (Exception e) {
+            //An error shouldn't occur as we should handle most of error in doService
             log.error("Error processing request", e);
             try {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
-            catch (Exception e1) {
+            } catch (Exception e1) {
                 log.debug("Cannot send reply to client!", e1);
             }
             //Need to wrap it in RuntimeException as it occurs in a Runnable
             throw new RuntimeCamelException(e);
-        }
-        finally {
+        } finally {
             context.complete();
         }
     }
 
-	/**
+    /**
      * This is the logical implementation to handle request with {@link CamelServlet}
      * This is where most exceptions should be handled
      *

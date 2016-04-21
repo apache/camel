@@ -16,23 +16,28 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.http.common.*;
+import org.apache.camel.http.common.CamelServlet;
+import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.camel.http.common.HttpConstants;
+import org.apache.camel.http.common.HttpConsumer;
+import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Servlet which leverage <a href="http://wiki.eclipse.org/Jetty/Feature/Continuations">Jetty Continuations</a>.

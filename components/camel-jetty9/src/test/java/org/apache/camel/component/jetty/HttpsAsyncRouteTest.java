@@ -16,6 +16,14 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.SocketException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -27,14 +35,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.SocketException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
 
 public class HttpsAsyncRouteTest extends HttpsRouteTest {
 

@@ -29,9 +29,9 @@ public class HttpBindingMapHttpMessageFormUrlEncodedFalseBodyTest extends BaseJe
     
     @Test
     public void testSendToJetty() throws Exception {
-    	Map<String,Object> map = new HashMap<String,Object>();
-    	map.put("content-type", "application/x-www-form-urlencoded");
-    	map.put(Exchange.HTTP_METHOD, HttpMethods.POST);
+        Map<String, Object> map = new HashMap<>();
+        map.put("content-type", "application/x-www-form-urlencoded");
+        map.put(Exchange.HTTP_METHOD, HttpMethods.POST);
         template.requestBodyAndHeaders("http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", "b1=x&b2=y", map);
     }
 
