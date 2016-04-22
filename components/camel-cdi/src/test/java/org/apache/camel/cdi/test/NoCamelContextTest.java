@@ -16,14 +16,12 @@
  */
 package org.apache.camel.cdi.test;
 
-import java.util.Properties;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Named;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cdi.CdiCamelExtension;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -33,28 +31,17 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+
 
 @RunWith(Arquillian.class)
-public class UndefinedPropertyTest {
+public class NoCamelContextTest {
 
-    @Produces
-    @ApplicationScoped
-    @Named("properties")
-    private static PropertiesComponent configuration() {
-        Properties properties = new Properties();
-        properties.put("from", "inbound");
-        // Do not add the looked up property for test purpose
-        //properties.put("to", "mock:outbound");
-        PropertiesComponent component = new PropertiesComponent();
-        component.setInitialProperties(properties);
-        return component;
-    }
+    @Any
+    @Inject
+    private Instance<CamelContext> contexts;
 
     @Deployment
     public static Archive<?> deployment() {
@@ -66,21 +53,7 @@ public class UndefinedPropertyTest {
     }
 
     @Test
-    public void lookupDefinedProperty(CamelContext context) throws Exception {
-        assertThat("Resolved property value is incorrect",
-            context.resolvePropertyPlaceholders("{{from}}"), is(equalTo("inbound")));
-    }
-
-    @Test
-    public void lookupUndefinedProperty(CamelContext context) {
-        try {
-            context.resolvePropertyPlaceholders("{{to}}");
-            fail("No exception is thrown!");
-        } catch (Exception cause) {
-            assertThat("Exception thrown is incorrect", cause,
-                is(instanceOf(IllegalArgumentException.class)));
-            assertThat("Exception message is incorrect", cause.getMessage(),
-                is(equalTo("Property with key [to] not found in properties from text: {{to}}")));
-        }
+    public void verifyDeployment() {
+        assertThat("Camel context beans are deployed!", contexts.isUnsatisfied(), is(equalTo(true)));
     }
 }

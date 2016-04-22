@@ -57,6 +57,11 @@ final class CdiSpiHelper {
     private CdiSpiHelper() {
     }
 
+    static Predicate<Bean> hasType(Type type) {
+        requireNonNull(type);
+        return bean -> bean.getTypes().contains(type);
+    }
+
     static Predicate<Annotation> isAnnotationType(Class<? extends Annotation> clazz) {
         requireNonNull(clazz);
         return annotation -> clazz.equals(annotation.annotationType());

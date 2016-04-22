@@ -35,6 +35,7 @@ import static java.util.function.Predicate.isEqual;
 import static java.util.stream.Collectors.collectingAndThen;
 
 import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Stream.concat;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
@@ -42,6 +43,7 @@ import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.AfterDeploymentValidation;
+import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -59,6 +61,7 @@ import javax.inject.Named;
 import org.apache.camel.BeanInject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Component;
 import org.apache.camel.Consume;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Converter;
@@ -69,7 +72,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.AbstractExchangeEvent;
 import org.apache.camel.model.RouteContainer;
@@ -83,6 +86,7 @@ import static org.apache.camel.cdi.BeanManagerHelper.getReferencesByType;
 import static org.apache.camel.cdi.CdiSpiHelper.getQualifiers;
 import static org.apache.camel.cdi.CdiSpiHelper.getRawType;
 import static org.apache.camel.cdi.CdiSpiHelper.hasAnnotation;
+import static org.apache.camel.cdi.CdiSpiHelper.hasType;
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 import static org.apache.camel.cdi.Excluded.EXCLUDED;
@@ -103,17 +107,15 @@ public class CdiCamelExtension implements Extension {
 
     private final Map<InjectionPoint, ForwardingObserverMethod<?>> cdiEventEndpoints = new ConcurrentHashMap<>();
 
-    private final Set<Bean<?>> contextBeans = newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<Bean<?>> cdiBeans = newSetFromMap(new ConcurrentHashMap<>());
 
     private final Set<Annotation> contextQualifiers = newSetFromMap(new ConcurrentHashMap<>());
-
-    private final Set<Annotation> eventQualifiers = newSetFromMap(new ConcurrentHashMap<>());
 
     private final Map<Method, Bean<?>> producerBeans = new ConcurrentHashMap<>();
 
     private final Map<Method, Set<Annotation>> producerQualifiers = new ConcurrentHashMap<>();
 
-    private final Set<ContextName> contextNames = newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<Annotation> eventQualifiers = newSetFromMap(new ConcurrentHashMap<>());
 
     private final Set<ImportResource> resources = newSetFromMap(new ConcurrentHashMap<>());
 
@@ -147,10 +149,6 @@ public class CdiCamelExtension implements Extension {
         }
     }
 
-    private void camelContextAware(@Observes ProcessAnnotatedType<? extends CamelContextAware> pat) {
-        camelBeans.add(pat.getAnnotatedType());
-    }
-
     private <T extends CamelContext> void camelContextBeans(@Observes ProcessInjectionTarget<T> pit, BeanManager manager) {
         pit.setInjectionTarget(environment.camelContextInjectionTarget(pit.getInjectionTarget(), pit.getAnnotatedType(), manager, this));
     }
@@ -165,18 +163,8 @@ public class CdiCamelExtension implements Extension {
         }
     }
 
-    private void cdiEventEndpoints(@Observes ProcessBean<?> pb) {
-        for (InjectionPoint ip : pb.getBean().getInjectionPoints()) {
-            if (!CdiEventEndpoint.class.equals(getRawType(ip.getType()))) {
-                continue;
-            }
-            // TODO: refine the key to the type and qualifiers instead of the whole injection point as it leads to registering redundant observers
-            if (ip.getType() instanceof ParameterizedType) {
-                cdiEventEndpoints.put(ip, new ForwardingObserverMethod<>(((ParameterizedType) ip.getType()).getActualTypeArguments()[0], ip.getQualifiers()));
-            } else if (ip.getType() instanceof Class) {
-                cdiEventEndpoints.put(ip, new ForwardingObserverMethod<>(Object.class, ip.getQualifiers()));
-            }
-        }
+    private <T extends CamelContextAware> void camelContextAware(@Observes ProcessInjectionTarget<T> pit, BeanManager manager) {
+        pit.setInjectionTarget(new CamelBeanInjectionTarget<>(pit.getInjectionTarget(), manager));
     }
 
     private <T extends Endpoint> void endpointBeans(@Observes ProcessProducerMethod<T, CdiCamelFactory> ppm) {
@@ -196,9 +184,7 @@ public class CdiCamelExtension implements Extension {
             new AnnotatedTypeDelegate<>(
                 pat.getAnnotatedType(), pat.getAnnotatedType().getMethods().stream()
                 .filter(am -> am.isAnnotationPresent(Produces.class))
-                .filter(am -> am.getTypeClosure().stream().anyMatch(isEqual(Endpoint.class)
-                    .or(isEqual(CdiEventEndpoint.class)).or(isEqual(MockEndpoint.class))
-                    .or(isEqual(ConsumerTemplate.class)).or(isEqual(ProducerTemplate.class))))
+                .filter(am -> am.getTypeClosure().stream().noneMatch(isEqual(TypeConverter.class)))
                 .peek(am -> producerQualifiers.put(am.getJavaMember(), getQualifiers(am, manager)))
                 .map(am -> new AnnotatedMethodDelegate<>(am, am.getAnnotations().stream()
                     .filter(annotation -> !manager.isQualifier(annotation.annotationType()))
@@ -218,34 +204,40 @@ public class CdiCamelExtension implements Extension {
         }
     }
 
-    private <T extends RoutesBuilder> void routeBuilderBeans(@Observes ProcessBean<T> pb) {
-        if (pb.getAnnotated().isAnnotationPresent(ContextName.class)) {
-            contextNames.add(pb.getAnnotated().getAnnotation(ContextName.class));
-        }
+    private void beans(@Observes ProcessProducerField<?, ?> pb) {
+        cdiBeans.add(pb.getBean());
     }
 
-    private <T extends CamelContext> void camelContextBeans(@Observes ProcessBean<T> pb) {
-        contextBeans.add(pb.getBean());
+    private void beans(@Observes ProcessProducerMethod<?, ?> pb) {
+        cdiBeans.add(pb.getBean());
     }
 
-    private <T extends CamelContext> void camelContextProducerFields(@Observes ProcessProducerField<T, ?> pb) {
-        contextBeans.add(pb.getBean());
-    }
+    private void beans(@Observes ProcessBean<?> pb) {
+        cdiBeans.add(pb.getBean());
 
-    private <T extends CamelContext> void camelContextProducerMethods(@Observes ProcessProducerMethod<T, ?> pb) {
-        contextBeans.add(pb.getBean());
+        // TODO: refine the key to the type and qualifiers instead of the whole injection point as it leads to registering redundant observers
+        pb.getBean().getInjectionPoints().stream()
+            .filter(ip -> CdiEventEndpoint.class.equals(getRawType(ip.getType())))
+            .forEach(ip -> {
+                // TODO: refine the key to the type and qualifiers instead of the whole injection point as it leads to registering redundant observers
+                if (ip.getType() instanceof ParameterizedType) {
+                    cdiEventEndpoints.put(ip, new ForwardingObserverMethod<>(((ParameterizedType) ip.getType()).getActualTypeArguments()[0], ip.getQualifiers()));
+                } else if (ip.getType() instanceof Class) {
+                    cdiEventEndpoints.put(ip, new ForwardingObserverMethod<>(Object.class, ip.getQualifiers()));
+                }
+            });
     }
 
     private void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager manager) {
-        // The set of programmatic beans to be added
-        Set<SyntheticBean<?>> beans = new HashSet<>();
+        // The set of extra Camel CDI beans
+        Set<SyntheticBean<?>> extraBeans = new HashSet<>();
 
         // Add beans from Camel XML resources
         for (ImportResource resource : resources) {
             XmlCdiBeanFactory factory = XmlCdiBeanFactory.with(manager, environment, this);
             for (String path : resource.value()) {
                 try {
-                    beans.addAll(factory.beansFrom(path));
+                    extraBeans.addAll(factory.beansFrom(path));
                 } catch (NoClassDefFoundError cause) {
                     if (cause.getMessage().contains("AbstractCamelContextFactoryBean")) {
                         logger.error("Importing Camel XML requires to have the 'camel-core-xml' dependency in the classpath!");
@@ -259,33 +251,32 @@ public class CdiCamelExtension implements Extension {
             }
         }
 
-        // The set of all the Camel context beans
-        Set<Bean<?>> contexts = new HashSet<>();
-
-        // From the discovered annotated types
-        contextBeans.stream()
-            .peek(contexts::add)
+        // Camel contexts from the imported Camel XML
+        concat(cdiBeans.stream(), extraBeans.stream())
+            .filter(hasType(CamelContext.class))
             .map(Bean::getQualifiers)
             .forEach(contextQualifiers::addAll);
 
-        // From the imported Camel XML
-        beans.stream()
-            .filter(bean -> bean.getTypes().contains(CamelContext.class))
-            .peek(contexts::add)
+        // From the @ContextName qualifiers on RoutesBuilder and RouteContainer beans
+        cdiBeans.stream()
+            .filter(hasType(RoutesBuilder.class).or(hasType(RouteContainer.class)))
             .map(Bean::getQualifiers)
-            .forEach(contextQualifiers::addAll);
-
-        // From the @ContextName qualifiers on RoutesBuilder beans
-        contextNames.stream()
+            .flatMap(Set::stream)
+            .filter(isAnnotationType(ContextName.class))
             .filter(name -> !contextQualifiers.contains(name))
             .peek(contextQualifiers::add)
             .map(name -> camelContextBean(manager, ANY, name, APPLICATION_SCOPED))
-            .peek(contexts::add)
-            .forEach(beans::add);
+            .forEach(extraBeans::add);
 
-        if (contexts.size() == 0) {
+        Set<Bean<?>> allBeans = concat(cdiBeans.stream(), extraBeans.stream())
+            .collect(toSet());
+        Set<Bean<?>> contexts = allBeans.stream()
+            .filter(hasType(CamelContext.class))
+            .collect(toSet());
+
+        if (contexts.size() == 0 && shouldDeployDefaultCamelContext(allBeans)) {
             // Add @Default Camel context bean if any
-            beans.add(camelContextBean(manager, ANY, DEFAULT, APPLICATION_SCOPED));
+            extraBeans.add(camelContextBean(manager, ANY, DEFAULT, APPLICATION_SCOPED));
         } else if (contexts.size() == 1) {
             // Add the @Default qualifier if there is only one Camel context bean
             Bean<?> context = contexts.iterator().next();
@@ -298,11 +289,12 @@ public class CdiCamelExtension implements Extension {
         }
 
         // Finally add the beans to the deployment
-        beans.forEach(abd::addBean);
+        extraBeans.forEach(abd::addBean);
 
         // Update the CDI Camel factory beans
         Set<Annotation> endpointQualifiers = cdiEventEndpoints.keySet().stream()
-            .flatMap(ip -> ip.getQualifiers().stream())
+            .map(InjectionPoint::getQualifiers)
+            .flatMap(Set::stream)
             .collect(toSet());
         Set<Annotation> templateQualifiers = contextQualifiers.stream()
             .filter(isAnnotationType(Default.class).or(isAnnotationType(Named.class)).negate())
@@ -318,6 +310,45 @@ public class CdiCamelExtension implements Extension {
 
         // Add CDI event endpoint observer methods
         cdiEventEndpoints.values().forEach(abd::addObserverMethod);
+    }
+
+    private boolean shouldDeployDefaultCamelContext(Set<Bean<?>> beans) {
+        return beans.stream()
+            // Is there a Camel bean with the @Default qualifier?
+            // Excluding internal components...
+            .filter(bean -> !bean.getBeanClass().getPackage().equals(getClass().getPackage()))
+            .filter(hasType(CamelContextAware.class).or(hasType(Component.class))
+                .or(hasType(RouteContainer.class).or(hasType(RoutesBuilder.class))))
+            .map(Bean::getQualifiers)
+            .flatMap(Set::stream)
+            .filter(isEqual(DEFAULT))
+            .findAny()
+            .isPresent()
+            // Or a bean with Camel annotations?
+            || concat(camelBeans.stream().map(AnnotatedType::getFields),
+                      camelBeans.stream().map(AnnotatedType::getMethods))
+            .flatMap(Set::stream)
+            .map(Annotated::getAnnotations)
+            .flatMap(Set::stream)
+            .filter(isAnnotationType(Consume.class).and(a -> ((Consume) a).context().isEmpty())
+                .or(isAnnotationType(BeanInject.class).and(a -> ((BeanInject) a).context().isEmpty()))
+                .or(isAnnotationType(EndpointInject.class).and(a -> ((EndpointInject) a).context().isEmpty()))
+                .or(isAnnotationType(Produce.class).and(a -> ((Produce) a).context().isEmpty()))
+                .or(isAnnotationType(PropertyInject.class).and(a -> ((PropertyInject) a).context().isEmpty())))
+            .findAny()
+            .isPresent()
+            // Or an injection point for Camel primitives?
+            || beans.stream()
+            // Excluding internal components...
+            .filter(bean -> !bean.getBeanClass().getPackage().equals(getClass().getPackage()))
+            .map(Bean::getInjectionPoints)
+            .flatMap(Set::stream)
+            .filter(ip -> getRawType(ip.getType()).getPackage().getName().startsWith("org.apache.camel"))
+            .map(InjectionPoint::getQualifiers)
+            .flatMap(Set::stream)
+            .filter(isAnnotationType(Uri.class).or(isEqual(DEFAULT)))
+            .findAny()
+            .isPresent();
     }
 
     private SyntheticBean<?> camelContextBean(BeanManager manager, Annotation... qualifiers) {
@@ -383,7 +414,7 @@ public class CdiCamelExtension implements Extension {
         }
 
         // Clean-up
-        Stream.of(converters, camelBeans, eagerBeans, contextBeans, contextNames).forEach(Set::clear);
+        Stream.of(converters, camelBeans, eagerBeans, cdiBeans).forEach(Set::clear);
         Stream.of(producerBeans, producerQualifiers).forEach(Map::clear);
     }
 

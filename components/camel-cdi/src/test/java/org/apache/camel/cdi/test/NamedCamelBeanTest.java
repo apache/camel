@@ -18,7 +18,6 @@ package org.apache.camel.cdi.test;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.CdiCamelExtension;
@@ -27,7 +26,6 @@ import org.apache.camel.cdi.bean.NamedCamelBean;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.junit.InSequence;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -52,24 +50,20 @@ public class NamedCamelBeanTest {
     }
 
     @Test
-    @InSequence(1)
-    public void configureCamelContext(CamelContext context) throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:inbound").bean("beanName").to("mock:outbound");
-            }
-        });
-    }
-
-    @Test
-    @InSequence(2)
-    public void sendMessageToInbound(@Uri("direct:inbound") ProducerTemplate in, @Uri("mock:outbound") MockEndpoint out) throws InterruptedException {
+    public void sendMessageToInbound(@Uri("direct:inbound") ProducerTemplate in,
+                                     @Uri("mock:outbound") MockEndpoint out) throws InterruptedException {
         out.expectedMessageCount(1);
         out.expectedBodiesReceived("test-processed");
         
         in.sendBody("test");
 
         assertIsSatisfied(2L, TimeUnit.SECONDS, out);
+    }
+
+    private static class TestRoute extends RouteBuilder {
+        @Override
+        public void configure() {
+            from("direct:inbound").bean("beanName").to("mock:outbound");
+        }
     }
 }
