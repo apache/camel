@@ -37,6 +37,7 @@ The AWS Kinesis component has no options.
 
 
 
+
 // endpoint options: START
 The AWS Kinesis component supports 25 endpoint options which are listed below:
 
@@ -46,11 +47,11 @@ The AWS Kinesis component supports 25 endpoint options which are listed below:
 | streamName | common |  | String | *Required* Name of the stream
 | amazonKinesisClient | common |  | AmazonKinesis | *Required* Amazon Kinesis client to use for all requests for this endpoint
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| iteratorType | consumer | trim_horizon | ShardIteratorType |One of trim_horizon, AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER or latest. See http://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetShardIterator.html[http://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetShardIterator.html] for descriptions of these four iterator types. If iteratorType is AT_SEQUENCE_NUMBER or AFTER_SEQUENCE_NUMBER you must specify the sequenceNumber.
-| shardId | consumer | 0 | String | Defines which shardId in the Kinesis stream to get records from.
-| sequenceNumber | consumer || String | The sequence number to start polling from. This property is only valid if iteratorType is AT_SEQUENCE_NUMBER or AFTER_SEQUENCE_NUMBER.
+| iteratorType | consumer |  | ShardIteratorType | Defines where in the Kinesis stream to start getting records
 | maxResultsPerRequest | consumer | 1 | int | Maximum number of records that will be fetched in each poll
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
+| sequenceNumber | consumer |  | String | The sequence number to start polling from
+| shardId | consumer |  | String | Defines which shardId in the Kinesis stream to get records from
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
@@ -70,6 +71,7 @@ The AWS Kinesis component supports 25 endpoint options which are listed below:
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
 // endpoint options: END
+
 
 
 Required Kinesis component options
