@@ -16,9 +16,9 @@
  */
 package org.apache.camel.test.blueprint;
 
-import org.junit.Test;
-
 import java.util.Dictionary;
+
+import org.junit.Test;
 
 /**
  * This test should be run in tandem with ConfigAdminLoadConfigurationFileAndOverrideTest.  These examples will load a
@@ -26,6 +26,7 @@ import java.util.Dictionary;
  * process both of them correctly
  */
 public class ConfigAdminLoadMultiConfigurationFileAndOverrideAltTest extends CamelBlueprintTestSupport {
+
     @Override
     protected String getBlueprintDescriptor() {
         // which blueprint XML file to use for this test

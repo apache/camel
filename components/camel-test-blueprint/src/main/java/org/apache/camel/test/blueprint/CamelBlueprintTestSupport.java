@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -99,13 +98,13 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         String[] file = loadConfigAdminConfigurationFile();
         String[][] configAdminPidFiles = new String[0][0];
         if (file != null) {
-            if (file.length % 2 !=0) {  // This needs to return pairs of filename and pid
+            if (file.length % 2 != 0) {  // This needs to return pairs of filename and pid
                 throw new IllegalArgumentException("The length of the String[] returned from loadConfigAdminConfigurationFile must divisible by 2, was " + file.length);
             }
-            configAdminPidFiles = new String[file.length / 2 ][2];
+            configAdminPidFiles = new String[file.length / 2][2];
 
             int pair = 0;
-            for (int i=0; i < file.length; i+=2) {
+            for (int i = 0; i < file.length; i += 2) {
                 String fileName = file[i];
                 String pid = file[i + 1];
                 if (!new File(fileName).exists()) {
