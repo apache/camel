@@ -65,7 +65,7 @@ public class FtpConsumerIdempotentMemoryRefTest extends FtpServerTestSupport {
         assertTrue(repo.contains("e.txt"));
 
         resetMocks();
-        notify = new NotifyBuilder(context).whenDone(4).create();
+        notify = new NotifyBuilder(context).whenDone(2).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
@@ -86,7 +86,9 @@ public class FtpConsumerIdempotentMemoryRefTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl()).to("mock:result");
+                from(getFtpUrl())
+                    .to("log:result")
+                    .to("mock:result");
             }
         };
     }
