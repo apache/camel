@@ -60,7 +60,7 @@ public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
                 count++;
                 // and it should be dynamic
                 assertTrue(context.getEndpointRegistry().isDynamic(uri));
-            };
+            }
         }
         assertEquals("Should only be 20 dynamic endpoints in the cache", 20, count);
 
