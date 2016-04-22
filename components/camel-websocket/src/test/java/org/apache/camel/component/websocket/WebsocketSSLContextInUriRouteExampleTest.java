@@ -166,7 +166,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
             public void configure() {
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
                 websocketComponent.setMinThreads(1);
-                websocketComponent.setMaxThreads(11);
+                websocketComponent.setMaxThreads(20);
                 from(uri)
                      .log(">>> Message received from WebSocket Client : ${body}")
                      .to("mock:client")

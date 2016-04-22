@@ -109,7 +109,7 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
             public void configure() {
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
                 websocketComponent.setPort(port);
-                websocketComponent.setMaxThreads(11);
+                websocketComponent.setMaxThreads(20);
                 websocketComponent.setMinThreads(1);
 
                 from("websocket://echo")

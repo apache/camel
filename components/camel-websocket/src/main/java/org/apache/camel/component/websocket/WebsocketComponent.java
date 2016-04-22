@@ -353,7 +353,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                 qtp.setMaxThreads(maxThreads.intValue());
             }
             // let the thread names indicate they are from the server
-            qtp.setName("CamelJettyWebSocketServer(" + "test" + ")");
+            qtp.setName("CamelJettyWebSocketServer");
             try {
                 qtp.start();
             } catch (Exception e) {
