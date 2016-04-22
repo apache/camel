@@ -70,11 +70,13 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     private final LoadTriplet load = new LoadTriplet();
     private final ConcurrentSkipListMap<InFlightKey, Long> exchangesInFlightStartTimestamps = new ConcurrentSkipListMap<InFlightKey, Long>();
     private final ConcurrentHashMap<String, InFlightKey> exchangesInFlightKeys = new ConcurrentHashMap<String, InFlightKey>();
+    private final String jmxDomain;
 
     public ManagedRoute(ModelCamelContext context, Route route) {
         this.route = route;
         this.context = context;
         this.description = route.getDescription();
+        this.jmxDomain = context.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
     }
 
     @Override
@@ -349,7 +351,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             if (server != null) {
                 // get all the processor mbeans and sort them accordingly to their index
                 String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-                ObjectName query = ObjectName.getInstance("org.apache.camel:context=" + prefix + getContext().getManagementName() + ",type=processors,*");
+                ObjectName query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
                 Set<ObjectName> names = server.queryNames(query, null);
                 List<ManagedProcessorMBean> mps = new ArrayList<ManagedProcessorMBean>();
                 for (ObjectName on : names) {
@@ -427,7 +429,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             if (server != null) {
                 // get all the processor mbeans and sort them accordingly to their index
                 String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-                ObjectName query = ObjectName.getInstance("org.apache.camel:context=" + prefix + getContext().getManagementName() + ",type=processors,*");
+                ObjectName query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
                 QueryExp queryExp = Query.match(new AttributeValueExp("RouteId"), new StringValueExp(getRouteId()));
                 Set<ObjectName> names = server.queryNames(query, queryExp);
                 for (ObjectName name : names) {
