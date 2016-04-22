@@ -76,20 +76,35 @@ public class KinesisEndpointTest {
         assertThat(endpoint.getMaxResultsPerRequest(), is(1));
     }
 
-    @Test(expected = ResolveEndpointFailedException.class)
+    @Test
     public void afterSequenceNumberRequiresSequenceNumber() throws Exception {
         KinesisEndpoint endpoint = (KinesisEndpoint) camelContext.getEndpoint("aws-kinesis://some_stream_name"
                 + "?amazonKinesisClient=#kinesisClient"
                 + "&iteratorType=AFTER_SEQUENCE_NUMBER"
+                + "&shardId=abc"
+                + "&sequenceNumber=123"
         );
 
+        assertThat(endpoint.getClient(), is(amazonKinesisClient));
+        assertThat(endpoint.getStreamName(), is("some_stream_name"));
+        assertThat(endpoint.getIteratorType(), is(ShardIteratorType.AFTER_SEQUENCE_NUMBER));
+        assertThat(endpoint.getShardId(), is("abc"));
+        assertThat(endpoint.getSequenceNumber(), is("123"));
     }
 
-    @Test(expected = ResolveEndpointFailedException.class)
+    @Test
     public void atSequenceNumberRequiresSequenceNumber() throws Exception {
         KinesisEndpoint endpoint = (KinesisEndpoint) camelContext.getEndpoint("aws-kinesis://some_stream_name"
                 + "?amazonKinesisClient=#kinesisClient"
                 + "&iteratorType=AT_SEQUENCE_NUMBER"
+                + "&shardId=abc"
+                + "&sequenceNumber=123"
         );
+
+        assertThat(endpoint.getClient(), is(amazonKinesisClient));
+        assertThat(endpoint.getStreamName(), is("some_stream_name"));
+        assertThat(endpoint.getIteratorType(), is(ShardIteratorType.AT_SEQUENCE_NUMBER));
+        assertThat(endpoint.getShardId(), is("abc"));
+        assertThat(endpoint.getSequenceNumber(), is("123"));
     }
 }
