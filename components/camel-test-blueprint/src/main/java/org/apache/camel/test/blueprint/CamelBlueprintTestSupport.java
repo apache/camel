@@ -57,7 +57,7 @@ import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 /**
- * Base class for OSGi Blueprint unit tests with Camel.
+ * Base class for OSGi Blueprint unit tests with Camel
  */
 public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     /** Name of a system property that sets camel context creation timeout. */
@@ -97,24 +97,36 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
         // load configuration file
         String[] file = loadConfigAdminConfigurationFile();
+        String[][] configAdminPidFiles = new String[0][0];
         if (file != null) {
-            if (file.length != 2) {
-                throw new IllegalArgumentException("The returned String[] from loadConfigAdminConfigurationFile must be of length 2, was " + file.length);
+            if (file.length % 2 !=0) {  // This needs to return pairs of filename and pid
+                throw new IllegalArgumentException("The length of the String[] returned from loadConfigAdminConfigurationFile must divisible by 2, was " + file.length);
             }
-            if (!new File(file[0]).exists()) {
-                throw new IllegalArgumentException("The provided file \"" + file[0] + "\" from loadConfigAdminConfigurationFile doesn't exist");
+            configAdminPidFiles = new String[file.length / 2 ][2];
+
+            int pair = 0;
+            for (int i=0; i < file.length; i+=2) {
+                String fileName = file[i];
+                String pid = file[i + 1];
+                if (!new File(fileName).exists()) {
+                    throw new IllegalArgumentException("The provided file \"" + fileName + "\" from loadConfigAdminConfigurationFile doesn't exist");
+                }
+                configAdminPidFiles[pair][0] = fileName;
+                configAdminPidFiles[pair][1] = pid;
+                pair++;
             }
         }
+
         // fetch initial configadmin configuration if provided programmatically
         Properties initialConfiguration = new Properties();
         String pid = setConfigAdminInitialConfiguration(initialConfiguration);
         if (pid != null) {
-            file = new String[] {prepareInitialConfigFile(initialConfiguration), pid};
+            configAdminPidFiles = new String[][] {{prepareInitialConfigFile(initialConfiguration), pid}};
         }
 
         final String symbolicName = getClass().getSimpleName();
         final BundleContext answer = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
-            includeTestBundle(), getBundleFilter(), getBundleVersion(), getBundleDirectives(), file);
+            includeTestBundle(), getBundleFilter(), getBundleVersion(), getBundleDirectives(), configAdminPidFiles);
 
         boolean expectReload = expectBlueprintContainerReloadOnConfigAdminUpdate();
 
