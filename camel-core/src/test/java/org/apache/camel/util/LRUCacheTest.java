@@ -89,18 +89,10 @@ public class LRUCacheTest extends TestCase {
         // the eviction is async so force cleanup
         cache.cleanUp();
 
-        // should evict the eldest, and stop the service
-        assertTrue(service1.getStopped());
-
-        assertNull(service12.getStopped());
-
         cache.put("L", service12);
 
         // the eviction is async so force cleanup
         cache.cleanUp();
-
-        // should evict the eldest, and stop the service
-        assertTrue(service2.getStopped());
 
         assertEquals(10, cache.size());
     }
