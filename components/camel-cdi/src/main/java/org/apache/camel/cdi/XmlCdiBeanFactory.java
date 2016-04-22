@@ -51,6 +51,8 @@ import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -126,7 +128,7 @@ final class XmlCdiBeanFactory {
                     beans.add(routeContextBean(factory, url));
                 }
                 for (AbstractCamelFactoryBean<?> factory : app.getBeans()) {
-                    if (factory.getId() != null) {
+                    if (hasId(factory)) {
                         beans.add(camelContextBean(null, factory, url));
                     }
                 }
@@ -152,7 +154,7 @@ final class XmlCdiBeanFactory {
     private SyntheticBean<?> camelContextBean(CamelContextFactoryBean factory, URL url) {
         Set<Annotation> annotations = new HashSet<>();
         annotations.add(ANY);
-        if (factory.getId() != null) {
+        if (hasId(factory)) {
             addAll(annotations,
                 ContextName.Literal.of(factory.getId()), NamedLiteral.of(factory.getId()));
         } else {
@@ -193,7 +195,7 @@ final class XmlCdiBeanFactory {
         // TODO: WARN log if the definition doesn't have an id
         if (factory.getBeans() != null) {
             factory.getBeans().stream()
-                .filter(bean -> bean.getId() != null)
+                .filter(XmlCdiBeanFactory::hasId)
                 .map(bean -> camelContextBean(context, bean, url))
                 .forEach(beans::add);
         }
@@ -201,14 +203,14 @@ final class XmlCdiBeanFactory {
         // TODO: define in beans
         if (factory.getEndpoints() != null) {
             factory.getEndpoints().stream()
-                .filter(endpoint -> endpoint.getId() != null)
+                .filter(XmlCdiBeanFactory::hasId)
                 .map(endpoint -> camelContextBean(context, endpoint, url))
                 .forEach(beans::add);
         }
 
         if (factory.getErrorHandlers() != null) {
             factory.getErrorHandlers().stream()
-                .filter(handler -> handler.getId() != null)
+                .filter(XmlCdiBeanFactory::hasId)
                 .map(handler -> errorHandlerBean(handler, url))
                 .forEach(beans::add);
         }
@@ -221,7 +223,7 @@ final class XmlCdiBeanFactory {
 
         if (factory.getProxies() != null) {
             factory.getProxies().stream()
-                .filter(proxy -> proxy.getId() != null)
+                .filter(XmlCdiBeanFactory::hasId)
                 .map(proxy -> proxyFactoryBean(context, proxy, url))
                 .forEach(beans::add);
         }
@@ -229,7 +231,7 @@ final class XmlCdiBeanFactory {
         // TODO: define in beans
         if (factory.getRedeliveryPolicies() != null) {
             factory.getRedeliveryPolicies().stream()
-                .filter(policy -> policy.getId() != null)
+                .filter(XmlCdiBeanFactory::hasId)
                 .map(policy -> camelContextBean(context, policy, url))
                 .forEach(beans::add);
         }
@@ -245,7 +247,7 @@ final class XmlCdiBeanFactory {
         Set<Annotation> annotations = new HashSet<>();
         annotations.add(ANY);
         // FIXME: should add @ContextName if the Camel context bean has it
-        annotations.add(factory.getId() != null ? NamedLiteral.of(factory.getId()) : DEFAULT);
+        annotations.add(hasId(factory) ? NamedLiteral.of(factory.getId()) : DEFAULT);
 
         // TODO: should that be @Singleton to enable injection points with bean instance type?
         if (factory.isSingleton()) {
@@ -310,7 +312,7 @@ final class XmlCdiBeanFactory {
 
         return new XmlServiceExporterBean<>(manager,
             new SyntheticAnnotated(type, types, APPLICATION_SCOPED, ANY, STARTUP,
-                exporter.getId() != null ? NamedLiteral.of(exporter.getId()) : DEFAULT),
+                hasId(exporter) ? NamedLiteral.of(exporter.getId()) : DEFAULT),
             type, bean ->
                 "imported bean [" + Objects.toString(exporter.getId(), "export") + "] "
                 + "from resource [" + url + "] "
@@ -363,7 +365,7 @@ final class XmlCdiBeanFactory {
             RoutesDefinition.class,
             new SyntheticInjectionTarget<>(() -> definition), bean ->
                 "imported routes definition "
-                + (definition.getId() != null ? "[" + definition.getId() + "] " : "")
+                + (hasId(definition) ? "[" + definition.getId() + "] " : "")
                 + "from resource [" + url + "]");
     }
 
@@ -464,5 +466,13 @@ final class XmlCdiBeanFactory {
         return new CreationException(
             format("Attribute [%s] is not supported by error handler type [%s], in error handler with id [%s]",
                 attribute, type, id));
+    }
+
+    private static <T extends IdentifiedType> boolean hasId(T type) {
+        return isNotEmpty(type.getId());
+    }
+
+    private static <T extends OptionalIdentifiedDefinition<T>> boolean hasId(T type) {
+        return isNotEmpty(type.getId());
     }
 }
