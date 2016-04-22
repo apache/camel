@@ -16,18 +16,19 @@
  */
 package org.apache.camel.management;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.w3c.dom.Document;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+
+import org.w3c.dom.Document;
+
+import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version
  */
 public class ManagedRouteDumpStatsAsXmlAndResetWithCustomDomainTest extends ManagementTestSupport {
 
-    private final String CUSTOM_DOMAIN_NAME="custom";
+    private static final String CUSTOM_DOMAIN_NAME = "custom";
 
     public void testPerformanceCounterStats() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
@@ -37,7 +38,7 @@ public class ManagedRouteDumpStatsAsXmlAndResetWithCustomDomainTest extends Mana
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance(CUSTOM_DOMAIN_NAME+":context=camel-1,type=routes,name=\"foo\"");
+        ObjectName on = ObjectName.getInstance(CUSTOM_DOMAIN_NAME + ":context=camel-1,type=routes,name=\"foo\"");
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
