@@ -912,8 +912,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             decrementRedeliveryCounter(exchange);
         }
 
-        // is the a failure processor to process the Exchange
-        if (processor != null) {
+        // we should allow using the failure processor if we should not continue
+        // or in case of continue then the failure processor is NOT a dead letter channel
+        // because you can continue and still let the failure processor do some routing
+        // before continue in the main route.
+        boolean allowFailureProcessor = !shouldContinue || !isDeadLetterChannel;
+
+        if (allowFailureProcessor && processor != null) {
 
             // prepare original IN body if it should be moved instead of current body
             if (data.useOriginalInMessage) {
