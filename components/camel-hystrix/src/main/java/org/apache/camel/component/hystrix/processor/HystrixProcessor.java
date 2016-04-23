@@ -30,6 +30,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.hystrix.HystrixConstants;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -194,6 +195,10 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
             }
             HystrixProcessorCommand command = new HystrixProcessorCommand(setter, exchange, processor, fallback, fallbackCommand);
             command.execute();
+
+            // enrich exchange with details from hystrix about the command execution
+            commandResponse(exchange, command);
+
         } catch (Throwable e) {
             exchange.setException(e);
         }
@@ -201,6 +206,14 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
         exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
         callback.done(true);
         return true;
+    }
+
+    private void commandResponse(Exchange exchange, HystrixCommand command) {
+        exchange.setProperty(HystrixConstants.HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION, command.isSuccessfulExecution());
+        exchange.setProperty(HystrixConstants.HYSTRIX_RESPONSE_FROM_FALLBACK, command.isResponseFromFallback());
+        exchange.setProperty(HystrixConstants.HYSTRIX_RESPONSE_SHORT_CIRCUITED, command.isResponseShortCircuited());
+        exchange.setProperty(HystrixConstants.HYSTRIX_RESPONSE_TIMED_OUT, command.isResponseTimedOut());
+        exchange.setProperty(HystrixConstants.HYSTRIX_RESPONSE_REJECTED, command.isResponseRejected());
     }
 
     @Override

@@ -18,6 +18,13 @@ package org.apache.camel.component.hystrix;
 
 public interface HystrixConstants {
 
+    // Hystrix EIP response properties
+    String HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION = "CamelHystrixSuccessfulExecution";
+    String HYSTRIX_RESPONSE_FROM_FALLBACK = "CamelHystrixResponseFromFallback";
+    String HYSTRIX_RESPONSE_SHORT_CIRCUITED = "CamelHystrixResponseShortCircuited";
+    String HYSTRIX_RESPONSE_TIMED_OUT = "CamelHystrixResponseTimedOut";
+    String HYSTRIX_RESPONSE_REJECTED = "CamelHystrixResponseRejected";
+
     // in message header
     String CAMEL_HYSTRIX_RUN_ENDPOINT = "CamelHystrixRunEndpoint";
     String CAMEL_HYSTRIX_FALLBACK_ENDPOINT = "CamelHystrixFallbackEndpoint";

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hystrix.processor;
 
+import org.apache.camel.component.hystrix.HystrixConstants;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -31,6 +32,8 @@ public class SpringHystrixRouteOkTest extends CamelSpringTestSupport {
     @Test
     public void testHystrix() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:result").expectedPropertyReceived(HystrixConstants.HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION, true);
+        getMockEndpoint("mock:result").expectedPropertyReceived(HystrixConstants.HYSTRIX_RESPONSE_FROM_FALLBACK, false);
 
         template.sendBody("direct:start", "Hello World");
 
