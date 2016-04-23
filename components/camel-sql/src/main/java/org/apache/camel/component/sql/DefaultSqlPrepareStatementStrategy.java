@@ -207,6 +207,21 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         return answer;
     }
 
+    protected static boolean hasParameter(String nextParam, Exchange exchange, Object body) {
+        Map<?, ?> bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, body));
+        Map<?, ?> headersMap = safeMap(exchange.getIn().getHeaders());
+
+        if (nextParam.startsWith("${") && nextParam.endsWith("}")) {
+            return true;
+        } else if (bodyMap.containsKey(nextParam)) {
+            return true;
+        } else if (headersMap.containsKey(nextParam)) {
+            return true;
+        }
+
+        return false;
+    }
+
     private static Map<?, ?> safeMap(Map<?, ?> map) {
         return (map == null || map.isEmpty()) ? Collections.emptyMap() : map;
     }
@@ -264,12 +279,14 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
             Object next = null;
             try {
-                next = lookupParameter(nextParam, exchange, body);
-                if (in && next != null) {
-                    // if SQL IN we need to return an iterator that can iterate the parameter values
-                    next = createInParameterIterator(next);
-                }
-                if (next == null) {
+                boolean hasNext = hasParameter(nextParam, exchange, body);
+                if (hasNext) {
+                    next = lookupParameter(nextParam, exchange, body);
+                    if (in && next != null) {
+                        // if SQL IN we need to return an iterator that can iterate the parameter values
+                        next = createInParameterIterator(next);
+                    }
+                } else {
                     throw new RuntimeExchangeException(String.format(MISSING_PARAMETER_EXCEPTION, nextParam, query), exchange);
                 }
             } finally {
