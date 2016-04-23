@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.infinispan.processor.aggregate;
 
 import java.util.Collections;
@@ -47,7 +63,7 @@ public class InfinispanLocalAggregationRepository extends ServiceSupport impleme
         this.cacheName = cacheName;
     }
 
-	@Override
+    @Override
     public Exchange add(final CamelContext camelContext, final String key, final Exchange exchange) {
         LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
         DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
@@ -55,41 +71,41 @@ public class InfinispanLocalAggregationRepository extends ServiceSupport impleme
         return unmarshallExchange(camelContext, oldHolder);
     }
 
-	@Override
-	public Exchange get(CamelContext camelContext, String key) {
+    @Override
+    public Exchange get(CamelContext camelContext, String key) {
         return unmarshallExchange(camelContext, (DefaultExchangeHolder) cache.get(key));
-	}
+    }
 
-	@Override
-	public void remove(CamelContext camelContext, String key, Exchange exchange) {
+    @Override
+    public void remove(CamelContext camelContext, String key, Exchange exchange) {
         LOG.trace("Removing an exchange with ID {} for key {} ", exchange.getExchangeId(), key);
-        cache.remove(key);		
-	}
+        cache.remove(key);
+    }
 
-	@Override
-	public void confirm(CamelContext camelContext, String exchangeId) {
+    @Override
+    public void confirm(CamelContext camelContext, String exchangeId) {
         LOG.trace("Confirming an exchange with ID {}.", exchangeId);
-        cache.remove(exchangeId);	
-	}
+        cache.remove(exchangeId);
+    }
 
-	@Override
-	public Set<String> getKeys() {
+    @Override
+    public Set<String> getKeys() {
         return Collections.unmodifiableSet(cache.keySet());
-	}
+    }
 
-	@Override
-	public Set<String> scan(CamelContext camelContext) {
+    @Override
+    public Set<String> scan(CamelContext camelContext) {
         LOG.trace("Scanning for exchanges to recover in {} context", camelContext.getName());
         Set<String> scanned = Collections.unmodifiableSet(cache.keySet());
         LOG.trace("Found {} keys for exchanges to recover in {} context", scanned.size(), camelContext.getName());
         return scanned;
-	}
+    }
 
-	@Override
-	public Exchange recover(CamelContext camelContext, String exchangeId) {
+    @Override
+    public Exchange recover(CamelContext camelContext, String exchangeId) {
         LOG.trace("Recovering an Exchange with ID {}.", exchangeId);
         return useRecovery ? unmarshallExchange(camelContext, cache.get(exchangeId)) : null;
-	}
+    }
 
     @Override
     public void setRecoveryInterval(long interval, TimeUnit timeUnit) {
@@ -101,10 +117,10 @@ public class InfinispanLocalAggregationRepository extends ServiceSupport impleme
         this.recoveryInterval = interval;
     }
     
-	@Override
-	public long getRecoveryIntervalInMillis() {
+    @Override
+    public long getRecoveryIntervalInMillis() {
         return recoveryInterval;
-	}
+    }
 
     @Override
     public void setUseRecovery(boolean useRecovery) {
@@ -136,8 +152,8 @@ public class InfinispanLocalAggregationRepository extends ServiceSupport impleme
         return maximumRedeliveries;
     }
 
-	@Override
-	protected void doStart() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
         if (maximumRedeliveries < 0) {
             throw new IllegalArgumentException("Maximum redelivery retries must be zero or a positive integer.");
         }
@@ -146,20 +162,22 @@ public class InfinispanLocalAggregationRepository extends ServiceSupport impleme
         }
         if (ObjectHelper.isEmpty(configuration)) {
             manager = new DefaultCacheManager();
+            manager.start();
         } else {
-        	manager = new DefaultCacheManager(configuration);       	
+            manager = new DefaultCacheManager(configuration);
+            manager.start();
         }        
         if (ObjectHelper.isEmpty(cacheName)) {
             cache = manager.getCache();
         } else {
-            cache = manager.getCache(cacheName);        	
+            cache = manager.getCache(cacheName);
         }
-	}
+    }
 
-	@Override
-	protected void doStop() throws Exception {
-		
-	}
+    @Override
+    protected void doStop() throws Exception {
+        manager.stop();
+    }
 
     protected Exchange unmarshallExchange(CamelContext camelContext, DefaultExchangeHolder holder) {
         Exchange exchange = null;
@@ -170,51 +188,51 @@ public class InfinispanLocalAggregationRepository extends ServiceSupport impleme
         return exchange;
     }
     
-	public DefaultCacheManager getManager() {
-		return manager;
-	}
+    public DefaultCacheManager getManager() {
+        return manager;
+    }
 
-	public void setManager(DefaultCacheManager manager) {
-		this.manager = manager;
-	}
+    public void setManager(DefaultCacheManager manager) {
+        this.manager = manager;
+    }
 
-	public String getCacheName() {
-		return cacheName;
-	}
+    public String getCacheName() {
+        return cacheName;
+    }
 
-	public void setCacheName(String cacheName) {
-		this.cacheName = cacheName;
-	}
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
+    }
 
-	public String getDeadLetterChannel() {
-		return deadLetterChannel;
-	}
+    public String getDeadLetterChannel() {
+        return deadLetterChannel;
+    }
 
-	public void setDeadLetterChannel(String deadLetterChannel) {
-		this.deadLetterChannel = deadLetterChannel;
-	}
+    public void setDeadLetterChannel(String deadLetterChannel) {
+        this.deadLetterChannel = deadLetterChannel;
+    }
 
-	public boolean isAllowSerializedHeaders() {
-		return allowSerializedHeaders;
-	}
+    public boolean isAllowSerializedHeaders() {
+        return allowSerializedHeaders;
+    }
 
-	public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
-		this.allowSerializedHeaders = allowSerializedHeaders;
-	}
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        this.allowSerializedHeaders = allowSerializedHeaders;
+    }
 
-	public Cache<String, DefaultExchangeHolder> getCache() {
-		return cache;
-	}
+    public Cache<String, DefaultExchangeHolder> getCache() {
+        return cache;
+    }
 
-	public void setCache(Cache<String, DefaultExchangeHolder> cache) {
-		this.cache = cache;
-	}
+    public void setCache(Cache<String, DefaultExchangeHolder> cache) {
+        this.cache = cache;
+    }
 
-	public Configuration getConfiguration() {
-		return configuration;
-	}
+    public Configuration getConfiguration() {
+        return configuration;
+    }
 
-	public void setConfiguration(Configuration configuration) {
-		this.configuration = configuration;
-	}
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+    }
 }

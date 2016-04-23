@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Unite test for {@link InfinispanLocalAggregationRepository}
  */
-public class InfinispanAggregationRepositoryOperationsTest {
+public class InfinispanLocalAggregationRepositoryOperationsTest {
 
     private static InfinispanLocalAggregationRepository aggregationRepository;
     private CamelContext camelContext = new DefaultCamelContext();
@@ -54,8 +54,10 @@ public class InfinispanAggregationRepositoryOperationsTest {
 
     private boolean exists(String key) {
         DefaultExchangeHolder holder = aggregationRepository.getCache().get(key);
-        if (holder == null) return false;
-        else return true;
+        if (holder == null) {
+            return false;
+        } 
+        return true;
     }
 
     @Test

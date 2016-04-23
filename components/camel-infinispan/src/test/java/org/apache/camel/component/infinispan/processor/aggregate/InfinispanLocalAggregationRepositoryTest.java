@@ -21,14 +21,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.infinispan.processor.aggregate.InfinispanLocalAggregationRepository;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 
-public class InfinispanAggregationRepositoryTest extends CamelTestSupport {
+public class InfinispanLocalAggregationRepositoryTest extends CamelTestSupport {
 
     private static final String MOCK_GOTCHA = "mock:gotcha";
     private static final String DIRECT_ONE = "direct:one";
