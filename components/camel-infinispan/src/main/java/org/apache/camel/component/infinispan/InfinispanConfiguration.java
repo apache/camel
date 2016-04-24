@@ -44,7 +44,7 @@ public class InfinispanConfiguration {
            + "replace,replaceAsync,"
            + "size,"
            + "clear,clearAsync,"
-           + "query")
+           + "query,stats")
     private String command;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean sync = true;
