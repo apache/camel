@@ -27,7 +27,7 @@ import org.apache.camel.spi.InflightRepository;
 /**
  * @version
  */
-public class InflightRepositoryBrowseTest extends ContextTestSupport {
+public class InflightRepositoryBrowseFromRouteTest extends ContextTestSupport {
 
     public void testInflight() throws Exception {
         assertEquals(0, context.getInflightRepository().browse().size());
@@ -43,11 +43,16 @@ public class InflightRepositoryBrowseTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                        .to("mock:a")
+                    .to("mock:a")
+                    .to("direct:bar")
+                    .to("mock:result");
+
+                from("direct:bar").routeId("bar")
+                        .to("mock:b")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                Collection<InflightRepository.InflightExchange> list = context.getInflightRepository().browse();
+                                Collection<InflightRepository.InflightExchange> list = context.getInflightRepository().browse("foo");
                                 assertEquals(1, list.size());
 
                                 InflightRepository.InflightExchange inflight = list.iterator().next();
@@ -55,11 +60,11 @@ public class InflightRepositoryBrowseTest extends ContextTestSupport {
 
                                 assertEquals(exchange, inflight.getExchange());
                                 assertEquals("foo", inflight.getFromRouteId());
-                                assertEquals("foo", inflight.getAtRouteId());
+                                assertEquals("bar", inflight.getAtRouteId());
                                 assertEquals("myProcessor", inflight.getNodeId());
                             }
-                        }).id("myProcessor")
-                        .to("mock:result");
+                        }).id("myProcessor");
+
             }
         };
     }

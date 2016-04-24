@@ -89,14 +89,38 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public Collection<InflightExchange> browse() {
-        return browse(-1, false);
+        return browse(null, -1, false);
+    }
+
+    @Override
+    public Collection<InflightExchange> browse(String fromRouteId) {
+        return browse(fromRouteId, -1, false);
     }
 
     @Override
     public Collection<InflightExchange> browse(int limit, boolean sortByLongestDuration) {
+        return browse(null, limit, sortByLongestDuration);
+    }
+
+    @Override
+    public Collection<InflightExchange> browse(String fromRouteId, int limit, boolean sortByLongestDuration) {
         List<InflightExchange> answer = new ArrayList<InflightExchange>();
 
-        List<Exchange> values = new ArrayList<Exchange>(inflight.values());
+        List<Exchange> values;
+        if (fromRouteId == null) {
+            // all values
+            values = new ArrayList<Exchange>(inflight.values());
+        } else {
+            // only if route match
+            values = new ArrayList<Exchange>();
+            for (Exchange exchange : inflight.values()) {
+                String exchangeRouteId = exchange.getFromRouteId();
+                if (fromRouteId.equals(exchangeRouteId)) {
+                    values.add(exchange);
+                }
+            }
+        }
+
         if (sortByLongestDuration) {
             Collections.sort(values, new Comparator<Exchange>() {
                 @Override
@@ -202,8 +226,18 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
 
         @Override
-        @SuppressWarnings("unchecked")
+        public String getFromRouteId() {
+            return exchange.getFromRouteId();
+        }
+
+        @Override
         public String getRouteId() {
+            return getAtRouteId();
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public String getAtRouteId() {
             List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
             if (list == null || list.isEmpty()) {
                 return null;
