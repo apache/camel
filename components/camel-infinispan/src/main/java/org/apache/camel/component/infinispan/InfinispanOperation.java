@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.infinispan.remote.InfinispanRemoteOperation;
 import org.apache.camel.util.ObjectHelper;
+import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.util.concurrent.NotifyingFuture;
 import org.infinispan.query.dsl.Query;
@@ -298,6 +299,12 @@ public final class InfinispanOperation {
                     return;
                 }
                 setResult(query.list(), message);
+            }
+        }, STATS {
+            @Override
+            void execute(InfinispanConfiguration configuration, BasicCache<Object, Object> cache, Message message) {
+                LOGGER.warn("You'll need to enable statistics to obtain meaningful data from your cache");
+                setResult(((Cache) cache).getAdvancedCache().getStats(), message);
             }
         };
 
