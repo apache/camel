@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.processor;
+package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.CamelContextLogExhaustedMessageBodyTest;
+import org.apache.camel.VetoCamelContextStartException;
+import org.apache.camel.support.LifecycleStrategySupport;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+public class MyVetoLifecycle extends LifecycleStrategySupport {
 
-public class SpringCamelContextLogExhaustedMessageBodyTest extends CamelContextLogExhaustedMessageBodyTest {
-
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringCamelContextLogExhaustedMessageBodyTest.xml");
+    @Override
+    public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+        throw new VetoCamelContextStartException("We do not like this route", context, false);
     }
 
 }

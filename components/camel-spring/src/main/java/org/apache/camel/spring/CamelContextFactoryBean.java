@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spring;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +74,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * A Spring {@link FactoryBean} to create and initialize a

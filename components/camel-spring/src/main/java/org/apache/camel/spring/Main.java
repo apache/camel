@@ -148,24 +148,33 @@ public class Main extends MainSupport {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-        if (applicationContext == null) {
-            applicationContext = createDefaultApplicationContext();
-        }
+        try {
+            super.doStart();
+            if (applicationContext == null) {
+                applicationContext = createDefaultApplicationContext();
+            }
 
-        // then start any additional after Camel has been started
-        if (additionalApplicationContext == null) {
-            additionalApplicationContext = createAdditionalLocationsFromClasspath();
-            if (additionalApplicationContext != null) {
-                LOG.debug("Starting Additional ApplicationContext: " + additionalApplicationContext.getId());
-                additionalApplicationContext.start();
+            // then start any additional after Camel has been started
+            if (additionalApplicationContext == null) {
+                additionalApplicationContext = createAdditionalLocationsFromClasspath();
+                if (additionalApplicationContext != null) {
+                    LOG.debug("Starting Additional ApplicationContext: " + additionalApplicationContext.getId());
+                    additionalApplicationContext.start();
+                }
+            }
+
+            LOG.debug("Starting Spring ApplicationContext: " + applicationContext.getId());
+            applicationContext.start();
+
+            postProcessContext();
+        } finally {
+            if (camelContexts != null && !camelContexts.isEmpty()) {
+                // if we were veto started then mark as completed
+                if (getCamelContexts().get(0).isVetoStarted()) {
+                    completed();
+                }
             }
         }
-
-        LOG.debug("Starting Spring ApplicationContext: " + applicationContext.getId());
-        applicationContext.start();
-
-        postProcessContext();
     }
 
     protected void doStop() throws Exception {

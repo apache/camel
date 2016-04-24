@@ -26,7 +26,6 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -39,6 +38,7 @@ import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.NamespaceAware;

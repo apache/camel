@@ -14,17 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.processor;
+package org.apache.camel.spring;
 
+import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.CamelContextLogExhaustedMessageBodyTest;
+import org.apache.camel.VetoCamelContextStartException;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.LifecycleStrategySupport;
+import org.junit.Test;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+/**
+ * @version
+ */
+public class MainVetoTest extends TestCase {
 
-public class SpringCamelContextLogExhaustedMessageBodyTest extends CamelContextLogExhaustedMessageBodyTest {
+    @Test
+    public void testMain() throws Exception {
+        // lets make a simple route
+        Main main = new Main();
+        main.setDuration(30);
+        main.setDurationHitExitCode(99);
+        main.setApplicationContextUri("org/apache/camel/spring/MainVetoTest.xml");
 
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringCamelContextLogExhaustedMessageBodyTest.xml");
+        // should not hang as we veto fail
+        main.run();
+
+        // should complete normally due veto
+        assertEquals(0, main.getExitCode());
     }
 
 }
