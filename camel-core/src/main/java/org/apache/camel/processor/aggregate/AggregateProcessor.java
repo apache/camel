@@ -1273,7 +1273,11 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
     @Override
     protected void doStart() throws Exception {
-        if (aggregationStrategy instanceof PreCompletionAwareAggregationStrategy) {
+        AggregationStrategy strategy = aggregationStrategy;
+        if (strategy instanceof DelegateAggregationStrategy) {
+            strategy = ((DelegateAggregationStrategy) strategy).getDelegate();
+        }
+        if (strategy instanceof PreCompletionAwareAggregationStrategy) {
             preCompletion = true;
             LOG.info("PreCompletionAwareAggregationStrategy detected. Aggregator {} is in pre-completion mode.", getId());
         }
