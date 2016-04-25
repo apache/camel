@@ -105,31 +105,13 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
         timedTaskManager = new TimedTaskManager();
-
-        LOGGER.trace("Verify ConnectionResource");
-        if (getConnectionResource() == null) {
-            LOGGER.debug("No ConnectionResource provided. Initialize the ConnectionFactoryResource.");
-            // We always use a connection pool, even for a pool of 1
-            ConnectionFactoryResource connections = new ConnectionFactoryResource(getConnectionCount(), getConnectionFactory());
-            connections.fillPool();
-            setConnectionResource(connections);
-        } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
-            ((ConnectionFactoryResource) getConnectionResource()).fillPool();
-        }
     }
 
     @Override
     protected void doStop() throws Exception {
         if (timedTaskManager != null) {
             timedTaskManager.cancelTasks();
-        }
-
-        if (getConnectionResource() != null) {
-            if (getConnectionResource() instanceof ConnectionFactoryResource) {
-                ((ConnectionFactoryResource) getConnectionResource()).drainPool();
-            }
         }
         super.doStop();
     }
