@@ -102,11 +102,10 @@ public class Main extends MainSupport {
 
     private void warnIfNoCamelFound() {
         BeanManager manager = cdiContainer.getBeanManager();
-        Set<Bean<?>> contexts = manager.getBeans(CamelContext.class);
-        // Warn if the default CDI Camel context has no routes
-        if (contexts.size() == 1 && BeanManagerHelper.getReference(manager, CamelContext.class, contexts.iterator().next()).getRoutes().isEmpty()) {
-            LOG.warn("Camel CDI main has started with no Camel routes! "
-                   + "You may add some RouteBuilder beans to your project.");
+        Set<Bean<?>> contexts = manager.getBeans(CamelContext.class, AnyLiteral.INSTANCE);
+        // Warn if there is no CDI Camel contexts
+        if (contexts.isEmpty()) {
+            LOG.warn("Camel CDI main has started with no Camel context!");
         }
     }
 

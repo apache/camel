@@ -16,14 +16,8 @@
  */
 package org.apache.camel.cdi.test;
 
-import java.util.concurrent.TimeUnit;
-
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.CamelContext;
 import org.apache.camel.cdi.CdiCamelExtension;
-import org.apache.camel.cdi.Uri;
-import org.apache.camel.cdi.bean.NamedCamelBean;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -33,37 +27,33 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 
 @RunWith(Arquillian.class)
-public class NamedCamelBeanTest {
+public class NoCamelContextTest {
+
+    @Any
+    @Inject
+    private Instance<CamelContext> contexts;
 
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
             // Camel CDI
             .addPackage(CdiCamelExtension.class.getPackage())
-            // Test class
-            .addClass(NamedCamelBean.class)
             // Bean archive deployment descriptor
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
-    public void sendMessageToInbound(@Uri("direct:inbound") ProducerTemplate in,
-                                     @Uri("mock:outbound") MockEndpoint out) throws InterruptedException {
-        out.expectedMessageCount(1);
-        out.expectedBodiesReceived("test-processed");
-        
-        in.sendBody("test");
-
-        assertIsSatisfied(2L, TimeUnit.SECONDS, out);
-    }
-
-    private static class TestRoute extends RouteBuilder {
-        @Override
-        public void configure() {
-            from("direct:inbound").bean("beanName").to("mock:outbound");
-        }
+    public void verifyDeployment() {
+        assertThat("Camel context beans are deployed!", contexts.isUnsatisfied(), is(equalTo(true)));
     }
 }
