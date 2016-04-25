@@ -733,7 +733,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         msg = msg + ". Handled and continue routing.";
 
         // log that we failed but want to continue
-        logFailedDelivery(false, false, false, isDeadLetterChannel, true, exchange, msg, data, null);
+        logFailedDelivery(false, false, false, true, isDeadLetterChannel, exchange, msg, data, null);
     }
 
     protected void prepareExchangeForRedelivery(Exchange exchange, RedeliveryData data) {
