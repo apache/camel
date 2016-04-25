@@ -37,7 +37,7 @@ public class CassandraLoadBalancingPolicies {
             loadBalancingPolicy = new TokenAwarePolicy(new RoundRobinPolicy());
             break;
         case dcAwareRoundRobinPolicy:
-            loadBalancingPolicy = new DCAwareRoundRobinPolicy();
+            loadBalancingPolicy = DCAwareRoundRobinPolicy.builder().build();
             break;
         default:
             throw new IllegalArgumentException("Cassandra load balancing policy can be " + roundRobinPolicy + " ," + tokenAwarePolicy 
