@@ -56,6 +56,13 @@
       <version>${flink-version}</version>
     </dependency>
 
+    <!-- scala -->
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala-2.10-version}</version>
+    </dependency>
+
     <!--testing-->
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -75,14 +82,6 @@
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!--optional-->
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>2.10.6</version>
       <scope>test</scope>
     </dependency>
 

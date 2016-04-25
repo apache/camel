@@ -481,7 +481,7 @@
     <saxon-bundle-version>9.5.1-5_1</saxon-bundle-version>
     <saxon-version>9.5.1-5</saxon-version>
     <scala-version>2.11.7</scala-version>
-    <scala-2.10-version>2.10.4</scala-2.10-version>
+    <scala-2.10-version>2.10.6</scala-2.10-version>
     <scala-maven-plugin-version>3.2.2</scala-maven-plugin-version>
     <scalatest-version>2.2.5</scalatest-version>
     <scalaxml-version>1.0.4</scalaxml-version>
