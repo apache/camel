@@ -34,6 +34,11 @@ import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionPoint;
 
+import org.apache.camel.BeanInject;
+import org.apache.camel.Consume;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.PropertyInject;
 import org.apache.camel.util.ObjectHelper;
 
 @Vetoed
@@ -143,5 +148,25 @@ final class CdiSpiHelper {
         }
         qualifiers.add(AnyLiteral.INSTANCE);
         return qualifiers;
+    }
+
+    static boolean hasDefaultContext(Annotated annotated) {
+        if (annotated.isAnnotationPresent(Consume.class) && annotated.getAnnotation(Consume.class).context().isEmpty()) {
+            return true;
+        }
+        if (annotated.isAnnotationPresent(BeanInject.class) && annotated.getAnnotation(BeanInject.class).context().isEmpty()) {
+            return true;
+        }
+        if (annotated.isAnnotationPresent(EndpointInject.class) && annotated.getAnnotation(EndpointInject.class).context().isEmpty()) {
+            return true;
+        }
+        if (annotated.isAnnotationPresent(Produce.class) && annotated.getAnnotation(Produce.class).context().isEmpty()) {
+            return true;
+        }
+        if (annotated.isAnnotationPresent(PropertyInject.class) && annotated.getAnnotation(PropertyInject.class).context().isEmpty()) {
+            return true;
+        }
+
+        return false;
     }
 }

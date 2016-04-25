@@ -76,6 +76,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.cdi.CdiSpiHelper.getFirstElementOfType;
 import static org.apache.camel.cdi.CdiSpiHelper.getRawType;
 import static org.apache.camel.cdi.CdiSpiHelper.hasAnnotation;
+import static org.apache.camel.cdi.CdiSpiHelper.hasDefaultContext;
 
 public class CdiCamelExtension implements Extension {
 
@@ -290,20 +291,12 @@ public class CdiCamelExtension implements Extension {
         // Or a bean with Camel annotations?
         for (AnnotatedType<?> type : camelBeans) {
             for (Annotated field : type.getFields()) {
-                if (field.isAnnotationPresent(Consume.class) && field.getAnnotation(Consume.class).context().isEmpty()
-                    || field.isAnnotationPresent(BeanInject.class) && field.getAnnotation(BeanInject.class).context().isEmpty()
-                    || field.isAnnotationPresent(EndpointInject.class) && field.getAnnotation(EndpointInject.class).context().isEmpty()
-                    || field.isAnnotationPresent(Produce.class) && field.getAnnotation(Produce.class).context().isEmpty()
-                    || field.isAnnotationPresent(PropertyInject.class) && field.getAnnotation(PropertyInject.class).context().isEmpty()) {
+                if (hasDefaultContext(field)) {
                     return true;
                 }
             }
             for (Annotated method : type.getMethods()) {
-                if (method.isAnnotationPresent(Consume.class) && method.getAnnotation(Consume.class).context().isEmpty()
-                    || method.isAnnotationPresent(BeanInject.class) && method.getAnnotation(BeanInject.class).context().isEmpty()
-                    || method.isAnnotationPresent(EndpointInject.class) && method.getAnnotation(EndpointInject.class).context().isEmpty()
-                    || method.isAnnotationPresent(Produce.class) && method.getAnnotation(Produce.class).context().isEmpty()
-                    || method.isAnnotationPresent(PropertyInject.class) && method.getAnnotation(PropertyInject.class).context().isEmpty()) {
+                if (hasDefaultContext(method)) {
                     return true;
                 }
             }
