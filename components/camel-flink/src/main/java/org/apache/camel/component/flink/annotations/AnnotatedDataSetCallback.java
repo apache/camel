@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.flink.annotations;
-
-import org.apache.camel.CamelContext;
-import org.apache.flink.api.java.DataSet;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.apache.camel.CamelContext;
+import org.apache.flink.api.java.DataSet;
 
 import static org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation;
 
@@ -67,7 +66,7 @@ public class AnnotatedDataSetCallback implements org.apache.camel.component.flin
             callbackMethod.setAccessible(true);
 
             if (camelContext != null) {
-                for (int i = 1;i < arguments.size();i++) {
+                for (int i = 1; i < arguments.size(); i++) {
                     arguments.set(i, camelContext.getTypeConverter().convertTo(callbackMethod.getParameterTypes()[i], arguments.get(i)));
                 }
             }

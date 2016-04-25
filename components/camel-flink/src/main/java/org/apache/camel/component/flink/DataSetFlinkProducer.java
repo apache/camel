@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.flink;
+
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.flink.api.java.DataSet;
-
-import java.util.List;
 
 public class DataSetFlinkProducer extends DefaultProducer {
 
@@ -34,7 +33,15 @@ public class DataSetFlinkProducer extends DefaultProducer {
         DataSet ds = resolveDataSet(exchange);
         DataSetCallback dataSetCallback = resolveDataSetCallback(exchange);
         Object body = exchange.getIn().getBody();
-        Object result = body instanceof List ? dataSetCallback.onDataSet(ds, ((List) body).toArray(new Object[0])) : dataSetCallback.onDataSet(ds, body);
+
+        Object result;
+        if (body instanceof List) {
+            List list = (List) body;
+            Object[] array = list.toArray(new Object[list.size()]);
+            result = dataSetCallback.onDataSet(ds, array);
+        } else {
+            result = dataSetCallback.onDataSet(ds, body);
+        }
         collectResults(exchange, result);
     }
 
@@ -48,13 +55,11 @@ public class DataSetFlinkProducer extends DefaultProducer {
             DataSet dsResults = (DataSet) result;
             if (getEndpoint().isCollect()) {
                 exchange.getIn().setBody(dsResults.collect());
-            }
-            else {
+            } else {
                 exchange.getIn().setBody(result);
                 exchange.getIn().setHeader(FlinkConstants.FLINK_DATASET_HEADER, result);
             }
-        }
-        else {
+        } else {
             exchange.getIn().setBody(result);
         }
     }

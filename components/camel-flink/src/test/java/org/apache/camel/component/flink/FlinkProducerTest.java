@@ -14,8 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.flink;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
 import com.google.common.truth.Truth;
 import org.apache.camel.component.flink.annotations.AnnotatedDataSetCallback;
@@ -24,10 +27,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 
 public class FlinkProducerTest extends CamelTestSupport {
 
@@ -127,7 +126,7 @@ public class FlinkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteAnnotatedCallback() {
-        DataSetCallback dataSetCallback = new AnnotatedDataSetCallback(new Object(){
+        DataSetCallback dataSetCallback = new AnnotatedDataSetCallback(new Object() {
             @org.apache.camel.component.flink.annotations.DataSetCallback
             Long countLines(DataSet<String> textFile) {
                 try {
@@ -162,7 +161,7 @@ public class FlinkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteAnnotatedCallbackWithParameters() {
-        DataSetCallback dataSetCallback = new AnnotatedDataSetCallback(new Object(){
+        DataSetCallback dataSetCallback = new AnnotatedDataSetCallback(new Object() {
             @org.apache.camel.component.flink.annotations.DataSetCallback
             Long countLines(DataSet<String> textFile, int first, int second) {
                 try {

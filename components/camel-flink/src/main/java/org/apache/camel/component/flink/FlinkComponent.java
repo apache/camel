@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.flink;
+
+import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.flink.api.java.DataSet;
-
-import java.util.Map;
 
 /**
  * The flink component can be used to send DataSet or DataStream jobs to Apache Flink cluster.

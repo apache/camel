@@ -14,12 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.flink;
 
-public class FlinkConstants {
+public final class FlinkConstants {
 
-    public static final String FLINK_DATASET_HEADER = "CAMEL_FLINK_DATASET";
+    public static final String FLINK_DATASET_HEADER = "CamelFlinkDataSet";
 
-    public static final String FLINK_DATASET_CALLBACK_HEADER = "CAMEL_FLINK_RDD_CALLBACK";
+    public static final String FLINK_DATASET_CALLBACK_HEADER = "CamelFlinkDataSetCallback";
+
+    private FlinkConstants() {
+    }
+
 }

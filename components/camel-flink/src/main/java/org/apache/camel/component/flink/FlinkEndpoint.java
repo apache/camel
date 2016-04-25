@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.flink;
 
 import org.apache.camel.Consumer;
@@ -26,29 +25,20 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.flink.api.java.DataSet;
-import org.slf4j.Logger;
-
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * The flink component can be used to send DataSet jobs to Apache Flink cluster.
  */
-@UriEndpoint(scheme = "META-INF/services/org/apache/camel/component/flink", title = "Apache Flink", syntax = "flink:endpointType",
-        producerOnly = true, label = "flink engine, hadoop")
+@UriEndpoint(scheme = "flink", title = "Apache Flink", syntax = "flink:endpointType", producerOnly = true, label = "hadoop")
 public class FlinkEndpoint extends DefaultEndpoint {
 
-    private static final Logger LOG = getLogger(FlinkEndpoint.class);
-
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = "true")
     private EndpointType endpointType;
-
-    // DataSet to compute against.
     @UriParam
     private DataSet dataSet;
-
     @UriParam
     private DataSetCallback dataSetCallback;
-
     @UriParam(defaultValue = "true")
     private boolean collect = true;
 
@@ -72,13 +62,11 @@ public class FlinkEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        LOG.trace("Creating {} Flink Producer.", endpointType);
         if (endpointType == EndpointType.dataset) {
-            LOG.trace("About to create Dataset Producer.");
             return new DataSetFlinkProducer(this);
+        } else {
+            throw new UnsupportedOperationException("datastream not yet supported");
         }
-        else
-            return null;
     }
 
     @Override

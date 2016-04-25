@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.flink;
+
+import static java.lang.String.format;
 
 import org.apache.camel.CamelContext;
 import org.apache.flink.api.java.DataSet;
-
-import static java.lang.String.format;
 
 public abstract class ConvertingDataSetCallback<T> implements DataSetCallback<T> {
 
@@ -39,7 +38,7 @@ public abstract class ConvertingDataSetCallback<T> implements DataSetCallback<T>
             String message = format("Received %d payloads, but expected %d.", payloads.length, payloadTypes.length);
             throw new IllegalArgumentException(message);
         }
-        for (int i=0; i < payloads.length;i++) {
+        for (int i = 0; i < payloads.length; i++) {
             payloads[i] = camelContext.getTypeConverter().convertTo(payloadTypes[i], payloads[i]);
         }
         return doOnDataSet(ds, payloads);
