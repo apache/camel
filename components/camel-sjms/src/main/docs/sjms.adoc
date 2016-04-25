@@ -123,8 +123,10 @@ The Simple JMS component supports 9 options which are listed below.
 
 
 
+
+
 // endpoint options: START
-The Simple JMS component supports 29 endpoint options which are listed below:
+The Simple JMS component supports 32 endpoint options which are listed below:
 
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
@@ -147,6 +149,9 @@ The Simple JMS component supports 29 endpoint options which are listed below:
 | responseTimeOut | producer (advanced) | 5000 | long | Sets the amount of time we should wait before timing out a InOut response.
 | asyncStartListener | advanced | false | boolean | Whether to startup the consumer message listener asynchronously when starting a route. For example if a JmsConsumer cannot get a connection to a remote JMS broker then it may block while retrying and/or failover. This will cause Camel to block while starting routes. By setting this option to true you will let routes startup while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this option is used then beware that if the connection could not be established then an exception is logged at WARN level and the consumer will not be able to receive messages; You can then restart the route to retry.
 | asyncStopListener | advanced | false | boolean | Whether to stop the consumer message listener asynchronously when stopping a route.
+| connectionCount | advanced |  | Integer | The maximum number of connections available to this endpoint
+| connectionFactory | advanced |  | ConnectionFactory | Initializes the connectionFactory for the endpoint which takes precedence over the component's connectionFactory if any
+| connectionResource | advanced |  | ConnectionResource | Initializes the connectionResource for the endpoint which takes precedence over the component's connectionResource if any
 | destinationCreationStrategy | advanced |  | DestinationCreationStrategy | To use a custom DestinationCreationStrategy.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | headerFilterStrategy | advanced |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
@@ -160,6 +165,8 @@ The Simple JMS component supports 29 endpoint options which are listed below:
 | transactionCommitStrategy | transaction |  | TransactionCommitStrategy | Sets the commit strategy.
 |=======================================================================
 // endpoint options: END
+
+
 
 
 Below is an example of how to configure the `SjmsComponent` with its

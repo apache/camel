@@ -44,7 +44,6 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
 
     private ConnectionFactory connectionFactory;
     private ConnectionResource connectionResource;
-    private volatile boolean closeConnectionResource;
     private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
     private JmsKeyFormatStrategy jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
     private Integer connectionCount = 1;
@@ -106,22 +105,8 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
         timedTaskManager = new TimedTaskManager();
-
-        LOGGER.trace("Verify ConnectionResource");
-        if (getConnectionResource() == null) {
-            LOGGER.debug("No ConnectionResource provided. Initialize the ConnectionFactoryResource.");
-            // We always use a connection pool, even for a pool of 1
-            ConnectionFactoryResource connections = new ConnectionFactoryResource(getConnectionCount(), getConnectionFactory());
-            connections.fillPool();
-            setConnectionResource(connections);
-            // we created the resource so we should close it when stopping
-            closeConnectionResource = true;
-        } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
-            ((ConnectionFactoryResource) getConnectionResource()).fillPool();
-        }
-    }
+	}
 
     @Override
     protected void doStop() throws Exception {
@@ -129,16 +114,6 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
             timedTaskManager.cancelTasks();
             timedTaskManager = null;
         }
-
-        if (closeConnectionResource) {
-            if (getConnectionResource() != null) {
-                if (getConnectionResource() instanceof ConnectionFactoryResource) {
-                    ((ConnectionFactoryResource) getConnectionResource()).drainPool();
-                }
-            }
-            connectionResource = null;
-        }
-
         super.doStop();
     }
 
