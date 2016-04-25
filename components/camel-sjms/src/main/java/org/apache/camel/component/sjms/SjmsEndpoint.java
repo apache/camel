@@ -124,7 +124,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     private ConnectionFactory connectionFactory;
     @UriParam(label = "advanced")
     private Integer connectionCount;
-    private boolean autoCreatedConnectionResource;
+    private volatile boolean closeConnectionResource;
 
     public SjmsEndpoint() {
     }
@@ -149,8 +149,9 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
                 // We always use a connection pool, even for a pool of 1
                 ConnectionFactoryResource connections = new ConnectionFactoryResource(getConnectionCount(), getConnectionFactory());
                 connections.fillPool();
-                autoCreatedConnectionResource = true;
                 connectionResource = connections;
+				// we created the resource so we should close it when stopping
+                closeConnectionResource = true;
             }
         } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
             ((ConnectionFactoryResource) getConnectionResource()).fillPool();
@@ -159,10 +160,13 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
 
     @Override
     protected void doStop() throws Exception {
-        if (connectionResource != null && autoCreatedConnectionResource) {
-            ((ConnectionFactoryResource) getConnectionResource()).drainPool();
+		if (closeConnectionResource) {
+            if (connectionResource != null) {
+                if (getConnectionResource() instanceof ConnectionFactoryResource) {
+                    ((ConnectionFactoryResource) getConnectionResource()).drainPool();
+                }
+            }
             connectionResource = null;
-            autoCreatedConnectionResource = false;
         }
         super.doStop();
     }
