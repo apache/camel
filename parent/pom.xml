@@ -174,6 +174,7 @@
     <felix-scr-annotations-version>1.9.12</felix-scr-annotations-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
     <flatpack-version>3.4.3</flatpack-version>
+    <flink-version>0.10.2</flink-version>
     <fop-bundle-version>2.1_1</fop-bundle-version>
     <fop-version>2.1</fop-version>
     <ftpserver-version>1.0.6</ftpserver-version>
@@ -934,6 +935,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-flatpack</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-flink</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
