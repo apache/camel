@@ -21,22 +21,20 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.singletonList;
 import static org.apache.camel.Exchange.FILE_NAME;
-import static org.apache.camel.dataformat.tarfile.TarUtils.*;
+import static org.apache.camel.dataformat.tarfile.TarUtils.TEXT;
+import static org.apache.camel.dataformat.tarfile.TarUtils.getBytes;
 import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredText;
 
-/**
- * Unit tests for {@link TarFileDataFormat}.
- */
-public class TarFileDataFormatTest extends CamelTestSupport {
-
-    private static final File TEST_DIR = new File("target/tar");
+public class SpringTarFileDataFormatTest extends CamelSpringTestSupport {
+    private static final File TEST_DIR = new File("target/springtar");
 
     @Test
     public void testTarWithoutFileName() throws Exception {
@@ -49,8 +47,9 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".tar", exchange.getIn().getHeader(FILE_NAME));
-        assertTrue(ObjectHelper.equalByteArray(getTaredText(exchange.getIn().getMessageId()), (byte[]) exchange.getIn().getBody()));
+        assertArrayEquals(getTaredText(exchange.getIn().getMessageId()), (byte[]) exchange.getIn().getBody());
     }
+
 
     @Test
     public void testTarWithFileName() throws Exception {
@@ -63,7 +62,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
-        assertTrue(ObjectHelper.equalByteArray(getTaredText("poem.txt"), (byte[]) exchange.getIn().getBody()));
+        assertArrayEquals(getTaredText("poem.txt"), (byte[]) exchange.getIn().getBody());
     }
 
     @Test
@@ -87,7 +86,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId(), exchange.getIn().getHeader(FILE_NAME));
-        assertEquals(TEXT, new String((byte[]) exchange.getIn().getBody(), "UTF-8"));
+        assertArrayEquals(TEXT.getBytes(UTF_8), (byte[]) exchange.getIn().getBody());
     }
 
     @Test
@@ -110,7 +109,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         Exchange exchange = mock.getReceivedExchanges().get(0);
         File file = new File(TEST_DIR, exchange.getIn().getMessageId() + ".tar");
         assertTrue(file.exists());
-        assertTrue(ObjectHelper.equalByteArray(getTaredText(exchange.getIn().getMessageId()), getBytes(file)));
+        assertArrayEquals(getTaredText(exchange.getIn().getMessageId()), getBytes(file));
     }
 
     @Test
@@ -132,18 +131,19 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         assertTrue(notify.matches(5, TimeUnit.SECONDS));
 
         assertTrue(file.exists());
-        assertTrue(ObjectHelper.equalByteArray(getTaredText("poem.txt"), getBytes(file)));
+        assertArrayEquals(getTaredText("poem.txt"), getBytes(file));
     }
 
     @Test
     public void testDslTar() throws Exception {
-        getMockEndpoint("mock:dslTar").expectedBodiesReceived(getTaredText("poem.txt"));
+        getMockEndpoint("mock:dslTar").expectedBodiesReceived(singletonList(getTaredText("poem.txt")));
         getMockEndpoint("mock:dslTar").expectedHeaderReceived(FILE_NAME, "poem.txt.tar");
 
         template.sendBodyAndHeader("direct:dslTar", TEXT, FILE_NAME, "poem.txt");
 
         assertMockEndpointsSatisfied();
     }
+
 
     @Test
     public void testDslUntar() throws Exception {
@@ -162,21 +162,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                interceptSendToEndpoint("file:*").to("mock:intercepted");
-
-                TarFileDataFormat tar = new TarFileDataFormat();
-
-                from("direct:tar").marshal(tar).to("mock:tar");
-                from("direct:untar").unmarshal(tar).to("mock:untar");
-                from("direct:tarAndUntar").marshal(tar).unmarshal(tar).to("mock:tarAndUntar");
-                from("direct:tarToFile").marshal(tar).to("file:" + TEST_DIR.getPath()).to("mock:tarToFile");
-                from("direct:dslTar").marshal(tar).to("mock:dslTar");
-                from("direct:dslUntar").unmarshal(tar).to("mock:dslUntar");
-            }
-        };
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/tarfile/SpringTarFileDataFormatTest.xml");
     }
 }
