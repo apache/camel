@@ -166,6 +166,7 @@
     * [JMX](jmx.adoc)
     * [JSON](json.adoc)
     * [Jbpm](jbpm.adoc)
+    * [Jcache](jcache.adoc)
     * [Jclouds](jclouds.adoc)
     * [Kafka](kafka.adoc)
     * [Metrics](metrics.adoc)
