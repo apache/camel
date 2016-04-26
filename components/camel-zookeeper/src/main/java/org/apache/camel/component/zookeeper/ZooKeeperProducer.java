@@ -43,12 +43,12 @@ import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getPayloadFrom
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getVersionFromMessage;
 
 /**
- * <code>ZookeeperProducer</code> attempts to set the content of nodes in the
+ * <code>ZooKeeperProducer</code> attempts to set the content of nodes in the
  * {@link ZooKeeper} cluster with the payloads of the of the exchanges it
  * receives.
  */
 @SuppressWarnings("rawtypes")
-public class ZookeeperProducer extends DefaultProducer {
+public class ZooKeeperProducer extends DefaultProducer {
     public static final String ZK_OPERATION_WRITE  = "WRITE";
     public static final String ZK_OPERATION_DELETE = "DELETE";
 
@@ -56,19 +56,19 @@ public class ZookeeperProducer extends DefaultProducer {
     private ZooKeeperConnectionManager zkm;
     private ZooKeeper connection;
 
-    public ZookeeperProducer(ZooKeeperEndpoint endpoint) {
+    public ZooKeeperProducer(ZooKeeperEndpoint endpoint) {
         super(endpoint);
         this.configuration = endpoint.getConfiguration();
         this.zkm = endpoint.getConnectionManager();
     }
 
     public void process(Exchange exchange) throws Exception {
-        
+
         ProductionContext context = new ProductionContext(connection, exchange);
 
         String operation = exchange.getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_OPERATION, String.class);
         boolean isDelete = ZK_OPERATION_DELETE.equals(operation);
-        
+
         if (ExchangeHelper.isOutCapable(exchange)) {
             if (isDelete) {
                 if (log.isDebugEnabled()) {
@@ -98,9 +98,9 @@ public class ZookeeperProducer extends DefaultProducer {
                 asynchronouslySetDataOnNode(connection, context);
             }
         }
-        
+
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         connection = zkm.getConnection();
@@ -140,7 +140,7 @@ public class ZookeeperProducer extends DefaultProducer {
         } else {
             context.exchange.setException(result.getException());
         }
-        
+
         context.exchange.setOut(out);
     }
 
@@ -203,11 +203,11 @@ public class ZookeeperProducer extends DefaultProducer {
             }
         }
     }
-    
+
     private OperationResult<String> createNode(ProductionContext ctx) throws Exception {
         CreateOperation create = new CreateOperation(ctx.connection, ctx.node);
         create.setPermissions(getAclListFromMessage(ctx.exchange.getIn()));
-        
+
         CreateMode mode = null;
         String modeString = configuration.getCreateMode();
         if (modeString != null) {
@@ -253,7 +253,7 @@ public class ZookeeperProducer extends DefaultProducer {
         return result;
     }
 
-    
+
     private void logStoreComplete(String path, Stat statistics) {
         if (log.isDebugEnabled()) {
             if (log.isTraceEnabled()) {

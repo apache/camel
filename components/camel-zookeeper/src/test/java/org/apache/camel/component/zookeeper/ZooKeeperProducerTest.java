@@ -33,7 +33,7 @@ import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_CR
 import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_NODE;
 import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_OPERATION;
 
-public class ZookeeperProducerTest extends ZooKeeperTestSupport {
+public class ZooKeeperProducerTest extends ZooKeeperTestSupport {
 
     private String zookeeperUri;
     private String testPayload = "TestPayload";
@@ -104,15 +104,15 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
         GetChildrenOperation listing = new GetChildrenOperation(getConnection(), "/modes-test");
         assertEquals(CreateMode.values().length, listing.get().getResult().size());
     }
-    
+
     @Test
     public void createWithOtherCreateMode() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:create-mode");
         mock.expectedMessageCount(1);
-        
+
         Exchange e = createExchangeWithBody(testPayload);
         e.setPattern(ExchangePattern.InOut);
-        
+
         template.send("direct:create-mode", e);
 
         assertMockEndpointsSatisfied();
