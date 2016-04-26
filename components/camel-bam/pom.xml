@@ -25,7 +25,7 @@
 
   <artifactId>camel-bam</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: BAM</name>
+  <name>Camel :: BAM (deprecated)</name>
   <description>Camel Business Activity Monitor support</description>
 
   <properties>
