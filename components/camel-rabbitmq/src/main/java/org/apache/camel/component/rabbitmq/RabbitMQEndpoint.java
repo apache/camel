@@ -83,6 +83,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam
     private boolean skipExchangeDeclare;
     @UriParam
+    private boolean serverNamedQueue;
+    @UriParam
     private Address[] addresses;
     @UriParam(defaultValue = "" + ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT;
@@ -416,6 +418,21 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     public boolean isSkipExchangeDeclare() {
         return skipExchangeDeclare;
+    }
+
+    public boolean isServerNamedQueue() {
+      return serverNamedQueue;
+    }
+
+    /**
+     * This can be used to let the server side determine the queue name.
+     * If this option is set some other options are ignored (isDurable, 
+     * isAutoDelete,...) The declared queu will always be a exclusive, 
+     * autodelete, non-durable queue.
+     * @param serverNamedQueue 
+     */
+    public void setServerNamedQueue(boolean serverNamedQueue) {
+      this.serverNamedQueue = serverNamedQueue;
     }
 
     /**
