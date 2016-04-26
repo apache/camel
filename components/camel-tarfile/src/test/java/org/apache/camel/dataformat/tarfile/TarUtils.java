@@ -27,6 +27,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
 final class TarUtils {
+
     static final String TEXT = "The Masque of Queen Bersabe (excerpt) \n"
             + "by: Algernon Charles Swinburne \n\n"
             + "My lips kissed dumb the word of Ah \n"
@@ -37,6 +38,10 @@ final class TarUtils {
             + "My mouth's heat was the heat of flame \n"
             + "For lust towards the kings that came \n"
             + "With horsemen riding royally.";
+
+    private TarUtils() {
+        // Prevent instantiation
+    }
 
     static byte[] getTaredText(String entryName) throws IOException {
         ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes("UTF-8"));
@@ -65,7 +70,4 @@ final class TarUtils {
         return baos.toByteArray();
     }
 
-    private TarUtils() {
-        // Prevent instantiation
-    }
 }
