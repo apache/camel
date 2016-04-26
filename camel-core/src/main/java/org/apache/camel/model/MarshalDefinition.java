@@ -48,6 +48,7 @@ import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
+import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat;
@@ -67,7 +68,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Marshals data into a specified format for transmission over a transport or component
  *
- * @version 
+ * @version
  */
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "marshal")
@@ -102,6 +103,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
         @XmlElement(required = false, name = "soapjaxb", type = SoapJaxbDataFormat.class),
         @XmlElement(required = false, name = "string", type = StringDataFormat.class),
         @XmlElement(required = false, name = "syslog", type = SyslogDataFormat.class),
+        @XmlElement(required = false, name = "tarfile", type = TarFileDataFormat.class),
         @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),
         @XmlElement(required = false, name = "univocity-csv", type = UniVocityCsvDataFormat.class),
         @XmlElement(required = false, name = "univocity-fixed", type = UniVocityFixedWidthDataFormat.class),
@@ -135,7 +137,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
     public String toString() {
         return "Marshal[" + description() + "]";
     }
-    
+
     protected String description() {
         return dataFormatType != null ? dataFormatType.toString() : "ref:" + ref;
     }
@@ -144,7 +146,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
     public String getLabel() {
         return "marshal[" + description() + "]";
     }
-    
+
     public String getRef() {
         return ref;
     }
