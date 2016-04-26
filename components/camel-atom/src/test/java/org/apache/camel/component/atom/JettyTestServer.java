@@ -43,7 +43,7 @@ import static org.junit.Assert.fail;
 public final class JettyTestServer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyTestServer.class);
-    protected static final int PORT = AvailablePortFinder.getNextAvailable();
+    private static final int PORT = AvailablePortFinder.getNextAvailable();
     private static JettyTestServer instance;
 
     public int port;
