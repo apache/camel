@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.flink.api.java.DataSet;
+import org.apache.flink.streaming.api.datastream.DataStream;
 
 /**
  * The flink component can be used to send DataSet or DataStream jobs to Apache Flink cluster.
@@ -29,6 +30,8 @@ public class FlinkComponent extends UriEndpointComponent {
 
     private DataSet ds;
     private DataSetCallback dataSetCallback;
+    private DataStream dataStream;
+    private DataStreamCallback dataStreamCallback;
 
     public FlinkComponent() {
         super(FlinkEndpoint.class);
@@ -44,6 +47,10 @@ public class FlinkComponent extends UriEndpointComponent {
         return ds;
     }
 
+    public DataStream getDataStream() {
+        return dataStream;
+    }
+
     /**
      * DataSet to compute against.
      */
@@ -51,8 +58,19 @@ public class FlinkComponent extends UriEndpointComponent {
         this.ds = ds;
     }
 
+    /**
+     * DataStream to compute against.
+     */
+    public void setDataStream(DataStream dataStream) {
+        this.dataStream = dataStream;
+    }
+
     public DataSetCallback getDataSetCallback() {
         return dataSetCallback;
+    }
+
+    public DataStreamCallback getDataStreamCallback() {
+        return dataStreamCallback;
     }
 
     /**
@@ -60,5 +78,12 @@ public class FlinkComponent extends UriEndpointComponent {
      */
     public void setDataSetCallback(DataSetCallback dataSetCallback) {
         this.dataSetCallback = dataSetCallback;
+    }
+
+    /**
+     * Function performing action against a DataStream.
+     */
+    public void setDataStreamCallback(DataStreamCallback dataStreamCallback) {
+        this.dataStreamCallback = dataStreamCallback;
     }
 }

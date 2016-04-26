@@ -25,6 +25,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.flink.api.java.DataSet;
+import org.apache.flink.streaming.api.datastream.DataStream;
 
 /**
  * The flink component can be used to send DataSet jobs to Apache Flink cluster.
@@ -39,6 +40,13 @@ public class FlinkEndpoint extends DefaultEndpoint {
     private DataSet dataSet;
     @UriParam
     private DataSetCallback dataSetCallback;
+
+    @UriParam
+    private DataStream dataStream;
+
+    @UriParam
+    private DataStreamCallback dataStreamCallback;
+
     @UriParam(defaultValue = "true")
     private boolean collect = true;
 
@@ -64,8 +72,10 @@ public class FlinkEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         if (endpointType == EndpointType.dataset) {
             return new DataSetFlinkProducer(this);
+        } else if (endpointType == EndpointType.datastream) {
+            return new DataStreamFlinkProducer(this);
         } else {
-            throw new UnsupportedOperationException("datastream not yet supported");
+            return null;
         }
     }
 
@@ -95,6 +105,10 @@ public class FlinkEndpoint extends DefaultEndpoint {
         return dataSet;
     }
 
+    public DataStream getDataStream() {
+        return dataStream;
+    }
+
     /**
      * DataSet to compute against.
      */
@@ -102,8 +116,19 @@ public class FlinkEndpoint extends DefaultEndpoint {
         this.dataSet = ds;
     }
 
+    /**
+     * DataStream to compute against.
+     */
+    public void setDataStream(DataStream ds) {
+        this.dataStream = ds;
+    }
+
     public DataSetCallback getDataSetCallback() {
         return dataSetCallback;
+    }
+
+    public DataStreamCallback getDataStreamCallback() {
+        return dataStreamCallback;
     }
 
     /**
@@ -111,6 +136,13 @@ public class FlinkEndpoint extends DefaultEndpoint {
      */
     public void setDataSetCallback(DataSetCallback dataSetCallback) {
         this.dataSetCallback = dataSetCallback;
+    }
+
+    /**
+     * Function performing action against a DataStream.
+     */
+    public void setDataStreamCallback(DataStreamCallback dataStreamCallback) {
+        this.dataStreamCallback = dataStreamCallback;
     }
 
     public boolean isCollect() {

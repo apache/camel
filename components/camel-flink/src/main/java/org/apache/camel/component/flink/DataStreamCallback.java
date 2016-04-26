@@ -16,16 +16,14 @@
  */
 package org.apache.camel.component.flink;
 
-public final class FlinkConstants {
+import org.apache.flink.streaming.api.datastream.DataStream;
 
-    public static final String FLINK_DATASET_HEADER = "CamelFlinkDataSet";
+/**
+ * Generic block of code with parameters which can be executed against DataStream and return results.
+ *
+ * @param <T> results type
+ */
+public interface DataStreamCallback<T> {
 
-    public static final String FLINK_DATASET_CALLBACK_HEADER = "CamelFlinkDataSetCallback";
-
-    public static final String FLINK_DATASTREAM_HEADER = "CamelFlinkDataStream";
-
-    public static final String FLINK_DATASTREAM_CALLBACK_HEADER = "CamelFlinkDataStreamCallback";
-
-    private FlinkConstants() {
-    }
+    T onDataStream(DataStream ds, Object... payloads) throws Exception;
 }

@@ -26,13 +26,17 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.junit.Test;
 
 public class FlinkProducerTest extends CamelTestSupport {
 
     static ExecutionEnvironment executionEnvironment = Flinks.createExecutionEnvironment();
+    static StreamExecutionEnvironment streamExecutionEnvironment = Flinks.createStreamExecutionEnvironment();
 
-    String flinkUri = "flink:dataSet?dataSet=#myDataSet";
+    String flinkDataSetUri = "flink:dataSet?dataSet=#myDataSet";
+    String flinkDataStreamUri = "flink:dataStream?dataStream=#myDataStream";
 
     int numberOfLinesInTestFile = 19;
 
@@ -41,6 +45,7 @@ public class FlinkProducerTest extends CamelTestSupport {
         JndiRegistry registry = super.createRegistry();
 
         registry.bind("myDataSet", executionEnvironment.readTextFile("src/test/resources/testds.txt"));
+        registry.bind("myDataStream", streamExecutionEnvironment.readTextFile("src/test/resources/testds.txt"));
 
         registry.bind("countLinesContaining", new DataSetCallback() {
             @Override
@@ -57,7 +62,7 @@ public class FlinkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteDataSetCallback() {
-        Long linesCount = template.requestBodyAndHeader(flinkUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, new DataSetCallback() {
+        Long linesCount = template.requestBodyAndHeader(flinkDataSetUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, new DataSetCallback() {
             @Override
             public Object onDataSet(DataSet ds, Object... payloads) {
                 try {
@@ -73,7 +78,7 @@ public class FlinkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteDataSetCallbackWithSinglePayload() {
-        Long linesCount = template.requestBodyAndHeader(flinkUri, 10, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, new DataSetCallback() {
+        Long linesCount = template.requestBodyAndHeader(flinkDataSetUri, 10, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, new DataSetCallback() {
             @Override
             public Object onDataSet(DataSet ds, Object... payloads) {
                 try {
@@ -89,7 +94,7 @@ public class FlinkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteDataSetCallbackWithPayloads() {
-        Long linesCount = template.requestBodyAndHeader(flinkUri, Arrays.<Integer>asList(10, 10), FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, new DataSetCallback() {
+        Long linesCount = template.requestBodyAndHeader(flinkDataSetUri, Arrays.<Integer>asList(10, 10), FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, new DataSetCallback() {
             @Override
             public Object onDataSet(DataSet ds, Object... payloads) {
                 try {
@@ -105,7 +110,7 @@ public class FlinkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldUseTransformationFromRegistry() {
-        Long linesCount = template.requestBody(flinkUri + "&dataSetCallback=#countLinesContaining", null, Long.class);
+        Long linesCount = template.requestBody(flinkDataSetUri + "&dataSetCallback=#countLinesContaining", null, Long.class);
         Truth.assertThat(linesCount).isGreaterThan(0L);
     }
 
@@ -114,7 +119,7 @@ public class FlinkProducerTest extends CamelTestSupport {
         final File output = File.createTempFile("camel", "flink");
         output.delete();
 
-        template.sendBodyAndHeader(flinkUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, new VoidDataSetCallback() {
+        template.sendBodyAndHeader(flinkDataSetUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, new VoidDataSetCallback() {
             @Override
             public void doOnDataSet(DataSet ds, Object... payloads) {
                 ds.writeAsText(output.getAbsolutePath());
@@ -137,7 +142,7 @@ public class FlinkProducerTest extends CamelTestSupport {
             }
         });
 
-        long pomLinesCount = template.requestBodyAndHeader(flinkUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback, Long.class);
+        long pomLinesCount = template.requestBodyAndHeader(flinkDataSetUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback, Long.class);
 
         Truth.assertThat(pomLinesCount).isEqualTo(19);
     }
@@ -154,7 +159,7 @@ public class FlinkProducerTest extends CamelTestSupport {
             }
         });
 
-        template.sendBodyAndHeader(flinkUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback);
+        template.sendBodyAndHeader(flinkDataSetUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback);
 
         Truth.assertThat(output.length()).isAtLeast(0L);
     }
@@ -172,7 +177,22 @@ public class FlinkProducerTest extends CamelTestSupport {
             }
         });
 
-        long pomLinesCount = template.requestBodyAndHeader(flinkUri, Arrays.<Integer>asList(10, 10), FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback, Long.class);
+        long pomLinesCount = template.requestBodyAndHeader(flinkDataSetUri, Arrays.<Integer>asList(10, 10), FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback, Long.class);
         Truth.assertThat(pomLinesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
+    }
+
+    @Test
+    public void shouldExecuteVoidDataStreamCallback() throws IOException {
+        final File output = File.createTempFile("camel", "flink");
+        output.delete();
+
+        template.sendBodyAndHeader(flinkDataStreamUri, null, FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER, new VoidDataStreamCallback() {
+            @Override
+            public void doOnDataStream(DataStream ds, Object... payloads) throws Exception {
+                ds.writeAsText(output.getAbsolutePath());
+            }
+        });
+
+        Truth.assertThat(output.length()).isAtLeast(0L);
     }
 }

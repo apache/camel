@@ -37,7 +37,6 @@
   </properties>
 
   <dependencies>
-
     <!--camel-->
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -55,6 +54,13 @@
       <artifactId>flink-clients</artifactId>
       <version>${flink-version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-streaming-java</artifactId>
+      <version>${flink-version}</version>
+    </dependency>
+
+    <!--flink-->
 
     <!-- scala -->
     <dependency>

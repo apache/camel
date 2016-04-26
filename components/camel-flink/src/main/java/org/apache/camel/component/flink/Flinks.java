@@ -17,13 +17,19 @@
 package org.apache.camel.component.flink;
 
 import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 public final class Flinks {
 
     private Flinks() {
+
     }
 
     public static ExecutionEnvironment createExecutionEnvironment() {
         return ExecutionEnvironment.getExecutionEnvironment();
+    }
+
+    public static StreamExecutionEnvironment createStreamExecutionEnvironment() {
+        return StreamExecutionEnvironment.getExecutionEnvironment();
     }
 }
