@@ -16,25 +16,26 @@
  */
 package org.apache.camel.component.ahc.ws;
 
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.ServerConnector;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * @version 
- */
-public class WsProducerTest extends WsProducerTestBase {
-    
-    @Override
-    protected void setUpComponent() throws Exception {
+public class TestMessages {
+
+    private static TestMessages instance;
+    private final List<Object> messages = new ArrayList<>();
+
+    public static TestMessages getInstance() {
+        if (instance == null) {
+            instance = new TestMessages();
+        }
+        return instance;
     }
 
-    @Override
-    protected Connector getConnector() throws Exception {
-        return new ServerConnector(server);
+    public List<Object> getMessages() {
+        return messages;
     }
-    
-    @Override
-    protected String getTargetURL() {
-        return "ahc-ws://localhost:" + PORT;
+
+    public void addMessage(Object message) {
+        messages.add(message);
     }
 }

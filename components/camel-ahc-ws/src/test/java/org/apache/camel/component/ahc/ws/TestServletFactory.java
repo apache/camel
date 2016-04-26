@@ -16,25 +16,13 @@
  */
 package org.apache.camel.component.ahc.ws;
 
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
-/**
- * @version 
- */
-public class WsProducerTest extends WsProducerTestBase {
-    
-    @Override
-    protected void setUpComponent() throws Exception {
-    }
+public class TestServletFactory extends WebSocketServlet {
 
     @Override
-    protected Connector getConnector() throws Exception {
-        return new ServerConnector(server);
-    }
-    
-    @Override
-    protected String getTargetURL() {
-        return "ahc-ws://localhost:" + PORT;
+    public void configure(WebSocketServletFactory factory) {
+        factory.register(TestServlet.class);
     }
 }
