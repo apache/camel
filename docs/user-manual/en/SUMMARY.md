@@ -169,6 +169,7 @@
     * [Jcache](jcache.adoc)
     * [Jclouds](jclouds.adoc)
     * [Jcr](jcr.adoc)
+    * [JDBC](jdbc.adoc)
     * [Kafka](kafka.adoc)
     * [Metrics](metrics.adoc)
     * [Mock](mock.adoc)
