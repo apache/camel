@@ -72,7 +72,7 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     private RestHostNameResolver hostNameResolver;
 
-    @XmlAttribute @Metadata(defaultValue = "auto")
+    @XmlAttribute @Metadata(defaultValue = "off")
     private RestBindingMode bindingMode;
 
     @XmlAttribute
@@ -263,7 +263,7 @@ public class RestConfigurationDefinition {
     /**
      * Sets the binding mode to use.
      * <p/>
-     * The default value is auto
+     * The default value is off
      */
     public void setBindingMode(RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
