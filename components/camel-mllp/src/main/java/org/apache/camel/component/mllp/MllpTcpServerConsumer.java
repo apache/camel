@@ -205,9 +205,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     Socket socket = null;
                     try {
                         socket = serverSocket.accept();
-                    } catch (SocketTimeoutException timeoutEx ) {
+                    } catch (SocketTimeoutException timeoutEx) {
                         // Didn't get a new connection - keep waiting for one
-                        log.debug( "Timeout waiting for client connection - keep listening");
+                        log.debug("Timeout waiting for client connection - keep listening");
                         continue;
                     } catch (SocketException socketEx) {
                         // This should happen if the component is closed while the accept call is blocking
