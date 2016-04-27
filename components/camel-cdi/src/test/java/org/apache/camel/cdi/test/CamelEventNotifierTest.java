@@ -101,8 +101,8 @@ public class CamelEventNotifierTest {
 
     @Test
     @InSequence(1)
-    public void startedCamelContext(List<Class> events) throws Exception {
-        assertThat("Events fired are incorrect", events,
+    public void startedCamelContext(List<Class> events) {
+        assertThat("Events fired are incorrect!", events,
             contains(
                 CamelContextStartingEvent.class,
                 CamelContextStartedEvent.class));
@@ -118,7 +118,7 @@ public class CamelEventNotifierTest {
 
         assertIsSatisfied(2L, TimeUnit.SECONDS, outbound);
 
-        assertThat("Events fired are incorrect", events,
+        assertThat("Events fired are incorrect!", events,
             contains(
                 CamelContextStartingEvent.class,
                 CamelContextStartedEvent.class,
@@ -135,7 +135,7 @@ public class CamelEventNotifierTest {
     public void stopCamelContext(CamelContext context, List<Class> events) throws Exception {
         context.stop();
 
-        assertThat("Events fired are incorrect", events,
+        assertThat("Events fired are incorrect!", events,
             contains(
                 CamelContextStartingEvent.class,
                 CamelContextStartedEvent.class,

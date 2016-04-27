@@ -35,6 +35,6 @@ public class SimpleCamelRoute extends RouteBuilder {
 
     @Override
     public void configure() {
-        from(direct).routeId("simple").to(mock);
+        from(direct).routeId("simple").startupOrder(10).to(mock);
     }
 }

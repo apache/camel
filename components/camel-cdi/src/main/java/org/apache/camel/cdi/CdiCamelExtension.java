@@ -30,7 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import static java.util.Collections.newSetFromMap;
-import static java.util.Collections.singleton;
 import static java.util.function.Predicate.isEqual;
 import static java.util.stream.Collectors.collectingAndThen;
 
@@ -199,8 +198,15 @@ public class CdiCamelExtension implements Extension {
         Type type = pom.getObserverMethod().getObservedType();
         // Camel events are raw types
         if (type instanceof Class && Class.class.cast(type).getPackage().equals(AbstractExchangeEvent.class.getPackage())) {
-            eventQualifiers.addAll(pom.getObserverMethod().getObservedQualifiers().isEmpty()
-                ? singleton(ANY) : pom.getObserverMethod().getObservedQualifiers());
+            Set<Annotation> qualifiers = pom.getObserverMethod().getObservedQualifiers();
+            if (qualifiers.isEmpty()) {
+                eventQualifiers.add(ANY);
+            } else if (qualifiers.size() == 1 && qualifiers.stream()
+                .filter(isAnnotationType(Named.class)).findAny().isPresent()) {
+                eventQualifiers.add(DEFAULT);
+            } else {
+                eventQualifiers.addAll(qualifiers);
+            }
         }
     }
 
