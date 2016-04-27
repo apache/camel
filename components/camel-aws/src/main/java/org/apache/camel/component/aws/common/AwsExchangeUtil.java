@@ -26,7 +26,9 @@ public final class AwsExchangeUtil {
 
     public static Message getMessageForResponse(final Exchange exchange) {
         if (exchange.getPattern().isOutCapable()) {
-            return exchange.getOut();
+            Message out = exchange.getOut();
+            out.copyFrom(exchange.getIn());
+            return out;
         }
         return exchange.getIn();
     }
