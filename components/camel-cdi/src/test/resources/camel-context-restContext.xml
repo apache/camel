@@ -15,10 +15,15 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<restContext id="rest" xmlns="http://camel.apache.org/schema/spring">
+<restContext id="rest" xmlns="http://camel.apache.org/schema/spring"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://camel.apache.org/schema/spring
+             http://camel.apache.org/schema/spring/camel-spring.xsd">
+
     <rest path="/inbound">
         <get>
             <to uri="direct:inbound"/>
         </get>
     </rest>
+
 </restContext>

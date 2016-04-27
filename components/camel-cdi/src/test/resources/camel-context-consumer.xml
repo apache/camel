@@ -15,7 +15,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<camelContext id="test" xmlns="http://camel.apache.org/schema/spring">
+<camelContext id="test" xmlns="http://camel.apache.org/schema/spring"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://camel.apache.org/schema/spring
+              http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <consumerTemplate id="consumer" maximumCacheSize="100"/>
 
