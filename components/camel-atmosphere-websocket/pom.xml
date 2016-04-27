@@ -40,9 +40,9 @@
             org.atmosphere.*;version="${atmosphere-version-range}",
             org.apache.catalina;resolution:=optional,
             org.apache.catalina.comet;resolution:=optional,
-            org.eclipse.jetty.continuation;version="[8,10)";resolution:=optional,
-            org.eclipse.jetty.server;version="[8,10)";resolution:=optional,
-            org.eclipse.jetty.util.ssl;version="[8,10)";resolution:=optional,
+            org.eclipse.jetty.continuation;version="[9,10)";resolution:=optional,
+            org.eclipse.jetty.server;version="[9,10)";resolution:=optional,
+            org.eclipse.jetty.util.ssl;version="[9,10)";resolution:=optional,
             ${camel.osgi.import.defaults},
             *
         </camel.osgi.import.pkg>
@@ -99,15 +99,15 @@
 
         <!-- Jetty 8 for testing-->
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-websocket</artifactId>
-            <version>${jetty8-version}</version>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-server</artifactId>
+            <version>${jetty9-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>${jetty8-version}</version>
+            <version>${jetty9-version}</version>
             <scope>test</scope>
         </dependency>
 
