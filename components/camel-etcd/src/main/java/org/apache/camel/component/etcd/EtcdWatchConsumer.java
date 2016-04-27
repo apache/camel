@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import mousio.client.promises.ResponsePromise;
 import mousio.etcd4j.requests.EtcdKeyGetRequest;
-import mousio.etcd4j.responses.EtcdErrorCode;
 import mousio.etcd4j.responses.EtcdException;
 import mousio.etcd4j.responses.EtcdKeysResponse;
 import org.apache.camel.Exchange;
@@ -32,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponsePromise.IsSimplePromiseResponseHandler<EtcdKeysResponse> {
     private static final Logger LOGGER = LoggerFactory.getLogger(EtcdWatchConsumer.class);
-    private static final String OUTDATED_EVENT_MSG = "requested index is outdated and cleared";
 
     private final EtcdWatchEndpoint endpoint;
     private final EtcdConfiguration configuration;
@@ -81,7 +79,7 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponseP
             // }
             //
             // So we set the index to the one returned by the exception + 1
-            if (isOutdatedIndexException(exception)) {
+            if (EtcdHelper.isOutdatedIndexException(exception)) {
                 LOGGER.debug("Outdated index, key: {}, cause={}", getPath(), exception.etcdCause);
 
                 // We set the index to the one returned by the exception + 1.
@@ -153,13 +151,5 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponseP
         }
 
         request.send().addListener(this);
-    }
-
-    private boolean isOutdatedIndexException(EtcdException exception) {
-        if (exception.isErrorCode(EtcdErrorCode.EventIndexCleared) && exception.etcdMessage != null) {
-            return exception.etcdMessage.toLowerCase().contains(OUTDATED_EVENT_MSG);
-        }
-
-        return false;
     }
 }
