@@ -39,11 +39,12 @@ import org.apache.camel.util.CamelContextHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestConfigurationDefinition {
 
+    private static final String SWAGGER = "swagger";
     @XmlAttribute
     private String component;
 
-    @XmlAttribute @Metadata(defaultValue = "swagger")
-    private String apiComponent;
+    @XmlAttribute @Metadata(defaultValue = SWAGGER)
+    private String apiComponent = SWAGGER;
 
     @XmlAttribute
     private String scheme;
@@ -73,7 +74,7 @@ public class RestConfigurationDefinition {
     private RestHostNameResolver hostNameResolver;
 
     @XmlAttribute @Metadata(defaultValue = "auto")
-    private RestBindingMode bindingMode;
+    private RestBindingMode bindingMode = RestBindingMode.auto;
 
     @XmlAttribute
     private Boolean skipBindingOnErrorCode;
