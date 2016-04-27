@@ -35,7 +35,6 @@
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.jetty9</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=jetty</camel.osgi.export.service>
-    <jetty-version>${jetty9-version}</jetty-version>
   </properties>
 
   <dependencies>
