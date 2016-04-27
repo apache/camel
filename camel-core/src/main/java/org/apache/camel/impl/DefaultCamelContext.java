@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,6 +41,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -3109,13 +3111,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         } catch (Throwable e) {
             log.warn("Error occurred while shutting down routes. This exception will be ignored.", e);
         }
-        getRouteStartupOrder().clear();
 
         // shutdown await manager to trigger interrupt of blocked threads to attempt to free these threads graceful
         shutdownServices(asyncProcessorAwaitManager);
 
-        shutdownServices(routeServices.values());
+        shutdownServices(getRouteStartupOrder().stream()
+            .sorted(Comparator.comparing(RouteStartupOrder::getStartupOrder).reversed())
+            .map(DefaultRouteStartupOrder.class::cast)
+            .map(DefaultRouteStartupOrder::getRouteService)
+            .collect(Collectors.toList()), false);
         // do not clear route services or startup listeners as we can start Camel again and get the route back as before
+        getRouteStartupOrder().clear();
 
         // but clear any suspend routes
         suspendedRouteServices.clear();
