@@ -54,7 +54,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
     private String produces;
 
     @XmlAttribute
-    @Metadata(defaultValue = "auto")
+    @Metadata(defaultValue = "off")
     private RestBindingMode bindingMode;
 
     @XmlAttribute
@@ -299,7 +299,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
     /**
      * Sets the binding mode to use.
      * <p/>
-     * The default value is auto
+     * The default value is off
      */
     public void setBindingMode(RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
