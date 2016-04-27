@@ -31,6 +31,9 @@
   <description>Camel Salesforce support</description>
 
   <properties>
+    <!-- TODO: upgrade to jetty 9 -->
+    <jetty8-version>8.1.17.v20150415</jetty8-version>
+
     <camel.osgi.import.before.defaults>
         org.joda.time.*;version="[1.6,3)"
     </camel.osgi.import.before.defaults>
@@ -50,17 +53,17 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-client</artifactId>
-      <version>${jetty-version}</version>
+      <version>${jetty8-version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-util</artifactId>
-      <version>${jetty-version}</version>
+      <version>${jetty8-version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-io</artifactId>
-      <version>${jetty-version}</version>
+      <version>${jetty8-version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
@@ -122,7 +125,7 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
-      <version>${jetty-version}</version>
+      <version>${jetty8-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

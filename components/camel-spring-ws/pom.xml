@@ -32,6 +32,10 @@
   <description>Camel support for Spring Web Services</description>
 
   <properties>
+
+    <!-- TODO: upgrade to jetty 9 -->
+    <jetty8-version>8.1.17.v20150415</jetty8-version>
+
     <camel.osgi.import.before.defaults>
       org.springframework.beans.*;version="${spring-version-range}",
       org.springframework.util.*;version="${spring-version-range}"
@@ -72,19 +76,19 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
-      <version>${jetty-version}</version>
+      <version>${jetty8-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-security</artifactId>
-      <version>${jetty-version}</version>
+      <version>${jetty8-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlet</artifactId>
-      <version>${jetty-version}</version>
+      <version>${jetty8-version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
