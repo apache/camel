@@ -53,7 +53,6 @@
     <module>camel-hystrix</module>
     <module>camel-jetty-common</module>
     <module>camel-jetty</module>
-    <module>camel-jetty8</module>
     <module>camel-jetty9</module>
     <module>camel-cxf</module>
     <module>camel-cxf-transport</module>
