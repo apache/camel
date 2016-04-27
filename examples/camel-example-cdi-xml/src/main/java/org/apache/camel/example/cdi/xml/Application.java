@@ -67,17 +67,14 @@ public class Application {
         return "Matrix » " + body;
     }
 
-    void logout(@Observes RouteStoppedEvent event) {
-        // TODO: being able to filter event by id with @Named
-        if (event.getRoute().getId().equals("terminal")) {
-            System.out.println(
-                  "                                     __ \n"
-                + " _____         _                   _|  |\n"
-                + "|  |  |___ ___| |_ _ ___ ___ ___ _| |  |\n"
-                + "|  |  |   | . | | | | . | . | -_| . |__|\n"
-                + "|_____|_|_|  _|_|___|_  |_  |___|___|__|\n"
-                + "          |_|       |___|___|           ");
-        }
+    void logout(@Observes @Named("terminal") RouteStoppedEvent event) {
+        System.out.println(
+              "                                     __    \n"
+            + " _____         _                   _|  |   \n"
+            + "|  |  |___ ___| |_ _ ___ ___ ___ _| |  |   \n"
+            + "|  |  |   | . | | | | . | . | -_| . |__|   \n"
+            + "|_____|_|_|  _|_|___|_  |_  |___|___|__|   \n"
+            + "          |_|       |___|___|              ");
     }
 
     void shutdown(@Observes @Destroyed(ApplicationScoped.class) Object event) {
