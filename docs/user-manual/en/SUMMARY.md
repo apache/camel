@@ -171,6 +171,7 @@
     * [Jcr](jcr.adoc)
     * [JDBC](jdbc.adoc)
     * [Jetty](jetty.adoc)
+    * [Jgroups](jgroups.adoc)
     * [Kafka](kafka.adoc)
     * [Metrics](metrics.adoc)
     * [Mock](mock.adoc)
