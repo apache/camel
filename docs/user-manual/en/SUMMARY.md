@@ -196,6 +196,7 @@
     * [Flatpack](flatpack-dataformat.adoc)
     * [Ical](ical.adoc)
     * [Jaxb](jaxb.adoc)
+    * [Jibx](jibx.adoc)
     * [XML JSON](xmljson.adoc)
 
 * User Guide
