@@ -85,7 +85,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         if (jobLauncher == null) {
             jobLauncher = resolveJobLauncher();
         }
-        if (job == null && jobName != null && jobName.compareTo("dynamic")!=0) {
+        if (job == null && jobName != null && jobName.compareTo("dynamic") != 0) {
             job = CamelContextHelper.mandatoryLookup(getCamelContext(), jobName, Job.class);
         }
     }
