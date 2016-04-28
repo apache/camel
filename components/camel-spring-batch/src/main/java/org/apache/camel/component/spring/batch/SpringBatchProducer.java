@@ -48,25 +48,18 @@ public class SpringBatchProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
 
         JobParameters jobParameters = prepareJobParameters(exchange.getIn().getHeaders());
-        String messageJobName = jobParameters.getString(SpringBatchComponent.DYNAMIC_JOBNAME);
+        String messageJobName = jobParameters.getString(SpringBatchComponent.JOB_NAME);
 
         Job job2run = this.job;
 
         if (messageJobName != null) {
-            Job dynamicJob = CamelContextHelper.mandatoryLookup(getEndpoint().getCamelContext(), messageJobName, Job.class);
-
-            job2run = dynamicJob;
-
-            if (job2run == null) {
-                exchange.setException(new CamelExchangeException("Found header " + SpringBatchComponent.DYNAMIC_JOBNAME
-                        + " with value " + messageJobName + " but could not find a Job in camel context", exchange));
-                return;
-            }
+            job2run = CamelContextHelper.mandatoryLookup(getEndpoint().getCamelContext(), messageJobName, Job.class);
         }
+
 
         if (job2run == null) {
             exchange.setException(new CamelExchangeException("jobName was not specified in the endpoint construction "
-                    + " and header " + SpringBatchComponent.DYNAMIC_JOBNAME + " could not be found", exchange));
+                    + " and header " + SpringBatchComponent.JOB_NAME + " could not be found", exchange));
             return;
         }
 

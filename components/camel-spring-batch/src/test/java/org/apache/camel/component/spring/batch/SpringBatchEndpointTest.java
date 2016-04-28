@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -118,7 +117,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         errorEndpoint.expectedMessageCount(1);
 
         //dynamic job should fail as header is present but the job does not exists
-        header(SpringBatchComponent.DYNAMIC_JOBNAME).append("thisJobDoesNotExsistAtAll" + Date.from(Instant.now()));
+        header(SpringBatchComponent.JOB_NAME).append("thisJobDoesNotExsistAtAll" + Date.from(Instant.now()));
         sendBody("direct:dyanmic", "Start the job, please.");
 
         mockEndpoint.assertIsSatisfied();
@@ -133,7 +132,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         Thread.sleep(5000);
         //dynamic job work if header is present and the job exists
         final Map<String, Object> headers = new HashMap<>();
-        headers.put(SpringBatchComponent.DYNAMIC_JOBNAME, "dynamicMockjob");
+        headers.put(SpringBatchComponent.JOB_NAME, "dynamicMockjob");
 
         sendBody("direct:dynamic", "Start the job, please.", headers);
 
