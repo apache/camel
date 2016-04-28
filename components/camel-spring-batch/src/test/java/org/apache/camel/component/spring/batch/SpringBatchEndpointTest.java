@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.spring.batch;
 
+import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -55,10 +59,17 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     @Mock
     Job job;
 
+    @Mock
+    Job dynamicMockjob;
+
     // Camel fixtures
 
     @EndpointInject(uri = "mock:test")
     MockEndpoint mockEndpoint;
+
+    @EndpointInject(uri = "mock:error")
+    MockEndpoint errorEndpoint;
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -66,9 +77,15 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to("spring-batch:mockJob").to("mock:test");
+                from("direct:dynamic").
+                        to("spring-batch:dynamic").
+                        errorHandler(deadLetterChannel("mock:error")).
+                        to("mock:test");
             }
         };
     }
+
+
 
     @Override
     public JndiRegistry createRegistry() throws Exception {
@@ -76,10 +93,54 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         registry.bind("jobLauncher", jobLauncher);
         registry.bind("alternativeJobLauncher", alternativeJobLauncher);
         registry.bind("mockJob", job);
+        registry.bind("dynamicMockjob", dynamicMockjob);
         return registry;
     }
 
     // Tests
+
+   @Test
+    public void dynamicJobFailsIfHeaderNotPressent() throws Exception {
+
+       mockEndpoint.expectedMessageCount(0);
+       errorEndpoint.expectedMessageCount(1);
+
+       //dynamic job should fail as header is not present and the job is dynamic
+       sendBody("direct:dyanmic", "Start the job, please.");
+       mockEndpoint.assertIsSatisfied();
+       mockEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void dynamicJobWorksIfHeaderWithInvalidJobName() throws Exception {
+
+        mockEndpoint.expectedMessageCount(0);
+        errorEndpoint.expectedMessageCount(1);
+
+        //dynamic job should fail as header is present but the job does not exists
+        header(SpringBatchComponent.DYNAMIC_JOBNAME).append("thisJobDoesNotExsistAtAll" +Date.from(Instant.now()));
+        sendBody("direct:dyanmic", "Start the job, please.");
+
+        mockEndpoint.assertIsSatisfied();
+        mockEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void dynamicJobWorksIfHeaderPressentWithvalidJob() throws Exception {
+
+        mockEndpoint.expectedMessageCount(1);
+        errorEndpoint.expectedMessageCount(0);
+        Thread.sleep(5000);
+        //dynamic job work if header is present and the job exists
+        final Map<String, Object> headers = new HashMap<>();
+        headers.put(SpringBatchComponent.DYNAMIC_JOBNAME, "dynamicMockjob");
+
+        sendBody("direct:dynamic", "Start the job, please.", headers);
+
+        mockEndpoint.assertIsSatisfied();
+        errorEndpoint.assertIsSatisfied();
+    }
+
 
     @Test
     public void shouldInjectJobToEndpoint() throws IllegalAccessException {
