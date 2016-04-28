@@ -182,6 +182,13 @@ public class SqlProducer extends DefaultProducer {
                                         exchange.getOut().setBody(data);
                                     }
                                     exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, 1);
+                                } else { 
+                                    if (getEndpoint().isNoop()) {
+                                        exchange.getOut().setBody(exchange.getIn().getBody());
+                                    } else if (getEndpoint().getOutputHeader() != null) {
+                                        exchange.getOut().setBody(exchange.getIn().getBody());
+                                    }
+                                    exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, 0);
                                 }
                             } else {
                                 throw new IllegalArgumentException("Invalid outputType=" + outputType);
