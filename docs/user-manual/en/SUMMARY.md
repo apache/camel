@@ -174,6 +174,7 @@
     * [Jgroups](jgroups.adoc)
     * [Jing](jing.adoc)
     * [JIRA](jira.adoc)
+    * [Jolt](jolt.adoc)
     * [Kafka](kafka.adoc)
     * [Metrics](metrics.adoc)
     * [Mock](mock.adoc)
