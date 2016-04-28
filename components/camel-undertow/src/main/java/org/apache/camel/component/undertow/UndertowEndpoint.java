@@ -289,7 +289,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         super.doStart();
 
         if (sslContextParameters != null) {
-            sslContext = sslContextParameters.createSSLContext();
+            sslContext = sslContextParameters.createSSLContext(getCamelContext());
         }
 
         // create options map

@@ -272,7 +272,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         params.add("sslContextFactory",
             "org.restlet.engine.ssl.DefaultSslContextFactory");
 
-        SSLContext context = scp.createSSLContext();
+        SSLContext context = scp.createSSLContext(getCamelContext());
         SSLEngine engine = context.createSSLEngine();
 
         params.add("enabledProtocols", stringArrayToString(engine.getEnabledProtocols()));

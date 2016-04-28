@@ -599,7 +599,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     private SslContextFactory createSslContextFactory(SSLContextParameters ssl) throws GeneralSecurityException, IOException {
         SslContextFactory answer = new SslContextFactory();
         if (ssl != null) {
-            answer.setSslContext(ssl.createSSLContext());
+            answer.setSslContext(ssl.createSSLContext(getCamelContext()));
         }
         return answer;
     }

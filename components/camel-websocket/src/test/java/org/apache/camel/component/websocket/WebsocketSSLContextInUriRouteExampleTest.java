@@ -106,7 +106,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         AsyncHttpClientConfig.Builder builder =
                 new AsyncHttpClientConfig.Builder();
 
-        builder.setSSLContext(new SSLContextParameters().createSSLContext());
+        builder.setSSLContext(new SSLContextParameters().createSSLContext(context));
         builder.setAcceptAnyCertificate(true);
         config = builder.build();
         c = new AsyncHttpClient(config);

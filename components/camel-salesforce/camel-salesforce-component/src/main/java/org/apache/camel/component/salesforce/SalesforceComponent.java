@@ -191,7 +191,7 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         final SSLContextParameters contextParameters = sslContextParameters != null
             ? sslContextParameters : new SSLContextParameters();
         final SslContextFactory sslContextFactory = httpClient.getSslContextFactory();
-        sslContextFactory.setSslContext(contextParameters.createSSLContext());
+        sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
 
         // set HTTP client parameters
         if (httpClientProperties != null && !httpClientProperties.isEmpty()) {

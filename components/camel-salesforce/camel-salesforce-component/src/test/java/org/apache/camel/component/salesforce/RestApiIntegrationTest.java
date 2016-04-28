@@ -71,7 +71,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         String accessToken = sf.getSession().getAccessToken();
 
         SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext());
+        sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext(context));
         HttpClient httpClient = new HttpClient(sslContextFactory);
         httpClient.setConnectTimeout(60000);
         httpClient.setTimeout(60000);

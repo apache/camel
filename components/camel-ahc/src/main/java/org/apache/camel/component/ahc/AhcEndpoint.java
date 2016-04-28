@@ -241,7 +241,7 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                 AsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
                 
                 if (sslContextParameters != null) {
-                    SSLContext ssl = sslContextParameters.createSSLContext();
+                    SSLContext ssl = sslContextParameters.createSSLContext(getCamelContext());
                     builder.setSSLContext(ssl);
                 }
                 
@@ -249,7 +249,7 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             } else {
                 if (sslContextParameters != null) {
                     AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
-                    SSLContext ssl = sslContextParameters.createSSLContext();
+                    SSLContext ssl = sslContextParameters.createSSLContext(getCamelContext());
                     builder.setSSLContext(ssl);
                     config = builder.build();
                 }
