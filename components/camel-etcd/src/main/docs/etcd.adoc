@@ -8,8 +8,9 @@
 
 
 
+
 // endpoint options: START
-The etcd component supports 14 endpoint options which are listed below:
+The etcd component supports 15 endpoint options which are listed below:
 
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
@@ -25,11 +26,13 @@ The etcd component supports 14 endpoint options which are listed below:
 | timeToLive | producer |  | Integer | To set the lifespan of a key in milliseconds.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| fromIndex | advance | 0 | Long | The index to watch from
 | password | security |  | String | The password to use for basic authentication.
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters.
 | userName | security |  | String | The user name to use for basic authentication.
 |=======================================================================
 // endpoint options: END
+
 
 
 
