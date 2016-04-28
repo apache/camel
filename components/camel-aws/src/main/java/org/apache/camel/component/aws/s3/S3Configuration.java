@@ -176,7 +176,12 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * Delete objects from S3 after it has been retrieved.
+     * Delete objects from S3 after they have been retrieved.  The delete is only performed if the Exchange is committed.
+     * If a rollback occurs, the object is not deleted.
+     * <p/>
+     * If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you
+     * need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the
+     * {@link S3Constants#BUCKET_NAME} and {@link S3Constants#KEY} headers, or only the {@link S3Constants#KEY} header.
      */
     public void setDeleteAfterRead(boolean deleteAfterRead) {
         this.deleteAfterRead = deleteAfterRead;
