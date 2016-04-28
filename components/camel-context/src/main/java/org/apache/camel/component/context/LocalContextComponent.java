@@ -78,7 +78,8 @@ public class LocalContextComponent extends DefaultComponent {
         Endpoint endpoint = map.get(remaining);
         if (endpoint != null) {
             logUsingEndpoint(uri, endpoint);
-            return endpoint;
+            return new ContextEndpoint(uri, this, endpoint);
+            //return new ExportedEndpoint(endpoint);
         }
 
         // look to see if there is an endpoint of name 'remaining' using one of the local endpoints within
@@ -90,7 +91,8 @@ public class LocalContextComponent extends DefaultComponent {
                 endpoint = map.get(newUri);
                 if (endpoint != null) {
                     logUsingEndpoint(uri, endpoint);
-                    return endpoint;
+                    return new ContextEndpoint(uri, this, endpoint);
+                    //return new ExportedEndpoint(endpoint);
                 }
             }
         }
