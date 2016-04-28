@@ -126,6 +126,12 @@
       <artifactId>camel-jaxb</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- testing with ok http client -->
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>${okclient-version}</version>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
