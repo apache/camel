@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.context;
 
+import java.util.Map;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateEndpoint;
@@ -96,4 +99,25 @@ public class ContextEndpoint extends DefaultEndpoint implements DelegateEndpoint
     public boolean isSingleton() {
         return delegate.isSingleton();
     }
+
+    @Override
+    public void start() throws Exception {
+        // noop by purpose
+    }
+
+    @Override
+    public void stop() throws Exception {
+        // noop by purpose
+    }
+
+    @Override
+    public void configureProperties(Map<String, Object> options) {
+        // noop by purpose
+    }
+
+    @Override
+    public void setCamelContext(CamelContext context) {
+        // noop by purpose
+    }
+
 }
