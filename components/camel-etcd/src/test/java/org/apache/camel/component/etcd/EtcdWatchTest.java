@@ -78,7 +78,7 @@ public class EtcdWatchTest extends EtcdTest {
 
     private void testWatch(String mockEndpoint, final String key, int updates) throws Exception {
         final String[] values = new String[updates];
-        for (int i = 0; i< updates; i++) {
+        for (int i = 0; i < updates; i++) {
             values[i] = key + "=myValue-" + i;
         }
 
@@ -89,7 +89,7 @@ public class EtcdWatchTest extends EtcdTest {
         mock.expectedBodiesReceived(values);
 
         final EtcdClient client = getClient();
-        for (int i = 0; i< updates; i++) {
+        for (int i = 0; i < updates; i++) {
             client.put(key, "myValue-" + i).send().get();
         }
 

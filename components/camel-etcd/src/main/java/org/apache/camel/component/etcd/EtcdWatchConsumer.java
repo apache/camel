@@ -128,7 +128,7 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponseP
             }
         }
 
-        if (throwable != null){
+        if (throwable != null) {
             handleException("Error processing etcd response", throwable);
         }
 
