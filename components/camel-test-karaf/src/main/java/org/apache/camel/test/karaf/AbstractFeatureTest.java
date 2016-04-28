@@ -249,7 +249,7 @@ public abstract class AbstractFeatureTest {
         }
         if (karafVersion == null) {
             // setup the default version of it
-            karafVersion = "4.0.4";
+            karafVersion = "4.0.5";
         }
         return karafVersion;
     }
