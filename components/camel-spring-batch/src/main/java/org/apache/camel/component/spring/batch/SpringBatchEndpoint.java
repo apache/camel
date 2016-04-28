@@ -37,7 +37,8 @@ import org.springframework.batch.core.launch.JobLauncher;
 @UriEndpoint(scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName", producerOnly = true, label = "spring,batch,scheduling")
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath()
+    @Metadata(required = "true")
     private String jobName;
 
     /**
@@ -46,6 +47,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
      */
     @Deprecated
     private String jobLauncherRef;
+
     @UriParam
     private JobLauncher jobLauncher;
 
@@ -83,7 +85,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         if (jobLauncher == null) {
             jobLauncher = resolveJobLauncher();
         }
-        if (job == null && jobName != null) {
+        if (job == null && jobName != null && jobName.compareTo("dynamic")!=0) {
             job = CamelContextHelper.mandatoryLookup(getCamelContext(), jobName, Job.class);
         }
     }
