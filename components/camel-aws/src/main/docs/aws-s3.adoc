@@ -38,6 +38,7 @@ The AWS S3 Storage Service component has no options.
 
 
 
+
 // endpoint options: START
 The AWS S3 Storage Service component supports 38 endpoint options which are listed below:
 
@@ -53,7 +54,7 @@ The AWS S3 Storage Service component supports 38 endpoint options which are list
 | proxyPort | common |  | Integer | Camel 2.16: Specify a proxy port to be used inside the client definition.
 | secretKey | common |  | String | Amazon AWS Secret Key
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| deleteAfterRead | consumer | true | boolean | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs the object is not deleted.
+| deleteAfterRead | consumer | true | boolean | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs the object is not deleted. If this option is false then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the link S3ConstantsBUCKET_NAME and link S3ConstantsKEY headers or only the link S3ConstantsKEY header.
 | fileName | consumer |  | String | To get the object from the bucket with the given file name
 | includeBody | consumer | true | boolean | Camel 2.17: If it is true the exchange body will be set to a stream to the contents of the file. If false the headers will be set with the S3 object metadata but the body will be null.
 | maxMessagesPerPoll | consumer | 10 | int | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited but use 0 or negative number to disable it as unlimited.
@@ -84,6 +85,7 @@ The AWS S3 Storage Service component supports 38 endpoint options which are list
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
 // endpoint options: END
+
 
 
 
