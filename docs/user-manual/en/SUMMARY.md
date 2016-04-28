@@ -189,11 +189,10 @@
     * [Yammer](yammer.adoc)
     * [ZooKeeper](zookeeper.adoc)
 
-<!--
 * [Expession Languages](languages.adoc)
     * [Bean Language](bean-language.adoc)
     * [Constant](constant.adoc)
--->
+    * [SQL](josql.adoc)
 
 * Data Formats
     * [Flatpack](flatpack-dataformat.adoc)
