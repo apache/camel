@@ -44,6 +44,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
 
     private ConnectionFactory connectionFactory;
     private ConnectionResource connectionResource;
+    private volatile boolean closeConnectionResource;
     private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
     private JmsKeyFormatStrategy jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
     private Integer connectionCount = 1;
@@ -115,6 +116,8 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
             ConnectionFactoryResource connections = new ConnectionFactoryResource(getConnectionCount(), getConnectionFactory());
             connections.fillPool();
             setConnectionResource(connections);
+            // we created the resource so we should close it when stopping
+            closeConnectionResource = true;
         } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
             ((ConnectionFactoryResource) getConnectionResource()).fillPool();
         }
@@ -124,13 +127,18 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     protected void doStop() throws Exception {
         if (timedTaskManager != null) {
             timedTaskManager.cancelTasks();
+            timedTaskManager = null;
         }
 
-        if (getConnectionResource() != null) {
-            if (getConnectionResource() instanceof ConnectionFactoryResource) {
-                ((ConnectionFactoryResource) getConnectionResource()).drainPool();
+        if (closeConnectionResource) {
+            if (getConnectionResource() != null) {
+                if (getConnectionResource() instanceof ConnectionFactoryResource) {
+                    ((ConnectionFactoryResource) getConnectionResource()).drainPool();
+                }
             }
+            connectionResource = null;
         }
+
         super.doStop();
     }
 
