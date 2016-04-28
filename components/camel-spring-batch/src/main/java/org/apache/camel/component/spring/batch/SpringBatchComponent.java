@@ -24,10 +24,9 @@ import org.springframework.batch.core.launch.JobLauncher;
 
 public class SpringBatchComponent extends UriEndpointComponent {
 
-    public  static final String DYNAMIC_JOBNAME = "CamelSpringBatchDynamicJobName";
-    
-    private static final String DEFAULT_JOB_LAUNCHER_REF_NAME = "jobLauncher";
+    public  static final String JOB_NAME = "CamelSpringBatch.jobName";
 
+    private static final String DEFAULT_JOB_LAUNCHER_REF_NAME = "jobLauncher";
 
     private JobLauncher jobLauncher;
     private JobLauncher defaultResolvedJobLauncher;
