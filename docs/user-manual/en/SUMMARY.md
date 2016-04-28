@@ -173,6 +173,7 @@
     * [Jetty](jetty.adoc)
     * [Jgroups](jgroups.adoc)
     * [Jing](jing.adoc)
+    * [JIRA](jira.adoc)
     * [Kafka](kafka.adoc)
     * [Metrics](metrics.adoc)
     * [Mock](mock.adoc)
