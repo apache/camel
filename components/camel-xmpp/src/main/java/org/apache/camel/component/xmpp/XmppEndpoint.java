@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
 
-    private XMPPConnection connection;
+    private volatile XMPPConnection connection;
     private XmppBinding binding;
 
     @UriPath @Metadata(required = "true")
@@ -152,56 +152,62 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public synchronized XMPPConnection createConnection() throws XMPPException, SmackException, IOException {
         if (connection != null && connection.isConnected()) {
+            // use existing working connection
             return connection;
         }
 
-        if (connection == null) {
-            connection = createConnectionInternal();
-        }
+        // prepare for creating new connection
+        connection = null;
 
-        connection.connect();
+        LOG.trace("Creating new connection ...");
+        XMPPConnection newConnection = createConnectionInternal();
 
-        connection.addPacketListener(new XmppLogger("INBOUND"), new PacketFilter() {
+        newConnection.connect();
+
+        newConnection.addPacketListener(new XmppLogger("INBOUND"), new PacketFilter() {
             public boolean accept(Packet packet) {
                 return true;
             }
         });
-        connection.addPacketSendingListener(new XmppLogger("OUTBOUND"), new PacketFilter() {
+        newConnection.addPacketSendingListener(new XmppLogger("OUTBOUND"), new PacketFilter() {
             public boolean accept(Packet packet) {
                 return true;
             }
         });
 
-        if (!connection.isAuthenticated()) {
+        if (!newConnection.isAuthenticated()) {
             if (user != null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Logging in to XMPP as user: {} on connection: {}", user, getConnectionMessage(connection));
+                    LOG.debug("Logging in to XMPP as user: {} on connection: {}", user, getConnectionMessage(newConnection));
                 }
                 if (password == null) {
-                    LOG.warn("No password configured for user: {} on connection: {}", user, getConnectionMessage(connection));
+                    LOG.warn("No password configured for user: {} on connection: {}", user, getConnectionMessage(newConnection));
                 }
 
                 if (createAccount) {
-                    AccountManager accountManager = AccountManager.getInstance(connection);
+                    AccountManager accountManager = AccountManager.getInstance(newConnection);
                     accountManager.createAccount(user, password);
                 }
                 if (login) {
                     if (resource != null) {
-                        connection.login(user, password, resource);
+                        newConnection.login(user, password, resource);
                     } else {
-                        connection.login(user, password);
+                        newConnection.login(user, password);
                     }
                 }
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Logging in anonymously to XMPP on connection: {}", getConnectionMessage(connection));
+                    LOG.debug("Logging in anonymously to XMPP on connection: {}", getConnectionMessage(newConnection));
                 }
-                connection.loginAnonymously();
+                newConnection.loginAnonymously();
             }
 
             // presence is not needed to be sent after login
         }
 
+        // okay new connection was created successfully so assign it as the connection
+        LOG.debug("Created new connection successfully: {}", newConnection);
+        connection = newConnection;
         return connection;
     }
 
