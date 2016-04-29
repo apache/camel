@@ -35,7 +35,6 @@ import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.util.ServiceHelper;
-import org.eclipse.jetty.http.HttpMethods;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_METHOD;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX;
@@ -490,7 +489,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         String apexMethod = getParameter(APEX_METHOD, exchange, IGNORE_BODY, IS_OPTIONAL);
         // default to GET
         if (apexMethod == null) {
-            apexMethod = HttpMethods.GET;
+            apexMethod = "GET";
             log.debug("Using HTTP GET method by default for APEX REST call for {}", apexUrl);
         }
         final Map<String, Object> queryParams = getQueryParams(exchange);

@@ -16,21 +16,23 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
-import org.eclipse.jetty.client.ContentExchange;
+import java.net.URI;
+
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.HttpConversation;
+import org.eclipse.jetty.client.HttpRequest;
 
 /**
- * Wraps a Salesforce Http Exchange
+ * Salesforce HTTP Request, exposes {@link HttpConversation} field.
  */
-public class SalesforceExchange extends ContentExchange {
+public class SalesforceHttpRequest extends HttpRequest {
 
-    private AbstractClientBase client;
-
-    public AbstractClientBase getClient() {
-        return client;
+    public SalesforceHttpRequest(HttpClient client, HttpConversation conversation, URI uri) {
+        super(client, conversation, uri);
     }
 
-    public void setClient(AbstractClientBase client) {
-        this.client = client;
+    @Override
+    protected HttpConversation getConversation() {
+        return super.getConversation();
     }
-
 }

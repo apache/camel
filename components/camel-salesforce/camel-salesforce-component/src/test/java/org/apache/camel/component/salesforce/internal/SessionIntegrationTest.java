@@ -17,9 +17,8 @@
 package org.apache.camel.component.salesforce.internal;
 
 import org.apache.camel.component.salesforce.LoginConfigHelper;
+import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.RedirectListener;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,16 +40,15 @@ public class SessionIntegrationTest extends Assert implements SalesforceSession.
 
         final SslContextFactory sslContextFactory = new SslContextFactory();
         sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext());
-        final HttpClient httpClient = new HttpClient(sslContextFactory);
+        final SalesforceHttpClient httpClient = new SalesforceHttpClient(sslContextFactory);
         httpClient.setConnectTimeout(TIMEOUT);
-        httpClient.setTimeout(TIMEOUT);
-        httpClient.registerListener(RedirectListener.class.getName());
-        httpClient.start();
 
         final SalesforceSession session = new SalesforceSession(
-            httpClient, LoginConfigHelper.getLoginConfig());
+            httpClient, TIMEOUT, LoginConfigHelper.getLoginConfig());
         session.addListener(this);
+        httpClient.setSession(session);
 
+        httpClient.start();
         try {
             String loginToken = session.login(session.getAccessToken());
             LOG.info("First token " + loginToken);

@@ -31,9 +31,6 @@
   <description>Camel Salesforce support</description>
 
   <properties>
-    <!-- TODO: upgrade to jetty 9 -->
-    <jetty8-version>8.1.17.v20150415</jetty8-version>
-
     <camel.osgi.import.before.defaults>
         org.joda.time.*;version="[1.6,3)"
     </camel.osgi.import.before.defaults>
@@ -53,17 +50,22 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-client</artifactId>
-      <version>${jetty8-version}</version>
+      <version>${jetty9-version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-util</artifactId>
-      <version>${jetty8-version}</version>
+      <version>${jetty9-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-util-ajax</artifactId>
+      <version>${jetty9-version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-io</artifactId>
-      <version>${jetty8-version}</version>
+      <version>${jetty9-version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
@@ -81,11 +83,11 @@
       <exclusions>
         <exclusion>
           <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-util</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-io</artifactId>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -125,7 +127,19 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
-      <version>${jetty8-version}</version>
+      <version>${jetty9-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+      <version>${jetty9-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-proxy</artifactId>
+      <version>${jetty9-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
