@@ -61,16 +61,16 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
     @Override
     public void getRecentReports(final RecentReportsResponseCallback callback) {
 
-        final Request Request = getRequest(HttpMethod.GET, reportsUrl());
+        final Request request = getRequest(HttpMethod.GET, reportsUrl());
 
-        doHttpRequest(Request, new ClientResponseCallback() {
+        doHttpRequest(request, new ClientResponseCallback() {
             @Override
             @SuppressWarnings("unchecked")
             public void onResponse(InputStream response, SalesforceException ex) {
                 List<RecentReport> recentReports = null;
                 if (response != null) {
                     try {
-                        recentReports = unmarshalResponse(response, Request,
+                        recentReports = unmarshalResponse(response, request,
                             new TypeReference<List<RecentReport>>() {
                             }
                         );
@@ -86,14 +86,14 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
     @Override
     public void getReportDescription(String reportId, final ReportDescriptionResponseCallback callback) {
 
-        final Request Request = getRequest(HttpMethod.GET, reportsDescribeUrl(reportId));
+        final Request request = getRequest(HttpMethod.GET, reportsDescribeUrl(reportId));
 
-        doHttpRequest(Request, new ClientResponseCallback() {
+        doHttpRequest(request, new ClientResponseCallback() {
             @Override
             public void onResponse(InputStream response, SalesforceException ex) {
                 ReportDescription reportDescription = null;
                 try {
-                    reportDescription = unmarshalResponse(response, Request, ReportDescription.class);
+                    reportDescription = unmarshalResponse(response, request, ReportDescription.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
@@ -107,28 +107,28 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
                                   final ReportResultsResponseCallback callback) {
 
         final boolean useGet = reportMetadata == null;
-        final Request Request = getRequest(
+        final Request request = getRequest(
             useGet ? HttpMethod.GET : HttpMethod.POST, reportsUrl(reportId, includeDetails));
 
         // set POST data
         if (!useGet) {
             try {
                 // wrap reportMetadata in a map
-                final HashMap<String, Object> request = new HashMap<String, Object>();
-                request.put("reportMetadata", reportMetadata);
-                marshalRequest(request, Request);
+                final HashMap<String, Object> input = new HashMap<String, Object>();
+                input.put("reportMetadata", reportMetadata);
+                marshalRequest(input, request);
             } catch (SalesforceException e) {
                 callback.onResponse(null, e);
                 return;
             }
         }
 
-        doHttpRequest(Request, new ClientResponseCallback() {
+        doHttpRequest(request, new ClientResponseCallback() {
             @Override
             public void onResponse(InputStream response, SalesforceException ex) {
                 SyncReportResults reportResults = null;
                 try {
-                    reportResults = unmarshalResponse(response, Request, SyncReportResults.class);
+                    reportResults = unmarshalResponse(response, request, SyncReportResults.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
@@ -141,28 +141,28 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
     public void executeAsyncReport(String reportId, Boolean includeDetails, ReportMetadata reportMetadata,
                                    final ReportInstanceResponseCallback callback) {
 
-        final Request Request = getRequest(HttpMethod.POST,
+        final Request request = getRequest(HttpMethod.POST,
             reportInstancesUrl(reportId, includeDetails));
 
         // set POST data
         if (reportMetadata != null) {
             try {
                 // wrap reportMetadata in a map
-                final HashMap<String, Object> request = new HashMap<String, Object>();
-                request.put("reportMetadata", reportMetadata);
-                marshalRequest(request, Request);
+                final HashMap<String, Object> input = new HashMap<String, Object>();
+                input.put("reportMetadata", reportMetadata);
+                marshalRequest(input, request);
             } catch (SalesforceException e) {
                 callback.onResponse(null, e);
                 return;
             }
         }
 
-        doHttpRequest(Request, new ClientResponseCallback() {
+        doHttpRequest(request, new ClientResponseCallback() {
             @Override
             public void onResponse(InputStream response, SalesforceException ex) {
                 ReportInstance reportInstance = null;
                 try {
-                    reportInstance = unmarshalResponse(response, Request, ReportInstance.class);
+                    reportInstance = unmarshalResponse(response, request, ReportInstance.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
@@ -174,16 +174,16 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
     @Override
     public void getReportInstances(String reportId, final ReportInstanceListResponseCallback callback) {
 
-        final Request Request = getRequest(HttpMethod.GET, reportInstancesUrl(reportId));
+        final Request request = getRequest(HttpMethod.GET, reportInstancesUrl(reportId));
 
-        doHttpRequest(Request, new ClientResponseCallback() {
+        doHttpRequest(request, new ClientResponseCallback() {
             @Override
             @SuppressWarnings("unchecked")
             public void onResponse(InputStream response, SalesforceException ex) {
                 List<ReportInstance> reportInstances = null;
                 if (response != null) {
                     try {
-                        reportInstances = unmarshalResponse(response, Request,
+                        reportInstances = unmarshalResponse(response, request,
                             new TypeReference<List<ReportInstance>>() {
                             }
                         );
@@ -199,15 +199,15 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
     @Override
     public void getReportResults(String reportId, String instanceId, final ReportResultsResponseCallback callback) {
 
-        final Request Request = getRequest(HttpMethod.GET,
+        final Request request = getRequest(HttpMethod.GET,
             reportInstancesUrl(reportId, instanceId));
 
-        doHttpRequest(Request, new ClientResponseCallback() {
+        doHttpRequest(request, new ClientResponseCallback() {
             @Override
             public void onResponse(InputStream response, SalesforceException ex) {
                 AsyncReportResults reportResults = null;
                 try {
-                    reportResults = unmarshalResponse(response, Request, AsyncReportResults.class);
+                    reportResults = unmarshalResponse(response, request, AsyncReportResults.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
