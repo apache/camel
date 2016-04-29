@@ -106,7 +106,7 @@ public class NatsConsumer extends DefaultConsumer {
         private final Connection connection;
         private final NatsConfiguration configuration;
 
-        public NatsConsumingTask(Connection connection, NatsConfiguration configuration) {
+        NatsConsumingTask(Connection connection, NatsConfiguration configuration) {
             this.connection = connection;
             this.configuration = configuration;
         }

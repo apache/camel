@@ -66,9 +66,9 @@ public class AbstractBraintreeTestSupport extends CamelTestSupport {
         }
 
         addOptionIfMissing(options, "environment", "CAMEL_BRAINTREE_ENVIRONMENT");
-        addOptionIfMissing(options, "merchantId" , "CAMEL_BRAINTREE_MERCHANT_ID");
-        addOptionIfMissing(options, "publicKey"  , "CAMEL_BRAINTREE_PUBLIC_KEY");
-        addOptionIfMissing(options, "privateKey" , "CAMEL_BRAINTREE_PRIVATE_KEY");
+        addOptionIfMissing(options, "merchantId", "CAMEL_BRAINTREE_MERCHANT_ID");
+        addOptionIfMissing(options, "publicKey", "CAMEL_BRAINTREE_PUBLIC_KEY");
+        addOptionIfMissing(options, "privateKey", "CAMEL_BRAINTREE_PRIVATE_KEY");
 
         final BraintreeConfiguration configuration = new BraintreeConfiguration();
         configuration.setHttpLogLevel(Level.WARNING);

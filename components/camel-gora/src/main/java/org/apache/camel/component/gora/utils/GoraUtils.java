@@ -63,7 +63,7 @@ public final class GoraUtils {
     public static Query<Object, Persistent> constractQueryFromConfiguration(final DataStore<Object, Persistent> dataStore, final GoraConfiguration conf)
         throws ClassNotFoundException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
-        final Query<Object , Persistent> query = dataStore.newQuery();
+        final Query<Object, Persistent> query = dataStore.newQuery();
 
         if (configurationExist(GoraAttribute.GORA_QUERY_START_TIME, conf)) {
             query.setStartTime(getAttributeAsLong(GoraAttribute.GORA_QUERY_START_TIME, conf));

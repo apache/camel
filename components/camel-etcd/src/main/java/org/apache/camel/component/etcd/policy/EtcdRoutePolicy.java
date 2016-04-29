@@ -133,7 +133,7 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
             LOGGER.info("Leadership taken (path={}, name={})", servicePath, serviceName);
             startAllStoppedConsumers();
         } else {
-            if(!leader.getAndSet(isLeader) && isLeader) {
+            if (!leader.getAndSet(isLeader) && isLeader) {
                 LOGGER.info("Leadership lost (path={}, name={})", servicePath, serviceName);
             }
         }

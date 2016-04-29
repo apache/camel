@@ -84,7 +84,7 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
 
     class MyFileInputStream extends FileInputStream {
 
-        public MyFileInputStream(File file) throws FileNotFoundException {
+        MyFileInputStream(File file) throws FileNotFoundException {
             super(file);
         }
 

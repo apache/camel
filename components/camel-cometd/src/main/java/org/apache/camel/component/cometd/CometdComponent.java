@@ -69,7 +69,7 @@ public class CometdComponent extends UriEndpointComponent {
         Server server;
         int refCount;
 
-        public ConnectorRef(Connector connector, CometDServlet servlet, Server server) {
+        ConnectorRef(Connector connector, CometDServlet servlet, Server server) {
             this.connector = connector;
             this.servlet = servlet;
             this.server = server;

@@ -64,7 +64,8 @@ public class Mina2ClientModeTcpTextlineDelimiterTest extends BaseMina2Test {
     private class Server {
         private final int port;
         private IoAcceptor acceptor;
-        public Server(int port) {
+
+        Server(int port) {
             this.port = port;
         }
         

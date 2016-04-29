@@ -73,7 +73,7 @@ class MyObject implements Serializable {
     final String name;
     final byte[] content;
 
-    public MyObject(String name, byte[] content) {
+    MyObject(String name, byte[] content) {
         this.name = name;
         this.content = content;
     }

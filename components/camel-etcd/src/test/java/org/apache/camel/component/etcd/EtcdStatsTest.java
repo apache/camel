@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
 import org.junit.Test;
 
 //@Ignore("Etcd must be started manually")
@@ -32,12 +31,12 @@ public class EtcdStatsTest extends EtcdTest {
     @Test
     public void testStats() throws Exception {
         testStatsConsumer("mock:stats-leader-consumer", EtcdConstants.ETCD_LEADER_STATS_PATH, EtcdLeaderStatsResponse.class);
-        testStatsConsumer("mock:stats-self-consumer"  , EtcdConstants.ETCD_SELF_STATS_PATH  , EtcdSelfStatsResponse.class);
-        testStatsConsumer("mock:stats-store-consumer" , EtcdConstants.ETCD_STORE_STATS_PATH , EtcdStoreStatsResponse.class);
+        testStatsConsumer("mock:stats-self-consumer", EtcdConstants.ETCD_SELF_STATS_PATH, EtcdSelfStatsResponse.class);
+        testStatsConsumer("mock:stats-store-consumer", EtcdConstants.ETCD_STORE_STATS_PATH, EtcdStoreStatsResponse.class);
 
         testStatsProducer("direct:stats-leader", "mock:stats-leader-producer", EtcdConstants.ETCD_LEADER_STATS_PATH, EtcdLeaderStatsResponse.class);
-        testStatsProducer("direct:stats-self"  , "mock:stats-self-producer"  , EtcdConstants.ETCD_SELF_STATS_PATH  , EtcdSelfStatsResponse.class);
-        testStatsProducer("direct:stats-store" , "mock:stats-store-producer" , EtcdConstants.ETCD_STORE_STATS_PATH , EtcdStoreStatsResponse.class);
+        testStatsProducer("direct:stats-self", "mock:stats-self-producer", EtcdConstants.ETCD_SELF_STATS_PATH, EtcdSelfStatsResponse.class);
+        testStatsProducer("direct:stats-store", "mock:stats-store-producer", EtcdConstants.ETCD_STORE_STATS_PATH, EtcdStoreStatsResponse.class);
     }
 
     protected void testStatsConsumer(String mockEnpoint, String expectedPath, final Class<?> expectedType) throws Exception {

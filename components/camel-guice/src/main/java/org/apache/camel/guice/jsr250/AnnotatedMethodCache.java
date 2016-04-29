@@ -33,7 +33,7 @@ class AnnotatedMethodCache {
     private Map<Class<?>, Method> methodCache = Collections
             .synchronizedMap(new WeakHashMap<Class<?>, Method>());
 
-    public AnnotatedMethodCache(Class<? extends Annotation> annotationType) {
+    AnnotatedMethodCache(Class<? extends Annotation> annotationType) {
         this.annotationType = annotationType;
     }
 
