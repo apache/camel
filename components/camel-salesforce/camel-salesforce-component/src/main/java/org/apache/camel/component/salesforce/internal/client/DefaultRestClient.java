@@ -98,7 +98,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                 // return list of choices as error message for 300
                 if (statusCode == HttpStatus.MULTIPLE_CHOICES_300) {
                     if (PayloadFormat.JSON.equals(format)) {
-                        choices = objectMapper.readValue(responseContent, new TypeReference<List<String>>() {});
+                        choices = objectMapper.readValue(responseContent, new TypeReference<List<String>>() { });
                     } else {
                         RestChoices restChoices = new RestChoices();
                         xStream.fromXML(responseContent, restChoices);

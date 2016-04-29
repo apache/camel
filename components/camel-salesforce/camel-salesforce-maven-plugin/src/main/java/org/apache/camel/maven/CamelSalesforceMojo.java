@@ -124,25 +124,25 @@ public class CamelSalesforceMojo extends AbstractMojo {
      * Is it a SOCKS4 Proxy?
      */
     @Parameter(property = "camelSalesforce.isHttpProxySocks4")
-    private boolean isHttpProxySocks4;
+    protected boolean isHttpProxySocks4;
 
     /**
      * Is HTTP Proxy secure, i.e. using secure sockets, true by default.
      */
     @Parameter(property = "camelSalesforce.isHttpProxySecure")
-    private boolean isHttpProxySecure = true;
+    protected boolean isHttpProxySecure = true;
 
     /**
      * Addresses to Proxy.
      */
     @Parameter(property = "camelSalesforce.httpProxyIncludedAddresses")
-    private Set<String> httpProxyIncludedAddresses;
+    protected Set<String> httpProxyIncludedAddresses;
 
     /**
      * Addresses to NOT Proxy.
      */
     @Parameter(property = "camelSalesforce.httpProxyIncludedAddresses")
-    private Set<String> httpProxyExcludedAddresses;
+    protected Set<String> httpProxyExcludedAddresses;
 
     /**
      * Proxy authentication username.

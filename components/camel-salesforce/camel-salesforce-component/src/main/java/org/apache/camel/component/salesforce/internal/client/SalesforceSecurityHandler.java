@@ -37,11 +37,12 @@ import org.slf4j.LoggerFactory;
 
 public class SalesforceSecurityHandler implements ProtocolHandler {
 
+    static final String CLIENT_ATTRIBUTE = SalesforceSecurityHandler.class.getName().concat("camel-salesforce-client");
+    static final String AUTHENTICATION_REQUEST_ATTRIBUTE = SalesforceSecurityHandler.class.getName().concat(".request");
+
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceSecurityHandler.class);
 
     private static final String AUTHENTICATION_RETRIES_ATTRIBUTE = SalesforceSecurityHandler.class.getName().concat(".retries");
-    static final String CLIENT_ATTRIBUTE = SalesforceSecurityHandler.class.getName().concat("camel-salesforce-client");
-    static final String AUTHENTICATION_REQUEST_ATTRIBUTE = SalesforceSecurityHandler.class.getName().concat(".request");
 
     private final SalesforceHttpClient httpClient;
     private final SalesforceSession session;
@@ -161,8 +162,8 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
                 // HTTP failure status
                 // get detailed cause, if request comes from an AbstractClientBase
                 final InputStream inputStream = getContent().length == 0 ? null : getContentAsInputStream();
-                final SalesforceException cause = client != null ?
-                    client.createRestException(response, inputStream) : null;
+                final SalesforceException cause = client != null
+                    ? client.createRestException(response, inputStream) : null;
 
                 if (status == HttpStatus.BAD_REQUEST_400 && cause != null && isInvalidSessionError(cause)) {
 
