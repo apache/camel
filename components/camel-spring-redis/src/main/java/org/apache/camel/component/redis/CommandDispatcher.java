@@ -17,7 +17,6 @@
 package org.apache.camel.component.redis;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -25,238 +24,236 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
 
-public class CommandDispatcher {
+class CommandDispatcher {
     private final RedisConfiguration configuration;
-    private final Exchange exchange;
 
-    public CommandDispatcher(RedisConfiguration configuration, Exchange exchange) {
+    CommandDispatcher(RedisConfiguration configuration) {
         this.configuration = configuration;
-        this.exchange = exchange;
     }
 
     // CHECKSTYLE:OFF
-    public void execute(final RedisClient redisClient) {
-        final Command command = determineCommand();
+    public void execute(final RedisClient redisClient, Exchange exchange) {
+        final Command command = determineCommand(exchange);
         switch (command) {
 
         case PING:
-            setResult(redisClient.ping());
+            setResult(exchange, redisClient.ping());
             break;
         case SET:
-            redisClient.set(getKey(), getValue());
+            redisClient.set(getKey(exchange), getValue(exchange));
             break;
         case GET:
-            setResult(redisClient.get(getKey()));
+            setResult(exchange, redisClient.get(getKey(exchange)));
             break;
         case QUIT:
             redisClient.quit();
             break;
         case EXISTS:
-            setResult(redisClient.exists(getKey()));
+            setResult(exchange, redisClient.exists(getKey(exchange)));
             break;
         case DEL:
-            redisClient.del(getKeys());
+            redisClient.del(getKeys(exchange));
             break;
         case TYPE:
-            setResult(redisClient.type(getKey()));
+            setResult(exchange, redisClient.type(getKey(exchange)));
             break;
         case KEYS:
-            setResult(redisClient.keys(getPattern()));
+            setResult(exchange, redisClient.keys(getPattern(exchange)));
             break;
         case RANDOMKEY:
-            setResult(redisClient.randomkey());
+            setResult(exchange, redisClient.randomkey());
             break;
         case RENAME:
-            redisClient.rename(getKey(), getStringValue());
+            redisClient.rename(getKey(exchange), getStringValue(exchange));
             break;
         case RENAMENX:
-            setResult(redisClient.renamenx(getKey(), getStringValue()));
+            setResult(exchange, redisClient.renamenx(getKey(exchange), getStringValue(exchange)));
             break;
         case EXPIRE:
-            setResult(redisClient.expire(getKey(), getTimeout()));
+            setResult(exchange, redisClient.expire(getKey(exchange), getTimeout(exchange)));
             break;
         case EXPIREAT:
-            setResult(redisClient.expireat(getKey(), getTimestamp()));
+            setResult(exchange, redisClient.expireat(getKey(exchange), getTimestamp(exchange)));
             break;
         case PEXPIRE:
-            setResult(redisClient.pexpire(getKey(), getTimeout()));
+            setResult(exchange, redisClient.pexpire(getKey(exchange), getTimeout(exchange)));
             break;
         case PEXPIREAT:
-            setResult(redisClient.pexpireat(getKey(), getTimestamp()));
+            setResult(exchange, redisClient.pexpireat(getKey(exchange), getTimestamp(exchange)));
             break;
         case TTL:
-            setResult(redisClient.ttl(getKey()));
+            setResult(exchange, redisClient.ttl(getKey(exchange)));
             break;
         case MOVE:
-            setResult(redisClient.move(getKey(), getDb()));
+            setResult(exchange, redisClient.move(getKey(exchange), getDb(exchange)));
             break;
         case GETSET:
-            setResult(redisClient.getset(getKey(), getValue()));
+            setResult(exchange, redisClient.getset(getKey(exchange), getValue(exchange)));
             break;
         case MGET:
-            setResult(redisClient.mget(getFields()));
+            setResult(exchange, redisClient.mget(getFields(exchange)));
             break;
         case SETNX:
-            setResult(redisClient.setnx(getKey(), getValue()));
+            setResult(exchange, redisClient.setnx(getKey(exchange), getValue(exchange)));
             break;
         case SETEX:
-            redisClient.setex(getKey(), getValue(), getTimeout(), TimeUnit.SECONDS);
+            redisClient.setex(getKey(exchange), getValue(exchange), getTimeout(exchange), TimeUnit.SECONDS);
             break;
         case MSET:
-            redisClient.mset(getValuesAsMap());
+            redisClient.mset(getValuesAsMap(exchange));
             break;
         case MSETNX:
-            redisClient.msetnx(getValuesAsMap());
+            redisClient.msetnx(getValuesAsMap(exchange));
             break;
         case DECRBY:
-            setResult(redisClient.decrby(getKey(), getLongValue()));
+            setResult(exchange, redisClient.decrby(getKey(exchange), getLongValue(exchange)));
             break;
         case DECR:
-            setResult(redisClient.decr(getKey()));
+            setResult(exchange, redisClient.decr(getKey(exchange)));
             break;
         case INCRBY:
-            setResult(redisClient.incrby(getKey(), getLongValue()));
+            setResult(exchange, redisClient.incrby(getKey(exchange), getLongValue(exchange)));
             break;
         case INCR:
-            setResult(redisClient.incr(getKey()));
+            setResult(exchange, redisClient.incr(getKey(exchange)));
             break;
         case APPEND:
-            setResult(redisClient.append(getKey(), getStringValue()));
+            setResult(exchange, redisClient.append(getKey(exchange), getStringValue(exchange)));
             break;
         case HSET:
-            redisClient.hset(getKey(), getField(), getValue());
+            redisClient.hset(getKey(exchange), getField(exchange), getValue(exchange));
             break;
         case HGET:
-            setResult(redisClient.hget(getKey(), getField()));
+            setResult(exchange, redisClient.hget(getKey(exchange), getField(exchange)));
             break;
         case HSETNX:
-            setResult(redisClient.hsetnx(getKey(), getField(), getValue()));
+            setResult(exchange, redisClient.hsetnx(getKey(exchange), getField(exchange), getValue(exchange)));
             break;
         case HMSET:
-            redisClient.hmset(getKey(), getValuesAsMap());
+            redisClient.hmset(getKey(exchange), getValuesAsMap(exchange));
             break;
         case HMGET:
-            setResult(redisClient.hmget(getKey(), getFields()));
+            setResult(exchange, redisClient.hmget(getKey(exchange), getFields(exchange)));
             break;
         case HINCRBY:
-            setResult(redisClient.hincrBy(getKey(), getField(), getValueAsLong()));
+            setResult(exchange, redisClient.hincrBy(getKey(exchange), getField(exchange), getValueAsLong(exchange)));
             break;
         case HEXISTS:
-            setResult(redisClient.hexists(getKey(), getField()));
+            setResult(exchange, redisClient.hexists(getKey(exchange), getField(exchange)));
             break;
         case HDEL:
-            redisClient.hdel(getKey(), getField());
+            redisClient.hdel(getKey(exchange), getField(exchange));
             break;
         case HLEN:
-            setResult(redisClient.hlen(getKey()));
+            setResult(exchange, redisClient.hlen(getKey(exchange)));
             break;
         case HKEYS:
-            setResult(redisClient.hkeys(getKey()));
+            setResult(exchange, redisClient.hkeys(getKey(exchange)));
             break;
         case HVALS:
-            setResult(redisClient.hvals(getKey()));
+            setResult(exchange, redisClient.hvals(getKey(exchange)));
             break;
         case HGETALL:
-            setResult(redisClient.hgetAll(getKey()));
+            setResult(exchange, redisClient.hgetAll(getKey(exchange)));
             break;
         case RPUSH:
-            setResult(redisClient.rpush(getKey(), getValue()));
+            setResult(exchange, redisClient.rpush(getKey(exchange), getValue(exchange)));
             break;
         case LPUSH:
-            setResult(redisClient.lpush(getKey(), getValue()));
+            setResult(exchange, redisClient.lpush(getKey(exchange), getValue(exchange)));
             break;
         case LLEN:
-            setResult(redisClient.llen(getKey()));
+            setResult(exchange, redisClient.llen(getKey(exchange)));
             break;
         case LRANGE:
-            setResult(redisClient.lrange(getKey(), getStart(), getEnd()));
+            setResult(exchange, redisClient.lrange(getKey(exchange), getStart(exchange), getEnd(exchange)));
             break;
         case LTRIM:
-            redisClient.ltrim(getKey(), getStart(), getEnd());
+            redisClient.ltrim(getKey(exchange), getStart(exchange), getEnd(exchange));
             break;
         case LINDEX:
-            setResult(redisClient.lindex(getKey(), getIndex()));
+            setResult(exchange, redisClient.lindex(getKey(exchange), getIndex(exchange)));
             break;
         case LSET:
-            redisClient.lset(getKey(), getValue(), getIndex());
+            redisClient.lset(getKey(exchange), getValue(exchange), getIndex(exchange));
             break;
         case LREM:
-            setResult(redisClient.lrem(getKey(), getValue(), getCount()));
+            setResult(exchange, redisClient.lrem(getKey(exchange), getValue(exchange), getCount(exchange)));
             break;
         case LPOP:
-            setResult(redisClient.lpop(getKey()));
+            setResult(exchange, redisClient.lpop(getKey(exchange)));
             break;
         case RPOP:
-            setResult(redisClient.rpop(getKey()));
+            setResult(exchange, redisClient.rpop(getKey(exchange)));
             break;
         case RPOPLPUSH:
-            setResult(redisClient.rpoplpush(getKey(), getDestination()));
+            setResult(exchange, redisClient.rpoplpush(getKey(exchange), getDestination(exchange)));
             break;
         case SADD:
-            setResult(redisClient.sadd(getKey(), getValue()));
+            setResult(exchange, redisClient.sadd(getKey(exchange), getValue(exchange)));
             break;
         case SMEMBERS:
-            setResult(redisClient.smembers(getKey()));
+            setResult(exchange, redisClient.smembers(getKey(exchange)));
             break;
         case SREM:
-            setResult(redisClient.srem(getKey(), getValue()));
+            setResult(exchange, redisClient.srem(getKey(exchange), getValue(exchange)));
             break;
         case SPOP:
-            setResult(redisClient.spop(getKey()));
+            setResult(exchange, redisClient.spop(getKey(exchange)));
             break;
         case SMOVE:
-            setResult(redisClient.smove(getKey(), getValue(), getDestination()));
+            setResult(exchange, redisClient.smove(getKey(exchange), getValue(exchange), getDestination(exchange)));
             break;
         case SCARD:
-            setResult(redisClient.scard(getKey()));
+            setResult(exchange, redisClient.scard(getKey(exchange)));
             break;
         case SISMEMBER:
-            setResult(redisClient.sismember(getKey(), getValue()));
+            setResult(exchange, redisClient.sismember(getKey(exchange), getValue(exchange)));
             break;
         case SINTER:
-            setResult(redisClient.sinter(getKey(), getKeys()));
+            setResult(exchange, redisClient.sinter(getKey(exchange), getKeys(exchange)));
             break;
         case SINTERSTORE:
-            redisClient.sinterstore(getKey(), getKeys(), getDestination());
+            redisClient.sinterstore(getKey(exchange), getKeys(exchange), getDestination(exchange));
             break;
         case SUNION:
-            setResult(redisClient.sunion(getKey(), getKeys()));
+            setResult(exchange, redisClient.sunion(getKey(exchange), getKeys(exchange)));
             break;
         case SUNIONSTORE:
-            redisClient.sunionstore(getKey(), getKeys(), getDestination());
+            redisClient.sunionstore(getKey(exchange), getKeys(exchange), getDestination(exchange));
             break;
         case SDIFF:
-            setResult(redisClient.sdiff(getKey(), getKeys()));
+            setResult(exchange, redisClient.sdiff(getKey(exchange), getKeys(exchange)));
             break;
         case SDIFFSTORE:
-            redisClient.sdiffstore(getKey(), getKeys(), getDestination());
+            redisClient.sdiffstore(getKey(exchange), getKeys(exchange), getDestination(exchange));
             break;
         case SRANDMEMBER:
-            setResult(redisClient.srandmember(getKey()));
+            setResult(exchange, redisClient.srandmember(getKey(exchange)));
             break;
         case ZADD:
-            setResult(redisClient.zadd(getKey(), getValue(), getScore()));
+            setResult(exchange, redisClient.zadd(getKey(exchange), getValue(exchange), getScore(exchange)));
             break;
         case ZRANGE:
-            setResult(redisClient.zrange(getKey(), getStart(), getEnd(), getWithScore()));
+            setResult(exchange, redisClient.zrange(getKey(exchange), getStart(exchange), getEnd(exchange), getWithScore(exchange)));
             break;
         case ZREM:
-            setResult(redisClient.zrem(getKey(), getValue()));
+            setResult(exchange, redisClient.zrem(getKey(exchange), getValue(exchange)));
             break;
         case ZINCRBY:
-            setResult(redisClient.zincrby(getKey(), getValue(), getIncrement()));
+            setResult(exchange, redisClient.zincrby(getKey(exchange), getValue(exchange), getIncrement(exchange)));
             break;
         case ZRANK:
-            setResult(redisClient.zrank(getKey(), getValue()));
+            setResult(exchange, redisClient.zrank(getKey(exchange), getValue(exchange)));
             break;
         case ZREVRANK:
-            setResult(redisClient.zrevrank(getKey(), getValue()));
+            setResult(exchange, redisClient.zrevrank(getKey(exchange), getValue(exchange)));
             break;
         case ZREVRANGE:
-            setResult(redisClient.zrevrange(getKey(), getStart(), getEnd(), getWithScore()));
+            setResult(exchange, redisClient.zrevrange(getKey(exchange), getStart(exchange), getEnd(exchange), getWithScore(exchange)));
             break;
         case ZCARD:
-            setResult(redisClient.zcard(getKey()));
+            setResult(exchange, redisClient.zcard(getKey(exchange)));
             break;
         case MULTI:
             redisClient.multi();
@@ -268,73 +265,73 @@ public class CommandDispatcher {
             redisClient.exec();
             break;
         case WATCH:
-            redisClient.watch(getKeys());
+            redisClient.watch(getKeys(exchange));
             break;
         case UNWATCH:
             redisClient.unwatch();
             break;
         case SORT:
-            setResult(redisClient.sort(getKey()));
+            setResult(exchange, redisClient.sort(getKey(exchange)));
             break;
         case BLPOP:
-            setResult(redisClient.blpop(getKey(), getTimeout()));
+            setResult(exchange, redisClient.blpop(getKey(exchange), getTimeout(exchange)));
             break;
         case BRPOP:
-            setResult(redisClient.brpop(getKey(), getTimeout()));
+            setResult(exchange, redisClient.brpop(getKey(exchange), getTimeout(exchange)));
             break;
         case PUBLISH:
-            redisClient.publish(getChannel(), getMessage());
+            redisClient.publish(getChannel(exchange), getMessage(exchange));
             break;
         case ZCOUNT:
-            setResult(redisClient.zcount(getKey(), getMin(), getMax()));
+            setResult(exchange, redisClient.zcount(getKey(exchange), getMin(exchange), getMax(exchange)));
             break;
         case ZRANGEBYSCORE:
-            setResult(redisClient.zrangebyscore(getKey(), getMin(), getMax()));
+            setResult(exchange, redisClient.zrangebyscore(getKey(exchange), getMin(exchange), getMax(exchange)));
             break;
         case ZREVRANGEBYSCORE:
-            setResult(redisClient.zrevrangebyscore(getKey(), getMin(), getMax()));
+            setResult(exchange, redisClient.zrevrangebyscore(getKey(exchange), getMin(exchange), getMax(exchange)));
             break;
         case ZREMRANGEBYRANK:
-            redisClient.zremrangebyrank(getKey(), getStart(), getEnd());
+            redisClient.zremrangebyrank(getKey(exchange), getStart(exchange), getEnd(exchange));
             break;
         case ZREMRANGEBYSCORE:
-            redisClient.zremrangebyscore(getKey(), getStart(), getEnd());
+            redisClient.zremrangebyscore(getKey(exchange), getStart(exchange), getEnd(exchange));
             break;
         case ZUNIONSTORE:
-            redisClient.zunionstore(getKey(), getKeys(), getDestination());
+            redisClient.zunionstore(getKey(exchange), getKeys(exchange), getDestination(exchange));
             break;
         case ZINTERSTORE:
-            redisClient.zinterstore(getKey(), getKeys(), getDestination());
+            redisClient.zinterstore(getKey(exchange), getKeys(exchange), getDestination(exchange));
             break;
         case STRLEN:
-            setResult(redisClient.strlen(getKey()));
+            setResult(exchange, redisClient.strlen(getKey(exchange)));
             break;
         case PERSIST:
-            setResult(redisClient.persist(getKey()));
+            setResult(exchange, redisClient.persist(getKey(exchange)));
             break;
         case RPUSHX:
-            setResult(redisClient.rpushx(getKey(), getValue()));
+            setResult(exchange, redisClient.rpushx(getKey(exchange), getValue(exchange)));
             break;
         case ECHO:
-            setResult(redisClient.echo(getStringValue()));
+            setResult(exchange, redisClient.echo(getStringValue(exchange)));
             break;
         case LINSERT:
-            setResult(redisClient.linsert(getKey(), getValue(), getPivot(), getPosition()));
+            setResult(exchange, redisClient.linsert(getKey(exchange), getValue(exchange), getPivot(exchange), getPosition(exchange)));
             break;
         case BRPOPLPUSH:
-            setResult(redisClient.brpoplpush(getKey(), getDestination(), getTimeout()));
+            setResult(exchange, redisClient.brpoplpush(getKey(exchange), getDestination(exchange), getTimeout(exchange)));
             break;
         case SETBIT:
-            redisClient.setbit(getKey(), getOffset(), getBooleanValue());
+            redisClient.setbit(getKey(exchange), getOffset(exchange), getBooleanValue(exchange));
             break;
         case GETBIT:
-            setResult(redisClient.getbit(getKey(), getOffset()));
+            setResult(exchange, redisClient.getbit(getKey(exchange), getOffset(exchange)));
             break;
         case SETRANGE:
-            redisClient.setex(getKey(), getValue(), getOffset());
+            redisClient.setex(getKey(exchange), getValue(exchange), getOffset(exchange));
             break;
         case GETRANGE:
-            setResult(redisClient.getrange(getKey(), getStart(), getEnd()));
+            setResult(exchange, redisClient.getrange(getKey(exchange), getStart(exchange), getEnd(exchange)));
             break;
         default:
             throw new RuntimeExchangeException("Unsupported command: " + command, exchange);
@@ -342,7 +339,7 @@ public class CommandDispatcher {
     }
     // CHECKSTYLE:ON
 
-    private Command determineCommand() {
+    private Command determineCommand(Exchange exchange) {
         Command command = exchange.getIn().getHeader(RedisConstants.COMMAND, Command.class);
         if (command == null) {
             command = configuration.getCommand();
@@ -357,7 +354,7 @@ public class CommandDispatcher {
         return exchange.getIn().getHeader(key, aClass);
     }
 
-    private void setResult(Object result) {
+    private void setResult(Exchange exchange, Object result) {
         Message message;
         if (exchange.getPattern().isOutCapable()) {
             message = exchange.getOut();
@@ -368,119 +365,119 @@ public class CommandDispatcher {
         message.setBody(result);
     }
 
-    public String getDestination() {
+    public String getDestination(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.DESTINATION, String.class);
     }
 
-    private String getChannel() {
+    private String getChannel(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.CHANNEL, String.class);
     }
 
-    private Object getMessage() {
+    private Object getMessage(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.MESSAGE, Object.class);
     }
 
-    public Long getIndex() {
+    public Long getIndex(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.INDEX, Long.class);
     }
 
-    public String getPivot() {
+    public String getPivot(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.PIVOT, String.class);
     }
 
-    public String getPosition() {
+    public String getPosition(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.POSITION, String.class);
     }
 
-    public Long getCount() {
+    public Long getCount(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.COUNT, Long.class);
     }
 
-    private Long getStart() {
+    private Long getStart(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.START, Long.class);
     }
 
-    private Long getEnd() {
+    private Long getEnd(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.END, Long.class);
     }
 
-    private Long getTimeout() {
+    private Long getTimeout(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.TIMEOUT, Long.class);
     }
 
-    private Long getOffset() {
+    private Long getOffset(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.OFFSET, Long.class);
     }
 
-    private Long getValueAsLong() {
+    private Long getValueAsLong(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.VALUE, Long.class);
     }
 
-    private Collection<String> getFields() {
+    private Collection<String> getFields(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.FIELDS, Collection.class);
     }
 
-    private Map<String, Object> getValuesAsMap() {
-        return getInHeaderValue(exchange, RedisConstants.VALUES, new HashMap<String, Object>().getClass());
+    private Map<String, Object> getValuesAsMap(Exchange exchange) {
+        return getInHeaderValue(exchange, RedisConstants.VALUES, Map.class);
     }
 
-    private String getKey() {
+    private String getKey(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.KEY, String.class);
     }
 
-    public Collection<String> getKeys() {
+    public Collection<String> getKeys(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.KEYS, Collection.class);
     }
 
-    private Object getValue() {
+    private Object getValue(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.VALUE, Object.class);
     }
 
-    private String getStringValue() {
+    private String getStringValue(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.VALUE, String.class);
     }
 
-    private Long getLongValue() {
+    private Long getLongValue(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.VALUE, Long.class);
     }
 
-    private Boolean getBooleanValue() {
+    private Boolean getBooleanValue(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.VALUE, Boolean.class);
     }
 
-    private String getField() {
+    private String getField(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.FIELD, String.class);
     }
 
-    public Long getTimestamp() {
+    public Long getTimestamp(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.TIMESTAMP, Long.class);
     }
 
-    public String getPattern() {
+    public String getPattern(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.PATTERN, String.class);
     }
 
-    public Integer getDb() {
+    public Integer getDb(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.DB, Integer.class);
     }
 
-    public Double getScore() {
+    public Double getScore(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.SCORE, Double.class);
     }
 
-    public Double getMin() {
+    public Double getMin(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.MIN, Double.class);
     }
 
-    public Double getMax() {
+    public Double getMax(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.MAX, Double.class);
     }
 
-    public Double getIncrement() {
+    public Double getIncrement(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.INCREMENT, Double.class);
     }
 
-    public Boolean getWithScore() {
+    public Boolean getWithScore(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.WITHSCORE, Boolean.class);
     }
 }
