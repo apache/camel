@@ -71,6 +71,12 @@ public abstract class AbstractDdbCommand {
         msg.setHeader(DdbConstants.ATTRIBUTES, attributes);
     }
     
+    protected void addToResults(Map<String, Object> map) {
+        Message msg = getMessageForResponse(exchange);
+        for(Map.Entry<String,Object> en : map.entrySet()){
+            msg.setHeader(en.getKey(), en.getValue());
+        }
+    }
     protected void addToResult(String headerKey, Object value) {
         Message msg = getMessageForResponse(exchange);
         msg.setHeader(headerKey, value);

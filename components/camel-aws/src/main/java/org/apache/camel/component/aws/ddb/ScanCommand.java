@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.ddb;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
@@ -36,11 +37,13 @@ public class ScanCommand extends AbstractDdbCommand {
                 .withTableName(determineTableName())
                 .withScanFilter(determineScanFilter()));
 
-        addToResult(DdbConstants.ITEMS, result.getItems());
-        addToResult(DdbConstants.LAST_EVALUATED_KEY, result.getLastEvaluatedKey());
-        addToResult(DdbConstants.CONSUMED_CAPACITY, result.getConsumedCapacity());
-        addToResult(DdbConstants.COUNT, result.getCount());
-        addToResult(DdbConstants.SCANNED_COUNT, result.getScannedCount());
+        Map tmp = new HashMap<>();
+        tmp.put(DdbConstants.ITEMS, result.getItems());
+        tmp.put(DdbConstants.LAST_EVALUATED_KEY, result.getLastEvaluatedKey());
+        tmp.put(DdbConstants.CONSUMED_CAPACITY, result.getConsumedCapacity());
+        tmp.put(DdbConstants.COUNT, result.getCount());
+        tmp.put(DdbConstants.SCANNED_COUNT, result.getScannedCount());
+        addToResults(tmp);
     }
 
     @SuppressWarnings("unchecked")
