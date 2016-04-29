@@ -95,11 +95,10 @@ public class DataFormatProviderTest extends Assert {
         private String name;
 
         @SuppressWarnings("unused")
-        public Book() {
-
+        Book() {
         }
 
-        public Book(String name) {
+        Book(String name) {
             this.name = name;
         }
 

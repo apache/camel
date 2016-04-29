@@ -84,8 +84,8 @@ public class HystrixManagementTest extends CamelTestSupport {
 
         Stream<String> jsons = stream.streamMetrics();
         jsons.forEach(s -> {
-                log.info("JSon: {}", s);
-            });
+            log.info("JSon: {}", s);
+        });
     }
 
     @Override

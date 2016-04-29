@@ -312,7 +312,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
         private final Exchange exchange;
         private final int repeatSeconds;
 
-        public TimeoutExtender(Exchange exchange, int repeatSeconds) {
+        TimeoutExtender(Exchange exchange, int repeatSeconds) {
             this.exchange = exchange;
             this.repeatSeconds = repeatSeconds;
         }

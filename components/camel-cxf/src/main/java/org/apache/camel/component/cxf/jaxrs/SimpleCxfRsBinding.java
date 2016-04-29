@@ -105,7 +105,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
 
     /** The JAX-RS annotations to be injected as headers in the IN message */
     private static final Set<Class<?>> HEADER_ANNOTATIONS = Collections.unmodifiableSet(
-            new HashSet<Class<?>>(Arrays.asList(new Class<?>[]{ 
+            new HashSet<Class<?>>(Arrays.asList(new Class<?>[] {
                 CookieParam.class, 
                 FormParam.class, 
                 PathParam.class,

@@ -49,11 +49,11 @@ public class BigIntComparisonsTest {
     public static Collection<Object[]> parameters() {
         List<Object[]> results = new ArrayList<>();
 
-        results.add(new Object[]{BigIntComparisons.Conditions.LT  , 1, 5, true});
+        results.add(new Object[]{BigIntComparisons.Conditions.LT, 1, 5, true});
         results.add(new Object[]{BigIntComparisons.Conditions.LTEQ, 1, 5, true});
-        results.add(new Object[]{BigIntComparisons.Conditions.LT  , 1, 1, false});
+        results.add(new Object[]{BigIntComparisons.Conditions.LT, 1, 1, false});
         results.add(new Object[]{BigIntComparisons.Conditions.LTEQ, 1, 1, true});
-        results.add(new Object[]{BigIntComparisons.Conditions.LT  , 5, 1, false});
+        results.add(new Object[]{BigIntComparisons.Conditions.LT, 5, 1, false});
         results.add(new Object[]{BigIntComparisons.Conditions.LTEQ, 5, 1, false});
 
         return results;

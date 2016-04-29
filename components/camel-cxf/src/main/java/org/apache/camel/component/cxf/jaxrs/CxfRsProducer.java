@@ -468,7 +468,7 @@ public class CxfRsProducer extends DefaultProducer {
     class ClientFactoryBeanCache {
         private LRUSoftCache<String, JAXRSClientFactoryBean> cache;    
         
-        public ClientFactoryBeanCache(final int maxCacheSize) {
+        ClientFactoryBeanCache(final int maxCacheSize) {
             this.cache = new LRUSoftCache<String, JAXRSClientFactoryBean>(maxCacheSize);
         }
         
