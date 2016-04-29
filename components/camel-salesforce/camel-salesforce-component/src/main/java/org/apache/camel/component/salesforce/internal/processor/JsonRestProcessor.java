@@ -127,7 +127,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                             + (in.getBody() == null ? null : in.getBody().getClass());
                         throw new SalesforceException(msg, null);
                     } else {
-                        request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8_CHARSET));
+                        request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8));
                     }
                 }
             }

@@ -85,6 +85,7 @@
                 <includes>
                   <include>**/*Test.java</include>
                 </includes>
+                <trimStackTrace>false</trimStackTrace>
               </configuration>
             </plugin>
           </plugins>

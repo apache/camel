@@ -26,6 +26,7 @@ import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
 
+import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.SalesforceMultipleChoicesException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
@@ -37,11 +38,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.eclipse.jetty.client.ContentExchange;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpExchange;
-import org.eclipse.jetty.http.HttpHeaders;
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.api.Response;
+import org.eclipse.jetty.client.util.InputStreamContentProvider;
+import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.util.StringUtil;
 
@@ -56,7 +57,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     private ObjectMapper objectMapper;
     private XStream xStream;
 
-    public DefaultRestClient(HttpClient httpClient, String version, PayloadFormat format, SalesforceSession session)
+    public DefaultRestClient(SalesforceHttpClient httpClient, String version, PayloadFormat format, SalesforceSession session)
         throws SalesforceException {
         super(version, session, httpClient);
 
@@ -72,36 +73,32 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    protected void doHttpRequest(ContentExchange request, ClientResponseCallback callback) {
+    protected void doHttpRequest(Request request, ClientResponseCallback callback) {
         // set standard headers for all requests
         final String contentType = PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8;
-        request.setRequestHeader(HttpHeaders.ACCEPT, contentType);
-        request.setRequestHeader(HttpHeaders.ACCEPT_CHARSET, StringUtil.__UTF8);
+        request.header(HttpHeader.ACCEPT, contentType);
+        request.header(HttpHeader.ACCEPT_CHARSET, StringUtil.__UTF8);
         // request content type and charset is set by the request entity
 
         super.doHttpRequest(request, callback);
     }
 
     @Override
-    protected SalesforceException createRestException(ContentExchange httpExchange, String reason) {
+    protected SalesforceException createRestException(Response response, InputStream responseContent) {
         // get status code and reason phrase
-        final int statusCode = httpExchange.getResponseStatus();
+        final int statusCode = response.getStatus();
+        String reason = response.getReason();
         if (reason == null || reason.isEmpty()) {
             reason = HttpStatus.getMessage(statusCode);
         }
         // try parsing response according to format
-        String responseContent = null;
         try {
-            responseContent = httpExchange.getResponseContent();
-            if (responseContent != null && !responseContent.isEmpty()) {
+            if (responseContent != null && responseContent.available() > 0) {
                 final List<String> choices;
                 // return list of choices as error message for 300
                 if (statusCode == HttpStatus.MULTIPLE_CHOICES_300) {
                     if (PayloadFormat.JSON.equals(format)) {
-                        choices = objectMapper.readValue(
-                            responseContent, new TypeReference<List<String>>() {
-                            }
-                        );
+                        choices = objectMapper.readValue(responseContent, new TypeReference<List<String>>() {});
                     } else {
                         RestChoices restChoices = new RestChoices();
                         xStream.fromXML(responseContent, restChoices);
@@ -142,7 +139,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void getVersions(final ResponseCallback callback) {
-        ContentExchange get = getContentExchange(HttpMethods.GET, servicesDataUrl());
+        Request get = getRequest(HttpMethod.GET, servicesDataUrl());
         // does not require authorization token
 
         doHttpRequest(get, new DelegatingClientCallback(callback));
@@ -150,7 +147,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void getResources(ResponseCallback callback) {
-        ContentExchange get = getContentExchange(HttpMethods.GET, versionUrl());
+        Request get = getRequest(HttpMethod.GET, versionUrl());
         // requires authorization token
         setAccessToken(get);
 
@@ -159,7 +156,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void getGlobalObjects(ResponseCallback callback) {
-        ContentExchange get = getContentExchange(HttpMethods.GET, sobjectsUrl(""));
+        Request get = getRequest(HttpMethod.GET, sobjectsUrl(""));
         // requires authorization token
         setAccessToken(get);
 
@@ -169,7 +166,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     public void getBasicInfo(String sObjectName,
                              ResponseCallback callback) {
-        ContentExchange get = getContentExchange(HttpMethods.GET, sobjectsUrl(sObjectName + "/"));
+        Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + "/"));
         // requires authorization token
         setAccessToken(get);
 
@@ -179,7 +176,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     public void getDescription(String sObjectName,
                                ResponseCallback callback) {
-        ContentExchange get = getContentExchange(HttpMethods.GET, sobjectsUrl(sObjectName + "/describe/"));
+        Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + "/describe/"));
         // requires authorization token
         setAccessToken(get);
 
@@ -202,7 +199,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             }
             params = fieldsValue.toString();
         }
-        ContentExchange get = getContentExchange(HttpMethods.GET, sobjectsUrl(sObjectName + "/" + id + params));
+        Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + "/" + id + params));
         // requires authorization token
         setAccessToken(get);
 
@@ -213,14 +210,14 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     public void createSObject(String sObjectName, InputStream sObject,
                               ResponseCallback callback) {
         // post the sObject
-        final ContentExchange post = getContentExchange(HttpMethods.POST, sobjectsUrl(sObjectName));
+        final Request post = getRequest(HttpMethod.POST, sobjectsUrl(sObjectName));
 
         // authorization
         setAccessToken(post);
 
         // input stream as entity content
-        post.setRequestContentSource(sObject);
-        post.setRequestContentType(PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+        post.content(new InputStreamContentProvider(sObject));
+        post.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
 
         doHttpRequest(post, new DelegatingClientCallback(callback));
     }
@@ -228,13 +225,13 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     public void updateSObject(String sObjectName, String id, InputStream sObject,
                               ResponseCallback callback) {
-        final ContentExchange patch = getContentExchange("PATCH", sobjectsUrl(sObjectName + "/" + id));
+        final Request patch = getRequest("PATCH", sobjectsUrl(sObjectName + "/" + id));
         // requires authorization token
         setAccessToken(patch);
 
         // input stream as entity content
-        patch.setRequestContentSource(sObject);
-        patch.setRequestContentType(PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+        patch.content(new InputStreamContentProvider(sObject));
+        patch.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
 
         doHttpRequest(patch, new DelegatingClientCallback(callback));
     }
@@ -242,7 +239,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     public void deleteSObject(String sObjectName, String id,
                               ResponseCallback callback) {
-        final ContentExchange delete = getContentExchange(HttpMethods.DELETE, sobjectsUrl(sObjectName + "/" + id));
+        final Request delete = getRequest(HttpMethod.DELETE, sobjectsUrl(sObjectName + "/" + id));
 
         // requires authorization token
         setAccessToken(delete);
@@ -253,7 +250,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     public void getSObjectWithId(String sObjectName, String fieldName, String fieldValue,
                                  ResponseCallback callback) {
-        final ContentExchange get = getContentExchange(HttpMethods.GET,
+        final Request get = getRequest(HttpMethod.GET,
                 sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue));
 
         // requires authorization token
@@ -265,16 +262,16 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     public void upsertSObject(String sObjectName, String fieldName, String fieldValue, InputStream sObject,
                               ResponseCallback callback) {
-        final ContentExchange patch = getContentExchange("PATCH",
+        final Request patch = getRequest("PATCH",
                 sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue));
 
         // requires authorization token
         setAccessToken(patch);
 
         // input stream as entity content
-        patch.setRequestContentSource(sObject);
+        patch.content(new InputStreamContentProvider(sObject));
         // TODO will the encoding always be UTF-8??
-        patch.setRequestContentType(PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+        patch.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
 
         doHttpRequest(patch, new DelegatingClientCallback(callback));
     }
@@ -282,7 +279,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     public void deleteSObjectWithId(String sObjectName, String fieldName, String fieldValue,
                                     ResponseCallback callback) {
-        final ContentExchange delete = getContentExchange(HttpMethods.DELETE,
+        final Request delete = getRequest(HttpMethod.DELETE,
                 sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue));
 
         // requires authorization token
@@ -293,10 +290,10 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void getBlobField(String sObjectName, String id, String blobFieldName, ResponseCallback callback) {
-        final ContentExchange get = getContentExchange(HttpMethods.GET,
+        final Request get = getRequest(HttpMethod.GET,
                 sobjectsUrl(sObjectName + "/" + id + "/" + blobFieldName));
         // TODO this doesn't seem to be required, the response is always the content binary stream
-        //get.setRequestHeader(HttpHeaders.ACCEPT_ENCODING, "base64");
+        //get.header(HttpHeader.ACCEPT_ENCODING, "base64");
 
         // requires authorization token
         setAccessToken(get);
@@ -309,7 +306,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         try {
 
             String encodedQuery = urlEncode(soqlQuery);
-            final ContentExchange get = getContentExchange(HttpMethods.GET, versionUrl() + "query/?q=" + encodedQuery);
+            final Request get = getRequest(HttpMethod.GET, versionUrl() + "query/?q=" + encodedQuery);
 
             // requires authorization token
             setAccessToken(get);
@@ -324,7 +321,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void queryMore(String nextRecordsUrl, ResponseCallback callback) {
-        final ContentExchange get = getContentExchange(HttpMethods.GET, instanceUrl + nextRecordsUrl);
+        final Request get = getRequest(HttpMethod.GET, instanceUrl + nextRecordsUrl);
 
         // requires authorization token
         setAccessToken(get);
@@ -337,7 +334,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         try {
 
             String encodedQuery = urlEncode(soslQuery);
-            final ContentExchange get = getContentExchange(HttpMethods.GET, versionUrl() + "search/?q=" + encodedQuery);
+            final Request get = getRequest(HttpMethod.GET, versionUrl() + "search/?q=" + encodedQuery);
 
             // requires authorization token
             setAccessToken(get);
@@ -353,21 +350,21 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     public void apexCall(String httpMethod, String apexUrl,
                          Map<String, Object> queryParams, InputStream requestDto, ResponseCallback callback) {
-        // create APEX call exchange
-        final ContentExchange exchange;
+        // create APEX call request
+        final Request request;
         try {
-            exchange = getContentExchange(httpMethod, apexCallUrl(apexUrl, queryParams));
+            request = getRequest(httpMethod, apexCallUrl(apexUrl, queryParams));
             // set request SObject and content type
             if (requestDto != null) {
-                exchange.setRequestContentSource(requestDto);
-                exchange.setRequestContentType(
+                request.content(new InputStreamContentProvider(requestDto));
+                request.header(HttpHeader.CONTENT_TYPE,
                     PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
             }
 
             // requires authorization token
-            setAccessToken(exchange);
+            setAccessToken(request);
 
-            doHttpRequest(exchange, new DelegatingClientCallback(callback));
+            doHttpRequest(request, new DelegatingClientCallback(callback));
         } catch (UnsupportedEncodingException e) {
             String msg = "Unexpected error: " + e.getMessage();
             callback.onResponse(null, new SalesforceException(msg, e));
@@ -414,12 +411,13 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         }
     }
 
-    protected void setAccessToken(HttpExchange httpExchange) {
-        httpExchange.setRequestHeader(TOKEN_HEADER, TOKEN_PREFIX + accessToken);
+    protected void setAccessToken(Request request) {
+        // replace old token
+        request.getHeaders().put(TOKEN_HEADER, TOKEN_PREFIX + accessToken);
     }
 
     private String urlEncode(String query) throws UnsupportedEncodingException {
-        String encodedQuery = URLEncoder.encode(query, StringUtil.__UTF8_CHARSET.toString());
+        String encodedQuery = URLEncoder.encode(query, StringUtil.__UTF8);
         // URLEncoder likes to use '+' for spaces
         encodedQuery = encodedQuery.replace("+", "%20");
         return encodedQuery;

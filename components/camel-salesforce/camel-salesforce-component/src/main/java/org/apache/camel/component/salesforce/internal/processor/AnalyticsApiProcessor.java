@@ -49,7 +49,8 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
         super(endpoint);
 
         this.analyticsClient = new DefaultAnalyticsApiClient(
-            (String) endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION), session, httpClient);
+            (String) endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION), session,
+            httpClient);
     }
 
     @Override

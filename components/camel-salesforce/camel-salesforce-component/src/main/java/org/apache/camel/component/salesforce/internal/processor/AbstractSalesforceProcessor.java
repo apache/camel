@@ -27,7 +27,7 @@ import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.eclipse.jetty.client.HttpClient;
+import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
 
     protected final OperationName operationName;
     protected final SalesforceSession session;
-    protected final HttpClient httpClient;
+    protected final SalesforceHttpClient httpClient;
 
     public AbstractSalesforceProcessor(SalesforceEndpoint endpoint) {
         this.endpoint = endpoint;

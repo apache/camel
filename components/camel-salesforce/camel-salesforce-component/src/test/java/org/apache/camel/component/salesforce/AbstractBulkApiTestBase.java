@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public abstract class AbstractBulkApiTestBase extends AbstractSalesforceTestBase {
 
-    protected JobInfo createJob(JobInfo jobInfo) throws InterruptedException {
+    protected JobInfo createJob(JobInfo jobInfo) {
         jobInfo = template().requestBody("direct:createJob", jobInfo, JobInfo.class);
         assertNotNull("Missing JobId", jobInfo.getId());
         return jobInfo;
@@ -94,7 +94,7 @@ public abstract class AbstractBulkApiTestBase extends AbstractSalesforceTestBase
         return !(state == BatchStateEnum.QUEUED || state == BatchStateEnum.IN_PROGRESS);
     }
 
-    protected BatchInfo getBatchInfo(BatchInfo batchInfo) throws InterruptedException {
+    protected BatchInfo getBatchInfo(BatchInfo batchInfo) {
         batchInfo = template().requestBody("direct:getBatch", batchInfo, BatchInfo.class);
 
         assertNotNull("Null batch", batchInfo);
