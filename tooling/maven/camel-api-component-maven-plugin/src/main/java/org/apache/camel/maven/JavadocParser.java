@@ -194,7 +194,7 @@ public class JavadocParser extends Parser {
         return methodText;
     }
 
-    private static enum ParserState {
+    private enum ParserState {
         INIT, METHOD_SUMMARY, METHOD
     }
 }

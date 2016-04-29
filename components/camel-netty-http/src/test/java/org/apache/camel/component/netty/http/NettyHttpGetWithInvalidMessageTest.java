@@ -70,7 +70,7 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
     }
     
     private void invokeService(int port) {
-        Exchange out = template.request("netty:tcp://localhost:" + port + "?encoders=#encoders&decoders=#decoders&sync=true" , new Processor() {
+        Exchange out = template.request("netty:tcp://localhost:" + port + "?encoders=#encoders&decoders=#decoders&sync=true", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(REQUEST_STRING);
