@@ -94,7 +94,7 @@ public class KafkaConsumer extends DefaultConsumer {
         private final String threadId;
         private final Properties kafkaProps;
 
-        public KafkaFetchRecords(String topicName, String id, Properties kafkaProps) {
+        KafkaFetchRecords(String topicName, String id, Properties kafkaProps) {
             this.topicName = topicName;
             this.threadId = topicName + "-" + "Thread " + id;
             this.kafkaProps = kafkaProps;
@@ -117,33 +117,28 @@ public class KafkaConsumer extends DefaultConsumer {
                 }
                 while (isRunAllowed() && !isSuspendingOrSuspended()) {
                     ConsumerRecords<Object, Object> allRecords = consumer.poll(Long.MAX_VALUE);
-                    // START : CAMEL-9823
-					for (TopicPartition partition : allRecords.partitions()) {
-						List<ConsumerRecord<Object, Object>> partitionRecords = allRecords
-								.records(partition);
-	                    for (ConsumerRecord<Object, Object> record : partitionRecords) {
-	                        if (LOG.isTraceEnabled()) {
-	                            LOG.trace("partition = {}, offset = {}, key = {}, value = {}", record.partition(), record.offset(), record.key(), record.value());
-	                        }
-	                        Exchange exchange = endpoint.createKafkaExchange(record);
-	                        try {
-	                            processor.process(exchange);
-	                        } catch (Exception e) {
-	                            getExceptionHandler().handleException("Error during processing", exchange, e);
-	                        }
-	                    }
-						// if autocommit is false
-						if (endpoint.isAutoCommitEnable() != null
-								&& !endpoint.isAutoCommitEnable()) {
-							long partitionLastoffset = partitionRecords.get(
-									partitionRecords.size() - 1).offset();
-							consumer.commitSync(Collections.singletonMap(
-									partition, new OffsetAndMetadata(
-											partitionLastoffset + 1)));
-						}
-	                    
-					}
-					// END : CAMEL-9823
+                    for (TopicPartition partition : allRecords.partitions()) {
+                        List<ConsumerRecord<Object, Object>> partitionRecords = allRecords
+                            .records(partition);
+                        for (ConsumerRecord<Object, Object> record : partitionRecords) {
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("partition = {}, offset = {}, key = {}, value = {}", record.partition(), record.offset(), record.key(), record.value());
+                            }
+                            Exchange exchange = endpoint.createKafkaExchange(record);
+                            try {
+                                processor.process(exchange);
+                            } catch (Exception e) {
+                                getExceptionHandler().handleException("Error during processing", exchange, e);
+                            }
+                        }
+                        // if autocommit is false
+                        if (endpoint.isAutoCommitEnable() != null
+                            && !endpoint.isAutoCommitEnable()) {
+                            long partitionLastoffset = partitionRecords.get(partitionRecords.size() - 1).offset();
+                            consumer.commitSync(Collections.singletonMap(
+                                partition, new OffsetAndMetadata(partitionLastoffset + 1)));
+                        }
+                    }
                 }
                 LOG.debug("Unsubscribing {} from topic {}", threadId, topicName);
                 consumer.unsubscribe();
