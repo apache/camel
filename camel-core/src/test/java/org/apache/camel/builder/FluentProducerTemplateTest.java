@@ -125,11 +125,11 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
 
         Exchange out = FluentProducerTemplate.on(context)
             .withExchange(() -> {
-                Exchange exchange = context.getEndpoint("direct:exception").createExchange();
-                exchange.getIn().setBody("Hello World");
+                    Exchange exchange = context.getEndpoint("direct:exception").createExchange();
+                    exchange.getIn().setBody("Hello World");
 
-                return exchange;
-            })
+                    return exchange;
+                })
             .to("direct:exception")
             .send();
 
@@ -179,11 +179,11 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
 
         Exchange out = FluentProducerTemplate.on(context)
             .withExchange(() -> {
-                Exchange exchange = context.getEndpoint("direct:exception").createExchange(ExchangePattern.InOut);
-                exchange.getIn().setBody("Hello World");
+                    Exchange exchange = context.getEndpoint("direct:exception").createExchange(ExchangePattern.InOut);
+                    exchange.getIn().setBody("Hello World");
 
-                return exchange;
-            })
+                    return exchange;
+                })
             .to("direct:exception")
             .send();
 
@@ -273,15 +273,15 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
 
                 from("direct:fault").process(
                         exchange -> {
-                            exchange.getOut().setFault(true);
-                            exchange.getOut().setBody("Faulty World");
-                        })
+                                exchange.getOut().setFault(true);
+                                exchange.getOut().setBody("Faulty World");
+                            })
                     .to("mock:result");
 
                 from("direct:exception").process(
                         exchange -> {
-                            throw new IllegalArgumentException("Forced exception by unit test");
-                        })
+                                throw new IllegalArgumentException("Forced exception by unit test");
+                            })
                     .to("mock:result");
 
                 from("direct:inout").transform(constant(123));
