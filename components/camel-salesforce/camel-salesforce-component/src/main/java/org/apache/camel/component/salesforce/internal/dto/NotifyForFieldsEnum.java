@@ -35,7 +35,7 @@ public enum NotifyForFieldsEnum {
 
     final String value;
 
-    private NotifyForFieldsEnum(String value) {
+    NotifyForFieldsEnum(String value) {
         this.value = value;
     }
 

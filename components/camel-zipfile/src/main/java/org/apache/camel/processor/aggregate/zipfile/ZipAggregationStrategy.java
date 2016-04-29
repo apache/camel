@@ -223,7 +223,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         
         private final File fileToDelete;
         
-        public DeleteZipFileOnCompletion(File fileToDelete) {
+        DeleteZipFileOnCompletion(File fileToDelete) {
             this.fileToDelete = fileToDelete;
         }
         

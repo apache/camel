@@ -35,7 +35,7 @@ public enum FormatEnum {
 
     final String value;
 
-    private FormatEnum(String value) {
+    FormatEnum(String value) {
         this.value = value;
     }
 

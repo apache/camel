@@ -51,8 +51,8 @@ public class ObservableMessageTest extends CamelTestSupport {
         protected void configure(Observable<Message> observable) {
             // lets process the messages using the RX API
             observable.map(message -> "Hello " + message.getBody(String.class)).subscribe(body -> {
-                    template.sendBody(resultEndpoint, body);
-                });
+                template.sendBody(resultEndpoint, body);
+            });
         }
     }
 

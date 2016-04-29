@@ -32,7 +32,7 @@ public class Http4RouteTest extends CamelTestSupport {
     public void sendHttpGetRequestTest() {
         String response = template.requestBody("http4://localhost:" + port1 
                          + "/test?aa=bb&httpClient.socketTimeout=10000&httpClient.connectTimeout=10000"
-                         + "&bridgeEndpoint=true&throwExceptionOnFailure=false" , null, String.class);
+                         + "&bridgeEndpoint=true&throwExceptionOnFailure=false", null, String.class);
         assertEquals("Get a wrong response", "aa=bb", response);
         
         response = template.requestBodyAndHeader("direct:start1", null, Exchange.HTTP_QUERY, "aa=bb", String.class);

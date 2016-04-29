@@ -87,7 +87,7 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
 
     private class SecurityListener extends BufferingResponseListener {
 
-        public SecurityListener(int maxLength) {
+        SecurityListener(int maxLength) {
             super(maxLength);
         }
 

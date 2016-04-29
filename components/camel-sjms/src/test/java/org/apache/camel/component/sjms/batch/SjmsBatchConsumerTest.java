@@ -65,7 +65,7 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
     private static class TransactedSendHarness extends RouteBuilder {
         private final String queueName;
 
-        public TransactedSendHarness(String queueName) {
+        TransactedSendHarness(String queueName) {
             this.queueName = queueName;
         }
 

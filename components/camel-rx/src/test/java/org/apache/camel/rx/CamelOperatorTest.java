@@ -59,14 +59,14 @@ public class CamelOperatorTest extends RxTestSupport {
         // Define an InOut route
         ConnectableObservable<Exchange> inOut = reactiveCamel.from("restlet:http://localhost:9080/test?restletMethod=POST")
             .map(exchange -> {
-                    exchange.getIn().setBody(exchange.getIn().getBody(String.class));
-                    return exchange;
-                })
+                exchange.getIn().setBody(exchange.getIn().getBody(String.class));
+                return exchange;
+            })
             .lift(reactiveCamel.to("log:inOut"))
             .map(exchange -> {
-                    exchange.getIn().setBody(exchange.getIn().getBody(String.class) + " back");
-                    return exchange;
-                })
+                exchange.getIn().setBody(exchange.getIn().getBody(String.class) + " back");
+                return exchange;
+            })
             .lift(reactiveCamel.to(mockEndpoint4))
             .publish();
 

@@ -101,7 +101,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            getExceptionHandler().handleException("Error processing exchange" , exchange, e);
+            getExceptionHandler().handleException("Error processing exchange", exchange, e);
             return;
         }
 

@@ -518,7 +518,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         final SessionID sessionID;
         final Message message;
 
-        public EventRecord(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) {
+        EventRecord(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) {
             this.eventCategory = eventCategory;
             this.sessionID = sessionID;
             this.message = message;

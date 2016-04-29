@@ -108,8 +108,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
                 public void processMessage(Chat chat, Message message) {
                     // not here to do conversation
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Received and discarding message from {} : {}"
-                                , participant, message.getBody());
+                        LOG.debug("Received and discarding message from {} : {}", participant, message.getBody());
                     }
                 }
             });

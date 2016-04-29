@@ -365,7 +365,7 @@ public class HttpTestServer {
 
         private volatile Exception exception;
 
-        public Worker(final HttpServerConnection conn) {
+        Worker(final HttpServerConnection conn) {
             this.conn = conn;
         }
 

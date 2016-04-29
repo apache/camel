@@ -127,13 +127,12 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
         private StringBuilder line = new StringBuilder();
         private int wordsCount;
 
-        public LineBuilder() { }
+        LineBuilder() { }
 
-        public LineBuilder(String line, int wordsCount) {
+        LineBuilder(String line, int wordsCount) {
             this.line = new StringBuilder(line);
             this.wordsCount = wordsCount;
         }
-
 
         public LineBuilder appendWord(String word) {
             line.append(word).append(" ");

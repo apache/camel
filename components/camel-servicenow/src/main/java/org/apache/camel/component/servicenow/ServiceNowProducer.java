@@ -80,7 +80,7 @@ public class ServiceNowProducer extends DefaultProducer {
         private final ThreadLocal<WeakReference<Processor>> cache;
         private final ServiceNowProducerProcessor.Supplier supplier;
 
-        public WeakThreadLocal(ServiceNowProducerProcessor.Supplier supplier) {
+        WeakThreadLocal(ServiceNowProducerProcessor.Supplier supplier) {
             this.cache = new ThreadLocal<>();
             this.supplier = supplier;
         }

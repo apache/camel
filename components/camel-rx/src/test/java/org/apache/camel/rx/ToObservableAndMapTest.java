@@ -39,9 +39,9 @@ public class ToObservableAndMapTest extends RxTestSupport {
         Observable<String> observable = observableMessage.map(message -> "Transformed value: headers " + message.getHeaders());
 
         observable.take(4).subscribe(body -> {
-                LOG.info(body);
-                producerTemplate.sendBody(mockEndpoint, body);
-            });
+            LOG.info(body);
+            producerTemplate.sendBody(mockEndpoint, body);
+        });
 
         mockEndpoint.assertIsSatisfied();
     }

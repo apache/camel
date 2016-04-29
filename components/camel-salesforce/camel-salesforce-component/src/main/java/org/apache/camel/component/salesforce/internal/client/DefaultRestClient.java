@@ -426,7 +426,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     private static class DelegatingClientCallback implements ClientResponseCallback {
         private final ResponseCallback callback;
 
-        public DelegatingClientCallback(ResponseCallback callback) {
+        DelegatingClientCallback(ResponseCallback callback) {
             this.callback = callback;
         }
 

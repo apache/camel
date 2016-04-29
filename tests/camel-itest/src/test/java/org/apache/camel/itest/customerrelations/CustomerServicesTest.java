@@ -65,7 +65,8 @@ public class CustomerServicesTest extends Assert {
     }
 
     class HeaderChecker extends AbstractPhaseInterceptor<Message> {
-        public HeaderChecker(String phase) {
+
+        HeaderChecker(String phase) {
             super(phase);
         }
 

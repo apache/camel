@@ -66,7 +66,7 @@ public class CamelSourceAdapter extends AbstractCamelAdapter implements Initiali
             org.springframework.messaging.Message<?> request = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
 
             if (exchange.getPattern().isOutCapable()) {
-                exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL , replyChannel);
+                exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL, replyChannel);
 
                 // we want to do in-out so the inputChannel is mandatory (used to receive reply from spring integration)
                 if (replyChannel == null) {
