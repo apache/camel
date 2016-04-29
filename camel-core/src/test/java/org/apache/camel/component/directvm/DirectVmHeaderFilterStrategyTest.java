@@ -41,17 +41,17 @@ public class DirectVmHeaderFilterStrategyTest extends ContextTestSupport {
         });
         
         Exchange response = template.request("direct-vm:start.filter?headerFilterStrategy=#headerFilterStrategy", exchange -> {
-                exchange.getIn().setBody("Hello World");
-                exchange.getIn().setHeader("Header1", "Value1");
-            });
+            exchange.getIn().setBody("Hello World");
+            exchange.getIn().setHeader("Header1", "Value1");
+        });
         
         assertNull(response.getException());
         assertNull(response.getOut().getHeader("Header2"));
         
         response = template.request("direct-vm:start.nofilter", exchange -> {
-                exchange.getIn().setBody("Hello World");
-                exchange.getIn().setHeader("Header1", "Value1");
-            });
+            exchange.getIn().setBody("Hello World");
+            exchange.getIn().setHeader("Header1", "Value1");
+        });
         
         assertNull(response.getException());
         assertEquals("Value2", response.getOut().getHeader("Header2", String.class));
@@ -61,12 +61,14 @@ public class DirectVmHeaderFilterStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct-vm:start.filter").process(exchange -> {
+                from("direct-vm:start.filter")
+                    .process(exchange -> {
                         assertNull(exchange.getIn().getHeader("Header1"));
                         exchange.getIn().setHeader("Header2", "Value2");
                     });
                 
-                from("direct-vm:start.nofilter").process(exchange -> {
+                from("direct-vm:start.nofilter")
+                    .process(exchange -> {
                         assertEquals("Value1", exchange.getIn().getHeader("Header1"));
                         exchange.getIn().setHeader("Header2", "Value2");
                     });

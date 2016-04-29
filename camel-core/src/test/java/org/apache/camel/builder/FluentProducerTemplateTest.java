@@ -76,7 +76,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Exchange out =  FluentProducerTemplate.on(context)
+        Exchange out = FluentProducerTemplate.on(context)
             .withBody("Hello World")
             .to("direct:exception")
             .send();
@@ -124,14 +124,13 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         Exchange out = FluentProducerTemplate.on(context)
-            .withExchange(() -> {
+                .withExchange(() -> {
                     Exchange exchange = context.getEndpoint("direct:exception").createExchange();
                     exchange.getIn().setBody("Hello World");
-
                     return exchange;
                 })
-            .to("direct:exception")
-            .send();
+                .to("direct:exception")
+                .send();
 
         assertTrue(out.isFailed());
         assertEquals("Forced exception by unit test", out.getException().getMessage());
@@ -179,11 +178,10 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
 
         Exchange out = FluentProducerTemplate.on(context)
             .withExchange(() -> {
-                    Exchange exchange = context.getEndpoint("direct:exception").createExchange(ExchangePattern.InOut);
-                    exchange.getIn().setBody("Hello World");
-
-                    return exchange;
-                })
+                Exchange exchange = context.getEndpoint("direct:exception").createExchange(ExchangePattern.InOut);
+                exchange.getIn().setBody("Hello World");
+                return exchange;
+            })
             .to("direct:exception")
             .send();
 
@@ -263,25 +261,25 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
                 // for faster unit test
                 errorHandler(noErrorHandler());
 
-                from("direct:in").process(
-                        exchange -> exchange.getIn().setBody("Bye World"))
+                from("direct:in")
+                    .process(exchange -> exchange.getIn().setBody("Bye World"))
                     .to("mock:result");
 
-                from("direct:out").process(
-                        exchange -> exchange.getOut().setBody("Bye Bye World"))
+                from("direct:out")
+                    .process(exchange -> exchange.getOut().setBody("Bye Bye World"))
                     .to("mock:result");
 
-                from("direct:fault").process(
-                        exchange -> {
-                                exchange.getOut().setFault(true);
-                                exchange.getOut().setBody("Faulty World");
-                            })
+                from("direct:fault")
+                    .process(exchange -> {
+                        exchange.getOut().setFault(true);
+                        exchange.getOut().setBody("Faulty World");
+                    })
                     .to("mock:result");
 
-                from("direct:exception").process(
-                        exchange -> {
-                                throw new IllegalArgumentException("Forced exception by unit test");
-                            })
+                from("direct:exception")
+                    .process(exchange -> {
+                        throw new IllegalArgumentException("Forced exception by unit test");
+                    })
                     .to("mock:result");
 
                 from("direct:inout").transform(constant(123));
