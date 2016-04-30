@@ -16,7 +16,20 @@
  */
 package org.apache.camel.component.sql;
 
-public enum SqlOutputType {
+import org.apache.camel.Exchange;
+import org.apache.camel.support.SynchronizationAdapter;
 
-    SelectOne, SelectList, StreamList
+public class ResultSetIteratorCompletion extends SynchronizationAdapter {
+
+    private final ResultSetIterator iterator;
+
+    public ResultSetIteratorCompletion(ResultSetIterator iterator) {
+        this.iterator = iterator;
+    }
+
+    @Override
+    public void onDone(Exchange exchange) {
+        iterator.close();
+    }
+
 }

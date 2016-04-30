@@ -32,7 +32,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 
+import static org.springframework.jdbc.support.JdbcUtils.closeConnection;
 import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
+import static org.springframework.jdbc.support.JdbcUtils.closeStatement;
 
 public class SqlProducer extends DefaultProducer {
     private final String query;
@@ -78,7 +80,6 @@ public class SqlProducer extends DefaultProducer {
         }
         final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(sql, getEndpoint().isAllowNamedParameters(), exchange);
 
-        // CAMEL-7313 - check whether to return generated keys
         final Boolean shouldRetrieveGeneratedKeys =
             exchange.getIn().getHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
 
@@ -104,6 +105,14 @@ public class SqlProducer extends DefaultProducer {
             }
         };
 
+        // special for processing stream list (batch not supported)
+        SqlOutputType outputType = getEndpoint().getOutputType();
+        if (outputType == SqlOutputType.StreamList) {
+            processStreamList(exchange, statementCreator, sql, preparedQuery);
+            return;
+        }
+
+        log.trace("jdbcTemplate.execute: {}", preparedQuery);
         jdbcTemplate.execute(statementCreator, new PreparedStatementCallback<Map<?, ?>>() {
             public Map<?, ?> doInPreparedStatement(PreparedStatement ps) throws SQLException {
                 ResultSet rs = null;
@@ -222,6 +231,74 @@ public class SqlProducer extends DefaultProducer {
                 }
             }
         });
+    }
+
+    protected void processStreamList(Exchange exchange, PreparedStatementCreator statementCreator, String sql, String preparedQuery) throws Exception {
+        log.trace("processStreamList: {}", preparedQuery);
+
+        // do not use the jdbcTemplate as it will auto-close connection/ps/rs when exiting the execute method
+        // and we need to keep the connection alive while routing and close it when the Exchange is done being routed
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = jdbcTemplate.getDataSource().getConnection();
+            ps = statementCreator.createPreparedStatement(con);
+
+            int expected = parametersCount > 0 ? parametersCount : ps.getParameterMetaData().getParameterCount();
+
+            // only populate if really needed
+            if (alwaysPopulateStatement || expected > 0) {
+                // transfer incoming message body data to prepared statement parameters, if necessary
+                if (batch) {
+                    Iterator<?> iterator;
+                    if (useMessageBodyForSql) {
+                        iterator = exchange.getIn().getHeader(SqlConstants.SQL_PARAMETERS, Iterator.class);
+                    } else {
+                        iterator = exchange.getIn().getBody(Iterator.class);
+                    }
+                    while (iterator != null && iterator.hasNext()) {
+                        Object value = iterator.next();
+                        Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected, exchange, value);
+                        sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
+                        ps.addBatch();
+                    }
+                } else {
+                    Object value;
+                    if (useMessageBodyForSql) {
+                        value = exchange.getIn().getHeader(SqlConstants.SQL_PARAMETERS);
+                    } else {
+                        value = exchange.getIn().getBody();
+                    }
+                    Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected, exchange, value);
+                    sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
+                }
+            }
+
+            boolean isResultSet = ps.execute();
+            if (isResultSet) {
+                rs = ps.getResultSet();
+                ResultSetIterator iterator = getEndpoint().queryForStreamList(con, ps, rs);
+                if (getEndpoint().isNoop()) {
+                    exchange.getOut().setBody(exchange.getIn().getBody());
+                } else if (getEndpoint().getOutputHeader() != null) {
+                    exchange.getOut().setBody(exchange.getIn().getBody());
+                    exchange.getOut().setHeader(getEndpoint().getOutputHeader(), iterator);
+                } else {
+                    exchange.getOut().setBody(iterator);
+                }
+                // we do not know the row count so we cannot set a ROW_COUNT header
+                // defer closing the iterator when the exchange is complete
+                exchange.addOnCompletion(new ResultSetIteratorCompletion(iterator));
+            }
+        } catch (Exception e) {
+            // in case of exception then close all this before rethrow
+            closeConnection(con);
+            closeStatement(ps);
+            closeResultSet(rs);
+            throw e;
+        }
     }
 
     public void setParametersCount(int parametersCount) {
