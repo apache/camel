@@ -97,8 +97,13 @@ public class KafkaProducer extends DefaultProducer {
             record = new ProducerRecord(topic, msg);
         }
 
-        // TODO: add support for async callback in the send
-        kafkaProducer.send(record);
+        // TODO: add support for async callback
+        // requires a thread pool for processing outgoing routing
+        try {
+            kafkaProducer.send(record).get();
+        } catch (Exception e) {
+            throw new CamelException(e);
+        }
     }
 
 }
