@@ -83,13 +83,13 @@ public class IrcConfiguration implements Cloneable {
     private boolean onPrivmsg = true;
     @UriParam(defaultValue = "true")
     private boolean autoRejoin = true;
-	/**
-	 * Sends <code>NAMES</code> command to channel after joining it.<br>
-	 * {@link #onReply} has to be <code>true</code> in order to process the
-	 * result which will have the header value <code>irc.num = '353'</code>.
-	 */
+    /**
+     * Sends <code>NAMES</code> command to channel after joining it.<br>
+     * {@link #onReply} has to be <code>true</code> in order to process the
+     * result which will have the header value <code>irc.num = '353'</code>.
+     */
     @UriParam(defaultValue = "false")
-    private boolean namesOnJoin = false;
+    private boolean namesOnJoin;
     private SSLContextParameters sslContextParameters;
     @UriParam
     private String nickPassword;
@@ -462,15 +462,16 @@ public class IrcConfiguration implements Cloneable {
     }
     
     public boolean isNamesOnJoin() {
-		return namesOnJoin;
-	}
+        return namesOnJoin;
+    }
 
-	public void setNamesOnJoin(boolean namesOnJoin) {
-		this.namesOnJoin = namesOnJoin;
-	}
+    public void setNamesOnJoin(boolean namesOnJoin) {
+        this.namesOnJoin = namesOnJoin;
+    }
 
-	public String toString() {
-        return "IrcConfiguration[hostname: " + hostname + ", ports=" + Arrays.toString(ports) + ", username=" + username + "]";
+    public String toString() {
+        return "IrcConfiguration[hostname: " + hostname + ", ports=" + Arrays.toString(ports) + ", username=" + username
+                + "]";
     }
     
     private static IrcChannel createChannel(String channelInfo) {
