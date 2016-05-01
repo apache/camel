@@ -95,8 +95,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
             + "c) If the outputClass is set, then it will convert the query result into an Java bean object by calling all the setters that match the column names."
             + "It will assume your class has a default constructor to create instance with."
             + "d) If the query resulted in more than one rows, it throws an non-unique result exception."
-            + "StreamList can only be used by the producer that streams the result of the query using an Iterator. This can be used with the Splitter EIP in streaming"
-            + " mode to process the ResultSet in streaming fashion.")
+            + "StreamList streams the result of the query using an Iterator. This can be used with the Splitter EIP in streaming mode to process the ResultSet in streaming fashion.")
     private SqlOutputType outputType = SqlOutputType.SelectList;
     @UriParam(description = "Specify the full package and class name to use as conversion when outputType=SelectOne.")
     private String outputClass;
