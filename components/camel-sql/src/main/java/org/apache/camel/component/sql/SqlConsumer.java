@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.sql;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -39,9 +37,7 @@ import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import static org.springframework.jdbc.support.JdbcUtils.closeConnection;
 import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
-import static org.springframework.jdbc.support.JdbcUtils.closeStatement;
 
 public class SqlConsumer extends ScheduledBatchPollingConsumer {
 
@@ -111,12 +107,6 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         pendingExchanges = 0;
 
         final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(resolvedQuery, getEndpoint().isAllowNamedParameters(), null);
-
-        // special for processing stream list (batch not supported)
-//        SqlOutputType outputType = getEndpoint().getOutputType();
-//        if (outputType == SqlOutputType.StreamList) {
-//            return pollStreamList(resolvedQuery, preparedQuery);
-//        }
 
         log.trace("poll: {}", preparedQuery);
         final PreparedStatementCallback<Integer> callback = new PreparedStatementCallback<Integer>() {
