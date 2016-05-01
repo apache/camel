@@ -35,56 +35,58 @@ import org.slf4j.LoggerFactory;
  * listed for the channel.
  */
 public class IrcsListUsersIntegrationTest extends CamelTestSupport {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(IrcsListUsersIntegrationTest.class);
 
-	/** message code for a reply to a <code>NAMES</code> command. */
-	public static final String IRC_RPL_NAMREPLY = "353";
+    private static final Logger LOGGER = LoggerFactory.getLogger(IrcsListUsersIntegrationTest.class);
 
-	/** irc component uri. configured by properties */
-	private static final String PRODUCER_URI = "ircs:{{test.user}}@{{test.server}}/{{test.room}}";
+    /** message code for a reply to a <code>NAMES</code> command. */
+    private static final String IRC_RPL_NAMREPLY = "353";
 
-	@EndpointInject(uri = "mock:result")
-	protected MockEndpoint resultEndpoint;
+    /** irc component uri. configured by properties */
+    private static final String PRODUCER_URI = "ircs:{{test.user}}@{{test.server}}/{{test.room}}";
 
-	protected Properties properties;
-	
-	public IrcsListUsersIntegrationTest() throws IOException {
-		super();
-		properties = new Properties();
-		InputStream resourceAsStream = this.getClass().getResourceAsStream("/it-list-users.properties");
-		properties.load(resourceAsStream);
-	}
-	
-	@Override
-	protected RoutesBuilder createRouteBuilder() throws Exception {
+    @EndpointInject(uri = "mock:result")
+    protected MockEndpoint resultEndpoint;
 
-		return new RouteBuilder() {
+    protected Properties properties;
 
-			@Override
-			public void configure() throws Exception {
-				LOGGER.debug("Creating new test route");
-				from(PRODUCER_URI + "?listOnJoin=true&onReply=true")
-					.choice()
-						.when(header("irc.messageType").isEqualToIgnoreCase("REPLY"))
-							.filter(header("irc.num").isEqualTo(IRC_RPL_NAMREPLY)).to("mock:result").stop();
-			}
-		};
-	}
+    public IrcsListUsersIntegrationTest() throws IOException {
+        super();
+        properties = new Properties();
+        InputStream resourceAsStream = this.getClass().getResourceAsStream("/it-list-users.properties");
+        properties.load(resourceAsStream);
+    }
 
-	@Test
-	public void test() throws Exception {
-		resultEndpoint.setMinimumExpectedMessageCount(1);
-		resultEndpoint.assertIsSatisfied();
-		String body = resultEndpoint.getExchanges().get(0).getIn().getBody(String.class);
-		LOGGER.debug("Received usernames: [{}]", body);
-		String username = properties.getProperty("test.user");
-		assertTrue("userlist does not contain test user", body.contains(username));
-	}
-	
-	@Override
-	protected Properties useOverridePropertiesWithPropertiesComponent() {
-		return properties;
-	}
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+
+        return new RouteBuilder() {
+
+            @Override
+            public void configure() throws Exception {
+                LOGGER.debug("Creating new test route");
+                
+                from(PRODUCER_URI + "?listOnJoin=true&onReply=true")
+                    .choice()
+                        .when(header("irc.messageType").isEqualToIgnoreCase("REPLY"))
+                            .filter(header("irc.num").isEqualTo(IRC_RPL_NAMREPLY))
+                            .to("mock:result").stop();
+            }
+        };
+    }
+
+    @Test
+    public void test() throws Exception {
+        resultEndpoint.setMinimumExpectedMessageCount(1);
+        resultEndpoint.assertIsSatisfied();
+        String body = resultEndpoint.getExchanges().get(0).getIn().getBody(String.class);
+        LOGGER.debug("Received usernames: [{}]", body);
+        String username = properties.getProperty("test.user");
+        assertTrue("userlist does not contain test user", body.contains(username));
+    }
+
+    @Override
+    protected Properties useOverridePropertiesWithPropertiesComponent() {
+        return properties;
+    }
 
 }

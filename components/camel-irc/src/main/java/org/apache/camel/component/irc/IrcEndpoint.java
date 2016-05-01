@@ -205,8 +205,8 @@ public class IrcEndpoint extends DefaultEndpoint {
             connection.doJoin(chn);
         }
         if (configuration.isNamesOnJoin()) {
-			connection.doNames(chn);
-		}
+            connection.doNames(chn);
+        }
     }
 }
 
