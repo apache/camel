@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
-import com.amazonaws.services.dynamodbv2.model.TableDescription;
-
-import org.apache.camel.Exchange;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
+import com.amazonaws.services.dynamodbv2.model.TableDescription;
+import org.apache.camel.Exchange;
+
 public class DeleteTableCommand extends AbstractDdbCommand {
+
     public DeleteTableCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration,
                               Exchange exchange) {
         super(ddbClient, configuration, exchange);
