@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.sql.stored;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -30,7 +29,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-public class ProducerTest extends CamelTestSupport {
+public class ProducerBodyArrayTest extends CamelTestSupport {
 
     EmbeddedDatabase db;
 
@@ -52,10 +51,8 @@ public class ProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
-        Map<String, Object> headers = new HashMap<>();
-        headers.put("num1", 1);
-        headers.put("num2", 2);
-        template.requestBodyAndHeaders("direct:query", null, headers);
+        Integer[] numbers = new Integer[]{1, 2};
+        template.requestBody("direct:query", numbers);
 
         assertMockEndpointsSatisfied();
 
@@ -73,8 +70,7 @@ public class ProducerTest extends CamelTestSupport {
                 // required for the sql component
                 getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
 
-                from("direct:query").to("sql-stored:SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers"
-                        + ".num2},OUT INTEGER resultofsub)").to("mock:query");
+                from("direct:query").to("sql-stored:SUBNUMBERS(INTEGER ${body[0]},INTEGER ${body[1]},OUT INTEGER resultofsub)").to("mock:query");
             }
         };
     }
