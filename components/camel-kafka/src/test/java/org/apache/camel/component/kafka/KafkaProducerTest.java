@@ -53,7 +53,7 @@ public class KafkaProducerTest {
         Future future = Mockito.mock(Future.class);
         Mockito.when(future.get()).thenReturn(rm);
         org.apache.kafka.clients.producer.KafkaProducer kp = Mockito.mock(org.apache.kafka.clients.producer.KafkaProducer.class);
-        Mockito.when(kp.send(Mockito.any())).thenReturn(future);
+        Mockito.when(kp.send(Mockito.any(ProducerRecord.class))).thenReturn(future);
 
         producer.setKafkaProducer(kp);
     }
