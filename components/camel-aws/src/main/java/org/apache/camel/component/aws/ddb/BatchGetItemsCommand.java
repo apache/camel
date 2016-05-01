@@ -27,6 +27,7 @@ import com.amazonaws.services.dynamodbv2.model.KeysAndAttributes;
 import org.apache.camel.Exchange;
 
 public class BatchGetItemsCommand extends AbstractDdbCommand {
+
     public BatchGetItemsCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration, Exchange exchange) {
         super(ddbClient, configuration, exchange);
     }

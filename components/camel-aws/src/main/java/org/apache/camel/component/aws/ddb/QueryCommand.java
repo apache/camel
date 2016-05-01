@@ -27,6 +27,7 @@ import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import org.apache.camel.Exchange;
 
 public class QueryCommand extends AbstractDdbCommand {
+
     public QueryCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration, Exchange exchange) {
         super(ddbClient, configuration, exchange);
     }

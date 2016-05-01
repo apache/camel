@@ -27,6 +27,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import org.apache.camel.Exchange;
 
 public class ScanCommand extends AbstractDdbCommand {
+
     public ScanCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration, Exchange exchange) {
         super(ddbClient, configuration, exchange);
     }
