@@ -53,6 +53,7 @@ The IRC component supports 23 endpoint options which are listed below:
 | port | common | 6667,6668,6669 | int | Port number for the IRC chat server
 | autoRejoin | common | true | boolean | Whether to auto re-join when being kicked
 | colors | common | true | boolean | Whether or not the server supports color codes.
+| namesOnJoin | common | false | boolean | Whether or not to send the NAMES command after a channel has been joined.
 | nickname | common |  | String | The nickname used in chat.
 | nickPassword | common |  | String | Your IRC server nickname password.
 | onJoin | common | true | boolean | Handle user join events.
@@ -168,6 +169,24 @@ For example we join 3 channels where as only channel 1 and 3 uses a key.
 [source,java]
 -----------------------------------------------------------------------------
 irc:nick@irc.server.org?channels=#chan1,#chan2,#chan3&keys=chan1Key,,chan3key
+-----------------------------------------------------------------------------
+
+Getting a list of users of the channel
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Using the `namesOnJoin` option one can invoke the IRC-`NAMES` command after the component has joined a channel. 
+The server will reply with `irc.num = 353`. So in order to process the result the property `onReply` has to be `true`.
+Furthermore one has to filter the `onReply` exchanges in order to get the names.
+
+For example we want to get all exchanges that contain the usernames of the channel:
+
+[source,java]
+-----------------------------------------------------------------------------
+from("ircs:nick@myserver:1234/#mychannelname?listOnJoin=true&onReply=true")
+	.choice()
+		.when(header("irc.messageType").isEqualToIgnoreCase("REPLY"))
+			.filter(header("irc.num").isEqualTo("353"))
+			.to("mock:result").stop();
 -----------------------------------------------------------------------------
 
 [[IRC-SeeAlso]]
