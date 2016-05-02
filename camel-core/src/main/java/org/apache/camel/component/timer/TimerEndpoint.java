@@ -177,6 +177,8 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
      * If greater than 0, generate periodic events every period milliseconds.
      * <p/>
      * The default value is 1000.
+     * You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).
+     * @see <a href="http://camel.apache.org/how-do-i-specify-time-period-in-a-human-friendly-syntax.html">human friendly syntax</a>
      */
     @ManagedAttribute(description = "Timer Period")
     public void setPeriod(long period) {
