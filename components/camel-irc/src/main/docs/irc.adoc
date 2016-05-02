@@ -43,8 +43,9 @@ The IRC component has no options.
 
 
 
+
 // endpoint options: START
-The IRC component supports 23 endpoint options which are listed below:
+The IRC component supports 24 endpoint options which are listed below:
 
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
@@ -53,7 +54,7 @@ The IRC component supports 23 endpoint options which are listed below:
 | port | common | 6667,6668,6669 | int | Port number for the IRC chat server
 | autoRejoin | common | true | boolean | Whether to auto re-join when being kicked
 | colors | common | true | boolean | Whether or not the server supports color codes.
-| namesOnJoin | common | false | boolean | Whether or not to send the NAMES command after a channel has been joined.
+| namesOnJoin | common | false | boolean | Sends NAMES command to channel after joining it. link onReply has to be true in order to process the result which will have the header value irc.num = '353'.
 | nickname | common |  | String | The nickname used in chat.
 | nickPassword | common |  | String | Your IRC server nickname password.
 | onJoin | common | true | boolean | Handle user join events.
@@ -75,6 +76,7 @@ The IRC component supports 23 endpoint options which are listed below:
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
+
 
 
 [[IRC-SSLSupport]]
