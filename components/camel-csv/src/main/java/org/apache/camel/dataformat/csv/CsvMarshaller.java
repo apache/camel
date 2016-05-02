@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -73,7 +74,7 @@ abstract class CsvMarshaller {
      * @throws IOException                        if we cannot write into the given stream
      */
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws NoTypeConversionAvailableException, IOException {
-        CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(outputStream), format);
+        CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(outputStream, IOHelper.getCharsetName(exchange)), format);
         try {
             Iterator it = ObjectHelper.createIterator(object);
             while (it.hasNext()) {
