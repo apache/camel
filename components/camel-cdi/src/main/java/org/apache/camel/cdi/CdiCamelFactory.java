@@ -216,9 +216,10 @@ final class CdiCamelFactory {
             return Class.class.cast(type).getName();
         }
         if (type instanceof ParameterizedType) {
-            return Stream.of(((ParameterizedType) type).getActualTypeArguments())
+            ParameterizedType pt = (ParameterizedType) type;
+            return Stream.of(pt.getActualTypeArguments())
                 .map(CdiCamelFactory::authorityFromType)
-                .collect(joining("%2C", "%3C", "%3E"));
+                .collect(joining("%2C", authorityFromType(pt.getRawType()) + "%3C", "%3E"));
         }
         if (type instanceof GenericArrayType) {
             GenericArrayType arrayType = (GenericArrayType) type;
