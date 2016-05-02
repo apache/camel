@@ -34,15 +34,15 @@ public final class SimpleTokenizer {
 
     static {
         // add known tokens
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "${"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "$simple{"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionEnd, "}"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, " "));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\t"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\n"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\r"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.singleQuote, "'"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.doubleQuote, "\""));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "${"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "$simple{"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionEnd, "}"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.booleanValue, "true"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.booleanValue, "false"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.nullValue, "null"));
@@ -85,6 +85,18 @@ public final class SimpleTokenizer {
         // static methods
     }
 
+    public static boolean hasFunctionStartToken(String expression) {
+        if (expression != null) {
+            for (SimpleTokenType type : KNOWN_TOKENS) {
+                if (type.getType() == TokenType.functionStart) {
+                    if (expression.contains(type.getValue())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * @see SimpleLanguage#changeFunctionStartToken(String...)

@@ -34,6 +34,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
         super(token);
     }
 
+    /**
+     * Creates a Camel {@link Expression} based on this model.
+     *
+     * @param expression not in use
+     */
     @Override
     public Expression createExpression(String expression) {
         String function = text.toString();
@@ -43,7 +48,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
     /**
      * Creates a Camel {@link Expression} based on this model.
      *
-     * @param expression the input string
+     * @param expression not in use
      * @param strict whether to throw exception if the expression was not a function,
      *          otherwise <tt>null</tt> is returned
      * @return the created {@link Expression}
@@ -412,12 +417,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 if (tokens.length > 2) {
                     throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
                 }
-                int min = Integer.parseInt(tokens[0].trim());
-                int max = Integer.parseInt(tokens[1].trim());
-                return ExpressionBuilder.randomExpression(min, max);
+                return ExpressionBuilder.randomExpression(tokens[0].trim(), tokens[1].trim());
             } else {
-                int max = Integer.parseInt(values.trim());
-                return ExpressionBuilder.randomExpression(max);
+                return ExpressionBuilder.randomExpression("0", values.trim());
             }
         }
 

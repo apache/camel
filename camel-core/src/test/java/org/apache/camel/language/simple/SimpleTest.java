@@ -1514,31 +1514,36 @@ public class SimpleTest extends LanguageTestSupport {
         int iterations = 30;
         int i = 0;
         for (i = 0; i < iterations; i++) {
-            Expression expression = SimpleLanguage.simple("random(1,10)", Integer.class);
+            Expression expression = SimpleLanguage.simple("${random(1,10)}", Integer.class);
             assertTrue(min <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
         }
         for (i = 0; i < iterations; i++) {
-            Expression expression = SimpleLanguage.simple("random(10)", Integer.class);
+            Expression expression = SimpleLanguage.simple("${random(10)}", Integer.class);
             assertTrue(0 <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
         }
-        Expression expression = SimpleLanguage.simple("random(1, 10)", Integer.class);
+        Expression expression = SimpleLanguage.simple("${random(1, 10)}", Integer.class);
         assertTrue(min <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
         
-        Expression expression1 = SimpleLanguage.simple("random( 10)", Integer.class);
+        Expression expression1 = SimpleLanguage.simple("${random( 10)}", Integer.class);
         assertTrue(0 <= expression1.evaluate(exchange, Integer.class) && expression1.evaluate(exchange, Integer.class) < max);
         
         try {
-            assertExpression("random(10,21,30)", null);
+            assertExpression("${random(10,21,30)}", null);
             fail("Should have thrown exception");
-        } catch (SimpleParserException e) {
-            assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random(10,21,30)", e.getMessage());
+        } catch (Exception e) {
+            assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random(10,21,30)", e.getCause().getMessage());
         }
         try {
-            assertExpression("random()", null);
+            assertExpression("${random()}", null);
             fail("Should have thrown exception");
-        } catch (SimpleParserException e) {
-            assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random()", e.getMessage());
+        } catch (Exception e) {
+            assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random()", e.getCause().getMessage());
         }
+
+        exchange.getIn().setHeader("max", 20);
+        Expression expression3 = SimpleLanguage.simple("${random(10,${header.max})}", Integer.class);
+        int num = expression3.evaluate(exchange, Integer.class);
+        assertTrue("Should be 10..20", num >= 0 && num < 20);
     }
 
     public void testListRemoveByInstance() throws Exception {
@@ -1569,6 +1574,19 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertEquals(1, data.size());
         assertEquals("B", data.get(0));
+    }
+
+    public void testBodyOgnlOnAnimalWithOgnlParams() throws Exception {
+        exchange.getIn().setBody(new Animal("tiger", 13));
+        exchange.getIn().setHeader("friend", new Animal("donkey", 4));
+        assertExpression("${body.setFriend(${header.friend})}", null);
+
+        Animal animal = exchange.getIn().getBody(Animal.class);
+        assertEquals("tiger", animal.getName());
+        assertEquals(13, animal.getAge());
+        assertNotNull("Should have a friend", animal.getFriend());
+        assertEquals("donkey", animal.getFriend().getName());
+        assertEquals(4, animal.getFriend().getAge());
     }
 
     protected String getLanguageName() {

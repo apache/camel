@@ -101,6 +101,10 @@ public class SimpleLanguage extends LanguageSupport {
     public SimpleLanguage() {
     }
 
+    public static boolean hasSimpleFunction(String expression) {
+        return SimpleTokenizer.hasFunctionStartToken(expression);
+    }
+
     public Predicate createPredicate(String expression) {
         ObjectHelper.notNull(expression, "expression");
 

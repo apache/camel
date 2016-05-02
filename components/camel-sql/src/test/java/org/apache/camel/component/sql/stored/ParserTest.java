@@ -51,7 +51,7 @@ public class ParserTest extends CamelTestSupport {
         InputParameter param1 = (InputParameter) template.getParameterList().get(0);
         Assert.assertEquals("_0", param1.getName());
         Assert.assertEquals(Types.INTEGER, param1.getSqlType());
-        Assert.assertEquals(Integer.valueOf(1), param1.getValueExtractor().eval(exchange, null));
+        Assert.assertEquals(1, param1.getValueExtractor().eval(exchange, null));
 
         InputParameter param2 = (InputParameter) template.getParameterList().get(1);
         Assert.assertEquals("_1", param2.getName());
@@ -85,14 +85,16 @@ public class ParserTest extends CamelTestSupport {
     @Test
     public void nestedSimpleExpression() {
         Exchange exchange = createExchangeWithBody(1);
-        exchange.getIn().setHeader("body", "body");
-        Template template = parser.parseTemplate("ADDNUMBERS2(INTEGER ${${header.body}})");
+        exchange.getIn().setHeader("foo", 1);
+        exchange.getIn().setHeader("bar", 3);
+        Template template = parser.parseTemplate("ADDNUMBERS2(INTEGER ${header.foo},INTEGER ${header.bar})");
         assertEquals(1, ((InputParameter) template.getParameterList().get(0)).getValueExtractor().eval(exchange, null));
+        assertEquals(3, ((InputParameter) template.getParameterList().get(1)).getValueExtractor().eval(exchange, null));
     }
 
     @Test
     public void vendorSpeficSqlType() {
-        Template template = parser.parseTemplate("ADDNUMBERS2(1342 ${${header.body}})");
+        Template template = parser.parseTemplate("ADDNUMBERS2(1342 ${header.foo})");
         assertEquals(1342, ((InputParameter) template.getParameterList().get(0)).getSqlType());
     }
 
