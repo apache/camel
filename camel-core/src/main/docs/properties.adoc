@@ -535,12 +535,12 @@ definition.
 ====
 **About placeholder syntaxes**
 
-Notice how we can use the Camel syntax for placeholders `{{ }}` in the
+Notice how we can use the Camel syntax for placeholders `{{` and `}}` in the
 Camel route, which will lookup the value from OSGi blueprint.
 
 The blueprint syntax for placeholders is `${ }`. So outside the
 `<camelContext>` you must use the `${ }` syntax. Where as inside
-`<camelContext>` you must use `{{ }}` syntax.
+`<camelContext>` you must use `{{` and `}}` syntax.
 
 OSGi blueprint allows you to configure the syntax, so you can actually
 align those if you want.
@@ -574,7 +574,7 @@ When using Blueprint property placeholder in the Blueprint XML file, you
 can declare the properties directly in the XML file as shown below:
 
 Notice that we have a `<bean>` which refers to one of the properties. And
-in the Camel route we refer to the other using the `{{ }}` notation.
+in the Camel route we refer to the other using the `{{` and `}}` notation.
 
 Now if you want to override these Blueprint properties from an unit
 test, you can do this as shown below:
@@ -668,7 +668,7 @@ as shown below:
 
 Notice how the hello bean is using pure Spring property placeholders
 using the `${ }` notation. And in the Camel routes we use the Camel
-placeholder notation with `{{ }}`.
+placeholder notation with `{{` and `}}`.
 
 [[Properties-ClashingSpringpropertyplaceholderswithCamelslanguage]]
 Clashing Spring property placeholders with Camels link:simple.html[Simple] language
@@ -813,8 +813,8 @@ can easily be used as shown below:
 
     <route>
       <from uri="direct:start"/>
-      <to uri="{{env:SOMENAME}}"/>
-      <to uri="{{sys:MyJvmPropertyName}}"/>
+      <to uri="{`{env:SOMENAME}`}"/>
+      <to uri="{`{sys:MyJvmPropertyName}`}"/>
     </route>
   </camelContext>
 ----
@@ -829,8 +829,8 @@ is a `log:foo` and `log:bar` value.
 
     <route>
       <from uri="direct:start"/>
-      <to uri="{{env:SOMENAME:log:foo}}"/>
-      <to uri="{{sys:MyJvmPropertyName:log:bar}}"/>
+      <to uri="{`{env:SOMENAME:log:foo}`}"/>
+      <to uri="{`{sys:MyJvmPropertyName:log:bar}`}"/>
     </route>
   </camelContext>
 ----
@@ -866,7 +866,7 @@ the link:http.html[HTTP] component to make the HTTP call:
 
     <route>
       <from uri="direct:start"/>
-      <to uri="http://{{service:FOO}}/myapp"/>
+      <to uri="http://{`{service:FOO}`}/myapp"/>
     </route>
   </camelContext>
 ----
@@ -882,7 +882,7 @@ example to call a service on localhost, maybe for unit testing etc
 
     <route>
       <from uri="direct:start"/>
-      <to uri="http://{{service:FOO:localhost:8080}}/myapp"/>
+      <to uri="http://{`{service:FOO:localhost:8080}`}/myapp"/>
     </route>
   </camelContext>
 ----
@@ -911,8 +911,8 @@ placeholder. This is best illustrated in the example code below
 
     <route>
       <from uri="direct:start"/>
-      <to uri="{{beer:FOO}}"/>
-      <to uri="{{beer:BAR}}"/>
+      <to uri="{`{beer:FOO}`}"/>
+      <to uri="{`{beer:BAR}`}"/>
     </route>
   </camelContext>
 ----
