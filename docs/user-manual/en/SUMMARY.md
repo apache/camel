@@ -194,6 +194,7 @@
 * [Expession Languages](languages.adoc)
     * [Bean Language](bean-language.adoc)
     * [Constant](constant.adoc)
+    * [Jsonpath](jsonpath.adoc)
     * [SQL](josql.adoc)
 
 * Data Formats
