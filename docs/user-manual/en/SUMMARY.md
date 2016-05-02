@@ -175,6 +175,7 @@
     * [Jing](jing.adoc)
     * [JIRA](jira.adoc)
     * [Jolt](jolt.adoc)
+    * [Jpa](jpa.adoc)
     * [Kafka](kafka.adoc)
     * [Metrics](metrics.adoc)
     * [Mock](mock.adoc)
