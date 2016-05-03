@@ -101,10 +101,6 @@ public class SimpleLanguage extends LanguageSupport {
     public SimpleLanguage() {
     }
 
-    public static boolean hasSimpleFunction(String expression) {
-        return SimpleTokenizer.hasFunctionStartToken(expression);
-    }
-
     public Predicate createPredicate(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
@@ -184,6 +180,16 @@ public class SimpleLanguage extends LanguageSupport {
      */
     public static Predicate predicate(String predicate) {
         return SIMPLE.createPredicate(predicate);
+    }
+
+    /**
+     * Does the expression include a simple function.
+     *
+     * @param expression the expression
+     * @return <tt>true</tt> if one or more simple function is included in the expression
+     */
+    public static boolean hasSimpleFunction(String expression) {
+        return SimpleTokenizer.hasFunctionStartToken(expression);
     }
 
     /**

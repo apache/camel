@@ -85,6 +85,12 @@ public final class SimpleTokenizer {
         // static methods
     }
 
+    /**
+     * Does the expression include a simple function.
+     *
+     * @param expression the expression
+     * @return <tt>true</tt> if one or more simple function is included in the expression
+     */
     public static boolean hasFunctionStartToken(String expression) {
         if (expression != null) {
             for (SimpleTokenType type : KNOWN_TOKENS) {
@@ -92,6 +98,9 @@ public final class SimpleTokenizer {
                     if (expression.contains(type.getValue())) {
                         return true;
                     }
+                } else {
+                    // function start are always first
+                    return false;
                 }
             }
         }
@@ -124,9 +133,17 @@ public final class SimpleTokenizer {
             }
         }
 
-        // add in start of list as its a more common token to be used
+        // add after the start tokens
+        int pos = 0;
+        for (SimpleTokenType type : KNOWN_TOKENS) {
+            if (type.getType() == TokenType.functionStart) {
+                pos++;
+            }
+        }
+
+        // add after function start of list as its a more common token to be used
         for (String token : endToken) {
-            KNOWN_TOKENS.add(0, new SimpleTokenType(TokenType.functionEnd, token));
+            KNOWN_TOKENS.add(pos, new SimpleTokenType(TokenType.functionEnd, token));
         }
     }
 
