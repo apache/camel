@@ -32,11 +32,6 @@ import org.junit.runner.RunWith;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 
-
-/**
- * @author arnaud.deprez
- * @since 18/04/16
- */
 @RunWith(Arquillian.class)
 public class ServletAsyncArquillianTest {
 

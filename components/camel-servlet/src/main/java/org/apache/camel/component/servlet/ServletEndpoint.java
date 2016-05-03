@@ -22,6 +22,8 @@ import java.net.URISyntaxException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.http.common.DefaultHttpBinding;
+import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -35,6 +37,8 @@ import org.apache.camel.spi.UriPath;
         syntax = "servlet:contextPath", consumerOnly = true, consumerClass = ServletConsumer.class, label = "http")
 public class ServletEndpoint extends HttpCommonEndpoint {
 
+    private HttpBinding binding;
+
     @UriPath(label = "consumer") @Metadata(required = "true")
     private String contextPath;
 
@@ -47,6 +51,40 @@ public class ServletEndpoint extends HttpCommonEndpoint {
     public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri) throws URISyntaxException {
         super(endPointURI, component, httpUri);
         this.contextPath = httpUri.getPath();
+    }
+
+    @Override
+    public ServletComponent getComponent() {
+        return (ServletComponent) super.getComponent();
+    }
+
+    @Override
+    public HttpBinding getHttpBinding() {
+        // make sure we include servlet variant of the http binding
+        if (this.binding == null) {
+            // is attachment binding enabled?
+            if (getComponent().isAttachmentMultipartBinding()) {
+                this.binding = new AttachmentHttpBinding();
+            } else {
+                this.binding = new DefaultHttpBinding();
+            }
+            this.binding.setTransferException(isTransferException());
+            if (getComponent() != null) {
+                this.binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
+            }
+            this.binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            this.binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
+            this.binding.setMapHttpMessageBody(isMapHttpMessageBody());
+            this.binding.setMapHttpMessageHeaders(isMapHttpMessageHeaders());
+            this.binding.setMapHttpMessageFormUrlEncodedBody(isMapHttpMessageFormUrlEncodedBody());
+        }
+        return this.binding;
+    }
+
+    @Override
+    public void setHttpBinding(HttpBinding binding) {
+        super.setHttpBinding(binding);
+        this.binding = binding;
     }
 
     public String getContextPath() {
