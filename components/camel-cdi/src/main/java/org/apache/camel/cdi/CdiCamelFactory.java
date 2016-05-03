@@ -17,17 +17,11 @@
 package org.apache.camel.cdi;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.joining;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
@@ -38,7 +32,6 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Typed;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.util.TypeLiteral;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -47,6 +40,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import static org.apache.camel.cdi.CdiEventEndpoint.eventEndpointUri;
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 
@@ -168,20 +162,7 @@ final class CdiCamelFactory {
         }
         String uri = eventEndpointUri(type, ip.getQualifiers());
         if (context.hasEndpoint(uri) == null) {
-            // FIXME: to be replaced once event firing with dynamic parameterized type is properly supported (see https://issues.jboss.org/browse/CDI-516)
-            TypeLiteral<T> literal = new TypeLiteral<T>() {
-            };
-            for (Field field : TypeLiteral.class.getDeclaredFields()) {
-                if (field.getType().equals(Type.class)) {
-                    field.setAccessible(true);
-                    field.set(literal, type);
-                    break;
-                }
-            }
-            context.addEndpoint(uri,
-                new CdiEventEndpoint<>(
-                    event.select(literal, ip.getQualifiers().stream().toArray(Annotation[]::new)),
-                    uri, context, (ForwardingObserverMethod<T>) extension.getObserverMethod(ip)));
+            context.addEndpoint(uri, extension.getEventEndpoint(uri));
         }
         return context.getEndpoint(uri, CdiEventEndpoint.class);
     }
@@ -202,30 +183,6 @@ final class CdiCamelFactory {
             return instance.select(DEFAULT).get();
         }
         return instance.select(qualifiers.stream().toArray(Annotation[]::new)).get();
-    }
-
-    private static String eventEndpointUri(Type type, Set<Annotation> qualifiers) {
-        return "cdi-event://" + authorityFromType(type) + qualifiers.stream()
-            .map(Annotation::annotationType)
-            .map(Class::getCanonicalName)
-            .collect(joining("%2C", qualifiers.size() > 0 ? "?qualifiers=" : "", ""));
-    }
-
-    private static String authorityFromType(Type type) {
-        if (type instanceof Class) {
-            return Class.class.cast(type).getName();
-        }
-        if (type instanceof ParameterizedType) {
-            ParameterizedType pt = (ParameterizedType) type;
-            return Stream.of(pt.getActualTypeArguments())
-                .map(CdiCamelFactory::authorityFromType)
-                .collect(joining("%2C", authorityFromType(pt.getRawType()) + "%3C", "%3E"));
-        }
-        if (type instanceof GenericArrayType) {
-            GenericArrayType arrayType = (GenericArrayType) type;
-            return authorityFromType(arrayType.getGenericComponentType()) + "%5B%5D";
-        }
-        throw new IllegalArgumentException("Cannot create URI authority for event type [" + type + "]");
     }
 
     private static <T extends Annotation> Optional<T> getQualifierByType(InjectionPoint ip, Class<T> type) {

@@ -82,6 +82,7 @@ import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.ApplicationScopedLiteral.APPLICATION_SCOPED;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferencesByType;
+import static org.apache.camel.cdi.CdiEventEndpoint.eventEndpointUri;
 import static org.apache.camel.cdi.CdiSpiHelper.getQualifiers;
 import static org.apache.camel.cdi.CdiSpiHelper.getRawType;
 import static org.apache.camel.cdi.CdiSpiHelper.hasAnnotation;
@@ -104,7 +105,7 @@ public class CdiCamelExtension implements Extension {
 
     private final Set<AnnotatedType<?>> eagerBeans = newSetFromMap(new ConcurrentHashMap<>());
 
-    private final Map<InjectionPoint, ForwardingObserverMethod<?>> cdiEventEndpoints = new ConcurrentHashMap<>();
+    private final Map<String, CdiEventEndpoint<?>> cdiEventEndpoints = new ConcurrentHashMap<>();
 
     private final Set<Bean<?>> cdiBeans = newSetFromMap(new ConcurrentHashMap<>());
 
@@ -118,8 +119,8 @@ public class CdiCamelExtension implements Extension {
 
     private final Set<ImportResource> resources = newSetFromMap(new ConcurrentHashMap<>());
 
-    ForwardingObserverMethod<?> getObserverMethod(InjectionPoint ip) {
-        return cdiEventEndpoints.get(ip);
+    CdiEventEndpoint<?> getEventEndpoint(String uri) {
+        return cdiEventEndpoints.get(uri);
     }
 
     Set<Annotation> getObserverEvents() {
@@ -218,19 +219,17 @@ public class CdiCamelExtension implements Extension {
         cdiBeans.add(pb.getBean());
     }
 
-    private void beans(@Observes ProcessBean<?> pb) {
+    private void beans(@Observes ProcessBean<?> pb, BeanManager manager) {
         cdiBeans.add(pb.getBean());
-
-        // TODO: refine the key to the type and qualifiers instead of the whole injection point as it leads to registering redundant observers
+        // Lookup for CDI event endpoint injection points
         pb.getBean().getInjectionPoints().stream()
             .filter(ip -> CdiEventEndpoint.class.equals(getRawType(ip.getType())))
             .forEach(ip -> {
-                // TODO: refine the key to the type and qualifiers instead of the whole injection point as it leads to registering redundant observers
-                if (ip.getType() instanceof ParameterizedType) {
-                    cdiEventEndpoints.put(ip, new ForwardingObserverMethod<>(((ParameterizedType) ip.getType()).getActualTypeArguments()[0], ip.getQualifiers()));
-                } else if (ip.getType() instanceof Class) {
-                    cdiEventEndpoints.put(ip, new ForwardingObserverMethod<>(Object.class, ip.getQualifiers()));
-                }
+                Type type = ip.getType() instanceof ParameterizedType
+                    ? ((ParameterizedType) ip.getType()).getActualTypeArguments()[0]
+                    : Object.class;
+                String uri = eventEndpointUri(type, ip.getQualifiers());
+                cdiEventEndpoints.put(uri, new CdiEventEndpoint<>(uri, type, ip.getQualifiers(), manager));
             });
     }
 
@@ -298,8 +297,8 @@ public class CdiCamelExtension implements Extension {
         extraBeans.forEach(abd::addBean);
 
         // Update the CDI Camel factory beans
-        Set<Annotation> endpointQualifiers = cdiEventEndpoints.keySet().stream()
-            .map(InjectionPoint::getQualifiers)
+        Set<Annotation> endpointQualifiers = cdiEventEndpoints.values().stream()
+            .map(CdiEventEndpoint::getQualifiers)
             .flatMap(Set::stream)
             .collect(toSet());
         Set<Annotation> templateQualifiers = contextQualifiers.stream()
@@ -315,7 +314,9 @@ public class CdiCamelExtension implements Extension {
             .forEach(abd::addBean);
 
         // Add CDI event endpoint observer methods
-        cdiEventEndpoints.values().forEach(abd::addObserverMethod);
+        cdiEventEndpoints.values().stream()
+            .map(ForwardingObserverMethod::new)
+            .forEach(abd::addObserverMethod);
     }
 
     private boolean shouldDeployDefaultCamelContext(Set<Bean<?>> beans) {
