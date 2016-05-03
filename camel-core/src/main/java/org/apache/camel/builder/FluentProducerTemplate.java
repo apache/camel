@@ -59,7 +59,7 @@ public class FluentProducerTemplate {
      *
      * @param key the key of the header
      * @param value the value of the header
-     * @return ProducerTemplate builder
+     * @return this FluentProducerTemplate instance
      */
     public FluentProducerTemplate withHeader(String key, Object value) {
         if (headers == null) {
@@ -74,7 +74,7 @@ public class FluentProducerTemplate {
     /**
      * Remove the headers.
      *
-     * @return ProducerTemplate builder
+     * @return this FluentProducerTemplate instance
      */
     public FluentProducerTemplate clearHeaders() {
         if (headers != null) {
@@ -88,7 +88,7 @@ public class FluentProducerTemplate {
      * Set the message body
      *
      * @param body the body
-     * @return ProducerTemplate builder
+     * @return this FluentProducerTemplate instance
      */
     public FluentProducerTemplate withBody(Object body) {
         this.body = body;
@@ -97,9 +97,24 @@ public class FluentProducerTemplate {
     }
 
     /**
+     * Set the message body after converting it to the given type
+     *
+     * @param body the body
+     * @param type the type which the body should be converted to
+     * @return this FluentProducerTemplate instance
+     */
+    public FluentProducerTemplate withBodyAs(Object body, Class<?> type) {
+        this.body = type != null
+            ? context.getTypeConverter().convertTo(type, body)
+            : body;
+
+        return this;
+    }
+
+    /**
      * Remove the body.
      *
-     * @return ProducerTemplate builder
+     * @return this FluentProducerTemplate instance
      */
     public FluentProducerTemplate clearBody() {
         this.body = null;
@@ -197,7 +212,7 @@ public class FluentProducerTemplate {
      * Set the message body
      *
      * @param endpointUri the endpoint URI to send to
-     * @return ProducerTemplate builder
+     * @return this FluentProducerTemplate instance
      */
     public FluentProducerTemplate to(String endpointUri) {
         return to(context.getEndpoint(endpointUri));
@@ -207,7 +222,7 @@ public class FluentProducerTemplate {
      * Set the message body
      *
      * @param endpoint the endpoint to send to
-     * @return ProducerTemplate builder
+     * @return this FluentProducerTemplate instance
      */
     public FluentProducerTemplate to(Endpoint endpoint) {
         this.endpoint = endpoint;
@@ -290,15 +305,9 @@ public class FluentProducerTemplate {
      * @throws CamelExecutionException
      */
     public Exchange send() throws CamelExecutionException {
-        Exchange result =  exchangeSupplier != null
+        return exchangeSupplier != null
             ? template().send(endpoint, exchangeSupplier.get())
             : template().send(endpoint, processorSupplier.get());
-
-        // TODO: validate
-        // must invoke extract result body in case of exception to be rethrown
-        //ExchangeHelper.extractResultBody(result, null);
-
-        return result;
     }
 
     /**
@@ -320,7 +329,7 @@ public class FluentProducerTemplate {
      * Create the FluentProducerTemplate by setting the camel context
      *
      * @param context the camel context
-     * @return ProducerTemplate builder
+     * @return this FluentProducerTemplate instance
      */
     public static FluentProducerTemplate on(CamelContext context) {
         return new FluentProducerTemplate(context);
