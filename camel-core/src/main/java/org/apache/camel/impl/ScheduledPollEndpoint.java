@@ -48,7 +48,8 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             description = "Whether the scheduler should be auto started.")
     private boolean startScheduler = true;
     @UriParam(optionalPrefix = "consumer.", defaultValue = "1000", label = "consumer,scheduler",
-            description = "Milliseconds before the first poll starts.")
+            description = "Milliseconds before the first poll starts."
+                    + " You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).")
     private long initialDelay = 1000;
     @UriParam(optionalPrefix = "consumer.", defaultValue = "500", label = "consumer,scheduler",
             description = "Milliseconds before the next poll.")
