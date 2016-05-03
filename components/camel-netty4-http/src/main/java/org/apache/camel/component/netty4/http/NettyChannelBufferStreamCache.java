@@ -32,11 +32,12 @@ import org.apache.camel.util.IOHelper;
  */
 public final class NettyChannelBufferStreamCache extends InputStream implements StreamCache {
 
-    private ByteBuf buffer;
+    private final ByteBuf buffer;
 
     public NettyChannelBufferStreamCache(ByteBuf buffer) {
-        this.buffer = buffer;
-        buffer.markReaderIndex();
+        // retain the buffer so we keep it in use until we release it when we are done
+        this.buffer = buffer.retain();
+        this.buffer.markReaderIndex();
     }
 
     @Override
@@ -102,8 +103,11 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
         return buffer.readableBytes();
     }
 
-    void defensiveCopyBuffer() {
-        // make a defensive copy of the buffer
-        this.buffer = buffer.copy();
+    /**
+     * Release the buffer when we are done using it.
+     */
+    public void release() {
+        buffer.release();
     }
+
 }
