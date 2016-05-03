@@ -99,6 +99,14 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
         super.setConfiguration(configuration);
     }
 
+    /**
+     * To use the shared configuration
+     */
+    @Override
+    public Olingo2Configuration getConfiguration() {
+        return super.getConfiguration();
+    }
+
     public Olingo2AppWrapper createApiProxy(Olingo2Configuration endpointConfiguration) {
         final Olingo2AppWrapper result;
         if (endpointConfiguration.equals(this.configuration)) {
