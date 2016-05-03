@@ -17,18 +17,11 @@
 package org.apache.camel.component.netty4.http;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.netty4.http.handlers.HttpServerChannelHandler;
 import org.apache.camel.support.SynchronizationAdapter;
 
 /**
- * A {@link org.apache.camel.spi.Synchronization} to keep track of the unit of work on the current {@link Exchange}
- * that has the {@link NettyChannelBufferStreamCache} as message body. This cache is wrapping the raw original
- * Netty {@link io.netty.buffer.ByteBuf}. Because the Netty HTTP server ({@link HttpServerChannelHandler}) will
- * close the {@link io.netty.buffer.ByteBuf} when Netty is complete processing the HttpMessage, then any further
- * access to the cache will cause in a buffer unreadable. In the case of Camel async routing engine will
- * handover the processing of the {@link Exchange} to another thread, then we need to keep track of this event
- * so we can do a defensive copy of the netty {@link io.netty.buffer.ByteBuf} so Camel is able to read
- * the content from other threads, while Netty has closed the original {@link io.netty.buffer.ByteBuf}.
+ * A {@link org.apache.camel.spi.Synchronization} to handle the lifecycle of the {@link NettyChannelBufferStreamCache}
+ * so the cache is released when the unit of work of the Exchange is done.
  */
 public class NettyChannelBufferStreamCacheOnCompletion extends SynchronizationAdapter {
 
@@ -40,14 +33,9 @@ public class NettyChannelBufferStreamCacheOnCompletion extends SynchronizationAd
 
     @Override
     public void onDone(Exchange exchange) {
-        // okay netty is no longer being active, so we need to signal to the cache that its to preserve the buffer if still in need.
-        cache.defensiveCopyBuffer();
+        // release the cache when we are done routing the Exchange
+        cache.release();
     }
 
-    @Override
-    public boolean allowHandover() {
-        // do not allow handover, so we can do the defensive copy in the onDone method
-        return false;
-    }
 
 }

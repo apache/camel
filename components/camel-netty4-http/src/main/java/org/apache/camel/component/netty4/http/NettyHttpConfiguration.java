@@ -249,7 +249,10 @@ public class NettyHttpConfiguration extends NettyConfiguration {
      * can retrieve all data from the stream. However you can set this option to true when you for example need to
      * access the raw stream, such as streaming it directly to a file or other persistent store. Mind that
      * if you enable this option, then you cannot read the Netty stream multiple times out of the box, and you would
-     * need manually to reset the reader index on the Netty raw stream.
+     * need manually to reset the reader index on the Netty raw stream. Also Netty will auto-close the Netty stream
+     * when the Netty HTTP server is done processing, which means that if the asynchronous routing engine is in
+     * use then any asynchronous thread that may continue routing the {@link org.apache.camel.Exchange} may not
+     * be able to read the Netty stream, because Netty has closed it.
      */
     public void setDisableStreamCache(boolean disableStreamCache) {
         this.disableStreamCache = disableStreamCache;
