@@ -208,12 +208,10 @@ final class CdiSpiHelper {
 
         return Stream.of(methods)
             .sorted(comparing(Method::getName))
-            .collect(() -> new StringJoiner(",", "@(", ")"),
+            .collect(() -> new StringJoiner(",", "@" + annotation.annotationType().getCanonicalName() + "(", ")"),
                 (joiner, method) -> {
                     try {
-                        joiner
-                            .add(method.getName()).add("=")
-                            .add(method.invoke(annotation).toString());
+                        joiner.add(method.getName() + "=" + method.invoke(annotation).toString());
                     } catch (NullPointerException | IllegalArgumentException | IllegalAccessException | InvocationTargetException cause) {
                         throw new RuntimeException(
                             "Error while accessing member [" + method.getName() + "]"
