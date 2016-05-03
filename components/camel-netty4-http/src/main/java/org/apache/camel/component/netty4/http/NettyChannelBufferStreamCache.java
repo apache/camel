@@ -32,7 +32,7 @@ import org.apache.camel.util.IOHelper;
  */
 public final class NettyChannelBufferStreamCache extends InputStream implements StreamCache {
 
-    private final ByteBuf buffer;
+    private ByteBuf buffer;
 
     public NettyChannelBufferStreamCache(ByteBuf buffer) {
         this.buffer = buffer;
@@ -100,5 +100,10 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
     @Override
     public long length() {
         return buffer.readableBytes();
+    }
+
+    void defensiveCopyBuffer() {
+        // make a defensive copy of the buffer
+        this.buffer = buffer.copy();
     }
 }
