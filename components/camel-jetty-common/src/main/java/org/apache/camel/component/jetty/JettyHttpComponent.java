@@ -55,6 +55,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
@@ -129,6 +130,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected String proxyHost;
     protected ErrorHandler errorHandler;
     private Integer proxyPort;
+    private boolean sendServerVersion = true;
 
     public JettyHttpComponent() {
         super(JettyHttpEndpoint.class);
@@ -289,6 +291,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (httpClient != null) {
             endpoint.setHttpClient(httpClient);
         }
+        endpoint.setSendServerVersion(isSendServerVersion());
 
         setProperties(endpoint, parameters);
         return endpoint;
@@ -985,6 +988,20 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     @Metadata(description = "To use a http proxy to configure the port number.")
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    public boolean isSendServerVersion() {
+        return sendServerVersion;
+    }
+
+    /**
+     * If the option is true, jetty will send the server header with the jetty version information to the client which sends the request.
+     * NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected.
+     */
+    @Metadata(description = "If the option is true, jetty server will send the date header to the client which sends the request."
+            + " NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected.")
+    public void setSendServerVersion(boolean sendServerVersion) {
+        this.sendServerVersion = sendServerVersion;
     }
 
     // Implementation methods

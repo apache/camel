@@ -50,8 +50,9 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
-The Jetty 9 component supports 29 options which are listed below.
+The Jetty 9 component supports 30 options which are listed below.
 
 
 
@@ -85,10 +86,12 @@ The Jetty 9 component supports 29 options which are listed below.
 | responseHeaderSize | Integer | Allows to configure a custom value of the response header size on the Jetty connectors.
 | proxyHost | String | To use a http proxy to configure the hostname.
 | proxyPort | Integer | To use a http proxy to configure the port number.
+| sendServerVersion | boolean | If the option is true jetty server will send the date header to the client which sends the request. NOTE please make sure there is no any other camel-jetty endpoint is share the same port otherwise this option may not work as expected.
 | allowJavaSerializedObject | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
 | headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 // component options: END
+
 
 
 
