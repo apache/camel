@@ -191,6 +191,14 @@ public interface CamelCatalog {
     Map<String, String> endpointProperties(String uri) throws URISyntaxException;
 
     /**
+     * Validates the pattern whether its a valid time pattern.
+     *
+     * @param pattern  the pattern such as 5000, 5s, 5sec, 4min, 4m30s, 1h, etc.
+     * @return <tt>true</tt> if valid, <tt>false</tt> if invalid
+     */
+    boolean validateTimePattern(String pattern);
+
+    /**
      * Parses and validates the endpoint uri and constructs a key/value properties of each option.
      *
      * @param uri  the endpoint uri
