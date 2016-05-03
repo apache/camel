@@ -223,7 +223,7 @@
     <hapi-version>2.2</hapi-version>
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
-    <hawtdispatch-version>1.21</hawtdispatch-version>
+    <hawtdispatch-version>1.22</hawtdispatch-version>
     <hazelcast-version>3.6.2</hazelcast-version>
     <hbase-version>1.2.1</hbase-version>
     <hessian-version>4.0.38</hessian-version>
