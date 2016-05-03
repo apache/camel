@@ -197,6 +197,7 @@
     * [Constant](constant.adoc)
     * [EL](juel.adoc)
     * [Jsonpath](jsonpath.adoc)
+    * [JXPath](jxpath.adoc)
     * [SQL](josql.adoc)
 
 * Data Formats
