@@ -178,6 +178,7 @@
     * [Jpa](jpa.adoc)
     * [JT400](jt400.adoc)
     * [Kafka](kafka.adoc)
+    * [Kestrel](kestrel.adoc)
     * [Metrics](metrics.adoc)
     * [Mock](mock.adoc)
     * [NATS](nats.adoc)
