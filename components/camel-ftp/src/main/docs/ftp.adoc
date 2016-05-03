@@ -110,6 +110,7 @@ link:file2.html[File] is inherited.
 The FTP component has no options.
 // component options: END
 
+
 // endpoint options: START
 The FTP component supports 100 endpoint options which are listed below:
 
@@ -202,7 +203,7 @@ The FTP component supports 100 endpoint options which are listed below:
 | backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
 | delay | scheduler | 500 | long | Milliseconds before the next poll.
 | greedy | scheduler | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-| initialDelay | scheduler | 1000 | long | Milliseconds before the first poll starts.
+| initialDelay | scheduler | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
 | runLoggingLevel | scheduler | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
 | scheduledExecutorService | scheduler |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
 | scheduler | scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
@@ -218,6 +219,7 @@ The FTP component supports 100 endpoint options which are listed below:
 | username | security |  | String | Username to use for login
 |=======================================================================
 // endpoint options: END
+
 
 
 [Info]
