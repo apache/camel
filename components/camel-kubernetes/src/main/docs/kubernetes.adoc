@@ -1,0 +1,154 @@
+[[Kubernetes-KubernetesComponent]]
+Kubernetes Component
+~~~~~~~~~~~~~~~~~~~~
+
+*Available as of Camel 2.17*
+
+The *Kubernetes* component is a component for integrating your
+application with Kubernetes standalone or on top of Openshift. 
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-kubernetes</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+[[Kubernetes-URIformat]]
+URI format
+^^^^^^^^^^
+
+[source,java]
+------------------------------
+kubernetes:masterUrl[?options]
+------------------------------
+
+You can append query options to the URI in the following
+format, `?option=value&option=value&...`
+
+[[Kubernetes-Options]]
+Options
+^^^^^^^
+
+
+// component options: START
+The Kubernetes component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Kubernetes component supports 23 endpoint options which are listed below:
+
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| masterUrl | common |  | String | *Required* Kubernetes Master url
+| apiVersion | common |  | String | The Kubernetes API Version to use
+| category | common |  | String | *Required* Kubernetes Producer and Consumer category
+| kubernetesClient | common |  | DefaultKubernetesClient | Default KubernetesClient to use if provided
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| namespaceName | consumer |  | String | The namespace name
+| poolSize | consumer | 1 | int | The Consumer pool size
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| operation | producer |  | String | Producer operation to do on Kubernetes
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| caCertData | security |  | String | The CA Cert Data
+| caCertFile | security |  | String | The CA Cert File
+| clientCertData | security |  | String | The Client Cert Data
+| clientCertFile | security |  | String | The Client Cert File
+| clientKeyAlgo | security |  | String | The Key Algorithm used by the client
+| clientKeyData | security |  | String | The Client Key data
+| clientKeyFile | security |  | String | The Client Key file
+| clientKeyPassphrase | security |  | String | The Client Key Passphrase
+| oauthToken | security |  | String | The Auth Token
+| password | security |  | String | Password to connect to Kubernetes
+| trustCerts | security |  | Boolean | Define if the certs we used are trusted anyway or not
+| username | security |  | String | Username to connect to Kubernetes
+|=======================================================================
+// endpoint options: END
+
+
+[[Kubernetes-Headers]]
+Headers
+^^^^^^^
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Type |Description
+
+|CamelKubernetesOperation |String |The Producer operation
+
+|CamelKubernetesNamespaceName |String |The Namespace name
+
+|CamelKubernetesNamespaceLabels |Map |The Namespace Labels
+
+|CamelKubernetesServiceLabels |Map |The Service labels
+
+|CamelKubernetesServiceName |String |The Service name
+
+|CamelKubernetesServiceSpec |io.fabric8.kubernetes.api.model.ServiceSpec |The Spec for a Service
+
+|CamelKubernetesReplicationControllersLabels |Map |Replication controller labels
+
+|CamelKubernetesReplicationControllerName |String |Replication controller name
+
+|CamelKubernetesReplicationControllerSpec |io.fabric8.kubernetes.api.model.ReplicationControllerSpec |The Spec for a Replication Controller
+
+|CamelKubernetesPodsLabels |Map |Pod labels
+
+|CamelKubernetesPodName |String |Pod name
+
+|CamelKubernetesPodSpec |io.fabric8.kubernetes.api.model.PodSpec |The Spec for a Pod
+
+|CamelKubernetesPersistentVolumesLabels |Map |Persistent Volume labels
+
+|CamelKubernetesPersistentVolumesName |String |Persistent Volume name
+
+|CamelKubernetesPersistentVolumesClaimsLabels |Map |Persistent Volume Claim labels
+
+|CamelKubernetesPersistentVolumesClaimsName |String |Persistent Volume Claim name
+
+|CamelKubernetesPersistentVolumesClaimsSpec |io.fabric8.kubernetes.api.model.PersistentVolumeClaimSpec |The Spec for a Persistent Volume claim
+
+|CamelKubernetesSecretsLabels |Map |Secret labels
+
+|CamelKubernetesSecretsName |String |Secret name
+
+|CamelKubernetesSecret |io.fabric8.kubernetes.api.model.Secret |A Secret Object
+
+|CamelKubernetesResourcesQuotaLabels |Map |Resource Quota labels
+
+|CamelKubernetesResourcesQuotaName |String |Resource Quota name
+
+|CamelKubernetesResourceQuotaSpec |io.fabric8.kubernetes.api.model.ResourceQuotaSpec |The Spec for a Resource Quota
+
+|CamelKubernetesServiceAccountsLabels |Map |Service Account labels
+
+|CamelKubernetesServiceAccountName |String |Service Account name
+
+|CamelKubernetesServiceAccount |io.fabric8.kubernetes.api.model.ServiceAccount |A Service Account object
+
+|CamelKubernetesNodesLabels |Map |Node labels
+
+|CamelKubernetesNodeName |String |Node name
+
+|CamelKubernetesBuildsLabels |Map |Openshift Build labels
+
+|CamelKubernetesBuildName |String |Openshift Build name
+
+|CamelKubernetesBuildConfigsLabels |Map |Openshift Build Config labels
+
+|CamelKubernetesBuildConfigName |String |Openshift Build Config name
+
+|CamelKubernetesEventAction |io.fabric8.kubernetes.client.Watcher.Action |Action watched by the consumer
+
+|CamelKubernetesEventTimestamp |String |Timestamp of the action watched by the consumer
+|=======================================================================
