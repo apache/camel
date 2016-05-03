@@ -95,6 +95,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         } else {
             // turn the body into stream cached
             NettyChannelBufferStreamCache cache = new NettyChannelBufferStreamCache(request.content());
+            // add on completion to the cache which is needed for Camel to keep track of the lifecycle of the cache
+            exchange.addOnCompletion(new NettyChannelBufferStreamCacheOnCompletion(cache));
             answer.setBody(cache);
         }
         return answer;
