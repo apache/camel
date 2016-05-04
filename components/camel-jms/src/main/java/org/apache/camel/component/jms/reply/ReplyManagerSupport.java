@@ -200,6 +200,20 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected abstract AbstractMessageListenerContainer createListenerContainer() throws Exception;
 
     /**
+     * @return waitForProvisionCorrelationToBeUpdated counter
+     */
+    private int getWaitForProvisionCorrelationToBeUpdatedCounter(){
+        return endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedCounter();
+    }
+
+    /**
+     * @return waitForProvisionCorrelationToBeUpdated thread sleeping time
+     */
+    private long getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(){
+        return endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime();
+    }
+
+    /**
      * <b>IMPORTANT:</b> This logic is only being used due to high performance in-memory only
      * testing using InOut over JMS. Its unlikely to happen in a real life situation with communication
      * to a remote broker, which always will be slower to send back reply, before Camel had a chance
@@ -216,13 +230,13 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
         ReplyHandler answer = null;
 
-        // wait up till 5 seconds
+        // wait up until configured values
         boolean done = false;
         int counter = 0;
-        while (!done && counter++ < 50) {
+        while (!done && counter++ < getWaitForProvisionCorrelationToBeUpdatedCounter()) {
             log.trace("Early reply not found handler at attempt {}. Waiting a bit longer.", counter);
             try {
-                Thread.sleep(100);
+                Thread.sleep(getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime());
             } catch (InterruptedException e) {
                 // ignore
             }
