@@ -297,8 +297,8 @@
     <jcr-version>2.0</jcr-version>
     <jdom-bundle-version>1.1_4</jdom-bundle-version>
     <jdom-version>1.1.3</jdom-version>
-    <jedis-client-version>2.7.3</jedis-client-version>
-    <jedis-client-bundle-version>2.7.3_1</jedis-client-bundle-version>
+    <jedis-client-version>2.8.1</jedis-client-version>
+    <jedis-client-bundle-version>2.8.1_1</jedis-client-bundle-version>
     <jersey-version>2.11</jersey-version>
     <jetty9-version>9.2.15.v20160210</jetty9-version>
     <jetty-version>${jetty9-version}</jetty-version>
