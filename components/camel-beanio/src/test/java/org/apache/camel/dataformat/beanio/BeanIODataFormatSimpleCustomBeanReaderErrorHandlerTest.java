@@ -68,18 +68,18 @@ public class BeanIODataFormatSimpleCustomBeanReaderErrorHandlerTest extends Came
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 // setup beanio data format using the mapping file, loaded from the classpath
-            	BeanIODataFormat format = new BeanIODataFormat(
+                BeanIODataFormat format = new BeanIODataFormat(
                         "org/apache/camel/dataformat/beanio/mappings.xml",
                         "employeeFile");
                 
-            	BeanReaderErrorHandler reader = new BeanReaderErrorHandler() {
-					
-					@Override
-					public void handleError(BeanReaderException ex) throws Exception {
-						log.info("Error: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText());
-						return;
-					}
-				};
+                BeanReaderErrorHandler reader = new BeanReaderErrorHandler() {
+
+                    @Override
+                    public void handleError(BeanReaderException ex) throws Exception {
+                        log.info("Error: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText());
+                        return;
+                    }
+                };
                 format.setBeanReaderErrorHandler(reader);
 
                 // a route which uses the bean io data format to format a CSV data

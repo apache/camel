@@ -91,11 +91,11 @@ public class BeanIOConfiguration {
         this.properties = properties;
     }
 
-	public BeanReaderErrorHandler getBeanReaderErrorHandler() {
-		return beanReaderErrorHandler;
-	}
+    public BeanReaderErrorHandler getBeanReaderErrorHandler() {
+        return beanReaderErrorHandler;
+    }
 
-	public void setBeanReaderErrorHandler(BeanReaderErrorHandler beanReaderErrorHandler) {
-		this.beanReaderErrorHandler = beanReaderErrorHandler;
-	}
+    public void setBeanReaderErrorHandler(BeanReaderErrorHandler beanReaderErrorHandler) {
+        this.beanReaderErrorHandler = beanReaderErrorHandler;
+    }
 }

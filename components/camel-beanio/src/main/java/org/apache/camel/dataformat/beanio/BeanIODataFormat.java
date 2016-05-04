@@ -149,7 +149,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
 
         try {
             if (ObjectHelper.isNotEmpty(configuration.getBeanReaderErrorHandler())) {
-            	in.setErrorHandler(configuration.getBeanReaderErrorHandler());
+                in.setErrorHandler(configuration.getBeanReaderErrorHandler());
             } else {
                 in.setErrorHandler(new BeanIOErrorHandler(configuration));
             }
@@ -224,11 +224,11 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
         return configuration.getEncoding();
     }
     
-	public BeanReaderErrorHandler getBeanReaderErrorHandler() {
-		return configuration.getBeanReaderErrorHandler();
-	}
+    public BeanReaderErrorHandler getBeanReaderErrorHandler() {
+        return configuration.getBeanReaderErrorHandler();
+    }
 
-	public void setBeanReaderErrorHandler(BeanReaderErrorHandler beanReaderErrorHandler) {
-		configuration.setBeanReaderErrorHandler(beanReaderErrorHandler);
-	}
+    public void setBeanReaderErrorHandler(BeanReaderErrorHandler beanReaderErrorHandler) {
+        configuration.setBeanReaderErrorHandler(beanReaderErrorHandler);
+    }
 }
