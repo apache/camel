@@ -500,8 +500,8 @@
     <snakeyaml-version>1.17</snakeyaml-version>
     <snappy-version>1.1.2.4</snappy-version>
     <snmp4j-version>2.3.4_1</snmp4j-version>
-    <solr-bundle-version>5.4.1_1</solr-bundle-version>
-    <solr-version>5.4.1</solr-version>
+    <solr-bundle-version>5.5.0_1</solr-bundle-version>
+    <solr-version>5.5.0</solr-version>
     <solr-version-range>[5,6)</solr-version-range>
     <spark-version>1.6.1</spark-version>
     <spark-rest-version>2.3</spark-rest-version>
