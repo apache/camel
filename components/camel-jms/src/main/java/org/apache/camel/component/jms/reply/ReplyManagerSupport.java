@@ -19,7 +19,6 @@ package org.apache.camel.component.jms.reply;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -200,20 +199,6 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected abstract AbstractMessageListenerContainer createListenerContainer() throws Exception;
 
     /**
-     * @return waitForProvisionCorrelationToBeUpdated counter
-     */
-    private int getWaitForProvisionCorrelationToBeUpdatedCounter(){
-        return endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedCounter();
-    }
-
-    /**
-     * @return waitForProvisionCorrelationToBeUpdated thread sleeping time
-     */
-    private long getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(){
-        return endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime();
-    }
-
-    /**
      * <b>IMPORTANT:</b> This logic is only being used due to high performance in-memory only
      * testing using InOut over JMS. Its unlikely to happen in a real life situation with communication
      * to a remote broker, which always will be slower to send back reply, before Camel had a chance
@@ -233,10 +218,10 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         // wait up until configured values
         boolean done = false;
         int counter = 0;
-        while (!done && counter++ < getWaitForProvisionCorrelationToBeUpdatedCounter()) {
+        while (!done && counter++ < endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedCounter()) {
             log.trace("Early reply not found handler at attempt {}. Waiting a bit longer.", counter);
             try {
-                Thread.sleep(getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime());
+                Thread.sleep(endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime());
             } catch (InterruptedException e) {
                 // ignore
             }

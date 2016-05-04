@@ -173,9 +173,12 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(defaultValue = "1", label = "advanced",
             description = "Specify the limit for the number of consumers that are allowed to be idle at any given time.")
     private int idleConsumerLimit = 1;
-    @UriParam(defaultValue = "100", label = "advanced")
+    @UriParam(defaultValue = "100", label = "advanced",
+            description = "Interval in millis to sleep each time while waiting for provisional correlation id to be updated.")
     private long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = 100L;
-    @UriParam(defaultValue = "50", label = "advanced")
+    @UriParam(defaultValue = "50", label = "advanced",
+            description = "Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS"
+                    + " and when the option useMessageIDAsCorrelationID is enabled.")
     private int waitForProvisionCorrelationToBeUpdatedCounter = 50;
     @UriParam(label = "consumer",
             description = "Specifies the maximum number of concurrent consumers when consuming from JMS (not for request/reply over JMS)."
@@ -1061,33 +1064,24 @@ public class JmsConfiguration implements Cloneable {
         this.idleConsumerLimit = idleConsumerLimit;
     }
 
-    /**
-     * Receives a counter that is used in conjunction with {@code waitForProvisionCorrelationToBeUpdatedThreadSleepingTime}
-     * @return waitForProvisionCorrelationToBeUpdatedCounter
-     */
     public int getWaitForProvisionCorrelationToBeUpdatedCounter() {
         return waitForProvisionCorrelationToBeUpdatedCounter;
     }
 
     /**
-     * Sets a counter that is used in conjunction with {@code waitForProvisionCorrelationToBeUpdatedThreadSleepingTime}
-     * @param counter
+     * Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS
+     * and when the option useMessageIDAsCorrelationID is enabled.
      */
     public void setWaitForProvisionCorrelationToBeUpdatedCounter(int counter) {
         this.waitForProvisionCorrelationToBeUpdatedCounter = counter;
     }
 
-    /**
-     * Gets the sleeping time of the Thread when waiting for provision correlation to be updated.
-     * @return
-     */
     public long getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime() {
         return waitForProvisionCorrelationToBeUpdatedThreadSleepingTime;
     }
 
     /**
-     * Sets the sleeping time of the Thread when waiting for provision correlation to be updated.
-     * @param sleepingTime
+     * Interval in millis to sleep each time while waiting for provisional correlation id to be updated.
      */
     public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(long sleepingTime) {
         this.waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = sleepingTime;
