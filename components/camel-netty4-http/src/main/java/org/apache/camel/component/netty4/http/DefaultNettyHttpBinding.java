@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty4.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
@@ -49,6 +50,7 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyConverter;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
@@ -95,7 +97,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             // keep the body as is, and use type converters
             answer.setBody(request.content());
         } else {
-            // turn the body into stream cached
+            // turn the body into stream cached (on the client/consumer side we can facade the netty stream instead of converting to byte array)
             NettyChannelBufferStreamCache cache = new NettyChannelBufferStreamCache(request.content());
             // add on completion to the cache which is needed for Camel to keep track of the lifecycle of the cache
             exchange.addOnCompletion(new NettyChannelBufferStreamCacheOnCompletion(cache));
@@ -274,13 +276,12 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             // keep the body as is, and use type converters
             answer.setBody(response.content());
         } else {
-            // stores as byte array as the netty ByteBuf will be freedy when the producer is done, and then we
-            // can no longer access the message body
+            // stores as byte array as the netty ByteBuf will be freed when the producer is done,
+            // and then we can no longer access the message body
             response.retain();
             try {
                 byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, response.content());
-                answer.setBody(bytes);
-                // TODO: use stream caching
+                answer.setBody(new ByteArrayInputStreamCache(new ByteArrayInputStream(bytes)));
             } finally {
                 response.release();
             }

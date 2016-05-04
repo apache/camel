@@ -94,8 +94,6 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             // signal callback
             callback.done(false);
         }
-
-        super.exceptionCaught(ctx, cause);
     }
 
     @Override
