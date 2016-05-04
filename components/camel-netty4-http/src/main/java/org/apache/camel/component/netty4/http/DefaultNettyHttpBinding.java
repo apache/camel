@@ -211,7 +211,13 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             String charset = "UTF-8";
 
             // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
-            String body = request.content().toString(Charset.forName(charset));
+            String body = null;
+            ByteBuf buffer = request.content();
+            try {
+                body = buffer.toString(Charset.forName(charset));
+            } finally {
+                buffer.release();
+            }
             if (ObjectHelper.isNotEmpty(body)) {
                 for (String param : body.split("&")) {
                     String[] pair = param.split("=", 2);

@@ -118,8 +118,6 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
        
         // handler to route Camel messages
         pipeline.addLast("handler", new HttpClientChannelHandler(producer));
-
-        
     }
 
     private SSLContext createSSLContext(NettyProducer producer) throws Exception {
