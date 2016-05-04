@@ -72,6 +72,8 @@ public class NettyHttpHandle404Test extends BaseNettyTest {
                                 NettyHttpOperationFailedException cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, NettyHttpOperationFailedException.class);
                                 exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, cause.getStatusCode());
                                 exchange.getOut().setBody(cause.getHttpContent().content().toString(Charset.defaultCharset()));
+                                // release as no longer in use
+                                cause.getHttpContent().content().release();
                             }
                         })
                         .end();

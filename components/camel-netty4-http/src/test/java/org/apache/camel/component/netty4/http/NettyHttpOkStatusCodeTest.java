@@ -34,6 +34,7 @@ public class NettyHttpOkStatusCodeTest extends BaseNettyTest {
             assertEquals(209, cause.getStatusCode());
             String body = context.getTypeConverter().convertTo(String.class, cause.getHttpContent().content());
             assertEquals("Not allowed", body);
+            cause.getHttpContent().content().release();
         }
     }
 

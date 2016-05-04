@@ -63,6 +63,8 @@ public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest
         String in = request.content().toString(Charset.forName("UTF-8"));
         String reply = "Bye " + in;
 
+        request.content().release();
+
         HttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
                                                             NettyConverter.toByteBuffer(reply.getBytes()));
         
