@@ -34,7 +34,7 @@ public class NettyHttp500ErrorTest extends BaseNettyTest {
         } catch (CamelExecutionException e) {
             NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
             assertEquals(500, cause.getStatusCode());
-            assertEquals("Camel cannot do this", context.getTypeConverter().convertTo(String.class, cause.getHttpContent().content()));
+            assertEquals("Camel cannot do this", cause.getContentAsString());
         }
 
         assertMockEndpointsSatisfied();

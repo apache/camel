@@ -36,9 +36,8 @@ public class NettyHttpReturnFaultTest extends BaseNettyTest {
         NettyHttpOperationFailedException exception = exchange.getException(NettyHttpOperationFailedException.class);
         assertNotNull(exception);
         assertEquals(500, exception.getStatusCode());
-        String message = context.getTypeConverter().convertTo(String.class, exception.getHttpContent().content());
+        String message = exception.getContentAsString();
         assertEquals("This is a fault", message);
-        exception.getHttpContent().content().release();
     }
 
     @Override

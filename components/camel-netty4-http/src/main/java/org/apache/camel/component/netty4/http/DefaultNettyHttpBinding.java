@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty4.http;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -44,6 +45,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyConverter;
@@ -268,8 +270,21 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             populateCamelHeaders(response, answer.getHeaders(), exchange, configuration);
         }
 
-        // keep the body as is, and use type converters
-        answer.setBody(response.content());
+        if (configuration.isDisableStreamCache()) {
+            // keep the body as is, and use type converters
+            answer.setBody(response.content());
+        } else {
+            // stores as byte array as the netty ByteBuf will be freedy when the producer is done, and then we
+            // can no longer access the message body
+            response.retain();
+            try {
+                byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, response.content());
+                answer.setBody(bytes);
+                // TODO: use stream caching
+            } finally {
+                response.release();
+            }
+        }
         return answer;
     }
 
@@ -319,7 +334,6 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         int code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, defaultCode, int.class);
         
         LOG.trace("HTTP Status Code: {}", code);
-
 
         // if there was an exception then use that as body
         if (cause != null) {
