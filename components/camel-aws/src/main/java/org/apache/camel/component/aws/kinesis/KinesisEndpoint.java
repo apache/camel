@@ -45,10 +45,22 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
     private int maxResultsPerRequest = 1;
     @UriParam(label = "consumer", description = "Defines where in the Kinesis stream to start getting records")
     private ShardIteratorType iteratorType = ShardIteratorType.TRIM_HORIZON;
+    @UriParam(label = "consumer", description = "Defines which shardId in the Kinesis stream to get records from")
+    private String shardId = "";
+    @UriParam(label = "consumer", description = "The sequence number to start polling from")
+    private String sequenceNumber = "";
 
     public KinesisEndpoint(String uri, String streamName, KinesisComponent component) {
         super(uri, component);
         this.streamName = streamName;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if ((iteratorType.equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER) || iteratorType.equals(ShardIteratorType.AT_SEQUENCE_NUMBER)) && sequenceNumber.isEmpty()) {
+            throw new IllegalArgumentException("Sequence Number must be specified with iterator Types AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER");
+        }
+        super.doStart();
     }
 
     @Override
@@ -113,6 +125,22 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
 
     public void setIteratorType(ShardIteratorType iteratorType) {
         this.iteratorType = iteratorType;
+    }
+
+    public String getShardId() {
+        return shardId;
+    }
+
+    public void setShardId(String shardId) {
+        this.shardId = shardId;
+    }
+
+    public String getSequenceNumber() {
+        return sequenceNumber;
+    }
+
+    public void setSequenceNumber(String sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
     }
 
 }

@@ -120,6 +120,7 @@ public class JsseParameters implements CamelContextAware {
     protected InputStream resolveResource(String resource) throws IOException {
         InputStream is = null;
 
+        // attempt as plain file first
         try {
             LOG.trace("Trying to open resource [{}] as a file.", resource);
             is = new FileInputStream(resource);
@@ -127,7 +128,24 @@ public class JsseParameters implements CamelContextAware {
         } catch (FileNotFoundException e) {
             LOG.trace("Could not open resource [" + resource + "] as a file.", e);
         }
-        
+
+        // then prefer to use ClassResolver from CamelContext if possible
+        if (is == null && this.context != null) {
+            LOG.trace("Trying to open resource using the CamelContext ClassResolver [{}].", context.getClassResolver());
+            try {
+                is = context.getClassResolver().loadResourceAsStream(resource);
+                if (is == null) {
+                    LOG.trace("Could not to open resource [{}] using the CamelContext ClassResolver [{}].",
+                            resource, context.getClassResolver());
+                } else {
+                    LOG.debug("Opened resource [{}] using the CamelContext ClassResolver [{}].",
+                            resource, this.getClass().getClassLoader());
+                }
+            } catch (Throwable e) {
+                LOG.trace("Could not open resource [" + resource + "]  using the CamelContext ClassResolver.", e);
+            }
+        }
+
         if (is == null && Thread.currentThread().getContextClassLoader() != null) {
             LOG.trace("Trying to open resource [{}] as a class path resource with the TCCL [{}].",
                       resource, Thread.currentThread().getContextClassLoader());
@@ -165,23 +183,11 @@ public class JsseParameters implements CamelContextAware {
                 LOG.trace("Could not open resource [" + resource + "] as a URL.", e);
             }
         }
-        
-        if (is == null && this.context != null) {
-            LOG.trace("Trying to open resource using the CamelContext ClassResolver [{}].", context.getClassResolver());
-            is = context.getClassResolver().loadResourceAsStream(resource);
-            if (is == null) {
-                LOG.trace("Could not to open resource [{}] using the CamelContext ClassResolver [{}].", 
-                          resource, context.getClassResolver());
-            } else {
-                LOG.debug("Opened resource [{}] using the CamelContext ClassResolver [{}].",
-                          resource, this.getClass().getClassLoader());
-            }
-        }
 
         if (is == null) {
             throw new IOException("Could not open " + resource + " as a file, class path resource, or URL.");
         }
-        
+
         return is;
     }
 

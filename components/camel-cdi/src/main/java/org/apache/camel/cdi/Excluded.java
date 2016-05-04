@@ -33,7 +33,7 @@ import javax.inject.Qualifier;
 @Target(value = { TYPE, METHOD, PARAMETER, FIELD })
 @interface Excluded {
 
-    Excluded INSTANCE = new ExcludedLiteral();
+    Excluded EXCLUDED = new ExcludedLiteral();
 
     @Vetoed
     final class ExcludedLiteral extends AnnotationLiteral<Excluded> implements Excluded {

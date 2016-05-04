@@ -18,7 +18,7 @@ First you will need to compile the example:
 
 ### Run
 
-To run the example on Apache Karaf 2.4.x
+To run the example on Apache Karaf 3.x or newer
 
 #### Step 1
 
@@ -28,9 +28,9 @@ Launch karaf
 
 Add features required into Karak
 
-	features:chooseurl camel ${version}
-	features:install camel-spring
-	features:install camel-box
+	feature:repo-add camel ${version}
+	feature:install camel-spring-dm
+	feature:install camel-box
 
 #### Step 3
 

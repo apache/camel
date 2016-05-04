@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
@@ -41,6 +42,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
     private String servletName = "CamelServlet";
     private HttpRegistry httpRegistry;
+    private boolean attachmentMultipartBinding;
 
     public ServletComponent() {
         super(ServletEndpoint.class);
@@ -61,6 +63,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         String servletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        Boolean async = getAndRemoveParameter(parameters, "async", Boolean.class);
 
         if (lenientContextPath()) {
             // the uri must have a leading slash for the context-path matching to work with servlet, and it can be something people
@@ -80,6 +83,9 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
         ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri);
         endpoint.setServletName(servletName);
+        if (async != null) {
+            endpoint.setAsync(async);
+        }
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         } else {
@@ -172,6 +178,19 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
      */
     public void setHttpRegistry(HttpRegistry httpRegistry) {
         this.httpRegistry = httpRegistry;
+    }
+
+    public boolean isAttachmentMultipartBinding() {
+        return attachmentMultipartBinding;
+    }
+
+    /**
+     * Whether to automatic bind multipart/form-data as attachments on the Camel {@link Exchange}.
+     * <p/>
+     * This is turn off by default as this may require servet specific configuration to enable this when using Servlet's.
+     */
+    public void setAttachmentMultipartBinding(boolean attachmentMultipartBinding) {
+        this.attachmentMultipartBinding = attachmentMultipartBinding;
     }
 
     @Override

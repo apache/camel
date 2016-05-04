@@ -49,6 +49,7 @@ public class EtcdComponent extends UriEndpointComponent {
         }
 
         EtcdNamespace namespace = getCamelContext().getTypeConverter().mandatoryConvertTo(EtcdNamespace.class, ns);
+        EtcdConfiguration configuration = loadConfiguration(new EtcdConfiguration(), parameters);
 
         if (namespace != null) {
             // path must start with leading slash
@@ -58,29 +59,11 @@ public class EtcdComponent extends UriEndpointComponent {
 
             switch (namespace) {
             case stats:
-                return new EtcdStatsEndpoint(
-                    uri,
-                    this,
-                    loadConfiguration(new EtcdConfiguration(), parameters),
-                    namespace,
-                    path
-                );
+                return new EtcdStatsEndpoint(uri, this, configuration, namespace, path);
             case watch:
-                return new EtcdWatchEndpoint(
-                    uri,
-                    this,
-                    loadConfiguration(new EtcdConfiguration(), parameters),
-                    namespace,
-                    path
-                );
+                return new EtcdWatchEndpoint(uri, this, configuration, namespace, path);
             case keys:
-                return new EtcdKeysEndpoint(
-                    uri,
-                    this,
-                    loadConfiguration(new EtcdConfiguration(), parameters),
-                    namespace,
-                    path
-                );
+                return new EtcdKeysEndpoint(uri, this, configuration, namespace, path);
             default:
                 throw new IllegalStateException("No endpoint for " + remaining);
             }

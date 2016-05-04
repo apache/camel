@@ -258,7 +258,7 @@ public final class BoxClientHelper {
     static class SocksSSLSocketFactory extends SSLSocketFactory {
         HttpHost proxyHost;
 
-        public SocksSSLSocketFactory(SSLContext sslContext, HttpHost proxyHost) {
+        SocksSSLSocketFactory(SSLContext sslContext, HttpHost proxyHost) {
             super(sslContext, SSLSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
             this.proxyHost = proxyHost;
         }

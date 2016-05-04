@@ -35,6 +35,7 @@ import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.StringQuoteHelper;
 
 /**
  * Evaluates an expression using a bean method invocation
@@ -106,6 +107,10 @@ public class BeanExpression implements Expression, Predicate {
             ExpressionIllegalSyntaxException cause = new ExpressionIllegalSyntaxException(method);
             throw new RuntimeBeanExpressionException(exchange, beanName, method, cause);
         }
+
+//        if (method != null) {
+//            OgnlHelper.validateMethodName(method);
+//        }
 
         if (OgnlHelper.isValidOgnlExpression(method)) {
             // okay the method is an ognl expression
@@ -273,6 +278,11 @@ public class BeanExpression implements Expression, Predicate {
             // there must be a bean to call with, we currently does not support OGNL expressions on using purely static methods
             if (beanToCall == null && beanType == null) {
                 throw new IllegalArgumentException("Bean instance and bean type is null. OGNL bean expressions requires to have either a bean instance of the class name of the bean to use.");
+            }
+
+            if (ognl != null) {
+                // must be a valid method name according to java identifier ruling
+                OgnlHelper.validateMethodName(ognl);
             }
 
             // Split ognl except when this is not a Map, Array

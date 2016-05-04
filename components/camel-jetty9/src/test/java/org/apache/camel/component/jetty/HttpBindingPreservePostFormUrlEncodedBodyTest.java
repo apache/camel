@@ -20,12 +20,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class HttpBindingPreservePostFormUrlEncodedBodyTest extends BaseJettyTest {
     
-    @Ignore
     @Test
     public void testSendToJetty() throws Exception {
         Exchange exchange = template.request("http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", new Processor() {

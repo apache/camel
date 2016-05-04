@@ -20,6 +20,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +32,7 @@ public class NettyConverterTest extends CamelTestSupport {
     /**
      * Test payload to send.
      */
-    private  static final String PAYLOAD = "Test Message";
+    private static final String PAYLOAD = "Test Message";
 
     private ByteBuf buf;
 
@@ -42,13 +43,17 @@ public class NettyConverterTest extends CamelTestSupport {
         buf.writeBytes(bytes);
     }
 
+    @After
+    public void tearDown() {
+        buf.release();
+    }
+
     @Test
     public void testConversionWithExchange() {
         String result = context.getTypeConverter().convertTo(String.class, new DefaultExchange(context), buf);
         assertNotNull(result);
         assertEquals(PAYLOAD, result);
     }
-
 
     @Test
     public void testConversionWithoutExchange() {

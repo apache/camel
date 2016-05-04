@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -78,6 +79,7 @@ public class DefaultHttpBinding implements HttpBinding {
     private boolean allowJavaSerializedObject;
     private boolean mapHttpMessageBody = true;
     private boolean mapHttpMessageHeaders = true;
+    private boolean mapHttpMessageFormUrlEncodedBody = true;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
 
     public DefaultHttpBinding() {
@@ -106,6 +108,13 @@ public class DefaultHttpBinding implements HttpBinding {
         }
         if (mapHttpMessageHeaders) {
             readHeaders(request, message);
+        }
+        if (mapHttpMessageFormUrlEncodedBody) {
+            try {
+                readFormUrlEncodedBody(request, message);
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeCamelException("Cannot read Form URL encoded body due " + e.getMessage(), e);
+            }
         }
 
         // populate the headers from the request
@@ -219,11 +228,15 @@ public class DefaultHttpBinding implements HttpBinding {
                 }
             }
         }
+    }
 
+    protected void readFormUrlEncodedBody(HttpServletRequest request, HttpMessage message) throws UnsupportedEncodingException {
+        LOG.trace("readFormUrlEncodedBody {}", request);
         // should we extract key=value pairs from form bodies (application/x-www-form-urlencoded)
         // and map those to Camel headers
         if (mapHttpMessageBody && mapHttpMessageHeaders) {
             LOG.trace("HTTP method {} with Content-Type {}", request.getMethod(), request.getContentType());
+            Map<String, Object> headers = message.getHeaders();
             Boolean flag = message.getHeader(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.class);
             boolean skipWwwFormUrlEncoding = flag != null ? flag : false;
             if (request.getMethod().equals("POST") && request.getContentType() != null
@@ -269,8 +282,12 @@ public class DefaultHttpBinding implements HttpBinding {
 
     private String getRawPath(HttpServletRequest request) {
         String uri = request.getRequestURI();
-        String contextPath = request.getContextPath();
-        String servletPath = request.getServletPath();
+        /**
+         * In async case, it seems that request.getContextPath() can return null
+         * @see https://dev.eclipse.org/mhonarc/lists/jetty-users/msg04669.html
+         */
+        String contextPath = request.getContextPath() == null ? "" : request.getContextPath();
+        String servletPath = request.getServletPath() == null ? "" : request.getServletPath();
         return uri.substring(contextPath.length() + servletPath.length());
     }
 
@@ -610,6 +627,14 @@ public class DefaultHttpBinding implements HttpBinding {
 
     public void setMapHttpMessageHeaders(boolean mapHttpMessageHeaders) {
         this.mapHttpMessageHeaders = mapHttpMessageHeaders;
+    }
+
+    public boolean isMapHttpMessageFormUrlEncodedBody() {
+        return mapHttpMessageFormUrlEncodedBody;
+    }
+
+    public void setMapHttpMessageFormUrlEncodedBody(boolean mapHttpMessageFormUrlEncodedBody) {
+        this.mapHttpMessageFormUrlEncodedBody = mapHttpMessageFormUrlEncodedBody;
     }
 
     protected static SimpleDateFormat getHttpDateFormat() {

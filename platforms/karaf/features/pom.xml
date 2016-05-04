@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.apache.karaf.shell</groupId>
       <artifactId>org.apache.karaf.shell.console</artifactId>
-      <version>${karaf-version}</version>
+      <version>${karaf4-version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -154,42 +154,9 @@
       </repositories>
     </profile>
 
+    <!-- validating using karaf 4.x -->
     <profile>
       <id>validate</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.karaf.tooling</groupId>
-            <artifactId>features-maven-plugin</artifactId>
-            <version>${karaf-version}</version>
-            <configuration>
-              <file>${project.build.directory}/classes/${features.file}</file>
-              <karafConfig>${project.build.directory}/classes/config.properties</karafConfig>
-              <jreVersion>jre-1.6</jreVersion>
-            </configuration>
-            <executions>
-              <execution>
-                <id>validate</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>validate</goal>
-                </goals>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-http-lightweight</artifactId>
-                <version>2.8</version>
-              </dependency>
-            </dependencies>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>validate-karaf4</id>
       <build>
         <plugins>
           <plugin>
@@ -210,12 +177,14 @@
                 <feature>framework</feature>
               </framework>
               <features>
+                <!-- camel-blueprint uses blueprint but its feature name is different in karaf 3.x vs 4.x -->
                 <!-- camel-cdi requires to install a cdi provider first -->
+                <!-- camel-cxf uses blueprint but its feature name is different in karaf 3.x vs 4.x -->
                 <!-- camel-ignite requires to install apache ignite first -->
                 <!-- camel-guice does not work in OSGi currently -->
-                <!-- camel-lucene does not work in OSGi currently (new bundle on the way) -->
                 <!-- camel-leveldb uses some wrap magic to install which validator fails but it works -->
-                <feature>camel|camel-(?!(cdi|ignite|guice|lucene|leveldb))*</feature>
+                <!-- camel-zipkin needs an OSGi bundle -->
+                <feature>camel|camel-(?!(blueprint|cdi|cxf|ignite|guice|leveldb|zipkin))*</feature>
               </features>
 			        <configuration>file://${project.build.directory}/classes/config.properties</configuration>
             </configuration>

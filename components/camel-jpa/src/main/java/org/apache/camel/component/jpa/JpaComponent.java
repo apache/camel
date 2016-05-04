@@ -17,6 +17,7 @@
 package org.apache.camel.component.jpa;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Endpoint;
@@ -38,6 +39,7 @@ public class JpaComponent extends UriEndpointComponent {
     private PlatformTransactionManager transactionManager;
     private boolean joinTransaction = true;
     private boolean sharedEntityManager;
+    private ExecutorService pollingConsumerExecutorService;
 
     public JpaComponent() {
         super(JpaEndpoint.class);
@@ -91,6 +93,14 @@ public class JpaComponent extends UriEndpointComponent {
      */
     public void setSharedEntityManager(boolean sharedEntityManager) {
         this.sharedEntityManager = sharedEntityManager;
+    }
+
+    synchronized ExecutorService getOrCreatePollingConsumerExecutorService() {
+        if (pollingConsumerExecutorService == null) {
+            LOG.debug("Creating thread pool for JpaPollingConsumer to support polling using timeout");
+            pollingConsumerExecutorService = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "JpaPollingConsumer");
+        }
+        return pollingConsumerExecutorService;
     }
 
     // Implementation methods
@@ -173,4 +183,13 @@ public class JpaComponent extends UriEndpointComponent {
         }
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        if (pollingConsumerExecutorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdown(pollingConsumerExecutorService);
+            pollingConsumerExecutorService = null;
+        }
+    }
 }

@@ -67,7 +67,7 @@ public final class CassandraUnitUtils {
      * Start embedded Cassandra.
      */
     public static void startEmbeddedCassandra() throws Exception {
-        EmbeddedCassandraServerHelper.startEmbeddedCassandra("/camel-cassandra.yaml", "target/camel-cassandra");
+        EmbeddedCassandraServerHelper.startEmbeddedCassandra("/camel-cassandra.yaml", "target/camel-cassandra", 30000);
     }
 
     /**

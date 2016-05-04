@@ -40,7 +40,7 @@ import org.junit.Test;
 
 public class HttpsRouteTest extends BaseJettyTest {
 
-    private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
+    public static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
 
     protected String expectedBody = "<hello>world!</hello>";
     protected String pwd = "changeit";

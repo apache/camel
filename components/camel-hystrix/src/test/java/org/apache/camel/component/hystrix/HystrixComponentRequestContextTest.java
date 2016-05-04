@@ -93,7 +93,7 @@ public class HystrixComponentRequestContextTest extends HystrixComponentBase {
                         .to("mock:result");
 
                 from("direct:start")
-                        .to("hystrix:testKey?runEndpointId=run&fallbackEndpointId=fallback&cacheKeyExpression=#headerExpression");
+                        .to("hystrix:testKey?runEndpoint=direct:run&fallbackEndpoint=direct:fallback&cacheKey=header.key");
             }
         };
     }

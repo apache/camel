@@ -67,7 +67,8 @@ public class UndefinedPropertyTest {
 
     @Test
     public void lookupDefinedProperty(CamelContext context) throws Exception {
-        assertThat("Resolved property value is incorrect", context.resolvePropertyPlaceholders("{{from}}"), is(equalTo("inbound")));
+        assertThat("Resolved property value is incorrect",
+            context.resolvePropertyPlaceholders("{{from}}"), is(equalTo("inbound")));
     }
 
     @Test
@@ -76,8 +77,10 @@ public class UndefinedPropertyTest {
             context.resolvePropertyPlaceholders("{{to}}");
             fail("No exception is thrown!");
         } catch (Exception cause) {
-            assertThat("Exception thrown is incorrect", cause, is(instanceOf(IllegalArgumentException.class)));
-            assertThat("Exception message is incorrect", cause.getMessage(), is(equalTo("Property with key [to] not found in properties from text: {{to}}")));
+            assertThat("Exception thrown is incorrect", cause,
+                is(instanceOf(IllegalArgumentException.class)));
+            assertThat("Exception message is incorrect", cause.getMessage(),
+                is(equalTo("Property with key [to] not found in properties from text: {{to}}")));
         }
     }
 }

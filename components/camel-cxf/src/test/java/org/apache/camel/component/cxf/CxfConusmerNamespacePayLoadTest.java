@@ -47,7 +47,7 @@ public class CxfConusmerNamespacePayLoadTest extends CxfConsumerPayloadTest {
     public void testInvokingServiceFromClient() throws Exception {
         // just send a request which has all the namespace in the soap header
         HttpPost post = new HttpPost(simpleEndpointAddress);
-        post.addHeader("Accept" , "text/xml");
+        post.addHeader("Accept", "text/xml");
         
         StringEntity entity = new StringEntity(ECHO_REQUEST, ContentType.create("text/xml", "ISO-8859-1"));
         post.setEntity(entity);

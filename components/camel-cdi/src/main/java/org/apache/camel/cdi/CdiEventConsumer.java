@@ -24,7 +24,7 @@ import org.apache.camel.management.event.AbstractExchangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/* package-private */ final class CdiEventConsumer<T> extends DefaultConsumer {
+final class CdiEventConsumer<T> extends DefaultConsumer {
 
     private final Logger logger = LoggerFactory.getLogger(CdiEventConsumer.class);
 
@@ -38,12 +38,12 @@ import org.slf4j.LoggerFactory;
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        endpoint.registerConsumer(this);
+        endpoint.addConsumer(this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        endpoint.unregisterConsumer(this);
+        endpoint.removeConsumer(this);
         super.doStop();
     }
 

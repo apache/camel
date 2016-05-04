@@ -19,20 +19,25 @@ package org.apache.camel.component.hystrix;
 import com.netflix.hystrix.HystrixCommand;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Producer;
+import org.apache.camel.ProducerCallback;
+import org.apache.camel.impl.ProducerCache;
 
 public class CamelHystrixCommand extends HystrixCommand<Exchange> {
     private final Exchange exchange;
     private final String cacheKey;
-    private String runEndpointId;
-    private String fallbackEndpointId;
+    private final Endpoint runEndpoint;
+    private final Endpoint fallbackEndpoint;
+    private final ProducerCache producerCache;
 
-    protected CamelHystrixCommand(Setter setter, Exchange exchange, String cacheKey, String runEndpointId,  String fallbackEndpointId) {
+    protected CamelHystrixCommand(Setter setter, Exchange exchange, String cacheKey, ProducerCache producerCache, Endpoint runEndpoint, Endpoint fallbackEndpoint) {
         super(setter);
         this.exchange = exchange;
         this.cacheKey = cacheKey;
-        this.runEndpointId = runEndpointId;
-        this.fallbackEndpointId = fallbackEndpointId;
+        this.producerCache = producerCache;
+        this.runEndpoint = runEndpoint;
+        this.fallbackEndpoint = fallbackEndpoint;
     }
 
     @Override
@@ -42,11 +47,10 @@ public class CamelHystrixCommand extends HystrixCommand<Exchange> {
 
     @Override
     protected Exchange getFallback() {
-        if (fallbackEndpointId == null) {
-            super.getFallback();
+        if (fallbackEndpoint == null) {
+            return exchange;
         }
         try {
-            Endpoint endpoint = findEndpoint(fallbackEndpointId);
             if (exchange.getException() != null) {
                 Exception exception = exchange.getException();
                 exchange.setException(null);
@@ -54,10 +58,19 @@ public class CamelHystrixCommand extends HystrixCommand<Exchange> {
                     exchange.removeProperty(Exchange.ROUTE_STOP);
                 }
             }
-
-            endpoint.createProducer().process(exchange);
-        } catch (Exception exception) {
-            throw new RuntimeException(exception.getMessage());
+            producerCache.doInProducer(fallbackEndpoint, exchange, exchange.getPattern(), new ProducerCallback<Exchange>() {
+                @Override
+                public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern exchangePattern) throws Exception {
+                    try {
+                        producer.process(exchange);
+                    } catch (Exception e) {
+                        exchange.setException(e);
+                    }
+                    return exchange;
+                }
+            });
+        } catch (Exception e) {
+            exchange.setException(e);
         }
         return exchange;
     }
@@ -65,14 +78,19 @@ public class CamelHystrixCommand extends HystrixCommand<Exchange> {
     @Override
     protected Exchange run() {
         try {
-            Endpoint endpoint = findEndpoint(runEndpointId);
-            endpoint.createProducer().process(exchange);
-        } catch (Exception exception) {
-            exchange.setException(null);
-            if (exception instanceof InterruptedException) {
-                exchange.removeProperty(Exchange.ROUTE_STOP);
-            }
-            throw new RuntimeException(exception.getMessage());
+            producerCache.doInProducer(runEndpoint, exchange, exchange.getPattern(), new ProducerCallback<Exchange>() {
+                @Override
+                public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern exchangePattern) throws Exception {
+                    try {
+                        producer.process(exchange);
+                    } catch (Exception e) {
+                        exchange.setException(e);
+                    }
+                    return exchange;
+                }
+            });
+        } catch (Exception e) {
+            exchange.setException(e);
         }
 
         if (exchange.getException() != null) {
@@ -86,7 +104,4 @@ public class CamelHystrixCommand extends HystrixCommand<Exchange> {
         return exchange;
     }
 
-    private Endpoint findEndpoint(String endpointId) {
-        return CamelContextHelper.mandatoryLookup(exchange.getContext(), endpointId, Endpoint.class);
-    }
 }

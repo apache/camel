@@ -113,6 +113,11 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     <T extends CamelContext> T adapt(Class<T> type);
 
     /**
+     * If CamelContext during the start procedure was vetoed, and therefore causing Camel to not start.
+     */
+    boolean isVetoStarted();
+
+    /**
      * Starts the {@link CamelContext} (<b>important:</b> the start method is not blocked, see more details
      *     <a href="http://camel.apache.org/running-camel-standalone-and-have-it-keep-running.html">here</a>)</li>.
      * <p/>

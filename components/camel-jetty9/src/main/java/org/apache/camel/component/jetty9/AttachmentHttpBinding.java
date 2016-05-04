@@ -49,11 +49,6 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
             try {
                 parts = parser.getParts();
                 for (Part part : parts) {
-                    String contentType = part.getContentType();
-                    if (!contentType.startsWith("application/octet-stream")) {
-                        continue;
-                    }
-
                     DataSource ds = new PartDataSource(part);
                     message.addAttachment(part.getName(), new DataHandler(ds));
                 }

@@ -194,7 +194,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
         private final List<AtomicBoolean> triggers;
 
-        public CompletionIntervalTask(List<AtomicBoolean> triggers) {
+        CompletionIntervalTask(List<AtomicBoolean> triggers) {
             this.triggers = triggers;
         }
 
@@ -276,7 +276,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             private long startTime;
             private Exchange aggregatedExchange;
 
-            public BatchConsumptionTask(AtomicBoolean timeoutInterval) {
+            BatchConsumptionTask(AtomicBoolean timeoutInterval) {
                 this.timeoutInterval = timeoutInterval;
             }
 

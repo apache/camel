@@ -23,6 +23,7 @@ import com.amazonaws.services.dynamodbv2.model.UpdateTableRequest;
 import org.apache.camel.Exchange;
 
 public class UpdateTableCommand extends AbstractDdbCommand {
+
     public UpdateTableCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration, Exchange exchange) {
         super(ddbClient, configuration, exchange);
     }

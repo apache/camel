@@ -58,22 +58,6 @@ To run the example, from the command line:
     $ bin/karaf
     ```
 
-2. For Karaf 2.x, install the following pre-requisites:
-
-    ```sh
-    karaf@root()> chooseurl camel 2.17.0
-    karaf@root()> chooseurl activemq 5.13.2
-    karaf@root()> features:install activemq-broker-noweb pax-cdi-weld camel-sjms camel-cdi
-    ```
-
-3. Then install and start the example:
-
-    ```sh
-    karaf@root()> install -s mvn:org.apache.camel/camel-example-cdi-osgi/2.17.0
-    ```
-
-Alternatively, with the new commands introduced since Karaf 3.x:
-
 2. Install the pre-requisites:
 
     ```sh

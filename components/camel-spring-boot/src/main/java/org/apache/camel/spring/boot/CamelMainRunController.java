@@ -33,15 +33,13 @@ public class CamelMainRunController {
     }
 
     public void start() {
-        daemon.run();
+        daemon.start();
     }
 
     private final class DaemonTask implements Runnable {
-
         @Override
         public void run() {
             controller.run();
         }
     }
-
 }

@@ -211,7 +211,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
     }
 
-    @Deprecated
     public RouteDefinition adviceWith(CamelContext camelContext, RouteBuilder builder) throws Exception {
         return adviceWith((ModelCamelContext)camelContext, builder);
     }

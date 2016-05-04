@@ -61,7 +61,9 @@ public class GridFsProducer extends DefaultProducer {
             DBObject dbObject = (DBObject) JSON.parse(metaData);
             gfsFile.setMetaData(dbObject);
             gfsFile.save();
+            //add headers with the id and file name produced by the driver.
             exchange.getIn().setHeader(Exchange.FILE_NAME_PRODUCED, gfsFile.getFilename());
+            exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_FILE_ID_PRODUCED, gfsFile.getId());
         } else if ("remove".equals(operation)) {
             final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
             endpoint.getGridFs().remove(filename);

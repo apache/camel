@@ -35,4 +35,7 @@ public interface ManagedInflightRepositoryMBean extends ManagedServiceMBean {
     @ManagedOperation(description = "Lists all the exchanges which are currently inflight, limited and sorted")
     TabularData browse(int limit, boolean sortByLongestDuration);
 
+    @ManagedOperation(description = "List all the exchanges that origins from the given route, which are currently inflight, limited and sorted")
+    TabularData browse(String fromRouteId, int limit, boolean sortByLongestDuration);
+
 }

@@ -24,7 +24,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.infinispan.util.Condition;
+import org.infinispan.Cache;
 import org.infinispan.commons.util.concurrent.NotifyingFuture;
+import org.infinispan.stats.Stats;
 import org.junit.Test;
 
 import static org.apache.camel.component.infinispan.util.Wait.waitFor;
@@ -930,6 +932,43 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         assertTrue(fut.isDone());
         assertTrue(currentCache().isEmpty());
     }
+    
+    @Test
+    public void statsOperation() throws Exception {
+        ((Cache) currentCache()).getAdvancedCache().getStats().setStatisticsEnabled(true); 
+        template.send("direct:start", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanConstants.PUT);
+            }
+        });
+
+        Object value = currentCache().get(KEY_ONE);
+        assertEquals(VALUE_ONE, value.toString());
+        
+        template.send("direct:start", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_TWO);
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanConstants.PUT);
+            }
+        });
+
+        value = currentCache().get(KEY_TWO);
+        assertEquals(VALUE_TWO, value.toString());
+        
+        Exchange exchange;
+        exchange = template.send("direct:stats", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+            }
+        });
+        Stats resultStats = exchange.getIn().getHeader(InfinispanConstants.RESULT, Stats.class);
+        assertEquals(2L, resultStats.getTotalNumberOfEntries());
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -968,6 +1007,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                         .to("infinispan://localhost?cacheContainer=#cacheContainer&command=REMOVEASYNC");
                 from("direct:clearasync")
                         .to("infinispan://localhost?cacheContainer=#cacheContainer&command=CLEARASYNC");
+                from("direct:stats")
+                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=STATS");
             }
         };
     }

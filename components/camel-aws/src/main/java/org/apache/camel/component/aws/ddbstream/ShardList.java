@@ -134,11 +134,7 @@ class ShardList {
         return "ShardList{" + "shards=" + shards + '}';
     }
 
-
-
-
-
-    private static enum StartingSequenceNumberComparator implements Comparator<Shard> {
+    private enum StartingSequenceNumberComparator implements Comparator<Shard> {
         INSTANCE() {
             @Override
             public int compare(Shard o1, Shard o2) {

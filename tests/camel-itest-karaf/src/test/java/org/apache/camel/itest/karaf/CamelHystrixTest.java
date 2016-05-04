@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.apache.camel.test.karaf.AbstractFeatureTest;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +23,7 @@ import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
 @Ignore("Need a new hystrix SMX bundle")
-public class CamelHystrixTest extends AbstractFeatureTest {
+public class CamelHystrixTest extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelHystrixTest.class);
 

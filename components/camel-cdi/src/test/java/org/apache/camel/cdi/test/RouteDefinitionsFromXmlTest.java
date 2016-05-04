@@ -52,7 +52,7 @@ public class RouteDefinitionsFromXmlTest {
 
     @Produces
     private RoutesDefinition routes(CamelContext context) throws Exception {
-        try (InputStream routes = getClass().getResourceAsStream("/routes.xml")) {
+        try (InputStream routes = getClass().getResourceAsStream("/camel-context-routes.xml")) {
             return ModelHelper.createModelFromXml(context, routes, RoutesDefinition.class);
         }
     }

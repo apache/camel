@@ -733,7 +733,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         msg = msg + ". Handled and continue routing.";
 
         // log that we failed but want to continue
-        logFailedDelivery(false, false, false, isDeadLetterChannel, true, exchange, msg, data, null);
+        logFailedDelivery(false, false, false, true, isDeadLetterChannel, exchange, msg, data, null);
     }
 
     protected void prepareExchangeForRedelivery(Exchange exchange, RedeliveryData data) {
@@ -912,8 +912,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             decrementRedeliveryCounter(exchange);
         }
 
-        // is the a failure processor to process the Exchange
-        if (processor != null) {
+        // we should allow using the failure processor if we should not continue
+        // or in case of continue then the failure processor is NOT a dead letter channel
+        // because you can continue and still let the failure processor do some routing
+        // before continue in the main route.
+        boolean allowFailureProcessor = !shouldContinue || !isDeadLetterChannel;
+
+        if (allowFailureProcessor && processor != null) {
 
             // prepare original IN body if it should be moved instead of current body
             if (data.useOriginalInMessage) {
@@ -1168,7 +1173,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // should we include message history
             if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
                 // only use the exchange formatter if we should log exhausted message body (and if using a custom formatter then always use it)
-                ExchangeFormatter formatter = customExchangeFormatter ? exchangeFormatter : (data.currentRedeliveryPolicy.isLogExhaustedMessageBody() ? exchangeFormatter : null);
+                ExchangeFormatter formatter = customExchangeFormatter
+                    ? exchangeFormatter : (data.currentRedeliveryPolicy.isLogExhaustedMessageBody() || camelContext.isLogExhaustedMessageBody() ? exchangeFormatter : null);
                 String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, false);
                 if (routeStackTrace != null) {
                     msg = msg + "\n" + routeStackTrace;
@@ -1187,7 +1193,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // should we include message history
             if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
                 // only use the exchange formatter if we should log exhausted message body (and if using a custom formatter then always use it)
-                ExchangeFormatter formatter = customExchangeFormatter ? exchangeFormatter : (data.currentRedeliveryPolicy.isLogExhaustedMessageBody() ? exchangeFormatter : null);
+                ExchangeFormatter formatter = customExchangeFormatter
+                    ? exchangeFormatter : (data.currentRedeliveryPolicy.isLogExhaustedMessageBody() || camelContext.isLogExhaustedMessageBody() ? exchangeFormatter : null);
                 String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, e != null && logStackTrace);
                 if (routeStackTrace != null) {
                     msg = msg + "\n" + routeStackTrace;

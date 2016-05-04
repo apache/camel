@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.netty4.http;
 
+import java.io.UnsupportedEncodingException;
+
 import io.netty.handler.codec.http.HttpContent;
 import org.apache.camel.CamelException;
+import org.apache.camel.component.netty4.NettyConverter;
 import org.apache.camel.util.ObjectHelper;
-
 
 /**
  * Exception when a Netty HTTP operation failed.
@@ -31,6 +33,7 @@ public class NettyHttpOperationFailedException extends CamelException {
     private final int statusCode;
     private final String statusText;
     private final transient HttpContent content;
+    private String contentAsString;
 
     public NettyHttpOperationFailedException(String uri, int statusCode, String statusText, String location, HttpContent content) {
         super("Netty HTTP operation failed invoking " + uri + " with statusCode: " + statusCode + (location != null ? ", redirectLocation: " + location : ""));
@@ -39,6 +42,11 @@ public class NettyHttpOperationFailedException extends CamelException {
         this.statusText = statusText;
         this.redirectLocation = location;
         this.content = content;
+        try {
+            this.contentAsString = NettyConverter.toString(content.content(), null);
+        } catch (UnsupportedEncodingException e) {
+            // ignore
+        }
     }
 
     public String getUri() {
@@ -70,8 +78,20 @@ public class NettyHttpOperationFailedException extends CamelException {
      * <p/>
      * Notice this may be <tt>null</tt> if this exception has been serialized,
      * as the {@link HttpContent} instance is marked as transient in this class.
+     *
+     * @deprecated use getContentAsString();
      */
+    @Deprecated
     public HttpContent getHttpContent() {
         return content;
+    }
+
+    /**
+     * Gets the HTTP content as a String
+     * <p/>
+     * Notice this may be <tt>null</tt> if it was not possible to read the content
+     */
+    public String getContentAsString() {
+        return contentAsString;
     }
 }

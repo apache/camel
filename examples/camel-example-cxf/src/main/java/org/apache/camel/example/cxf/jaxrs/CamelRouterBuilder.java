@@ -103,7 +103,7 @@ public class CamelRouterBuilder extends RouteBuilder {
         private Class<?> beanClass;
         private Object instance;
         
-        public MappingProcessor(Object obj) {
+        MappingProcessor(Object obj) {
             beanClass = obj.getClass();
             instance = obj;
         }

@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.net.ssl.SSLContext;
 
 import io.undertow.server.HttpServerExchange;
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -48,7 +49,7 @@ import org.xnio.Options;
  */
 @UriEndpoint(scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
         consumerClass = UndertowConsumer.class, label = "http", lenientProperties = true)
-public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
     private UndertowComponent component;
@@ -71,11 +72,11 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     private Boolean throwExceptionOnFailure;
     @UriParam
     private Boolean transferException;
-    @UriPath(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean keepAlive = Boolean.TRUE;
-    @UriPath(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean tcpNoDelay = Boolean.TRUE;
-    @UriPath(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean reuseAddresses = Boolean.TRUE;
     @UriParam(label = "producer", prefix = "option.", multiValue = true)
     private Map<String, Object> options;
@@ -288,7 +289,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
         super.doStart();
 
         if (sslContextParameters != null) {
-            sslContext = sslContextParameters.createSSLContext();
+            sslContext = sslContextParameters.createSSLContext(getCamelContext());
         }
 
         // create options map

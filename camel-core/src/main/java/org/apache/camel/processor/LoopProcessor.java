@@ -86,16 +86,18 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
         }
 
         // loop synchronously
-        while ((predicate != null && doWhile.get())  || (index.get() < count.get())) {
+        while ((predicate != null && doWhile.get()) || (index.get() < count.get())) {
 
             // and prepare for next iteration
             // if (!copy) target = exchange; else copy of original
             target = prepareExchange(exchange, index.get(), original);
+            // the following process method will in the done method re-evaluate the predicate
+            // so we do not need to do it here as well
             boolean sync = process(target, callback, index, count, doWhile, original);
 
             if (!sync) {
                 LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", target.getExchangeId());
-                // the remainder of the routing slip will be completed async
+                // the remainder of the loop will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
@@ -105,21 +107,6 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
             // check for error if so we should break out
             if (!continueProcessing(target, "so breaking out of loop", LOG)) {
                 break;
-            }
-
-            // increment counter before next loop
-            index.getAndIncrement();
-
-            // evaluate predicate
-            if (predicate != null) {
-                try {
-                    boolean result = predicate.matches(exchange);
-                    doWhile.set(result);
-                } catch (Exception e) {
-                    // break out looping due that exception
-                    exchange.setException(e);
-                    doWhile.set(false);
-                }
             }
         }
 
@@ -137,21 +124,39 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
         // set current index as property
         LOG.debug("LoopProcessor: iteration #{}", index.get());
         exchange.setProperty(Exchange.LOOP_INDEX, index.get());
-        
+
         boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
-                // we only have to handle async completion of the routing slip
+                // increment counter after done
+                index.getAndIncrement();
+
+                // evaluate predicate for next loop
+                if (predicate != null && index.get() > 0) {
+                    try {
+                        boolean result = predicate.matches(exchange);
+                        doWhile.set(result);
+                    } catch (Exception e) {
+                        // break out looping due that exception
+                        exchange.setException(e);
+                        doWhile.set(false);
+                    }
+                }
+
+                // we only have to handle async completion of the loop
+                // (as the sync is done in the outer processor)
                 if (doneSync) {
                     return;
                 }
 
                 Exchange target = exchange;
 
-                // increment index as we have just processed once
-                index.getAndIncrement();
-
                 // continue looping asynchronously
-                while ((predicate != null && doWhile.get())  || (index.get() < count.get())) {
+                while ((predicate != null && doWhile.get()) || (index.get() < count.get())) {
+
+                    // check for error if so we should break out
+                    if (!continueProcessing(target, "so breaking out of loop", LOG)) {
+                        break;
+                    }
 
                     // and prepare for next iteration
                     target = prepareExchange(exchange, index.get(), original);
@@ -163,26 +168,6 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                         // the remainder of the routing slip will be completed async
                         // so we break out now, then the callback will be invoked which then continue routing from where we left here
                         return;
-                    }
-
-                    // check for error if so we should break out
-                    if (!continueProcessing(target, "so breaking out of loop", LOG)) {
-                        break;
-                    }
-
-                    // increment counter before next loop
-                    index.getAndIncrement();
-
-                    // evaluate predicate
-                    if (predicate != null) {
-                        try {
-                            boolean result = predicate.matches(exchange);
-                            doWhile.set(result);
-                        } catch (Exception e) {
-                            // break out looping due that exception
-                            exchange.setException(e);
-                            doWhile.set(false);
-                        }
                     }
                 }
 

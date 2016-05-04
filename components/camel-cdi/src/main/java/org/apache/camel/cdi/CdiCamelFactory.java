@@ -17,15 +17,12 @@
 package org.apache.camel.cdi;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.Optional;
+
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
@@ -35,7 +32,6 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Typed;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.util.TypeLiteral;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -43,6 +39,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.mock.MockEndpoint;
+
+import static org.apache.camel.cdi.CdiEventEndpoint.eventEndpointUri;
+import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
+import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 
 final class CdiCamelFactory {
 
@@ -61,12 +61,9 @@ final class CdiCamelFactory {
     @Default @Uri("")
     // Qualifiers are dynamically added in CdiCamelExtension
     private static ProducerTemplate producerTemplate(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
-        Uri uri = CdiSpiHelper.getQualifierByType(ip, Uri.class);
-        if (uri != null) {
-            return producerTemplateFromUri(ip, instance, extension, uri);
-        } else {
-            return defaultProducerTemplate(ip, instance, extension);
-        }
+        return getQualifierByType(ip, Uri.class)
+            .map(uri -> producerTemplateFromUri(ip, instance, extension, uri))
+            .orElseGet(() -> defaultProducerTemplate(ip, instance, extension));
     }
 
     private static ProducerTemplate producerTemplateFromUri(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension, Uri uri) {
@@ -109,7 +106,7 @@ final class CdiCamelFactory {
     @Typed(MockEndpoint.class)
     // Qualifiers are dynamically added in CdiCamelExtension
     private static MockEndpoint mockEndpointFromUri(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
-        Uri uri = CdiSpiHelper.getQualifierByType(ip, Uri.class);
+        Uri uri = getQualifierByType(ip, Uri.class).get();
         try {
             CamelContext context = uri.context().isEmpty()
                 ? selectContext(ip, instance, extension)
@@ -128,7 +125,7 @@ final class CdiCamelFactory {
     @Typed(MockEndpoint.class)
     // Qualifiers are dynamically added in CdiCamelExtension
     private static MockEndpoint createMockEndpoint(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
-        Mock mock = CdiSpiHelper.getQualifierByType(ip, Mock.class);
+        Mock mock = getQualifierByType(ip, Mock.class).get();
         try {
             CamelContext context = mock.context().isEmpty()
                 ? selectContext(ip, instance, extension)
@@ -143,7 +140,7 @@ final class CdiCamelFactory {
     @Produces
     // Qualifiers are dynamically added in CdiCamelExtension
     private static Endpoint endpoint(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
-        Uri uri = CdiSpiHelper.getQualifierByType(ip, Uri.class);
+        Uri uri = getQualifierByType(ip, Uri.class).get();
         try {
             CamelContext context = uri.context().isEmpty()
                 ? selectContext(ip, instance, extension)
@@ -165,19 +162,7 @@ final class CdiCamelFactory {
         }
         String uri = eventEndpointUri(type, ip.getQualifiers());
         if (context.hasEndpoint(uri) == null) {
-            // FIXME: to be replaced once event firing with dynamic parameterized type is properly supported (see https://issues.jboss.org/browse/CDI-516)
-            TypeLiteral<T> literal = new TypeLiteral<T>() {
-            };
-            for (Field field : TypeLiteral.class.getDeclaredFields()) {
-                if (field.getType().equals(Type.class)) {
-                    field.setAccessible(true);
-                    field.set(literal, type);
-                    break;
-                }
-            }
-            context.addEndpoint(uri,
-                new CdiEventEndpoint<>(
-                    event.select(literal, ip.getQualifiers().toArray(new Annotation[ip.getQualifiers().size()])), uri, context, (ForwardingObserverMethod<T>) extension.getObserverMethod(ip)));
+            context.addEndpoint(uri, extension.getEventEndpoint(uri));
         }
         return context.getEndpoint(uri, CdiEventEndpoint.class);
     }
@@ -194,50 +179,16 @@ final class CdiCamelFactory {
     private static <T extends CamelContext> T selectContext(InjectionPoint ip, Instance<T> instance, CdiCamelExtension extension) {
         Collection<Annotation> qualifiers = new HashSet<>(ip.getQualifiers());
         qualifiers.retainAll(extension.getContextQualifiers());
-        if (qualifiers.isEmpty() && !instance.select(DefaultLiteral.INSTANCE).isUnsatisfied()) {
-            return instance.select(DefaultLiteral.INSTANCE).get();
+        if (qualifiers.isEmpty() && !instance.select(DEFAULT).isUnsatisfied()) {
+            return instance.select(DEFAULT).get();
         }
-        return instance.select(qualifiers.toArray(new Annotation[qualifiers.size()])).get();
+        return instance.select(qualifiers.stream().toArray(Annotation[]::new)).get();
     }
 
-    private static String eventEndpointUri(Type type, Set<Annotation> qualifiers) {
-        String uri = "cdi-event://" + authorityFromType(type);
-        StringBuilder parameters = new StringBuilder();
-        Iterator<Annotation> it = qualifiers.iterator();
-        while (it.hasNext()) {
-            parameters.append(it.next().annotationType().getCanonicalName());
-            if (it.hasNext()) {
-                parameters.append("%2C");
-            }
-        }
-        if (parameters.length() > 0) {
-            uri += "?qualifiers=" + parameters.toString();
-        }
-        return uri;
-    }
-
-    private static String authorityFromType(Type type) {
-        if (type instanceof Class) {
-            return Class.class.cast(type).getName();
-        }
-        if (type instanceof ParameterizedType) {
-            ParameterizedType pt = (ParameterizedType) type;
-            StringBuilder builder = new StringBuilder(authorityFromType(pt.getRawType()));
-            Iterator<Type> it = Arrays.asList(pt.getActualTypeArguments()).iterator();
-            builder.append("%3C");
-            while (it.hasNext()) {
-                builder.append(authorityFromType(it.next()));
-                if (it.hasNext()) {
-                    builder.append("%2C");
-                }
-            }
-            builder.append("%3E");
-            return builder.toString();
-        }
-        if (type instanceof GenericArrayType) {
-            GenericArrayType arrayType = (GenericArrayType) type;
-            return authorityFromType(arrayType.getGenericComponentType()) + "%5B%5D";
-        }
-        throw new IllegalArgumentException("Cannot create URI authority for event type [" + type + "]");
+    private static <T extends Annotation> Optional<T> getQualifierByType(InjectionPoint ip, Class<T> type) {
+        return ip.getQualifiers().stream()
+            .filter(isAnnotationType(type))
+            .findAny()
+            .map(type::cast);
     }
 }

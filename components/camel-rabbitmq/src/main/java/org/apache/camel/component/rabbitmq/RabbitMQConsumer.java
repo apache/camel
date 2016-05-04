@@ -184,7 +184,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
         private final long connectionRetryInterval;
         private final AtomicBoolean running = new AtomicBoolean(true);
 
-        public StartConsumerCallable(long connectionRetryInterval) {
+        StartConsumerCallable(long connectionRetryInterval) {
             this.connectionRetryInterval = connectionRetryInterval;
         }
 

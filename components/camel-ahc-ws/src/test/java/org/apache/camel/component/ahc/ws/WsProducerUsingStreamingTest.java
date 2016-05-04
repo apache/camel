@@ -19,7 +19,7 @@ package org.apache.camel.component.ahc.ws;
 import java.io.UnsupportedEncodingException;
 
 import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.ServerConnector;
 
 /**
  * @version 
@@ -32,7 +32,7 @@ public class WsProducerUsingStreamingTest extends WsProducerTestBase {
 
     @Override
     protected Connector getConnector() throws Exception {
-        return new SelectChannelConnector();
+        return new ServerConnector(server);
     }
     
     @Override

@@ -156,7 +156,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
            // okay we have a binding mode, so need to check for empty body as that can cause the marshaller to fail
             // as they assume a non-empty body
             if (isXml || isJson) {
-                // we have binding enabled, so we need to know if there body is empty or not\
+                // we have binding enabled, so we need to know if there body is empty or not
                 // so force reading the body as a String which we can work with
                 body = MessageHelper.extractBodyAsString(exchange.getIn());
                 if (body != null) {

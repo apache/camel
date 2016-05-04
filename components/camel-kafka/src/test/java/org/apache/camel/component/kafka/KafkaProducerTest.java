@@ -17,6 +17,7 @@
 package org.apache.camel.component.kafka;
 
 import java.util.Properties;
+import java.util.concurrent.Future;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
@@ -24,6 +25,7 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
@@ -45,7 +47,15 @@ public class KafkaProducerTest {
                 "kafka:broker1:1234,broker2:4567?topic=sometopic", null);
         endpoint.setBrokers("broker1:1234,broker2:4567");
         producer = new KafkaProducer(endpoint);
-        producer.setKafkaProducer(Mockito.mock(org.apache.kafka.clients.producer.KafkaProducer.class));
+
+
+        RecordMetadata rm = new RecordMetadata(null, 1, 1);
+        Future future = Mockito.mock(Future.class);
+        Mockito.when(future.get()).thenReturn(rm);
+        org.apache.kafka.clients.producer.KafkaProducer kp = Mockito.mock(org.apache.kafka.clients.producer.KafkaProducer.class);
+        Mockito.when(kp.send(Mockito.any())).thenReturn(future);
+
+        producer.setKafkaProducer(kp);
     }
 
     @Test

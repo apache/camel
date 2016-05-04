@@ -52,7 +52,6 @@ public class ProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
-
         Map<String, Object> headers = new HashMap<>();
         headers.put("num1", 1);
         headers.put("num2", 2);

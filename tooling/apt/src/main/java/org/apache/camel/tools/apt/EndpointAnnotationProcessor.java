@@ -153,6 +153,13 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         }
         writer.println("<b>Description:</b> " + description + "<br/>");
         writer.println("<b>Deprecated:</b>" + componentModel.isDeprecated() + "<br/>");
+        if (componentModel.isConsumerOnly()) {
+            writer.println("<b>ConsumerOnly:</b>" + "true" + "<br/>");
+        }
+        if (componentModel.isProducerOnly()) {
+            writer.println("<b>ProducerOnly:</b>" + "true" + "<br/>");
+        }
+        writer.println("<b>Async:</b>" + componentModel.isAsync() + "<br/>");
         writer.println("<b>Maven:</b> " + componentModel.getGroupId() + "/" + componentModel.getArtifactId() + "/" + componentModel.getVersionId() + "<br/>");
 
         writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, classElement, "", uriEndpoint.excludeProperties());
@@ -223,6 +230,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
         buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\",");
         buffer.append("\n    \"deprecated\": \"").append(componentModel.isDeprecated()).append("\",");
+        buffer.append("\n    \"async\": \"").append(componentModel.isAsync()).append("\",");
         if (componentModel.isConsumerOnly()) {
             buffer.append("\n    \"consumerOnly\": \"").append("true").append("\",");
         } else if (componentModel.isProducerOnly()) {
@@ -457,6 +465,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         model.setConsumerOnly(uriEndpoint.consumerOnly());
         model.setProducerOnly(uriEndpoint.producerOnly());
         model.setLenientProperties(uriEndpoint.lenientProperties());
+        model.setAsync(implementsInterface(roundEnv, endpointClassElement, "org.apache.camel.AsyncEndpoint"));
 
         String data = loadResource("META-INF/services/org/apache/camel/component", scheme);
         if (data != null) {

@@ -341,20 +341,23 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             createBraveForService(pattern, serviceName);
         }
 
-        ServiceHelper.startService(spanCollector);
+        ServiceHelper.startServices(spanCollector, eventNotifier);
     }
 
     @Override
     protected void doStop() throws Exception {
+        // stop event notifier
+        camelContext.getManagementStrategy().removeEventNotifier(eventNotifier);
+        ServiceHelper.stopService(eventNotifier);
+
         // stop and close collector
         ServiceHelper.stopAndShutdownService(spanCollector);
         if (spanCollector instanceof Closeable) {
             IOHelper.close((Closeable) spanCollector);
         }
-
+        // clear braves
         braves.clear();
-
-        camelContext.getManagementStrategy().removeEventNotifier(eventNotifier);
+        // remove route policy
         camelContext.getRoutePolicyFactories().remove(this);
     }
 
@@ -675,9 +678,10 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
 
         private final String routeId;
 
-        public ZipkinRoutePolicy(String routeId) {
+        ZipkinRoutePolicy(String routeId) {
             this.routeId = routeId;
         }
+
         @Override
         public void onExchangeBegin(Route route, Exchange exchange) {
             // use route policy to track events when Camel a Camel route begins/end the lifecycle of an Exchange

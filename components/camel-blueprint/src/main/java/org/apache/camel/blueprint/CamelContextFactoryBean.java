@@ -44,6 +44,7 @@ import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.model.ContextScanDefinition;
+import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
@@ -86,6 +87,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private String trace;
     @XmlAttribute(required = false)
     private String messageHistory;
+    @XmlAttribute(required = false)
+    private String logExhaustedMessageBody;
     @XmlAttribute(required = false)
     private String streamCache = "false";
     @XmlAttribute(required = false)
@@ -138,6 +141,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlElement(name = "streamCaching", type = CamelStreamCachingStrategyDefinition.class, required = false)
     private CamelStreamCachingStrategyDefinition camelStreamCachingStrategy;
     @XmlElements({
+        @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class, required = false),
         @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
         @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
         @XmlElement(name = "proxy", type = CamelProxyFactoryBean.class, required = false),
@@ -507,6 +511,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public String getLogExhaustedMessageBody() {
+        return logExhaustedMessageBody;
+    }
+
+    public void setLogExhaustedMessageBody(String logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
     }
 
     public String getStreamCache() {

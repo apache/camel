@@ -146,15 +146,13 @@ public class ZooKeeperElection {
         producerTemplate.send(zep, e);
 
         if (e.isFailed()) {
-            LOG.error("Error setting up election node " + fullpath, e.getException());
+            LOG.warn("Error setting up election node " + fullpath, e.getException());
         } else {
             LOG.info("Candidate node '{}' has been created", fullpath);
             try {
-                if (zep != null) {
-                    camelContext.addRoutes(new ElectoralMonitorRoute(zep));
-                }
+                camelContext.addRoutes(new ElectoralMonitorRoute(zep));
             } catch (Exception ex) {
-                LOG.error("Error configuring ZookeeperElection", ex);
+                LOG.warn("Error configuring ZookeeperElection", ex);
             }
         }
         return zep;
@@ -197,7 +195,7 @@ public class ZooKeeperElection {
         private SequenceComparator comparator = new SequenceComparator();
         private ZooKeeperEndpoint zep;
 
-        public ElectoralMonitorRoute(ZooKeeperEndpoint zep) {
+        ElectoralMonitorRoute(ZooKeeperEndpoint zep) {
             this.zep = zep;
             zep.getConfiguration().setListChildren(true);
             zep.getConfiguration().setSendEmptyMessageOnDelete(true);

@@ -43,8 +43,6 @@ public class PahoProducer extends DefaultProducer {
         client.publish(topic, message);
     }
 
-   
-
     @Override
     public PahoEndpoint getEndpoint() {
         return (PahoEndpoint)super.getEndpoint();

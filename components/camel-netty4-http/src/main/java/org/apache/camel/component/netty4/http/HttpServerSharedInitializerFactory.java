@@ -83,10 +83,10 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
         }
 
         pipeline.addLast("decoder", new HttpRequestDecoder(409, configuration.getMaxHeaderSize(), 8192));
+        pipeline.addLast("encoder", new HttpResponseEncoder());
         if (configuration.isChunked()) {
             pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));
         }
-        pipeline.addLast("encoder", new HttpResponseEncoder());
         if (configuration.isCompression()) {
             pipeline.addLast("deflater", new HttpContentCompressor());
         }

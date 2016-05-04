@@ -43,7 +43,8 @@ import org.apache.camel.spi.UriPath;
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath @Metadata(required = "true")
     private String timerName;
-    @UriParam(defaultValue = "1000")
+    @UriParam(defaultValue = "1000", description = "If greater than 0, generate periodic events every period milliseconds."
+            + " You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).")
     private long period = 1000;
     @UriParam(defaultValue = "1000")
     private long delay = 1000;
@@ -177,6 +178,8 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
      * If greater than 0, generate periodic events every period milliseconds.
      * <p/>
      * The default value is 1000.
+     * You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).
+     * @see <a href="http://camel.apache.org/how-do-i-specify-time-period-in-a-human-friendly-syntax.html">human friendly syntax</a>
      */
     @ManagedAttribute(description = "Timer Period")
     public void setPeriod(long period) {

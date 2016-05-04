@@ -242,11 +242,10 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
     public void registerConsumer(UndertowConsumer consumer) {
         int port = consumer.getEndpoint().getHttpURI().getPort();
         if (serversRegistry.containsKey(port)) {
-            //server listens on port, we need add configuration for path
             UndertowRegistry undertowRegistry = serversRegistry.get(port);
             undertowRegistry.registerConsumer(consumer);
         } else {
-            //create new server to listen on specified port
+            // Create a new server to listen on the specified port
             serversRegistry.put(port, new UndertowRegistry(consumer, port));
         }
     }
@@ -254,18 +253,20 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
     public void unregisterConsumer(UndertowConsumer consumer) {
         int port = consumer.getEndpoint().getHttpURI().getPort();
         if (serversRegistry.containsKey(port)) {
-            serversRegistry.get(port).unregisterConsumer(consumer);
-        }
-        if (serversRegistry.get(port).isEmpty()) {
-            //if there no Consumer left, we can shut down server
-            Undertow server = serversRegistry.get(port).getServer();
-            if (server != null) {
-                server.stop();
+            UndertowRegistry undertowRegistry = serversRegistry.get(port);
+            undertowRegistry.unregisterConsumer(consumer);
+
+            if (undertowRegistry.isEmpty()) {
+                // If there are no consumers left, we can shut down the server
+                Undertow server = undertowRegistry.getServer();
+                if (server != null) {
+                    server.stop();
+                }
+                serversRegistry.remove(port);
+            } else {
+                // Else, rebuild the server
+                startServer(consumer);
             }
-            serversRegistry.remove(port);
-        } else {
-            //call startServer to rebuild otherwise
-            startServer(consumer);
         }
     }
 

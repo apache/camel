@@ -93,7 +93,7 @@ public abstract class AbstractEtcdEndpoint extends DefaultEndpoint {
 
     private SSLContext createSslContext(EtcdConfiguration configuration) throws Exception {
         if (configuration.getSslContextParameters() != null) {
-            return configuration.getSslContextParameters().createSSLContext();
+            return configuration.getSslContextParameters().createSSLContext(getCamelContext());
         }
         return null;
     }

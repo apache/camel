@@ -44,6 +44,7 @@
     <module>camel-example-cdi-properties</module>
     <module>camel-example-cdi-rest-servlet</module>
     <module>camel-example-cdi-test</module>
+    <module>camel-example-cdi-xml</module>
     <module>camel-example-cxf</module>
     <module>camel-example-cxf-blueprint</module>
     <module>camel-example-cxf-osgi</module>
@@ -53,6 +54,7 @@
     <module>camel-example-etl</module>
     <module>camel-example-ftp</module>
     <module>camel-example-guice-jms</module>
+    <module>camel-example-hystrix</module>
     <module>camel-example-jdbc</module>
     <module>camel-example-jmx</module>
     <module>camel-example-jms-file</module>
@@ -61,7 +63,6 @@
     <module>camel-example-management</module>
     <module>camel-example-mybatis</module>
     <module>camel-example-netty-http</module>
-    <module>camel-example-osgi</module>
     <module>camel-example-osgi-rmi</module>
     <module>camel-example-pojo-messaging</module>
     <module>camel-example-reportincident</module>
@@ -78,6 +79,7 @@
     <module>camel-example-spring-boot</module>
     <module>camel-example-spring-boot-metrics</module>
     <module>camel-example-spring-boot-starter</module>
+    <module>camel-example-spring-dm</module>
     <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
     <module>camel-example-spring-ws</module>
@@ -88,6 +90,7 @@
     <module>camel-example-sql</module>
     <module>camel-example-sql-blueprint</module>
     <module>camel-example-swagger-cdi</module>
+    <module>camel-example-swagger-osgi</module>
     <module>camel-example-swagger-xml</module>
     <module>camel-example-tracer</module>
     <module>camel-example-twitter-websocket</module>

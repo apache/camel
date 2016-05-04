@@ -98,12 +98,18 @@ public class JmsConfiguration implements Cloneable {
             description = "Specifies whether the consumer container should auto-startup.")
     private boolean autoStartup = true;
     @UriParam(label = "consumer,advanced",
+            description = "Whether the DefaultMessageListenerContainer used in the reply managers for request-reply messaging allow "
+                    + " the DefaultMessageListenerContainer.runningAllowed flag to quick stop in case JmsConfiguration#isAcceptMessagesWhileStopping"
+                    + " is enabled, and org.apache.camel.CamelContext is currently being stopped. This quick stop ability is enabled by"
+                    + " default in the regular JMS consumers but to enable for reply managers you must enable this flag.")
+    private boolean allowReplyManagerQuickStop;   
+    @UriParam(label = "consumer,advanced",
             description = "Specifies whether the consumer accept messages while it is stopping."
                     + " You may consider enabling this option, if you start and stop JMS routes at runtime, while there are still messages"
                     + " enqued on the queue. If this option is false, and you stop the JMS route, then messages may be rejected,"
                     + " and the JMS broker would have to attempt redeliveries, which yet again may be rejected, and eventually the message"
                     + " may be moved at a dead letter queue on the JMS broker. To avoid this its recommended to enable this option.")
-    private boolean acceptMessagesWhileStopping;
+    private boolean acceptMessagesWhileStopping;    
     @UriParam(description = "Sets the JMS client ID to use. Note that this value, if specified, must be unique and can only be used by a single JMS connection instance."
             + " It is typically only required for durable topic subscriptions."
             + " If using Apache ActiveMQ you may prefer to use Virtual Topics instead.")
@@ -762,6 +768,20 @@ public class JmsConfiguration implements Cloneable {
         this.acceptMessagesWhileStopping = acceptMessagesWhileStopping;
     }
 
+    /**
+     * Whether the {@link DefaultMessageListenerContainer} used in the reply managers for request-reply messaging allow 
+     * the {@link DefaultMessageListenerContainer.runningAllowed} flag to quick stop in case {@link JmsConfiguration#isAcceptMessagesWhileStopping()} 
+     * is enabled, and {@link org.apache.camel.CamelContext} is currently being stopped. This quick stop ability is enabled by
+     * default in the regular JMS consumers but to enable for reply managers you must enable this flag.
+     */
+    public boolean isAllowReplyManagerQuickStop() {
+        return allowReplyManagerQuickStop;
+    }
+
+    public void setAllowReplyManagerQuickStop(boolean allowReplyManagerQuickStop) {
+        this.allowReplyManagerQuickStop = allowReplyManagerQuickStop;
+    }
+    
     public String getClientId() {
         return clientId;
     }

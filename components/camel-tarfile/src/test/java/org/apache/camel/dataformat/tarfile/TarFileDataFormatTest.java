@@ -16,11 +16,7 @@
  */
 package org.apache.camel.dataformat.tarfile;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
@@ -28,29 +24,17 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.junit.Test;
 
 import static org.apache.camel.Exchange.FILE_NAME;
+import static org.apache.camel.dataformat.tarfile.TarUtils.*;
+import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredText;
 
 /**
  * Unit tests for {@link TarFileDataFormat}.
  */
 public class TarFileDataFormatTest extends CamelTestSupport {
-
-    private static final String TEXT = "The Masque of Queen Bersabe (excerpt) \n"
-            + "by: Algernon Charles Swinburne \n\n"
-            + "My lips kissed dumb the word of Ah \n"
-            + "Sighed on strange lips grown sick thereby. \n"
-            + "God wrought to me my royal bed; \n"
-            + "The inner work thereof was red, \n"
-            + "The outer work was ivory. \n"
-            + "My mouth's heat was the heat of flame \n"
-            + "For lust towards the kings that came \n"
-            + "With horsemen riding royally.";
 
     private static final File TEST_DIR = new File("target/tar");
 
@@ -194,32 +178,5 @@ public class TarFileDataFormatTest extends CamelTestSupport {
                 from("direct:dslUntar").unmarshal(tar).to("mock:dslUntar");
             }
         };
-    }
-
-    private static byte[] getTaredText(String entryName) throws IOException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes("UTF-8"));
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        TarArchiveOutputStream tos = new TarArchiveOutputStream(baos);
-        try {
-            TarArchiveEntry entry = new TarArchiveEntry(entryName);
-            entry.setSize(bais.available());
-            tos.putArchiveEntry(entry);
-            IOHelper.copy(bais, tos);
-        } finally {
-            tos.closeArchiveEntry();
-            IOHelper.close(bais, tos);
-        }
-        return baos.toByteArray();
-    }
-
-    private static byte[] getBytes(File file) throws IOException {
-        FileInputStream fis = new FileInputStream(file);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            IOHelper.copy(fis, baos);
-        } finally {
-            IOHelper.close(fis, baos);
-        }
-        return baos.toByteArray();
     }
 }

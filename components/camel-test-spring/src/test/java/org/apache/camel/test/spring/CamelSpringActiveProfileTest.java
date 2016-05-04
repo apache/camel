@@ -36,7 +36,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @ContextConfiguration
 @ActiveProfiles("test")
-@RunWith(CamelSpringJUnit4ClassRunner.class)
+@RunWith(CamelSpringRunner.class)
 public class CamelSpringActiveProfileTest {
 
     @Autowired

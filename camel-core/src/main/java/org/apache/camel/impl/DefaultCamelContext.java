@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,7 +39,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.naming.Context;
@@ -175,6 +179,7 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("deprecation")
 public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, Suspendable {
     private final Logger log = LoggerFactory.getLogger(getClass());
+    private final AtomicBoolean vetoStated = new AtomicBoolean();
     private JAXBContext jaxbContext;
     private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
     private ManagementNameStrategy managementNameStrategy = new DefaultManagementNameStrategy(this);
@@ -214,6 +219,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean trace = Boolean.FALSE;
     private Boolean messageHistory = Boolean.TRUE;
+    private Boolean logExhaustedMessageBody = Boolean.FALSE;
     private Boolean streamCache = Boolean.FALSE;
     private Boolean handleFault = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
@@ -243,7 +249,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ServicePool<Endpoint, Producer> producerServicePool = new SharedProducerServicePool(100);
     private ServicePool<Endpoint, PollingConsumer> pollingConsumerServicePool = new SharedPollingConsumerServicePool(100);
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
-    private ProcessorFactory processorFactory;
+    private ProcessorFactory processorFactory = new DefaultProcessorFactory();
     private MessageHistoryFactory messageHistoryFactory = new DefaultMessageHistoryFactory();
     private InterceptStrategy defaultTracer;
     private InterceptStrategy defaultBacklogTracer;
@@ -320,6 +326,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public <T extends CamelContext> T adapt(Class<T> type) {
         return type.cast(this);
+    }
+
+    public boolean isVetoStarted() {
+        return vetoStated.get();
     }
 
     public String getName() {
@@ -2617,6 +2627,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.messageHistory = messageHistory;
     }
 
+    public Boolean isLogExhaustedMessageBody() {
+        return logExhaustedMessageBody;
+    }
+
+    public void setLogExhaustedMessageBody(Boolean logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
+    }
+
     public Boolean isHandleFault() {
         return handleFault;
     }
@@ -2811,6 +2829,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void start() throws Exception {
+        vetoStated.set(false);
         startDate = new Date();
         stopWatch.restart();
         log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is starting");
@@ -2834,6 +2853,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             firstStartDone = true;
             super.start();
         } catch (VetoCamelContextStartException e) {
+            // mark we veto against starting Camel
+            vetoStated.set(true);
             if (e.isRethrowException()) {
                 throw e;
             } else {
@@ -2972,10 +2993,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 strategy.onContextStart(this);
             } catch (VetoCamelContextStartException e) {
                 // okay we should not start Camel since it was vetoed
-                log.warn("Lifecycle strategy vetoed starting CamelContext ({}) due {}", getName(), e.getMessage());
+                log.warn("Lifecycle strategy vetoed starting CamelContext ({}) due: {}", getName(), e.getMessage());
                 throw e;
             } catch (Exception e) {
-                log.warn("Lifecycle strategy " + strategy + " failed starting CamelContext ({}) due {}", getName(), e.getMessage());
+                log.warn("Lifecycle strategy " + strategy + " failed starting CamelContext ({}) due: {}", getName(), e.getMessage());
                 throw e;
             }
         }
@@ -3090,13 +3111,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         } catch (Throwable e) {
             log.warn("Error occurred while shutting down routes. This exception will be ignored.", e);
         }
-        getRouteStartupOrder().clear();
 
         // shutdown await manager to trigger interrupt of blocked threads to attempt to free these threads graceful
         shutdownServices(asyncProcessorAwaitManager);
 
-        shutdownServices(routeServices.values());
+        shutdownServices(getRouteStartupOrder().stream()
+            .sorted(Comparator.comparing(RouteStartupOrder::getStartupOrder).reversed())
+            .map(DefaultRouteStartupOrder.class::cast)
+            .map(DefaultRouteStartupOrder::getRouteService)
+            .collect(Collectors.toList()), false);
         // do not clear route services or startup listeners as we can start Camel again and get the route back as before
+        getRouteStartupOrder().clear();
 
         // but clear any suspend routes
         suspendedRouteServices.clear();

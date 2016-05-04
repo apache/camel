@@ -55,6 +55,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
@@ -129,6 +130,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected String proxyHost;
     protected ErrorHandler errorHandler;
     private Integer proxyPort;
+    private boolean sendServerVersion = true;
 
     public JettyHttpComponent() {
         super(JettyHttpEndpoint.class);
@@ -182,6 +184,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         Integer httpClientMinThreads = getAndRemoveParameter(parameters, "httpClientMinThreads", Integer.class, this.httpClientMinThreads);
         Integer httpClientMaxThreads = getAndRemoveParameter(parameters, "httpClientMaxThreads", Integer.class, this.httpClientMaxThreads);
         HttpClient httpClient = resolveAndRemoveReferenceParameter(parameters, "httpClient", HttpClient.class);
+        Boolean async = getAndRemoveParameter(parameters, "async", Boolean.class);
 
         // extract httpClient. parameters
         Map<String, Object> httpClientParameters = IntrospectionSupport.extractProperties(parameters, "httpClient.");
@@ -203,6 +206,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         endpointUri = new URI(scheme + ":" + endpointUri);
 
         JettyHttpEndpoint endpoint = createEndpoint(endpointUri, httpUri);
+        if (async != null) {
+            endpoint.setAsync(async);
+        }
 
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
@@ -285,6 +291,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (httpClient != null) {
             endpoint.setHttpClient(httpClient);
         }
+        endpoint.setSendServerVersion(isSendServerVersion());
 
         setProperties(endpoint, parameters);
         return endpoint;
@@ -595,7 +602,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     private SslContextFactory createSslContextFactory(SSLContextParameters ssl) throws GeneralSecurityException, IOException {
         SslContextFactory answer = new SslContextFactory();
         if (ssl != null) {
-            answer.setSslContext(ssl.createSSLContext());
+            answer.setSslContext(ssl.createSSLContext(getCamelContext()));
         }
         return answer;
     }
@@ -983,6 +990,20 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         this.proxyPort = proxyPort;
     }
 
+    public boolean isSendServerVersion() {
+        return sendServerVersion;
+    }
+
+    /**
+     * If the option is true, jetty will send the server header with the jetty version information to the client which sends the request.
+     * NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected.
+     */
+    @Metadata(description = "If the option is true, jetty server will send the date header to the client which sends the request."
+            + " NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected.")
+    public void setSendServerVersion(boolean sendServerVersion) {
+        this.sendServerVersion = sendServerVersion;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -1122,6 +1143,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         CamelServlet camelServlet = new CamelContinuationServlet();
         ServletHolder holder = new ServletHolder();
         holder.setServlet(camelServlet);
+        holder.setAsyncSupported(true);
+        holder.setInitParameter(CamelServlet.ASYNC_PARAM, Boolean.toString(endpoint.isAsync()));
         context.addServlet(holder, "/*");
 
         // use rest enabled resolver in case we use rest

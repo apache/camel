@@ -28,7 +28,6 @@ import org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.eclipse.jetty.client.HttpClient;
 
 /**
  * Salesforce Endpoint configuration.
@@ -70,6 +69,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String INCLUDE_DETAILS = "includeDetails";
     public static final String REPORT_METADATA = "reportMetadata";
     public static final String INSTANCE_ID = "instanceId";
+
+    // default maximum authentication retries on failed authentication or expired session
+    public static final int DEFAULT_MAX_AUTHENTICATION_RETRIES = 4;
 
     // general properties
     @UriParam
@@ -139,9 +141,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     @UriParam
     private String instanceId;
 
-    // Jetty HttpClient, set using reference
+    // Salesforce Jetty9 HttpClient, set using reference
     @UriParam
-    private HttpClient httpClient;
+    private SalesforceHttpClient httpClient;
 
     public SalesforceEndpointConfig copy() {
         try {
@@ -475,11 +477,11 @@ public class SalesforceEndpointConfig implements Cloneable {
     /**
      * Custom Jetty Http Client to use to connect to Salesforce.
      */
-    public void setHttpClient(HttpClient httpClient) {
+    public void setHttpClient(SalesforceHttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
-    public HttpClient getHttpClient() {
+    public SalesforceHttpClient getHttpClient() {
         return httpClient;
     }
 

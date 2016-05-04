@@ -45,7 +45,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new ZookeeperProducer(this);
+        return new ZooKeeperProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -167,7 +167,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
     public void setSendEmptyMessageOnDelete(boolean sendEmptyMessageOnDelete) {
         getConfiguration().setSendEmptyMessageOnDelete(sendEmptyMessageOnDelete);
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         if (connectionManager != null) {

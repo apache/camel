@@ -33,6 +33,8 @@ from the classpath. You can prefix with `file:`, `http:`, or
 |ignoreInvalidRecords |`false` |Whether to ignore invalid records.
 
 |encoding |Platform default |The charset to use.
+
+|beanReaderErrorHandler | |A custom BeanReaderErrorHandler implementation to use in your dataformat definition
 |=======================================================================
 
 [[BeanIO-Usage]]

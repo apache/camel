@@ -18,14 +18,22 @@ package org.apache.camel.component.hystrix;
 
 public interface HystrixConstants {
 
+    // Hystrix EIP response properties
+    String HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION = "CamelHystrixSuccessfulExecution";
+    String HYSTRIX_RESPONSE_FROM_FALLBACK = "CamelHystrixResponseFromFallback";
+    String HYSTRIX_RESPONSE_SHORT_CIRCUITED = "CamelHystrixResponseShortCircuited";
+    String HYSTRIX_RESPONSE_TIMED_OUT = "CamelHystrixResponseTimedOut";
+    String HYSTRIX_RESPONSE_REJECTED = "CamelHystrixResponseRejected";
+
     // in message header
+    String CAMEL_HYSTRIX_RUN_ENDPOINT = "CamelHystrixRunEndpoint";
+    String CAMEL_HYSTRIX_FALLBACK_ENDPOINT = "CamelHystrixFallbackEndpoint";
+    String CAMEL_HYSTRIX_CACHE_KEY = "CamelHystrixCacheKey";
     String CAMEL_HYSTRIX_CLEAR_CACHE_FIRST = "CamelHystrixClearCacheFirst";
     String CAMEL_HYSTRIX_REQUEST_CONTEXT = "CamelHystrixRequestContex";
     String CAMEL_HYSTRIX_GROUP_KEY = "CamelHystrixGroupKey";
     String CAMEL_HYSTRIX_COMMAND_KEY = "CamelHystrixCommandKey";
     String CAMEL_HYSTRIX_THREAD_POOL_KEY = "CamelHystrixThreadPoolKey";
-    String CAMEL_HYSTRIX_RUN_ENDPOINT_ID = "CamelHystrixRunEndpointId";
-    String CAMEL_HYSTRIX_FALLBACK_ENDPOINT_ID = "CamelHystrixFallbackEndpointId";
     String CAMEL_HYSTRIX_CORE_SIZE = "CamelHystrixCoreSize";
     String CAMEL_HYSTRIX_KEEP_ALIVE_TIME = "CamelHystrixKeepAliveTime";
     String CAMEL_HYSTRIX_MAX_QUEUE_SIZE = "CamelHystrixMaxQueueSize";
@@ -33,8 +41,6 @@ public interface HystrixConstants {
 
     String CAMEL_HYSTRIX_THREAD_POOL_METRICS_ROLLING_STATISTICAL_WINDOW_IN_MILLISECONDS = "CamelHystrixThreadPoolMetricsRollingStatisticalWindowInMilliseconds";
     String CAMEL_HYSTRIX_THREAD_POOL_ROLLING_NUMBER_STATISTICAL_WINDOW_BUCKETS = "CamelHystrixThreadPoolRollingNumberStatisticalWindowBuckets";
-
-
 
     String CAMEL_HYSTRIX_CIRCUIT_BREAKER_ENABLED = "CamelHystrixCircuitBreakerEnabled";
     String CAMEL_HYSTRIX_CIRCUIT_BREAKER_ERROR_THRESHOLD_PERCENTAGE = "CamelHystrixCircuitBreakerErrorThresholdPercentage";

@@ -607,6 +607,27 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void validateTimePattern() throws Exception {
+        assertTrue(catalog.validateTimePattern("0"));
+        assertTrue(catalog.validateTimePattern("500"));
+        assertTrue(catalog.validateTimePattern("10000"));
+        assertTrue(catalog.validateTimePattern("5s"));
+        assertTrue(catalog.validateTimePattern("5sec"));
+        assertTrue(catalog.validateTimePattern("5secs"));
+        assertTrue(catalog.validateTimePattern("3m"));
+        assertTrue(catalog.validateTimePattern("3min"));
+        assertTrue(catalog.validateTimePattern("3minutes"));
+        assertTrue(catalog.validateTimePattern("5m15s"));
+        assertTrue(catalog.validateTimePattern("1h"));
+        assertTrue(catalog.validateTimePattern("1hour"));
+        assertTrue(catalog.validateTimePattern("2hours"));
+
+        assertFalse(catalog.validateTimePattern("bla"));
+        assertFalse(catalog.validateTimePattern("2year"));
+        assertFalse(catalog.validateTimePattern("60darn"));
+    }
+
+    @Test
     public void testEndpointComponentName() throws Exception {
         String name = catalog.endpointComponentName("jms:queue:foo");
         assertEquals("jms", name);

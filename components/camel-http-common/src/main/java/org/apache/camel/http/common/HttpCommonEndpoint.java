@@ -47,9 +47,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
                     + " You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.")
     boolean bridgeEndpoint;
     @UriParam(label = "producer",
-            description = "If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, " +
-                    "useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, " +
-                    "this allows applications which use the Host header to generate accurate URL's for a proxied service")
+            description = "If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, "
+                + "useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, "
+                + "this allows applications which use the Host header to generate accurate URL's for a proxied service")
     boolean preserveHostHeader;
     @UriParam(label = "consumer",
             description = "Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.")
@@ -113,6 +113,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             description = "If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers."
             + " Setting this to false will avoid the HTTP Headers mapping.")
     boolean mapHttpMessageHeaders = true;
+    @UriParam(label = "advanced", defaultValue = "true",
+            description = "If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP."
+            + " Setting this to false will avoid the HTTP Form Encoded body mapping.")
+    boolean mapHttpMessageFormUrlEncodedBody = true;
     @UriParam(label = "producer", defaultValue = "200-299",
             description = "The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.")
     private String okStatusCodeRange = "200-299";
@@ -120,6 +124,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             description = "Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints."
                     + " See more details at http://camel.apache.org/urlrewrite.html")
     private UrlRewrite urlRewrite;
+    @UriParam(label = "consumer", defaultValue = "false",
+            description = "Configure the consumer to work in async mode")
+    private boolean async;
 
     public HttpCommonEndpoint() {
     }
@@ -184,6 +191,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             httpBinding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
             httpBinding.setMapHttpMessageBody(isMapHttpMessageBody());
             httpBinding.setMapHttpMessageHeaders(isMapHttpMessageHeaders());
+            httpBinding.setMapHttpMessageFormUrlEncodedBody(isMapHttpMessageFormUrlEncodedBody());
         }
         return httpBinding;
     }
@@ -494,5 +502,28 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      */
     public void setMapHttpMessageHeaders(boolean mapHttpMessageHeaders) {
         this.mapHttpMessageHeaders = mapHttpMessageHeaders;
+    }
+
+    public boolean isMapHttpMessageFormUrlEncodedBody() {
+        return mapHttpMessageFormUrlEncodedBody;
+    }
+
+    /**
+     * If this option is true then IN exchange Form Encoded body will be mapped to HTTP
+     */
+    public void setMapHttpMessageFormUrlEncodedBody(boolean mapHttpMessageFormUrlEncodedBody) {
+        this.mapHttpMessageFormUrlEncodedBody = mapHttpMessageFormUrlEncodedBody;
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+
+    /**
+     * If this option is true, the consumer will work in async mode
+     * @param async
+     */
+    public void setAsync(boolean async) {
+        this.async = async;
     }
 }

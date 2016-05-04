@@ -39,11 +39,11 @@
     <module>camel-test-cdi</module>
     <module>camel-test-karaf</module>
     <module>camel-test-spring</module>
-    <module>camel-test-spring40</module>
     <module>camel-core-osgi</module>
     <module>camel-core-xml</module>
     <module>camel-blueprint</module>
     <module>camel-spring</module>
+    <module>camel-spring-dm</module>
     <module>camel-bam</module>
     <module>camel-groovy</module>
     <module>camel-scala</module>
@@ -53,7 +53,6 @@
     <module>camel-hystrix</module>
     <module>camel-jetty-common</module>
     <module>camel-jetty</module>
-    <module>camel-jetty8</module>
     <module>camel-jetty9</module>
     <module>camel-cxf</module>
     <module>camel-cxf-transport</module>
@@ -83,7 +82,7 @@
     <module>camel-castor</module>
     <module>camel-cdi</module>
     <module>camel-chunk</module>
-	<module>camel-cm-sms</module>
+    <module>camel-cm-sms</module>
     <module>camel-cmis</module>
     <module>camel-coap</module>
     <module>camel-cometd</module>
@@ -105,6 +104,7 @@
     <module>camel-exec</module>
     <module>camel-facebook</module>
     <module>camel-flatpack</module>
+    <module>camel-flink</module>
     <module>camel-fop</module>
     <module>camel-freemarker</module>
     <module>camel-ftp</module>

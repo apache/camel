@@ -43,6 +43,8 @@ import javax.xml.ws.handler.Handler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
@@ -113,7 +115,7 @@ import org.slf4j.LoggerFactory;
  * The cxf component is used for SOAP WebServices using Apache CXF.
  */
 @UriEndpoint(scheme = "cxf", title = "CXF", syntax = "cxf:beanId:address", consumerClass = CxfConsumer.class, label = "soap,webservice")
-public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service, Cloneable {
+public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, Service, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
 
@@ -1130,15 +1132,13 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.username = username;
     }
 
-
-
     /**
      * We need to override the {@link ClientImpl#setParameters} method
      * to insert parameters into CXF Message for {@link DataFormat#PAYLOAD} mode.
      */
     class CamelCxfClientImpl extends ClientImpl {
 
-        public CamelCxfClientImpl(Bus bus, Endpoint ep) {
+        CamelCxfClientImpl(Bus bus, Endpoint ep) {
             super(bus, ep);
         }
 

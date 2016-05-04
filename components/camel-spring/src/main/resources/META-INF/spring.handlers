@@ -17,4 +17,3 @@
 
 http\://camel.apache.org/schema/spring=org.apache.camel.spring.handler.CamelNamespaceHandler
 http\://camel.apache.org/schema/spring/v${camel.schema.version}=org.apache.camel.spring.handler.CamelNamespaceHandler
-http\://camel.apache.org/schema/osgi=org.apache.camel.osgi.CamelNamespaceHandler

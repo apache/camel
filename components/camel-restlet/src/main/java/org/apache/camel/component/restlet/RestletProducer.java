@@ -96,9 +96,10 @@ public class RestletProducer extends DefaultAsyncProducer {
         if (endpoint.isSynchronous()) {
             try {
                 process(exchange);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 exchange.setException(e);
             }
+            callback.done(true);
             return true;
         }
 
@@ -110,7 +111,7 @@ public class RestletProducer extends DefaultAsyncProducer {
             String resourceUri = buildUri(endpoint, exchange);
             request = new Request(endpoint.getRestletMethod(), resourceUri);
             binding.populateRestletRequestFromExchange(request, exchange);
-        } catch (CamelExchangeException e) {
+        } catch (Throwable e) {
             // break out in case of exception
             exchange.setException(e);
             callback.done(true);
@@ -132,7 +133,7 @@ public class RestletProducer extends DefaultAsyncProducer {
                             binding.populateExchangeFromRestletResponse(exchange, response);
                         }
                     }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     exchange.setException(e);
                 } finally {
                     callback.done(false);

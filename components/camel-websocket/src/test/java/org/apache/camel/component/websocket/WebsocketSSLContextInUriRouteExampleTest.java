@@ -106,7 +106,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         AsyncHttpClientConfig.Builder builder =
                 new AsyncHttpClientConfig.Builder();
 
-        builder.setSSLContext(new SSLContextParameters().createSSLContext());
+        builder.setSSLContext(new SSLContextParameters().createSSLContext(context));
         builder.setAcceptAnyCertificate(true);
         config = builder.build();
         c = new AsyncHttpClient(config);
@@ -164,7 +164,9 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-
+                WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
+                websocketComponent.setMinThreads(1);
+                websocketComponent.setMaxThreads(20);
                 from(uri)
                      .log(">>> Message received from WebSocket Client : ${body}")
                      .to("mock:client")

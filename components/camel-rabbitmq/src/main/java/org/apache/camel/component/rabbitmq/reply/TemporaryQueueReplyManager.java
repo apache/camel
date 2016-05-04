@@ -120,7 +120,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
          *
          * @param channel the channel to which this consumer is attached
          */
-        public RabbitConsumer(TemporaryQueueReplyManager consumer, Channel channel) {
+        RabbitConsumer(TemporaryQueueReplyManager consumer, Channel channel) {
             super(channel);
             this.consumer = consumer;
             this.channel = channel;

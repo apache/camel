@@ -19,9 +19,9 @@ package org.apache.camel.component.websocket;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.channels.ReadableByteChannel;
 
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.IOHelper;
@@ -47,11 +47,6 @@ public class JettyClassPathResource extends Resource {
     @Override
     public boolean isContainedIn(Resource r) throws MalformedURLException {
         return false;
-    }
-
-    @Override
-    public void release() {
-        // noop
     }
 
     @Override
@@ -103,11 +98,6 @@ public class JettyClassPathResource extends Resource {
     }
 
     @Override
-    public OutputStream getOutputStream() throws IOException, SecurityException {
-        return null;
-    }
-
-    @Override
     public boolean delete() throws SecurityException {
         return false;
     }
@@ -125,5 +115,15 @@ public class JettyClassPathResource extends Resource {
     @Override
     public Resource addPath(String path) throws IOException, MalformedURLException {
         return new JettyClassPathResource(resolver, this.path + "/" + path);
+    }
+
+    @Override
+    public void close() {
+        // noop
+    }
+
+    @Override
+    public ReadableByteChannel getReadableByteChannel() throws IOException {
+        return null;
     }
 }

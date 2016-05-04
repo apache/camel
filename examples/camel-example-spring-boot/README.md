@@ -41,7 +41,7 @@ You can SSH into the JVM using
 
     ssh -p 2000 user@localhost
 
-And then use the generated password that spring-boot logged when it was staring.
+And then use `password` when the server will prompt to encode the password.
 
 
 ### Documentation

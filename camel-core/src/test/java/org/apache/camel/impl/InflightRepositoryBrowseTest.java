@@ -54,7 +54,8 @@ public class InflightRepositoryBrowseTest extends ContextTestSupport {
                                 assertNotNull(inflight);
 
                                 assertEquals(exchange, inflight.getExchange());
-                                assertEquals("foo", inflight.getRouteId());
+                                assertEquals("foo", inflight.getFromRouteId());
+                                assertEquals("foo", inflight.getAtRouteId());
                                 assertEquals("myProcessor", inflight.getNodeId());
                             }
                         }).id("myProcessor")

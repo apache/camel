@@ -22,6 +22,7 @@ import javax.net.ssl.SSLContext;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -39,7 +40,7 @@ import org.apache.camel.util.jsse.SSLContextParameters;
  * To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
  */
 @UriEndpoint(scheme = "ahc", title = "AHC", syntax = "ahc:httpUri", producerOnly = true, label = "http", lenientProperties = true)
-public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private AsyncHttpClient client;
     @UriPath @Metadata(required = "true")
@@ -240,7 +241,7 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 AsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
                 
                 if (sslContextParameters != null) {
-                    SSLContext ssl = sslContextParameters.createSSLContext();
+                    SSLContext ssl = sslContextParameters.createSSLContext(getCamelContext());
                     builder.setSSLContext(ssl);
                 }
                 
@@ -248,7 +249,7 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             } else {
                 if (sslContextParameters != null) {
                     AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
-                    SSLContext ssl = sslContextParameters.createSSLContext();
+                    SSLContext ssl = sslContextParameters.createSSLContext(getCamelContext());
                     builder.setSSLContext(ssl);
                     config = builder.build();
                 }

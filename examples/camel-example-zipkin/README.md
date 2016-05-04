@@ -57,6 +57,14 @@ $ mvn compile camel:run
 You should be able to visualize the traces and timings from this example using the Zipkin Web Console.
 The services are named `service1` and `service2`.
 
+In the screen shot below we are showing a trace of a client calling service1 and service2.
+
+![Zipkin Web Console Trace Details](images/zipkin-web-console-1.png "Detail of a trace")
+
+You can then click on each span and get annotated data from the Camel exchange and about the requests as shown:
+
+![Zipkin Web Console Span Details](images/zipkin-web-console-2.png "Detail of the span")
+
 
 ### Installing Zipkin Server using Docker
 

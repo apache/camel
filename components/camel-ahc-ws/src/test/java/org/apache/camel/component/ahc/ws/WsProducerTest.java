@@ -17,7 +17,7 @@
 package org.apache.camel.component.ahc.ws;
 
 import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.ServerConnector;
 
 /**
  * @version 
@@ -30,7 +30,7 @@ public class WsProducerTest extends WsProducerTestBase {
 
     @Override
     protected Connector getConnector() throws Exception {
-        return new SelectChannelConnector();
+        return new ServerConnector(server);
     }
     
     @Override

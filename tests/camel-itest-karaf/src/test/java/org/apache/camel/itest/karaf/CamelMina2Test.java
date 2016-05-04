@@ -16,13 +16,12 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.apache.camel.test.karaf.AbstractFeatureTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelMina2Test extends AbstractFeatureTest {
+public class CamelMina2Test extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelMina2Test.class);
 

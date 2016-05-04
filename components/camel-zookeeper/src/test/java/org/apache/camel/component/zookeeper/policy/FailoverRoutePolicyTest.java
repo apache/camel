@@ -64,7 +64,7 @@ public class FailoverRoutePolicyTest extends ZooKeeperTestSupport {
         private MockEndpoint mock;
         private String routename;
 
-        public ZookeeperPolicyEnforcedContext(String name) throws Exception {
+        ZookeeperPolicyEnforcedContext(String name) throws Exception {
             controlledContext = new DefaultCamelContext();
             routename = name;
             template = controlledContext.createProducerTemplate();

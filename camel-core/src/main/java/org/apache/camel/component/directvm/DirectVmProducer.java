@@ -64,19 +64,19 @@ public class DirectVmProducer extends DefaultAsyncProducer {
         }
         
         return consumer.getAsyncProcessor().process(submitted, done -> {
-                exchange.setException(submitted.getException());
-                exchange.getOut().copyFrom(submitted.hasOut() ? submitted.getOut() : submitted.getIn());
-            
-                if (headerFilterStrategy != null) {
-                    exchange.getOut().getHeaders().entrySet().removeIf(e -> headerFilterStrategy.applyFilterToExternalHeaders(e.getKey(), e.getValue(), submitted));
-                }
-                
-                if (endpoint.isPropagateProperties()) {
-                    exchange.getProperties().putAll(submitted.getProperties());
-                }
-                
-                callback.done(done);
-            });
+            exchange.setException(submitted.getException());
+            exchange.getOut().copyFrom(submitted.hasOut() ? submitted.getOut() : submitted.getIn());
+
+            if (headerFilterStrategy != null) {
+                exchange.getOut().getHeaders().entrySet().removeIf(e -> headerFilterStrategy.applyFilterToExternalHeaders(e.getKey(), e.getValue(), submitted));
+            }
+
+            if (endpoint.isPropagateProperties()) {
+                exchange.getProperties().putAll(submitted.getProperties());
+            }
+
+            callback.done(done);
+        });
     }
     
 }

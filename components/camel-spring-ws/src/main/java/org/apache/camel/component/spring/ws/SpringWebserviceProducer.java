@@ -26,6 +26,7 @@ import javax.net.ssl.SSLContext;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -97,7 +98,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
         }
     }
 
-    private static void prepareMessageSenders(SpringWebserviceConfiguration configuration) {
+    private void prepareMessageSenders(SpringWebserviceConfiguration configuration) {
         // Skip this whole thing if none of the relevant config options are set.
         if (!(configuration.getTimeout() > -1) && configuration.getSslContextParameters() == null) {
             return;
@@ -128,7 +129,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
             } else if (messageSender.getClass().equals(HttpUrlConnectionMessageSender.class)) {
                 // Only if exact match denoting likely use of default configuration.  We don't want to get
                 // sub-classes that might have been otherwise injected.
-                messageSenders[i] = new AbstractHttpWebServiceMessageSenderDecorator((HttpUrlConnectionMessageSender) messageSender, configuration);
+                messageSenders[i] = new AbstractHttpWebServiceMessageSenderDecorator((HttpUrlConnectionMessageSender) messageSender, configuration, getEndpoint().getCamelContext());
             } else {
                 // For example this will be the case during unit-testing with the net.javacrumbs.spring-ws-test API
                 LOG.warn("Ignoring the timeout and SSLContextParameters options for {}.  You will need to configure "
@@ -145,14 +146,15 @@ public class SpringWebserviceProducer extends DefaultProducer {
     protected static final class AbstractHttpWebServiceMessageSenderDecorator extends AbstractHttpWebServiceMessageSender {
 
         private final AbstractHttpWebServiceMessageSender delegate;
-
         private final SpringWebserviceConfiguration configuration;
+        private final CamelContext camelContext;
 
         private SSLContext sslContext;
 
-        public AbstractHttpWebServiceMessageSenderDecorator(AbstractHttpWebServiceMessageSender delegate, SpringWebserviceConfiguration configuration) {
+        public AbstractHttpWebServiceMessageSenderDecorator(AbstractHttpWebServiceMessageSender delegate, SpringWebserviceConfiguration configuration, CamelContext camelContext) {
             this.delegate = delegate;
             this.configuration = configuration;
+            this.camelContext = camelContext;
         }
 
         @Override
@@ -169,7 +171,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
                     try {
                         synchronized (this) {
                             if (sslContext == null) {
-                                sslContext = configuration.getSslContextParameters().createSSLContext();
+                                sslContext = configuration.getSslContextParameters().createSSLContext(camelContext);
                             }
                         }
                     } catch (GeneralSecurityException e) {

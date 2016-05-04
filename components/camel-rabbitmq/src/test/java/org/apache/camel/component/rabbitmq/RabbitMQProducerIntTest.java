@@ -134,7 +134,7 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
     private class ArrayPopulatingConsumer extends DefaultConsumer {
         private final List<String> received;
 
-        public ArrayPopulatingConsumer(final List<String> received) {
+        ArrayPopulatingConsumer(final List<String> received) {
             super(RabbitMQProducerIntTest.this.channel);
             this.received = received;
         }

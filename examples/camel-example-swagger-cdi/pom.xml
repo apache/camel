@@ -28,7 +28,7 @@
 
   <artifactId>camel-example-swagger-cdi</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Example :: Swagger CDI</name>
+  <name>Camel :: Example :: Swagger :: CDI</name>
   <description>An example using REST DSL and Swagger Java with CDI</description>
 
   <dependencies>

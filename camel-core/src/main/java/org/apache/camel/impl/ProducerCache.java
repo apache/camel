@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
@@ -26,12 +28,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.FailedToCreateProducerException;
-import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.ServicePoolAware;
-import org.apache.camel.processor.UnitOfWorkProducer;
+import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.processor.Pipeline;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.support.ServiceSupport;
@@ -203,7 +205,7 @@ public class ProducerCache extends ServiceSupport {
      * @param exchange the exchange to send
      */
     public void send(Endpoint endpoint, Exchange exchange) {
-        sendExchange(endpoint, null, null, exchange);
+        sendExchange(endpoint, null, null, null, exchange);
     }
 
     /**
@@ -219,7 +221,7 @@ public class ProducerCache extends ServiceSupport {
      * @return the exchange
      */
     public Exchange send(Endpoint endpoint, Processor processor) {
-        return sendExchange(endpoint, null, processor, null);
+        return sendExchange(endpoint, null, processor, null, null);
     }
 
     /**
@@ -236,7 +238,25 @@ public class ProducerCache extends ServiceSupport {
      * @return the exchange
      */
     public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor) {
-        return sendExchange(endpoint, pattern, processor, null);
+        return sendExchange(endpoint, pattern, processor, null, null);
+    }
+
+    /**
+     * Sends an exchange to an endpoint using a supplied
+     * {@link Processor} to populate the exchange
+     * <p>
+     * This method will <b>not</b> throw an exception. If processing of the given
+     * Exchange failed then the exception is stored on the return Exchange
+     *
+     * @param endpoint the endpoint to send the exchange to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param processor the transformer used to populate the new exchange
+     * @param resultProcessor a processor to process the exchange when the send is complete.
+     * @return the exchange
+     */
+    public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor, Processor resultProcessor) {
+        return sendExchange(endpoint, pattern, processor, resultProcessor, null);
     }
 
     /**
@@ -377,7 +397,7 @@ public class ProducerCache extends ServiceSupport {
     }
 
     protected Exchange sendExchange(final Endpoint endpoint, ExchangePattern pattern,
-                                    final Processor processor, Exchange exchange) {
+                                    final Processor processor, final Processor resultProcessor, Exchange exchange) {
         return doInProducer(endpoint, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) {
                 if (exchange == null) {
@@ -408,9 +428,23 @@ public class ProducerCache extends ServiceSupport {
                         watch = new StopWatch();
                         EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
                     }
-                    // ensure we run in an unit of work
-                    Producer target = new UnitOfWorkProducer(producer);
-                    target.process(exchange);
+
+                    // if we have a result processor then wrap in pipeline to execute both of them in sequence
+                    Processor target;
+                    if (resultProcessor != null) {
+                        List<Processor> processors = new ArrayList<Processor>(2);
+                        processors.add(producer);
+                        processors.add(resultProcessor);
+                        target = Pipeline.newInstance(getCamelContext(), processors);
+                    } else {
+                        target = producer;
+                    }
+
+                    // wrap in unit of work
+                    CamelInternalProcessor internal = new CamelInternalProcessor(target);
+                    internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
+
+                    internal.process(exchange);
                 } catch (Throwable e) {
                     // ensure exceptions is caught and set on the exchange
                     exchange.setException(e);

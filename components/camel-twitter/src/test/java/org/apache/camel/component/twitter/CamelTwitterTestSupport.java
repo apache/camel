@@ -36,9 +36,9 @@ public class CamelTwitterTestSupport extends CamelTestSupport {
 
         // Load from env
         addProperty(properties, "consumer.key", "CAMEL_TWITTER_CONSUMER_KEY");
-        addProperty(properties, "consumer.secret" , "CAMEL_TWITTER_CONSUMER_SECRET");
-        addProperty(properties, "access.token" , "CAMEL_TWITTER_ACCESS_TOKEN");
-        addProperty(properties, "access.token.secret" , "CAMEL_TWITTER_ACCESS_TOKE_SECRET");
+        addProperty(properties, "consumer.secret", "CAMEL_TWITTER_CONSUMER_SECRET");
+        addProperty(properties, "access.token", "CAMEL_TWITTER_ACCESS_TOKEN");
+        addProperty(properties, "access.token.secret", "CAMEL_TWITTER_ACCESS_TOKE_SECRET");
 
         // if any of the properties is not set, load test-options.properties
         if (!properties.containsKey("consumer.key")

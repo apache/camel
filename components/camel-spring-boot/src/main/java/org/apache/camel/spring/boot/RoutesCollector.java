@@ -113,15 +113,13 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                         controller.start();
                     } else {
                         // start camel manually
-                        camelContext.start();
+                        maybeStart(camelContext);
                     }
 
                     for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
                         LOG.debug("CamelContextConfiguration found. Invoking afterApplicationStart: {}", camelContextConfiguration);
                         camelContextConfiguration.afterApplicationStart(camelContext);
                     }
-
-
                 } catch (Exception e) {
                     throw new CamelSpringBootInitializationException(e);
                 }
@@ -130,6 +128,17 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
             }
         } else {
             LOG.debug("Ignore ContextRefreshedEvent: {}", event);
+        }
+    }
+
+    private void maybeStart(CamelContext camelContext) throws Exception {
+        // for example from unit testing we want to start Camel later and not when Spring framework
+        // publish a ContextRefreshedEvent
+        boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
+        if (skip) {
+            LOG.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
+        } else {
+            camelContext.start();
         }
     }
 

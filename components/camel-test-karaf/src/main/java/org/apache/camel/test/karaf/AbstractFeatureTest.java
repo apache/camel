@@ -19,6 +19,7 @@ package org.apache.camel.test.karaf;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +27,8 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.EnumSet;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import javax.inject.Inject;
 
@@ -45,7 +48,11 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.options.UrlReference;
+import org.ops4j.pax.tinybundles.core.TinyBundle;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
@@ -62,11 +69,13 @@ import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.vmOption;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 
 public abstract class AbstractFeatureTest {
 
+    public static final Long SERVICE_TIMEOUT = 30000L;
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractFeatureTest.class);
 
     @Inject
@@ -95,6 +104,36 @@ public abstract class AbstractFeatureTest {
         LOG.info("tearDown()");
     }
 
+    protected Bundle installBlueprintAsBundle(String name, URL url, boolean start) throws BundleException {
+        TinyBundle bundle = TinyBundles.bundle();
+        bundle.add("OSGI-INF/blueprint/blueprint-" + name.toLowerCase(Locale.ENGLISH) + ".xml", url);
+        bundle.set("Manifest-Version", "2")
+                .set("Bundle-ManifestVersion", "2")
+                .set("Bundle-SymbolicName", name)
+                .set("Bundle-Version", "1.0.0");
+        Bundle answer = bundleContext.installBundle(name, bundle.build());
+
+        if (start) {
+            answer.start();
+        }
+        return answer;
+    }
+
+    protected Bundle installSpringAsBundle(String name, URL url, boolean start) throws BundleException {
+        TinyBundle bundle = TinyBundles.bundle();
+        bundle.add("META-INF/spring/spring-" + name.toLowerCase(Locale.ENGLISH) + ".xml", url);
+        bundle.set("Manifest-Version", "2")
+                .set("Bundle-ManifestVersion", "2")
+                .set("Bundle-SymbolicName", name)
+                .set("Bundle-Version", "1.0.0");
+        Bundle answer = bundleContext.installBundle(name, bundle.build());
+
+        if (start) {
+            answer.start();
+        }
+        return answer;
+    }
+
     protected void installCamelFeature(String mainFeature) throws Exception {
         if (!mainFeature.startsWith("camel-")) {
             mainFeature = "camel-" + mainFeature;
@@ -114,7 +153,7 @@ public abstract class AbstractFeatureTest {
 
         installCamelFeature(mainFeature);
 
-        CamelContext camelContext = getOsgiService(bundleContext, CamelContext.class, "(camel.context.name=myCamel)", 20000);
+        CamelContext camelContext = getOsgiService(bundleContext, CamelContext.class, "(camel.context.name=myCamel)", SERVICE_TIMEOUT);
         assertNotNull("Cannot find CamelContext with name myCamel", camelContext);
 
         LOG.info("Getting Camel component: {}", component);
@@ -134,7 +173,7 @@ public abstract class AbstractFeatureTest {
 
         installCamelFeature(mainFeature);
 
-        CamelContext camelContext = getOsgiService(bundleContext, CamelContext.class, "(camel.context.name=myCamel)", 20000);
+        CamelContext camelContext = getOsgiService(bundleContext, CamelContext.class, "(camel.context.name=myCamel)", SERVICE_TIMEOUT);
         assertNotNull("Cannot find CamelContext with name myCamel", camelContext);
 
         LOG.info("Getting Camel dataformat: {}", dataFormat);
@@ -210,13 +249,22 @@ public abstract class AbstractFeatureTest {
         }
         if (karafVersion == null) {
             // setup the default version of it
-            karafVersion = "4.0.4";
+            karafVersion = "4.0.5";
         }
         return karafVersion;
     }
 
-    @Configuration
-    public static Option[] configure() {
+    public static Option[] configure(String... extra) {
+
+        List<String> camel = new ArrayList<>();
+        camel.add("camel");
+        if (extra != null && extra.length > 0) {
+            for (String e : extra) {
+                camel.add(e);
+            }
+        }
+        final String[] camelFeatures = camel.toArray(new String[camel.size()]);
+
         switchPlatformEncodingToUTF8();
         String karafVersion = getKarafVersion();
         LOG.info("*** Apache Karaf version is " + karafVersion + " ***");
@@ -226,15 +274,12 @@ public abstract class AbstractFeatureTest {
             //org.ops4j.pax.exam.CoreOptions.vmOption("-Xdebug"),
             //org.ops4j.pax.exam.CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
 
-            // we need INFO logging otherwise we cannot see what happens
-            new LogLevelOption(LogLevelOption.LogLevel.INFO),
-
             KarafDistributionOption.karafDistributionConfiguration()
                     .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
                     .karafVersion(karafVersion)
                     .name("Apache Karaf")
                     .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
-            logLevel(LogLevelOption.LogLevel.WARN),
+            logLevel(LogLevelOption.LogLevel.INFO),
 
             // keep the folder so we can look inside when something fails
             keepRuntimeFolder(),
@@ -243,7 +288,7 @@ public abstract class AbstractFeatureTest {
             configureConsole().ignoreRemoteShell(),
 
             // need to modify the jre.properties to export some com.sun packages that some features rely on
-            KarafDistributionOption.replaceConfigurationFile("etc/jre.properties", new File("src/test/resources/jre.properties")),
+//            KarafDistributionOption.replaceConfigurationFile("etc/jre.properties", new File("src/test/resources/jre.properties")),
 
             vmOption("-Dfile.encoding=UTF-8"),
 
@@ -251,19 +296,29 @@ public abstract class AbstractFeatureTest {
             editConfigurationFilePut("etc/custom.properties", "karaf.shutdown.port", "-1"),
 
             // Assign unique ports for Karaf
-            editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port", Integer.toString(AvailablePortFinder.getNextAvailable())),
-            editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiRegistryPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
-            editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiServerPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
+//            editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port", Integer.toString(AvailablePortFinder.getNextAvailable())),
+//            editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiRegistryPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
+//            editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiServerPort", Integer.toString(AvailablePortFinder.getNextAvailable())),
 
-                // install junit
+            // install junit
             CoreOptions.junitBundles(),
 
             // install camel
-            KarafDistributionOption.features(getCamelKarafFeatureUrl(), "camel"),
+            features(getCamelKarafFeatureUrl(), camelFeatures),
+
+            // install camel-test-karaf as bundle (not feature as the feature causes a bundle refresh that invalidates the @Inject bundleContext)
             mavenBundle().groupId("org.apache.camel").artifactId("camel-test-karaf").versionAsInProject()
         };
 
         return options;
+    }
+
+    protected <T> T getOsgiService(BundleContext bundleContext, Class<T> type) {
+        return getOsgiService(bundleContext, type, null, SERVICE_TIMEOUT);
+    }
+
+    protected <T> T getOsgiService(BundleContext bundleContext, Class<T> type, long timeout) {
+        return getOsgiService(bundleContext, type, null, timeout);
     }
 
     @SuppressWarnings("unchecked")

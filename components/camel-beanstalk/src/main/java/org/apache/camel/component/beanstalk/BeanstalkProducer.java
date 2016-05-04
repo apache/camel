@@ -101,11 +101,11 @@ public class BeanstalkProducer extends DefaultProducer implements AsyncProcessor
         private final Exchange exchange;
         private final AsyncCallback callback;
 
-        public RunCommand(final Exchange exchange) {
+        RunCommand(final Exchange exchange) {
             this(exchange, null);
         }
 
-        public RunCommand(final Exchange exchange, final AsyncCallback callback) {
+        RunCommand(final Exchange exchange, final AsyncCallback callback) {
             this.exchange = exchange;
             this.callback = callback;
         }

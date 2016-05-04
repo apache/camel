@@ -84,7 +84,7 @@ public final class LoginAuthFlowUI implements IAuthFlowUI {
         // TODO run this on an Executor to make it async
 
         // create HtmlUnit client
-        final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_24);
+        final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_38);
         final WebClientOptions options = webClient.getOptions();
         options.setRedirectEnabled(true);
         options.setJavaScriptEnabled(false);

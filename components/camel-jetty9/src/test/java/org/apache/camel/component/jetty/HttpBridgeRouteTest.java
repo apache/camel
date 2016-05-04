@@ -26,8 +26,8 @@ import org.junit.Test;
 
 public class HttpBridgeRouteTest extends BaseJettyTest {
 
-    private int port1;
-    private int port2;
+    protected int port1;
+    protected int port2;
 
     @Test
     public void testHttpClient() throws Exception {

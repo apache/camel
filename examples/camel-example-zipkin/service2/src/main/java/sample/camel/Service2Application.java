@@ -18,7 +18,11 @@ package sample.camel;
 
 import org.apache.camel.main.Main;
 
-public class Service2Application {
+public final class Service2Application {
+
+    private Service2Application() {
+      // noop
+    }
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();

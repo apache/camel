@@ -175,6 +175,7 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
             if (ObjectHelper.isEmpty(sharedLink)) {
                 throw new IllegalArgumentException("Missing required property sharedLink");
             }
+            break;
         default:
         }
 

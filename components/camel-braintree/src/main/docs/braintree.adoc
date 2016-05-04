@@ -39,7 +39,7 @@ URI format
 
 [source,java]
 ---------------------------------------------
-linkedin://endpoint-prefix/endpoint?[options]
+braintree://endpoint-prefix/endpoint?[options]
 ---------------------------------------------
 
  

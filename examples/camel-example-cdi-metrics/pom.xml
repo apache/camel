@@ -88,6 +88,15 @@
     <plugins>
 
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <!-- Enable metrics injection by method parameter names -->
+          <compilerArgument>-parameters</compilerArgument>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
         <version>${project.version}</version>

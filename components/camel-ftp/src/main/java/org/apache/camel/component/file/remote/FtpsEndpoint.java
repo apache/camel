@@ -72,7 +72,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         FTPSClient client;
         
         if (sslContextParameters != null) {
-            SSLContext context = sslContextParameters.createSSLContext();
+            SSLContext context = sslContextParameters.createSSLContext(getCamelContext());
 
             client = new FTPSClient(getFtpsConfiguration().isImplicit(), context);
             
