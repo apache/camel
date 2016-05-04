@@ -173,6 +173,10 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(defaultValue = "1", label = "advanced",
             description = "Specify the limit for the number of consumers that are allowed to be idle at any given time.")
     private int idleConsumerLimit = 1;
+    @UriParam(defaultValue = "100", label = "advanced")
+    private long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = 100L;
+    @UriParam(defaultValue = "50", label = "advanced")
+    private int waitForProvisionCorrelationToBeUpdatedCounter = 50;
     @UriParam(label = "consumer",
             description = "Specifies the maximum number of concurrent consumers when consuming from JMS (not for request/reply over JMS)."
                     + " See also the maxMessagesPerTask option to control dynamic scaling up/down of threads."
@@ -1057,6 +1061,38 @@ public class JmsConfiguration implements Cloneable {
         this.idleConsumerLimit = idleConsumerLimit;
     }
 
+    /**
+     * Receives a counter that is used in conjunction with {@code waitForProvisionCorrelationToBeUpdatedThreadSleepingTime}
+     * @return waitForProvisionCorrelationToBeUpdatedCounter
+     */
+    public int getWaitForProvisionCorrelationToBeUpdatedCounter() {
+        return waitForProvisionCorrelationToBeUpdatedCounter;
+    }
+
+    /**
+     * Sets a counter that is used in conjunction with {@code waitForProvisionCorrelationToBeUpdatedThreadSleepingTime}
+     * @param counter
+     */
+    public void setWaitForProvisionCorrelationToBeUpdatedCounter(int counter) {
+        this.waitForProvisionCorrelationToBeUpdatedCounter = counter;
+    }
+
+    /**
+     * Gets the sleeping time of the Thread when waiting for provision correlation to be updated.
+     * @return
+     */
+    public long getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime() {
+        return waitForProvisionCorrelationToBeUpdatedThreadSleepingTime;
+    }
+
+    /**
+     * Sets the sleeping time of the Thread when waiting for provision correlation to be updated.
+     * @param sleepingTime
+     */
+    public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(long sleepingTime) {
+        this.waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = sleepingTime;
+    }
+    
     public int getMaxConcurrentConsumers() {
         return maxConcurrentConsumers;
     }
