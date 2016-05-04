@@ -38,6 +38,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.beanio.BeanReader;
+import org.beanio.BeanReaderErrorHandler;
 import org.beanio.BeanWriter;
 import org.beanio.StreamFactory;
 import org.slf4j.Logger;
@@ -147,7 +148,11 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
         BeanReader in = factory.createReader(getStreamName(), streamReader);
 
         try {
-            in.setErrorHandler(new BeanIOErrorHandler(configuration));
+            if (ObjectHelper.isNotEmpty(configuration.getBeanReaderErrorHandler())) {
+            	in.setErrorHandler(configuration.getBeanReaderErrorHandler());
+            } else {
+                in.setErrorHandler(new BeanIOErrorHandler(configuration));
+            }
 
             Object readObject;
             while ((readObject = in.read()) != null) {
@@ -218,4 +223,12 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
     public Charset getEncoding() {
         return configuration.getEncoding();
     }
+    
+	public BeanReaderErrorHandler getBeanReaderErrorHandler() {
+		return configuration.getBeanReaderErrorHandler();
+	}
+
+	public void setBeanReaderErrorHandler(BeanReaderErrorHandler beanReaderErrorHandler) {
+		configuration.setBeanReaderErrorHandler(beanReaderErrorHandler);
+	}
 }
