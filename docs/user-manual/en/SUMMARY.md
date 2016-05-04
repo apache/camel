@@ -97,7 +97,6 @@
     * [Bam](bam.adoc)
     * [Barcode](barcode-data-format.adoc)
     * [Base64](base64.adoc)
-    * [BeanIO](beanio.adoc)
     * [Beanstalk](beanstalk.adoc)
     * [Bean-validator](bean-validator.adoc)
     * [Bindy](bindy.adoc)
@@ -204,6 +203,7 @@
     * [SQL](josql.adoc)
 
 * Data Formats
+    * [BeanIO](beanio.adoc)
     * [Flatpack](flatpack-dataformat.adoc)
     * [Ical](ical.adoc)
     * [Jaxb](jaxb.adoc)
