@@ -154,9 +154,9 @@
     <ehcache-version>2.10.1</ehcache-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
-    <elasticsearch-bundle-version>2.2.1_1</elasticsearch-bundle-version>
+    <elasticsearch-bundle-version>2.3.1_1</elasticsearch-bundle-version>
     <elasticsearch-guava-version>18.0</elasticsearch-guava-version>
-    <elasticsearch-version>2.2.1</elasticsearch-version>
+    <elasticsearch-version>2.3.1</elasticsearch-version>
     <elasticsearch-cluster-runner-version>2.2.0.0</elasticsearch-cluster-runner-version>
     <elsql-version>1.2</elsql-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
@@ -369,8 +369,8 @@
     <logback-version>1.1.5</logback-version>
     <lucene3-bundle-version>3.6.0_1</lucene3-bundle-version>
     <lucene3-version>3.6.0</lucene3-version>
-    <lucene-bundle-version>5.4.1_1</lucene-bundle-version>
-    <lucene-version>5.4.1</lucene-version>
+    <lucene-bundle-version>5.5.0_1</lucene-bundle-version>
+    <lucene-version>5.5.0</lucene-version>
     <lucene-version-range>[5,6)</lucene-version-range>
     <lightcouch-version>0.1.8</lightcouch-version>
     <lightcouch-gson-version>2.3.1</lightcouch-gson-version>
