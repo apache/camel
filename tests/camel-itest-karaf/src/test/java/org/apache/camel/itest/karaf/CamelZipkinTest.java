@@ -22,7 +22,6 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-@Ignore("Does not yet work in OSGi: https://issues.apache.org/jira/browse/SMX4-1983")
 public class CamelZipkinTest extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelZipkinTest.class);

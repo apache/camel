@@ -1832,11 +1832,8 @@
     <bundle>mvn:org.apache.camel/camel-zipfile/${project.version}</bundle>
   </feature>
   <feature name='camel-zipkin' version='${project.version}' resolver='(obr)' start-level='50'>
-    <!-- TODO: https://issues.apache.org/jira/browse/SMX4-1983 -->
-    <details>camel-zpikin using spancollector-scribe does not yet work in OSGi</details>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>wrap:mvn:com.github.kristofa/brave-core/${brave-zipkin-version}</bundle>
-    <!--<bundle dependency='true'>wrap:mvn:com.github.kristofa/brave-spancollector-scribe/${brave-zipkin-version}</bundle>-->
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.brave-zipkin/${brave-zipkin-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.thrift/libthrift/${libthrift-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-zipkin/${project.version}</bundle>
   </feature>
