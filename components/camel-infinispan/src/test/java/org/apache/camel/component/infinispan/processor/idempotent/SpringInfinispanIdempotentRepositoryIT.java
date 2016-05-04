@@ -25,7 +25,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
-public class SpringInfinispanIdempotentRpoositoryIT extends CamelSpringTestSupport {
+public class SpringInfinispanIdempotentRepositoryIT extends CamelSpringTestSupport {
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/infinispan/processor/idempotent/SpringInfinispanIdempotentRepositoryIT.xml");
