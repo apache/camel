@@ -208,8 +208,9 @@ Component options
 
 
 
+
 // component options: START
-The JMS component supports 69 options which are listed below.
+The JMS component supports 71 options which are listed below.
 
 
 
@@ -285,8 +286,11 @@ The JMS component supports 69 options which are listed below.
 | queueBrowseStrategy | QueueBrowseStrategy | To use a custom QueueBrowseStrategy when browsing queues
 | headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 | messageCreatedStrategy | MessageCreatedStrategy | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.
+| waitForProvisionCorrelationToBeUpdatedCounter | int | Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS and when the option useMessageIDAsCorrelationID is enabled.
+| waitForProvisionCorrelationToBeUpdatedThreadSleepingTime | long | Interval in millis to sleep each time while waiting for provisional correlation id to be updated.
 |=======================================================================
 // component options: END
+
 
 
 
