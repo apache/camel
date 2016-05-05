@@ -182,6 +182,7 @@
     * [Kubernetes](kubernetes.adoc)
     * [Kura](kura.adoc)
     * [LDAP](ldap.adoc)
+    * [LevelDB](leveldb.adoc)
     * [Metrics](metrics.adoc)
     * [Mock](mock.adoc)
     * [NATS](nats.adoc)
