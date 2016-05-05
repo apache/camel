@@ -242,8 +242,8 @@
     <httpclient4-olingo2-version>4.4.1</httpclient4-olingo2-version>
     <httpasyncclient-version>4.1.1</httpasyncclient-version>
     <httpclient-version>3.1</httpclient-version>
-    <hystrix-version>1.4.26</hystrix-version>
-    <hystrix-bundle-version>1.4.23_1</hystrix-bundle-version>
+    <hystrix-version>1.5.2</hystrix-version>
+    <hystrix-bundle-version>1.5.2_1</hystrix-bundle-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.7</ical4j-version>

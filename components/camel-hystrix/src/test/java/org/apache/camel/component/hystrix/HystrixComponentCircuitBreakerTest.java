@@ -26,7 +26,7 @@ public class HystrixComponentCircuitBreakerTest extends HystrixComponentBase {
     @Test
     public void circuitBreakerRejectsWhenTresholdReached() throws Exception {
         final int requestCount = 5;
-        resultEndpoint.expectedMessageCount(2);
+        resultEndpoint.expectedMessageCount(3);
         errorEndpoint.expectedMessageCount(requestCount);
         resultEndpoint.whenAnyExchangeReceived(new Processor() {
             @Override
@@ -37,9 +37,9 @@ public class HystrixComponentCircuitBreakerTest extends HystrixComponentBase {
 
         for (int i = 0; i < requestCount; i++) {
             try {
-                template.sendBody("test");
+                template.sendBody("test" + i);
             } catch (Exception e) {
-
+                // ignore
             }
         }
         assertMockEndpointsSatisfied();
@@ -52,6 +52,7 @@ public class HystrixComponentCircuitBreakerTest extends HystrixComponentBase {
             public void configure() {
 
                 from("direct:fallback")
+                        .to("log:fallback")
                         .to("mock:error");
 
                 from("direct:run")
@@ -61,6 +62,7 @@ public class HystrixComponentCircuitBreakerTest extends HystrixComponentBase {
                                 Thread.sleep(500);
                             }
                         })
+                        .to("log:result")
                         .to("mock:result");
 
                 from("direct:start")
