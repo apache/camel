@@ -52,7 +52,8 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
                     + " You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).")
     private long initialDelay = 1000;
     @UriParam(optionalPrefix = "consumer.", defaultValue = "500", label = "consumer,scheduler",
-            description = "Milliseconds before the next poll.")
+            description = "Milliseconds before the next poll."
+                    + " You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).")
     private long delay = 500;
     @UriParam(optionalPrefix = "consumer.", defaultValue = "MILLISECONDS", label = "consumer,scheduler",
             description = "Time unit for initialDelay and delay options.")
@@ -267,6 +268,10 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
 
     /**
      * Milliseconds before the next poll.
+     * <p/>
+     * The default value is 500.
+     * You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).
+     * @see <a href="http://camel.apache.org/how-do-i-specify-time-period-in-a-human-friendly-syntax.html">human friendly syntax</a>
      */
     public void setDelay(long delay) {
         this.delay = delay;
