@@ -180,6 +180,7 @@
     * [Kestrel](kestrel.adoc)
     * [Krati](krati.adoc)
     * [Kubernetes](kubernetes.adoc)
+    * [Kura](kura.adoc)
     * [Metrics](metrics.adoc)
     * [Mock](mock.adoc)
     * [NATS](nats.adoc)
