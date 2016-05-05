@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-dozer</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>Camel :: Dozer</name>
   <description>Camel Support for the Dozer type conversion framework</description>
 
