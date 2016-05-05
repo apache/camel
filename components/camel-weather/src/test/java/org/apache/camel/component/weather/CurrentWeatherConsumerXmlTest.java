@@ -24,7 +24,6 @@ public class CurrentWeatherConsumerXmlTest extends BaseWeatherConsumerTest {
     protected void checkWeatherContent(String weather) {
         log.debug("The weather in {} format is {}{}", new Object[] {WeatherMode.XML, LS, weather});
 
-        assertStringContains(weather, "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         assertStringContains(weather, "<coord");
         assertStringContains(weather, "<temperature");
     }
