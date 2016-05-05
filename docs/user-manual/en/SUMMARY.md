@@ -212,6 +212,7 @@
     * [Ical](ical.adoc)
     * [Jaxb](jaxb.adoc)
     * [Jibx](jibx.adoc)
+    * [Lzf](lzf.adoc)
     * [XML JSON](xmljson.adoc)
 
 * User Guide
