@@ -393,7 +393,7 @@
     <feature version="${project.version}">camel-core</feature>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
-    <bundle dependency="true">wrap:mvn:javax.servlet/servlet-api/2.5</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>    
     <bundle dependency='true'>wrap:mvn:com.dropbox.core/dropbox-core-sdk/${dropbox-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.squareup.okhttp/okhttp/${squareup-okhttp-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.squareup.okio/okio/${squareup-okio-version}</bundle>
