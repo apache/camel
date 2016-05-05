@@ -40,6 +40,7 @@ The AWS S3 Storage Service component has no options.
 
 
 
+
 // endpoint options: START
 The AWS S3 Storage Service component supports 38 endpoint options which are listed below:
 
@@ -74,7 +75,7 @@ The AWS S3 Storage Service component supports 38 endpoint options which are list
 | backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
 | backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
 | backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-| delay | scheduler | 500 | long | Milliseconds before the next poll.
+| delay | scheduler | 500 | long | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
 | greedy | scheduler | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
 | initialDelay | scheduler | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
 | runLoggingLevel | scheduler | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
@@ -86,6 +87,7 @@ The AWS S3 Storage Service component supports 38 endpoint options which are list
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
 // endpoint options: END
+
 
 
 
