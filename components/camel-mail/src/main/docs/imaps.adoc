@@ -18,8 +18,9 @@ The IMAPS component supports 2 options which are listed below.
 
 
 
+
 // endpoint options: START
-The IMAPS component supports 62 endpoint options which are listed below:
+The IMAPS component supports 63 endpoint options which are listed below:
 
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
@@ -53,6 +54,7 @@ The IMAPS component supports 62 endpoint options which are listed below:
 | javaMailSender | producer (advanced) |  | JavaMailSender | To use a custom org.apache.camel.component.mail.JavaMailSender for sending emails.
 | additionalJavaMailProperties | advanced |  | Properties | Sets additional java mail properties that will append/override any default properties that is set based on all the other options. This is useful if you need to add some special options but want to keep the others as is.
 | alternativeBodyHeader | advanced | CamelMailAlternativeBody | String | Specifies the key to an IN message header that contains an alternative email body. For example if you send emails in text/html format and want to provide an alternative mail body for non-HTML email clients set the alternative mail body with this key as a header.
+| attachmentsContentTransferEncodingResolver | advanced |  | AttachmentsContentTransferEncodingResolver | To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments.
 | binding | advanced |  | MailBinding | Sets the binding used to convert from a Camel message to and from a Mail message
 | connectionTimeout | advanced | 30000 | int | The connection timeout in milliseconds.
 | contentType | advanced | text/plain | String | The mail message content type. Use text/html for HTML mails.
@@ -88,4 +90,5 @@ The IMAPS component supports 62 endpoint options which are listed below:
 | username | security |  | String | The username for login
 |=======================================================================
 // endpoint options: END
+
 
