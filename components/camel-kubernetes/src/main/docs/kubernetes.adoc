@@ -151,4 +151,10 @@ Headers
 |CamelKubernetesEventAction |io.fabric8.kubernetes.client.Watcher.Action |Action watched by the consumer
 
 |CamelKubernetesEventTimestamp |String |Timestamp of the action watched by the consumer
+
+|CamelKubernetesConfigMapName |String |ConfigMap name
+
+|CamelKubernetesConfigMapsLabels |Map |ConfigMap labels
+
+|CamelKubernetesConfigData |Map |ConfigMap Data
 |=======================================================================
