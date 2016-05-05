@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.sun.el.ExpressionFactoryImpl;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -33,6 +35,10 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.dozer.CustomConverter;
 import org.dozer.DozerBeanMapper;
+import org.dozer.config.BeanContainer;
+import org.dozer.loader.xml.ELEngine;
+import org.dozer.loader.xml.ElementReader;
+import org.dozer.loader.xml.ExpressionElementReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,6 +113,41 @@ public class DozerEndpoint extends DefaultEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
+        initDozerBeanContainerAndMapper();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // noop
+    }
+
+    protected void initDozerBeanContainerAndMapper() throws Exception {
+        LOG.info("Configuring DozerBeanContainer and DozerBeanMapper");
+
+        // must setup dozer to be able to load the EL factory we are using which is from glashfish
+        ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+
+        ExpressionFactoryImpl factory = new ExpressionFactoryImpl();
+        ClassLoader cl = factory.getClass().getClassLoader();
+        Thread.currentThread().setContextClassLoader(cl);
+
+        System.setProperty("javax.el.ExpressionFactory", "com.sun.el.ExpressionFactoryImpl");
+        try {
+            ELEngine engine = new ELEngine();
+            engine.init();
+            BeanContainer.getInstance().setElEngine(engine);
+            ElementReader reader = new ExpressionElementReader(engine);
+            BeanContainer.getInstance().setElementReader(reader);
+
+        } catch (Throwable e) {
+            throw new IllegalStateException("Error configuring DozerBeanContainer/DozerBeanMapper due " + e.getMessage(), e);
+        } finally {
+            System.clearProperty("javax.el.ExpressionFactory");
+            Thread.currentThread().setContextClassLoader(oldCl);
+        }
+
+        // configure mapper as well
         if (mapper == null) {
             if (configuration.getMappingConfiguration() != null) {
                 mapper = DozerTypeConverterLoader.createDozerBeanMapper(
@@ -116,12 +157,7 @@ public class DozerEndpoint extends DefaultEndpoint {
             }
             configureMapper(mapper);
         }
-    }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        // noop
     }
 
     private DozerBeanMapper createDozerBeanMapper() throws Exception {
