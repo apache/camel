@@ -72,9 +72,9 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
         boolean configMapExists = false;
         Iterator<ConfigMap> it = result.iterator();
         while (it.hasNext()) {
-        	ConfigMap cfMap = it.next();
+            ConfigMap cfMap = it.next();
             if (cfMap.getMetadata().getLabels().containsValue("elasticsearch")) {
-            	configMapExists = true;
+                configMapExists = true;
             }
         }
 
@@ -151,8 +151,8 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
         assertNotNull(result);
         assertTrue(result.getData().containsKey("test"));
         assertTrue(result.getData().containsKey("test1"));
-        assertEquals("test1",result.getData().get("test"));
-        assertEquals("test2",result.getData().get("test1"));
+        assertEquals("test1", result.getData().get("test"));
+        assertEquals("test2", result.getData().get("test1"));
 
         ex = template.request("direct:deleteConfigMap", new Processor() {
 
