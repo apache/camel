@@ -183,6 +183,7 @@
     * [Kura](kura.adoc)
     * [LDAP](ldap.adoc)
     * [LevelDB](leveldb.adoc)
+    * [Lucene](lucene.adoc)
     * [Metrics](metrics.adoc)
     * [Mock](mock.adoc)
     * [NATS](nats.adoc)
