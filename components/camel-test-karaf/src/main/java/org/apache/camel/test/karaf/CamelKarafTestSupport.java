@@ -94,7 +94,6 @@ public class CamelKarafTestSupport extends CamelTestSupport {
      *
      * @param command The command to execute
      * @param principals The principals (e.g. RolePrincipal objects) to run the command under
-     * @return
      */
     protected String executeCommand(final String command, Principal ... principals) {
         return executeCommand(command, COMMAND_TIMEOUT, false, principals);
@@ -108,7 +107,6 @@ public class CamelKarafTestSupport extends CamelTestSupport {
      * @param timeout    The amount of time in millis to wait for the command to execute.
      * @param silent     Specifies if the command should be displayed in the screen.
      * @param principals The principals (e.g. RolePrincipal objects) to run the command under
-     * @return
      */
     protected String executeCommand(final String command, final Long timeout, final Boolean silent, final Principal ... principals) {
 
@@ -193,14 +191,14 @@ public class CamelKarafTestSupport extends CamelTestSupport {
             throw new RuntimeException(e);
         }
     }
-        
+
+    @SuppressWarnings("unchecked")
     private void waitForService(String filter, long timeout) throws InvalidSyntaxException,
         InterruptedException {
         
         ServiceTracker st = new ServiceTracker(bundleContext,
                                                bundleContext.createFilter(filter),
                                                null);
-        
         try {
             st.open();
             st.waitForService(timeout);
@@ -217,6 +215,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
         return getOsgiService(type, null, SERVICE_TIMEOUT);
     }
 
+    @SuppressWarnings("unchecked")
     protected <T> T getOsgiService(Class<T> type, String filter, long timeout) {
         ServiceTracker tracker = null;
         try {
@@ -263,15 +262,15 @@ public class CamelKarafTestSupport extends CamelTestSupport {
     */
     private static String explode(Dictionary dictionary) {
         Enumeration keys = dictionary.keys();
-        StringBuffer result = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
-            result.append(String.format("%s=%s", key, dictionary.get(key)));
+            sb.append(String.format("%s=%s", key, dictionary.get(key)));
             if (keys.hasMoreElements()) {
-                result.append(", ");
+                sb.append(", ");
             }
         }
-        return result.toString();
+        return sb.toString();
     }
 
     /**
@@ -287,7 +286,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
 
     public JMXConnector getJMXConnector(String userName, String passWord) throws Exception {
         JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:1099/karaf-root");
-        Hashtable env = new Hashtable();
+        Hashtable<String, Object> env = new Hashtable<>();
         String[] credentials = new String[]{userName, passWord};
         env.put("jmx.remote.credentials", credentials);
         JMXConnector connector = JMXConnectorFactory.connect(url, env);
@@ -359,8 +358,6 @@ public class CamelKarafTestSupport extends CamelTestSupport {
     /**
      * The feature service does not uninstall feature dependencies when uninstalling a single feature.
      * So we need to make sure we uninstall all features that were newly installed.
-     *
-     * @param featuresBefore
      */
     protected void uninstallNewFeatures(Set<Feature> featuresBefore) {
         Feature[] features = featuresService.listInstalledFeatures();
@@ -370,7 +367,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
                     System.out.println("Uninstalling " + curFeature.getName());
                     featuresService.uninstallFeature(curFeature.getName(), curFeature.getVersion());
                 } catch (Exception e) {
-                    // e.printStackTrace();
+                    // ignore
                 }
             }
         }
