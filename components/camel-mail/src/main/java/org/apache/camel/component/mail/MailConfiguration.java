@@ -42,7 +42,6 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 public class MailConfiguration implements Cloneable {
 
     private ClassLoader applicationClassLoader;
-    private Session session;
     private Properties javaMailProperties;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
 
@@ -60,6 +59,8 @@ public class MailConfiguration implements Cloneable {
     private String subject;
     @UriParam @Metadata(label = "producer,advanced")
     private JavaMailSender javaMailSender;
+    @UriParam(label = "advanced")
+    private Session session;
     @UriParam(defaultValue = "true", label = "consumer,advanced")
     private boolean mapMailMessage = true;
     @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FROM, label = "producer")
@@ -391,6 +392,11 @@ public class MailConfiguration implements Cloneable {
         return session;
     }
 
+    /**
+     * Specifies the mail session that camel should use for all mail interactions. Useful in scenarios where
+     * mail sessions are created and managed by some other resource, such as a JavaEE container.
+     * If this is not specified, Camel automatically creates the mail session for you.
+     */
     public void setSession(Session session) {
         this.session = session;
     }
