@@ -30,7 +30,7 @@ public class KubernetesConfiguration {
     @Metadata(required = "true")
     private String masterUrl;
 
-    @UriParam(enums = "namespaces,services,replicationControllers,pods,persistentVolumes,persistentVolumesClaims,secrets,resourcesQuota,serviceAccounts,nodes,builds,buildConfigs")
+    @UriParam(enums = "namespaces,services,replicationControllers,pods,persistentVolumes,persistentVolumesClaims,secrets,resourcesQuota,serviceAccounts,nodes,configMaps,builds,buildConfigs")
     @Metadata(required = "true")
     private String category;
 
@@ -48,7 +48,8 @@ public class KubernetesConfiguration {
             + "listPodsByLabels,getPod,createPod,deletePod,listPersistentVolumes,listPersistentVolumesByLabels,getPersistentVolume,listPersistentVolumesClaims,listPersistentVolumesClaimsByLabels,"
             + "getPersistentVolumeClaim,createPersistentVolumeClaim,deletePersistentVolumeClaim,listSecrets,listSecretsByLabels,getSecret,createSecret,deleteSecret,listResourcesQuota,"
             + "listResourcesQuotaByLabels,getResourceQuota,createResourceQuota,deleteResourceQuota,listServiceAccounts,listServiceAccountsByLabels,getServiceAccount,createServiceAccount,"
-            + "deleteServiceAccount,listNodes,listNodesByLabels,getNode,listBuilds,listBuildsByLabels,getBuild,listBuildConfigs,listBuildConfigsByLabels,getBuildConfig")
+            + "deleteServiceAccount,listNodes,listNodesByLabels,getNode,listConfigMaps,listConfigMapsByLabels,getConfigMap,createConfigMap,deleteConfigMap,listBuilds,listBuildsByLabels," 
+            + "getBuild,listBuildConfigs,listBuildConfigsByLabels,getBuildConfig")
     private String operation;
 
     @UriParam
