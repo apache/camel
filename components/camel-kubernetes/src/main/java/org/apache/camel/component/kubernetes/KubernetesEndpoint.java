@@ -32,6 +32,7 @@ import org.apache.camel.component.kubernetes.consumer.KubernetesSecretsConsumer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesServicesConsumer;
 import org.apache.camel.component.kubernetes.producer.KubernetesBuildConfigsProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesBuildsProducer;
+import org.apache.camel.component.kubernetes.producer.KubernetesConfigMapsProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesNamespacesProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesNodesProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesPersistentVolumesClaimsProducer;
@@ -105,6 +106,9 @@ public class KubernetesEndpoint extends DefaultEndpoint {
 
             case KubernetesCategory.NODES:
                 return new KubernetesNodesProducer(this);
+                
+            case KubernetesCategory.CONFIGMAPS:
+                return new KubernetesConfigMapsProducer(this);
 
             case KubernetesCategory.BUILDS:
                 return new KubernetesBuildsProducer(this);
