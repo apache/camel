@@ -113,6 +113,8 @@ public class MailConfiguration implements Cloneable {
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "advanced", prefix = "mail.", multiValue = true)
     private Properties additionalJavaMailProperties;
+    @UriParam(label = "advanced")
+    private AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver;
 
     public MailConfiguration() {
     }
@@ -725,5 +727,16 @@ public class MailConfiguration implements Cloneable {
      */
     public void setHandleFailedMessage(boolean handleFailedMessage) {
         this.handleFailedMessage = handleFailedMessage;
+    }
+
+    public AttachmentsContentTransferEncodingResolver getAttachmentsContentTransferEncodingResolver() {
+        return attachmentsContentTransferEncodingResolver;
+    }
+
+    /**
+     * To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments.
+     */
+    public void setAttachmentsContentTransferEncodingResolver(AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver) {
+        this.attachmentsContentTransferEncodingResolver = attachmentsContentTransferEncodingResolver;
     }
 }

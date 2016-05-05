@@ -446,13 +446,15 @@ public class MailBinding {
         multipart.setSubType("mixed");
         addBodyToMultipart(configuration, multipart, exchange);
         String partDisposition = configuration.isUseInlineAttachments() ? Part.INLINE : Part.ATTACHMENT;
+        AttachmentsContentTransferEncodingResolver contentTransferEncodingResolver = configuration.getAttachmentsContentTransferEncodingResolver();
         if (exchange.getIn().hasAttachments()) {
-            addAttachmentsToMultipart(multipart, partDisposition, exchange);
+            addAttachmentsToMultipart(multipart, partDisposition, contentTransferEncodingResolver, exchange);
         }
         return multipart;
     }
 
-    protected void addAttachmentsToMultipart(MimeMultipart multipart, String partDisposition, Exchange exchange) throws MessagingException {
+    protected void addAttachmentsToMultipart(MimeMultipart multipart, String partDisposition,
+                                             AttachmentsContentTransferEncodingResolver encodingResolver, Exchange exchange) throws MessagingException {
         LOG.trace("Adding attachments +++ start +++");
         int i = 0;
         for (Map.Entry<String, DataHandler> entry : exchange.getIn().getAttachments().entrySet()) {
@@ -494,6 +496,8 @@ public class MailBinding {
                         }
                     }
 
+                    // set Content-Transfer-Encoding using resolver if possible
+                    resolveContentTransferEncoding(encodingResolver, i, messageBodyPart);
                     // Set Disposition
                     messageBodyPart.setDisposition(partDisposition);
                     // Add part to multipart
@@ -507,6 +511,16 @@ public class MailBinding {
             i++;
         }
         LOG.trace("Adding attachments +++ done +++");
+    }
+
+    protected void resolveContentTransferEncoding(AttachmentsContentTransferEncodingResolver resolver, int i, BodyPart messageBodyPart) throws MessagingException {
+        if (resolver != null) {
+            String contentTransferEncoding = resolver.resolveContentTransferEncoding(messageBodyPart);
+            LOG.trace("Attachment #{}: Using content transfer encoding resolver: {} resolved content transfer encoding as: {}", i, resolver, contentTransferEncoding);
+            if (contentTransferEncoding != null) {
+                messageBodyPart.setHeader("Content-Transfer-Encoding", contentTransferEncoding);
+            }
+        }
     }
 
     protected void createMultipartAlternativeMessage(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange)
@@ -541,8 +555,8 @@ public class MailBinding {
                 multipartAlternative.addBodyPart(related);
 
                 addBodyToMultipart(configuration, multipartRelated, exchange);
-
-                addAttachmentsToMultipart(multipartRelated, Part.INLINE, exchange);
+                AttachmentsContentTransferEncodingResolver resolver = configuration.getAttachmentsContentTransferEncodingResolver();
+                addAttachmentsToMultipart(multipartRelated, Part.INLINE, resolver, exchange);
             }
         }
     }
