@@ -181,6 +181,7 @@
     * [Krati](krati.adoc)
     * [Kubernetes](kubernetes.adoc)
     * [Kura](kura.adoc)
+    * [LDAP](ldap.adoc)
     * [Metrics](metrics.adoc)
     * [Mock](mock.adoc)
     * [NATS](nats.adoc)
