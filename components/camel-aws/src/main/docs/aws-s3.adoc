@@ -90,10 +90,6 @@ The AWS S3 Storage Service component supports 38 endpoint options which are list
 
 
 
-
-
-|=======================================================================
-
 Required S3 component options
 
 You have to provide the amazonS3Client in the
@@ -149,7 +145,7 @@ see `com.amazonaws.services.s3.model.AccessControlList` for more details
 
 |`CamelAwsS3Headers` |`Map<String,String>` |*Camel 2.15.0*: support to get or set custom objectMetadata headers.
 
-|CamelAwsS3ServerSideEncryption |String |*Camel 2.16:* Sets the server-side encryption algorithm when encrypting
+|`CamelAwsS3ServerSideEncryption` |String |*Camel 2.16:* Sets the server-side encryption algorithm when encrypting
 the object using AWS-managed keys. For example use AES256.
 |=======================================================================
 
@@ -213,7 +209,7 @@ object to be saved as.
 |`CamelAwsS3ContentControl` |`String` |The *optional* Cache-Control HTTP header which allows the user to
 specify caching behavior along the HTTP request/reply chain.
 
-|CamelAwsS3ServerSideEncryption |String |*Camel 2.16:* The server-side encryption algorithm when encrypting the
+|`CamelAwsS3ServerSideEncryption` |String |*Camel 2.16:* The server-side encryption algorithm when encrypting the
 object using AWS-managed keys.
 |=======================================================================
 
