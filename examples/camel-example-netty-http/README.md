@@ -6,14 +6,14 @@ This example shows how to use a shared Netty HTTP Server in an OSGi environment.
 
 There is 4 modules in this example:
 
-* `shared-netty-http-server` - The Shared Netty HTTP server that the other Camel applications uses.
+* `shared-netty-http-server` - The Shared Netty HTTP server that the other Camel applications uses
 * `myapp-one` - A Camel application that reuses the shared Netty HTTP server
 * `myapp-two` - A Camel application that reuses the shared Netty HTTP server
 * `myapp-cdi` - A Camel CDI application that reuses the shared Netty HTTP server
 
 ### Build
 
-You will need to compile and prepared this example first:
+You will need to compile this example first:
 
 ```sh
 $ mvn install
@@ -21,16 +21,14 @@ $ mvn install
 
 ### Run
 
-This example requires running in Apache Karaf / ServiceMix.
-
-To install Apache Camel in Karaf you type in the shell:
+This example runs in Apache Karaf / ServiceMix. To install Apache Camel in Karaf you type in the shell:
 
 ```sh
 karaf@root()> repo-add camel 2.17.0
 karaf@root()> feature:install camel
 ```
 
-First you need to install the following features in Karaf/ServiceMix with:
+Then you need to install the following features in Karaf/ServiceMix:
 
 ```sh
 karaf@root()> features:install camel-netty-http
@@ -57,7 +55,7 @@ karaf@root()> osgi:install -s mvn:org.apache.camel/camel-example-netty-myapp-two
 If you want to test the Camel CDI application, you first need to install the required features:
 
 ```sh
-karaf@root()> features:pax-cdi-weld camel-cdi
+karaf@root()> features:install pax-cdi-weld camel-cdi
 ```
 
 And then install the Camel CDI application:
