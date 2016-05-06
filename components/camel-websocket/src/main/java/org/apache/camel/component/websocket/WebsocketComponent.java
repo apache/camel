@@ -339,7 +339,7 @@ public class WebsocketComponent extends UriEndpointComponent {
     protected Server createServer() throws Exception {
         Server server = null;
         if (minThreads == null && maxThreads == null && getThreadPool() == null) {
-            throw new RuntimeCamelException("Error creating JettyWebSocketServer. MinThreads/MaxThreads or ThreadPool must be defined");        	
+            throw new RuntimeCamelException("Error creating JettyWebSocketServer. MinThreads/MaxThreads or ThreadPool must be defined");
         }
         // configure thread pool if min/max given
         if (minThreads != null || maxThreads != null) {
