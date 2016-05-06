@@ -171,8 +171,9 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
         });
         context.start();
 
-        MyCoolBean reply = template.requestBody(getAhcEndpointUri(), "Hello World", MyCoolBean.class);
-        assertNull(reply);
+        Object reply = template.requestBody(getAhcEndpointUri(), "Hello World", Object.class);
+        MyCoolBean bean = context.getTypeConverter().convertTo(MyCoolBean.class, reply);
+        assertNull(bean);
     }
 
     @Test
