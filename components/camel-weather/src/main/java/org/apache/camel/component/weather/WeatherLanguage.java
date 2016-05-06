@@ -16,27 +16,31 @@
  */
 package org.apache.camel.component.weather;
 
-import org.apache.camel.builder.RouteBuilder;
-
-public class CurrentWeatherConsumerTest extends BaseWeatherConsumerTest {
-
-    @Override
-    protected void checkWeatherContent(String weather) {
-        log.debug("The weather in {} format is {}{}", new Object[] {WeatherMode.XML, LS, weather});
-
-        //assertStringContains(weather, "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-        assertStringContains(weather, "<coord");
-        assertStringContains(weather, "<temperature");
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("weather:foo?appid=9162755b2efa555823cfe0451d7fff38&lon=4&lat=52&rightLon=6&topLat=54").to("mock:result");
-            }
-        };
-    }
-
+/**
+ * All available languages for the weather API.
+ */
+public enum WeatherLanguage {
+    en,
+    ru,
+    it,
+    es,
+    sp,
+    uk,
+    ua,
+    de,
+    pt,
+    ro,
+    pl,
+    fi,
+    nl,
+    fr,
+    bg,
+    sv,
+    se,
+    zh_tw,
+    zh,
+    zh_cn,
+    tr,
+    hr,
+    ca;
 }

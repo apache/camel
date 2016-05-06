@@ -16,19 +16,16 @@
  */
 package org.apache.camel.component.weather;
 
-import java.net.URL;
 import java.util.Scanner;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 
+import static org.apache.camel.component.weather.WeatherLanguage.en;
 import static org.apache.camel.component.weather.WeatherMode.JSON;
 import static org.apache.camel.component.weather.WeatherUnits.METRIC;
-import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 @UriParams
@@ -47,11 +44,19 @@ public class WeatherConfiguration {
     @UriParam
     private String lon;
     @UriParam
+    private String rightLon;
+    @UriParam
+    private String topLat;
+    @UriParam
+    private Integer zoom;
+    @UriParam
     private String period = "";
     @UriParam(defaultValue = "JSON")
     private WeatherMode mode = JSON;
     @UriParam(defaultValue = "METRIC")
     private WeatherUnits units = METRIC;
+    @UriParam(defaultValue = "en")
+    private WeatherLanguage language = en;
     @UriParam
     private String headerName;
 
@@ -142,6 +147,7 @@ public class WeatherConfiguration {
 
     /**
      * Latitude of location. You can use lat and lon options instead of location.
+     * For boxed queries this is the bottom latitude.
      */
     public void setLat(String lat) {
         this.lat = lat;
@@ -153,6 +159,7 @@ public class WeatherConfiguration {
 
     /**
      * Longitude of location. You can use lat and lon options instead of location.
+     * For boxed queries this is the left longtitude.
      */
     public void setLon(String lon) {
         this.lon = lon;
@@ -169,57 +176,58 @@ public class WeatherConfiguration {
         return appid;
     }
 
-
-    public String getQuery() throws Exception {
-        return getQuery(getLocation());
+    String getQuery() throws Exception {
+        return new WeatherQuery(this.component, this).getQuery();
     }
 
-    public String getQuery(String location) throws Exception {
-        String answer = "http://api.openweathermap.org/data/2.5/";
-
-        if (lat != null && lon != null) {
-            location = "lat=" + lat + "&lon=" + lon;
-        } else if (isEmpty(location) || "current".equals(location)) {
-            location = getCurrentGeoLocation();
-        } else {
-            // assuming the location is a town or country
-            location = "q=" + location;
-        }
-        
-        if (isEmpty(getPeriod())) {
-            answer += "weather?" + location;
-        } else {
-            answer += "forecast/daily?" + location + "&cnt=" + getPeriod();
-        }
-
-        // append the desired measurement unit if not the default (which is metric)
-        if (getUnits() != METRIC) {
-            answer += "&units=" + getUnits().name().toLowerCase();
-        }
-
-        // append the desired output mode if not the default (which is json)
-        if (getMode() != JSON) {
-            answer += "&mode=" + getMode().name().toLowerCase();
-        }
-
-        if (getAppid() != null) {
-            answer += "&APPID=" + getAppid();
-        }
-        
-        return answer;
+    String getQuery(String location) throws Exception {
+        return new WeatherQuery(this.component, this).getQuery(location);
     }
 
-    private String getCurrentGeoLocation() throws Exception {
-        String geoLocation = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, new URL("http://freegeoip.io/json/"));
-        if (isEmpty(geoLocation)) {
-            throw new IllegalStateException("Got the unexpected value '" + geoLocation + "' for the geolocation");
-        }
+    public WeatherLanguage getLanguage() {
+        return language;
+    }
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readValue(geoLocation, JsonNode.class);
-        JsonNode latitudeNode = notNull(node.get("latitude"), "latitude");
-        JsonNode longitudeNode = notNull(node.get("longitude"), "longitude");
+    /**
+     * Language of the response.
+     */
+    public void setLanguage(WeatherLanguage language) {
+        this.language = language;
+    }
 
-        return "lat=" + latitudeNode + "&lon=" + longitudeNode;
+    public String getRightLon() {
+        return rightLon;
+    }
+
+    /**
+     * For boxed queries this is the right longtitude. Needs to be used
+     * in combination with topLat and zoom.
+     */
+    public void setRightLon(String rightLon) {
+        this.rightLon = rightLon;
+    }
+
+    public String getTopLat() {
+        return topLat;
+    }
+
+    /**
+     * For boxed queries this is the top latitude. Needs to be used
+     * in combination with rightLon and zoom.
+     */
+    public void setTopLat(String topLat) {
+        this.topLat = topLat;
+    }
+
+    public Integer getZoom() {
+        return zoom;
+    }
+
+    /**
+     * For boxed queries this is the zoom. Needs to be used
+     * in combination with rightLon and topLat.
+     */
+    public void setZoom(Integer zoom) {
+        this.zoom = zoom;
     }
 }
