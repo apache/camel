@@ -22,10 +22,11 @@ import org.apache.camel.component.websocket.WebsocketComponent.ConnectorRef;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.junit.Test;
 import org.mockito.Mock;
 
-public class WebscoketEndpointConfigurationTest extends CamelTestSupport {
+public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
     
     private int port;
     
@@ -48,6 +49,48 @@ public class WebscoketEndpointConfigurationTest extends CamelTestSupport {
         Consumer consumer = websocketEndpoint.createConsumer(processor);
         component.connect((WebsocketProducerConsumer) consumer);
         
+        assertNotNull(consumer);
+        assertEquals(WebsocketConsumer.class, consumer.getClass());
+        
+        // just check the servlet initial parameters
+        ConnectorRef conector = WebsocketComponent.getConnectors().values().iterator().next();
+        
+        ServletContextHandler context = (ServletContextHandler)conector.server.getHandler();
+        String buffersize = context.getInitParameter("bufferSize");
+        assertEquals("Get a wrong buffersize", "65000", buffersize);
+        String maxIdleTime = context.getInitParameter("maxIdleTime");
+        assertEquals("Get a worng maxIdleTime", "3000", maxIdleTime);
+    }
+    
+    @Test(expected=RuntimeException.class)
+    public void testSetServletNoMinThreadsNoMaxThreadsNoThreadPool() throws Exception {
+        String uri = "websocket://localhost:" + port + "/bar?bufferSize=65000&maxIdleTime=3000";
+        WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
+        WebsocketComponent component = websocketEndpoint.getComponent();
+        Consumer consumer = websocketEndpoint.createConsumer(processor);
+        component.connect((WebsocketProducerConsumer) consumer);
+        assertNotNull(consumer);
+        assertEquals(WebsocketConsumer.class, consumer.getClass());
+        
+        // just check the servlet initial parameters
+        ConnectorRef conector = WebsocketComponent.getConnectors().values().iterator().next();
+        
+        ServletContextHandler context = (ServletContextHandler)conector.server.getHandler();
+        String buffersize = context.getInitParameter("bufferSize");
+        assertEquals("Get a wrong buffersize", "65000", buffersize);
+        String maxIdleTime = context.getInitParameter("maxIdleTime");
+        assertEquals("Get a worng maxIdleTime", "3000", maxIdleTime);
+    }
+    
+    @Test
+    public void testSetServletThreadPool() throws Exception {
+        String uri = "websocket://localhost:" + port + "/bar?bufferSize=65000&maxIdleTime=3000";
+        WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
+        WebsocketComponent component = websocketEndpoint.getComponent();
+        QueuedThreadPool qtp = new QueuedThreadPool(20, 1);
+        component.setThreadPool(qtp);
+        Consumer consumer = websocketEndpoint.createConsumer(processor);
+        component.connect((WebsocketProducerConsumer) consumer);
         assertNotNull(consumer);
         assertEquals(WebsocketConsumer.class, consumer.getClass());
         
