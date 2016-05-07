@@ -81,10 +81,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         context = exchange.getContext();
 
         if (context.isAllowUseOriginalMessage()) {
-            // TODO: Camel 3.0: the copy on facade strategy will help us here in the future
-            // TODO: optimize to only copy original message if enabled to do so in the route
             // special for JmsMessage as it can cause it to loose headers later.
-            // This will be resolved when we get the message facade with copy on write implemented
             if (exchange.getIn().getClass().getName().equals("org.apache.camel.component.jms.JmsMessage")) {
                 this.originalInMessage = new DefaultMessage();
                 this.originalInMessage.setBody(exchange.getIn().getBody());
@@ -93,8 +90,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
                 this.originalInMessage = exchange.getIn().copy();
             }
         }
-
-        // TODO: Optimize to only copy if useOriginalMessage has been enabled
 
         // mark the creation time when this Exchange was created
         if (exchange.getProperty(Exchange.CREATED_TIMESTAMP) == null) {
@@ -281,6 +276,9 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     public Message getOriginalInMessage() {
+        if (originalInMessage == null && !context.isAllowUseOriginalMessage()) {
+            throw new IllegalStateException("AllowUseOriginalMessage is disabled. Cannot access the original message.");
+        }
         return originalInMessage;
     }
 

@@ -42,7 +42,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.naming.Context;
@@ -227,7 +226,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
     private Boolean useBreadcrumb = Boolean.TRUE;
-    private Boolean allowUseOriginalMessage = Boolean.TRUE;
+    private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Long delay;
     private ErrorHandlerFactory errorHandlerBuilder;
     private final Object errorHandlerExecutorServiceLock = new Object();
@@ -3073,11 +3072,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
 
-        if (isAllowUseOriginalMessage()) {
-            log.info("AllowUseOriginalMessage is enabled. If access to the original message is not needed,"
-                    + " then its recommended to turn this option off as it may improve performance.");
-        }
-
         if (streamCachingInUse) {
             // stream caching is in use so enable the strategy
             getStreamCachingStrategy().setEnabled(true);
@@ -3086,6 +3080,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // log if stream caching is not in use as this can help people to enable it if they use streams
             log.info("StreamCaching is not in use. If using streams then its recommended to enable stream caching."
                     + " See more details at http://camel.apache.org/stream-caching.html");
+        }
+
+        if (isAllowUseOriginalMessage()) {
+            log.info("AllowUseOriginalMessage enabled because UseOriginalMessage is in use");
         }
 
         // start routes
