@@ -1345,35 +1345,16 @@ public final class ExpressionBuilder {
      */
     public static Expression tokenizeXMLExpression(String tagName, String inheritNamespaceTagName) {
         ObjectHelper.notEmpty(tagName, "tagName");
-
-        // must be XML tokens
-        if (!tagName.startsWith("<")) {
-            tagName = "<" + tagName;
-        }
-        if (!tagName.endsWith(">")) {
-            tagName = tagName + ">";
-        }
-
-        if (inheritNamespaceTagName != null) {
-            if (!inheritNamespaceTagName.startsWith("<")) {
-                inheritNamespaceTagName = "<" + inheritNamespaceTagName;
-            }
-            if (!inheritNamespaceTagName.endsWith(">")) {
-                inheritNamespaceTagName = inheritNamespaceTagName + ">";
-            }
-        }
         return new TokenXMLExpressionIterator(tagName, inheritNamespaceTagName);
     }
 
     public static Expression tokenizeXMLAwareExpression(String path, char mode) {
         ObjectHelper.notEmpty(path, "path");
-
         return new XMLTokenExpressionIterator(path, mode);
     }
     
     public static Expression tokenizeXMLAwareExpression(String path, char mode, int group) {
         ObjectHelper.notEmpty(path, "path");
-
         return new XMLTokenExpressionIterator(path, mode, group);
     }
 

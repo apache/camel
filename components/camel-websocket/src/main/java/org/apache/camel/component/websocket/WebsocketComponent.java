@@ -338,6 +338,9 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     protected Server createServer() throws Exception {
         Server server = null;
+        if (minThreads == null && maxThreads == null && getThreadPool() == null) {
+            throw new RuntimeCamelException("Error creating JettyWebSocketServer. MinThreads/MaxThreads or ThreadPool must be defined");
+        }
         // configure thread pool if min/max given
         if (minThreads != null || maxThreads != null) {
             if (getThreadPool() != null) {
@@ -685,7 +688,7 @@ public class WebsocketComponent extends UriEndpointComponent {
     }
 
     /**
-     * To set a value for minimum number of threads in server thread pool.
+     * To set a value for minimum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
      */
     public void setMinThreads(Integer minThreads) {
         this.minThreads = minThreads;
@@ -696,7 +699,7 @@ public class WebsocketComponent extends UriEndpointComponent {
     }
 
     /**
-     * To set a value for maximum number of threads in server thread pool.
+     * To set a value for maximum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
      */
     public void setMaxThreads(Integer maxThreads) {
         this.maxThreads = maxThreads;
@@ -707,7 +710,7 @@ public class WebsocketComponent extends UriEndpointComponent {
     }
 
     /**
-     * To use a custom thread pool for the server.
+     * To use a custom thread pool for the server. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
      */
     public void setThreadPool(ThreadPool threadPool) {
         this.threadPool = threadPool;

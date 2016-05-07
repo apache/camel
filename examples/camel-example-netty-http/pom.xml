@@ -71,6 +71,7 @@
     <module>shared-netty-http-server</module>
     <module>myapp-one</module>
     <module>myapp-two</module>
+    <module>myapp-cdi</module>
   </modules>
 
 </project>

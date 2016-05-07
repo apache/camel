@@ -112,8 +112,9 @@ The FTP component has no options.
 
 
 
+
 // endpoint options: START
-The FTP component supports 100 endpoint options which are listed below:
+The FTP component supports 102 endpoint options which are listed below:
 
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
@@ -180,6 +181,8 @@ The FTP component supports 100 endpoint options which are listed below:
 | eagerMaxMessagesPerPoll | filter | true | boolean | Allows for controlling whether the limit from maxMessagesPerPoll is eager or not. If eager then the limit is during the scanning of files. Where as false would scan all files and then perform sorting. Setting this option to false allows for sorting all files first and then limit the poll. Mind that this requires a higher memory usage as all file details are in memory to perform the sorting.
 | exclude | filter |  | String | Is used to exclude files if filename matches the regex pattern (matching is case in-senstive). Notice if you use symbols such as plus sign and others you would need to configure this using the RAW() syntax if configuring this as an endpoint uri. See more details at configuring endpoint uris
 | filter | filter |  | GenericFileFilter<T> | Pluggable filter as a org.apache.camel.component.file.GenericFileFilter class. Will skip files if filter returns false in its accept() method.
+| filterDirectory | filter |  | String | Filters the directory based on Simple language. For example to filter on current date you can use a simple date pattern such as $date:now:yyyMMdd
+| filterFile | filter |  | String | Filters the file based on Simple language. For example to filter on file size you can use $file:size 5000
 | idempotent | filter | false | Boolean | Option to use the Idempotent Consumer EIP pattern to let Camel skip already processed files. Will by default use a memory based LRUCache that holds 1000 entries. If noop=true then idempotent will be enabled as well to avoid consuming the same files over and over again.
 | idempotentKey | filter |  | String | To use a custom idempotent key. By default the absolute path of the file is used. You can use the File Language for example to use the file name and file size you can do: idempotentKey=$file:name-$file:size
 | idempotentRepository | filter |  | String> | A pluggable repository org.apache.camel.spi.IdempotentRepository which by default use MemoryMessageIdRepository if none is specified and idempotent is true.
@@ -220,6 +223,7 @@ The FTP component supports 100 endpoint options which are listed below:
 | username | security |  | String | Username to use for login
 |=======================================================================
 // endpoint options: END
+
 
 
 

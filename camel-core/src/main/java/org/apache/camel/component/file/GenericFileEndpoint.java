@@ -18,14 +18,11 @@ package org.apache.camel.component.file;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -34,6 +31,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
@@ -139,6 +137,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected IdempotentRepository<String> idempotentRepository;
     @UriParam(label = "consumer,filter")
     protected GenericFileFilter<T> filter;
+    @UriParam(label = "consumer,filter", javaType = "java.lang.String")
+    protected Predicate filterDirectory;
+    @UriParam(label = "consumer,filter", javaType = "java.lang.String")
+    protected Predicate filterFile;
     @UriParam(label = "consumer,filter", defaultValue = "true")
     protected boolean antFilterCaseSensitive = true;
     protected volatile AntPathMatcherGenericFileFilter<T> antFilter;
@@ -460,6 +462,44 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     public void setMoveFailed(String fileLanguageExpression) {
         String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
         this.moveFailed = createFileLanguageExpression(expression);
+    }
+
+    public Predicate getFilterDirectory() {
+        return filterDirectory;
+    }
+
+    /**
+     * Filters the directory based on Simple language.
+     * For example to filter on current date, you can use a simple date pattern such as ${date:now:yyyMMdd}
+     */
+    public void setFilterDirectory(Predicate filterDirectory) {
+        this.filterDirectory = filterDirectory;
+    }
+
+    /**
+     * @see #setFilterDirectory(Predicate)
+     */
+    public void setFilterDirectory(String expression) {
+        this.filterDirectory = createFileLanguagePredicate(expression);
+    }
+
+    public Predicate getFilterFile() {
+        return filterFile;
+    }
+
+    /**
+     * Filters the file based on Simple language.
+     * For example to filter on file size, you can use ${file:size} > 5000
+     */
+    public void setFilterFile(Predicate filterFile) {
+        this.filterFile = filterFile;
+    }
+
+    /**
+     * @see #setFilterFile(Predicate)
+     */
+    public void setFilterFile(String expression) {
+        this.filterFile = createFileLanguagePredicate(expression);
     }
 
     public Expression getPreMove() {
@@ -1226,6 +1266,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
             language = getCamelContext().resolveLanguage("constant");
         }
         return language.createExpression(expression);
+    }
+
+    private Predicate createFileLanguagePredicate(String expression) {
+        Language language = getCamelContext().resolveLanguage("file");
+        return language.createPredicate(expression);
     }
 
     /**

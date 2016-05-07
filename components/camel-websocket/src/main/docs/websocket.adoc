@@ -33,6 +33,7 @@ Websocket Options
 ^^^^^^^^^^^^^^^^^
 
 
+
 // component options: START
 The Jetty Websocket component supports 12 options which are listed below.
 
@@ -48,13 +49,14 @@ The Jetty Websocket component supports 12 options which are listed below.
 | sslPassword | String | The password when using SSL.
 | sslKeystore | String | The path to the keystore.
 | enableJmx | boolean | If this option is true Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.
-| minThreads | Integer | To set a value for minimum number of threads in server thread pool.
-| maxThreads | Integer | To set a value for maximum number of threads in server thread pool.
-| threadPool | ThreadPool | To use a custom thread pool for the server.
+| minThreads | Integer | To set a value for minimum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
+| maxThreads | Integer | To set a value for maximum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
+| threadPool | ThreadPool | To use a custom thread pool for the server. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
 | sslContextParameters | SSLContextParameters | To configure security using SSLContextParameters
 | socketFactory | Map | To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol. The default key is reserved for the default implementation.
 |=======================================================================
 // component options: END
+
 
 
 

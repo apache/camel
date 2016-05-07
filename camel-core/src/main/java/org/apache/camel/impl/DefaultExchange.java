@@ -92,10 +92,6 @@ public final class DefaultExchange implements Exchange {
     public Exchange copy(boolean safeCopy) {
         DefaultExchange exchange = new DefaultExchange(this);
 
-        if (hasProperties()) {
-            exchange.setProperties(safeCopyProperties(getProperties()));
-        }
-
         if (safeCopy) {
             exchange.getIn().setBody(getIn().getBody());
             exchange.getIn().setFault(getIn().isFault());
@@ -122,6 +118,12 @@ public final class DefaultExchange implements Exchange {
             }
         }
         exchange.setException(getException());
+
+        // copy properties after body as body may trigger lazy init
+        if (hasProperties()) {
+            exchange.setProperties(safeCopyProperties(getProperties()));
+        }
+
         return exchange;
     }
 

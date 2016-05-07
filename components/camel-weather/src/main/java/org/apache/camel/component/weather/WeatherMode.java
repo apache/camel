@@ -21,6 +21,6 @@ package org.apache.camel.component.weather;
  */
 public enum WeatherMode {
 
-    HTML, JSON, XML;
+    HTML, JSON, XML
 
 }

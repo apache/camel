@@ -40,7 +40,7 @@ public class MyBatisUnknownStatementTypeTest extends CamelTestSupport {
             fail("Should have thrown exception");
         } catch (Exception e) {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("statementType must be specified on: Endpoint[mybatis://selectAllAccounts]", e.getCause().getCause().getMessage());
+            assertEquals("statementType must be specified on: mybatis://selectAllAccounts", e.getCause().getCause().getMessage());
         }
     }
 

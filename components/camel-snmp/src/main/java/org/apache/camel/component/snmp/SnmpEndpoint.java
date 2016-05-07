@@ -386,6 +386,6 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     @Override
     public String toString() {
         // only show address to avoid user and password details to be shown
-        return "SnmpEndpoint[" + address + "]";
+        return "snmp://" + address;
     }
 }
