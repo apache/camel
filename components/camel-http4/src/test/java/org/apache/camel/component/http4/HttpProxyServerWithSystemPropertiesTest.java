@@ -52,14 +52,13 @@ import org.junit.Test;
  * @version 
  */
 public class HttpProxyServerWithSystemPropertiesTest extends BaseHttpTest {
-    
+
     private HttpServer proxy;
-    
+
     @Before
     @Override
     public void setUp() throws Exception {
-        Map<String, String> expectedHeaders = new HashMap<String, String>();
-        expectedHeaders.put("Proxy-Connection", "Keep-Alive");
+        Map<String, String> expectedHeaders = new HashMap<>();
         proxy = ServerBootstrap.bootstrap().
                 setHttpProcessor(getBasicHttpProcessor()).
                 setConnectionReuseStrategy(getConnectionReuseStrategy()).
@@ -68,9 +67,12 @@ public class HttpProxyServerWithSystemPropertiesTest extends BaseHttpTest {
                 setSslContext(getSSLContext()).
                 registerHandler("*", new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders)).create();
         proxy.start();
-        
+
+        expectedHeaders.put("Connection", "Keep-Alive");
+        expectedHeaders.put("Host", getProxyHost() + ":" + getProxyPort());
+
         System.getProperties().setProperty("http.proxyHost", getProxyHost());
-        System.getProperties().setProperty("http.proxyPort", String.valueOf(getProxyPort()));
+        System.getProperties().setProperty("http.proxyPort", getProxyPort());
 
         super.setUp();
     }
@@ -84,7 +86,7 @@ public class HttpProxyServerWithSystemPropertiesTest extends BaseHttpTest {
             proxy.stop();
         }
     }
-    
+
     @Override
     protected HttpProcessor getBasicHttpProcessor() {
         List<HttpRequestInterceptor> requestInterceptors = new ArrayList<HttpRequestInterceptor>();
@@ -95,7 +97,6 @@ public class HttpProxyServerWithSystemPropertiesTest extends BaseHttpTest {
         ImmutableHttpProcessor httpproc = new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);
         return httpproc;
     }
-    
 
     @Test
     public void httpGetWithProxyFromSystemProperties() throws Exception {
@@ -112,14 +113,14 @@ public class HttpProxyServerWithSystemPropertiesTest extends BaseHttpTest {
         return proxy.getInetAddress().getHostName();
     }
 
-    private int getProxyPort() {
-        return proxy.getLocalPort();
+    private String getProxyPort() {
+        return "" + proxy.getLocalPort();
     }
-    
-    class RequestProxyBasicAuth implements HttpRequestInterceptor {
+
+    private static class RequestProxyBasicAuth implements HttpRequestInterceptor {
         public void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
             String auth = null;
-            
+
             String requestLine = request.getRequestLine().toString();
             // assert we set a write GET URI
             if (requestLine.contains("http4://localhost")) {
@@ -154,7 +155,7 @@ public class HttpProxyServerWithSystemPropertiesTest extends BaseHttpTest {
         }
     }
 
-    class ResponseProxyBasicUnauthorized implements HttpResponseInterceptor {
+    private static class ResponseProxyBasicUnauthorized implements HttpResponseInterceptor {
         public void process(final HttpResponse response, final HttpContext context) throws HttpException, IOException {
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
                 response.addHeader(AUTH.PROXY_AUTH, "Basic realm=\"test realm\"");
