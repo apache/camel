@@ -194,6 +194,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         // must validate configuration before creating processor
         validateConfiguration();
 
+        if (useOriginalMessagePolicy != null && useOriginalMessagePolicy) {
+            // ensure allow original is turned on
+            routeContext.setAllowUseOriginalMessage(true);
+        }
+
         // lets attach this on exception to the route error handler
         Processor child = createOutputsProcessor(routeContext);
         if (child != null) {
@@ -213,6 +218,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         // load exception classes
         if (exceptions != null && !exceptions.isEmpty()) {
             exceptionClasses = createExceptionClasses(routeContext.getCamelContext().getClassResolver());
+        }
+
+        if (useOriginalMessagePolicy != null && useOriginalMessagePolicy) {
+            // ensure allow original is turned on
+            routeContext.setAllowUseOriginalMessage(true);
         }
 
         // must validate configuration before creating processor
