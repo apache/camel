@@ -164,7 +164,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
             } catch (RuntimeException e) {
                 // ignore any exception and use null for building the string value
             }
-            endpointUriToString = String.format("Endpoint[%s]", URISupport.sanitizeUri(value));
+            // ensure to sanitize uri so we do not show sensitive information such as passwords
+            endpointUriToString = URISupport.sanitizeUri(value);
         }
         return endpointUriToString;
     }
