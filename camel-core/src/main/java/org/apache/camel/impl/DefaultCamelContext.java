@@ -3083,7 +3083,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         if (isAllowUseOriginalMessage()) {
-            log.info("AllowUseOriginalMessage enabled because UseOriginalMessage is in use");
+            log.debug("AllowUseOriginalMessage enabled because UseOriginalMessage is in use");
         }
 
         // start routes
