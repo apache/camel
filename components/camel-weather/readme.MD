@@ -15,7 +15,7 @@ There are five type of queries:
 1. by name of the city and the country code (q={city name},{country code})
 2. by id of the city (id={city ID}); The current weather can also be
 asked for a group of id's using the context group
-3. by latitude and longtitude (lat={lat}&lon={lon})
+3. by latitude and longitude (lat={lat}&lon={lon})
 4. by box (bbox=12,32,15,37,10), you must also provide cluster=yes/no; context
 must be box/city or box/station
 5. find cities/station around location defined by lat/lon; context

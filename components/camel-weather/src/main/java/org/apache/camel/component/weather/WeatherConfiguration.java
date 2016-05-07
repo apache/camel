@@ -18,6 +18,7 @@ package org.apache.camel.component.weather;
 
 import java.util.Scanner;
 
+import org.apache.camel.component.weather.geolocation.FreeGeoIpGeoLocationProvider;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -32,6 +33,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public class WeatherConfiguration {
 
     private final WeatherComponent component;
+    private final WeatherQuery weatherQuery;
 
     @UriPath(description = "The name value is not used.") @Metadata(required = "true")
     private String name;
@@ -53,8 +55,8 @@ public class WeatherConfiguration {
     private String period = "";
     @UriParam(defaultValue = "JSON")
     private WeatherMode mode = JSON;
-    @UriParam(defaultValue = "METRIC")
-    private WeatherUnits units = METRIC;
+    @UriParam
+    private WeatherUnits units;
     @UriParam(defaultValue = "en")
     private WeatherLanguage language = en;
     @UriParam
@@ -62,6 +64,10 @@ public class WeatherConfiguration {
 
     public WeatherConfiguration(WeatherComponent component) {
         this.component = notNull(component, "component");
+        weatherQuery = new WeatherQuery(this);
+        FreeGeoIpGeoLocationProvider geoLocationProvider = new FreeGeoIpGeoLocationProvider();
+        geoLocationProvider.setCamelContext(component.getCamelContext());
+        weatherQuery.setGeoLocationProvider(geoLocationProvider);
     }
 
     public String getPeriod() {
@@ -177,11 +183,11 @@ public class WeatherConfiguration {
     }
 
     String getQuery() throws Exception {
-        return new WeatherQuery(this.component, this).getQuery();
+        return weatherQuery.getQuery();
     }
 
     String getQuery(String location) throws Exception {
-        return new WeatherQuery(this.component, this).getQuery(location);
+        return weatherQuery.getQuery(location);
     }
 
     public WeatherLanguage getLanguage() {

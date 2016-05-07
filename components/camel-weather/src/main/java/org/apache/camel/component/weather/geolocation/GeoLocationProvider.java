@@ -14,13 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.weather;
+package org.apache.camel.component.weather.geolocation;
 
-/**
- * The possible output modes of the weather information
- */
-public enum WeatherMode {
+public interface GeoLocationProvider {
 
-    HTML, JSON, XML
+    GeoLocation getCurrentGeoLocation() throws Exception;
 
 }

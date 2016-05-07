@@ -42,5 +42,5 @@ public enum WeatherLanguage {
     zh_cn,
     tr,
     hr,
-    ca;
+    ca
 }

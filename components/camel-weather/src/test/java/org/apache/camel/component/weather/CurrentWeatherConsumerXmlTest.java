@@ -22,7 +22,7 @@ public class CurrentWeatherConsumerXmlTest extends BaseWeatherConsumerTest {
 
     @Override
     protected void checkWeatherContent(String weather) {
-        log.debug("The weather in {} format is {}{}", new Object[] {WeatherMode.XML, LS, weather});
+        log.debug("The weather in {} format is {}{}", WeatherMode.XML, LS, weather);
 
         assertStringContains(weather, "<coord");
         assertStringContains(weather, "<temperature");

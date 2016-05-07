@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.weather;
 
+import org.apache.camel.component.weather.geolocation.GeoLocation;
+import org.apache.camel.component.weather.geolocation.GeoLocationProvider;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -33,10 +35,9 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class WeatherQuery {
     private final WeatherConfiguration weatherConfiguration;
-    private final WeatherComponent component;
+    private GeoLocationProvider geoLocationProvider;
 
-    public WeatherQuery(WeatherComponent component, WeatherConfiguration weatherConfiguration) {
-        this.component = component;
+    public WeatherQuery(WeatherConfiguration weatherConfiguration) {
         this.weatherConfiguration = weatherConfiguration;
     }
 
@@ -67,7 +68,7 @@ public class WeatherQuery {
         location = location + "&lang=" + weatherConfiguration.getLanguage();
 
         if (weatherConfiguration.getTopLat() != null && weatherConfiguration.getRightLon() != null) {
-            answer += "box?" + location;
+            answer += "box/city?" + location;
         } else if (isEmpty(weatherConfiguration.getPeriod())) {
             answer += "weather?" + location;
         } else {
@@ -75,7 +76,7 @@ public class WeatherQuery {
         }
 
         // append the desired measurement unit if not the default (which is metric)
-        if (weatherConfiguration.getUnits() != METRIC) {
+        if (weatherConfiguration.getUnits() != null) {
             answer += "&units=" + weatherConfiguration.getUnits().name().toLowerCase();
         }
 
@@ -92,34 +93,12 @@ public class WeatherQuery {
 
     }
 
-    /**
-     * TODO: shouldn't this method be moved to a class of its own perhaps with an interface
-     * that gets injected. For testing purposes you can inject your own version when testing this
-     * class.
-     */
-
     String getCurrentGeoLocation() throws Exception {
-        HttpClient httpClient = new HttpClient();
-        GetMethod getMethod = new GetMethod("http://freegeoip.io/json/");
-        try {
-            int statusCode = httpClient.executeMethod(getMethod);
-            if (statusCode != HttpStatus.SC_OK) {
-                throw new IllegalStateException("Got the unexpected http-status '" + getMethod.getStatusLine() + "' for the geolocation");
-            }
-            String geoLocation = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, getMethod.getResponseBodyAsStream());
-            if (isEmpty(geoLocation)) {
-                throw new IllegalStateException("Got the unexpected value '" + geoLocation + "' for the geolocation");
-            }
-
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readValue(geoLocation, JsonNode.class);
-            JsonNode latitudeNode = notNull(node.get("latitude"), "latitude");
-            JsonNode longitudeNode = notNull(node.get("longitude"), "longitude");
-
-            return "lat=" + latitudeNode + "&lon=" + longitudeNode;
-        } finally {
-            getMethod.releaseConnection();
-        }
+        GeoLocation geoLocation = geoLocationProvider.getCurrentGeoLocation();
+        return "lat=" + geoLocation.getLatitude() + "&lon=" + geoLocation.getLongitude();
     }
 
+    void setGeoLocationProvider(GeoLocationProvider geoLocationProvider) {
+        this.geoLocationProvider = geoLocationProvider;
+    }
 }
