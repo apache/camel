@@ -32,6 +32,7 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.format.FormatException;
+import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,8 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     private static final Logger LOG = LoggerFactory.getLogger(BindyFixedLengthFactory.class);
 
     boolean isOneToMany;
+
+    private final FormatFactory formatFactory = FormatFactory.getInstance();
 
     private Map<Integer, DataField> dataFields = new TreeMap<Integer, DataField>();
     private Map<Integer, Field> annotatedFields = new TreeMap<Integer, Field>();
@@ -239,7 +242,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             }
 
             // Create format object to format the field
-            Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), dataField, field.getAnnotation(BindyConverter.class));
+            FormattingOptions formattingOptions = ConverterUtils.convert(dataField,
+                    field.getType(),
+                    field.getAnnotation(BindyConverter.class),
+                    getLocale());
+            Format<?> format = formatFactory.getFormat(formattingOptions);
 
             // field object to be set
             Object modelField = model.get(field.getDeclaringClass().getName());
@@ -345,7 +352,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     Class<?> type = field.getType();
 
                     // Create format
-                    Format<?> format = FormatFactory.getFormat(type, getLocale(), datafield, field.getAnnotation(BindyConverter.class));
+                    FormattingOptions formattingOptions = ConverterUtils.convert(datafield,
+                            field.getType(),
+                            field.getAnnotation(BindyConverter.class),
+                            getLocale());
+                    Format<?> format = formatFactory.getFormat(formattingOptions);
 
                     // Get field value
                     Object value = field.get(obj);

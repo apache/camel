@@ -14,26 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.bindy.format;
+package org.apache.camel.dataformat.bindy.format.factories;
 
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import org.apache.camel.dataformat.bindy.FormattingOptions;
 
-public class DoublePatternFormat extends NumberPatternFormat<Double> {
+public abstract class AbstractFormatFactory implements FormatFactoryInterface {
+    protected final List<Class<?>> supportedClasses = new ArrayList<>();
 
-    public DoublePatternFormat() {
-    }
-
-    public DoublePatternFormat(String pattern, Locale locale) {
-        super(pattern, locale);
+    @Override
+    public Collection<Class<?>> supportedClasses() {
+        return Collections.unmodifiableList(supportedClasses);
     }
 
     @Override
-    public Double parse(String string) throws Exception {
-        if (getNumberFormat() != null) {
-            return getNumberFormat().parse(string).doubleValue();
-        } else {
-            return Double.valueOf(string);
-        }
+    public boolean canBuild(FormattingOptions formattingOptions) {
+        return supportedClasses.contains(formattingOptions.getClazz());
     }
-
 }

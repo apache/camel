@@ -51,7 +51,7 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
     @Test
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
-        expected = "10,Christian,Mueller,12-24-2013,12-26-2015,01-06-2016 12:14:49,13:15:01";
+        expected = "10,Christian,Mueller,12-24-2013,12-26-2015,01-06-2016 12:14:49,13:15:01,broken";
 
         result.expectedBodiesReceived(expected + "\r\n");
 
@@ -96,6 +96,9 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
 
         @DataField(pos = 7, pattern = "HH:mm:ss")
         private LocalTime receivedTime;
+
+        @DataField(pos = 8)
+        private ReturnReason returnReason;
 
         public int getOrderNr() {
             return orderNr;
@@ -157,5 +160,18 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
         public void setReceivedTime(LocalTime receivedTime) {
             this.receivedTime = receivedTime;
         }
+
+        public ReturnReason getReturnReason() {
+            return returnReason;
+        }
+
+        public void setReturnReason(ReturnReason returnReason) {
+            this.returnReason = returnReason;
+        }
+    }
+
+    public enum ReturnReason {
+        broken,
+        other
     }
 }
