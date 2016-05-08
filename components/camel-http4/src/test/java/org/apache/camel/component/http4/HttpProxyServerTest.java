@@ -97,12 +97,12 @@ public class HttpProxyServerTest extends BaseHttpTest {
     @Test
     public void testDifferentHttpProxyConfigured() throws Exception {
         HttpEndpoint http1 = context.getEndpoint("http4://www.google.com?proxyAuthHost=www.myproxy.com&proxyAuthPort=1234", HttpEndpoint.class);
-        HttpEndpoint http2 = context.getEndpoint("http4://www.google.com?test=parameter&proxyAuthHost=www.myotherproxy.com&proxyAuthPort=2345", HttpEndpoint.class);
+        HttpEndpoint http2 = context.getEndpoint("http4://www.google.com?test=parameter&proxyAuthHost=www.otherproxy.com&proxyAuthPort=2345", HttpEndpoint.class);
         // HttpClientBuilder doesn't support get the configuration here
         
         //As the endpointUri is recreated, so the parameter could be in different place, so we use the URISupport.normalizeUri
         assertEquals("Get a wrong endpoint uri of http1", "http4://www.google.com?proxyAuthHost=www.myproxy.com&proxyAuthPort=1234", URISupport.normalizeUri(http1.getEndpointUri()));
-        assertEquals("Get a wrong endpoint uri of http2", "http4://www.google.com?proxyAuthHost=www.myotherproxy.com&proxyAuthPort=2345&test=parameter", URISupport.normalizeUri(http2.getEndpointUri()));
+        assertEquals("Get a wrong endpoint uri of http2", "http4://www.google.com?proxyAuthHost=www.otherproxy.com&proxyAuthPort=2345&test=parameter", URISupport.normalizeUri(http2.getEndpointUri()));
 
         assertEquals("Should get the same EndpointKey", http1.getEndpointKey(), http2.getEndpointKey());
     }

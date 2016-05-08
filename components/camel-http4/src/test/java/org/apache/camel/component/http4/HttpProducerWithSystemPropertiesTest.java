@@ -44,35 +44,45 @@ import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.protocol.ResponseContent;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  *
  * @version 
  */
-public class HttpProxyServerWithSystemPropertiesTest extends BaseHttpTest {
+public class HttpProducerWithSystemPropertiesTest extends BaseHttpTest {
 
-    private HttpServer proxy;
+    private static Object defaultSystemHttpAgent;
+    private HttpServer localServer;
+
+    @BeforeClass
+    public static void setUpSystemProperties() throws Exception {
+        // the 'http.agent' java system-property corresponds to the http 'User-Agent' header
+        defaultSystemHttpAgent = System.getProperties().setProperty("http.agent", "myCoolCamelCaseAgent");
+    }
+
+    @AfterClass
+    public static void resetSystemProperties() throws Exception {
+        System.getProperties().setProperty("http.agent", String.valueOf(defaultSystemHttpAgent));
+    }
 
     @Before
     @Override
     public void setUp() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
-        proxy = ServerBootstrap.bootstrap().
+        expectedHeaders.put("User-Agent", "myCoolCamelCaseAgent");
+
+        localServer = ServerBootstrap.bootstrap().
                 setHttpProcessor(getBasicHttpProcessor()).
                 setConnectionReuseStrategy(getConnectionReuseStrategy()).
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
                 registerHandler("*", new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders)).create();
-        proxy.start();
-
-        expectedHeaders.put("Connection", "Keep-Alive");
-        expectedHeaders.put("Host", getProxyHost() + ":" + getProxyPort());
-
-        System.getProperties().setProperty("http.proxyHost", getProxyHost());
-        System.getProperties().setProperty("http.proxyPort", getProxyPort());
+        localServer.start();
 
         super.setUp();
     }
@@ -82,8 +92,8 @@ public class HttpProxyServerWithSystemPropertiesTest extends BaseHttpTest {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        if (proxy != null) {
-            proxy.stop();
+        if (localServer != null) {
+            localServer.stop();
         }
     }
 
@@ -101,20 +111,12 @@ public class HttpProxyServerWithSystemPropertiesTest extends BaseHttpTest {
     @Test
     public void httpGetWithProxyFromSystemProperties() throws Exception {
 
-        Exchange exchange = template.request("http4://" + getProxyHost() + ":" + getProxyPort() + "?useSystemProperties=true", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?useSystemProperties=true", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
 
         assertExchange(exchange);
-    }
-
-    private String getProxyHost() {
-        return proxy.getInetAddress().getHostName();
-    }
-
-    private String getProxyPort() {
-        return "" + proxy.getLocalPort();
     }
 
     private static class RequestProxyBasicAuth implements HttpRequestInterceptor {
