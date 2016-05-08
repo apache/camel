@@ -33,14 +33,9 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
     @Mock
     private Processor processor;
 
-    @Override
-    public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(16330);
-        super.setUp();
-    }
-    
     @Test
     public void testSetServletInitalparameters() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(16330);
         String uri = "websocket://localhost:" + port + "/bar?bufferSize=65000&maxIdleTime=3000";
         WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
         WebsocketComponent component = websocketEndpoint.getComponent();
@@ -64,6 +59,7 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
     
     @Test(expected = RuntimeException.class)
     public void testSetServletNoMinThreadsNoMaxThreadsNoThreadPool() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(16331);
         String uri = "websocket://localhost:" + port + "/bar?bufferSize=65000&maxIdleTime=3000";
         WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
         WebsocketComponent component = websocketEndpoint.getComponent();
@@ -84,6 +80,7 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
     
     @Test
     public void testSetServletThreadPool() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(16332);
         String uri = "websocket://localhost:" + port + "/bar?bufferSize=65000&maxIdleTime=3000";
         WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
         WebsocketComponent component = websocketEndpoint.getComponent();
