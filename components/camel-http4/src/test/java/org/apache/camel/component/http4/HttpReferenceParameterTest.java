@@ -54,8 +54,8 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
 
     @Test
     public void testHttpBinding() {
-        assertSame(testBinding, endpoint1.getBinding());
-        assertSame(testBinding, endpoint2.getBinding());
+        assertSame(testBinding, endpoint1.getHttpBinding());
+        assertSame(testBinding, endpoint2.getHttpBinding());
     }
 
     @Test
@@ -89,7 +89,6 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
         };
     }
 
-    @SuppressWarnings("deprecation")
     private static class TestHttpBinding extends DefaultHttpBinding {
     }
 
