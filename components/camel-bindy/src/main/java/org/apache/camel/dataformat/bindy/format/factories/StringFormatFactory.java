@@ -14,26 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.bindy.format;
+package org.apache.camel.dataformat.bindy.format.factories;
 
-import java.util.Locale;
+import org.apache.camel.dataformat.bindy.Format;
+import org.apache.camel.dataformat.bindy.FormattingOptions;
 
-public class IntegerPatternFormat extends NumberPatternFormat<Integer> {
+public class StringFormatFactory extends AbstractFormatFactory {
 
-    public IntegerPatternFormat() {
-    }
+    private static final StringFormat STRING_FORMAT = new StringFormat();
 
-    public IntegerPatternFormat(String pattern, Locale locale) {
-        super(pattern, locale);
+    {
+        supportedClasses.add(String.class);
     }
 
     @Override
-    public Integer parse(String string) throws Exception {
-        if (getNumberFormat() != null) {
-            return getNumberFormat().parse(string).intValue();
-        } else {
-            return Integer.valueOf(string);
+    public Format<?> build(FormattingOptions formattingOptions) {
+        return STRING_FORMAT;
+    }
+
+    private static class StringFormat implements Format<String> {
+
+        public String format(String object) throws Exception {
+            return object;
         }
+
+        public String parse(String string) throws Exception {
+            return string;
+        }
+
     }
 
 }

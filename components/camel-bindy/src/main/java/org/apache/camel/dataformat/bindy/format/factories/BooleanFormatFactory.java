@@ -14,23 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.bindy.format;
+package org.apache.camel.dataformat.bindy.format.factories;
 
 import org.apache.camel.dataformat.bindy.Format;
+import org.apache.camel.dataformat.bindy.FormattingOptions;
 
-public class EnumFormat<T extends Enum<T>> implements Format<T> {
+public class BooleanFormatFactory extends AbstractFormatFactory {
 
-    private final Class<T> clazz;
+    private static final BooleanFormat BOOLEAN_FORMAT = new BooleanFormat();
 
-    public EnumFormat(Class<T> clazz) {
-        this.clazz = clazz;
+    {
+        supportedClasses.add(boolean.class);
+        supportedClasses.add(Boolean.class);
     }
 
-    public String format(final T object) throws Exception {
-        return object.name();
+    @Override
+    public Format<?> build(FormattingOptions formattingOptions) {
+        return BOOLEAN_FORMAT;
     }
 
-    public T parse(final String string) throws Exception {
-        return Enum.valueOf(clazz, string);
+    private static class BooleanFormat implements Format<Boolean> {
+
+        public String format(Boolean object) throws Exception {
+            return object.toString();
+        }
+
+        public Boolean parse(String string) throws Exception {
+            return Boolean.valueOf(string);
+        }
+
     }
 }

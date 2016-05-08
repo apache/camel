@@ -192,7 +192,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             }
 
             // Create format object to format the field
-            Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), dataField, field.getAnnotation(BindyConverter.class));
+            FormattingOptions formattingOptions = ConverterUtils.convert(dataField,
+                    field.getType(),
+                    field.getAnnotation(BindyConverter.class),
+                    getLocale());
+            Format<?> format = formatFactory.getFormat(formattingOptions);
 
             // field object to be set
             Object modelField = model.get(field.getDeclaringClass().getName());
@@ -396,7 +400,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     Class<?> type = field.getType();
 
                     // Create format
-                    Format<?> format = FormatFactory.getFormat(type, getLocale(), datafield, field.getAnnotation(BindyConverter.class));
+                    FormattingOptions formattingOptions = ConverterUtils.convert(datafield,
+                            field.getType(),
+                            field.getAnnotation(BindyConverter.class),
+                            getLocale());
+                    Format<?> format = formatFactory.getFormat(formattingOptions);
 
                     // Get field value
                     Object value = field.get(obj);
@@ -565,7 +573,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 }
 
                 if (section != null) {
-                    // Test if section number is not null
+                    // BigIntegerFormatFactory if section number is not null
                     ObjectHelper.notNull(section.number(), "No number has been defined for the section");
 
                     // Get section number and add it to the sections
@@ -589,7 +597,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             DataField dataField = dataFields.get(i);
             Object modelField = model.get(field.getDeclaringClass().getName());
             if (field.get(modelField) == null && !dataField.defaultValue().isEmpty()) {
-                Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), dataField, field.getAnnotation(BindyConverter.class));
+                FormattingOptions formattingOptions = ConverterUtils.convert(dataField,
+                        field.getType(),
+                        field.getAnnotation(BindyConverter.class),
+                        getLocale());
+                Format<?> format = formatFactory.getFormat(formattingOptions);
                 Object value = format.parse(dataField.defaultValue());
                 field.set(modelField, value);
             }
