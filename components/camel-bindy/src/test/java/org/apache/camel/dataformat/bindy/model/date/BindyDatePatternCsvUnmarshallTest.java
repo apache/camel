@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dataformat.bindy.model.date;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 import org.apache.camel.EndpointInject;
@@ -48,7 +51,7 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
     @Test
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
-        expected = "10,Christian,Mueller,12-24-2013";
+        expected = "10,Christian,Mueller,12-24-2013,12-26-2015,01-06-2016 12:14:49,13:15:01";
 
         result.expectedBodiesReceived(expected + "\r\n");
 
@@ -85,6 +88,15 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
         @DataField(pos = 4, pattern = "MM-dd-yyyy")
         private Date orderDate;
 
+        @DataField(pos = 5, pattern = "MM-dd-yyyy")
+        private LocalDate deliveryDate;
+
+        @DataField(pos = 6, pattern = "MM-dd-yyyy HH:mm:ss")
+        private LocalDateTime returnedDateTime;
+
+        @DataField(pos = 7, pattern = "HH:mm:ss")
+        private LocalTime receivedTime;
+
         public int getOrderNr() {
             return orderNr;
         }
@@ -120,6 +132,30 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.firstName + ", " + this.lastName + ", "  + String.valueOf(this.orderDate);
+        }
+
+        public LocalDate getDeliveryDate() {
+            return deliveryDate;
+        }
+
+        public void setDeliveryDate(LocalDate deliveryDate) {
+            this.deliveryDate = deliveryDate;
+        }
+
+        public LocalDateTime getReturnedDateTime() {
+            return returnedDateTime;
+        }
+
+        public void setReturnedDateTime(LocalDateTime returnedDateTime) {
+            this.returnedDateTime = returnedDateTime;
+        }
+
+        public LocalTime getReceivedTime() {
+            return receivedTime;
+        }
+
+        public void setReceivedTime(LocalTime receivedTime) {
+            this.receivedTime = receivedTime;
         }
     }
 }
