@@ -66,7 +66,11 @@ public class HttpProducerWithSystemPropertiesTest extends BaseHttpTest {
 
     @AfterClass
     public static void resetSystemProperties() throws Exception {
-        System.getProperties().setProperty("http.agent", String.valueOf(defaultSystemHttpAgent));
+        if (defaultSystemHttpAgent != null) {
+            System.getProperties().setProperty("http.agent", String.valueOf(defaultSystemHttpAgent));
+        } else {
+            System.getProperties().remove("http.agent");
+        }
     }
 
     @Before
