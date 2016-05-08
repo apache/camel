@@ -41,8 +41,6 @@ public class VertxProcessorFactory implements ProcessorFactory {
     @Override
     public Processor createChildProcessor(RouteContext routeContext, ProcessorDefinition<?> def, boolean mandatory) throws Exception {
         // let the classic camel-core create the child processor, which end up calling the createProcessor below
-        String id = def.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
-        System.out.println("Child id" + id);
         return null;
     }
 
