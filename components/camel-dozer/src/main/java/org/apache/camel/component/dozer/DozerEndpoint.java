@@ -123,28 +123,15 @@ public class DozerEndpoint extends DefaultEndpoint {
     }
 
     protected void initDozerBeanContainerAndMapper() throws Exception {
+
         LOG.info("Configuring DozerBeanContainer and DozerBeanMapper");
 
-        // must setup dozer to be able to load the EL factory we are using which is from glashfish
-        ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-
-        ExpressionFactoryImpl factory = new ExpressionFactoryImpl();
-        ClassLoader cl = factory.getClass().getClassLoader();
-        Thread.currentThread().setContextClassLoader(cl);
-
-        System.setProperty("javax.el.ExpressionFactory", "com.sun.el.ExpressionFactoryImpl");
+        // init the expression engine with a fallback to the impl from glasfish
         try {
-            ELEngine engine = new ELEngine();
-            engine.init();
-            BeanContainer.getInstance().setElEngine(engine);
-            ElementReader reader = new ExpressionElementReader(engine);
-            BeanContainer.getInstance().setElementReader(reader);
-
-        } catch (Throwable e) {
-            throw new IllegalStateException("Error configuring DozerBeanContainer/DozerBeanMapper due " + e.getMessage(), e);
-        } finally {
-            System.clearProperty("javax.el.ExpressionFactory");
-            Thread.currentThread().setContextClassLoader(oldCl);
+            initELEngine(null);
+        } catch (Throwable ex) {
+            LOG.warn("Cannot initialize Expression Engine, now using fallback", ex);
+            initELEngine("com.sun.el.ExpressionFactoryImpl");
         }
 
         // configure mapper as well
@@ -158,6 +145,31 @@ public class DozerEndpoint extends DefaultEndpoint {
             configureMapper(mapper);
         }
 
+    }
+
+    public void initELEngine(String factoryImpl) {
+        String elprop = System.getProperty("javax.el.ExpressionFactory");
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            if (factoryImpl != null) {
+                System.setProperty("javax.el.ExpressionFactory", factoryImpl);
+            }
+            ClassLoader applLoader = getCamelContext().getApplicationContextClassLoader();
+            if (applLoader != null) {
+                Thread.currentThread().setContextClassLoader(applLoader);
+            }
+            ELEngine engine = new ELEngine();
+            engine.init();
+            BeanContainer.getInstance().setElEngine(engine);
+            ElementReader reader = new ExpressionElementReader(engine);
+            BeanContainer.getInstance().setElementReader(reader);
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
+            if (elprop != null)
+                System.setProperty("javax.el.ExpressionFactory", elprop);
+            else
+                System.clearProperty("javax.el.ExpressionFactory");
+        }
     }
 
     private DozerBeanMapper createDozerBeanMapper() throws Exception {
