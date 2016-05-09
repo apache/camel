@@ -159,6 +159,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                 }
 
                 server.addConnector(connector);
+
                 LOG.trace("Jetty Connector added: {}", connector.getName());
 
                 // Create ServletContextHandler
@@ -213,6 +214,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                 WebsocketProducer producer = WebsocketProducer.class.cast(prodcon);
                 producer.setStore(connectorRef.memoryStore);
             }
+            
         }
     }
 
@@ -339,7 +341,9 @@ public class WebsocketComponent extends UriEndpointComponent {
     protected Server createServer() throws Exception {
         Server server = null;
         if (minThreads == null && maxThreads == null && getThreadPool() == null) {
-            throw new RuntimeCamelException("Error creating JettyWebSocketServer. MinThreads/MaxThreads or ThreadPool must be defined");
+            minThreads = 1;
+            // 1+selectors+acceptors
+            maxThreads = 1 + Runtime.getRuntime().availableProcessors() * 2;
         }
         // configure thread pool if min/max given
         if (minThreads != null || maxThreads != null) {

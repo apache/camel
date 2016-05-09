@@ -57,7 +57,7 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
         assertEquals("Get a worng maxIdleTime", "3000", maxIdleTime);
     }
     
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testSetServletNoMinThreadsNoMaxThreadsNoThreadPool() throws Exception {
         port = AvailablePortFinder.getNextAvailable(16331);
         String uri = "websocket://localhost:" + port + "/bar?bufferSize=65000&maxIdleTime=3000";
