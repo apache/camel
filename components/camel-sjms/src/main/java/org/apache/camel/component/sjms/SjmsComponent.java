@@ -106,7 +106,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     protected void doStart() throws Exception {
         super.doStart();
         timedTaskManager = new TimedTaskManager();
-	}
+    }
 
     @Override
     protected void doStop() throws Exception {
