@@ -42,15 +42,15 @@ public class HttpProducerWithSystemPropertiesTest extends BaseHttpTest {
     @BeforeClass
     public static void setUpHttpAgentSystemProperty() throws Exception {
         // the 'http.agent' java system-property corresponds to the http 'User-Agent' header
-        defaultSystemHttpAgent = System.getProperties().setProperty("http.agent", "myCoolCamelCaseAgent");
+        defaultSystemHttpAgent = System.setProperty("http.agent", "myCoolCamelCaseAgent");
     }
 
     @AfterClass
     public static void resetHttpAgentSystemProperty() throws Exception {
         if (defaultSystemHttpAgent != null) {
-            System.getProperties().setProperty("http.agent", String.valueOf(defaultSystemHttpAgent));
+            System.setProperty("http.agent", String.valueOf(defaultSystemHttpAgent));
         } else {
-            System.getProperties().remove("http.agent");
+            System.clearProperty("http.agent");
         }
     }
 
