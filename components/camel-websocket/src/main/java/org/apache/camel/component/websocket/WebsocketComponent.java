@@ -693,6 +693,7 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     /**
      * To set a value for minimum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
+     * The default values for minThreads is 1.
      */
     public void setMinThreads(Integer minThreads) {
         this.minThreads = minThreads;
@@ -704,6 +705,7 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     /**
      * To set a value for maximum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
+     * The default values for maxThreads is 1 + 2 * noCores.
      */
     public void setMaxThreads(Integer maxThreads) {
         this.maxThreads = maxThreads;
