@@ -135,6 +135,10 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return getProducerCache().send(endpoint, pattern, processor);
     }
 
+    public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor, Processor resultProcessor) {
+        return getProducerCache().send(endpoint, pattern, processor, resultProcessor);
+    }
+
     public Object sendBody(Endpoint endpoint, ExchangePattern pattern, Object body) {
         Exchange result = send(endpoint, pattern, createSetBodyProcessor(body));
         return extractResultBody(result, pattern);
