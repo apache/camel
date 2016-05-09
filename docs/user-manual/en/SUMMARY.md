@@ -193,6 +193,7 @@
         * [SMTPs](smtps.adoc)
     * [Metrics](metrics.adoc)
     * [Mina](mina.adoc)
+    * [Mina2](mina2.adoc)
     * [Mock](mock.adoc)
     * [NATS](nats.adoc)
     * [Properties](properties.adoc)
