@@ -399,6 +399,11 @@
     <bundle dependency='true'>wrap:mvn:com.squareup.okio/okio/${squareup-okio-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-dropbox/${project.version}</bundle>
   </feature>
+  <feature name='camel-ehcache' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version="${project.version}">camel-core</feature>
+    <bundle dependency="true">mvn:org.ehcache/ehcache/${ehcache3-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-ehcache/${project.version}</bundle>
+  </feature>
   <feature name='camel-elsql' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version="${project.version}">camel-sql</feature>
     <bundle dependency="true">mvn:com.opengamma/elsql/${elsql-version}</bundle>
