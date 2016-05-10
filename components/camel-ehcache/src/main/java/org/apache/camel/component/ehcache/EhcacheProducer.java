@@ -26,7 +26,7 @@ import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.impl.DefaultProducer;
 import org.ehcache.Cache;
 
-public final class EhcacheProducer extends DefaultProducer {
+public class EhcacheProducer extends DefaultProducer {
     private final EhcacheConfiguration configuration;
     private final EhcacheManager manager;
     private final Cache<Object, Object> cache;

@@ -27,7 +27,7 @@
 
   <artifactId>camel-ehcache</artifactId>
   <packaging>jar</packaging>
-  <name>Camel : Ehcache</name>
+  <name>Camel :: Ehcache</name>
   <description>Camel Ehcache support</description>
 
   <properties>

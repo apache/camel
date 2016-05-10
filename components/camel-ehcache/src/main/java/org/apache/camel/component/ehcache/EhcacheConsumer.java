@@ -24,7 +24,7 @@ import org.ehcache.Cache;
 import org.ehcache.event.CacheEvent;
 import org.ehcache.event.CacheEventListener;
 
-public final class EhcacheConsumer extends DefaultConsumer implements CacheEventListener<Object, Object> {
+public class EhcacheConsumer extends DefaultConsumer implements CacheEventListener<Object, Object> {
     private final EhcacheConfiguration configuration;
     private final EhcacheManager manager;
     private final Cache<Object, Object> cache;
