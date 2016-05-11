@@ -22,6 +22,10 @@
     <ehcache:key-type>java.lang.Object</ehcache:key-type>
     <ehcache:value-type>java.lang.Object</ehcache:value-type>
   </ehcache:cache>
+  <ehcache:cache alias="idempotent" uses-template="default-template">
+    <ehcache:key-type>java.lang.String</ehcache:key-type>
+    <ehcache:value-type>java.lang.Boolean</ehcache:value-type>
+  </ehcache:cache>
 
   <ehcache:cache-template name="default-template">
     <ehcache:expiry>

@@ -42,10 +42,11 @@ public class EhcacheTestSupport extends CamelTestSupport  {
     public static final Logger LOGGER = LoggerFactory.getLogger(EhcacheTestSupport.class);
     public static final String EHCACHE_CONFIG = "/ehcache/ehcache-config.xml";
     public static final String TEST_CACHE_NAME = "mycache";
+    public static final String IDEMPOTENT_TEST_CACHE_NAME = "idempotent";
 
     @Rule
     public final TestName testName = new TestName();
-    public CacheManager cacheManager;
+    protected CacheManager cacheManager;
 
     @Override
     protected void doPreSetup() throws Exception {
@@ -75,6 +76,15 @@ public class EhcacheTestSupport extends CamelTestSupport  {
 
     protected Cache<Object, Object> getCache(String name) {
         return cacheManager.getCache(name, Object.class, Object.class);
+    }
+
+    protected Cache<Object, Object> getTestCache() {
+        return cacheManager.getCache(TEST_CACHE_NAME, Object.class, Object.class);
+    }
+
+
+    protected Cache<String, Boolean> getIdempotentCache() {
+        return cacheManager.getCache(IDEMPOTENT_TEST_CACHE_NAME, String.class, Boolean.class);
     }
 
     protected String generateRandomString() {

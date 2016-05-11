@@ -53,7 +53,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
 
     @Test
     public void testCachePut() throws Exception {
-        final Cache<Object, Object> cache = getCache(TEST_CACHE_NAME);
+        final Cache<Object, Object> cache = getTestCache();
         final String key = generateRandomString();
         final String val = generateRandomString();
 
@@ -78,7 +78,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
 
     @Test
     public void testCachePutAll() throws Exception {
-        final Cache<Object, Object> cache = getCache(TEST_CACHE_NAME);
+        final Cache<Object, Object> cache = getTestCache();
         final Map<String, String> map = generateRandomMapOfString(3);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -102,7 +102,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
 
     @Test
     public void testCachePutIfAbsent() throws Exception {
-        final Cache<Object, Object> cache = getCache(TEST_CACHE_NAME);
+        final Cache<Object, Object> cache = getTestCache();
         final String key = generateRandomString();
         final String val1 = generateRandomString();
         final String val2 = generateRandomString();
@@ -143,7 +143,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
 
     @Test
     public void testCacheGet() throws Exception {
-        final Cache<Object, Object> cache = getCache(TEST_CACHE_NAME);
+        final Cache<Object, Object> cache = getTestCache();
         final String key = generateRandomString();
         final String val = generateRandomString();
 
@@ -167,7 +167,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
 
     @Test
     public void testCacheGetAll() throws Exception {
-        final Cache<Object, Object> cache = getCache(TEST_CACHE_NAME);
+        final Cache<Object, Object> cache = getTestCache();
         final Map<String, String> map = generateRandomMapOfString(3);
         final Set<String> keys = map.keySet().stream().limit(2).collect(Collectors.toSet());
 
@@ -199,7 +199,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
 
     @Test
     public void testCacheRemove() throws Exception {
-        final Cache<Object, Object> cache = getCache(TEST_CACHE_NAME);
+        final Cache<Object, Object> cache = getTestCache();
         final String key = generateRandomString();
         final String val = generateRandomString();
 
@@ -223,7 +223,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
 
     @Test
     public void testCacheRemoveIf() throws Exception {
-        final Cache<Object, Object> cache = getCache(TEST_CACHE_NAME);
+        final Cache<Object, Object> cache = getTestCache();
         final String key = generateRandomString();
         final String val1 = generateRandomString();
         final String val2 = generateRandomString();
@@ -262,7 +262,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
 
     @Test
     public void testCacheRemoveAll() throws Exception {
-        final Cache<Object, Object> cache = getCache(TEST_CACHE_NAME);
+        final Cache<Object, Object> cache = getTestCache();
         final Map<String, String> map = generateRandomMapOfString(3);
         final Set<String> keys = map.keySet().stream().limit(2).collect(Collectors.toSet());
 
@@ -290,7 +290,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
 
     @Test
     public void testCacheReplace() throws Exception {
-        final Cache<Object, Object> cache = getCache(TEST_CACHE_NAME);
+        final Cache<Object, Object> cache = getTestCache();
         final String key = generateRandomString();
         final String val1 = generateRandomString();
         final String val2 = generateRandomString();
