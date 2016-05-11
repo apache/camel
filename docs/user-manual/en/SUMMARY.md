@@ -196,6 +196,7 @@
     * [Mina2](mina2.adoc)
     * [MLLP](mllp.adoc)
     * [MongoDB](mongodb.adoc)
+    * [MongoDB-GridFS](gridfs.adoc)
     * [Mock](mock.adoc)
     * [NATS](nats.adoc)
     * [Properties](properties.adoc)
