@@ -18,14 +18,18 @@ package org.apache.camel.component.kafka;
 
 import java.util.Properties;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 
-public class KafkaProducer extends DefaultProducer {
+public class KafkaProducer extends DefaultProducer implements AsyncProcessor {
 
     private org.apache.kafka.clients.producer.KafkaProducer kafkaProducer;
     private final KafkaEndpoint endpoint;
@@ -69,9 +73,7 @@ public class KafkaProducer extends DefaultProducer {
         }
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void process(Exchange exchange) throws CamelException {
+    protected ProducerRecord createRecorder(Exchange exchange) throws CamelException {
         String topic = endpoint.getTopic();
         if (!endpoint.isBridgeEndpoint()) {
             topic = exchange.getIn().getHeader(KafkaConstants.TOPIC, topic, String.class);
@@ -96,9 +98,15 @@ public class KafkaProducer extends DefaultProducer {
             log.warn("No message key or partition key set");
             record = new ProducerRecord(topic, msg);
         }
+        return record;
+    }
 
-        // TODO: add support for async callback
-        // requires a thread pool for processing outgoing routing
+    @Override
+    @SuppressWarnings("unchecked")
+    public void process(Exchange exchange) throws CamelException {
+
+        ProducerRecord record = createRecorder(exchange);
+        // Just send out the record in the sync way
         try {
             kafkaProducer.send(record).get();
         } catch (Exception e) {
@@ -106,4 +114,38 @@ public class KafkaProducer extends DefaultProducer {
         }
     }
 
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            ProducerRecord record = createRecorder(exchange);
+            kafkaProducer.send(record, new KafkaProducerCallBack(exchange, callback));
+            // Finishing the processing in an async way
+            return false;
+        } catch (Exception ex) {
+            // Just set the exception back to the client
+            exchange.setException(ex);
+            callback.done(true);
+            return true;
+        }
+    }
+
+    class KafkaProducerCallBack implements Callback {
+
+        private Exchange exchange;
+        private AsyncCallback callback;
+
+        KafkaProducerCallBack(Exchange exchange, AsyncCallback callback) {
+            this.exchange = exchange;
+            this.callback = callback;
+        }
+
+        @Override
+        public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+            if (e != null) {
+                // Just set the exception back
+                exchange.setException(e);
+            }
+            callback.done(false);
+        }
+    }
 }
