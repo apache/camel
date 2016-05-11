@@ -199,6 +199,7 @@
     * [MongoDB-GridFS](gridfs.adoc)
     * [MQTT](mqtt.adoc)
     * [Msv](msv.adoc)
+    * [Mustache](mustache.adoc)
     * [Mock](mock.adoc)
     * [NATS](nats.adoc)
     * [Properties](properties.adoc)
