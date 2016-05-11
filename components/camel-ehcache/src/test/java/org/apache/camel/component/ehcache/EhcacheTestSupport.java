@@ -26,7 +26,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.apache.camel.builder.FluentProducerTemplate;
 import org.apache.camel.component.ehcache.processor.aggregate.EhcacheAggregationRepository;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.impl.JndiRegistry;
@@ -131,9 +130,5 @@ public class EhcacheTestSupport extends CamelTestSupport  {
             i -> i + "-" + generateRandomString(),
             i -> i + "-" + generateRandomString()
         ));
-    }
-
-    FluentProducerTemplate fluentTemplate() {
-        return FluentProducerTemplate.on(context());
     }
 }
