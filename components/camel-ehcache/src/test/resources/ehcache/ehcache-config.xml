@@ -26,6 +26,10 @@
     <ehcache:key-type>java.lang.String</ehcache:key-type>
     <ehcache:value-type>java.lang.Boolean</ehcache:value-type>
   </ehcache:cache>
+  <ehcache:cache alias="aggregate" uses-template="default-template">
+    <ehcache:key-type>java.lang.String</ehcache:key-type>
+    <ehcache:value-type>org.apache.camel.impl.DefaultExchangeHolder</ehcache:value-type>
+  </ehcache:cache>
 
   <ehcache:cache-template name="default-template">
     <ehcache:expiry>
