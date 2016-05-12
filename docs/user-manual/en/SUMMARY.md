@@ -206,6 +206,7 @@
     * [Nagios](nagios.adoc)
     * [Netty](netty.adoc)
     * [Netty4](netty4.adoc)
+    * [Netty HTTP](netty-http.adoc)
     * [Netty4 HTTP](netty4-http.adoc)
     * [NATS](nats.adoc)
     * [Properties](properties.adoc)
