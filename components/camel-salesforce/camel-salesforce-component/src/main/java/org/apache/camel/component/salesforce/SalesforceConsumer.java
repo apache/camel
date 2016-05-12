@@ -103,7 +103,7 @@ public class SalesforceConsumer extends DefaultConsumer {
             // create REST client for PushTopic operations
             SalesforceComponent component = endpoint.getComponent();
             RestClient restClient = new DefaultRestClient(component.getConfig().getHttpClient(),
-                    endpoint.getConfiguration().getApiVersion(), PayloadFormat.JSON, component.getSession());
+                    endpoint.getConfiguration().getApiVersion(), endpoint.getConfiguration().getFormat(), component.getSession());
             // don't forget to start the client
             ServiceHelper.startService(restClient);
 
