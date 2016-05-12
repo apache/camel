@@ -19,7 +19,6 @@ package org.apache.camel.component.ehcache;
 import java.io.IOException;
 import java.net.URL;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -28,11 +27,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
-import org.ehcache.config.ResourcePools;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.event.EventFiring;
 import org.ehcache.event.EventOrdering;
@@ -41,7 +39,7 @@ import org.ehcache.xml.XmlConfiguration;
 
 @UriParams
 public class EhcacheConfiguration {
-    public static final String PREFIX_CACHE = "cache.";
+    public static final String PREFIX_CONF = "conf.";
     public static final String PREFIX_POOL = "pool.";
 
     private final CamelContext context;
@@ -61,14 +59,7 @@ public class EhcacheConfiguration {
     @UriParam
     private CacheManager cacheManager;
     @UriParam(label = "advanced")
-    private CacheConfiguration<?, ?> defaultCacheConfiguration;
-    @UriParam(label = "advanced")
-    private ResourcePools defaultCacheResourcePools;
-
-    @UriParam(label = "advanced", prefix = PREFIX_CACHE, multiValue = true, javaType = "java.lang.String")
-    private Map<String, CacheConfiguration> cacheConfigurations;
-    @UriParam(label = "advanced", prefix = PREFIX_POOL, multiValue = true, javaType = "java.lang.String")
-    private Map<String, ResourcePools> cacheResourcePools;
+    private CacheConfiguration<?, ?> configuration;
 
     @UriParam(
         label = "consumer",
@@ -231,93 +222,16 @@ public class EhcacheConfiguration {
     /**
      * The default cache configuration to be used to create caches.
      */
-    public void setDefaultCacheConfiguration(CacheConfiguration<?, ?> defaultCacheConfiguration) {
-        this.defaultCacheConfiguration = defaultCacheConfiguration;
+    public <K, V> void setConfiguration(CacheConfiguration<K, V> configuration) {
+        this.configuration = configuration;
     }
 
-    public CacheConfiguration<?, ?> getDefaultCacheConfiguration() {
-        return defaultCacheConfiguration;
+    public <K, V> CacheConfiguration<K, V> getConfiguration() {
+        return (CacheConfiguration<K, V>)configuration;
     }
 
-    /**
-     * The cache configuration to be used for cache cacheName.
-     */
-    public void addCacheConfiguration(String cacheName, CacheConfiguration cacheConfiguration) {
-        if (cacheConfigurations == null) {
-            cacheConfigurations = new HashMap<>();
-        }
-
-        cacheConfigurations.put(cacheName, cacheConfiguration);
-    }
-
-    EhcacheConfiguration addCacheConfigurationFromParameters(Map<String, Object> parameters) {
-        Map<String, Object> models = IntrospectionSupport.extractProperties(parameters, PREFIX_CACHE);
-        for (Map.Entry<String, Object> entry : models.entrySet()) {
-            addCacheConfiguration(
-                entry.getKey(),
-                EndpointHelper.resolveParameter(
-                    context,
-                    (String)entry.getValue(),
-                    CacheConfiguration.class
-                )
-            );
-        }
-
-        return this;
-    }
-
-    public CacheConfiguration getCacheConfiguration(String cacheName) {
-        return cacheConfigurations != null
-            ? cacheConfigurations.getOrDefault(cacheName, defaultCacheConfiguration)
-            : defaultCacheConfiguration;
-    }
-
-    // ****************************
-    // Cache Resource Pools
-    // ****************************
-
-    public ResourcePools getDefaultCacheResourcePools() {
-        return defaultCacheResourcePools;
-    }
-
-    /**
-     * The default resource pools to be used to create caches.
-     */
-    public void setDefaultCacheResourcePools(ResourcePools defaultCacheResourcePools) {
-        this.defaultCacheResourcePools = defaultCacheResourcePools;
-    }
-
-    /**
-     * The resource pools to be used for cache cacheName.
-     */
-    public void addResourcePools(String cacheName, ResourcePools resourcePools) {
-        if (cacheResourcePools == null) {
-            cacheResourcePools = new HashMap<>();
-        }
-
-        cacheResourcePools.put(cacheName, resourcePools);
-    }
-
-    EhcacheConfiguration addResourcePoolsFromParameters(Map<String, Object> parameters) {
-        Map<String, Object> models = IntrospectionSupport.extractProperties(parameters, PREFIX_POOL);
-        for (Map.Entry<String, Object> entry : models.entrySet()) {
-            addResourcePools(
-                entry.getKey(),
-                EndpointHelper.resolveParameter(
-                    context,
-                    (String)entry.getValue(),
-                    ResourcePools.class
-                )
-            );
-        }
-
-        return this;
-    }
-
-    public ResourcePools getResourcePools(String cacheName) {
-        return cacheResourcePools != null
-            ? cacheResourcePools.getOrDefault(cacheName, defaultCacheResourcePools)
-            : defaultCacheResourcePools;
+    public <K, V> CacheConfiguration<K, V> getMandatoryConfiguration() {
+        return ObjectHelper.notNull(getConfiguration(), "CacheConfiguration");
     }
 
     // ****************************
@@ -326,9 +240,6 @@ public class EhcacheConfiguration {
 
     static EhcacheConfiguration create(CamelContext context, String remaining, Map<String, Object> parameters) throws Exception {
         EhcacheConfiguration configuration = new EhcacheConfiguration(context, remaining);
-        configuration.addCacheConfigurationFromParameters(parameters);
-        configuration.addResourcePoolsFromParameters(parameters);
-
         EndpointHelper.setReferenceProperties(context, configuration, parameters);
         EndpointHelper.setProperties(context, configuration, parameters);
 
@@ -344,8 +255,8 @@ public class EhcacheConfiguration {
             manager = CacheManagerBuilder.newCacheManager(new XmlConfiguration(getConfigUriAsUrl()));
         } else {
             CacheManagerBuilder builder = CacheManagerBuilder.newCacheManagerBuilder();
-            if (cacheConfigurations != null) {
-                cacheConfigurations.forEach(builder::withCache);
+            if (configuration != null) {
+                builder.withCache(cacheName, configuration);
             }
 
             manager = builder.build();

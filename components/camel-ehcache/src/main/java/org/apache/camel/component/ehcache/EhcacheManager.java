@@ -22,12 +22,8 @@ import org.apache.camel.Service;
 import org.apache.camel.util.ObjectHelper;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
-import org.ehcache.config.CacheConfiguration;
-import org.ehcache.config.ResourcePools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.ehcache.config.builders.CacheConfigurationBuilder.newCacheConfigurationBuilder;
 
 public class EhcacheManager implements Service {
     private static final Logger LOGGER = LoggerFactory.getLogger(EhcacheManager.class);
@@ -73,19 +69,7 @@ public class EhcacheManager implements Service {
     public <K, V> Cache<K, V> getCache(String name, Class<K> keyType, Class<V> valueType) throws Exception {
         Cache<K, V> cache = cacheManager.getCache(name, keyType, valueType);
         if (cache == null && configuration != null && configuration.isCreateCacheIfNotExist()) {
-            final CacheConfiguration config = configuration.getCacheConfiguration(name);
-            final ResourcePools pools = configuration.getResourcePools(name);
-
-            if (config == null && pools == null) {
-                throw new IllegalArgumentException("No cache config and resource pools for cache " + name);
-            }
-
-            cache = cacheManager.createCache(
-                name,
-                config != null
-                    ? config
-                    : newCacheConfigurationBuilder(keyType, valueType, pools).build()
-            );
+            cache = cacheManager.createCache(name, configuration.getMandatoryConfiguration());
         }
 
         return cache;
