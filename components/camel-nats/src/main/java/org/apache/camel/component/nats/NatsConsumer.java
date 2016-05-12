@@ -36,6 +36,7 @@ public class NatsConsumer extends DefaultConsumer {
     private ExecutorService executor;
     private Connection connection;
     private int sid;
+    private boolean subscribed;
 
     public NatsConsumer(NatsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -94,7 +95,15 @@ public class NatsConsumer extends DefaultConsumer {
         return connection;
     }
 
-    class NatsConsumingTask implements Runnable {
+    public boolean isSubscribed() {
+		return subscribed;
+	}
+
+	public void setSubscribed(boolean subscribed) {
+		this.subscribed = subscribed;
+	}
+
+	class NatsConsumingTask implements Runnable {
 
         private final Connection connection;
         private final NatsConfiguration configuration;
@@ -124,6 +133,7 @@ public class NatsConsumer extends DefaultConsumer {
             } catch (Throwable e) {
                 getExceptionHandler().handleException("Error during processing", e);
             }
+            if (connection.getSubscriptionCount() > 0) setSubscribed(true);
         }
     }
 
