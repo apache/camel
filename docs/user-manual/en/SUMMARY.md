@@ -201,6 +201,7 @@
     * [Msv](msv.adoc)
     * [Mustache](mustache.adoc)
     * [Mvel](mvel.adoc)
+    * [Mybatis](mybatis.adoc)
     * [Mock](mock.adoc)
     * [NATS](nats.adoc)
     * [Properties](properties.adoc)
