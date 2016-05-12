@@ -96,14 +96,14 @@ public class NatsConsumer extends DefaultConsumer {
     }
 
     public boolean isSubscribed() {
-		return subscribed;
-	}
+        return subscribed;
+    }
 
-	public void setSubscribed(boolean subscribed) {
-		this.subscribed = subscribed;
-	}
+    public void setSubscribed(boolean subscribed) {
+        this.subscribed = subscribed;
+    }
 
-	class NatsConsumingTask implements Runnable {
+    class NatsConsumingTask implements Runnable {
 
         private final Connection connection;
         private final NatsConfiguration configuration;
@@ -133,7 +133,9 @@ public class NatsConsumer extends DefaultConsumer {
             } catch (Throwable e) {
                 getExceptionHandler().handleException("Error during processing", e);
             }
-            if (connection.getSubscriptionCount() > 0) setSubscribed(true);
+            if (connection.getSubscriptionCount() > 0) {
+                setSubscribed(true);
+            }
         }
     }
 

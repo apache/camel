@@ -198,7 +198,7 @@ public class NatsConfiguration {
         this.poolSize = poolSize;
     }
 
-	private static <T> void addPropertyIfNotNull(Properties props, String key, T value) {
+    private static <T> void addPropertyIfNotNull(Properties props, String key, T value) {
         if (value != null) {
             props.put(key, value);
         }
