@@ -16,14 +16,18 @@
  */
 package org.apache.camel.component.ehcache.processor.idempotent;
 
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 
+@ManagedResource(description = "Ehcache based message id repository")
 public class EhcacheIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
 
-    private String repositoryName;
+    private String cacheName;
     private Cache<String, Boolean> cache;
     private CacheManager cacheManager;
 
@@ -32,21 +36,17 @@ public class EhcacheIdempotentRepository extends ServiceSupport implements Idemp
     }
 
     public EhcacheIdempotentRepository(CacheManager cacheManager, String repositoryName) {
-        this.repositoryName = repositoryName;
+        this.cacheName = repositoryName;
         this.cacheManager = cacheManager;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        cache = cacheManager.getCache(repositoryName, String.class, Boolean.class);
+    @ManagedAttribute(description = "The processor name")
+    public String getCacheName() {
+        return cacheName;
     }
 
     @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
-
-    @Override
+    @ManagedOperation(description = "Adds the key to the store")
     public boolean add(String key) {
         return cache.putIfAbsent(key, false) == null;
     }
@@ -57,22 +57,31 @@ public class EhcacheIdempotentRepository extends ServiceSupport implements Idemp
     }
 
     @Override
+    @ManagedOperation(description = "Does the store contain the given key")
     public boolean contains(String key) {
         return this.cache.containsKey(key);
     }
 
     @Override
+    @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String key) {
         cache.remove(key);
         return true;
     }
 
     @Override
+    @ManagedOperation(description = "Clear the store")
     public void clear() {
         cache.clear();
     }
 
-    public String getRepositoryName() {
-        return repositoryName;
+    @Override
+    protected void doStart() throws Exception {
+        cache = cacheManager.getCache(cacheName, String.class, Boolean.class);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }
