@@ -205,6 +205,7 @@
     * [Mock](mock.adoc)
     * [Nagios](nagios.adoc)
     * [Netty](netty.adoc)
+    * [Netty4](netty4.adoc)
     * [NATS](nats.adoc)
     * [Properties](properties.adoc)
     * [Quickfix](quickfix.adoc)
