@@ -197,6 +197,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     String getUptime();
 
+    /**
+     * Gets the uptime in milli seconds
+     *
+     * @return the uptime in millis seconds
+     */
+    long getUptimeMillis();
+
     // Service Methods
     //-----------------------------------------------------------------------
 

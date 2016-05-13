@@ -40,8 +40,11 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Camel State")
     String getState();
 
-    @ManagedAttribute(description = "Uptime")
+    @ManagedAttribute(description = "Uptime [human readable text]")
     String getUptime();
+
+    @ManagedAttribute(description = "Uptime [milliseconds]")
+    long getUptimeMillis();
 
     @ManagedAttribute(description = "Camel Management StatisticsLevel")
     String getManagementStatisticsLevel();

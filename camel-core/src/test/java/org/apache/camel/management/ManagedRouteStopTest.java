@@ -61,6 +61,9 @@ public class ManagedRouteStopTest extends ManagementTestSupport {
         assertNotNull(uptime);
         log.info("Uptime: {}", uptime);
 
+        long uptimeMillis = (Long) mbeanServer.getAttribute(on, "UptimeMillis");
+        assertTrue(uptimeMillis > 0);
+
         mbeanServer.invoke(on, "stop", null, null);
 
         registered = mbeanServer.isRegistered(on);
@@ -72,6 +75,9 @@ public class ManagedRouteStopTest extends ManagementTestSupport {
 
         uptime = (String) mbeanServer.getAttribute(on, "Uptime");
         assertEquals("", uptime);
+
+        uptimeMillis = (Long) mbeanServer.getAttribute(on, "UptimeMillis");
+        assertEquals(0, uptimeMillis);
     }
 
     @Override

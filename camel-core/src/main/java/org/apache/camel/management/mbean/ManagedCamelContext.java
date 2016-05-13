@@ -116,6 +116,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return context.getUptime();
     }
 
+    public long getUptimeMillis() {
+        return context.getUptimeMillis();
+    }
+
     public String getManagementStatisticsLevel() {
         if (context.getManagementStrategy().getManagementAgent() != null) {
             return context.getManagementStrategy().getManagementAgent().getStatisticsLevel().name();
