@@ -21,7 +21,6 @@ import java.util.Random;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -30,8 +29,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class SjmsEndpointConnectionSettingsTest extends CamelTestSupport {
-    private static final ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
-    private static final ConnectionResource connectionResource = new ConnectionFactoryResource(2, connectionFactory);
+    private final ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+    private final ConnectionResource connectionResource = new ConnectionFactoryResource(2, connectionFactory);
 
     @Test
     public void testConnectionFactory() {
