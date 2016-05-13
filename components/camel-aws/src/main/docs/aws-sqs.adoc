@@ -41,6 +41,7 @@ The AWS Simple Queue Service component has no options.
 
 
 
+
 // endpoint options: START
 The AWS Simple Queue Service component supports 45 endpoint options which are listed below:
 
@@ -53,14 +54,7 @@ The AWS Simple Queue Service component supports 45 endpoint options which are li
 | amazonSQSClient | common |  | AmazonSQS | To use the AmazonSQS as client
 | amazonSQSEndpoint | common |  | String | The region with which the AWS-SQS client wants to work with. Only works if Camel creates the AWS-SQS client i.e. if you explicitly set amazonSQSClient then this setting will have no effect. You would have to set it on the client you create directly
 | headerFilterStrategy | common |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to map headers to/from Camel.
-| maximumMessageSize | common |  | Integer | The maximumMessageSize (in bytes) an SQS message can contain for this queue.
-| messageRetentionPeriod | common |  | Integer | The messageRetentionPeriod (in seconds) a message will be retained by SQS for this queue.
-| policy | common |  | String | The policy for this queue
-| proxyHost | common |  | String | To define a proxy host when instantiating the SQS client
-| proxyPort | common |  | Integer | To define a proxy port when instantiating the SQS client
 | queueOwnerAWSAccountId | common |  | String | Specify the queue owner aws account id when you need to connect the queue with different account owner.
-| receiveMessageWaitTimeSeconds | common |  | Integer | If you do not specify WaitTimeSeconds in the request the queue attribute ReceiveMessageWaitTimeSeconds is used to determine how long to wait.
-| redrivePolicy | common |  | String | Specify the policy that send message to DeadLetter queue. See detail at Amazon docs.
 | region | common |  | String | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL.
 | secretKey | common |  | String | Amazon AWS Secret Key
 | attributeNames | consumer |  | String | A list of attribute names to receive when consuming. Multiple names can be separated by comma.
@@ -93,9 +87,17 @@ The AWS Simple Queue Service component supports 45 endpoint options which are li
 | startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+| proxyHost | proxy |  | String | To define a proxy host when instantiating the SQS client
+| proxyPort | proxy |  | Integer | To define a proxy port when instantiating the SQS client
+| maximumMessageSize | queue |  | Integer | The maximumMessageSize (in bytes) an SQS message can contain for this queue.
+| messageRetentionPeriod | queue |  | Integer | The messageRetentionPeriod (in seconds) a message will be retained by SQS for this queue.
+| policy | queue |  | String | The policy for this queue
+| receiveMessageWaitTimeSeconds | queue |  | Integer | If you do not specify WaitTimeSeconds in the request the queue attribute ReceiveMessageWaitTimeSeconds is used to determine how long to wait.
+| redrivePolicy | queue |  | String | Specify the policy that send message to DeadLetter queue. See detail at Amazon docs.
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 

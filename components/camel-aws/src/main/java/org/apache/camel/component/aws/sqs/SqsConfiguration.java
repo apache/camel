@@ -37,9 +37,9 @@ public class SqsConfiguration {
     private String queueOwnerAWSAccountId;
     @UriParam
     private String region;
-    @UriParam
+    @UriParam(label = "proxy")
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer proxyPort;
 
     // consumer properties
@@ -67,17 +67,17 @@ public class SqsConfiguration {
     private Integer delaySeconds;
 
     // queue properties
-    @UriParam
+    @UriParam(label = "queue")
     private Integer maximumMessageSize;
-    @UriParam
+    @UriParam(label = "queue")
     private Integer messageRetentionPeriod;
-    @UriParam
+    @UriParam(label = "queue")
     private Integer receiveMessageWaitTimeSeconds;
-    @UriParam
+    @UriParam(label = "queue")
     private String policy;
     
     // dead letter queue properties
-    @UriParam
+    @UriParam(label = "queue")
     private String redrivePolicy;
 
     /**
