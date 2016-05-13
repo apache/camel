@@ -56,6 +56,7 @@ The Mustache component supports 1 options which are listed below.
 
 
 
+
 // endpoint options: START
 The Mustache component supports 7 endpoint options which are listed below:
 
@@ -65,12 +66,13 @@ The Mustache component supports 7 endpoint options which are listed below:
 | resourceUri | producer |  | String | *Required* Path to the resource or a reference to lookup a bean in the Registry to use as the resource
 | contentCache | producer | false | boolean | Sets whether to use resource content cache or not
 | encoding | producer |  | String | Character encoding of the resource content.
-| endDelimiter | producer | "\}\}" | String | Characters used to mark template code end.
-| startDelimiter | producer | "\{\{" | String | Characters used to mark template code beginning.
+| endDelimiter | producer | }} | String | Characters used to mark template code end.
+| startDelimiter | producer | {{ | String | Characters used to mark template code beginning.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
+
 
 
 [[Mustache-MustacheContext]]
