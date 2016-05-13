@@ -42,6 +42,7 @@ Options
 ^^^^^^^
 
 
+{% raw %}
 // component options: START
 The Mustache component supports 1 options which are listed below.
 
@@ -53,6 +54,7 @@ The Mustache component supports 1 options which are listed below.
 | mustacheFactory | MustacheFactory | To use a custom MustacheFactory
 |=======================================================================
 // component options: END
+
 
 
 
@@ -72,7 +74,7 @@ The Mustache component supports 7 endpoint options which are listed below:
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
-
+{% endraw %}
 
 
 [[Mustache-MustacheContext]]
