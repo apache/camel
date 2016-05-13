@@ -112,7 +112,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KafkaTopic[" + configuration.getTopic() + "]", configuration.getConsumerStreams());
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KafkaTopic[" + configuration.getTopic() + "]", configuration.getConsumersCount());
     }
 
     public Exchange createKafkaExchange(MessageAndMetadata<byte[], byte[]> mm) {
