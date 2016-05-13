@@ -79,7 +79,7 @@ public class KafkaProducerTest {
         Mockito.verify(producer.getKafkaProducer()).send(Matchers.any(ProducerRecord.class));
     }
 
-    @Test(expected=CamelException.class)
+    @Test(expected = Exception.class)
     @SuppressWarnings({"unchecked"})
     public void processSendsMessageWithException() throws Exception {
         endpoint.setTopic("sometopic");
@@ -90,7 +90,6 @@ public class KafkaProducerTest {
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
 
         producer.process(exchange);
-
     }
 
     @Test
@@ -103,9 +102,7 @@ public class KafkaProducerTest {
         producer.process(exchange, callback);
 
         Mockito.verify(producer.getKafkaProducer()).send(Matchers.any(ProducerRecord.class), Matchers.any(Callback.class));
-
     }
-
 
     @Test
     public void processAsyncSendsMessageWithException() throws Exception {
@@ -125,7 +122,6 @@ public class KafkaProducerTest {
         Mockito.verify(exchange).setException(Matchers.isA(ApiException.class));
         Mockito.verify(callback).done(Matchers.eq(true));
     }
-
 
     @Test
     public void processSendsMessageWithTopicHeaderAndNoTopicInEndPoint() throws Exception {

@@ -73,6 +73,7 @@ public class KafkaProducer extends DefaultProducer implements AsyncProcessor {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected ProducerRecord createRecorder(Exchange exchange) throws CamelException {
         String topic = endpoint.getTopic();
         if (!endpoint.isBridgeEndpoint()) {
@@ -103,19 +104,25 @@ public class KafkaProducer extends DefaultProducer implements AsyncProcessor {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void process(Exchange exchange) throws CamelException {
-
+    public void process(Exchange exchange) throws Exception {
         ProducerRecord record = createRecorder(exchange);
         // Just send out the record in the sync way
-        try {
-            kafkaProducer.send(record).get();
-        } catch (Exception e) {
-            throw new CamelException(e);
-        }
+        kafkaProducer.send(record).get();
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        // force processing synchronously using different api
+        if (endpoint.isSynchronous()) {
+            try {
+                process(exchange);
+            } catch (Throwable e) {
+                exchange.setException(e);
+            }
+            callback.done(true);
+            return true;
+        }
+
         try {
             ProducerRecord record = createRecorder(exchange);
             kafkaProducer.send(record, new KafkaProducerCallBack(exchange, callback));
@@ -129,10 +136,10 @@ public class KafkaProducer extends DefaultProducer implements AsyncProcessor {
         }
     }
 
-    class KafkaProducerCallBack implements Callback {
+    private final class KafkaProducerCallBack implements Callback {
 
-        private Exchange exchange;
-        private AsyncCallback callback;
+        private final Exchange exchange;
+        private final AsyncCallback callback;
 
         KafkaProducerCallBack(Exchange exchange, AsyncCallback callback) {
             this.exchange = exchange;
