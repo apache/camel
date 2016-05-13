@@ -298,9 +298,9 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
-	  <bundle dependency='true'>mvn:org.jsoup/jsoup/${jsoup-version}</bundle>
-	  <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-api-version}</bundle>
-	  <bundle dependency='true'>mvn:javax.el/javax.el-api/${javax.el-api-version}</bundle>
+    <bundle dependency='true'>mvn:org.jsoup/jsoup/${jsoup-version}</bundle>
+    <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.el/javax.el-api/${javax.el-api-version}</bundle>
     <bundle dependency='true'>mvn:org.glassfish.web/javax.el/${javax.el-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml/classmate/${classmate-version}</bundle>
     <bundle dependency='true'>mvn:org.hibernate/hibernate-validator/${hibernate-validator-version}</bundle>
