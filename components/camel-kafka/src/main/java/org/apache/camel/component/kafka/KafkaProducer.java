@@ -17,6 +17,7 @@
 package org.apache.camel.component.kafka;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -33,6 +34,8 @@ public class KafkaProducer extends DefaultProducer implements AsyncProcessor {
 
     private org.apache.kafka.clients.producer.KafkaProducer kafkaProducer;
     private final KafkaEndpoint endpoint;
+    private ExecutorService workerPool;
+    private boolean shutdownWorkerPool;
 
     public KafkaProducer(KafkaEndpoint endpoint) {
         super(endpoint);
@@ -58,11 +61,12 @@ public class KafkaProducer extends DefaultProducer implements AsyncProcessor {
         this.kafkaProducer = kafkaProducer;
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        if (kafkaProducer != null) {
-            kafkaProducer.close();
-        }
+    public ExecutorService getWorkerPool() {
+        return workerPool;
+    }
+
+    public void setWorkerPool(ExecutorService workerPool) {
+        this.workerPool = workerPool;
     }
 
     @Override
@@ -70,6 +74,23 @@ public class KafkaProducer extends DefaultProducer implements AsyncProcessor {
         Properties props = getProps();
         if (kafkaProducer == null) {
             kafkaProducer = new org.apache.kafka.clients.producer.KafkaProducer(props);
+        }
+
+        // if we are in asynchronous mode we need a worker pool
+        if (!endpoint.isSynchronous() && workerPool == null) {
+            workerPool = endpoint.createProducerExecutor();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (kafkaProducer != null) {
+            kafkaProducer.close();
+        }
+
+        if (shutdownWorkerPool && workerPool != null) {
+            endpoint.getCamelContext().getExecutorServiceManager().shutdown(workerPool);
+            workerPool = null;
         }
     }
 
@@ -152,7 +173,14 @@ public class KafkaProducer extends DefaultProducer implements AsyncProcessor {
                 // Just set the exception back
                 exchange.setException(e);
             }
-            callback.done(false);
+            // use worker pool to continue routing the exchange
+            // as this thread is from Kafka Callback and should not be used by Camel routing
+            workerPool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    callback.done(false);
+                }
+            });
         }
     }
 }

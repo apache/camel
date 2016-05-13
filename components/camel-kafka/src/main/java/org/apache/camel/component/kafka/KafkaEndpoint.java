@@ -86,7 +86,13 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KafkaTopic[" + configuration.getTopic() + "]", configuration.getConsumerStreams());
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KafkaConsumer[" + configuration.getTopic() + "]", configuration.getConsumerStreams());
+    }
+
+    public ExecutorService createProducerExecutor() {
+        int core = getConfiguration().getWorkerPoolCoreSize();
+        int max = getConfiguration().getWorkerPoolMaxSize();
+        return getCamelContext().getExecutorServiceManager().newThreadPool(this, "KafkaProducer[" + configuration.getTopic() + "]", core, max);
     }
 
     public Exchange createKafkaExchange(ConsumerRecord record) {
@@ -648,5 +654,29 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
      */
     public void setBridgeEndpoint(boolean bridgeEndpoint) {
         this.bridgeEndpoint = bridgeEndpoint;
+    }
+
+    public void setWorkerPool(ExecutorService workerPool) {
+        configuration.setWorkerPool(workerPool);
+    }
+
+    public void setWorkerPoolMaxSize(Integer workerPoolMaxSize) {
+        configuration.setWorkerPoolMaxSize(workerPoolMaxSize);
+    }
+
+    public Integer getWorkerPoolMaxSize() {
+        return configuration.getWorkerPoolMaxSize();
+    }
+
+    public Integer getWorkerPoolCoreSize() {
+        return configuration.getWorkerPoolCoreSize();
+    }
+
+    public ExecutorService getWorkerPool() {
+        return configuration.getWorkerPool();
+    }
+
+    public void setWorkerPoolCoreSize(Integer workerPoolCoreSize) {
+        configuration.setWorkerPoolCoreSize(workerPoolCoreSize);
     }
 }

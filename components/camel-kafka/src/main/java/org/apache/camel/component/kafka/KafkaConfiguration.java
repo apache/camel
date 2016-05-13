@@ -17,7 +17,9 @@
 package org.apache.camel.component.kafka;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -99,6 +101,13 @@ public class KafkaConfiguration {
     //Producer configuration properties
     @UriParam(label = "producer", defaultValue = "100")
     private Integer retryBackoffMs = 100;
+
+    @UriParam(label = "producer")
+    private ExecutorService workerPool;
+    @UriParam(label = "producer", defaultValue = "10")
+    private Integer workerPoolCoreSize = 10;
+    @UriParam(label = "producer", defaultValue = "20")
+    private Integer workerPoolMaxSize = 20;
 
     //Async producer config
     @UriParam(label = "producer", defaultValue = "10000")
@@ -1145,4 +1154,50 @@ public class KafkaConfiguration {
         this.valueDeserializer = valueDeserializer;
     }
 
+    public boolean isSeekToBeginning() {
+        return seekToBeginning;
+    }
+
+    /**
+     * If the option is true, then KafkaConsumer will read from beginning on startup.
+     */
+    public void setSeekToBeginning(boolean seekToBeginning) {
+        this.seekToBeginning = seekToBeginning;
+    }
+
+    public ExecutorService getWorkerPool() {
+        return workerPool;
+    }
+
+    /**
+     * To use a custom worker pool for continue routing {@link Exchange} after kafka server has acknowledge
+     * the message that was sent to it from {@link KafkaProducer} using asynchronous non-blocking processing.
+     */
+    public void setWorkerPool(ExecutorService workerPool) {
+        this.workerPool = workerPool;
+    }
+
+    public Integer getWorkerPoolCoreSize() {
+        return workerPoolCoreSize;
+    }
+
+    /**
+     * Number of core threads for the worker pool for continue routing {@link Exchange} after kafka server has acknowledge
+     * the message that was sent to it from {@link KafkaProducer} using asynchronous non-blocking processing.
+     */
+    public void setWorkerPoolCoreSize(Integer workerPoolCoreSize) {
+        this.workerPoolCoreSize = workerPoolCoreSize;
+    }
+
+    public Integer getWorkerPoolMaxSize() {
+        return workerPoolMaxSize;
+    }
+
+    /**
+     * Maximum number of threads for the worker pool for continue routing {@link Exchange} after kafka server has acknowledge
+     * the message that was sent to it from {@link KafkaProducer} using asynchronous non-blocking processing.
+     */
+    public void setWorkerPoolMaxSize(Integer workerPoolMaxSize) {
+        this.workerPoolMaxSize = workerPoolMaxSize;
+    }
 }
