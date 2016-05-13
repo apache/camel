@@ -76,6 +76,8 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRestletBinding.class);
     private static final String RFC_2822_DATE_PATTERN = "EEE, dd MMM yyyy HH:mm:ss Z";
     private HeaderFilterStrategy headerFilterStrategy;
+    private boolean streamRepresentation;
+    private boolean autoCloseStream;
 
     public void populateExchangeFromRestletRequest(Request request, Response response, Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
@@ -363,9 +365,14 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 LOG.debug("Setting the Content-Type to be {}",  mediaType.toString());
                 exchange.getOut().setHeader(Exchange.CONTENT_TYPE, mediaType.toString());
             }
-            if (response.getEntity() instanceof StreamRepresentation) {
+            if (streamRepresentation && response.getEntity() instanceof StreamRepresentation) {
                 Representation representationDecoded = new DecodeRepresentation(response.getEntity());
-                exchange.getOut().setBody(representationDecoded.getStream());
+                InputStream is = representationDecoded.getStream();
+                exchange.getOut().setBody(is);
+                if (autoCloseStream) {
+                    // ensure the input stream is closed when we are done routing
+                    exchange.addOnCompletion(new RestletOnCompletion(is));
+                }
             } else if (response.getEntity() instanceof Representation) {
                 Representation representationDecoded = new DecodeRepresentation(response.getEntity());
                 exchange.getOut().setBody(representationDecoded.getText());
@@ -583,5 +590,21 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;
+    }
+
+    public boolean isStreamRepresentation() {
+        return streamRepresentation;
+    }
+
+    public void setStreamRepresentation(boolean streamRepresentation) {
+        this.streamRepresentation = streamRepresentation;
+    }
+
+    public boolean isAutoCloseStream() {
+        return autoCloseStream;
+    }
+
+    public void setAutoCloseStream(boolean autoCloseStream) {
+        this.autoCloseStream = autoCloseStream;
     }
 }
