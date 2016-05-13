@@ -90,9 +90,11 @@ The Gora component has no options.
 
 
 
+
 // endpoint options: START
 The Gora component supports 22 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -119,7 +121,9 @@ The Gora component supports 22 endpoint options which are listed below:
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 [[Gora-SupportedGoraOperations]]

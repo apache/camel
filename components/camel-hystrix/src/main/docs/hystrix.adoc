@@ -52,9 +52,11 @@ The Hystrix component has no options.
 
 
 
+
 // endpoint options: START
 The Hystrix component supports 38 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -97,7 +99,9 @@ The Hystrix component supports 38 endpoint options which are listed below:
 | threadPoolMetricsRollingStatisticalWindowBuckets | threadpool | 10 | Integer | This property sets the number of buckets the rolling statistical window is divided into.
 | threadPoolMetricsRollingStatisticalWindowInMilliseconds | threadpool | 10000 | Integer | This property sets the duration of the statistical rolling window in milliseconds. This is how long metrics are kept for the thread pool.
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 [[Hystrix-InMessageHeaders]]

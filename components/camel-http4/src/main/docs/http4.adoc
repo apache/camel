@@ -54,11 +54,13 @@ Http4 Component Options
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 
+
 // component options: START
 The HTTP4 component supports 13 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -76,7 +78,10 @@ The HTTP4 component supports 13 options which are listed below.
 | cookieStore | CookieStore | To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy).
 | headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
@@ -86,6 +91,7 @@ The HTTP4 component supports 13 options which are listed below.
 // endpoint options: START
 The HTTP4 component supports 31 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -121,7 +127,9 @@ The HTTP4 component supports 31 endpoint options which are listed below:
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | useSystemProperties | advanced | false | boolean | To use System Properties as fallback for configuration
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 

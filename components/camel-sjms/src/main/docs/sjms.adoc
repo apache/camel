@@ -101,11 +101,13 @@ Component Options and Configurations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
+
 // component options: START
 The Simple JMS component supports 9 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -119,7 +121,10 @@ The Simple JMS component supports 9 options which are listed below.
 | timedTaskManager | TimedTaskManager | To use a custom TimedTaskManager
 | messageCreatedStrategy | MessageCreatedStrategy | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
@@ -128,6 +133,7 @@ The Simple JMS component supports 9 options which are listed below.
 // endpoint options: START
 The Simple JMS component supports 32 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -164,7 +170,9 @@ The Simple JMS component supports 32 endpoint options which are listed below:
 | transactionBatchTimeout | transaction | 5000 | long | Sets timeout (in millis) for batch transactions the value should be 1000 or higher.
 | transactionCommitStrategy | transaction |  | TransactionCommitStrategy | Sets the commit strategy.
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 

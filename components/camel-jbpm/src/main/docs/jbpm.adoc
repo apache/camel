@@ -41,9 +41,11 @@ The JBPM component has no options.
 
 
 
+
 // endpoint options: START
 The JBPM component supports 27 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -75,7 +77,9 @@ The JBPM component supports 27 endpoint options which are listed below:
 | password | security |  | String | Password for authentication
 | userName | security |  | String | Username for authentication
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 [[jBPM-MessageHeaders]]

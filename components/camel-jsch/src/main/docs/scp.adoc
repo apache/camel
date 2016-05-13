@@ -42,23 +42,29 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The SCP component supports 1 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | verboseLogging | boolean | JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But setting this option to true turns on the verbose logging again.
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
 // endpoint options: START
 The SCP component supports 42 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -105,7 +111,9 @@ The SCP component supports 42 endpoint options which are listed below:
 | password | security |  | String | Password to use for login
 | username | security |  | String | Username to use for login
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 [[Jsch-Limitations]]

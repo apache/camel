@@ -61,24 +61,30 @@ GoogleMailComponent
 ^^^^^^^^^^^^^^^^^^^
 
 
+
 // component options: START
 The Google Mail component supports 2 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | configuration | GoogleMailConfiguration | To use the shared configuration
 | clientFactory | GoogleMailClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleMailClientFactory
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
 // endpoint options: START
 The Google Mail component supports 13 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -96,7 +102,9 @@ The Google Mail component supports 13 endpoint options which are listed below:
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 [[GoogleMail-ProducerEndpoints]]

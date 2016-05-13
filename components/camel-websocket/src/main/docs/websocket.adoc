@@ -35,11 +35,13 @@ Websocket Options
 
 
 
+
 // component options: START
 The Jetty Websocket component supports 12 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -56,7 +58,10 @@ The Jetty Websocket component supports 12 options which are listed below.
 | sslContextParameters | SSLContextParameters | To configure security using SSLContextParameters
 | socketFactory | Map | To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol. The default key is reserved for the default implementation.
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
@@ -66,6 +71,7 @@ The Jetty Websocket component supports 12 options which are listed below.
 // endpoint options: START
 The Jetty Websocket component supports 20 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -90,7 +96,9 @@ The Jetty Websocket component supports 20 endpoint options which are listed belo
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
  
 

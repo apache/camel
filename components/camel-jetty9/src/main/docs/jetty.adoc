@@ -51,11 +51,13 @@ Options
 
 
 
+
 // component options: START
 The Jetty 9 component supports 30 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -90,7 +92,10 @@ The Jetty 9 component supports 30 options which are listed below.
 | allowJavaSerializedObject | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
 | headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
@@ -98,6 +103,7 @@ The Jetty 9 component supports 30 options which are listed below.
 // endpoint options: START
 The Jetty 9 component supports 52 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -154,7 +160,9 @@ The Jetty 9 component supports 52 endpoint options which are listed below:
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 | sslContextParametersRef | security |  | String | To configure security using SSLContextParameters
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 [[Jetty-MessageHeaders]]

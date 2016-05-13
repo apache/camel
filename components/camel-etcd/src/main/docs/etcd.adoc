@@ -9,9 +9,11 @@
 
 
 
+
 // endpoint options: START
 The etcd component supports 15 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -31,7 +33,9 @@ The etcd component supports 15 endpoint options which are listed below:
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters.
 | userName | security |  | String | The user name to use for basic authentication.
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 

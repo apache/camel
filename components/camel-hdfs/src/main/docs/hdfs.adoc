@@ -58,23 +58,29 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The HDFS component supports 1 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | jAASConfiguration | Configuration | To use the given configuration for security with JAAS.
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
 // endpoint options: START
 The HDFS component supports 41 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -120,7 +126,9 @@ The HDFS component supports 41 endpoint options which are listed below:
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 

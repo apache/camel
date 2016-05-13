@@ -64,23 +64,29 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The Mina component supports 1 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | configuration | MinaConfiguration | To use the shared mina configuration.
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
 // endpoint options: START
 The Mina component supports 24 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -109,7 +115,9 @@ The Mina component supports 24 endpoint options which are listed below:
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 [[MINA-Usingacustomcodec]]

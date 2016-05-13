@@ -49,23 +49,29 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The Hazelcast component supports 1 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | hazelcastInstance | HazelcastInstance | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference camel use the default hazelcast instance from the camel-hazelcast instance.
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
 // endpoint options: START
 The Hazelcast component supports 13 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -83,7 +89,9 @@ The Hazelcast component supports 13 endpoint options which are listed below:
 | transacted | seda | false | boolean | If set to true then the consumer runs in transaction mode where the messages in the seda queue will only be removed if the transaction commits which happens when the processing is complete.
 | transferExchange | seda | false | boolean | If set to true the whole Exchange will be transfered. If header or body contains not serializable objects they will be skipped.
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 [[HazelcastComponent-Sections]]

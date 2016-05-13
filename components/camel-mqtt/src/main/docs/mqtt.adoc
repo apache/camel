@@ -38,11 +38,13 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The MQTT component supports 3 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -50,13 +52,17 @@ The MQTT component supports 3 options which are listed below.
 | userName | String | Username to be used for authentication against the MQTT broker
 | password | String | Password to be used for authentication against the MQTT broker
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
 // endpoint options: START
 The MQTT component supports 39 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -100,7 +106,9 @@ The MQTT component supports 39 endpoint options which are listed below:
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 [[MQTT-Samples]]
