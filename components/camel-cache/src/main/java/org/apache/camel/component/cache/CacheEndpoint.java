@@ -47,7 +47,7 @@ public class CacheEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(CacheEndpoint.class);
     @UriParam
     private CacheConfiguration config;
-    @UriParam
+    @UriParam(label = "advanced")
     private CacheManagerFactory cacheManagerFactory;
     @UriParam
     private String key;
