@@ -130,6 +130,9 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
         return hystrixConfigurationRef;
     }
 
+    /**
+     * Refers to a Hystrix configuration to use for configuring the Hystrix EIP.
+     */
     public void setHystrixConfigurationRef(String hystrixConfigurationRef) {
         this.hystrixConfigurationRef = hystrixConfigurationRef;
     }
