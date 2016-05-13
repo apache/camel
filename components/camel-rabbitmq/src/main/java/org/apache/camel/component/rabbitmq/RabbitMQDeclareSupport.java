@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.rabbitmq;
 
+import com.rabbitmq.client.AMQP.Queue.DeclareOk;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,6 +51,9 @@ public class RabbitMQDeclareSupport {
         }
 
         if (shouldDeclareQueue()) {
+            if(endpoint.isServerNamedQueue()){
+              declareServerNamedQueue(channel);
+            }
             // need to make sure the queueDeclare is same with the exchange declare
             declareAndBindQueue(channel, endpoint.getQueue(), endpoint.getExchangeName(), endpoint.getRoutingKey(), resolvedQueueArguments());
         }
@@ -97,6 +101,11 @@ public class RabbitMQDeclareSupport {
         channel.exchangeDeclare(exchange, exchangeType, endpoint.isDurable(), endpoint.isAutoDelete(), exchangeArgs);
     }
 
+    private void declareServerNamedQueue(final Channel channel) throws IOException{
+      DeclareOk declareOk = channel.queueDeclare();
+      endpoint.setQueue(declareOk.getQueue());
+    }
+    
     private void declareAndBindQueue(final Channel channel, final String queue, final String exchange, final String routingKey, final Map<String, Object> arguments)
             throws IOException {
         channel.queueDeclare(queue, endpoint.isDurable(), false, endpoint.isAutoDelete(), arguments);
