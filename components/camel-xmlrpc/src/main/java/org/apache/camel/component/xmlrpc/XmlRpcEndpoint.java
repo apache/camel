@@ -45,9 +45,9 @@ public class XmlRpcEndpoint extends DefaultEndpoint {
     private XmlRpcConfiguration configuration;
     @UriParam
     private String defaultMethodName;
-    @UriParam
+    @UriParam(label = "advanced")
     private XmlRpcClientConfigurer clientConfigurer;
-    @UriParam
+    @UriParam(label = "advanced")
     private XmlRpcClientConfigImpl clientConfig = new XmlRpcClientConfigImpl();
 
     public XmlRpcEndpoint() {
