@@ -1154,17 +1154,6 @@ public class KafkaConfiguration {
         this.valueDeserializer = valueDeserializer;
     }
 
-    public boolean isSeekToBeginning() {
-        return seekToBeginning;
-    }
-
-    /**
-     * If the option is true, then KafkaConsumer will read from beginning on startup.
-     */
-    public void setSeekToBeginning(boolean seekToBeginning) {
-        this.seekToBeginning = seekToBeginning;
-    }
-
     public ExecutorService getWorkerPool() {
         return workerPool;
     }
