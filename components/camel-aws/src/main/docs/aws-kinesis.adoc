@@ -111,8 +111,7 @@ Message headers set by the Kinesis consumer
 |Header |Type |Description
 
 |`CamelAwsKinesisSequenceNumber` |`String` |The sequence number of the record. This is represented as a String as it
-size is not defined by the API. If it is to be used as a numerical type
-then use
+size is not defined by the API. If it is to be used as a numerical type then use
 
 |`CamelAwsKinesisApproximateArrivalTimestamp` |`String` |The time AWS assigned as the arrival time of the record.
 
