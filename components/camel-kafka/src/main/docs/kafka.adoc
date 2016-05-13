@@ -59,16 +59,33 @@ Options (Camel 2.16 or older)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
+
+
 // component options: START
-The Kafka component has no options.
+The Kafka component supports 1 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,8",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| workerPool | ExecutorService | To use a shared custom worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing. If using this option then you must handle the lifecycle of the thread pool to shut the pool down when no longer needed.
+|=======================================================================
+{% endraw %}
 // component options: END
 
 
 
 
 
+
+
+
+
+
 // endpoint options: START
-The Kafka component supports 71 endpoint options which are listed below:
+The Kafka component supports 74 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -143,11 +160,17 @@ The Kafka component supports 71 endpoint options which are listed below:
 | sslTruststoreLocation | producer |  | String | The location of the trust store file.
 | sslTruststorePassword | producer |  | String | The password for the trust store file.
 | sslTruststoreType | producer | JKS | String | The file format of the trust store file. Default value is JKS.
+| workerPool | producer |  | ExecutorService | To use a custom worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing.
+| workerPoolCoreSize | producer | 10 | Integer | Number of core threads for the worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing.
+| workerPoolMaxSize | producer | 20 | Integer | Maximum number of threads for the worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
+
+
 
 
 

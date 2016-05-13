@@ -17,8 +17,10 @@
 package org.apache.camel.component.kafka;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.UriEndpointComponent;
 
 public class KafkaComponent extends UriEndpointComponent {
@@ -31,6 +33,8 @@ public class KafkaComponent extends UriEndpointComponent {
         super(context, KafkaEndpoint.class);
     }
 
+    private ExecutorService workerPool;
+
     @Override
     protected KafkaEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {
         KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
@@ -38,8 +42,25 @@ public class KafkaComponent extends UriEndpointComponent {
         if (brokers != null) {
             endpoint.getConfiguration().setBrokers(brokers);
         }
+
+        // configure component options before endpoint properties which can override from params
+        endpoint.getConfiguration().setWorkerPool(workerPool);
+
         setProperties(endpoint, params);
         return endpoint;
+    }
+
+    public ExecutorService getWorkerPool() {
+        return workerPool;
+    }
+
+    /**
+     * To use a shared custom worker pool for continue routing {@link Exchange} after kafka server has acknowledge
+     * the message that was sent to it from {@link KafkaProducer} using asynchronous non-blocking processing.
+     * If using this option then you must handle the lifecycle of the thread pool to shut the pool down when no longer needed.
+     */
+    public void setWorkerPool(ExecutorService workerPool) {
+        this.workerPool = workerPool;
     }
 
 }
