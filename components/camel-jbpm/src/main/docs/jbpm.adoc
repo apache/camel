@@ -42,6 +42,7 @@ The JBPM component has no options.
 
 
 
+
 // endpoint options: START
 The JBPM component supports 27 endpoint options which are listed below:
 
@@ -53,7 +54,6 @@ The JBPM component supports 27 endpoint options which are listed below:
 | attachmentId | producer |  | Long | attachId to use when retrieving attachments
 | contentId | producer |  | Long | contentId to use when retrieving attachments
 | deploymentId | producer |  | String | *Required* The id of the deployment
-| entities | producer |  | List | The potentialOwners when nominateTask operation is performed
 | event | producer |  | Object | the data associated with this event when signalEvent operation is performed
 | eventType | producer |  | String | the type of event to use when signalEvent operation is performed
 | identifier | producer |  | String | identifier the global identifier
@@ -62,7 +62,6 @@ The JBPM component supports 27 endpoint options which are listed below:
 | operation | producer | startProcess | String | The operation to perform
 | processId | producer |  | String | the id of the process that should be acted upon
 | processInstanceId | producer |  | Long | the id of the process instance
-| statuses | producer |  | List | The list of status to use when filtering tasks
 | targetUserId | producer |  | String | The targetUserId used when delegating a task
 | task | producer |  | Task | The task instance to use with task operations
 | taskId | producer |  | Long | the id of the task
@@ -70,15 +69,18 @@ The JBPM component supports 27 endpoint options which are listed below:
 | userId | producer |  | String | userId to use with task operations
 | value | producer |  | Object | the value to assign to the global identifier
 | workItemId | producer |  | Long | the id of the work item
+| entities | advanced |  | List | The potentialOwners when nominateTask operation is performed
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | extraJaxbClasses | advanced |  | Class[] | To load additional classes when working with XML
 | parameters | advanced |  | Map | the variables that should be set for various operations
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| statuses | filter |  | List | The list of status to use when filtering tasks
 | password | security |  | String | Password for authentication
 | userName | security |  | String | Username for authentication
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 

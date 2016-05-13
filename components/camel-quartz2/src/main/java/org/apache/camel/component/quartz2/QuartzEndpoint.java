@@ -72,7 +72,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private String cron;
     @UriParam
     private boolean stateful;
-    @UriParam
+    @UriParam(label = "scheduler")
     private boolean fireNow;
     @UriParam(defaultValue = "true")
     private boolean deleteJob = true;
@@ -82,21 +82,21 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private boolean durableJob;
     @UriParam
     private boolean recoverableJob;
-    @UriParam(defaultValue = "500")
+    @UriParam(label = "scheduler", defaultValue = "500")
     private long triggerStartDelay = 500;
-    @UriParam
+    @UriParam(label = "scheduler")
     private int startDelayedSeconds;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "scheduler", defaultValue = "true")
     private boolean autoStartScheduler = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean usingFixedCamelContextName;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean prefixJobNameWithEndpointId;
-    @UriParam(prefix = "trigger.", multiValue = true)
+    @UriParam(prefix = "trigger.", multiValue = true, label = "advanced")
     private Map<String, Object> triggerParameters;
-    @UriParam(prefix = "job.", multiValue = true)
+    @UriParam(prefix = "job.", multiValue = true, label = "advanced")
     private Map<String, Object> jobParameters;
-    @UriParam
+    @UriParam(label = "advanced")
     private Calendar customCalendar;
 
     public QuartzEndpoint(String uri, QuartzComponent quartzComponent) {

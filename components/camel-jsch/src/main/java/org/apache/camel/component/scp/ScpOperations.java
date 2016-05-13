@@ -83,7 +83,6 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
     @Override
     public boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
-        // TODO: implement
         return false;
     }
     

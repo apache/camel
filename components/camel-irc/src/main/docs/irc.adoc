@@ -45,8 +45,9 @@ The IRC component has no options.
 
 
 
+
 // endpoint options: START
-The IRC component supports 24 endpoint options which are listed below:
+The IRC component supports 26 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -55,30 +56,33 @@ The IRC component supports 24 endpoint options which are listed below:
 | hostname | common |  | String | *Required* Hostname for the IRC chat server
 | port | common | 6667,6668,6669 | int | Port number for the IRC chat server
 | autoRejoin | common | true | boolean | Whether to auto re-join when being kicked
-| colors | common | true | boolean | Whether or not the server supports color codes.
 | namesOnJoin | common | false | boolean | Sends NAMES command to channel after joining it. link onReply has to be true in order to process the result which will have the header value irc.num = '353'.
 | nickname | common |  | String | The nickname used in chat.
 | nickPassword | common |  | String | Your IRC server nickname password.
-| onJoin | common | true | boolean | Handle user join events.
-| onKick | common | true | boolean | Handle kick events.
-| onMode | common | true | boolean | Handle mode change events.
-| onNick | common | true | boolean | Handle nickname change events.
-| onPart | common | true | boolean | Handle user part events.
-| onPrivmsg | common | true | boolean | Handle private message events.
-| onQuit | common | true | boolean | Handle user quit events.
-| onReply | common | false | boolean | Whether or not to handle general responses to commands or informational messages.
-| onTopic | common | true | boolean | Handle topic change events.
 | password | common |  | String | The IRC server password.
 | persistent | common | true | boolean | Use persistent messages.
 | realname | common |  | String | The IRC user's actual name.
 | username | common |  | String | The IRC server user name.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| colors | advanced | true | boolean | Whether or not the server supports color codes.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| onJoin | filter | true | boolean | Handle user join events.
+| onKick | filter | true | boolean | Handle kick events.
+| onMode | filter | true | boolean | Handle mode change events.
+| onNick | filter | true | boolean | Handle nickname change events.
+| onPart | filter | true | boolean | Handle user part events.
+| onPrivmsg | filter | true | boolean | Handle private message events.
+| onQuit | filter | true | boolean | Handle user quit events.
+| onReply | filter | false | boolean | Whether or not to handle general responses to commands or informational messages.
+| onTopic | filter | true | boolean | Handle topic change events.
+| sslContextParameters | security |  | SSLContextParameters | Used for configuring security using SSL. Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. Note that this setting overrides the trustManager option.
+| trustManager | security |  | SSLTrustManager | The trust manager used to verify the SSL server's certificate.
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
