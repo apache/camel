@@ -61,35 +61,35 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private String host;
     @UriPath @Metadata(required = "true")
     private int port;
-    @UriPath
+    @UriPath(label = "common")
     private String participant;
-    @UriParam
+    @UriParam(label = "security")
     private String user;
-    @UriParam
+    @UriParam(label = "security")
     private String password;
-    @UriParam(defaultValue = "Camel")
+    @UriParam(label = "common,advanced", defaultValue = "Camel")
     private String resource = "Camel";
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true")
     private boolean login = true;
-    @UriParam
+    @UriParam(label = "common,advanced")
     private boolean createAccount;
-    @UriParam
+    @UriParam(label = "common")
     private String room;
-    @UriParam
+    @UriParam(label = "common")
     private String nickname;
-    @UriParam
+    @UriParam(label = "common")
     private String serviceName;
-    @UriParam
+    @UriParam(label = "common")
     private boolean pubsub;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean doc;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true")
     private boolean testConnectionOnStartup = true;
-    @UriParam(defaultValue = "10")
+    @UriParam(label = "consumer", defaultValue = "10")
     private int connectionPollDelay = 10;
-    @UriParam
+    @UriParam(label = "filter")
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
-    @UriParam
+    @UriParam(label = "advanced")
     private ConnectionConfiguration connectionConfig;
 
     public XmppEndpoint() {
