@@ -84,6 +84,7 @@ The Mina2 component supports 1 options which are listed below.
 
 
 
+
 // endpoint options: START
 The Mina2 component supports 29 endpoint options which are listed below:
 
@@ -94,35 +95,36 @@ The Mina2 component supports 29 endpoint options which are listed below:
 | protocol | common |  | String | *Required* Protocol to use
 | host | common |  | String | *Required* Hostname to use. Use localhost or 0.0.0.0 for local server as consumer. For producer use the hostname or ip address of the remote server.
 | port | common |  | int | *Required* Port number
-| allowDefaultCodec | common | true | boolean | The mina component installs a default codec if both codec is null and textline is false. Setting allowDefaultCodec to false prevents the mina component from installing a default codec as the first element in the filter chain. This is useful in scenarios where another filter must be the first in the filter chain like the SSL filter.
-| autoStartTls | common | true | boolean | Whether to auto start SSL handshake.
-| codec | common |  | ProtocolCodecFactory | To use a custom minda codec implementation.
-| decoderMaxLineLength | common | 1024 | int | To set the textline protocol decoder max line length. By default the default value of Mina itself is used which are 1024.
 | disconnect | common | false | boolean | Whether or not to disconnect(close) from Mina session right after use. Can be used for both consumer and producer.
-| disconnectOnNoReply | common | true | boolean | If sync is enabled then this option dictates MinaConsumer if it should disconnect where there is no reply to send back.
-| encoderMaxLineLength | common | -1 | int | To set the textline protocol encoder max line length. By default the default value of Mina itself is used which are Integer.MAX_VALUE.
-| encoding | common |  | String | You can configure the encoding (a charset name) to use for the TCP textline codec and the UDP protocol. If not provided Camel will use the JVM default Charset
-| filters | common |  | List | You can set a list of Mina IoFilters to use.
-| lazySessionCreation | common | true | boolean | Sessions can be lazily created to avoid exceptions if the remote server is not up and running when the Camel producer is started.
-| maximumPoolSize | common | 16 | int | Number of worker threads in the worker pool for TCP and UDP
 | minaLogger | common | false | boolean | You can enable the Apache MINA logging filter. Apache MINA uses slf4j logging at INFO level to log all input and output.
-| noReplyLogLevel | common | WARN | LoggingLevel | If sync is enabled this option dictates MinaConsumer which logging level to use when logging a there is no reply to send back.
-| orderedThreadPoolExecutor | common | true | boolean | Whether to use ordered thread pool to ensure events are processed orderly on the same channel.
-| sslContextParameters | common |  | SSLContextParameters | To configure SSL security.
 | sync | common | true | boolean | Setting to set endpoint as one-way or request-response.
-| textline | common | false | boolean | Only used for TCP. If no codec is specified you can use this flag to indicate a text line based codec; if not specified or the value is false then Object Serialization is assumed over TCP.
-| textlineDelimiter | common |  | Mina2TextLineDelimiter | Only used for TCP and if textline=true. Sets the text line delimiter to use. If none provided Camel will use DEFAULT. This delimiter is used to mark the end of text.
 | timeout | common | 30000 | long | You can configure the timeout that specifies how long to wait for a response from a remote server. The timeout unit is in milliseconds so 60000 is 60 seconds.
-| transferExchange | common | false | boolean | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body Out body fault body In headers Out headers fault headers exchange properties exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | clientMode | consumer | false | boolean | If the clientMode is true mina consumer will connect the address as a TCP client.
+| disconnectOnNoReply | consumer (advanced) | true | boolean | If sync is enabled then this option dictates MinaConsumer if it should disconnect where there is no reply to send back.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| cachedAddress | producer | true | boolean | Whether to create the InetAddress once and reuse. Setting this to false allows to pickup DNS changes in the network.
+| noReplyLogLevel | consumer (advanced) | WARN | LoggingLevel | If sync is enabled this option dictates MinaConsumer which logging level to use when logging a there is no reply to send back.
+| cachedAddress | producer (advanced) | true | boolean | Whether to create the InetAddress once and reuse. Setting this to false allows to pickup DNS changes in the network.
+| lazySessionCreation | producer (advanced) | true | boolean | Sessions can be lazily created to avoid exceptions if the remote server is not up and running when the Camel producer is started.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| maximumPoolSize | advanced | 16 | int | Number of worker threads in the worker pool for TCP and UDP
+| orderedThreadPoolExecutor | advanced | true | boolean | Whether to use ordered thread pool to ensure events are processed orderly on the same channel.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| transferExchange | advanced | false | boolean | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body Out body fault body In headers Out headers fault headers exchange properties exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.
+| allowDefaultCodec | codec | true | boolean | The mina component installs a default codec if both codec is null and textline is false. Setting allowDefaultCodec to false prevents the mina component from installing a default codec as the first element in the filter chain. This is useful in scenarios where another filter must be the first in the filter chain like the SSL filter.
+| codec | codec |  | ProtocolCodecFactory | To use a custom minda codec implementation.
+| decoderMaxLineLength | codec | 1024 | int | To set the textline protocol decoder max line length. By default the default value of Mina itself is used which are 1024.
+| encoderMaxLineLength | codec | -1 | int | To set the textline protocol encoder max line length. By default the default value of Mina itself is used which are Integer.MAX_VALUE.
+| encoding | codec |  | String | You can configure the encoding (a charset name) to use for the TCP textline codec and the UDP protocol. If not provided Camel will use the JVM default Charset
+| filters | codec |  | List | You can set a list of Mina IoFilters to use.
+| textline | codec | false | boolean | Only used for TCP. If no codec is specified you can use this flag to indicate a text line based codec; if not specified or the value is false then Object Serialization is assumed over TCP.
+| textlineDelimiter | codec |  | Mina2TextLineDelimiter | Only used for TCP and if textline=true. Sets the text line delimiter to use. If none provided Camel will use DEFAULT. This delimiter is used to mark the end of text.
+| autoStartTls | security | true | boolean | Whether to auto start SSL handshake.
+| sslContextParameters | security |  | SSLContextParameters | To configure SSL security.
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
