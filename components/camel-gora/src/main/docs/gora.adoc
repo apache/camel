@@ -91,6 +91,7 @@ The Gora component has no options.
 
 
 
+
 // endpoint options: START
 The Gora component supports 22 endpoint options which are listed below:
 
@@ -99,30 +100,31 @@ The Gora component supports 22 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | name | common |  | String | *Required* Instance name
-| concurrentConsumers | common | 1 | int | Concurrent Consumers NOTE: used only by consumer
-| dataStoreClass | common |  | String | dataStore type
-| endKey | common |  | Object | Gora Query End Key attribute
-| endTime | common |  | long | Gora Query End Time attribute
-| fields | common |  | Strings | Gora Query Fields attribute
-| flushOnEveryOperation | common | true | boolean | Flush on every operation NOTE: used only by producer
-| hadoopConfiguration | common |  | Configuration | configuration
-| keyClass | common |  | String | key type
-| keyRangeFrom | common |  | Object | Gora Query Key Range From attribute
-| keyRangeTo | common |  | Object | Gora Query Key Range To attribute
-| limit | common |  | long | Gora Query Limit attribute
-| startKey | common |  | Object | Gora Query Start Key attribute
-| startTime | common |  | long | Gora Query Start Time attribute
-| timeRangeFrom | common |  | long | Gora Query Time Range From attribute
-| timeRangeTo | common |  | long | Gora Query Key Range To attribute
-| timestamp | common |  | long | Gora Query Timestamp attribute
-| valueClass | common |  | String | value type
+| dataStoreClass | common |  | String | The type of the dataStore
+| keyClass | common |  | String | The type class of the key
+| valueClass | common |  | String | The type of the value
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| concurrentConsumers | consumer | 1 | int | Number of concurrent consumers
+| endKey | consumer |  | Object | The End Key
+| endTime | consumer |  | long | The End Time
+| fields | consumer |  | Strings | The Fields
+| keyRangeFrom | consumer |  | Object | The Key Range From
+| keyRangeTo | consumer |  | Object | The Key Range To
+| limit | consumer |  | long | The Limit
+| startKey | consumer |  | Object | The Start Key
+| startTime | consumer |  | long | The Start Time
+| timeRangeFrom | consumer |  | long | The Time Range From
+| timeRangeTo | consumer |  | long | The Time Range To
+| timestamp | consumer |  | long | The Timestamp
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| flushOnEveryOperation | producer | true | boolean | Flush on every operation
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| hadoopConfiguration | advanced |  | Configuration | Hadoop Configuration
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 

@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of Camel-Gora {@link Consumer}.
- *
  */
 public class GoraConsumer extends ScheduledPollConsumer {
 
@@ -57,11 +56,6 @@ public class GoraConsumer extends ScheduledPollConsumer {
      * Camel Gora Query
      */
     private Query query;
-
-    /**
-     * executor service
-     */
-    private ExecutorService executor;
 
     /**
      * Poll run
