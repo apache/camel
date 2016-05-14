@@ -76,6 +76,7 @@ The Netty4 component supports 3 options which are listed below.
 
 
 
+
 // endpoint options: START
 The Netty4 component supports 72 endpoint options which are listed below:
 
@@ -86,21 +87,11 @@ The Netty4 component supports 72 endpoint options which are listed below:
 | protocol | common |  | String | *Required* The protocol to use which can be tcp or udp.
 | host | common |  | String | *Required* The hostname. For the consumer the hostname is localhost or 0.0.0.0 For the producer the hostname is the remote host to connect to
 | port | common |  | int | *Required* The host port number
-| allowDefaultCodec | common | true | boolean | The netty component installs a default codec if both encoder/deocder is null and textline is false. Setting allowDefaultCodec to false prevents the netty component from installing a default codec as the first element in the filter chain.
-| autoAppendDelimiter | common | true | boolean | Whether or not to auto append missing end delimiter when sending using the textline codec.
-| decoder | common |  | ChannelHandler | A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads.
-| decoderMaxLineLength | common | 1024 | int | The max line length to use for the textline codec.
-| decoders | common |  | String | A list of decoders to be used. You can use a String which have values separated by comma and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup.
-| delimiter | common | LINE | TextLineDelimiter | The delimiter to use for the textline codec. Possible values are LINE and NULL.
 | disconnect | common | false | boolean | Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer.
-| encoder | common |  | ChannelHandler | A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads.
-| encoders | common |  | String | A list of encoders to be used. You can use a String which have values separated by comma and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup.
-| encoding | common |  | String | The encoding (a charset name) to use for the textline codec. If not provided Camel will use the JVM default Charset.
 | keepAlive | common | true | boolean | Setting to ensure socket is not closed due to inactivity
 | reuseAddress | common | true | boolean | Setting to facilitate socket multiplexing
 | sync | common | true | boolean | Setting to set endpoint as one-way or request-response
 | tcpNoDelay | common | true | boolean | Setting to improve TCP protocol performance
-| textline | common | false | boolean | Only used for TCP. If no codec is specified you can use this flag to indicate a text line based codec; if not specified or the value is false then Object Serialization is assumed over TCP.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | broadcast | consumer | false | boolean | Setting to choose Multicast over UDP
 | clientMode | consumer | false | boolean | If the clientMode is true netty consumer will connect the address as a TCP client.
@@ -142,6 +133,16 @@ The Netty4 component supports 72 endpoint options which are listed below:
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | transferExchange | advanced | false | boolean | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body Out body fault body In headers Out headers fault headers exchange properties exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.
 | udpByteArrayCodec | advanced | false | boolean | For UDP only. If enabled the using byte array codec instead of Java serialization protocol.
+| allowDefaultCodec | codec | true | boolean | The netty component installs a default codec if both encoder/deocder is null and textline is false. Setting allowDefaultCodec to false prevents the netty component from installing a default codec as the first element in the filter chain.
+| autoAppendDelimiter | codec | true | boolean | Whether or not to auto append missing end delimiter when sending using the textline codec.
+| decoder | codec |  | ChannelHandler | A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads.
+| decoderMaxLineLength | codec | 1024 | int | The max line length to use for the textline codec.
+| decoders | codec |  | String | A list of decoders to be used. You can use a String which have values separated by comma and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup.
+| delimiter | codec | LINE | TextLineDelimiter | The delimiter to use for the textline codec. Possible values are LINE and NULL.
+| encoder | codec |  | ChannelHandler | A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads.
+| encoders | codec |  | String | A list of encoders to be used. You can use a String which have values separated by comma and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup.
+| encoding | codec |  | String | The encoding (a charset name) to use for the textline codec. If not provided Camel will use the JVM default Charset.
+| textline | codec | false | boolean | Only used for TCP. If no codec is specified you can use this flag to indicate a text line based codec; if not specified or the value is false then Object Serialization is assumed over TCP.
 | enabledProtocols | security | TLSv1,TLSv1.1,TLSv1.2 | String | Which protocols to enable when using SSL
 | keyStoreFile | security |  | File | Client side certificate keystore to be used for encryption
 | keyStoreFormat | security |  | String | Keystore format to be used for payload encryption. Defaults to JKS if not set
@@ -158,6 +159,7 @@ The Netty4 component supports 72 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 

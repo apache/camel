@@ -48,25 +48,25 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private long requestTimeout;
     @UriParam(defaultValue = "true")
     private boolean sync = true;
-    @UriParam
+    @UriParam(label = "codec")
     private boolean textline;
-    @UriParam(defaultValue = "LINE")
+    @UriParam(label = "codec", defaultValue = "LINE")
     private TextLineDelimiter delimiter = TextLineDelimiter.LINE;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "codec", defaultValue = "true")
     private boolean autoAppendDelimiter = true;
-    @UriParam(defaultValue = "1024")
+    @UriParam(label = "codec", defaultValue = "1024")
     private int decoderMaxLineLength = 1024;
-    @UriParam
+    @UriParam(label = "codec")
     private String encoding;
-    @UriParam(description = "To use a single encoder. This options is deprecated use encoders instead.")
+    @UriParam(label = "codec", description = "To use a single encoder. This options is deprecated use encoders instead.")
     @Deprecated
     private ChannelHandler encoder;
-    @UriParam(javaType = "java.lang.String")
+    @UriParam(label = "codec", javaType = "java.lang.String")
     private List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
-    @UriParam(description = "To use a single decoder. This options is deprecated use encoders instead.")
+    @UriParam(label = "codec", description = "To use a single decoder. This options is deprecated use encoders instead.")
     @Deprecated
     private ChannelHandler decoder;
-    @UriParam(javaType = "java.lang.String")
+    @UriParam(label = "codec", javaType = "java.lang.String")
     private List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
     @UriParam
     private boolean disconnect;
@@ -82,7 +82,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private LoggingLevel serverExceptionCaughtLogLevel = LoggingLevel.WARN;
     @UriParam(label = "consumer,advanced", defaultValue = "DEBUG")
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "codec", defaultValue = "true")
     private boolean allowDefaultCodec = true;
     @UriParam(label = "producer,advanced")
     private ClientInitializerFactory clientInitializerFactory;
@@ -108,7 +108,6 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean udpByteArrayCodec;
     @UriParam(label = "producer")
     private boolean reuseChannel;
-
 
     /**
      * Returns a copy of this configuration
