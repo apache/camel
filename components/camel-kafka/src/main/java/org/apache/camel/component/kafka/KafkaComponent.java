@@ -25,6 +25,8 @@ import org.apache.camel.impl.UriEndpointComponent;
 
 public class KafkaComponent extends UriEndpointComponent {
 
+    private ExecutorService workerPool;
+
     public KafkaComponent() {
         super(KafkaEndpoint.class);
     }
@@ -32,8 +34,6 @@ public class KafkaComponent extends UriEndpointComponent {
     public KafkaComponent(CamelContext context) {
         super(context, KafkaEndpoint.class);
     }
-
-    private ExecutorService workerPool;
 
     @Override
     protected KafkaEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {

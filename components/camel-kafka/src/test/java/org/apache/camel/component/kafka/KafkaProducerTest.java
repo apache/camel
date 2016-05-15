@@ -52,7 +52,6 @@ public class KafkaProducerTest {
         endpoint.setBrokers("broker1:1234,broker2:4567");
         producer = new KafkaProducer(endpoint);
 
-
         RecordMetadata rm = new RecordMetadata(null, 1, 1);
         Future future = Mockito.mock(Future.class);
         Mockito.when(future.get()).thenReturn(rm);
