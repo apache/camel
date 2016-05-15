@@ -49,6 +49,8 @@ The mllp component has no options.
 
 
 
+
+
 // endpoint options: START
 The mllp component supports 19 endpoint options which are listed below:
 
@@ -58,26 +60,28 @@ The mllp component supports 19 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | hostname | common |  | String | *Required* Hostname or IP for connection for the TCP connection. The default value is null which means any local IP address
 | port | common |  | int | *Required* Port number for the TCP connection
-| acceptTimeout | common | 60000 | int | Timeout value while waiting for a TCP connection TCP Server Only
 | autoAck | common | true | boolean | Enable/Disable the automatic generation of a MLLP Acknowledgement MLLP Consumers only
-| backlog | common | 5 | int | The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full the connection is refused.
-| bindRetryInterval | common | 5000 | int | TCP Server Only - The number of milliseconds to wait between bind attempts
-| bindTimeout | common | 30000 | int | TCP Server Only - The number of milliseconds to retry binding to a server port
-| charsetName | common |  | String | Set the CamelCharsetName property on the exchange
-| connectTimeout | common | 30000 | int | Timeout value for establishing for a TCP connection TCP Client only
 | keepAlive | common | true | boolean | Enable/disable the SO_KEEPALIVE socket option.
-| receiveBufferSize | common |  | Integer | Sets the SO_RCVBUF option to the specified value
-| receiveTimeout | common | 10000 | int | The SO_TIMEOUT value used when waiting for the start of an MLLP frame
 | reuseAddress | common | false | boolean | Enable/disable the SO_REUSEADDR socket option.
-| sendBufferSize | common |  | Integer | Sets the SO_SNDBUF option to the specified value
 | tcpNoDelay | common | true | boolean | Enable/disable the TCP_NODELAY socket option.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| backlog | advanced | 5 | int | The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full the connection is refused.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| receiveBufferSize | advanced |  | Integer | Sets the SO_RCVBUF option to the specified value
+| sendBufferSize | advanced |  | Integer | Sets the SO_SNDBUF option to the specified value
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| charsetName | codec |  | String | Set the CamelCharsetName property on the exchange
+| acceptTimeout | timeout | 60000 | int | Timeout value while waiting for a TCP connection TCP Server Only
+| bindRetryInterval | timeout | 5000 | int | TCP Server Only - The number of milliseconds to wait between bind attempts
+| bindTimeout | timeout | 30000 | int | TCP Server Only - The number of milliseconds to retry binding to a server port
+| connectTimeout | timeout | 30000 | int | Timeout value for establishing for a TCP connection TCP Client only
+| receiveTimeout | timeout | 10000 | int | The SO_TIMEOUT value used when waiting for the start of an MLLP frame
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
+
 
 
 
