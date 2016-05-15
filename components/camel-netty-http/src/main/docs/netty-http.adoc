@@ -101,6 +101,7 @@ The Netty HTTP component supports 5 options which are listed below.
 
 
 
+
 // endpoint options: START
 The Netty HTTP component supports 82 endpoint options which are listed below:
 
@@ -113,11 +114,7 @@ The Netty HTTP component supports 82 endpoint options which are listed below:
 | port | common |  | int | The host port number
 | path | common |  | String | Resource path
 | bridgeEndpoint | common | false | boolean | If the option is true the producer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the producer send all the fault response back. The consumer working in the bridge mode will skip the gzip compression and WWW URL form encoding (by adding the Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed exchange).
-| decoder | common |  | ChannelHandler | To use a single decoder. This options is deprecated use encoders instead.
-| decoders | common |  | String | A list of decoders to be used. You can use a String which have values separated by comma and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup.
 | disconnect | common | false | boolean | Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer.
-| encoder | common |  | ChannelHandler | To use a single encoder. This options is deprecated use encoders instead.
-| encoders | common |  | String | A list of encoders to be used. You can use a String which have values separated by comma and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup.
 | keepAlive | common | true | boolean | Setting to ensure socket is not closed due to inactivity
 | reuseAddress | common | true | boolean | Setting to facilitate socket multiplexing
 | sync | common | true | boolean | Setting to set endpoint as one-way or request-response
@@ -175,6 +172,10 @@ The Netty HTTP component supports 82 endpoint options which are listed below:
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | transferException | advanced | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
 | transferExchange | advanced | false | boolean | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body Out body fault body In headers Out headers fault headers exchange properties exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.
+| decoder | codec |  | ChannelHandler | To use a single decoder. This options is deprecated use encoders instead.
+| decoders | codec |  | String | A list of decoders to be used. You can use a String which have values separated by comma and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup.
+| encoder | codec |  | ChannelHandler | To use a single encoder. This options is deprecated use encoders instead.
+| encoders | codec |  | String | A list of encoders to be used. You can use a String which have values separated by comma and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup.
 | enabledProtocols | security | TLSv1,TLSv1.1,TLSv1.2 | String | Which protocols to enable when using SSL
 | keyStoreFile | security |  | File | Client side certificate keystore to be used for encryption
 | keyStoreFormat | security | JKS | String | Keystore format to be used for payload encryption. Defaults to JKS if not set
@@ -193,6 +194,7 @@ The Netty HTTP component supports 82 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
