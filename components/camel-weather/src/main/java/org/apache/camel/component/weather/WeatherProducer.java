@@ -45,7 +45,7 @@ public class WeatherProducer extends DefaultProducer {
             q = getEndpoint().getConfiguration().getQuery(location);
         }
 
-        HttpClient httpClient = new HttpClient();
+        HttpClient httpClient = ((WeatherComponent) getEndpoint().getComponent()).getHttpClient();
         GetMethod method = new GetMethod(q);
         try {
             log.debug("Going to execute the Weather query {}", q);

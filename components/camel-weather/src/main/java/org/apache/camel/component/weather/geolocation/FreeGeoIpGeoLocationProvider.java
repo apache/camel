@@ -17,6 +17,7 @@
 package org.apache.camel.component.weather.geolocation;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.weather.WeatherComponent;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -28,18 +29,22 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 public class FreeGeoIpGeoLocationProvider implements GeoLocationProvider {
 
-    private CamelContext camelContext;
+    private final WeatherComponent component;
+
+    public FreeGeoIpGeoLocationProvider(WeatherComponent component) {
+        this.component = component;
+    }
 
     @Override
     public GeoLocation getCurrentGeoLocation() throws Exception {
-        HttpClient httpClient = new HttpClient();
+        HttpClient httpClient = component.getHttpClient();
         GetMethod getMethod = new GetMethod("http://freegeoip.io/json/");
         try {
             int statusCode = httpClient.executeMethod(getMethod);
             if (statusCode != HttpStatus.SC_OK) {
                 throw new IllegalStateException("Got the unexpected http-status '" + getMethod.getStatusLine() + "' for the geolocation");
             }
-            String geoLocation = camelContext.getTypeConverter().mandatoryConvertTo(String.class, getMethod.getResponseBodyAsStream());
+            String geoLocation = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, getMethod.getResponseBodyAsStream());
             if (isEmpty(geoLocation)) {
                 throw new IllegalStateException("Got the unexpected value '" + geoLocation + "' for the geolocation");
             }
@@ -56,7 +61,4 @@ public class FreeGeoIpGeoLocationProvider implements GeoLocationProvider {
 
     }
 
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
 }
