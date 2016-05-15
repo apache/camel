@@ -100,6 +100,7 @@ The Jetty 9 component supports 30 options which are listed below.
 
 
 
+
 // endpoint options: START
 The Jetty 9 component supports 52 endpoint options which are listed below:
 
@@ -130,6 +131,7 @@ The Jetty 9 component supports 52 endpoint options which are listed below:
 | traceEnabled | consumer | false | boolean | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.
 | useContinuation | consumer |  | Boolean | Whether or not to use Jetty continuations for the Jetty Server.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| filterInitParameters | consumer (advanced) |  | Map | Configuration of the filter init parameters. These parameters will be applied to the filter list before starting the jetty server.
 | filtersRef | consumer (advanced) |  | String | Allows using a custom filters which is putted into a list and can be find in the Registry. Multiple values can be separated by comma.
 | handlers | consumer (advanced) |  | String | Specifies a comma-delimited set of Handler instances to lookup in your Registry. These handlers are added to the Jetty servlet context (for example to add security). Important: You can not use different handlers with different Jetty endpoints using the same port number. The handlers is associated to the port number. If you need different handlers then use different port numbers.
 | httpBindingRef | consumer (advanced) |  | String | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
@@ -156,12 +158,12 @@ The Jetty 9 component supports 52 endpoint options which are listed below:
 | mapHttpMessageFormUrlEncodedBody | advanced | true | boolean | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping.
 | mapHttpMessageHeaders | advanced | true | boolean | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| filterInitParameters | advanced |  | Map | Configuration of the filter init parameters. These parameters will be applied to the filter list before starting the jetty server.
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 | sslContextParametersRef | security |  | String | To configure security using SSLContextParameters
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 

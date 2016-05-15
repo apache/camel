@@ -99,7 +99,7 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
             description = "Allows using a custom filters which is putted into a list and can be find in the Registry."
             + " Multiple values can be separated by comma.")
     private List<Filter> filters;
-    @UriParam(label = "consumer, advanced", prefix = "filter.", multiValue = true,
+    @UriParam(label = "consumer,advanced", prefix = "filter.", multiValue = true,
             description = "Configuration of the filter init parameters. These parameters will be applied to the filter list before starting the jetty server.")
     private Map<String, String> filterInitParameters;
 
