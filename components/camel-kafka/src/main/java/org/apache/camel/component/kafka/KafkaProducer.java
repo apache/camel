@@ -20,17 +20,16 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
-public class KafkaProducer extends DefaultProducer implements AsyncProcessor {
+public class KafkaProducer extends DefaultAsyncProducer {
 
     private org.apache.kafka.clients.producer.KafkaProducer kafkaProducer;
     private final KafkaEndpoint endpoint;
@@ -79,6 +78,8 @@ public class KafkaProducer extends DefaultProducer implements AsyncProcessor {
         // if we are in asynchronous mode we need a worker pool
         if (!endpoint.isSynchronous() && workerPool == null) {
             workerPool = endpoint.createProducerExecutor();
+            // we create a thread pool so we should also shut it down
+            shutdownWorkerPool = true;
         }
     }
 
@@ -127,34 +128,28 @@ public class KafkaProducer extends DefaultProducer implements AsyncProcessor {
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
         ProducerRecord record = createRecorder(exchange);
-        // Just send out the record in the sync way
         kafkaProducer.send(record).get();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // force processing synchronously using different api
-        if (endpoint.isSynchronous()) {
-            try {
+        try {
+            if (endpoint.isSynchronous()) {
+                // force process using synchronous call on kafka
                 process(exchange);
-            } catch (Throwable e) {
-                exchange.setException(e);
+            } else {
+                ProducerRecord record = createRecorder(exchange);
+                kafkaProducer.send(record, new KafkaProducerCallBack(exchange, callback));
+                // return false to process asynchronous
+                return false;
             }
-            callback.done(true);
-            return true;
+        } catch (Exception ex) {
+            exchange.setException(ex);
         }
 
-        try {
-            ProducerRecord record = createRecorder(exchange);
-            kafkaProducer.send(record, new KafkaProducerCallBack(exchange, callback));
-            // Finishing the processing in an async way
-            return false;
-        } catch (Exception ex) {
-            // Just set the exception back to the client
-            exchange.setException(ex);
-            callback.done(true);
-            return true;
-        }
+        callback.done(true);
+        return true;
     }
 
     private final class KafkaProducerCallBack implements Callback {
@@ -170,7 +165,6 @@ public class KafkaProducer extends DefaultProducer implements AsyncProcessor {
         @Override
         public void onCompletion(RecordMetadata recordMetadata, Exception e) {
             if (e != null) {
-                // Just set the exception back
                 exchange.setException(e);
             }
             // use worker pool to continue routing the exchange
@@ -183,4 +177,5 @@ public class KafkaProducer extends DefaultProducer implements AsyncProcessor {
             });
         }
     }
+
 }
