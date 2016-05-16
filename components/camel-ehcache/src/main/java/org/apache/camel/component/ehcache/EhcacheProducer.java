@@ -29,8 +29,9 @@ import org.ehcache.Cache;
 public class EhcacheProducer extends DefaultProducer {
     private final EhcacheConfiguration configuration;
     private final EhcacheManager manager;
-    private final Cache<Object, Object> cache;
+    private final Cache cache;
 
+    @SuppressWarnings("unchecked")
     public EhcacheProducer(EhcacheEndpoint endpoint, EhcacheConfiguration configuration) throws Exception {
         super(endpoint);
 
@@ -92,19 +93,19 @@ public class EhcacheProducer extends DefaultProducer {
     }
 
     private void onPut(Message message) throws Exception {
-        cache.put(getKey(message), getValue(message, Object.class));
+        cache.put(getKey(message), getValue(message, configuration.getValueType()));
 
         setResult(message, true, null, null);
     }
 
     private void onPutAll(Message message) throws Exception {
-        cache.putAll(getValue(message, Map.class));
+        cache.putAll((Map)getValue(message, Map.class));
 
         setResult(message, true, null, null);
     }
 
     private void onPutIfAbsent(Message message) throws Exception {
-        Object oldValue = cache.putIfAbsent(getKey(message), getValue(message, Object.class));
+        Object oldValue = cache.putIfAbsent(getKey(message), getValue(message, configuration.getValueType()));
 
         setResult(message, true, null, oldValue);
     }
@@ -142,7 +143,7 @@ public class EhcacheProducer extends DefaultProducer {
     private void onReplace(Message message) throws Exception {
         boolean success = true;
         Object oldValue = null;
-        Object value = getValue(message, Object.class);
+        Object value = getValue(message, configuration.getValueType());
         Object valueToReplace = message.getHeader(EhcacheConstants.OLD_VALUE);
         if (valueToReplace == null) {
             oldValue = cache.replace(getKey(message), value);
@@ -157,8 +158,8 @@ public class EhcacheProducer extends DefaultProducer {
     // Helpers
     // ****************************
 
-    private String getKey(final Message message) throws Exception {
-        String value = message.getHeader(EhcacheConstants.KEY, String.class);
+    private Object getKey(final Message message) throws Exception {
+        Object value = message.getHeader(EhcacheConstants.KEY, configuration.getKeyType());
         if (value == null) {
             value = configuration.getKey();
         }
@@ -173,8 +174,8 @@ public class EhcacheProducer extends DefaultProducer {
         return value;
     }
 
-    private <T> T getValue(final Message message, final Class<T> type)  throws Exception {
-        T value = message.getHeader(EhcacheConstants.VALUE, type);
+    private Object getValue(final Message message, final Class<?> type)  throws Exception {
+        Object value = message.getHeader(EhcacheConstants.VALUE, type);
         if (value == null) {
             value = message.getBody(type);
         }

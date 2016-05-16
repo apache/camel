@@ -19,6 +19,7 @@ package org.apache.camel.component.ehcache.processor.idempotent;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.ehcache.EhcacheManager;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.ehcache.Cache;
@@ -29,7 +30,7 @@ public class EhcacheIdempotentRepository extends ServiceSupport implements Idemp
 
     private String cacheName;
     private Cache<String, Boolean> cache;
-    private CacheManager cacheManager;
+    private EhcacheManager cacheManager;
 
     public EhcacheIdempotentRepository(CacheManager cacheManager) {
         this(cacheManager, EhcacheIdempotentRepository.class.getSimpleName());
@@ -37,7 +38,7 @@ public class EhcacheIdempotentRepository extends ServiceSupport implements Idemp
 
     public EhcacheIdempotentRepository(CacheManager cacheManager, String repositoryName) {
         this.cacheName = repositoryName;
-        this.cacheManager = cacheManager;
+        this.cacheManager = new EhcacheManager(cacheManager);
     }
 
     @ManagedAttribute(description = "The processor name")
@@ -77,11 +78,12 @@ public class EhcacheIdempotentRepository extends ServiceSupport implements Idemp
 
     @Override
     protected void doStart() throws Exception {
+        cacheManager.start();
         cache = cacheManager.getCache(cacheName, String.class, Boolean.class);
     }
 
     @Override
     protected void doStop() throws Exception {
-        // noop
+        cacheManager.stop();
     }
 }

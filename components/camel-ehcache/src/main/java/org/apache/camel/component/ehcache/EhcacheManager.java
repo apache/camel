@@ -75,9 +75,19 @@ public class EhcacheManager implements Service {
         return cache;
     }
 
-    public Cache<Object, Object> getCache() throws Exception  {
+    public Cache<?, ?> getCache(String name) throws Exception {
+        return getCache(
+            name,
+            configuration.getKeyType(),
+            configuration.getValueType());
+    }
+
+    public Cache<?, ?> getCache() throws Exception  {
         ObjectHelper.notNull(configuration, "Ehcache configuration");
 
-        return getCache(configuration.getCacheName(), Object.class, Object.class);
+        return getCache(
+            configuration.getCacheName(),
+            configuration.getKeyType(),
+            configuration.getValueType());
     }
 }

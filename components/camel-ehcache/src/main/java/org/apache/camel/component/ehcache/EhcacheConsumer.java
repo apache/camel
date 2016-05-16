@@ -27,8 +27,9 @@ import org.ehcache.event.CacheEventListener;
 public class EhcacheConsumer extends DefaultConsumer implements CacheEventListener<Object, Object> {
     private final EhcacheConfiguration configuration;
     private final EhcacheManager manager;
-    private final Cache<Object, Object> cache;
+    private final Cache cache;
 
+    @SuppressWarnings("unchecked")
     public EhcacheConsumer(EhcacheEndpoint endpoint, EhcacheConfiguration configuration, Processor processor) throws Exception {
         super(endpoint, processor);
 

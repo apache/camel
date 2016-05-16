@@ -22,6 +22,8 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.UriParam;
@@ -54,12 +56,17 @@ public class EhcacheConfiguration {
     @UriParam(label = "producer")
     private String action;
     @UriParam(label = "producer")
-    private String key;
+    private Object key;
 
     @UriParam
     private CacheManager cacheManager;
     @UriParam(label = "advanced")
     private CacheConfiguration<?, ?> configuration;
+
+    @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
+    private Class<?> keyType = Object.class;
+    @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
+    private Class<?> valueType = Object.class;
 
     @UriParam(
         label = "consumer",
@@ -69,7 +76,7 @@ public class EhcacheConfiguration {
 
     @UriParam(
         label = "consumer",
-        enums = "ASYNCHRONOUS, SYNCHRONOUS",
+        enums = "ASYNCHRONOUS,SYNCHRONOUS",
         defaultValue = "ASYNCHRONOUS")
     private EventFiring eventFiring = EventFiring.ASYNCHRONOUS;
 
@@ -86,6 +93,8 @@ public class EhcacheConfiguration {
     EhcacheConfiguration(CamelContext context, String cacheName) {
         this.context = context;
         this.cacheName = cacheName;
+
+        Stream.of(EventType.values()).map(EventType::name).collect(Collectors.joining(", "));
     }
 
     public CamelContext getContext() {
@@ -137,7 +146,7 @@ public class EhcacheConfiguration {
         this.action = action;
     }
 
-    public String getKey() {
+    public Object getKey() {
         return key;
     }
 
@@ -145,7 +154,7 @@ public class EhcacheConfiguration {
      * To configure the default action key. If a key is set in the message
      * header, then the key from the header takes precedence.
      */
-    public void setKey(String key) {
+    public void setKey(Object key) {
         this.key = key;
     }
 
@@ -232,6 +241,36 @@ public class EhcacheConfiguration {
 
     public <K, V> CacheConfiguration<K, V> getMandatoryConfiguration() {
         return ObjectHelper.notNull(getConfiguration(), "CacheConfiguration");
+    }
+
+    public Class<?> getKeyType() {
+        return keyType;
+    }
+
+    /**
+     * The cache key type, default Object.class
+     */
+    public void setKeyType(Class<?> keyType) {
+        this.keyType = keyType;
+    }
+
+    public void setKeyType(String keyType) throws ClassNotFoundException {
+        setKeyType(context.getClassResolver().resolveMandatoryClass(keyType));
+    }
+
+    public Class<?> getValueType() {
+        return valueType;
+    }
+
+    /**
+     * The cache value type, default Object.class
+     */
+    public void setValueType(Class<?> valueType) {
+        this.valueType = valueType;
+    }
+
+    public void setValueType(String valueType) throws ClassNotFoundException {
+        setValueType(context.getClassResolver().resolveMandatoryClass(valueType));
     }
 
     // ****************************
