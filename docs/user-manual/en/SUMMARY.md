@@ -209,6 +209,7 @@
     * [Netty HTTP](netty-http.adoc)
     * [Netty4 HTTP](netty4-http.adoc)
     * [NATS](nats.adoc)
+    * [Olingo2](olingo2.adoc)
     * [Properties](properties.adoc)
     * [Quickfix](quickfix.adoc)
     * [Scp](scp.adoc)
