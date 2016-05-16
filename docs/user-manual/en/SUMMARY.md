@@ -226,6 +226,7 @@
     * [EL](juel.adoc)
     * [Jsonpath](jsonpath.adoc)
     * [JXPath](jxpath.adoc)
+    * [Ognl](ognl.adoc)
     * [SQL](josql.adoc)
 
 * Data Formats
