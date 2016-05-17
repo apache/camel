@@ -26,7 +26,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ehcache.EhcacheTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.junit.Test;
 
 
@@ -80,7 +79,7 @@ public class EhcacheAggregationRepositoryRoutesTest extends EhcacheTestSupport {
                     .aggregationRepository(createAggregateRepository())
                     .aggregationStrategy(EhcacheAggregationRepositoryRoutesTest.this::aggregate)
                     .completionSize(VALUES.length)
-                        .to("log:org.apache.camel.component.ehcache.processor.aggregate^level=INFO%showAll=true&mulltiline=true")
+                        .to("log:org.apache.camel.component.ehcache.processor.aggregate?level=INFO&showAll=true&multiline=true")
                         .to(ENDPOINT_MOCK);
             }
         };

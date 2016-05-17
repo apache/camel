@@ -25,7 +25,7 @@ public interface EhcacheConstants {
     String KEYS = "CamelEhcacheKeys";
     String VALUE = "CamelEhcacheValue";
     String OLD_VALUE = "CamelEhcacheOldValue";
-    String EVENT_TYPE = "CamelEhcacheEventValue";
+    String EVENT_TYPE = "CamelEhcacheEventType";
 
     String ACTION_CLEAR = "CLEAR";
     String ACTION_PUT = "PUT";
