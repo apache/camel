@@ -126,6 +126,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
     @Override
     @SuppressWarnings("unchecked")
+    // Camel calls this method if the endpoint isSynchronous(), as the KafkaEndpoint creates a SynchronousDelegateProducer for it
     public void process(Exchange exchange) throws Exception {
         ProducerRecord record = createRecorder(exchange);
         kafkaProducer.send(record).get();
@@ -135,19 +136,13 @@ public class KafkaProducer extends DefaultAsyncProducer {
     @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            if (endpoint.isSynchronous()) {
-                // force process using synchronous call on kafka
-                process(exchange);
-            } else {
-                ProducerRecord record = createRecorder(exchange);
-                kafkaProducer.send(record, new KafkaProducerCallBack(exchange, callback));
-                // return false to process asynchronous
-                return false;
-            }
+            ProducerRecord record = createRecorder(exchange);
+            kafkaProducer.send(record, new KafkaProducerCallBack(exchange, callback));
+            // return false to process asynchronous
+            return false;
         } catch (Exception ex) {
             exchange.setException(ex);
         }
-
         callback.done(true);
         return true;
     }
