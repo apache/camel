@@ -213,6 +213,7 @@
     * [Openshift](openshift.adoc)
     * [Optaplanner](optaplanner.adoc)
     * [Paho](paho.adoc)
+    * [Paxlogging](paxlogging.adoc)
     * [Properties](properties.adoc)
     * [Quickfix](quickfix.adoc)
     * [Scp](scp.adoc)
