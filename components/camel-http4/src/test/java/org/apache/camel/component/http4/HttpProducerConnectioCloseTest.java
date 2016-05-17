@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http4;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -28,8 +29,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.apache.camel.EndpointInject;
-
 /**
  * Unit test that show custom header filter useful to send Connection Close header
  *
@@ -37,10 +36,10 @@ import org.apache.camel.EndpointInject;
  */
 public class HttpProducerConnectioCloseTest extends BaseHttpTest {
 
-    private HttpServer localServer;
-    
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint mockResultEndpoint;
+    
+    private HttpServer localServer;
     
     @Before
     @Override
@@ -72,7 +71,8 @@ public class HttpProducerConnectioCloseTest extends BaseHttpTest {
     public void noDataDefaultIsGet() throws Exception {
         HttpComponent component = context.getComponent("http4", HttpComponent.class);
         component.setConnectionTimeToLive(1000L);
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myget?headerFilterStrategy=#myFilter");
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + localServer.getInetAddress().getHostName() + ":" 
+            + localServer.getLocalPort() + "/myget?headerFilterStrategy=#myFilter");
         HttpProducer producer = new HttpProducer(endpoiont);
         Exchange exchange = producer.createExchange();
         exchange.getIn().setBody(null);
@@ -96,8 +96,8 @@ public class HttpProducerConnectioCloseTest extends BaseHttpTest {
     class ConnectionCloseHeaderFilter extends HttpHeaderFilterStrategy {
         @Override
         protected void initialize() {
-           super.initialize();
-           getOutFilter().remove("connection");
-       }
+            super.initialize();
+            getOutFilter().remove("connection");
+        }
     }
 }
