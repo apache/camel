@@ -212,6 +212,7 @@
     * [Olingo2](olingo2.adoc)
     * [Openshift](openshift.adoc)
     * [Optaplanner](optaplanner.adoc)
+    * [Paho](paho.adoc)
     * [Properties](properties.adoc)
     * [Quickfix](quickfix.adoc)
     * [Scp](scp.adoc)
