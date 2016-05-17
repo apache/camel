@@ -215,6 +215,7 @@
     * [Paho](paho.adoc)
     * [Paxlogging](paxlogging.adoc)
     * [PDF](pdf.adoc)
+    * [PGEvent](pgevent.adoc)
     * [Properties](properties.adoc)
     * [Quickfix](quickfix.adoc)
     * [Scp](scp.adoc)
