@@ -85,7 +85,7 @@
     <caffeine-version>2.3.0</caffeine-version>
     <californium-version>1.0.0-M3</californium-version>
     <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
-    <cassandra-driver-version>3.0.1</cassandra-driver-version>
+    <cassandra-driver-version>3.0.2</cassandra-driver-version>
     <cassandra-driver-guava-version>18.0</cassandra-driver-guava-version>
     <cassandra-version>3.5</cassandra-version>
     <cassandra-unit-version>3.0.0.1</cassandra-unit-version>
