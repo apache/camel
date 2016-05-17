@@ -244,6 +244,7 @@
     * [Jaxb](jaxb.adoc)
     * [Jibx](jibx.adoc)
     * [Lzf](lzf.adoc)
+    * [Protobuf](protobuf.adoc)
     * [XML JSON](xmljson.adoc)
 
 * User Guide
