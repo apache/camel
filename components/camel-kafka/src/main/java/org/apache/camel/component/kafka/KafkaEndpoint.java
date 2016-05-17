@@ -26,6 +26,7 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -72,7 +73,12 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     @Override
     public Producer createProducer() throws Exception {
-        return createProducer(this);
+        KafkaProducer producer = createProducer(this);
+        if (isSynchronous()) {
+            return new SynchronousDelegateProducer(producer);
+        } else {
+            return producer;
+        }
     }
 
     @Override
