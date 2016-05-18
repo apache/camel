@@ -65,6 +65,7 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -162,6 +163,10 @@ public class HttpProducer extends DefaultProducer {
                 //HttpClient 4 will check to see if the Host header is present, and use it if it is, see org.apache.http.protocol.RequestTargetHost in httpcore
                 httpRequest.setHeader("Host", hostHeader);
             }
+        }
+        
+        if (getEndpoint().isConnectionClose()) {
+        	httpRequest.addHeader("Connection", HTTP.CONN_CLOSE);
         }
 
         // lets store the result in the output message.

@@ -34,7 +34,7 @@ import org.junit.Test;
  *
  * @version 
  */
-public class HttpProducerConnectioCloseTest extends BaseHttpTest {
+public class HttpProducerExplicitConnectionCloseTest extends BaseHttpTest {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint mockResultEndpoint;
@@ -72,32 +72,15 @@ public class HttpProducerConnectioCloseTest extends BaseHttpTest {
         HttpComponent component = context.getComponent("http4", HttpComponent.class);
         component.setConnectionTimeToLive(1000L);
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + localServer.getInetAddress().getHostName() + ":" 
-            + localServer.getLocalPort() + "/myget?headerFilterStrategy=#myFilter");
+            + localServer.getLocalPort() + "/myget?connectionClose=true");
         HttpProducer producer = new HttpProducer(endpoiont);
         Exchange exchange = producer.createExchange();
         exchange.getIn().setBody(null);
-        exchange.getIn().setHeader("connection", HTTP.CONN_CLOSE);
         producer.start();
         producer.process(exchange);
         producer.stop();
 
         assertEquals(HTTP.CONN_CLOSE, exchange.getOut().getHeader("connection"));
         assertExchange(exchange);
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = new JndiRegistry(createJndiContext());
-        ConnectionCloseHeaderFilter connectionCloseFilterStrategy = new ConnectionCloseHeaderFilter();
-        jndi.bind("myFilter", connectionCloseFilterStrategy);
-        return jndi;
-    }
-    
-    class ConnectionCloseHeaderFilter extends HttpHeaderFilterStrategy {
-        @Override
-        protected void initialize() {
-            super.initialize();
-            getOutFilter().remove("connection");
-        }
     }
 }
