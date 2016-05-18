@@ -1,4 +1,4 @@
-package org.apache.camel;
+package org.apache.camel.example;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

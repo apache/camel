@@ -1,15 +1,19 @@
 package org.apache.camel.itest;
 
+import java.io.File;
 import java.net.URL;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.example.Hello;
 import org.apache.camel.example.HelloBean;
 import org.apache.camel.test.karaf.CamelKarafTestSupport;
-import org.easymock.Mock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -17,14 +21,16 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.util.Filter;
 import org.ops4j.pax.swissbox.tinybundles.dp.Constants;
+import org.osgi.service.cm.ConfigurationAdmin;
 
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.streamBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.replaceConfigurationFile;
 import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
 
 @RunWith(PaxExam.class)
-public class BlueprintBeanIT extends CamelKarafTestSupport {
+public class BlueprintBeanPropertiesOverrideFromFileIT extends CamelKarafTestSupport {
     @Inject
     @Filter(value = "(camel.context.name=blueprint-bean-context)", timeout = 30000)
     protected CamelContext testContext;
@@ -34,11 +40,26 @@ public class BlueprintBeanIT extends CamelKarafTestSupport {
         return true;
     }
 
+    /*
+        */
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("timer://testing-context")
+                        .log("********** Received Event **********")
+                ;
+            }
+        };
+    }
+
     @Configuration
     public Option[] configure() throws Exception {
         return combine(
                 configure("camel-core-osgi", "camel-blueprint", "camel-test"),
                 mavenBundle().groupId("org.apache.camel").artifactId("camel-core-osgi").versionAsInProject(),
+                replaceConfigurationFile("etc/HelloBean.cfg", new File("src/test/resources/etc/HelloBean.cfg")),
                 streamBundle(
                         bundle()
                                 .add(Hello.class)
@@ -52,6 +73,8 @@ public class BlueprintBeanIT extends CamelKarafTestSupport {
         );
     }
 
+    /*
+    */
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = testContext;
@@ -60,14 +83,13 @@ public class BlueprintBeanIT extends CamelKarafTestSupport {
     }
 
     @Test
-    public void testRoute() throws Exception {
+    public void testReplacePropertiesFromFile() throws Exception {
         // the route is timer based, so every 2 seconds a message is sent
         MockEndpoint result = getMockEndpoint("mock://result");
         result.expectedMinimumMessageCount(1);
-        result.expectedBodyReceived().body().contains("Default property value");
+        result.expectedBodyReceived().body().contains("file property value");
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
     }
-
 
 }
