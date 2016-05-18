@@ -38,7 +38,7 @@ public class TestRouteBuilder extends RouteBuilder {
         from("restlet:http://localhost:" + port + "/securedOrders?restletMethod=post&restletRealm=#realm").process(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getOut().setBody(
-                        "received [" + exchange.getIn().getBody()
+                        "received [" + exchange.getIn().getBody(String.class)
                         + "] as an order id = "
                         + exchange.getIn().getHeader("id"));
             }
