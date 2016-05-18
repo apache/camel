@@ -94,15 +94,15 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
-                if(HeaderConstants.ATTRIBUTE_HEADERS.equalsIgnoreCase(key)){
-                	 Series<Header> series = (Series<Header>) value;
-                     for(Header header: series){
-                    	 if (!headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), header.getValue(), exchange))
-                        	 inMessage.setHeader(header.getName(), header.getValue());
-                     }
-                }
-                else {
-                	inMessage.setHeader(key, value);
+                if (HeaderConstants.ATTRIBUTE_HEADERS.equalsIgnoreCase(key)) {
+                    Series<Header> series = (Series<Header>) value;
+                    for (Header header: series) {
+                        if (!headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), header.getValue(), exchange)) {
+                            inMessage.setHeader(header.getName(), header.getValue());
+                        }
+                    }
+                } else {
+                    inMessage.setHeader(key, value);
                 }
                 LOG.debug("Populate exchange from Restlet request header: {} value: {}", key, value);
             }
@@ -171,38 +171,35 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if ((Method.PUT == method || Method.POST == method) && MediaType.APPLICATION_WWW_FORM.equals(mediaType, true)) {
             form = new Form();
             
-            if(exchange.getIn().getBody() instanceof Map) {
-            	//Body is key value pairs
-                try{
-                	Map pairs = exchange.getIn().getBody(Map.class);
-                	for(Object key: pairs.keySet()) {
-                		Object value = pairs.get(key);
-                		form.add(key.toString(), value != null ? value.toString() : null);
-                	}
-                }
-            	catch(Exception ex) {
+            if (exchange.getIn().getBody() instanceof Map) {
+                //Body is key value pairs
+                try {
+                    Map pairs = exchange.getIn().getBody(Map.class);
+                    for (Object key: pairs.keySet()) {
+                        Object value = pairs.get(key);
+                        form.add(key.toString(), value != null ? value.toString() : null);
+                    }
+                } catch (Exception ex) {
                     LOG.error("body for " + MediaType.APPLICATION_WWW_FORM + " must be Map<String,String> or string format like name=bob&password=secRet", ex);
-                    
                 }
-            }
-            else {
-	            // use string based for forms
-	            String body = exchange.getIn().getBody(String.class);
-	            if (body != null) {
-	            	List<NameValuePair> pairs = URLEncodedUtils.parse(body, Charset.forName(IOHelper.getCharsetName(exchange, true)));
-	                for(NameValuePair p : pairs) {
-	                	form.add(p.getName(), p.getValue());
-	                }
-	            }
+            } else {
+                // use string based for forms
+                String body = exchange.getIn().getBody(String.class);
+                if (body != null) {
+                    List<NameValuePair> pairs = URLEncodedUtils.parse(body, Charset.forName(IOHelper.getCharsetName(exchange, true)));
+                    for (NameValuePair p : pairs) {
+                        form.add(p.getName(), p.getValue());
+                    }
+                }
             }
         }
 
         //Get outgoing custom http headers
         Series<Header> restletHeaders = (Series)request.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
-    	if(restletHeaders == null){
-    		restletHeaders = new Series<>(Header.class);
-    		request.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, restletHeaders);
-    	}
+        if (restletHeaders == null) {
+            restletHeaders = new Series<>(Header.class);
+            request.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, restletHeaders);
+        }
 
         // login and password are filtered by header filter strategy
         String login = exchange.getIn().getHeader(RestletConstants.RESTLET_LOGIN, String.class);
@@ -228,23 +225,23 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                         if (value instanceof Collection) {
                             for (Object v : (Collection<?>) value) {
                                 form.add(key, v.toString());
-                                if(!headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)){
-                            		restletHeaders.set(key, value.toString());
-                            	}
+                                if (!headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
+                                    restletHeaders.set(key, value.toString());
+                                }
                             }
                         } else {
-                        	//Add headers to headers and to body
+                            //Add headers to headers and to body
                             form.add(key, value.toString());
-                            if(!headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)){
-                        		restletHeaders.set(key, value.toString());
-                        	}
+                            if (!headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
+                                restletHeaders.set(key, value.toString());
+                            }
                         }
                     }
                 } else {
                     // For non-form post put all the headers in custom headers
-                	if(!headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)){
-                		restletHeaders.set(key, value.toString());
-                	}
+                    if (!headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
+                        restletHeaders.set(key, value.toString());
+                    }
                 }
                 LOG.debug("Populate Restlet request from exchange header: {} value: {}", key, value);
             }
