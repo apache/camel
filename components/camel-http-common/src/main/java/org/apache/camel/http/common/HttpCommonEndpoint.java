@@ -366,16 +366,16 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         return transferException;
     }
     
-	public boolean isConnectionClose() {
-		return connectionClose;
-	}
+    public boolean isConnectionClose() {
+        return connectionClose;
+    }
 
     /**
      * If this option is true, the producer will add a Connection Close header to HTTP Request
      */
-	public void setConnectionClose(boolean connectionClose) {
-		this.connectionClose = connectionClose;
-	}
+    public void setConnectionClose(boolean connectionClose) {
+        this.connectionClose = connectionClose;
+    }
 
     /**
      * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized

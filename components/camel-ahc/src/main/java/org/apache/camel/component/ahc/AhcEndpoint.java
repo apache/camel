@@ -233,17 +233,17 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     public boolean isConnectionClose() {
-		return connectionClose;
-	}
+        return connectionClose;
+    }
     
     /**
      * Define if the Connection Close header has to be added to HTTP Request. This parameter is false by default
      */
-	public void setConnectionClose(boolean connectionClose) {
-		this.connectionClose = connectionClose;
-	}
+    public void setConnectionClose(boolean connectionClose) {
+        this.connectionClose = connectionClose;
+    }
 
-	@Override
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
         if (client == null) {

@@ -166,7 +166,7 @@ public class HttpProducer extends DefaultProducer {
         }
         
         if (getEndpoint().isConnectionClose()) {
-        	httpRequest.addHeader("Connection", HTTP.CONN_CLOSE);
+            httpRequest.addHeader("Connection", HTTP.CONN_CLOSE);
         }
 
         // lets store the result in the output message.
