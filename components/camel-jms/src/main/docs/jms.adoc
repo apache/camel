@@ -209,11 +209,13 @@ Component options
 
 
 
+
 // component options: START
 The JMS component supports 71 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -289,7 +291,9 @@ The JMS component supports 71 options which are listed below.
 | waitForProvisionCorrelationToBeUpdatedCounter | int | Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS and when the option useMessageIDAsCorrelationID is enabled.
 | waitForProvisionCorrelationToBeUpdatedThreadSleepingTime | long | Interval in millis to sleep each time while waiting for provisional correlation id to be updated.
 |=======================================================================
+{% endraw %}
 // component options: END
+
 
 
 
@@ -302,9 +306,11 @@ Endpoint options
 
 
 
+
 // endpoint options: START
 The JMS component supports 78 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -387,7 +393,9 @@ The JMS component supports 78 endpoint options which are listed below:
 | transactionName | transaction (advanced) |  | String | The name of the transaction to use.
 | transactionTimeout | transaction (advanced) | -1 | int | The timeout value of the transaction (in seconds) if using transacted mode.
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 

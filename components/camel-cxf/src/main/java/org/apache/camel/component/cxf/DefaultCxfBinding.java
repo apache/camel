@@ -165,8 +165,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
         
         // propagate body
+        String encoding = (String)camelExchange.getProperty(Exchange.CHARSET_NAME);
         camelExchange.getOut().setBody(DefaultCxfBinding.getContentFromCxf(cxfMessage, 
-                camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class)));
+                camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class), encoding));
         
         // propagate response context
         if (responseContext != null && responseContext.size() > 0) {
@@ -277,8 +278,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         setCharsetWithContentType(camelExchange);
            
         // set body
+        String encoding = (String)camelExchange.getProperty(Exchange.CHARSET_NAME);
         Object body = DefaultCxfBinding.getContentFromCxf(cxfMessage, 
-                camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class));
+                camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class), encoding);
         if (body != null) {
             camelExchange.getIn().setBody(body);
         }  
@@ -708,7 +710,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
     }
 
-    protected static Object getContentFromCxf(Message message, DataFormat dataFormat) {
+    protected static Object getContentFromCxf(Message message, DataFormat dataFormat, String encoding) {
         Set<Class<?>> contentFormats = message.getContentFormats();
         Object answer = null;
         if (contentFormats != null) {
@@ -738,7 +740,11 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 if (answer == null) {
                     answer = message.getContent(Reader.class);
                     if (answer != null) {
-                        answer = new ReaderInputStream((Reader)answer);
+                        if (encoding == null) {
+                            encoding = "UTF-8";
+                        }
+                        LOG.trace("file encoding is = {}", encoding);
+                        answer = new ReaderInputStream((Reader)answer, Charset.forName(encoding));
                     }
                 }
                 

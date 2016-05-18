@@ -225,6 +225,10 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
                 }
             }
         }
+        
+        if (getEndpoint().isConnectionClose()) {
+            httpExchange.addRequestHeader("Connection", "close");
+        }
 
         //In reverse proxy applications it can be desirable for the downstream service to see the original Host header
         //if this option is set, and the exchange Host header is not null, we will set it's current value on the httpExchange

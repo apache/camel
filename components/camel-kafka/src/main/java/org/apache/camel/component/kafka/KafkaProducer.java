@@ -17,18 +17,24 @@
 package org.apache.camel.component.kafka;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 
-public class KafkaProducer extends DefaultProducer {
+public class KafkaProducer extends DefaultAsyncProducer {
 
     private org.apache.kafka.clients.producer.KafkaProducer kafkaProducer;
     private final KafkaEndpoint endpoint;
+    private ExecutorService workerPool;
+    private boolean shutdownWorkerPool;
 
     public KafkaProducer(KafkaEndpoint endpoint) {
         super(endpoint);
@@ -54,11 +60,12 @@ public class KafkaProducer extends DefaultProducer {
         this.kafkaProducer = kafkaProducer;
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        if (kafkaProducer != null) {
-            kafkaProducer.close();
-        }
+    public ExecutorService getWorkerPool() {
+        return workerPool;
+    }
+
+    public void setWorkerPool(ExecutorService workerPool) {
+        this.workerPool = workerPool;
     }
 
     @Override
@@ -67,11 +74,29 @@ public class KafkaProducer extends DefaultProducer {
         if (kafkaProducer == null) {
             kafkaProducer = new org.apache.kafka.clients.producer.KafkaProducer(props);
         }
+
+        // if we are in asynchronous mode we need a worker pool
+        if (!endpoint.isSynchronous() && workerPool == null) {
+            workerPool = endpoint.createProducerExecutor();
+            // we create a thread pool so we should also shut it down
+            shutdownWorkerPool = true;
+        }
     }
 
     @Override
+    protected void doStop() throws Exception {
+        if (kafkaProducer != null) {
+            kafkaProducer.close();
+        }
+
+        if (shutdownWorkerPool && workerPool != null) {
+            endpoint.getCamelContext().getExecutorServiceManager().shutdown(workerPool);
+            workerPool = null;
+        }
+    }
+
     @SuppressWarnings("unchecked")
-    public void process(Exchange exchange) throws CamelException {
+    protected ProducerRecord createRecorder(Exchange exchange) throws CamelException {
         String topic = endpoint.getTopic();
         if (!endpoint.isBridgeEndpoint()) {
             topic = exchange.getIn().getHeader(KafkaConstants.TOPIC, topic, String.class);
@@ -96,13 +121,55 @@ public class KafkaProducer extends DefaultProducer {
             log.warn("No message key or partition key set");
             record = new ProducerRecord(topic, msg);
         }
+        return record;
+    }
 
-        // TODO: add support for async callback
-        // requires a thread pool for processing outgoing routing
+    @Override
+    @SuppressWarnings("unchecked")
+    // Camel calls this method if the endpoint isSynchronous(), as the KafkaEndpoint creates a SynchronousDelegateProducer for it
+    public void process(Exchange exchange) throws Exception {
+        ProducerRecord record = createRecorder(exchange);
+        kafkaProducer.send(record).get();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            kafkaProducer.send(record).get();
-        } catch (Exception e) {
-            throw new CamelException(e);
+            ProducerRecord record = createRecorder(exchange);
+            kafkaProducer.send(record, new KafkaProducerCallBack(exchange, callback));
+            // return false to process asynchronous
+            return false;
+        } catch (Exception ex) {
+            exchange.setException(ex);
+        }
+        callback.done(true);
+        return true;
+    }
+
+    private final class KafkaProducerCallBack implements Callback {
+
+        private final Exchange exchange;
+        private final AsyncCallback callback;
+
+        KafkaProducerCallBack(Exchange exchange, AsyncCallback callback) {
+            this.exchange = exchange;
+            this.callback = callback;
+        }
+
+        @Override
+        public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+            if (e != null) {
+                exchange.setException(e);
+            }
+            // use worker pool to continue routing the exchange
+            // as this thread is from Kafka Callback and should not be used by Camel routing
+            workerPool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    callback.done(false);
+                }
+            });
         }
     }
 

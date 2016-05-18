@@ -65,87 +65,85 @@ public class SipConfiguration {
 
     @UriPath @Metadata(required = "true")
     private URI uri;
-    @UriParam
+    @UriParam(label = "advanced")
     private AddressFactory addressFactory;
-    @UriParam
+    @UriParam(label = "advanced")
     private MessageFactory messageFactory;
-    @UriParam
+    @UriParam(label = "advanced")
     private HeaderFactory headerFactory;
-    @UriParam
+    @UriParam(label = "advanced")
     private SipStack sipStack;
-    @UriParam
+    @UriParam(label = "advanced")
     private ListeningPoint listeningPoint;
-    @UriParam
+    @UriParam(label = "advanced")
     private SipURI sipUri;
-    @UriParam(defaultValue = "NAME_NOT_SET")
+    @UriParam(label = "common", defaultValue = "NAME_NOT_SET")
     private String stackName = "NAME_NOT_SET";
-    @UriParam(defaultValue = "tcp", enums = "tcp,udp")
+    @UriParam(label = "common", defaultValue = "tcp", enums = "tcp,udp")
     private String transport = "tcp";
-    @UriParam
+    @UriParam(label = "proxy")
     private int maxForwards;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean consumer;
-    @UriParam
+    @UriParam(label = "common")
     private String eventHeaderName;
-    @UriParam
+    @UriParam(label = "common")
     private String eventId;
-    @UriParam(defaultValue = "3600")
+    @UriParam(label = "common", defaultValue = "3600")
     private int msgExpiration = 3600;
-    @UriParam
+    @UriParam(label = "proxy")
     private boolean useRouterForAllUris;
-    @UriParam(defaultValue = "10000")
+    @UriParam(label = "common", defaultValue = "10000")
     private long receiveTimeoutMillis = 10000;
-    @UriParam(defaultValue = "1048576")
+    @UriParam(label = "advanced", defaultValue = "1048576")
     private int maxMessageSize = 1048576;
-    @UriParam
+    @UriParam(label = "common")
     private boolean cacheConnections;
-    @UriParam(defaultValue = "text")
+    @UriParam(label = "common", defaultValue = "text")
     private String contentType = "text";
-    @UriParam(defaultValue = "plain")
+    @UriParam(label = "common", defaultValue = "plain")
     private String contentSubType = "plain";
-    @UriParam(defaultValue = "off")
-    private String automaticDialogSupport = "off";
-    @UriParam
+    @UriParam(label = "logging")
     private String implementationServerLogFile;
-    @UriParam
+    @UriParam(label = "logging")
     private String implementationDebugLogFile;
-    @UriParam(defaultValue = "0")
+    @UriParam(label = "logging", defaultValue = "0")
     private String implementationTraceLevel = "0";
-    @UriParam
+    @UriParam(label = "advanced")
     private SipFactory sipFactory;
-    @UriParam
+    @UriParam(label = "common")
     private String fromUser;
-    @UriParam
+    @UriParam(label = "common")
     private String fromHost;
-    @UriParam
+    @UriParam(label = "common")
     private int fromPort;
-    @UriParam
+    @UriParam(label = "common")
     private String toUser;
-    @UriParam
+    @UriParam(label = "common")
     private String toHost;
-    @UriParam
+    @UriParam(label = "common")
     private int toPort;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean presenceAgent;
-    @UriParam
+    @UriParam(label = "advanced")
     private FromHeader fromHeader;
-    @UriParam
+    @UriParam(label = "advanced")
     private ToHeader toHeader;
-    @UriParam
+    @UriParam(label = "advanced")
     private List<ViaHeader> viaHeaders;
-    @UriParam
+    @UriParam(label = "advanced")
     private ContentTypeHeader contentTypeHeader;
-    @UriParam
+    @UriParam(label = "advanced")
     private CallIdHeader callIdHeader;
-    @UriParam
+    @UriParam(label = "advanced")
     private MaxForwardsHeader maxForwardsHeader;
-    @UriParam
+    @UriParam(label = "advanced")
     private ContactHeader contactHeader;
-    @UriParam
+    @UriParam(label = "advanced")
     private EventHeader eventHeader;
-    @UriParam
+    @UriParam(label = "advanced")
     private ExtensionHeader extensionHeader;
-    @UriParam
+    @UriParam(label = "advanced")
     private ExpiresHeader expiresHeader;
 
     public SipConfiguration() {
@@ -498,17 +496,6 @@ public class SipConfiguration {
         this.maxMessageSize = maxMessageSize;
     }
 
-    public String getAutomaticDialogSupport() {
-        return automaticDialogSupport;
-    }
-
-    /**
-     * Setting to specify whether every communication should be associated with a dialog.
-     */
-    public void setAutomaticDialogSupport(String automaticDialogSupport) {
-        this.automaticDialogSupport = automaticDialogSupport;
-    }
-
     public boolean isCacheConnections() {
         return cacheConnections;
     }
@@ -825,7 +812,7 @@ public class SipConfiguration {
     }
 
     /**
-     * Setting for a String based event Id. Mandatory setting unless a registry based FromHeader is specified
+     * Setting for a String based event type.
      */
     public void setEventHeaderName(String eventHeaderName) {
         this.eventHeaderName = eventHeaderName;

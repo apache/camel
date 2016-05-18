@@ -19,6 +19,9 @@ package org.apache.camel.dataformat.bindy;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.Locale;
 
@@ -40,6 +43,9 @@ import org.apache.camel.dataformat.bindy.format.FloatFormat;
 import org.apache.camel.dataformat.bindy.format.FloatPatternFormat;
 import org.apache.camel.dataformat.bindy.format.IntegerFormat;
 import org.apache.camel.dataformat.bindy.format.IntegerPatternFormat;
+import org.apache.camel.dataformat.bindy.format.LocalDatePatternFormat;
+import org.apache.camel.dataformat.bindy.format.LocalDateTimePatternFormat;
+import org.apache.camel.dataformat.bindy.format.LocalTimePatternFormat;
 import org.apache.camel.dataformat.bindy.format.LongFormat;
 import org.apache.camel.dataformat.bindy.format.LongPatternFormat;
 import org.apache.camel.dataformat.bindy.format.ShortFormat;
@@ -112,6 +118,12 @@ public final class FormatFactory {
             return new CharacterFormat();
         } else if (clazz == boolean.class || clazz == Boolean.class) {
             return new BooleanFormat();
+        } else if (clazz == LocalDate.class) {
+            return new LocalDatePatternFormat(pattern, getLocale(locale));
+        } else if (clazz == LocalDateTime.class) {
+            return new LocalDateTimePatternFormat(pattern, timezone, getLocale(locale));
+        } else if (clazz == LocalTime.class) {
+            return new LocalTimePatternFormat(pattern, timezone, getLocale(locale));
         } else if (clazz.isEnum()) {
             @SuppressWarnings({"rawtypes", "unchecked"})
             Format<?> fmt = new EnumFormat(clazz);

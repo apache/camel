@@ -44,11 +44,13 @@ The Yammer component can be configured with the Yammer account settings
 which are mandatory to configure before using.
 
 
+
 // component options: START
 The Yammer component supports 4 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -57,7 +59,9 @@ The Yammer component supports 4 options which are listed below.
 | accessToken | String | The access token
 | config | YammerConfiguration | To use a shared yammer configuration
 |=======================================================================
+{% endraw %}
 // component options: END
+
 
 
 You can also configure these options directly in the endpoint.
@@ -67,9 +71,11 @@ Endpoint options
 ^^^^^^^^^^^^^^^^^
 
 
+
 // endpoint options: START
 The Yammer component supports 29 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -103,7 +109,9 @@ The Yammer component supports 29 endpoint options which are listed below:
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 

@@ -51,11 +51,13 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The CometD component supports 6 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -66,13 +68,17 @@ The CometD component supports 6 options which are listed below.
 | extensions | List | To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests.
 | sslContextParameters | SSLContextParameters | To configure security using SSLContextParameters
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
 // endpoint options: START
 The CometD component supports 19 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -96,7 +102,9 @@ The CometD component supports 19 endpoint options which are listed below:
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 You can append query options to the URI in the following format,

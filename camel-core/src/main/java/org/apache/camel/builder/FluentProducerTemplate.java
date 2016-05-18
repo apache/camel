@@ -30,11 +30,13 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public class FluentProducerTemplate {
     private final CamelContext context;
+    private final ClassValue<ConvertBodyProcessor> resultProcessors;
     private Map<String, Object> headers;
     private Object body;
     private Endpoint endpoint;
@@ -52,6 +54,12 @@ public class FluentProducerTemplate {
         this.exchangeSupplier = null;
         this.processorSupplier = () -> this::populateExchange;
         this.template = null;
+        this.resultProcessors = new ClassValue<ConvertBodyProcessor>() {
+            @Override
+            protected ConvertBodyProcessor computeValue(Class<?> type) {
+                return new ConvertBodyProcessor(type);
+            }
+        };
     }
 
     /**
@@ -259,7 +267,13 @@ public class FluentProducerTemplate {
             Exchange exchange = template().request(endpoint, processorSupplier.get());
             result = exchange.hasOut() ? (T)exchange.getOut() : (T)exchange.getIn();
         } else {
-            Exchange exchange = template().send(endpoint, ExchangePattern.InOut, processorSupplier.get());
+            Exchange exchange = template().send(
+                endpoint,
+                ExchangePattern.InOut,
+                processorSupplier.get(),
+                resultProcessors.get(type)
+            );
+
             result = context.getTypeConverter().convertTo(
                 type,
                 ExchangeHelper.extractResultBody(exchange, exchange.getPattern())

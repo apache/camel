@@ -55,11 +55,13 @@ settings which is mandatory to configure before using.
 
 
 
+
 // component options: START
 The Twitter component supports 8 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -72,7 +74,9 @@ The Twitter component supports 8 options which are listed below.
 | httpProxyPassword | String | The http proxy password which can be used for the camel-twitter.
 | httpProxyPort | int | The http proxy port which can be used for the camel-twitter.
 |=======================================================================
+{% endraw %}
 // component options: END
+
 
 
 
@@ -143,9 +147,11 @@ URI options
 
 
 
+
 // endpoint options: START
 The Twitter component supports 43 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -193,7 +199,9 @@ The Twitter component supports 43 endpoint options which are listed below:
 | httpProxyPort | proxy |  | Integer | The http proxy port which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
 | httpProxyUser | proxy |  | String | The http proxy user which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 

@@ -66,6 +66,7 @@
         <include>org.apache.camel:camel-dozer</include>
         <include>org.apache.camel:camel-dropbox</include>
         <include>org.apache.camel:camel-eclipse</include>
+        <include>org.apache.camel:camel-ehcache</include>
         <include>org.apache.camel:camel-ejb</include>
         <include>org.apache.camel:camel-elasticsearch</include>
         <include>org.apache.camel:camel-elsql</include>

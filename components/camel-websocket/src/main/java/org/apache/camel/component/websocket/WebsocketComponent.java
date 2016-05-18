@@ -159,6 +159,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                 }
 
                 server.addConnector(connector);
+
                 LOG.trace("Jetty Connector added: {}", connector.getName());
 
                 // Create ServletContextHandler
@@ -213,6 +214,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                 WebsocketProducer producer = WebsocketProducer.class.cast(prodcon);
                 producer.setStore(connectorRef.memoryStore);
             }
+            
         }
     }
 
@@ -339,7 +341,9 @@ public class WebsocketComponent extends UriEndpointComponent {
     protected Server createServer() throws Exception {
         Server server = null;
         if (minThreads == null && maxThreads == null && getThreadPool() == null) {
-            throw new RuntimeCamelException("Error creating JettyWebSocketServer. MinThreads/MaxThreads or ThreadPool must be defined");
+            minThreads = 1;
+            // 1+selectors+acceptors
+            maxThreads = 1 + Runtime.getRuntime().availableProcessors() * 2;
         }
         // configure thread pool if min/max given
         if (minThreads != null || maxThreads != null) {
@@ -689,6 +693,7 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     /**
      * To set a value for minimum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
+     * The default values for minThreads is 1.
      */
     public void setMinThreads(Integer minThreads) {
         this.minThreads = minThreads;
@@ -700,6 +705,7 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     /**
      * To set a value for maximum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
+     * The default values for maxThreads is 1 + 2 * noCores.
      */
     public void setMaxThreads(Integer maxThreads) {
         this.maxThreads = maxThreads;

@@ -39,7 +39,7 @@ public class EtcdConfiguration {
     private Integer timeToLive;
     @UriParam
     private Long timeout;
-    @UriParam(label = "consumer,advance", defaultValue = "0")
+    @UriParam(label = "consumer,advanced", defaultValue = "0")
     private Long fromIndex = 0L;
 
     public String getUris() {

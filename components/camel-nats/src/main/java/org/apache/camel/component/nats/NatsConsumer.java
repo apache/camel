@@ -42,6 +42,7 @@ public class NatsConsumer extends DefaultConsumer {
     private ExecutorService executor;
     private Connection connection;
     private Subscription sid;
+    private boolean subscribed;
 
     public NatsConsumer(NatsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -101,6 +102,14 @@ public class NatsConsumer extends DefaultConsumer {
         return connection;
     }
 
+    public boolean isSubscribed() {
+        return subscribed;
+    }
+
+    public void setSubscribed(boolean subscribed) {
+        this.subscribed = subscribed;
+    }
+
     class NatsConsumingTask implements Runnable {
 
         private final Connection connection;
@@ -133,6 +142,9 @@ public class NatsConsumer extends DefaultConsumer {
                     if (ObjectHelper.isNotEmpty(getEndpoint().getNatsConfiguration().getMaxMessages())) {
                         sid.autoUnsubscribe(Integer.parseInt(getEndpoint().getNatsConfiguration().getMaxMessages()));
                     }
+                    if (sid.isValid()) {
+                        setSubscribed(true);
+                    }
                 } else {
                     sid = connection.subscribe(getEndpoint().getNatsConfiguration().getTopic(), new MessageHandler() {
                         @Override
@@ -151,7 +163,10 @@ public class NatsConsumer extends DefaultConsumer {
                     });
                     if (ObjectHelper.isNotEmpty(getEndpoint().getNatsConfiguration().getMaxMessages())) {
                         sid.autoUnsubscribe(Integer.parseInt(getEndpoint().getNatsConfiguration().getMaxMessages()));
-                    }    
+                    }
+                    if (sid.isValid()) {
+                        setSubscribed(true);
+                    }
                 }
             } catch (Throwable e) {
                 getExceptionHandler().handleException("Error during processing", e);

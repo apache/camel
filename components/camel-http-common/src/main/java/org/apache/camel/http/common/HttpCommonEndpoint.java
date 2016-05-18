@@ -82,6 +82,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             + " This is by default turned off. If you enable this then be aware that Java will deserialize the incoming"
             + " data from the request to Java and that can be a potential security risk.")
     boolean transferException;
+    @UriParam(label = "producer", defaultValue = "false", description = "Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.")
+    boolean connectionClose;
     @UriParam(label = "consumer",
             description = "Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.")
     boolean traceEnabled;
@@ -362,6 +364,17 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
 
     public boolean isTransferException() {
         return transferException;
+    }
+    
+    public boolean isConnectionClose() {
+        return connectionClose;
+    }
+
+    /**
+     * If this option is true, the producer will add a Connection Close header to HTTP Request
+     */
+    public void setConnectionClose(boolean connectionClose) {
+        this.connectionClose = connectionClose;
     }
 
     /**

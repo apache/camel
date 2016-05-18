@@ -54,22 +54,28 @@ Ganglia component and endpoint URI options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+
 // component options: START
 The Ganglia component supports 1 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | configuration | GangliaConfiguration | To use the shared configuration
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 // endpoint options: START
 The Ganglia component supports 16 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -90,7 +96,9 @@ The Ganglia component supports 16 endpoint options which are listed below:
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 [[Ganglia-Messagebody]]

@@ -41,35 +41,35 @@ public class MinaConfiguration implements Cloneable {
     private int port;
     @UriParam(defaultValue = "true")
     private boolean sync = true;
-    @UriParam
+    @UriParam(label = "codec")
     private boolean textline;
-    @UriParam
+    @UriParam(label = "codec")
     private TextLineDelimiter textlineDelimiter;
-    @UriParam
+    @UriParam(label = "codec")
     private ProtocolCodecFactory codec;
-    @UriParam
+    @UriParam(label = "codec")
     private String encoding;
-    @UriParam(label = "producer", defaultValue = "30000")
+    @UriParam(defaultValue = "30000")
     private long timeout = 30000;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean lazySessionCreation = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean transferExchange;
     @UriParam
     private boolean minaLogger;
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "codec", defaultValue = "-1")
     private int encoderMaxLineLength = -1;
-    @UriParam(defaultValue = "1024")
+    @UriParam(label = "codec", defaultValue = "1024")
     private int decoderMaxLineLength = 1024;
-    @UriParam
+    @UriParam(label = "codec")
     private List<IoFilter> filters;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "codec", defaultValue = "true")
     private boolean allowDefaultCodec = true;
     @UriParam
     private boolean disconnect;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean disconnectOnNoReply = true;
-    @UriParam(defaultValue = "WARN")
+    @UriParam(label = "consumer,advanced", defaultValue = "WARN")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
     @UriParam(label = "consumer")
     private boolean clientMode;

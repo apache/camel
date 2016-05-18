@@ -114,17 +114,22 @@ Component Options and Configurations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
+
 // component options: START
 The Simple JMS Batch component supports 1 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | connectionFactory | ConnectionFactory | A ConnectionFactory is required to enable the SjmsBatchComponent.
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
@@ -132,6 +137,7 @@ The Simple JMS Batch component supports 1 options which are listed below.
 // endpoint options: START
 The Simple JMS Batch component supports 19 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -155,7 +161,9 @@ The Simple JMS Batch component supports 19 endpoint options which are listed bel
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | timeoutCheckerExecutorService | advanced |  | ScheduledExecutorService | If using the completionInterval option a background thread is created to trigger the completion interval. Set this option to provide a custom thread pool to be used rather than creating a new thread for every consumer.
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 The `completionSize` endpoint attribute is used in conjunction with

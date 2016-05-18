@@ -44,6 +44,7 @@ import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.builder.FluentProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -82,6 +83,7 @@ public abstract class CamelTestSupport extends TestSupport {
     private static ThreadLocal<Service> threadService = new ThreadLocal<Service>();
     protected volatile ModelCamelContext context;
     protected volatile ProducerTemplate template;
+    protected volatile FluentProducerTemplate fluentTemplate;
     protected volatile ConsumerTemplate consumer;
     protected volatile Service camelContextService;
     protected boolean dumpRouteStats;
@@ -201,6 +203,10 @@ public abstract class CamelTestSupport extends TestSupport {
         return template;
     }
 
+    public FluentProducerTemplate fluentTemplate() {
+        return fluentTemplate;
+    }
+
     public ConsumerTemplate consumer() {
         return consumer;
     }
@@ -292,6 +298,7 @@ public abstract class CamelTestSupport extends TestSupport {
         template.start();
         consumer = context.createConsumerTemplate();
         consumer.start();
+        fluentTemplate = FluentProducerTemplate.on(context());
 
         threadTemplate.set(template);
         threadConsumer.set(consumer);

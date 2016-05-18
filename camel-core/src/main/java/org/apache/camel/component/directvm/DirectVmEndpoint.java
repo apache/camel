@@ -45,9 +45,9 @@ public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private long timeout = 30000L;
     @UriParam(label = "producer")
     private boolean failIfNoConsumers = true;
-    @UriParam(label = "headerFilterStrategy")
+    @UriParam(label = "producer,advanced")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam(label = "propagateProperties", defaultValue = "false")
+    @UriParam(label = "advanced", defaultValue = "false")
     private Boolean propagateProperties;
 
     public DirectVmEndpoint(String endpointUri, DirectVmComponent component) {
@@ -125,7 +125,6 @@ public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     /**
      * Sets a {@link HeaderFilterStrategy} that will only be applied on producer endpoints (on both directions: request and response).
      * <p>Default value: none.</p>
-     * @param headerFilterStrategy
      */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
@@ -138,7 +137,6 @@ public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     /**
      * Whether to propagate or not properties from the producer side to the consumer side, and viceversa.
      * <p>Default value: true.</p>
-     * @param propagateProperties
      */
     public void setPropagateProperties(Boolean propagateProperties) {
         this.propagateProperties = propagateProperties;

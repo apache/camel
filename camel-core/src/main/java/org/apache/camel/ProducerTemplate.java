@@ -309,6 +309,24 @@ public interface ProducerTemplate extends Service {
      */
     Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor);
 
+
+    /**
+     * Sends an exchange to an endpoint using a supplied processor
+     * <br/><br/>
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is <b>not</b> thrown from this method, but you can access it from the returned exchange using
+     * {@link org.apache.camel.Exchange#getException()}.
+     *
+     * @param endpoint  the endpoint to send the exchange to
+     * @param pattern   the message {@link ExchangePattern} such as
+     *                  {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param processor the transformer used to populate the new exchange
+     * @param resultProcessor a processor to process the exchange when the send is complete.
+     * {@link Processor} to populate the exchange
+     * @return the returned exchange
+     */
+    Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor, Processor resultProcessor);
+
     /**
      * Send the body to an endpoint
      * <br/><br/>

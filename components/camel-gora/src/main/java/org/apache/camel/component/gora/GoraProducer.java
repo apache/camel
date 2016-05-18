@@ -67,9 +67,6 @@ public class GoraProducer extends DefaultProducer implements ServicePoolAware {
         this.configuration = configuration;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final Exchange exchange) throws Exception {
         final String operation = (String) exchange.getIn().getHeader(GoraAttribute.GORA_OPERATION.value);

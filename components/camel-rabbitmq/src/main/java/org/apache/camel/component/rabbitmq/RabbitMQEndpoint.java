@@ -56,55 +56,55 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private int portNumber;
     @UriPath @Metadata(required = "true")
     private String exchangeName;
-    @UriParam(defaultValue = ConnectionFactory.DEFAULT_USER)
+    @UriParam(label = "security", defaultValue = ConnectionFactory.DEFAULT_USER)
     private String username = ConnectionFactory.DEFAULT_USER;
-    @UriParam(defaultValue = ConnectionFactory.DEFAULT_PASS)
+    @UriParam(label = "security", defaultValue = ConnectionFactory.DEFAULT_PASS)
     private String password = ConnectionFactory.DEFAULT_PASS;
     @UriParam(defaultValue = ConnectionFactory.DEFAULT_VHOST)
     private String vhost = ConnectionFactory.DEFAULT_VHOST;
-    @UriParam(label = "consumer", defaultValue = "10")
+    @UriParam(label = "consumer,advanced", defaultValue = "10")
     private int threadPoolSize = 10;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean autoAck = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true")
     private boolean autoDelete = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true")
     private boolean durable = true;
     @UriParam(label = "producer")
     private boolean bridgeEndpoint;
-    @UriParam
+    @UriParam(label = "common")
     private String queue = String.valueOf(UUID.randomUUID().toString().hashCode());
-    @UriParam(defaultValue = "direct", enums = "direct,fanout,headers,topic")
+    @UriParam(label = "common", defaultValue = "direct", enums = "direct,fanout,headers,topic")
     private String exchangeType = "direct";
-    @UriParam
+    @UriParam(label = "common")
     private String routingKey;
-    @UriParam(label = "producer")
+    @UriParam(label = "common")
     private boolean skipQueueDeclare;
-    @UriParam
+    @UriParam(label = "common")
     private boolean skipExchangeDeclare;
-    @UriParam
+    @UriParam(label = "advanced")
     private Address[] addresses;
     @UriParam(defaultValue = "" + ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT;
-    @UriParam(defaultValue = "" + ConnectionFactory.DEFAULT_CHANNEL_MAX)
+    @UriParam(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_CHANNEL_MAX)
     private int requestedChannelMax = ConnectionFactory.DEFAULT_CHANNEL_MAX;
-    @UriParam(defaultValue = "" + ConnectionFactory.DEFAULT_FRAME_MAX)
+    @UriParam(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_FRAME_MAX)
     private int requestedFrameMax = ConnectionFactory.DEFAULT_FRAME_MAX;
-    @UriParam(defaultValue = "" + ConnectionFactory.DEFAULT_HEARTBEAT)
+    @UriParam(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_HEARTBEAT)
     private int requestedHeartbeat = ConnectionFactory.DEFAULT_HEARTBEAT;
-    @UriParam
+    @UriParam(label = "security")
     private String sslProtocol;
-    @UriParam
+    @UriParam(label = "security")
     private TrustManager trustManager;
-    @UriParam
+    @UriParam(label = "advanced")
     private Map<String, Object> clientProperties;
-    @UriParam
+    @UriParam(label = "advanced")
     private ConnectionFactory connectionFactory;
-    @UriParam
+    @UriParam(label = "advanced")
     private Boolean automaticRecoveryEnabled;
-    @UriParam
+    @UriParam(label = "advanced")
     private Integer networkRecoveryInterval;
-    @UriParam
+    @UriParam(label = "advanced")
     private Boolean topologyRecoveryEnabled;
     @UriParam(label = "consumer")
     private boolean prefetchEnabled;
@@ -118,13 +118,13 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private int concurrentConsumers = 1;
     @UriParam(defaultValue = "true")
     private boolean declare = true;
-    @UriParam
+    @UriParam(label = "common")
     private String deadLetterExchange;
-    @UriParam
+    @UriParam(label = "common")
     private String deadLetterRoutingKey;
-    @UriParam
+    @UriParam(label = "common")
     private String deadLetterQueue;
-    @UriParam(defaultValue = "direct", enums = "direct,fanout,headers,topic")
+    @UriParam(label = "common", defaultValue = "direct", enums = "direct,fanout,headers,topic")
     private String deadLetterExchangeType = "direct";
     @UriParam(label = "producer", defaultValue = "10")
     private int channelPoolMaxSize = 10;
@@ -134,15 +134,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean mandatory;
     @UriParam(label = "producer")
     private boolean immediate;
-    @UriParam
+    @UriParam(label = "advanced")
     private ArgsConfigurer queueArgsConfigurer;
-    @UriParam
+    @UriParam(label = "advanced")
     private ArgsConfigurer exchangeArgsConfigurer;
-    @UriParam
+    @UriParam(label = "advanced")
     private long requestTimeout = 20000;
-    @UriParam
+    @UriParam(label = "advanced")
     private long requestTimeoutCheckerInterval = 1000;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean transferException;
     @UriParam(label = "producer")
     private boolean publisherAcknowledgements;

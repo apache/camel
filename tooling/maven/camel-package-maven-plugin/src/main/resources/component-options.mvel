@@ -5,9 +5,11 @@ The @{title} component supports @{componentOptions.size()} options which are lis
 @end{}
 
 @if{!componentOptions.isEmpty()}
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 @foreach{row : componentOptions}| @{row.name} | @{row.shortJavaType} | @{row.description}
 @end{}|=======================================================================
+{% endraw %}
 @end{}

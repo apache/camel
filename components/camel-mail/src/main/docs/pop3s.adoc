@@ -3,18 +3,23 @@ Mail Component POP3s
 ~~~~~~~~~~~~~~~~~~~~
 
 
+
 // component options: START
 The POP3S component supports 2 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | configuration | MailConfiguration | Sets the Mail configuration
 | contentTypeResolver | ContentTypeResolver | Resolver to determine Content-Type for file attachments.
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
@@ -22,6 +27,7 @@ The POP3S component supports 2 options which are listed below.
 // endpoint options: START
 The POP3S component supports 63 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -89,6 +95,8 @@ The POP3S component supports 63 endpoint options which are listed below:
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters.
 | username | security |  | String | The username for login
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 

@@ -17,6 +17,8 @@
 package org.apache.camel.component.restlet;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,7 +36,7 @@ public class RestletProducerBinaryStreamTest extends RestletTestSupport {
 
     @Test
     public void shouldHandleBinaryOctetStream() throws Exception {
-        Exchange response = template.request("restlet:http://localhost:" + portNum + "/application/octet-stream", null);
+        Exchange response = template.request("restlet:http://localhost:" + portNum + "/application/octet-stream?streamRepresentation=true", null);
 
         assertThat(response.getOut().getHeader(CONTENT_TYPE, String.class), equalTo("application/octet-stream"));
         assertThat(response.getOut().getBody(byte[].class), equalTo(getAllBytes()));
@@ -42,10 +44,26 @@ public class RestletProducerBinaryStreamTest extends RestletTestSupport {
 
     @Test
     public void shouldHandleBinaryAudioMpeg() throws Exception {
-        Exchange response = template.request("restlet:http://localhost:" + portNum + "/audio/mpeg", null);
+        Exchange response = template.request("restlet:http://localhost:" + portNum + "/audio/mpeg?streamRepresentation=true", null);
 
         assertThat(response.getOut().getHeader(CONTENT_TYPE, String.class), equalTo("audio/mpeg"));
         assertThat(response.getOut().getBody(byte[].class), equalTo(getAllBytes()));
+    }
+
+    @Test
+    public void shouldAutoClose() throws Exception {
+        Exchange response = template.request("restlet:http://localhost:" + portNum + "/application/octet-stream?streamRepresentation=true&autoCloseStream=true", null);
+
+        assertThat(response.getOut().getHeader(CONTENT_TYPE, String.class), equalTo("application/octet-stream"));
+        InputStream is = (InputStream) response.getOut().getBody();
+        assertNotNull(is);
+
+        try {
+            is.read();
+            fail("Should be closed");
+        } catch (IOException e) {
+            // expected
+        }
     }
 
     @Override

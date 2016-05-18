@@ -69,29 +69,29 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     @UriParam(enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY,SAFE")
     private WriteConcern writeConcern;
     private WriteConcern writeConcernRef;
-    @UriParam
+    @UriParam(label = "advanced")
     private ReadPreference readPreference;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean dynamicity;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean writeResultAsHeader;
     // tailable cursor consumer by default
     private MongoDbConsumerType consumerType;
-    @UriParam(defaultValue = "1000")
+    @UriParam(label = "advanced", defaultValue = "1000")
     private long cursorRegenerationDelay = 1000L;
-    @UriParam
+    @UriParam(label = "tail")
     private String tailTrackIncreasingField;
 
-    // persitent tail tracking
-    @UriParam
+    // persistent tail tracking
+    @UriParam(label = "tail")
     private boolean persistentTailTracking;
-    @UriParam
+    @UriParam(label = "tail")
     private String persistentId;
-    @UriParam
+    @UriParam(label = "tail")
     private String tailTrackDb;
-    @UriParam
+    @UriParam(label = "tail")
     private String tailTrackCollection;
-    @UriParam
+    @UriParam(label = "tail")
     private String tailTrackField;
     private MongoDbTailTrackingConfig tailTrackingConfig;
 
