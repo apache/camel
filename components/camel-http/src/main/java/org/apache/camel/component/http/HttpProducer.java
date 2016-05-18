@@ -139,6 +139,10 @@ public class HttpProducer extends DefaultProducer {
                 }
             }
         }
+        
+        if (getEndpoint().isConnectionClose()) {
+        	method.addRequestHeader("Connection", "close");
+        }
 
         // lets store the result in the output message.
         try {
