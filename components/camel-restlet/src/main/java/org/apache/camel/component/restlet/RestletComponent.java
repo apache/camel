@@ -104,7 +104,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        RestletEndpoint result = new RestletEndpoint(this, remaining);
+        String remainingRaw = URISupport.extractRemainderPath(new URI(uri), true);
+        RestletEndpoint result = new RestletEndpoint(this, remainingRaw);
         if (synchronous != null) {
             result.setSynchronous(synchronous);
         }
@@ -115,10 +116,10 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         result.updateEndpointUri();
 
         // construct URI so we can use it to get the splitted information
-        URI u = new URI(remaining);
+        URI u = new URI(remainingRaw);
         String protocol = u.getScheme();
 
-        String uriPattern = u.getPath();
+        String uriPattern = u.getRawPath();
         if (parameters.size() > 0) {
             uriPattern = uriPattern + "?" + URISupport.createQueryString(parameters);
         }
