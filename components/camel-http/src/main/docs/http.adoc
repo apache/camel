@@ -143,8 +143,9 @@ The HTTP component supports 6 options which are listed below.
 
 
 
+
 // endpoint options: START
-The HTTP component supports 25 endpoint options which are listed below:
+The HTTP component supports 26 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -155,6 +156,7 @@ The HTTP component supports 25 endpoint options which are listed below:
 | authMethodPriority | producer |  | String | Authentication method for proxy either as Basic Digest or NTLM.
 | bridgeEndpoint | producer | false | boolean | If the option is true HttpProducer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.
 | chunked | producer | true | boolean | If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response
+| connectionClose | producer | false | boolean | Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.
 | copyHeaders | producer | true | boolean | If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy. Setting this to false allows to only include the headers from the HTTP response (not propagating IN headers).
 | headerFilterStrategy | producer |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 | httpBinding | producer |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
@@ -178,6 +180,7 @@ The HTTP component supports 25 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
