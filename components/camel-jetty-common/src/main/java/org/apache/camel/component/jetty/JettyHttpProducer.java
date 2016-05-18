@@ -226,9 +226,7 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
             }
         }
         
-        System.out.println("Adding close");
         if (getEndpoint().isConnectionClose()) {
-            System.out.println("in If");
             httpExchange.addRequestHeader("Connection", "close");
         }
 
