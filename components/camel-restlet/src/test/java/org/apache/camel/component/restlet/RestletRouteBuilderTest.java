@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.restlet.Client;
 import org.restlet.Request;
@@ -166,6 +167,17 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
         headers.put(Exchange.CONTENT_TYPE, MediaType.APPLICATION_WWW_FORM);
         
         String response = template.requestBodyAndHeaders("restlet:http://localhost:" + portNum + "/login?restletMethod=post", "user=jaymandawg&passwd=secret$%", headers, String.class);
+        assertEquals("received user: jaymandawgpassword: secret$%", response);
+    }
+    
+    @Test
+    public void testFormsProducerMapBody() throws IOException {
+    	Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(Exchange.CONTENT_TYPE, MediaType.APPLICATION_WWW_FORM);
+        Map<String, String> body = new HashMap<>();
+        body.put("user", "jaymandawg");
+        body.put("passwd", "secret$%");
+        String response = template.requestBodyAndHeaders("restlet:http://localhost:" + portNum + "/login?restletMethod=post", body, headers, String.class);
         assertEquals("received user: jaymandawgpassword: secret$%", response);
     }
 }
