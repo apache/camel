@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.security.InvalidParameterException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -180,7 +181,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                         form.add(key.toString(), value != null ? value.toString() : null);
                     }
                 } catch (Exception ex) {
-                    LOG.error("body for " + MediaType.APPLICATION_WWW_FORM + " must be Map<String,String> or string format like name=bob&password=secRet", ex);
+                    throw new InvalidParameterException("body for " + MediaType.APPLICATION_WWW_FORM + " request must be Map<String,String> or string format like name=bob&password=secRet");
                 }
             } else {
                 // use string based for forms
