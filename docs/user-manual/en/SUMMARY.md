@@ -228,6 +228,7 @@
     * [RSS](rss.adoc)
     * [Salesforce](salesforce.adoc)
     * [SAP NetWeaver](sap-netweaver.adoc)
+    * [Saxon](xquery.adoc)
     * [Scp](scp.adoc)
     * [SJMS](sjms.adoc)
     * [SJMS Batch](sjms-batch.adoc)
