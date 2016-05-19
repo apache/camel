@@ -227,6 +227,7 @@
     * [Routebox](routebox.adoc)
     * [RSS](rss.adoc)
     * [Salesforce](salesforce.adoc)
+    * [SAP NetWeaver](sap-netweaver.adoc)
     * [Scp](scp.adoc)
     * [SJMS](sjms.adoc)
     * [SJMS Batch](sjms-batch.adoc)
