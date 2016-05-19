@@ -223,6 +223,7 @@
     * [Quickfix](quickfix.adoc)
     * [RabbitMQ](rabbitmq.adoc)
     * [Restlet](restlet.adoc)
+    * [RMI](rmi.adoc)
     * [Scp](scp.adoc)
     * [SJMS](sjms.adoc)
     * [SJMS Batch](sjms-batch.adoc)
