@@ -222,6 +222,7 @@
     * [Quartz2](quartz2.adoc)
     * [Quickfix](quickfix.adoc)
     * [RabbitMQ](rabbitmq.adoc)
+    * [Restlet](restlet.adoc)
     * [Scp](scp.adoc)
     * [SJMS](sjms.adoc)
     * [SJMS Batch](sjms-batch.adoc)
