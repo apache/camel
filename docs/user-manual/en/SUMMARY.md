@@ -226,6 +226,7 @@
     * [RMI](rmi.adoc)
     * [Routebox](routebox.adoc)
     * [RSS](rss.adoc)
+    * [Salesforce](salesforce.adoc)
     * [Scp](scp.adoc)
     * [SJMS](sjms.adoc)
     * [SJMS Batch](sjms-batch.adoc)
