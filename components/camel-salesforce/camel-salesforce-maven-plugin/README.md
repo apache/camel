@@ -10,6 +10,7 @@ The plugin configuration has the following properties.
 * clientSecret - Salesforce client secret for Remote API access
 * userName - Salesforce account user name
 * password - Salesforce account password (including secret token)
+* loginUrl - Salesforce loginUrl (defaults to "https://login.salesforce.com")
 * version - Salesforce Rest API version, defaults to 25.0
 * outputDirectory - Directory where to place generated DTOs, defaults to ${project.build.directory}/generated-sources/camel-salesforce
 * includes - List of SObject types to include
@@ -17,6 +18,25 @@ The plugin configuration has the following properties.
 * includePattern - Java RegEx for SObject types to include
 * excludePattern - Java RegEx for SObject types to exclude
 * packageName - Java package name for generated DTOs, defaults to org.apache.camel.salesforce.dto.
+
+Additonal properties to provide proxy information if behind a firewall.
+
+* httpProxyHost
+* httpProxyPort
+* httpProxyUsername
+* httpProxyPassword
+* httpProxyRealm
+* httpProxyAuthUri
+* httpProxyUseDigestAuth
+* httpProxyIncludedAddresses
+* httpProxyExcludedAddresses
+
+Sample plugin
+```
+
+```
+
+
 
 Fro obvious security reasons it is recommended that the clientId, clientSecret, userName and password fields be not set in the pom.xml. 
 The plugin should be configured for the rest of the properties, and can be executed using the following command:
