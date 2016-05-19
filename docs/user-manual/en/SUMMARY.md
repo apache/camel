@@ -242,6 +242,7 @@
     * [Jsonpath](jsonpath.adoc)
     * [JXPath](jxpath.adoc)
     * [Ognl](ognl.adoc)
+    * [Ruby](ruby.adoc)
     * [SQL](josql.adoc)
 
 * Data Formats
