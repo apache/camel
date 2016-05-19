@@ -225,6 +225,7 @@
     * [Restlet](restlet.adoc)
     * [RMI](rmi.adoc)
     * [Routebox](routebox.adoc)
+    * [RSS](rss.adoc)
     * [Scp](scp.adoc)
     * [SJMS](sjms.adoc)
     * [SJMS Batch](sjms-batch.adoc)
