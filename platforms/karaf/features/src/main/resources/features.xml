@@ -934,6 +934,7 @@
   <feature name='camel-josql' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.josql/${josql-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.gentlyweb-utils/${gentlyweb-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-josql/${project.version}</bundle>
   </feature>
   <feature name='camel-jpa' version='${project.version}' resolver='(obr)' start-level='50'>
