@@ -22,7 +22,7 @@ import org.apache.camel.dataformat.bindy.FormattingOptions;
 
 public class CharacterFormatFactory extends AbstractFormatFactory {
 
-    private static final CharacterFormat CHARACTER_FORMAT = new CharacterFormat();
+    private final CharacterFormat characterFormat = new CharacterFormat();
 
     {
         supportedClasses.add(char.class);
@@ -31,7 +31,7 @@ public class CharacterFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return CHARACTER_FORMAT;
+        return characterFormat;
     }
 
     private static class CharacterFormat implements Format<Character> {

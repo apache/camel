@@ -23,7 +23,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class IntegerFormatFactory extends AbstractFormatFactory {
 
-    private static final IntegerFormat INTEGER_FORMAT = new IntegerFormat();
+    private final IntegerFormat integerFormat = new IntegerFormat();
 
     {
         supportedClasses.add(int.class);
@@ -38,7 +38,7 @@ public class IntegerFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return  INTEGER_FORMAT;
+        return integerFormat;
     }
 
     private static class IntegerFormat extends AbstractNumberFormat<Integer> {

@@ -14,34 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.bindy.format.factories;
+package org.apache.camel.dataformat.bindy.annotation;
 
-import org.apache.camel.dataformat.bindy.Format;
-import org.apache.camel.dataformat.bindy.FormattingOptions;
 
-public class StringFormatFactory extends AbstractFormatFactory {
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import org.apache.camel.dataformat.bindy.format.factories.FormatFactoryInterface;
 
-    private final StringFormat stringFormat = new StringFormat();
-
-    {
-        supportedClasses.add(String.class);
-    }
-
-    @Override
-    public Format<?> build(FormattingOptions formattingOptions) {
-        return stringFormat;
-    }
-
-    private static class StringFormat implements Format<String> {
-
-        public String format(String object) throws Exception {
-            return object;
-        }
-
-        public String parse(String string) throws Exception {
-            return string;
-        }
-
-    }
-
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface FormatFactories {
+    Class<? extends FormatFactoryInterface>[] value();
 }

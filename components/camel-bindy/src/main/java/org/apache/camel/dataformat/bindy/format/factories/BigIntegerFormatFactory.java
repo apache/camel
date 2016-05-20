@@ -23,7 +23,7 @@ import org.apache.camel.dataformat.bindy.format.AbstractNumberFormat;
 
 public class BigIntegerFormatFactory extends AbstractFormatFactory {
 
-    private static final BigIntegerFormat BIG_INTEGER_FORMAT = new BigIntegerFormat();
+    private final BigIntegerFormat bigIntegerFormat = new BigIntegerFormat();
 
     {
         supportedClasses.add(BigInteger.class);
@@ -36,7 +36,7 @@ public class BigIntegerFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return BIG_INTEGER_FORMAT;
+        return bigIntegerFormat;
     }
 
     private static class BigIntegerFormat extends AbstractNumberFormat<BigInteger> {

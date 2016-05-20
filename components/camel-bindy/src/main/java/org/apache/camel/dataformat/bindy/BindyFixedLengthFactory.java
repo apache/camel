@@ -48,8 +48,6 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
     boolean isOneToMany;
 
-    private final FormatFactory formatFactory = FormatFactory.getInstance();
-
     private Map<Integer, DataField> dataFields = new TreeMap<Integer, DataField>();
     private Map<Integer, Field> annotatedFields = new TreeMap<Integer, Field>();
 

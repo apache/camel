@@ -23,7 +23,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class ShortFormatFactory extends AbstractFormatFactory {
 
-    private static final ShortFormat SHORT_FORMAT = new ShortFormat();
+    private final ShortFormat shortFormat = new ShortFormat();
 
     {
         supportedClasses.add(short.class);
@@ -38,7 +38,7 @@ public class ShortFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return SHORT_FORMAT;
+        return shortFormat;
     }
 
     private static class ShortFormat extends AbstractNumberFormat<Short> {

@@ -22,7 +22,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class ByteFormatFactory extends AbstractFormatFactory {
 
-    private static final ByteFormat BYTE_FORMAT = new ByteFormat();
+    private final ByteFormat byteFormat = new ByteFormat();
 
     {
         supportedClasses.add(byte.class);
@@ -36,7 +36,7 @@ public class ByteFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return BYTE_FORMAT;
+        return byteFormat;
     }
 
     private static class ByteFormat implements Format<Byte> {
