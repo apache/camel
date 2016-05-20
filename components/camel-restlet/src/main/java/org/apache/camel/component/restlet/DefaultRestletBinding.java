@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
-import java.security.InvalidParameterException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,6 +37,7 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StringSource;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
@@ -180,8 +180,8 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                         Object value = pairs.get(key);
                         form.add(key.toString(), value != null ? value.toString() : null);
                     }
-                } catch (Exception ex) {
-                    throw new InvalidParameterException("body for " + MediaType.APPLICATION_WWW_FORM + " request must be Map<String,String> or string format like name=bob&password=secRet");
+                } catch (Exception e) {
+                    throw new RuntimeCamelException("body for " + MediaType.APPLICATION_WWW_FORM + " request must be Map<String,String> or string format like name=bob&password=secRet", e);
                 }
             } else {
                 // use string based for forms
