@@ -16,32 +16,10 @@
  */
 package org.apache.camel.dataformat.bindy.format.factories;
 
-import org.apache.camel.dataformat.bindy.Format;
 import org.apache.camel.dataformat.bindy.FormattingOptions;
 
-public class BooleanFormatFactory extends AbstractFormatFactory {
-
-    private final BooleanFormat booleanFormat = new BooleanFormat();
-
-    {
-        supportedClasses.add(boolean.class);
-        supportedClasses.add(Boolean.class);
-    }
-
-    @Override
-    public Format<?> build(FormattingOptions formattingOptions) {
-        return booleanFormat;
-    }
-
-    private static class BooleanFormat implements Format<Boolean> {
-
-        public String format(Boolean object) throws Exception {
-            return object.toString();
-        }
-
-        public Boolean parse(String string) throws Exception {
-            return Boolean.valueOf(string);
-        }
-
-    }
+public interface FactoryRegistry {
+    FactoryRegistry register(FormatFactoryInterface... formatFactory);
+    FactoryRegistry unregister(Class<? extends FormatFactoryInterface> clazz);
+    FormatFactoryInterface findForFormattingOptions(FormattingOptions formattingOptions);
 }

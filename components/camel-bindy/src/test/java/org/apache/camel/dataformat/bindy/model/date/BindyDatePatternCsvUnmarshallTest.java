@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.bindy.model.date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collection;
 import java.util.Date;
 
 import org.apache.camel.EndpointInject;
@@ -26,9 +27,14 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.bindy.Format;
+import org.apache.camel.dataformat.bindy.FormattingOptions;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
+import org.apache.camel.dataformat.bindy.annotation.FormatFactories;
 import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
+import org.apache.camel.dataformat.bindy.format.factories.AbstractFormatFactory;
+import org.apache.camel.dataformat.bindy.format.factories.FormatFactoryInterface;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -74,10 +80,11 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
     }
 
     @CsvRecord(separator = ",")
+    @FormatFactories({OrderNumberFormatFactory.class})
     public static class Order {
 
         @DataField(pos = 1)
-        private int orderNr;
+        private OrderNumber orderNr;
 
         @DataField(pos = 2)
         private String firstName;
@@ -100,11 +107,11 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
         @DataField(pos = 8)
         private ReturnReason returnReason;
 
-        public int getOrderNr() {
+        public OrderNumber getOrderNr() {
             return orderNr;
         }
 
-        public void setOrderNr(int orderNr) {
+        public void setOrderNr(OrderNumber orderNr) {
             this.orderNr = orderNr;
         }
 
@@ -173,5 +180,37 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
     public enum ReturnReason {
         broken,
         other
+    }
+
+    public static class OrderNumber {
+        private int orderNr;
+
+        public static OrderNumber ofString(String orderNumber) {
+            OrderNumber result = new OrderNumber();
+            result.orderNr = Integer.valueOf(orderNumber);
+            return result;
+        }
+    }
+
+    public static class OrderNumberFormatFactory extends AbstractFormatFactory {
+
+        {
+            supportedClasses.add(OrderNumber.class);
+        }
+
+        @Override
+        public Format<?> build(FormattingOptions formattingOptions) {
+            return new Format<OrderNumber>() {
+                @Override
+                public String format(OrderNumber object) throws Exception {
+                    return String.valueOf(object.orderNr);
+                }
+
+                @Override
+                public OrderNumber parse(String string) throws Exception {
+                    return OrderNumber.ofString(string);
+                }
+            };
+        }
     }
 }

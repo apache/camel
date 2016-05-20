@@ -47,7 +47,6 @@ import org.slf4j.LoggerFactory;
 public class BindyKeyValuePairFactory extends BindyAbstractFactory implements BindyFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(BindyKeyValuePairFactory.class);
-    private final FormatFactory formatFactory = FormatFactory.getInstance();
 
     private Map<Integer, KeyValuePairField> keyValuePairFields = new LinkedHashMap<Integer, KeyValuePairField>();
     private Map<Integer, Field> annotatedFields = new LinkedHashMap<Integer, Field>();

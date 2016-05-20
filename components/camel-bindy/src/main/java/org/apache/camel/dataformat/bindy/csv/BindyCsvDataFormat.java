@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyCsvFactory;
+import org.apache.camel.dataformat.bindy.FormatFactory;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
@@ -277,7 +278,9 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     @Override
-    protected BindyAbstractFactory createModelFactory() throws Exception {
-        return new BindyCsvFactory(getClassType());
+    protected BindyAbstractFactory createModelFactory(FormatFactory formatFactory) throws Exception {
+        BindyCsvFactory bindyCsvFactory = new BindyCsvFactory(getClassType());
+        bindyCsvFactory.setFormatFactory(formatFactory);
+        return bindyCsvFactory;
     }
 }

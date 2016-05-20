@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 public abstract class BindyAbstractFactory implements BindyFactory {
     private static final Logger LOG = LoggerFactory.getLogger(BindyAbstractFactory.class);
     protected final Map<String, List<Field>> annotatedLinkFields = new LinkedHashMap<String, List<Field>>();
-    protected final FormatFactory formatFactory = FormatFactory.getInstance();
+    protected FormatFactory formatFactory;
     protected Set<Class<?>> models;
     protected Set<String> modelClassNames;
     protected String crlf;
@@ -245,5 +245,9 @@ public abstract class BindyAbstractFactory implements BindyFactory {
 
     public void setLocale(String locale) {
         this.locale = locale;
+    }
+
+    public void setFormatFactory(FormatFactory formatFactory) {
+        this.formatFactory = formatFactory;
     }
 }

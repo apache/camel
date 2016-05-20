@@ -23,7 +23,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class LongFormatFactory extends AbstractFormatFactory {
 
-    private static final LongFormat LONG_FORMAT = new LongFormat();
+    private final LongFormat longFormat = new LongFormat();
 
     {
         supportedClasses.add(long.class);
@@ -37,7 +37,7 @@ public class LongFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return LONG_FORMAT;
+        return longFormat;
     }
 
     private static class LongFormat extends AbstractNumberFormat<Long> {
