@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -231,6 +233,20 @@ public class FileConsumer extends GenericFileConsumer<File> {
         // use file as body as we have converters if needed as stream
         answer.setBody(file);
         return answer;
+    }
+
+    @Override
+    protected void updateFileHeaders(GenericFile<File> file, Message message) {
+        long length = file.getFile().length();
+        long modified = file.getFile().lastModified();
+        file.setFileLength(length);
+        file.setLastModified(modified);
+        if (length >= 0) {
+            message.setHeader(Exchange.FILE_LENGTH, length);
+        }
+        if (modified >= 0) {
+            message.setHeader(Exchange.FILE_LAST_MODIFIED, modified);
+        }
     }
 
     @Override

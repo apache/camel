@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
@@ -109,6 +110,11 @@ public class RemoteFileIgnoreDoPollErrorTest {
             @Override
             protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange, Exception cause) {
                 return ignoreCannotRetrieveFile;
+            }
+
+            @Override
+            protected void updateFileHeaders(GenericFile<Object> genericFile, Message message) {
+                // noop
             }
         };
     }

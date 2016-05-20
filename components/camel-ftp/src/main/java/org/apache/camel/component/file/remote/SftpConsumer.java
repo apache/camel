@@ -21,6 +21,7 @@ import java.util.List;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
@@ -221,6 +222,20 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         answer.setFileName(answer.getRelativeFilePath());
 
         return answer;
+    }
+
+    @Override
+    protected void updateFileHeaders(GenericFile<ChannelSftp.LsEntry> file, Message message) {
+        long length = file.getFile().getAttrs().getSize();
+        long modified = file.getFile().getAttrs().getMTime() * 1000L;
+        file.setFileLength(length);
+        file.setLastModified(modified);
+        if (length >= 0) {
+            message.setHeader(Exchange.FILE_LENGTH, length);
+        }
+        if (modified >= 0) {
+            message.setHeader(Exchange.FILE_LAST_MODIFIED, modified);
+        }
     }
 
     private boolean isStepwise() {
