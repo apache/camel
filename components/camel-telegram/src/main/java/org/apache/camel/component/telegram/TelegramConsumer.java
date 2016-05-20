@@ -40,7 +40,6 @@ public class TelegramConsumer extends ScheduledPollConsumer {
 
     public TelegramConsumer(TelegramEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        setDelay(endpoint.getConfiguration().getDelay());
         this.endpoint = endpoint;
     }
 
@@ -68,7 +67,7 @@ public class TelegramConsumer extends ScheduledPollConsumer {
         List<Update> updates = updateResult.getUpdates();
 
         if (updates.size() > 0) {
-            log.info("Received " + updates.size() + " updates from Telegram service");
+            log.debug("Received {} updates from Telegram service", updates.size());
         } else {
             log.debug("No updates received from Telegram service");
         }
@@ -84,26 +83,19 @@ public class TelegramConsumer extends ScheduledPollConsumer {
     private void processUpdates(List<Update> updates) throws Exception {
         for (Update update : updates) {
 
-            log.debug("Received update from Telegram service: " + update);
+            log.debug("Received update from Telegram service: {}", update);
 
-            Exchange exchange = endpoint.createExchange();
-
-            if (update.getMessage() != null) {
-                exchange.getIn().setBody(update.getMessage());
-
-                if (update.getMessage().getChat() != null) {
-                    exchange.getIn().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, update.getMessage().getChat().getId());
-                }
-            }
+            Exchange exchange = endpoint.createExchange(update);
             getProcessor().process(exchange);
         }
     }
+
 
     private void updateOffset(List<Update> updates) {
         OptionalLong ol = updates.stream().mapToLong(Update::getUpdateId).max();
         if (ol.isPresent()) {
             this.offset = ol.getAsLong() + 1;
-            log.debug("Next Telegram offset will be " + this.offset);
+            log.debug("Next Telegram offset will be {}", this.offset);
         }
     }
 }

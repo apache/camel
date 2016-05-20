@@ -18,19 +18,19 @@ package org.apache.camel.component.telegram;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.Metadata;
+import org.apache.camel.component.telegram.model.Update;
+import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 
 /**
  * The Camel endpoint for a telegram bot.
  */
 @UriEndpoint(scheme = "telegram", title = "Telegram", syntax = "telegram:type/authorizationToken", consumerClass = TelegramConsumer.class, label = "chat")
-public class TelegramEndpoint extends DefaultEndpoint {
+public class TelegramEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
     private TelegramConfiguration configuration;
@@ -47,7 +47,23 @@ public class TelegramEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new TelegramConsumer(this, processor);
+        TelegramConsumer consumer = new TelegramConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
+    }
+
+    public Exchange createExchange(Update update) {
+        Exchange exchange = super.createExchange();
+
+        if (update.getMessage() != null) {
+            exchange.getIn().setBody(update.getMessage());
+
+            if (update.getMessage().getChat() != null) {
+                exchange.getIn().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, update.getMessage().getChat().getId());
+            }
+        }
+
+        return exchange;
     }
 
     @Override
