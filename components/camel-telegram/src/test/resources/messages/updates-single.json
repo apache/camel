@@ -1,0 +1,23 @@
+{
+  "ok": true,
+  "result": [
+    {
+      "update_id": 525704898,
+      "message": {
+        "message_id": 179,
+        "from": {
+          "id": 1585844777,
+          "first_name": "John",
+          "last_name": "Doe"
+        },
+        "chat": {
+          "id": -45658,
+          "title": "A chat group",
+          "type": "group"
+        },
+        "date": 1463436626,
+        "text": "a message"
+      }
+    }
+  ]
+}
