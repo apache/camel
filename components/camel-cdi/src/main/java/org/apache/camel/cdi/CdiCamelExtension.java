@@ -307,7 +307,7 @@ public class CdiCamelExtension implements Extension {
                 continue;
             }
             for (InjectionPoint ip : bean.getInjectionPoints()) {
-                if (!getRawType(ip.getType()).getPackage().getName().startsWith("org.apache.camel")) {
+                if (!getRawType(ip.getType()).getName().startsWith("org.apache.camel")) {
                     continue;
                 }
                 for (Annotation qualifier : ip.getQualifiers()) {
