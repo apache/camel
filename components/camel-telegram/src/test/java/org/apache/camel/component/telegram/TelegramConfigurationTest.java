@@ -27,7 +27,6 @@ import org.junit.Test;
 public class TelegramConfigurationTest extends TelegramTestSupport {
 
 
-
     @Test
     public void testChatBotResult() throws Exception {
         TelegramEndpoint endpoint = (TelegramEndpoint) context().getEndpoints().stream().filter(e -> e instanceof TelegramEndpoint).findAny().get();
@@ -36,11 +35,10 @@ public class TelegramConfigurationTest extends TelegramTestSupport {
         assertEquals("bots", config.getType());
         assertEquals("mock-token", config.getAuthorizationToken());
         assertEquals("12345", config.getChatId());
-        assertEquals(Long.valueOf(2000L), config.getDelay());
+        assertEquals(2000L, endpoint.getDelay());
         assertEquals(Integer.valueOf(10), config.getTimeout());
         assertEquals(Integer.valueOf(60), config.getLimit());
     }
-
 
 
     @Override

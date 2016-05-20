@@ -42,9 +42,6 @@ public class TelegramConfiguration {
             + "It is an optional parameter, as the chat id can be set dynamically for each outgoing message (using body or headers).", label = "producer")
     private String chatId;
 
-    @UriParam(description = "Delay in milliseconds between two consecutive polls to the 'getUpdates' service.", optionalPrefix = "consumer.", defaultValue = "1000", label = "consumer")
-    private Long delay = 1000L;
-
     @UriParam(description = "Timeout in seconds for long polling. Put 0 for short polling or a bigger number for long polling. Long polling produces shorter response time.", optionalPrefix =
             "consumer.", defaultValue = "30", label = "consumer")
     private Integer timeout = 30;
@@ -104,14 +101,6 @@ public class TelegramConfiguration {
         this.chatId = chatId;
     }
 
-    public Long getDelay() {
-        return delay;
-    }
-
-    public void setDelay(Long delay) {
-        this.delay = delay;
-    }
-
     public Integer getTimeout() {
         return timeout;
     }
@@ -130,7 +119,13 @@ public class TelegramConfiguration {
 
     @Override
     public String toString() {
-        return "TelegramConfiguration{" + "type='" + type + '\'' + ", authorizationToken='" + authorizationToken + '\'' + ", chatId='" + chatId + '\'' + ", delay=" + delay
-                + ", timeout=" + timeout + ", limit=" + limit + '}';
+        final StringBuilder sb = new StringBuilder("TelegramConfiguration{");
+        sb.append("type='").append(type).append('\'');
+        sb.append(", authorizationToken='").append(authorizationToken).append('\'');
+        sb.append(", chatId='").append(chatId).append('\'');
+        sb.append(", timeout=").append(timeout);
+        sb.append(", limit=").append(limit);
+        sb.append('}');
+        return sb.toString();
     }
 }

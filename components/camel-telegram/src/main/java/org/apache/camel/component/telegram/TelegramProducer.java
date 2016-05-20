@@ -37,7 +37,7 @@ public class TelegramProducer extends DefaultProducer {
 
         if (exchange.getIn().getBody() == null) {
             // fail fast
-            log.info("Received exchange with empty body, skipping");
+            log.debug("Received exchange with empty body, skipping");
             return;
         }
 
@@ -50,15 +50,14 @@ public class TelegramProducer extends DefaultProducer {
         if (message.getChatId() == null) {
             log.debug("Chat id is null on outgoing message, trying resolution");
             String chatId = resolveChatId(config, message, exchange);
-            log.debug("Resolved chat id is " + chatId);
+            log.debug("Resolved chat id is {}", chatId);
             message.setChatId(chatId);
         }
 
         TelegramService service = TelegramServiceProvider.get().getService();
 
-        log.info("Sending text message to Telegram service");
-        log.debug("Message being sent is: " + message);
-        log.debug("Headers of message being sent are: " + exchange.getIn().getHeaders());
+        log.debug("Message being sent is: {}", message);
+        log.debug("Headers of message being sent are: {}", exchange.getIn().getHeaders());
 
         service.sendMessage(config.getAuthorizationToken(), message);
     }
