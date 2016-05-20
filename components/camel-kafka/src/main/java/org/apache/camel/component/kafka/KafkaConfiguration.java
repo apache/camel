@@ -118,7 +118,7 @@ public class KafkaConfiguration {
     private String keySerializerClass;
 
     @UriParam(label = "producer", defaultValue = "1")
-    private Integer requestRequiredAcks = 1;
+    private String requestRequiredAcks = "1";
     //buffer.memory
     @UriParam(label = "producer", defaultValue = "33554432")
     private Integer bufferMemorySize = 33554432;
@@ -865,7 +865,7 @@ public class KafkaConfiguration {
         this.bufferMemorySize = bufferMemorySize;
     }
 
-    public Integer getRequestRequiredAcks() {
+    public String getRequestRequiredAcks() {
         return requestRequiredAcks;
     }
 
@@ -882,7 +882,7 @@ public class KafkaConfiguration {
      * acks=all This means the leader will wait for the full set of in-sync replicas to acknowledge the record. This guarantees that the
      * record will not be lost as long as at least one in-sync replica remains alive. This is the strongest available guarantee.
      */
-    public void setRequestRequiredAcks(Integer requestRequiredAcks) {
+    public void setRequestRequiredAcks(String requestRequiredAcks) {
         this.requestRequiredAcks = requestRequiredAcks;
     }
 
