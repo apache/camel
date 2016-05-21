@@ -30,6 +30,7 @@
       <to uri="mock:dataset"/>
       <split>
         <simple>${body}</simple>
+        <to uri="log:row"/>
         <to uri="mock:results"/>
       </split>
     </route>
