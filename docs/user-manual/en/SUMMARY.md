@@ -232,6 +232,7 @@
     * [Scp](scp.adoc)
     * [SJMS](sjms.adoc)
     * [SJMS Batch](sjms-batch.adoc)
+    * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
     * [Websocket](websocket.adoc)
     * [XML Security](xmlsecurity.adoc)
