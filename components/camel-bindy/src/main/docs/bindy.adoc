@@ -66,7 +66,8 @@ the POJO like :
 * KeyValuePairField (for key = value format like we have in FIX
 financial messages),
 * Section (to identify header, body and footer section),
-* OneToMany
+* OneToMany,
+* BindyConverter (since 2.18.0)
 
 This section will describe them :
 
@@ -1498,6 +1499,66 @@ public class Security {
     @KeyValuePairField(tag = 54) // Movement type ( 1 = Buy, 2 = sell)
     private String side;
 ---------------------------------------------------------------------------------------------------
+
+[[Bindy-9.BindyConverter]]
+9. BindyConverter
+^^^^^^^^^^^^^^^^^
+
+The purpose of the annotation @BindyConverter is define a converter
+to be used on field level. The provided class must implement the
+Format interface.
+
+[source,java]
+---------------------------------------------------------------------------------------------------
+...
+    @FixedLengthRecord(length = 10, paddingChar = ' ')
+    public static class DataModel {
+        @DataField(pos =  1, length = 10, trim = true)
+        @BindyConverter(CustomConverter.class)
+        public String field1;
+    }
+
+    public static class CustomConverter implements Format<String> {
+        @Override
+        public String format(String object) throws Exception {
+            return (new StringBuilder(object)).reverse().toString();
+        }
+
+        @Override
+        public String parse(String string) throws Exception {
+            return (new StringBuilder(string)).reverse().toString();
+        }
+    }
+...
+---------------------------------------------------------------------------------------------------
+
+[[Bindy-SupportedDatatypes]]
+Supported Datatypes
+^^^^^^^^^^^^^^^^^^^
+
+The DefaultFormatFactory makes formatting of the following datatype available by
+returning an instance of the interface FormatFactoryInterface based on the provided
+FormattingOptions:
+
+* BigDecimal
+* BigInteger
+* Boolean
+* Byte
+* Character
+* Date
+* Double
+* Enums
+* Float
+* Integer
+* LocalDate (java 8, since 2.18.0)
+* LocalDateTime (java 8, since 2.18.0)
+* LocalTime (java 8, since 2.18.0)
+* Long
+* Short
+* String
+
+The DefaultFormatFactory can be overridden by providing an instance of
+FactoryRegistry in the registry in use (e.g. spring or JNDI).
 
 [[Bindy-UsingtheJavaDSL]]
 Using the Java DSL
