@@ -67,7 +67,8 @@ the POJO like :
 financial messages),
 * Section (to identify header, body and footer section),
 * OneToMany,
-* BindyConverter (since 2.18.0)
+* BindyConverter (since 2.18.0),
+* FormatFactories (since 2.18.0)
 
 This section will describe them :
 
@@ -1530,6 +1531,61 @@ Format interface.
         }
     }
 ...
+---------------------------------------------------------------------------------------------------
+
+[[Bindy-10.FormatFactories]]
+10. FormatFactories
+^^^^^^^^^^^^^^^^^^^
+
+The purpose of the annotation @FormatFactories is to define a set of converters
+at record-level. The provided classes must implement the FormatFactoryInterface interface.
+
+[source,java]
+---------------------------------------------------------------------------------------------------
+    @CsvRecord(separator = ",")
+    @FormatFactories({OrderNumberFormatFactory.class})
+    public static class Order {
+
+        @DataField(pos = 1)
+        private OrderNumber orderNr;
+
+        @DataField(pos = 2)
+        private String firstName;
+
+...
+    }
+
+    public static class OrderNumber {
+        private int orderNr;
+
+        public static OrderNumber ofString(String orderNumber) {
+            OrderNumber result = new OrderNumber();
+            result.orderNr = Integer.valueOf(orderNumber);
+            return result;
+        }
+    }
+
+    public static class OrderNumberFormatFactory extends AbstractFormatFactory {
+
+        {
+            supportedClasses.add(OrderNumber.class);
+        }
+
+        @Override
+        public Format<?> build(FormattingOptions formattingOptions) {
+            return new Format<OrderNumber>() {
+                @Override
+                public String format(OrderNumber object) throws Exception {
+                    return String.valueOf(object.orderNr);
+                }
+
+                @Override
+                public OrderNumber parse(String string) throws Exception {
+                    return OrderNumber.ofString(string);
+                }
+            };
+        }
+    }
 ---------------------------------------------------------------------------------------------------
 
 [[Bindy-SupportedDatatypes]]
