@@ -661,7 +661,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     /**
      * Use eager completion checking which means that the {{completionPredicate}} will use the incoming Exchange.
-     * At opposed to without eager completion checking the {{completionPredicate}} will use the aggregated Exchange.
+     * As opposed to without eager completion checking the {{completionPredicate}} will use the aggregated Exchange.
      *
      * @return builder
      */

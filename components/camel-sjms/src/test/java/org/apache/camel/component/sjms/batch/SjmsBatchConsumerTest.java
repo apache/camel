@@ -152,6 +152,33 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
     }
 
     @Test
+    public void testConsumptionCompletionPredicate() throws Exception {
+        final String completionPredicate = "${body} contains 'done'";
+        final int completionTimeout = -1; // predicate-based only
+
+        final String queueName = getQueueName();
+        context.addRoutes(new TransactedSendHarness(queueName));
+        context.addRoutes(new RouteBuilder() {
+            public void configure() throws Exception {
+                fromF("sjms-batch:%s?completionTimeout=%s&completionPredicate=%s&aggregationStrategy=#testStrategy&eagerCheckCompletion=true",
+                        queueName, completionTimeout, completionPredicate).routeId("batchConsumer").startupOrder(10)
+                        .log(LoggingLevel.DEBUG, "${body.size}")
+                        .to("mock:batches");
+            }
+        });
+        context.start();
+
+        MockEndpoint mockBatches = getMockEndpoint("mock:batches");
+        mockBatches.expectedMessageCount(2);
+
+        template.sendBody("direct:in", generateStrings(50));
+        template.sendBody("direct:in", "Message done");
+        template.sendBody("direct:in", generateStrings(50));
+        template.sendBody("direct:in", "Message done");
+        mockBatches.assertIsSatisfied();
+    }
+
+    @Test
     public void testConsumptionCompletionTimeout() throws Exception {
         final int completionTimeout = 2000;
         final int completionSize = -1; // timeout-based only
