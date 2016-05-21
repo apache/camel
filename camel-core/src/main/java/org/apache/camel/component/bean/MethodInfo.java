@@ -40,6 +40,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RoutingSlip;
@@ -248,6 +249,11 @@ public class MethodInfo {
             }
 
             public boolean proceed(AsyncCallback callback) {
+                Object body = exchange.getIn().getBody();
+                if (body != null && body instanceof StreamCache) {
+                    // ensure the stream cache is reset before calling the method
+                    ((StreamCache) body).reset();
+                }
                 try {
                     return doProceed(callback);
                 } catch (InvocationTargetException e) {
@@ -467,6 +473,12 @@ public class MethodInfo {
                 exchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
 
                 for (int i = 0; i < expressions.length; i++) {
+
+                    if (body != null && body instanceof StreamCache) {
+                        // need to reset stream cache for each expression as you may access the message body in multiple parameters
+                        ((StreamCache) body).reset();
+                    }
+
                     // grab the parameter value for the given index
                     Object parameterValue = it != null && it.hasNext() ? it.next() : null;
                     // and the expected parameter type
