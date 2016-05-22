@@ -91,16 +91,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 String name = model.getClass().getName();
                 Map<String, Object> row = new HashMap<String, Object>(1);
                 row.put(name, model);
-                // search for @Link-ed fields and add them to the model
-                for (Field field : model.getClass().getDeclaredFields()) {
-                    Link linkField = field.getAnnotation(Link.class);
-                    if (linkField != null) {
-                        boolean accessible = field.isAccessible();
-                        field.setAccessible(true);
-                        row.put(field.getType().getName(), field.get(model));
-                        field.setAccessible(accessible);
-                    }
-                } 
+                row.putAll(createLinkedFieldsModel(model));
                 models.add(row);
             }
         }

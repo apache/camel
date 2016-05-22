@@ -16,9 +16,11 @@
  */
 package org.apache.camel.dataformat.bindy;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +30,7 @@ import java.util.function.Function;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.dataformat.bindy.annotation.FormatFactories;
+import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.format.factories.DefaultFactoryRegistry;
 import org.apache.camel.dataformat.bindy.format.factories.FactoryRegistry;
 import org.apache.camel.dataformat.bindy.format.factories.FormatFactoryInterface;
@@ -127,6 +130,20 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
 
     public void setModelFactory(BindyAbstractFactory modelFactory) {
         this.modelFactory = modelFactory;
+    }
+
+    protected Map<String, Object> createLinkedFieldsModel(Object model) throws IllegalAccessException {
+        Map<String, Object> row = new HashMap<>();
+        for (Field field : model.getClass().getDeclaredFields()) {
+            Link linkField = field.getAnnotation(Link.class);
+            if (linkField != null) {
+                boolean accessible = field.isAccessible();
+                field.setAccessible(true);
+                row.put(field.getType().getName(), field.get(model));
+                field.setAccessible(accessible);
+            }
+        }
+        return row;
     }
 
     protected abstract BindyAbstractFactory createModelFactory(FormatFactory formatFactory) throws Exception;

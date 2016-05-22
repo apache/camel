@@ -85,6 +85,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                 String name = model.getClass().getName();
                 Map<String, Object> row = new HashMap<String, Object>();
                 row.put(name, model);
+                row.putAll(createLinkedFieldsModel(model));
                 models.add(row);
             }
         } else {
