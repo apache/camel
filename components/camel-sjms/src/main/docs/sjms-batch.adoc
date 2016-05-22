@@ -135,6 +135,7 @@ The Simple JMS Batch component supports 1 options which are listed below.
 
 
 
+
 // endpoint options: START
 The Simple JMS Batch component supports 21 endpoint options which are listed below:
 
@@ -147,11 +148,11 @@ The Simple JMS Batch component supports 21 endpoint options which are listed bel
 | allowNullBody | consumer | true | boolean | Whether to allow sending messages with no body. If this option is false and the message body is null then an JMSException is thrown.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | completionInterval | consumer | 1000 | int | The completion interval in millis which causes batches to be completed in a scheduled fixed rate every interval. The batch may be empty if the timeout triggered and there was no messages in the batch. Notice you cannot use both completion timeout and completion interval at the same time only one can be configured.
-| completionPredicate | consumer |  | String | The completion predicate which causes batches to be completed when the predicate evaluates as true. The predicate can be configured using the simple language using the string syntax.
+| completionPredicate | consumer |  | String | The completion predicate which causes batches to be completed when the predicate evaluates as true. The predicate can also be configured using the simple language using the string syntax. You may want to set the option eagerCheckCompletion to true to let the predicate match the incoming message as otherwise it matches the aggregated message.
 | completionSize | consumer | 200 | int | The number of messages consumed at which the batch will be completed
 | completionTimeout | consumer | 500 | int | The timeout in millis from receipt of the first first message when the batch will be completed. The batch may be empty if the timeout triggered and there was no messages in the batch. Notice you cannot use both completion timeout and completion interval at the same time only one can be configured.
 | consumerCount | consumer | 1 | int | The number of JMS sessions to consume from
-| eagerCheckCompletion | consumer | false | boolean | Use eager completion checking which means that the completionPredicate will use the incoming Exchange. At opposed to without eager completion checking the completionPredicate will use the aggregated Exchange.
+| eagerCheckCompletion | consumer | false | boolean | Use eager completion checking which means that the completionPredicate will use the incoming Exchange. As opposed to without eager completion checking the completionPredicate will use the aggregated Exchange.
 | includeAllJMSXProperties | consumer | false | boolean | Whether to include all JMSXxxx properties when mapping from JMS to Camel Message. Setting this to true will include properties such as JMSXAppID and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy then this option does not apply.
 | mapJmsMessage | consumer | true | boolean | Specifies whether Camel should auto map the received JMS message to a suited payload type such as javax.jms.TextMessage to a String etc. See section about how mapping works below for more details.
 | pollDuration | consumer | 1000 | int | The duration in milliseconds of each poll for messages. completionTimeOut will be used if it is shorter and a batch has started.
@@ -166,6 +167,7 @@ The Simple JMS Batch component supports 21 endpoint options which are listed bel
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
