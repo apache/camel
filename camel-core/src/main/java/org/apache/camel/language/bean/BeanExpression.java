@@ -108,10 +108,6 @@ public class BeanExpression implements Expression, Predicate {
             throw new RuntimeBeanExpressionException(exchange, beanName, method, cause);
         }
 
-//        if (method != null) {
-//            OgnlHelper.validateMethodName(method);
-//        }
-
         if (OgnlHelper.isValidOgnlExpression(method)) {
             // okay the method is an ognl expression
             OgnlInvokeProcessor ognl = new OgnlInvokeProcessor(beanHolder, method);
