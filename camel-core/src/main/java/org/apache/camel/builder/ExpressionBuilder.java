@@ -995,6 +995,40 @@ public final class ExpressionBuilder {
 
     /**
      * Returns the expression for the exchanges inbound message body converted
+     * to the given type and invoking methods on the converted body defined in a simple OGNL notation
+     */
+    public static Expression bodyOgnlExpression(final String name, final String ognl) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String text = simpleExpression(name).evaluate(exchange, String.class);
+                Class<?> type;
+                try {
+                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
+                } catch (ClassNotFoundException e) {
+                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                }
+                Object body = exchange.getIn().getBody(type);
+                if (body != null) {
+                    // ognl is able to evaluate method name if it contains nested functions
+                    // so we should not eager evaluate ognl as a string
+                    MethodCallExpression call = new MethodCallExpression(exchange, ognl);
+                    // set the instance to use
+                    call.setInstance(body);
+                    return call.evaluate(exchange);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "bodyOgnlAs[" + name + "](" + ognl + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchanges inbound message body converted
      * to the given type
      */
     public static Expression mandatoryBodyExpression(final String name) {
@@ -1017,6 +1051,41 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "mandatoryBodyAs[" + name + "]";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchanges inbound message body converted
+     * to the given type and invoking methods on the converted body defined in a simple OGNL notation
+     */
+    public static Expression mandatoryBodyOgnlExpression(final String name, final String ognl) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String text = simpleExpression(name).evaluate(exchange, String.class);
+                Class<?> type;
+                try {
+                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
+                } catch (ClassNotFoundException e) {
+                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                }
+                Object body;
+                try {
+                    body = exchange.getIn().getMandatoryBody(type);
+                } catch (InvalidPayloadException e) {
+                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                }
+                // ognl is able to evaluate method name if it contains nested functions
+                // so we should not eager evaluate ognl as a string
+                MethodCallExpression call = new MethodCallExpression(exchange, ognl);
+                // set the instance to use
+                call.setInstance(body);
+                return call.evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "mandatoryBodyAs[" + name + "](" + ognl + ")";
             }
         };
     }

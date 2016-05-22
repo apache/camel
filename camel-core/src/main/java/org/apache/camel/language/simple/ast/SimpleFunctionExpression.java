@@ -229,24 +229,40 @@ public class SimpleFunctionExpression extends LiteralExpression {
         String remainder = ifStartsWithReturnRemainder("bodyAs", function);
         if (remainder != null) {
             String type = ObjectHelper.between(remainder, "(", ")");
-            remainder = ObjectHelper.after(remainder, ")");
-            if (type == null || ObjectHelper.isNotEmpty(remainder)) {
+            if (type == null) {
                 throw new SimpleParserException("Valid syntax: ${bodyAs(type)} was: " + function, token.getIndex());
             }
-            
             type = StringHelper.removeQuotes(type);
-            return ExpressionBuilder.bodyExpression(type);
+            remainder = ObjectHelper.after(remainder, ")");
+            if (ObjectHelper.isNotEmpty(remainder)) {
+                boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+                if (invalid) {
+                    throw new SimpleParserException("Valid syntax: ${bodyAs(type).OGNL} was: " + function, token.getIndex());
+                }
+                return ExpressionBuilder.bodyOgnlExpression(type, remainder);
+            } else {
+                return ExpressionBuilder.bodyExpression(type);
+            }
+
         }
         // mandatoryBodyAs
         remainder = ifStartsWithReturnRemainder("mandatoryBodyAs", function);
         if (remainder != null) {
             String type = ObjectHelper.between(remainder, "(", ")");
-            remainder = ObjectHelper.after(remainder, ")");
-            if (type == null || ObjectHelper.isNotEmpty(remainder)) {
+            if (type == null) {
                 throw new SimpleParserException("Valid syntax: ${mandatoryBodyAs(type)} was: " + function, token.getIndex());
             }
             type = StringHelper.removeQuotes(type);
-            return ExpressionBuilder.mandatoryBodyExpression(type);
+            remainder = ObjectHelper.after(remainder, ")");
+            if (ObjectHelper.isNotEmpty(remainder)) {
+                boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+                if (invalid) {
+                    throw new SimpleParserException("Valid syntax: ${mandatoryBodyAs(type).OGNL} was: " + function, token.getIndex());
+                }
+                return ExpressionBuilder.mandatoryBodyOgnlExpression(type, remainder);
+            } else {
+                return ExpressionBuilder.mandatoryBodyExpression(type);
+            }
         }
 
         // body OGNL

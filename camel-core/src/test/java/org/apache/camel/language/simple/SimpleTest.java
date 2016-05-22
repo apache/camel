@@ -264,6 +264,46 @@ public class SimpleTest extends LanguageTestSupport {
         assertPredicate("${body.toUpperCase()} == 'HELLO WORLD'", true);
     }
     
+    public void testOGNLBodyAsExpression() throws Exception {
+        byte[] body = "hello world".getBytes();
+        exchange.getIn().setBody(body);
+
+        // there is no upper case method on byte array, but we can convert to String as below
+        try {
+            assertPredicate("${body.toUpperCase()} == 'HELLO WORLD'", true);
+            fail("Should throw exception");
+        } catch (RuntimeBeanExpressionException e) {
+            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
+            assertEquals("toUpperCase()", cause.getMethodName());
+        }
+
+        assertPredicate("${bodyAs(String)} == 'hello world'", true);
+        assertPredicate("${bodyAs(String).toUpperCase()} == 'HELLO WORLD'", true);
+
+        // and body on exchange should not be changed
+        assertSame(body, exchange.getIn().getBody());
+    }
+
+    public void testOGNLMandatoryBodyAsExpression() throws Exception {
+        byte[] body = "hello world".getBytes();
+        exchange.getIn().setBody(body);
+
+        // there is no upper case method on byte array, but we can convert to String as below
+        try {
+            assertPredicate("${body.toUpperCase()} == 'HELLO WORLD'", true);
+            fail("Should throw exception");
+        } catch (RuntimeBeanExpressionException e) {
+            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
+            assertEquals("toUpperCase()", cause.getMethodName());
+        }
+
+        assertPredicate("${mandatoryBodyAs(String)} == 'hello world'", true);
+        assertPredicate("${mandatoryBodyAs(String).toUpperCase()} == 'HELLO WORLD'", true);
+
+        // and body on exchange should not be changed
+        assertSame(body, exchange.getIn().getBody());
+    }
+
     public void testOGNLCallReplace() throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("cool", "Camel rocks");
@@ -527,14 +567,6 @@ public class SimpleTest extends LanguageTestSupport {
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
         }
-        
-        exchange.getIn().setBody("hello");
-        try {
-            assertExpression("${bodyAs(String).test}", "hello.test");
-            fail("should have thrown an exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertTrue("Get a wrong message", e.getMessage().indexOf("bodyAs(String).test") > 0);
-        }
     }
 
     public void testMandatoryBodyAs() throws Exception {
@@ -559,13 +591,6 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
-        }
-        
-        try {
-            assertExpression("${mandatoryBodyAs(String).test}", "hello.test");
-            fail("should have thrown an exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertTrue("Get a wrong message", e.getMessage().indexOf("mandatoryBodyAs(String).test") > 0);
         }
     }
 
