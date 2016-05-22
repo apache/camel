@@ -16,8 +16,12 @@
  */
 package org.apache.camel.test.spring;
 
+import java.util.List;
+
 import org.junit.runners.model.InitializationError;
+import org.springframework.core.OrderComparator;
 import org.springframework.test.context.TestContextManager;
+import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
@@ -56,12 +60,30 @@ public class CamelSpringBootJUnit4ClassRunner extends SpringJUnit4ClassRunner {
             System.setProperty("skipStartingCamelContext", "true");
 
             // inject Camel first, and then disable jmx and add the stop-watch
-            registerTestExecutionListeners(new CamelSpringTestContextLoaderTestExecutionListener());
-            registerTestExecutionListeners(new DisableJmxTestExecutionListener());
-            registerTestExecutionListeners(new CamelSpringBootExecutionListener());
-            registerTestExecutionListeners(new StopWatchTestExecutionListener());
+            // (ensure to get the current list as we need to re-order that list so Camel comes first)
+            List<TestExecutionListener> list = getTestExecutionListeners();
+            addIfMissingType(list, new CamelSpringTestContextLoaderTestExecutionListener());
+            addIfMissingType(list, new DisableJmxTestExecutionListener());
+            addIfMissingType(list, new CamelSpringBootExecutionListener());
+            addIfMissingType(list, new StopWatchTestExecutionListener());
+            OrderComparator.sort(list);
+            registerTestExecutionListeners(list);
         }
 
+        private void addIfMissingType(List<TestExecutionListener> list, TestExecutionListener listener) {
+            String type = listener.getClass().getName();
+            boolean found = false;
+            for (TestExecutionListener current : list) {
+                if (type.equals(current.getClass().getName())) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                list.add(listener);
+            }
+        }
     }
 
 }

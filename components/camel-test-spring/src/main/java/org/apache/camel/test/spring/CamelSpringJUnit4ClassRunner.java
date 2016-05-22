@@ -57,14 +57,29 @@ public class CamelSpringJUnit4ClassRunner extends SpringJUnit4ClassRunner {
             super(testClass);
 
             // inject Camel first, and then disable jmx and add the stop-watch
+            // (ensure to get the current list as we need to re-order that list so Camel comes first)
             List<TestExecutionListener> list = getTestExecutionListeners();
-            list.add(new CamelSpringTestContextLoaderTestExecutionListener());
-            list.add(new DisableJmxTestExecutionListener());
-            list.add(new StopWatchTestExecutionListener());
+            addIfMissingType(list, new CamelSpringTestContextLoaderTestExecutionListener());
+            addIfMissingType(list, new DisableJmxTestExecutionListener());
+            addIfMissingType(list, new StopWatchTestExecutionListener());
             OrderComparator.sort(list);
             registerTestExecutionListeners(list);
         }
 
+        private void addIfMissingType(List<TestExecutionListener> list, TestExecutionListener listener) {
+            String type = listener.getClass().getName();
+            boolean found = false;
+            for (TestExecutionListener current : list) {
+                if (type.equals(current.getClass().getName())) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                list.add(listener);
+            }
+        }
     }
 
 }
