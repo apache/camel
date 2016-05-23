@@ -32,7 +32,6 @@ import org.eclipse.jetty.util.B64Code;
 import org.eclipse.jetty.util.StringUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,6 @@ import static org.eclipse.jetty.http.HttpHeader.PROXY_AUTHORIZATION;
 /**
  * Test HTTP proxy configuration for Salesforce component.
  */
-@Ignore("Bug in Jetty9 causes java.lang.IllegalArgumentException: Invalid protocol login.salesforce.com")
 public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpProxyIntegrationTest.class);
@@ -128,9 +126,10 @@ public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
         // set HTTP proxy settings
         salesforce.setHttpProxyHost(HTTP_PROXY_HOST);
         salesforce.setHttpProxyPort(httpProxyPort);
+        salesforce.setIsHttpProxySecure(false);
         salesforce.setHttpProxyUsername(HTTP_PROXY_USER_NAME);
         salesforce.setHttpProxyPassword(HTTP_PROXY_PASSWORD);
-        salesforce.setHttpProxyAuthUri(String.format("https://%s:%s", HTTP_PROXY_HOST, httpProxyPort));
+        salesforce.setHttpProxyAuthUri(String.format("http://%s:%s", HTTP_PROXY_HOST, httpProxyPort));
         salesforce.setHttpProxyRealm(HTTP_PROXY_REALM);
 
         // set HTTP client properties
