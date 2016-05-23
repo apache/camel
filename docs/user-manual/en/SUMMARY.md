@@ -10,6 +10,7 @@
     * [Endpoint](endpoint.adoc)
     * [Exchange](exchange.adoc)
     * [Exchange Pattern](exchange-pattern.adoc)
+    * [Intercept](intercept.adoc)
     * [Registry](registry.adoc)
     * [RX](rx.adoc)
     * [Scala DSL](scala-dsl.adoc)
