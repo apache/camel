@@ -47,6 +47,12 @@ public class TimePatternConverterTest extends ContextTestSupport {
         assertEquals(35000, milliseconds);
     }
 
+    public void testSecsTimePattern() throws Exception {
+        String source = "35secs";
+        long milliseconds = TimePatternConverter.toMilliSeconds(source);
+        assertEquals(35000, milliseconds);
+    }
+
     public void testSecondTimePattern() throws Exception {
         String source = "35second";
         long milliseconds = TimePatternConverter.toMilliSeconds(source);
@@ -203,6 +209,11 @@ public class TimePatternConverterTest extends ContextTestSupport {
 
     public void testIllegalCharacters() throws Exception {
         String source = "5ssegegegegqergerg";
+        checkForIllegalArgument(source, "Illegal characters: " + source);
+    }
+
+    public void testSsCharacters() throws Exception {
+        String source = "5ss";
         checkForIllegalArgument(source, "Illegal characters: " + source);
     }
 
