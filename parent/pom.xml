@@ -131,6 +131,8 @@
     <commons-pool2-version>2.4.2</commons-pool2-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <compress-lzf-version>1.0.3</compress-lzf-version>
+    <consul-client-version>0.12.0</consul-client-version>
+    <consul-client-bundle-version>0.12.0_1</consul-client-bundle-version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
     <cxf-version>3.1.6</cxf-version>
     <cxf-version-range>[3.0,4.0)</cxf-version-range>
@@ -818,6 +820,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cometd</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-consul</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
