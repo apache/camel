@@ -25,12 +25,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Converter from String syntax to milli seconds.
+ * Code is copied to org.apache.camel.catalog.TimePatternConverter in camel-catalog
  */
 @Converter
 public final class TimePatternConverter {   
     private static final Logger LOG = LoggerFactory.getLogger(TimePatternConverter.class);
     private static final String NUMBERS_ONLY_STRING_PATTERN = "^[-]?(\\d)+$";
-    //private static final String REPLACEMENT_PATTERN = "[our|inute|econd](s)?";
     private static final String HOUR_REGEX_PATTERN = "((\\d)*(\\d))h(our(s)?)?";
     private static final String MINUTES_REGEX_PATTERN = "((\\d)*(\\d))m(in(ute(s)?)?)?";
     private static final String SECONDS_REGEX_PATTERN = "((\\d)*(\\d))s(ec(ond(s)?)?)?";
@@ -55,10 +55,6 @@ public final class TimePatternConverter {
             //       This String -> long converter will be used for all strings.
             milliseconds = Long.valueOf(source);
         } else {            
-            //matcher = createMatcher(REPLACEMENT_PATTERN, source);
-
-            LOG.trace("Replaced original source {} to {}", source, source);
-            
             matcher = createMatcher(HOUR_REGEX_PATTERN, source);
             if (matcher.find()) {
                 milliseconds = milliseconds + (3600000 * Long.valueOf(matcher.group(1)));
