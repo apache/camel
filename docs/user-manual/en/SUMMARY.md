@@ -6,6 +6,7 @@
 * [Longer Getting Started Guide](book-getting-started.adoc)
 
 * [Architecture](architecture.adoc)
+    * [Async](async.adoc)
     * [Dozer Type Conversion](dozer-type-conversion.adoc)
     * [Endpoint](endpoint.adoc)
     * [Exchange](exchange.adoc)
@@ -17,7 +18,6 @@
 
 <!--
     * [AOP](aop.adoc)
-    * [Async](async.adoc)
     * [BAM](bam.adoc)
     * [Batch Consumer](batch-consumer.adoc)
     * [BrowsableEndpoint](browsable-endpoint.adoc)
