@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.weather;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.camel.component.weather.geolocation.GeoLocation;
 import org.apache.camel.component.weather.geolocation.GeoLocationProvider;
 import org.junit.Before;
@@ -64,6 +67,23 @@ public class WeatherQueryTest {
     }
 
     @Test
+    public void testBoxedStationQuery() throws Exception {
+        WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
+        weatherConfiguration.setLon("4");
+        weatherConfiguration.setLat("52");
+        weatherConfiguration.setRightLon("6");
+        weatherConfiguration.setTopLat("54");
+        weatherConfiguration.setZoom(8);
+        weatherConfiguration.setUnits(WeatherUnits.METRIC);
+        weatherConfiguration.setAppid(APPID);
+        weatherConfiguration.setWeatherApi(WeatherApi.Station);
+        WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
+        weatherQuery.setGeoLocationProvider(geoLocationProvider);
+        String query = weatherQuery.getQuery();
+        assertThat(query, is("http://api.openweathermap.org/data/2.5/box/station?bbox=4,52,6,54,8&cluster=yes&lang=en&units=metric&APPID=9162755b2efa555823cfe0451d7fff38"));
+    }
+
+    @Test
     public void testLatLonQuery() throws Exception {
         WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
         weatherConfiguration.setLon("4");
@@ -78,6 +98,124 @@ public class WeatherQueryTest {
     }
 
     @Test
+    public void testZipQuery() throws Exception {
+        WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
+        weatherConfiguration.setZip("2493CJ,nl");
+        weatherConfiguration.setMode(WeatherMode.XML);
+        weatherConfiguration.setLanguage(WeatherLanguage.nl);
+        weatherConfiguration.setAppid(APPID);
+        WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
+        weatherQuery.setGeoLocationProvider(geoLocationProvider);
+        String query = weatherQuery.getQuery();
+        assertThat(query, is("http://api.openweathermap.org/data/2.5/weather?zip=2493CJ,nl&lang=nl&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
+    }
+
+    @Test
+    public void testSingleIdQuery() throws Exception {
+        WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
+        List<String> ids = Arrays.asList("524901");
+        weatherConfiguration.setIds(ids);
+        weatherConfiguration.setMode(WeatherMode.XML);
+        weatherConfiguration.setLanguage(WeatherLanguage.nl);
+        weatherConfiguration.setAppid(APPID);
+        WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
+        weatherQuery.setGeoLocationProvider(geoLocationProvider);
+        String query = weatherQuery.getQuery();
+        assertThat(query, is("http://api.openweathermap.org/data/2.5/weather?id=524901&lang=nl&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
+    }
+
+    @Test
+    public void testSingleIdDailyForecastQuery() throws Exception {
+        WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
+        List<String> ids = Arrays.asList("524901");
+        weatherConfiguration.setIds(ids);
+        weatherConfiguration.setMode(WeatherMode.XML);
+        weatherConfiguration.setLanguage(WeatherLanguage.nl);
+        weatherConfiguration.setAppid(APPID);
+        weatherConfiguration.setPeriod("20");
+        WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
+        weatherQuery.setGeoLocationProvider(geoLocationProvider);
+        String query = weatherQuery.getQuery();
+        assertThat(query, is("http://api.openweathermap.org/data/2.5/forecast/daily?id=524901&lang=nl&cnt=20&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
+    }
+
+    @Test
+    public void testSingleIdHourlyForecastQuery() throws Exception {
+        WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
+        List<String> ids = Arrays.asList("524901");
+        weatherConfiguration.setIds(ids);
+        weatherConfiguration.setMode(WeatherMode.XML);
+        weatherConfiguration.setLanguage(WeatherLanguage.nl);
+        weatherConfiguration.setAppid(APPID);
+        weatherConfiguration.setWeatherApi(WeatherApi.Hourly);
+        weatherConfiguration.setPeriod("20");
+        WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
+        weatherQuery.setGeoLocationProvider(geoLocationProvider);
+        String query = weatherQuery.getQuery();
+        assertThat(query, is("http://api.openweathermap.org/data/2.5/forecast?id=524901&lang=nl&cnt=20&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
+    }
+
+    @Test
+    public void testSingleIdStationQuery() throws Exception {
+        WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
+        List<String> ids = Arrays.asList("52");
+        weatherConfiguration.setIds(ids);
+        weatherConfiguration.setMode(WeatherMode.JSON);
+        weatherConfiguration.setLanguage(WeatherLanguage.nl);
+        weatherConfiguration.setAppid(APPID);
+        weatherConfiguration.setWeatherApi(WeatherApi.Station);
+        WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
+        weatherQuery.setGeoLocationProvider(geoLocationProvider);
+        String query = weatherQuery.getQuery();
+        assertThat(query, is("http://api.openweathermap.org/data/2.5/station?id=52&lang=nl&APPID=9162755b2efa555823cfe0451d7fff38"));
+    }
+
+    @Test
+    public void testMultiIdQuery() throws Exception {
+        WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
+        List<String> ids = Arrays.asList("524901", "703448");
+        weatherConfiguration.setIds(ids);
+        weatherConfiguration.setMode(WeatherMode.JSON);
+        weatherConfiguration.setLanguage(WeatherLanguage.nl);
+        weatherConfiguration.setAppid(APPID);
+        WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
+        weatherQuery.setGeoLocationProvider(geoLocationProvider);
+        String query = weatherQuery.getQuery();
+        assertThat(query, is("http://api.openweathermap.org/data/2.5/group?id=524901,703448&lang=nl&APPID=9162755b2efa555823cfe0451d7fff38"));
+    }
+
+    @Test
+    public void testFindInCircleQuery() throws Exception {
+        WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
+        weatherConfiguration.setLat(LATITUDE);
+        weatherConfiguration.setLon(LONGITUDE);
+        weatherConfiguration.setCnt(25);
+        weatherConfiguration.setMode(WeatherMode.JSON);
+        weatherConfiguration.setLanguage(WeatherLanguage.nl);
+        weatherConfiguration.setAppid(APPID);
+        WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
+        weatherQuery.setGeoLocationProvider(geoLocationProvider);
+        String query = weatherQuery.getQuery();
+        assertThat(query, is("http://api.openweathermap.org/data/2.5/find?lat=51.98&lon=4.13&lang=nl&cnt=25&APPID=9162755b2efa555823cfe0451d7fff38"));
+    }
+
+    @Test
+    public void testFindStationInCircleQuery() throws Exception {
+        WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
+        weatherConfiguration.setLat(LATITUDE);
+        weatherConfiguration.setLon(LONGITUDE);
+        weatherConfiguration.setCnt(25);
+        weatherConfiguration.setMode(WeatherMode.JSON);
+        weatherConfiguration.setLanguage(WeatherLanguage.nl);
+        weatherConfiguration.setAppid(APPID);
+        weatherConfiguration.setWeatherApi(WeatherApi.Station);
+        WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
+        weatherQuery.setGeoLocationProvider(geoLocationProvider);
+        String query = weatherQuery.getQuery();
+        assertThat(query, is("http://api.openweathermap.org/data/2.5/station/find?lat=51.98&lon=4.13&lang=nl&cnt=25&APPID=9162755b2efa555823cfe0451d7fff38"));
+    }
+
+    @Test
     public void testCurrentLocationQuery() throws Exception {
         WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
         weatherConfiguration.setMode(WeatherMode.XML);
@@ -89,6 +227,21 @@ public class WeatherQueryTest {
         weatherQuery.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
         assertThat(query, is("http://api.openweathermap.org/data/2.5/forecast/daily?lat=51.98&lon=4.13&lang=nl&cnt=3&units=imperial&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
+    }
+
+    @Test
+    public void testCurrentLocationHourlyQuery() throws Exception {
+        WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
+        weatherConfiguration.setMode(WeatherMode.XML);
+        weatherConfiguration.setPeriod("3");
+        weatherConfiguration.setLanguage(WeatherLanguage.nl);
+        weatherConfiguration.setUnits(WeatherUnits.IMPERIAL);
+        weatherConfiguration.setAppid(APPID);
+        weatherConfiguration.setWeatherApi(WeatherApi.Hourly);
+        WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
+        weatherQuery.setGeoLocationProvider(geoLocationProvider);
+        String query = weatherQuery.getQuery();
+        assertThat(query, is("http://api.openweathermap.org/data/2.5/forecast?lat=51.98&lon=4.13&lang=nl&cnt=3&units=imperial&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
     @Test

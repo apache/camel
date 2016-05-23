@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.weather;
 
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.camel.component.weather.geolocation.FreeGeoIpGeoLocationProvider;
@@ -62,6 +63,14 @@ public class WeatherConfiguration {
     private WeatherLanguage language = en;
     @UriParam
     private String headerName;
+    @UriParam
+    private String zip;
+    @UriParam
+    private List<String> ids;
+    @UriParam
+    private Integer cnt;
+    @UriParam
+    private WeatherApi weatherApi;
 
     @UriParam(label = "proxy")
     private String proxyHost;
@@ -341,5 +350,49 @@ public class WeatherConfiguration {
      */
     public void setProxyAuthHost(String proxyAuthHost) {
         this.proxyAuthHost = proxyAuthHost;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    /**
+     * Zip-code, e.g. 94040,us
+     */
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    public List<String> getIds() {
+        return ids;
+    }
+
+    /**
+     * List of id's of city/stations
+     */
+    public void setIds(List<String> ids) {
+        this.ids = ids;
+    }
+
+    public Integer getCnt() {
+        return cnt;
+    }
+
+    /**
+     * Number of results to be found
+     */
+    public void setCnt(Integer cnt) {
+        this.cnt = cnt;
+    }
+
+    public WeatherApi getWeatherApi() {
+        return weatherApi;
+    }
+
+    /**
+     * The API to be use (current, forecast/3 hour, forecast daily, station
+     */
+    public void setWeatherApi(WeatherApi weatherApi) {
+        this.weatherApi = weatherApi;
     }
 }
