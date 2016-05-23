@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
@@ -270,4 +272,9 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         }
         return ftpConsumerToString;
     }
+
+	@Override
+	protected void updateFileHeaders(GenericFile<FTPFile> arg0, Message arg1) {
+		log.warn("not implemented");
+	}
 }

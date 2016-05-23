@@ -18,14 +18,17 @@ package org.apache.camel.component.file.remote;
 
 import java.util.List;
 
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.SftpException;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
+import com.jcraft.jsch.SftpException;
 
 /**
  * Secure FTP consumer
@@ -227,5 +230,11 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
         return config.isStepwise();
     }
+
+	@Override
+	protected void updateFileHeaders(GenericFile<LsEntry> arg0, Message arg1) {
+		log.warn("not implemented");
+		
+	}
 
 }
