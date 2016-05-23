@@ -113,8 +113,7 @@ public class WeatherQueryTest {
     @Test
     public void testSingleIdQuery() throws Exception {
         WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
-        List<String> ids = Arrays.asList("524901");
-        weatherConfiguration.setIds(ids);
+        weatherConfiguration.setIds("524901");
         weatherConfiguration.setMode(WeatherMode.XML);
         weatherConfiguration.setLanguage(WeatherLanguage.nl);
         weatherConfiguration.setAppid(APPID);
@@ -127,8 +126,7 @@ public class WeatherQueryTest {
     @Test
     public void testSingleIdDailyForecastQuery() throws Exception {
         WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
-        List<String> ids = Arrays.asList("524901");
-        weatherConfiguration.setIds(ids);
+        weatherConfiguration.setIds("524901");
         weatherConfiguration.setMode(WeatherMode.XML);
         weatherConfiguration.setLanguage(WeatherLanguage.nl);
         weatherConfiguration.setAppid(APPID);
@@ -142,8 +140,7 @@ public class WeatherQueryTest {
     @Test
     public void testSingleIdHourlyForecastQuery() throws Exception {
         WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
-        List<String> ids = Arrays.asList("524901");
-        weatherConfiguration.setIds(ids);
+        weatherConfiguration.setIds("524901");
         weatherConfiguration.setMode(WeatherMode.XML);
         weatherConfiguration.setLanguage(WeatherLanguage.nl);
         weatherConfiguration.setAppid(APPID);
@@ -158,8 +155,7 @@ public class WeatherQueryTest {
     @Test
     public void testSingleIdStationQuery() throws Exception {
         WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
-        List<String> ids = Arrays.asList("52");
-        weatherConfiguration.setIds(ids);
+        weatherConfiguration.setIds("52");
         weatherConfiguration.setMode(WeatherMode.JSON);
         weatherConfiguration.setLanguage(WeatherLanguage.nl);
         weatherConfiguration.setAppid(APPID);
@@ -173,8 +169,7 @@ public class WeatherQueryTest {
     @Test
     public void testMultiIdQuery() throws Exception {
         WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
-        List<String> ids = Arrays.asList("524901", "703448");
-        weatherConfiguration.setIds(ids);
+        weatherConfiguration.setIds("524901", "703448");
         weatherConfiguration.setMode(WeatherMode.JSON);
         weatherConfiguration.setLanguage(WeatherLanguage.nl);
         weatherConfiguration.setAppid(APPID);
