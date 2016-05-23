@@ -581,7 +581,7 @@
     <wsdl4j-version>1.6.2</wsdl4j-version>
     <xalan-bundle-version>2.7.2_3</xalan-bundle-version>
     <xalan-version>2.7.2</xalan-version>
-    <xbean-spring-version>3.18</xbean-spring-version>
+    <xbean-spring-version>4.5</xbean-spring-version>
     <!-- xbean-asm4-bundle is used by openjpa -->
     <xbean-asm4-bundle-version>3.14</xbean-asm4-bundle-version>
     <xerces-bundle-version>2.11.0_1</xerces-bundle-version>
