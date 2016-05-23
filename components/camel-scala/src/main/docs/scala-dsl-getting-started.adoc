@@ -1,0 +1,59 @@
+[[ScalaDSL-GettingStarted]]
+Scala DSL Getting Started
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Just like the link:dsl.html[Java DSL], the Scala DSL has a RouteBuilder
+class (`org.apache.camel.scala.dsl.builder.RouteBuilder`) that you can
+extend to implement your own routes. This example shows two very simple
+routes:
+
+INFO: From *Camel 2.15* onwards use
+org.apache.camel.scala.dsl.builder.ScalaRouteBuilder and pass in the
+CamelContext in the constructor, which will be used by the builder. The
+old class RouteBuilder is deprecated.
+
+If you compare this to the Java link:dsl.html[DSL], you notice:
+
+* there is no configure() method to override
+* a route starts directly with a URI instead of `from(uri)`
+* `→` is just an alias for `to`
+
+[[ScalaDSL-GettingStarted-SettingtherouteID]]
+Setting the route ID
+^^^^^^^^^^^^^^^^^^^^
+
+To assign the unique ID to the Scala route, insert the `routeId` method
+invocation after the "from" part of the DSL.
+
+[source,java]
+-----------------------------------------
+ "direct:a" routeId "route-b" to "mock:b"
+-----------------------------------------
+
+[[ScalaDSL-GettingStarted-CreatinganewCamelScalaproject]]
+Creating a new Camel Scala project
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Camel offers link:camel-maven-archetypes.html[Maven archetypes] that
+allow you to quickly setup a new project.
+
+To do this, you can execute the following Maven goal from the command
+line (using Maven 3.0.3 or better):
+
+[source,java]
+----------------------
+mvn archetype:generate
+----------------------
+
+This runs Maven interactively - just type `camel` and press <Enter> to
+filter for Camel-related archetypes. +
+ From the list, pick the number for `camel-archetype-scala`, then fill
+in the remaining details (such as the Camel version, _et cetera_).
+
+The generated project has a "readme" file with more instructions, and is
+ready to compile and run from Maven using:
+
+[source,java]
+---------------------
+mvn compile exec:java
+---------------------

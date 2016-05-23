@@ -12,6 +12,7 @@
     * [Exchange Pattern](exchange-pattern.adoc)
     * [Registry](registry.adoc)
     * [RX](rx.adoc)
+    * [Scala DSL](scala-dsl.adoc)
 
 <!--
     * [AOP](aop.adoc)
