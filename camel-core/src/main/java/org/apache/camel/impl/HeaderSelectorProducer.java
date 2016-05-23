@@ -83,13 +83,6 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
     }
 
     @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-
-        handlers.clear();
-    }
-
-    @Override
     protected Processor getProcessor(Exchange exchange) throws Exception {
         final String action = exchange.getIn().getHeader(header, defaultHeaderValue, String.class);
         if (action == null) {
