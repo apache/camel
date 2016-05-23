@@ -19,7 +19,6 @@ package org.apache.camel.test.spring;
 import java.util.List;
 
 import org.junit.runners.model.InitializationError;
-import org.springframework.core.OrderComparator;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -59,30 +58,28 @@ public class CamelSpringBootJUnit4ClassRunner extends SpringJUnit4ClassRunner {
             // turn off auto starting spring as we need to do this later
             System.setProperty("skipStartingCamelContext", "true");
 
-            // inject Camel first, and then disable jmx and add the stop-watch
-            // (ensure to get the current list as we need to re-order that list so Camel comes first)
-            List<TestExecutionListener> list = getTestExecutionListeners();
-            addIfMissingType(list, new CamelSpringTestContextLoaderTestExecutionListener());
-            addIfMissingType(list, new DisableJmxTestExecutionListener());
-            addIfMissingType(list, new CamelSpringBootExecutionListener());
-            addIfMissingType(list, new StopWatchTestExecutionListener());
-            OrderComparator.sort(list);
-            registerTestExecutionListeners(list);
+            // is Camel already registered
+            if (!alreadyRegistered()) {
+                // inject Camel first, and then disable jmx and add the stop-watch
+                List<TestExecutionListener> list = getTestExecutionListeners();
+                list.add(0, new CamelSpringTestContextLoaderTestExecutionListener());
+                list.add(1, new DisableJmxTestExecutionListener());
+                list.add(2, new CamelSpringBootExecutionListener());
+                list.add(3, new StopWatchTestExecutionListener());
+            }
         }
 
-        private void addIfMissingType(List<TestExecutionListener> list, TestExecutionListener listener) {
-            String type = listener.getClass().getName();
-            boolean found = false;
-            for (TestExecutionListener current : list) {
-                if (type.equals(current.getClass().getName())) {
-                    found = true;
-                    break;
+        private boolean alreadyRegistered() {
+            List<TestExecutionListener> list = getTestExecutionListeners();
+            if (list != null) {
+                for (TestExecutionListener listener : list) {
+                    if (listener instanceof CamelSpringTestContextLoaderTestExecutionListener) {
+                        return true;
+                    }
                 }
             }
 
-            if (!found) {
-                list.add(listener);
-            }
+            return false;
         }
     }
 
