@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.weather;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -364,7 +366,20 @@ public class WeatherConfiguration {
     }
 
     public List<String> getIds() {
-        return ids;
+        return (List<String>) ids;
+    }
+
+    public void addId(String id) {
+        if (ids == null) {
+            ids = new ArrayList<>();
+        }
+        ids.add(id);
+    }
+    /**
+     * List of id's of city/stations
+     */
+    public void setIds(String... ids) {
+        this.ids = Arrays.asList(ids);
     }
 
     /**
