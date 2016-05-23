@@ -229,6 +229,7 @@
     * [SAP NetWeaver](sap-netweaver.adoc)
     * [Saxon](xquery.adoc)
     * [Scp](scp.adoc)
+    * [Schematron](schematron.adoc)
     * [SJMS](sjms.adoc)
     * [SJMS Batch](sjms-batch.adoc)
     * [Telegram](telegram.adoc)
