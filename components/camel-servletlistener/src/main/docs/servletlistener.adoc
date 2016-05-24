@@ -1,0 +1,355 @@
+[[ServletListenerComponent-ServletListenerComponent]]
+ServletListener Component
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Available as of Camel 2.11*
+
+This component is used for bootstrapping Camel applications in web
+applications. For example beforehand people would have to find their own
+way of bootstrapping Camel, or rely on 3rd party frameworks such as
+Spring to do it.
+
+
+NOTE: *Sidebar*
+This component supports Servlet 2.x onwards, which mean it works also in
+older web containers; which is the goal of this component.
+Though Servlet 2.x requires to use a web.xml file as configuration.
+For Servlet 3.x containers you can use annotation driven configuration
+to boostrap Camel using the @WebListener, and implement your own class,
+where you boostrap Camel. Doing this still puts the challenge how to let
+end users easily configure Camel, which you get for free with the old
+school web.xml file.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-servletlistener</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+[[ServletListenerComponent-Using]]
+Using
+^^^^^
+
+You would need to chose one of the following implementations of the
+abstract class
+`org.apache.camel.component.servletlistener.CamelServletContextListener`.
+
+* `JndiCamelServletContextListener` which uses the `JndiRegistry` to
+leverage JNDI for its registry.
+* `SimpleCamelServletContextListener` which uses the `SimpleRegistry` to
+leverage a `java.util.Map` as its registry.
+
+To use this you need to configure the
+`org.apache.camel.component.servletlistener.CamelServletContextListener`
+in the `WEB-INF/web.xml` file as shown below:
+
+[[ServletListenerComponent-Options]]
+Options
+^^^^^^^
+
+The
+`org.apache.camel.component.servletlistener.CamelServletContextListener`
+supports the following options which can be configured as context-param
+in the web.xml file.
+
+[width="100%",cols="10%,20%,70%",options="header",]
+|=======================================================================
+|Option |Type |Description
+
+|propertyPlaceholder.XXX | | To configure link:using-propertyplaceholder.html[property placeholders]
+in Camel. You should prefix the option with "propertyPlaceholder.", for
+example to configure the location, use propertyPlaceholder.location as
+name. You can configure all the options from the
+link:properties.html[Properties] component.
+
+|jmx.XXX |  | To configure link:camel-jmx.html[JMX]. You should prefix the option with
+"jmx.", for example to disable JMX, use jmx.disabled as name. You can
+configure all the options from `org.apache.camel.spi.ManagementAgent`.
+As well the options mentioned on the link:camel-jmx.html[JMX] page.
+
+|name |`String` |To configure the name of the link:camelcontext.html[CamelContext].
+
+|messageHistory |`Boolean` |*Camel 2.12.2:* Whether to enable or disable
+link:message-history.html[Message History] (enabled by default).
+
+|streamCache |`Boolean` |Whether to enable link:stream-caching.html[Stream caching].
+
+|trace |`Boolean` |Whether to enable link:tracer.html[Tracer].
+
+|delayer |`Long` |To set a delay value for link:delay-interceptor.html[Delay Interceptor].
+
+|handleFault |`Boolean` |Whether to enable handle fault.
+
+|errorHandlerRef |`String` |Refers to a context scoped link:error-handler.html[Error Handler] to be
+used.
+
+|autoStartup |`Boolean` |Whether to start all routes when starting Camel.
+
+|useMDCLogging |`Boolean` |Whether to use link:mdc-logging.html[MDC logging].
+
+|useBreadcrumb |`Boolean` |Whether to use link:mdc-logging.html[breadcrumb].
+
+|managementNamePattern |`String` |To set a custom naming pattern for JMX MBeans.
+
+|threadNamePattern |`String` |To set a custom naming pattern for threads.
+
+|properties.XXX |  | To set custom properties on `CamelContext.getProperties`. This is seldom
+in use.
+
+|routebuilder.XXX |  | To configure routes to be used. See below for more details.
+
+|CamelContextLifecycle |  | Refers to a FQN classname of an implementation of
+`org.apache.camel.component.servletlistener.CamelContextLifecycle`.
+Which allows to execute custom code before and after
+link:camelcontext.html[CamelContext] has been started or stopped. See
+below for further details.
+
+|XXX |  | To set any option on link:camelcontext.html[CamelContext].
+|=======================================================================
+
+[[ServletListenerComponent-Examples]]
+Examples
+^^^^^^^^
+
+See link:servlet-tomcat-no-spring-example.html[Servlet Tomcat No Spring
+Example].
+
+[[ServletListenerComponent-AccessingthecreatedCamelContext]]
+Accessing the created CamelContext
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.14/2.13.3/2.12.5*
+
+The created `CamelContext` is stored on the `ServletContext` as an
+attribute with the key "CamelContext". You can get hold of the
+CamelContext if you can get hold of the `ServletContext` as shown below:
+
+[source,java]
+--------------------------------------------------------------------
+ServletContext sc = ...
+CamelContext camel = (CamelContext) sc.getAttribute("CamelContext");
+--------------------------------------------------------------------
+
+ 
+
+[[ServletListenerComponent-Configuringroutes]]
+Configuring routes
+^^^^^^^^^^^^^^^^^^
+
+You need to configure which routes to use in the web.xml file. You can
+do this in a number of ways, though all the parameters must be prefixed
+with "routeBuilder".
+
+[[ServletListenerComponent-UsingaRouteBuilderclass]]
+Using a RouteBuilder class
+++++++++++++++++++++++++++
+
+By default Camel will assume the param-value is a FQN classname for a
+Camel link:routebuilder.html[RouteBuilder] class, as shown below:
+
+[source,xml]
+---------------------------------------------------------------------------------
+  <context-param>
+    <param-name>routeBuilder-MyRoute</param-name>
+    <param-value>org.apache.camel.component.servletlistener.MyRoute</param-value>
+  </context-param>
+---------------------------------------------------------------------------------
+
+You can specify multiple classes in the same param-value as shown below:
+
+[source,xml]
+-----------------------------------------------------------------------
+  <context-param>
+    <param-name>routeBuilder-routes</param-name>
+    <!-- we can define multiple values separated by comma -->
+    <param-value>
+      org.apache.camel.component.servletlistener.MyRoute,
+      org.apache.camel.component.servletlistener.routes.BarRouteBuilder
+    </param-value>
+  </context-param>
+-----------------------------------------------------------------------
+
+The name of the parameter does not have a meaning at runtime. It just
+need to be unique and start with "routeBuilder". In the example above we
+have "routeBuilder-routes". But you could just as well have named it
+"routeBuilder.foo".
+
+[[ServletListenerComponent-Usingpackagescanning]]
+Using package scanning
+++++++++++++++++++++++
+
+You can also tell Camel to use package scanning, which mean it will look
+in the given package for all classes of
+link:routebuilder.html[RouteBuilder] types and automatic adding them as
+Camel routes. To do that you need to prefix the value with
+"packagescan:" as shown below:
+
+[source,xml]
+--------------------------------------------------------------------------------------------
+  <context-param>
+    <param-name>routeBuilder-MyRoute</param-name>
+    <!-- define the routes using package scanning by prefixing with packagescan: -->
+    <param-value>packagescan:org.apache.camel.component.servletlistener.routes</param-value>
+  </context-param>
+--------------------------------------------------------------------------------------------
+
+[[ServletListenerComponent-UsingaXMLfile]]
+Using a XML file
+++++++++++++++++
+
+You can also define Camel routes using XML DSL, though as we are not
+using Spring or Blueprint the XML file can only contain Camel route(s).
+
+In the web.xml you refer to the XML file which can be from "classpath",
+"file" or a "http" url, as shown below:
+
+[source,xml]
+------------------------------------------------------------
+  <context-param>
+    <param-name>routeBuilder-MyRoute</param-name>
+    <param-value>classpath:routes/myRoutes.xml</param-value>
+  </context-param>
+------------------------------------------------------------
+
+And the XML file is:
+
+*routes/myRoutes.xml*
+
+[source,xml]
+--------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- the xmlns="http://camel.apache.org/schema/spring" is needed -->
+<routes xmlns="http://camel.apache.org/schema/spring">
+
+  <route id="foo">
+    <from uri="direct:foo"/>
+    <to uri="mock:foo"/>
+  </route>
+
+  <route id="bar">
+    <from uri="direct:bar"/>
+    <to uri="mock:bar"/>
+  </route>
+
+</routes>
+--------------------------------------------------------------------
+
+Notice that in the XML file the root tag is <routes> which must use the
+namespace "http://camel.apache.org/schema/spring". This namespace is
+having the spring in the name, but that is because of historical
+reasons, as Spring was the first and only XML DSL back in the time. At
+runtime no Spring JARs is needed. Maybe in Camel 3.0 the namespace can
+be renamed to a generic name.
+
+[[ServletListenerComponent-Configuringpropertplaceholders]]
+Configuring propert placeholders
+++++++++++++++++++++++++++++++++
+
+Here is a snippet of a web.xml configuration for setting up property
+placeholders to load `myproperties.properties` from the classpath
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------------------------
+  <!-- setup property placeholder to load properties from classpath -->
+  <!-- we do this by setting the param-name with propertyPlaceholder. as prefix and then any options such as location, cache etc -->
+  <context-param>
+    <param-name>propertyPlaceholder.location</param-name>
+    <param-value>classpath:myproperties.properties</param-value>
+  </context-param>
+  <!-- for example to disable cache on properties component, you do -->
+  <context-param>
+    <param-name>propertyPlaceholder.cache</param-name>
+    <param-value>false</param-value>
+  </context-param>
+------------------------------------------------------------------------------------------------------------------------------------
+
+[[ServletListenerComponent-ConfiguringJMX]]
+Configuring JMX
++++++++++++++++
+
+Here is a snippet of a web.xml configuration for configuring JMX, such
+as disabling JMX.
+
+[source,xml]
+------------------------------------------------------------------
+  <!-- configure JMX by using names that is prefixed with jmx. -->
+  <!-- in this example we disable JMX -->
+  <context-param>
+    <param-name>jmx.disabled</param-name>
+    <param-value>true</param-value>
+  </context-param>
+------------------------------------------------------------------
+
+[[ServletListenerComponent-JNDIorSimpleasCamel]]
+JNDI or Simple as Camel link:registry.html[Registry]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This component uses either JNDI or Simple as the
+link:registry.html[Registry]. +
+ This allows you to lookup link:bean.html[Bean]s and other services in
+JNDI, and as well to bind and unbind your own link:bean.html[Bean]s.
+
+This is done from Java code by implementing the
+`org.apache.camel.component.servletlistener.CamelContextLifecycle`.
+
+[[ServletListenerComponent-UsingcustomCamelContextLifecycle]]
+Using custom CamelContextLifecycle
+++++++++++++++++++++++++++++++++++
+
+In the code below we use the callbacks `beforeStart` and `afterStop` to
+enlist our custom bean in the Simple link:registry.html[Registry], and
+as well to cleanup when we stop.
+
+Then we need to register this class in the web.xml file as shown below,
+using the parameter name "CamelContextLifecycle". The value must be a
+FQN which refers to the class implementing the
+`org.apache.camel.component.servletlistener.CamelContextLifecycle`
+interface.
+
+[source,xml]
+-------------------------------------------------------------------------------------
+  <context-param>
+    <param-name>CamelContextLifecycle</param-name>
+    <param-value>org.apache.camel.component.servletlistener.MyLifecycle</param-value>
+  </context-param>
+-------------------------------------------------------------------------------------
+
+As we enlisted our HelloBean link:bean.html[Bean] using the name
+"myBean" we can refer to this link:bean.html[Bean] in the Camel routes
+as shown below:
+
+[source,java]
+-----------------------------------------------
+public class MyBeanRoute extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        from("seda:foo").routeId("foo")
+            .to("bean:myBean")
+            .to("mock:foo");
+    }
+}
+-----------------------------------------------
+
+*Important:* If you use
+`org.apache.camel.component.servletlistener.JndiCamelServletContextListener`
+then the `CamelContextLifecycle` must use the `JndiRegistry` as well.
+And likewise if the servlet is
+`org.apache.camel.component.servletlistener.SimpleCamelServletContextListener`
+then the `CamelContextLifecycle` must use the `SimpleRegistry`
+
+[[ServletListenerComponent-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:servlet.html[SERVLET]
+* link:servlet-tomcat-example.html[Servlet Tomcat Example]
+* link:servlet-tomcat-no-spring-example.html[Servlet Tomcat No Spring
+Example]
+
