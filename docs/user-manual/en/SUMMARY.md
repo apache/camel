@@ -250,6 +250,7 @@
     * [Ognl](ognl.adoc)
     * [Ruby](ruby.adoc)
     * [SQL](josql.adoc)
+    * [Scripting languages](scripting-languages.adoc)
 
 * Data Formats
     * [BeanIO](beanio.adoc)
