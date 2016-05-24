@@ -230,6 +230,7 @@
     * [Saxon](xquery.adoc)
     * [Scp](scp.adoc)
     * [Schematron](schematron.adoc)
+    * [SCR](camel-and-scr.adoc)
     * [SJMS](sjms.adoc)
     * [SJMS Batch](sjms-batch.adoc)
     * [Telegram](telegram.adoc)
