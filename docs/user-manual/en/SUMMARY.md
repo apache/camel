@@ -241,7 +241,7 @@
     * [Yammer](yammer.adoc)
     * [ZooKeeper](zookeeper.adoc)
 
-* [Expession Languages](languages.adoc)
+* [Expression Languages](languages.adoc)
     * [Bean Language](bean-language.adoc)
     * [Constant](constant.adoc)
     * [EL](juel.adoc)
