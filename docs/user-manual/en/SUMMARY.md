@@ -153,7 +153,6 @@
     * [HL7](hl7.adoc)
     * [Http](http.adoc)
     * [Http4](http4.adoc)
-    * [Hystrix](hystrix.adoc)
     * [Ibatis](ibatis.adoc)
     * [Infinispan](infinispan.adoc)
     * [IRC](irc.adoc)
