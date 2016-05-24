@@ -20,9 +20,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import com.rabbitmq.client.AlreadyClosedException;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
+import com.rabbitmq.client.Consumer;
 import org.apache.camel.Processor;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -30,6 +32,9 @@ import org.mockito.Mockito;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
 
 public class RabbitMQConsumerTest {
 
@@ -63,6 +68,27 @@ public class RabbitMQConsumerTest {
         Mockito.when(endpoint.getConcurrentConsumers()).thenReturn(1);
         Mockito.when(endpoint.connect(Matchers.any(ExecutorService.class))).thenReturn(conn);
         Mockito.when(conn.createChannel()).thenReturn(channel);
+
+        consumer.doStart();
+        consumer.doStop();
+
+        Mockito.verify(conn).close(30 * 1000);
+    }
+
+    @Test
+    public void testStoppingConsumerShutdownConnectionWhenServerHasClosedChannel() throws Exception {
+        AlreadyClosedException alreadyClosedException = Mockito.mock(AlreadyClosedException.class);
+
+        RabbitMQConsumer consumer = new RabbitMQConsumer(endpoint, processor);
+
+        Mockito.when(endpoint.createExecutor()).thenReturn(Executors.newFixedThreadPool(3));
+        Mockito.when(endpoint.getConcurrentConsumers()).thenReturn(1);
+        Mockito.when(endpoint.connect(Matchers.any(ExecutorService.class))).thenReturn(conn);
+        Mockito.when(conn.createChannel()).thenReturn(channel);
+        Mockito.when(channel.basicConsume(anyString(), anyBoolean(), any(Consumer.class))).thenReturn("TAG");
+        Mockito.when(channel.isOpen()).thenReturn(false);
+        Mockito.doThrow(alreadyClosedException).when(channel).basicCancel("TAG");
+        Mockito.doThrow(alreadyClosedException).when(channel).close();
 
         consumer.doStart();
         consumer.doStop();

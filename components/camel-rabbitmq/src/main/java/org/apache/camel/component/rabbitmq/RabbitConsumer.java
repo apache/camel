@@ -156,11 +156,13 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
         if (channel == null) {
             return;
         }
-        if (tag != null) {
+        if (tag != null && isChannelOpen()) {
             channel.basicCancel(tag);
         }
         try {
-            channel.close();
+            if (isChannelOpen()) {
+                channel.close();
+            }
         } catch (TimeoutException e) {
             log.error("Timeout occured");
             throw e;
