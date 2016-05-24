@@ -232,6 +232,7 @@
     * [Schematron](schematron.adoc)
     * [SCR](camel-and-scr.adoc)
     * [Script](script.adoc)
+    * [Servicenow](servicenow.adoc)
     * [SJMS](sjms.adoc)
     * [SJMS Batch](sjms-batch.adoc)
     * [Telegram](telegram.adoc)
