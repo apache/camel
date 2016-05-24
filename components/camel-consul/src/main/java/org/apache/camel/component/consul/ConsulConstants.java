@@ -17,8 +17,6 @@
 package org.apache.camel.component.consul;
 
 public interface ConsulConstants {
-    String CONSUL_ENDPOINT_KV = "kv";
-
     String CONSUL_ACTION = "CamelConsulAction";
     String CONSUL_KEY = "CamelConsulKey";
     String CONSUL_EVENT_ID = "CamelConsulEventId";
@@ -28,15 +26,12 @@ public interface ConsulConstants {
     String CONSUL_TAG_FILTER = "CamelConsulTagFilter";
     String CONSUL_SERVICE_FILTER = "CamelConsulSessionFilter";
     String CONSUL_VERSION = "CamelConsulVersion";
-    String CONSUL_VALUE = "CamelConsulValue";
-    String CONSUL_VALUES = "CamelConsulValues";
     String CONSUL_FLAGS = "CamelConsulFlags";
     String CONSUL_CREATE_INDEX = "CamelConsulCreateIndex";
-    String CONSUL_LOCK_INDEX = "CamelConsulCreateIndex";
+    String CONSUL_LOCK_INDEX = "CamelConsulLockIndex";
     String CONSUL_MODIFY_INDEX = "CamelConsulModifyIndex";
     String CONSUL_OPTIONS = "CamelConsulOptions";
     String CONSUL_RESULT = "CamelConsulResult";
     String CONSUL_SESSION = "CamelConsulSession";
-    String CONSUL_OPERATION = "CamelConsulOperation";
     String CONSUL_VALUE_AS_STRING = "CamelConsulValueAsString";
 }

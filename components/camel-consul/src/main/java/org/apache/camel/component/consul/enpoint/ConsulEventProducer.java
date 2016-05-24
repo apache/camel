@@ -22,12 +22,12 @@ import com.orbitz.consul.option.EventOptions;
 import com.orbitz.consul.option.QueryOptions;
 import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
-import org.apache.camel.component.consul.AbstractConsulEndpoint;
 import org.apache.camel.component.consul.AbstractConsulProducer;
 import org.apache.camel.component.consul.ConsulConfiguration;
+import org.apache.camel.component.consul.ConsulEndpoint;
 
 public class ConsulEventProducer extends AbstractConsulProducer<EventClient> {
-    ConsulEventProducer(AbstractConsulEndpoint endpoint, ConsulConfiguration configuration) {
+    public ConsulEventProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
         super(endpoint, configuration, c -> c.eventClient());
     }
 

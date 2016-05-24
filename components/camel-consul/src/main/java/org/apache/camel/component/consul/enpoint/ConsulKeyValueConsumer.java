@@ -30,10 +30,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.consul.AbstractConsulConsumer;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
+import org.apache.camel.component.consul.ConsulEndpoint;
 
 public class ConsulKeyValueConsumer extends AbstractConsulConsumer<KeyValueClient> {
 
-    protected ConsulKeyValueConsumer(ConsulKeyValueEndpoint endpoint, ConsulConfiguration configuration, Processor processor) {
+    public ConsulKeyValueConsumer(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor) {
         super(endpoint, configuration, processor, c -> c.keyValueClient());
     }
 
@@ -79,7 +80,11 @@ public class ConsulKeyValueConsumer extends AbstractConsulConsumer<KeyValueClien
             message.setHeader(ConsulConstants.CONSUL_CREATE_INDEX, value.getCreateIndex());
             message.setHeader(ConsulConstants.CONSUL_LOCK_INDEX, value.getLockIndex());
             message.setHeader(ConsulConstants.CONSUL_MODIFY_INDEX, value.getModifyIndex());
-            message.setHeader(ConsulConstants.CONSUL_SESSION, value.getSession().orNull());
+
+            if (value.getSession().isPresent()) {
+                message.setHeader(ConsulConstants.CONSUL_SESSION, value.getSession().get());
+            }
+
             message.setBody(configuration.isValueAsString() ? value.getValueAsString().orNull() : value.getValue().orNull());
 
             try {

@@ -157,10 +157,6 @@ public class ConsulConfiguration {
     /**
      * Write timeout for OkHttpClient
      */
-    public void setWritTeimeoutMillis(Long writeTimeoutMillis) {
-        this.writeTimeoutMillis = writeTimeoutMillis;
-    }
-
     public void setWriteTimeoutMillis(Long writeTimeoutMillis) {
         this.writeTimeoutMillis = writeTimeoutMillis;
     }
@@ -200,7 +196,7 @@ public class ConsulConfiguration {
     }
 
     /**
-     * The default action. Can be overridden by CamelConsulKey
+     * The default key. Can be overridden by CamelConsulKey
      */
     public void setKey(String key) {
         this.key = key;

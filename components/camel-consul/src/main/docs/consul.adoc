@@ -46,6 +46,7 @@ The Consul component has no options.
 
 
 
+
 // endpoint options: START
 The Consul component supports 20 endpoint options which are listed below:
 
@@ -55,7 +56,7 @@ The Consul component supports 20 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | apiEndpoint | common |  | String | *Required* The API endpoint
 | connectTimeoutMillis | common |  | Long | Connect timeout for OkHttpClient
-| key | common |  | String | The default action. Can be overridden by CamelConsulKey
+| key | common |  | String | The default key. Can be overridden by CamelConsulKey
 | pingInstance | common | true | boolean | Configure if the AgentClient should attempt a ping before returning the Consul instance
 | readTimeoutMillis | common |  | Long | Read timeout for OkHttpClient
 | url | common |  | String | The Consul agent URL
@@ -76,6 +77,7 @@ The Consul component supports 20 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 [[Consul-Headers]]
 Headers

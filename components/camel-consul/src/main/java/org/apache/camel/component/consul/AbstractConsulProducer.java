@@ -26,12 +26,12 @@ import org.apache.camel.impl.HeaderSelectorProducer;
 
 
 public abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
-    private final AbstractConsulEndpoint endpoint;
+    private final ConsulEndpoint endpoint;
     private final ConsulConfiguration configuration;
     private final Function<Consul, C> clientSupplier;
     private C client;
 
-    protected AbstractConsulProducer(AbstractConsulEndpoint endpoint, ConsulConfiguration configuration, Function<Consul, C> clientSupplier) {
+    protected AbstractConsulProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration, Function<Consul, C> clientSupplier) {
         super(endpoint, ConsulConstants.CONSUL_ACTION, configuration.getAction());
 
         this.endpoint = endpoint;

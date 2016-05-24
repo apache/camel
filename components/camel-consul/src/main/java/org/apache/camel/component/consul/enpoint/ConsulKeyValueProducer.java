@@ -21,14 +21,14 @@ import com.orbitz.consul.option.PutOptions;
 import com.orbitz.consul.option.QueryOptions;
 import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
-import org.apache.camel.component.consul.AbstractConsulEndpoint;
 import org.apache.camel.component.consul.AbstractConsulProducer;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
+import org.apache.camel.component.consul.ConsulEndpoint;
 
 public class ConsulKeyValueProducer extends AbstractConsulProducer<KeyValueClient> {
 
-    ConsulKeyValueProducer(AbstractConsulEndpoint endpoint, ConsulConfiguration configuration) {
+    public ConsulKeyValueProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
         super(endpoint, configuration, c -> c.keyValueClient());
     }
 

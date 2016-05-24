@@ -20,46 +20,68 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.consul.enpoint.ConsulAgentEndpoint;
-import org.apache.camel.component.consul.enpoint.ConsulEventEndpoint;
-import org.apache.camel.component.consul.enpoint.ConsulKeyValueEndpoint;
+import org.apache.camel.component.consul.enpoint.ConsulAgentProducer;
+import org.apache.camel.component.consul.enpoint.ConsulEventConsumer;
+import org.apache.camel.component.consul.enpoint.ConsulEventProducer;
+import org.apache.camel.component.consul.enpoint.ConsulKeyValueConsumer;
+import org.apache.camel.component.consul.enpoint.ConsulKeyValueProducer;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * Represents the component that manages {@link AbstractConsulEndpoint}.
+ * Represents the component that manages {@link ConsulEndpoint}.
  */
 public class ConsulComponent extends UriEndpointComponent {
     
     public ConsulComponent() {
-        super(AbstractConsulEndpoint.class);
+        super(ConsulEndpoint.class);
     }
 
     public ConsulComponent(CamelContext context) {
-        super(context, AbstractConsulEndpoint.class);
+        super(context, ConsulEndpoint.class);
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        return ConsulApiEndpoint.valueOf(remaining).create(
+            remaining,
+            uri,
+            this,
+            createConfiguration(parameters)
+        );
+    }
+
+    private ConsulConfiguration createConfiguration(Map<String, Object> parameters) throws Exception {
         ConsulConfiguration configuration = new ConsulConfiguration();
         setProperties(configuration, parameters);
 
-        return ConsulApiEndpoint.valueOf(remaining).create(uri, this, configuration);
+        return configuration;
     }
 
-    private enum ConsulApiEndpoint implements ConsulEndpointFactory {
-        kv(ConsulKeyValueEndpoint::new),
-        event(ConsulEventEndpoint::new),
-        agent(ConsulAgentEndpoint::new);
+    // *************************************************************************
+    // Consul Api Enpoints (see https://www.consul.io/docs/agent/http.html)
+    // *************************************************************************
 
-        private final ConsulEndpointFactory factory;
+    private enum ConsulApiEndpoint {
+        kv(ConsulKeyValueProducer::new, ConsulKeyValueConsumer::new),
+        event(ConsulEventProducer::new, ConsulEventConsumer::new),
+        agent(ConsulAgentProducer::new, null);
 
-        ConsulApiEndpoint(ConsulEndpointFactory factory) {
-            this.factory = factory;
+        private final ConsulEndpoint.ProducerFactory producerFactory;
+        private final ConsulEndpoint.ConsumerFactory consumerFactory;
+
+        ConsulApiEndpoint(ConsulEndpoint.ProducerFactory producerFactory, ConsulEndpoint.ConsumerFactory consumerFactory) {
+            this.producerFactory = producerFactory;
+            this.consumerFactory = consumerFactory;
         }
 
-        @Override
-        public Endpoint create(String uri, ConsulComponent component, ConsulConfiguration configuration) throws Exception {
-            return factory.create(uri, component, configuration);
+        public Endpoint create(String apiEndpoint, String uri, ConsulComponent component, ConsulConfiguration configuration) throws Exception {
+            return new ConsulEndpoint(
+                apiEndpoint,
+                uri,
+                component,
+                configuration,
+                producerFactory,
+                consumerFactory);
         }
     }
 }

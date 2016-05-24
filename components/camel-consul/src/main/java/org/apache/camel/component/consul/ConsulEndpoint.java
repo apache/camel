@@ -17,34 +17,70 @@
 package org.apache.camel.component.consul;
 
 import com.orbitz.consul.Consul;
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
-public abstract class AbstractConsulEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "The consul configuration")
+@UriEndpoint(scheme = "consul", title = "Consul", syntax = "consul://apiEndpoint", label = "api,cloud")
+public class ConsulEndpoint extends DefaultEndpoint {
+
+    @UriParam(description = "The consul configuration")
     @Metadata(required = "true")
     private final ConsulConfiguration configuration;
 
-    @UriParam(description = "The API endpoint")
+    @UriPath(description = "The API endpoint")
     @Metadata(required = "true")
     private final String apiEndpoint;
 
+    private final ProducerFactory producerFactory;
+    private final ConsumerFactory consumerFactory;
+
     private Consul consul;
 
-    protected AbstractConsulEndpoint(String apiEndpoint, String uri, ConsulComponent component, ConsulConfiguration configuration) {
+    public ConsulEndpoint(
+            String apiEndpoint,
+            String uri,
+            ConsulComponent component,
+            ConsulConfiguration configuration,
+            ProducerFactory producerFactory,
+            ConsumerFactory consumerFactory) {
+
         super(uri, component);
 
-        this.configuration = configuration;
-        this.apiEndpoint = apiEndpoint;
+        this.configuration = ObjectHelper.notNull(configuration, "configuration");
+        this.apiEndpoint = ObjectHelper.notNull(apiEndpoint, "apiEndpoint");
+        this.producerFactory = producerFactory;
+        this.consumerFactory = consumerFactory;
     }
 
     @Override
     public boolean isSingleton() {
         return true;
+    }
+
+    @Override
+    public Producer createProducer() throws Exception {
+        if (producerFactory == null) {
+            throw new IllegalArgumentException("No producer for " + apiEndpoint);
+        }
+
+        return producerFactory.create(this, configuration);
+    }
+
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        if (consumerFactory == null) {
+            throw new IllegalArgumentException("No consumer for " + apiEndpoint);
+        }
+
+        return consumerFactory.create(this, configuration, processor);
     }
 
     // *************************************************************************
@@ -90,5 +126,19 @@ public abstract class AbstractConsulEndpoint extends DefaultEndpoint {
         }
 
         return consul;
+    }
+
+    // *************************************************************************
+    //
+    // *************************************************************************
+
+    @FunctionalInterface
+    public interface ProducerFactory {
+        Producer create(ConsulEndpoint endpoint, ConsulConfiguration configuration) throws Exception;
+    }
+
+    @FunctionalInterface
+    public interface ConsumerFactory {
+        Consumer create(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor) throws Exception;
     }
 }

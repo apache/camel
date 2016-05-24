@@ -17,12 +17,12 @@
 package org.apache.camel.component.consul.enpoint;
 
 import com.orbitz.consul.AgentClient;
-import org.apache.camel.component.consul.AbstractConsulEndpoint;
 import org.apache.camel.component.consul.AbstractConsulProducer;
 import org.apache.camel.component.consul.ConsulConfiguration;
+import org.apache.camel.component.consul.ConsulEndpoint;
 
 public class ConsulAgentProducer extends AbstractConsulProducer<AgentClient> {
-    ConsulAgentProducer(AbstractConsulEndpoint endpoint, ConsulConfiguration configuration) {
+    public ConsulAgentProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
         super(endpoint, configuration, c -> c.agentClient());
 
         bind(ConsulAgentActions.CHECKS, wrap(c -> c.getChecks()));

@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
  * @author lburgazzoli
  */
 public abstract class AbstractConsulConsumer<C> extends DefaultConsumer {
-    protected final AbstractConsulEndpoint endpoint;
+    protected final ConsulEndpoint endpoint;
     protected final ConsulConfiguration configuration;
     protected final String key;
     protected final AtomicReference<BigInteger> index;
@@ -37,7 +37,7 @@ public abstract class AbstractConsulConsumer<C> extends DefaultConsumer {
     private final Function<Consul, C> clientSupplier;
     private Runnable watcher;
 
-    protected AbstractConsulConsumer(AbstractConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor, Function<Consul, C> clientSupplier) {
+    protected AbstractConsulConsumer(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor, Function<Consul, C> clientSupplier) {
         super(endpoint, processor);
 
         this.endpoint = endpoint;

@@ -30,9 +30,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.consul.AbstractConsulConsumer;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
+import org.apache.camel.component.consul.ConsulEndpoint;
 
 public class ConsulEventConsumer extends AbstractConsulConsumer<EventClient> {
-    protected ConsulEventConsumer(ConsulEventEndpoint endpoint, ConsulConfiguration configuration, Processor processor) {
+    public ConsulEventConsumer(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor) {
         super(endpoint, configuration, processor, c -> c.eventClient());
     }
 
@@ -85,10 +86,18 @@ public class ConsulEventConsumer extends AbstractConsulConsumer<EventClient> {
             message.setHeader(ConsulConstants.CONSUL_EVENT_ID, event.getId());
             message.setHeader(ConsulConstants.CONSUL_EVENT_NAME, event.getName());
             message.setHeader(ConsulConstants.CONSUL_EVENT_LTIME, event.getLTime());
-            message.setHeader(ConsulConstants.CONSUL_NODE_FILTER, event.getNodeFilter());
-            message.setHeader(ConsulConstants.CONSUL_SERVICE_FILTER, event.getServiceFilter());
-            message.setHeader(ConsulConstants.CONSUL_TAG_FILTER, event.getTagFilter());
             message.setHeader(ConsulConstants.CONSUL_VERSION, event.getVersion());
+
+            if (event.getNodeFilter().isPresent()) {
+                message.setHeader(ConsulConstants.CONSUL_NODE_FILTER, event.getNodeFilter().get());
+            }
+            if (event.getServiceFilter().isPresent()) {
+                message.setHeader(ConsulConstants.CONSUL_SERVICE_FILTER, event.getServiceFilter().get());
+            }
+            if (event.getTagFilter().isPresent()) {
+                message.setHeader(ConsulConstants.CONSUL_TAG_FILTER, event.getTagFilter().get());
+            }
+
             message.setBody(event.getPayload().orNull());
 
             try {
