@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
-
+import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -61,7 +61,7 @@ public class KubernetesEndpoint extends DefaultEndpoint {
     @UriParam
     private KubernetesConfiguration configuration;
 
-    private DefaultKubernetesClient client;
+    private transient KubernetesClient client;
 
     public KubernetesEndpoint(String uri, KubernetesComponent component, KubernetesConfiguration config) {
         super(uri, component);
@@ -160,22 +160,22 @@ public class KubernetesEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        client = configuration.getKubernetesClient() != null ? configuration.getKubernetesClient()
-                : createKubernetesClient();
+        client = configuration.getKubernetesClient() != null ? configuration.getKubernetesClient() : createKubernetesClient();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        client.close();
+        if (client != null) {
+            client.close();
+        }
     }
     
     public ExecutorService createExecutor() {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KubernetesConsumer", configuration.getPoolSize());
     }
 
-    public DefaultKubernetesClient getKubernetesClient() {
+    public KubernetesClient getKubernetesClient() {
         return client;
     }
 
@@ -186,10 +186,9 @@ public class KubernetesEndpoint extends DefaultEndpoint {
         return configuration;
     }
 
-    private DefaultKubernetesClient createKubernetesClient() {
+    private KubernetesClient createKubernetesClient() {
         LOG.debug("Create Kubernetes client with the following Configuration: " + configuration.toString());
 
-        DefaultKubernetesClient kubeClient = new DefaultKubernetesClient();
         ConfigBuilder builder = new ConfigBuilder();
         builder.withMasterUrl(configuration.getMasterUrl());
         if ((ObjectHelper.isNotEmpty(configuration.getUsername())
@@ -232,8 +231,6 @@ public class KubernetesEndpoint extends DefaultEndpoint {
         }
 
         Config conf = builder.build();
-
-        kubeClient = new DefaultKubernetesClient(conf);
-        return kubeClient;
+        return new DefaultKubernetesClient(conf);
     }
 }

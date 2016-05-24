@@ -31,6 +31,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
+/**
+ * Hystrix Circuit Breaker EIP
+ */
 @Metadata(label = "eip,routing,circuitbreaker")
 @XmlRootElement(name = "hystrix")
 @XmlAccessorType(XmlAccessType.FIELD)

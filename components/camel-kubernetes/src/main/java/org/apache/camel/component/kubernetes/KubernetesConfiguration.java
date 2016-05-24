@@ -86,7 +86,7 @@ public class KubernetesConfiguration {
     private Boolean trustCerts;
 
     @UriParam(label = "consumer")
-    private String namespaceName;
+    private String namespace;
     
     @UriParam(label = "consumer", defaultValue = "1")
     private int poolSize = 1;
@@ -279,16 +279,33 @@ public class KubernetesConfiguration {
     }
 
     /**
-     * The namespace name
+     * The namespace
      */
-    public String getNamespaceName() {
-        return namespaceName;
+    public String getNamespace() {
+        return namespace;
     }
 
-    public void setNamespaceName(String namespaceName) {
-        this.namespaceName = namespaceName;
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
-    
+
+
+    /**
+     * @deprecated use {@link #getNamespace()}
+     */
+    @Deprecated
+    public String getNamespaceName() {
+        return getNamespace();
+    }
+
+    /**
+     * @deprecated use {@link #setNamespace(String)}
+     */
+    @Deprecated
+    public void setNamespaceName(String namespace) {
+        setNamespace(namespace);
+    }
+
     /**
      * The Consumer pool size
      */
@@ -308,6 +325,6 @@ public class KubernetesConfiguration {
                 + ", clientCertData=" + clientCertData + ", clientCertFile=" + clientCertFile + ", clientKeyAlgo="
                 + clientKeyAlgo + ", clientKeyData=" + clientKeyData + ", clientKeyFile=" + clientKeyFile
                 + ", clientKeyPassphrase=" + clientKeyPassphrase + ", oauthToken=" + oauthToken + ", trustCerts="
-                + trustCerts + ", namespaceName=" + namespaceName + "]";
+                + trustCerts + ", namespaceName=" + namespace + "]";
     }
 }

@@ -100,6 +100,7 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.remote.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
@@ -206,6 +207,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private final List<RestDefinition> restDefinitions = new ArrayList<RestDefinition>();
     private Map<String, RestConfiguration> restConfigurations = new ConcurrentHashMap<>();
+    private Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
     private RestRegistry restRegistry = new DefaultRestRegistry();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<RoutePolicyFactory>();
@@ -2551,6 +2553,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public void addRestConfiguration(RestConfiguration restConfiguration) {
         restConfigurations.put(restConfiguration.getComponent(), restConfiguration);
     }
+
     public RestConfiguration getRestConfiguration(String component, boolean defaultIfNotExist) {
         if (component == null) {
             component = "";
@@ -2564,6 +2567,37 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
         return config;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends ServiceCallConfigurationDefinition> T getServiceCallConfiguration(String serviceName, Class<T> type) {
+        if (serviceName == null) {
+            serviceName = "";
+        }
+
+        ServiceCallConfigurationDefinition config = serviceCallConfigurations.get(serviceName);
+        if (config == null) {
+            for (ServiceCallConfigurationDefinition candidate : serviceCallConfigurations.values()) {
+                if (type == null || type.isInstance(candidate)) {
+                    config = candidate;
+                    break;
+                }
+            }
+        }
+
+        if (config != null) {
+            return type != null ? type.cast(config) : (T) config;
+        } else {
+            return null;
+        }
+    }
+
+    public void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration) {
+        serviceCallConfigurations.put("", configuration);
+    }
+
+    public void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration) {
+        serviceCallConfigurations.put(serviceName, configuration);
     }
 
     public List<InterceptStrategy> getInterceptStrategies() {

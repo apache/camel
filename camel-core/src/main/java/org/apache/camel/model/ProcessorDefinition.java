@@ -53,6 +53,7 @@ import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.model.remote.ServiceCallDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
@@ -650,6 +651,48 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type toF(String uri, Object... args) {
         addOutput(new ToDefinition(String.format(uri, args)));
+        return (Type) this;
+    }
+
+    /**
+     * Calls the service
+     *
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public ServiceCallDefinition serviceCall() {
+        ServiceCallDefinition answer = new ServiceCallDefinition();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Calls the service
+     *
+     * @param name the service name
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type serviceCall(String name) {
+        ServiceCallDefinition answer = new ServiceCallDefinition();
+        answer.setName(name);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Calls the service
+     *
+     * @param name the service name
+     * @param uri  the endpoint uri to use for calling the service
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type serviceCall(String name, String uri) {
+        ServiceCallDefinition answer = new ServiceCallDefinition();
+        answer.setName(name);
+        answer.setUri(uri);
+        addOutput(answer);
         return (Type) this;
     }
 

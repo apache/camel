@@ -58,6 +58,8 @@ import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.model.remote.KubernetesConfigurationDefinition;
+import org.apache.camel.model.remote.RibbonConfigurationDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.PackageScanFilter;
@@ -142,6 +144,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private CamelStreamCachingStrategyDefinition camelStreamCachingStrategy;
     @XmlElements({
         @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class, required = false),
+        @XmlElement(name = "kubernetesConfiguration", type = KubernetesConfigurationDefinition.class, required = false),
+        @XmlElement(name = "ribbonConfiguration", type = RibbonConfigurationDefinition.class, required = false),
         @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
         @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
         @XmlElement(name = "proxy", type = CamelProxyFactoryBean.class, required = false),

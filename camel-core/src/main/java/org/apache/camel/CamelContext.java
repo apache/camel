@@ -34,6 +34,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.remote.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -563,6 +564,31 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Gets all the RestConfiguration's
      */
     Collection<RestConfiguration> getRestConfigurations();
+
+    /**
+     * Gets the service call configuration by the given name. If no name is given and there is only one configuration
+     * which matches the type then this configuration is returned.
+     *
+     * @param serviceName name of service, or <tt>null</tt> to return the default configuration
+     * @param type implementation of the configuration such as kubernetes, ribbon etc.
+     * @return the configuration, or <tt>null</tt> if no configuration has been registered
+     */
+    <T extends ServiceCallConfigurationDefinition> T getServiceCallConfiguration(String serviceName, Class<T> type);
+
+    /**
+     * Sets the default service call configuration
+     *
+     * @param configuration the configuration
+     */
+    void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration);
+
+    /**
+     * Adds the service call configuration
+     *
+     * @param serviceName name of the service
+     * @param configuration the configuration
+     */
+    void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration);
 
     /**
      * Returns the order in which the route inputs was started.

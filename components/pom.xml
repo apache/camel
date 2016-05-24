@@ -203,6 +203,7 @@
     <module>camel-quickfix</module>
     <module>camel-rabbitmq</module>
     <module>camel-restlet</module>
+    <module>camel-ribbon</module>
     <module>camel-rmi</module>
     <module>camel-routebox</module>
     <module>camel-rss</module>

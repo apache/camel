@@ -17,6 +17,11 @@
 package org.apache.camel.component.kubernetes;
 
 public interface KubernetesConstants {
+
+    // Service Call EIP
+    String KUBERNETES_SERVER_IP = "CamelKubernetesServerIp";
+    String KUBERNETES_SERVER_PORT = "CamelKubernetesServerPort";
+
     // Producer
     String KUBERNETES_OPERATION = "CamelKubernetesOperation";
     String KUBERNETES_NAMESPACE_NAME = "CamelKubernetesNamespaceName";

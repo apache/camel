@@ -78,9 +78,9 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
         @Override
         public void run() {
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getOauthToken())) {
-                if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespaceName())) {
+                if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
                     getEndpoint().getKubernetesClient().replicationControllers()
-                            .inNamespace(getEndpoint().getKubernetesConfiguration().getNamespaceName())
+                            .inNamespace(getEndpoint().getKubernetesConfiguration().getNamespace())
                             .watch(new Watcher<ReplicationController>() {
 
                                 @Override

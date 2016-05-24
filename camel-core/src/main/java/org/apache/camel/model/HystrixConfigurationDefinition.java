@@ -28,6 +28,9 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
+/**
+ * Hystrix Circuit Breaker EIP configuration
+ */
 @Metadata(label = "eip,routing,circuitbreaker")
 @XmlRootElement(name = "hystrixConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
