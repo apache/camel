@@ -234,6 +234,7 @@
     * [Servicenow](servicenow.adoc)
     * [Servlet](servlet.adoc)
     * [Servlet Listener](servletlistener.adoc)
+    * [Shiro](shiro-security.adoc)
     * [SJMS](sjms.adoc)
     * [SJMS Batch](sjms-batch.adoc)
     * [Telegram](telegram.adoc)
