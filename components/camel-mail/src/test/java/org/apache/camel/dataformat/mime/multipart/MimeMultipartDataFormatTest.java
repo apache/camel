@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.mime.multipart;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -299,6 +300,38 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         unmarshalAndCheckAttachmentName("@camel.apache.org");
     }
 
+    @Test
+    public void unmarshalNonMimeBody() {
+        in.setBody("This is not a MIME-Multipart");
+        Exchange out = template.send("direct:unmarshalonly", exchange);
+        assertNotNull(out.getOut());
+        String bodyStr = out.getOut().getBody(String.class);
+        assertEquals("This is not a MIME-Multipart", bodyStr);
+    }
+
+    @Test
+    public void unmarshalInlineHeadersNonMimeBody() {
+        in.setBody("This is not a MIME-Multipart");
+        Exchange out = template.send("direct:unmarshalonlyinlineheaders", exchange);
+        assertNotNull(out.getOut());
+        String bodyStr = out.getOut().getBody(String.class);
+        assertEquals("This is not a MIME-Multipart", bodyStr);
+    }
+
+    /*
+     * This test will only work of stream caching is enabled on the route. In order to find out whether the body
+     * is a multipart or not the stream has to be read, and if the underlying data is a stream (but not a stream cache)
+     * there is no way back
+     */
+    @Test
+    public void unmarshalInlineHeadersNonMimeBodyStream() throws UnsupportedEncodingException {
+        in.setBody(new ByteArrayInputStream("This is not a MIME-Multipart".getBytes("UTF-8")));
+        Exchange out = template.send("direct:unmarshalonlyinlineheaders", exchange);
+        assertNotNull(out.getOut());
+        String bodyStr = out.getOut().getBody(String.class);
+        assertEquals("This is not a MIME-Multipart", bodyStr);
+    }
+
     private void unmarshalAndCheckAttachmentName(String matcher) throws IOException, UnsupportedEncodingException {
         Exchange intermediate = template.send("direct:unmarshalonlyinlineheaders", exchange);
         assertNotNull(intermediate.getOut());
@@ -332,7 +365,8 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
                 from("direct:marshalonlyrelated").marshal().mimeMultipart("related");
                 from("direct:marshalonlymixed").marshal().mimeMultipart();
                 from("direct:marshalonlyinlineheaders").marshal().mimeMultipart("mixed", false, true, "(included|x-.*)", false);
-                from("direct:unmarshalonlyinlineheaders").unmarshal().mimeMultipart(false, true, false);
+                from("direct:unmarshalonly").unmarshal().mimeMultipart(false, false, false);
+                from("direct:unmarshalonlyinlineheaders").streamCaching().unmarshal().mimeMultipart(false, true, false);
             }
         };
     }
