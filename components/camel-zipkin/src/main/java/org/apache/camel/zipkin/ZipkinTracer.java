@@ -678,9 +678,10 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
 
         private final String routeId;
 
-        public ZipkinRoutePolicy(String routeId) {
+        ZipkinRoutePolicy(String routeId) {
             this.routeId = routeId;
         }
+
         @Override
         public void onExchangeBegin(Route route, Exchange exchange) {
             // use route policy to track events when Camel a Camel route begins/end the lifecycle of an Exchange

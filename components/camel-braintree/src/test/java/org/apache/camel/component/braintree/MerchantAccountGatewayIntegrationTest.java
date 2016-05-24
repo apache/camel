@@ -45,13 +45,13 @@ public class MerchantAccountGatewayIntegrationTest extends AbstractBraintreeTest
             new MerchantAccountRequest()
                 .masterMerchantAccountId(System.getenv("CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID"))
                 .individual()
-                    .firstName("merchant")
-                    .lastName(merchantId)
-                    .address()
-                        .streetAddress("my street")
-                        .done()
-                    .done()
-            , Result.class
+                .firstName("merchant")
+                .lastName(merchantId)
+                .address()
+                .streetAddress("my street")
+                .done()
+                .done(),
+            Result.class
         );
 
         assertNotNull("create result", result);

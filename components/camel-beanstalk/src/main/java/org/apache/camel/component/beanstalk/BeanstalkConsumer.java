@@ -203,7 +203,7 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
         protected final Command successCommand;
         protected final Command failureCommand;
 
-        public Sync() {
+        Sync() {
             successCommand = new DeleteCommand(getEndpoint());
 
             if (BeanstalkComponent.COMMAND_BURY.equals(onFailure.name())) {
@@ -239,7 +239,7 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
             private final Command command;
             private final Exchange exchange;
 
-            public RunCommand(final Command command, final Exchange exchange) {
+            RunCommand(final Command command, final Exchange exchange) {
                 this.command = command;
                 this.exchange = exchange;
             }

@@ -26,7 +26,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 @XmlAccessorType(XmlAccessType.FIELD)
 class TerserExpression extends ExpressionDefinition {
 
-    public TerserExpression(String expression) {
+    TerserExpression(String expression) {
         super(expression);
     }
 

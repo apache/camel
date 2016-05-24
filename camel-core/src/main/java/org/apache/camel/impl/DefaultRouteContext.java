@@ -353,10 +353,12 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     public void setAllowUseOriginalMessage(Boolean allowUseOriginalMessage) {
-        throw new IllegalArgumentException("This option can only be configured on CamelContext");
+        // can only be configured on CamelContext
+        getCamelContext().setAllowUseOriginalMessage(allowUseOriginalMessage);
     }
 
     public Boolean isAllowUseOriginalMessage() {
+        // can only be configured on CamelContext
         return getCamelContext().isAllowUseOriginalMessage();
     }
 

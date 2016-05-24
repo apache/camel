@@ -21,11 +21,14 @@ import java.net.URI;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.util.ReferenceCountUtil;
+import io.netty.util.ReferenceCounted;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.netty4.NettyConfiguration;
 import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyProducer;
+import org.apache.camel.support.SynchronizationAdapter;
 
 
 /**
@@ -58,7 +61,7 @@ public class NettyHttpProducer extends NettyProducer {
         String uri = NettyHttpHelper.createURL(exchange, getEndpoint());
         URI u = NettyHttpHelper.createURI(exchange, uri, getEndpoint());
 
-        HttpRequest request = getEndpoint().getNettyHttpBinding().toNettyRequest(exchange.getIn(), u.toString(), getConfiguration());
+        final HttpRequest request = getEndpoint().getNettyHttpBinding().toNettyRequest(exchange.getIn(), u.toString(), getConfiguration());
         String actualUri = request.getUri();
         exchange.getIn().setHeader(Exchange.HTTP_URL, actualUri);
         // Need to check if we need to close the connection or not
@@ -70,6 +73,19 @@ public class NettyHttpProducer extends NettyProducer {
             // Need to remove the Host key as it should be not used when bridging/proxying
             exchange.getIn().removeHeader("host");
         }
+
+        // need to release the request when we are done
+        exchange.addOnCompletion(new SynchronizationAdapter(){
+            @Override
+            public void onDone(Exchange exchange) {
+                if (request instanceof ReferenceCounted) {
+                    if (((ReferenceCounted) request).refCnt() > 0) {
+                        log.debug("Releasing Netty HttpRequest ByteBuf");
+                        ReferenceCountUtil.release(request);
+                    }
+                }
+            }
+        });
 
         return request;
     }
@@ -92,24 +108,38 @@ public class NettyHttpProducer extends NettyProducer {
         @Override
         public void done(boolean doneSync) {
             try {
-                NettyHttpMessage nettyMessage = exchange.hasOut() ? exchange.getOut(NettyHttpMessage.class) : exchange.getIn(NettyHttpMessage.class);
-                if (nettyMessage != null) {
-                    FullHttpResponse response = nettyMessage.getHttpResponse();
-                    // Need to retain the ByteBuffer for producer to consumer
-                    // TODO Remove this part of ByteBuffer right away
-                    if (response != null) {
-                        response.content().retain();
-                        // the actual url is stored on the IN message in the getRequestBody method as its accessed on-demand
-                        String actualUrl = exchange.getIn().getHeader(Exchange.HTTP_URL, String.class);
-                        int code = response.getStatus() != null ? response.getStatus().code() : -1;
-                        log.debug("Http responseCode: {}", code);
+                // only handle when we are done asynchronous as then the netty producer is done sending, and we have a response
+                if (!doneSync) {
+                    NettyHttpMessage nettyMessage = exchange.hasOut() ? exchange.getOut(NettyHttpMessage.class) : exchange.getIn(NettyHttpMessage.class);
+                    if (nettyMessage != null) {
+                        final FullHttpResponse response = nettyMessage.getHttpResponse();
+                        // Need to retain the ByteBuffer for producer to consumer
+                        if (response != null) {
+                            response.content().retain();
 
-                        // if there was a http error code then check if we should throw an exception
-                        boolean ok = NettyHttpHelper.isStatusCodeOk(code, configuration.getOkStatusCodeRange());
-                        if (!ok && getConfiguration().isThrowExceptionOnFailure()) {
-                            // operation failed so populate exception to throw
-                            Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, actualUrl, response, code, getConfiguration().isTransferException());
-                            exchange.setException(cause);
+                            // need to release the response when we are done
+                            exchange.addOnCompletion(new SynchronizationAdapter(){
+                                @Override
+                                public void onDone(Exchange exchange) {
+                                    if (response.refCnt() > 0) {
+                                        log.debug("Releasing Netty HttpResonse ByteBuf");
+                                        ReferenceCountUtil.release(response);
+                                    }
+                                }
+                            });
+
+                            // the actual url is stored on the IN message in the getRequestBody method as its accessed on-demand
+                            String actualUrl = exchange.getIn().getHeader(Exchange.HTTP_URL, String.class);
+                            int code = response.getStatus() != null ? response.getStatus().code() : -1;
+                            log.debug("Http responseCode: {}", code);
+
+                            // if there was a http error code then check if we should throw an exception
+                            boolean ok = NettyHttpHelper.isStatusCodeOk(code, configuration.getOkStatusCodeRange());
+                            if (!ok && getConfiguration().isThrowExceptionOnFailure()) {
+                                // operation failed so populate exception to throw
+                                Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, actualUrl, response, code, getConfiguration().isTransferException());
+                                exchange.setException(cause);
+                            }
                         }
                     }
                 }

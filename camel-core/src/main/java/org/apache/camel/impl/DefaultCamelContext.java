@@ -42,7 +42,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.naming.Context;
@@ -101,6 +100,7 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.remote.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
@@ -207,6 +207,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private final List<RestDefinition> restDefinitions = new ArrayList<RestDefinition>();
     private Map<String, RestConfiguration> restConfigurations = new ConcurrentHashMap<>();
+    private Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
     private RestRegistry restRegistry = new DefaultRestRegistry();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<RoutePolicyFactory>();
@@ -227,7 +228,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
     private Boolean useBreadcrumb = Boolean.TRUE;
-    private Boolean allowUseOriginalMessage = Boolean.TRUE;
+    private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Long delay;
     private ErrorHandlerFactory errorHandlerBuilder;
     private final Object errorHandlerExecutorServiceLock = new Object();
@@ -2552,6 +2553,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public void addRestConfiguration(RestConfiguration restConfiguration) {
         restConfigurations.put(restConfiguration.getComponent(), restConfiguration);
     }
+
     public RestConfiguration getRestConfiguration(String component, boolean defaultIfNotExist) {
         if (component == null) {
             component = "";
@@ -2565,6 +2567,37 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
         return config;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends ServiceCallConfigurationDefinition> T getServiceCallConfiguration(String serviceName, Class<T> type) {
+        if (serviceName == null) {
+            serviceName = "";
+        }
+
+        ServiceCallConfigurationDefinition config = serviceCallConfigurations.get(serviceName);
+        if (config == null) {
+            for (ServiceCallConfigurationDefinition candidate : serviceCallConfigurations.values()) {
+                if (type == null || type.isInstance(candidate)) {
+                    config = candidate;
+                    break;
+                }
+            }
+        }
+
+        if (config != null) {
+            return type != null ? type.cast(config) : (T) config;
+        } else {
+            return null;
+        }
+    }
+
+    public void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration) {
+        serviceCallConfigurations.put("", configuration);
+    }
+
+    public void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration) {
+        serviceCallConfigurations.put(serviceName, configuration);
     }
 
     public List<InterceptStrategy> getInterceptStrategies() {
@@ -2736,12 +2769,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public String getUptime() {
-        // compute and log uptime
-        if (startDate == null) {
+        long delta = getUptimeMillis();
+        if (delta == 0) {
             return "";
         }
-        long delta = new Date().getTime() - startDate.getTime();
         return TimeUtils.printDuration(delta);
+    }
+
+    public long getUptimeMillis() {
+        if (startDate == null) {
+            return 0;
+        }
+        return new Date().getTime() - startDate.getTime();
     }
 
     @Override
@@ -3073,11 +3112,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
 
-        if (isAllowUseOriginalMessage()) {
-            log.info("AllowUseOriginalMessage is enabled. If access to the original message is not needed,"
-                    + " then its recommended to turn this option off as it may improve performance.");
-        }
-
         if (streamCachingInUse) {
             // stream caching is in use so enable the strategy
             getStreamCachingStrategy().setEnabled(true);
@@ -3086,6 +3120,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // log if stream caching is not in use as this can help people to enable it if they use streams
             log.info("StreamCaching is not in use. If using streams then its recommended to enable stream caching."
                     + " See more details at http://camel.apache.org/stream-caching.html");
+        }
+
+        if (isAllowUseOriginalMessage()) {
+            log.debug("AllowUseOriginalMessage enabled because UseOriginalMessage is in use");
         }
 
         // start routes

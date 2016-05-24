@@ -54,22 +54,22 @@ public class MllpEndpoint extends DefaultEndpoint {
     @UriPath @Metadata(required = "true")
     int port = -1;
 
-    @UriParam(defaultValue = "5")
+    @UriParam(label = "advanced", defaultValue = "5")
     int backlog = 5;
 
-    @UriParam(defaultValue = "30000")
+    @UriParam(label = "timeout", defaultValue = "30000")
     int bindTimeout = 30000;
 
-    @UriParam(defaultValue = "5000")
+    @UriParam(label = "timeout", defaultValue = "5000")
     int bindRetryInterval = 5000;
 
-    @UriParam(defaultValue = "60000")
+    @UriParam(label = "timeout", defaultValue = "60000")
     int acceptTimeout = 60000;
 
-    @UriParam(defaultValue = "30000")
+    @UriParam(label = "timeout", defaultValue = "30000")
     int connectTimeout = 30000;
 
-    @UriParam(defaultValue = "10000")
+    @UriParam(label = "timeout", defaultValue = "10000")
     int receiveTimeout = 10000;
 
     @UriParam(defaultValue = "true")
@@ -81,16 +81,16 @@ public class MllpEndpoint extends DefaultEndpoint {
     @UriParam
     boolean reuseAddress;
 
-    @UriParam
+    @UriParam(label = "advanced")
     Integer receiveBufferSize;
 
-    @UriParam
+    @UriParam(label = "advanced")
     Integer sendBufferSize;
 
     @UriParam(defaultValue = "true")
     boolean autoAck = true;
 
-    @UriParam
+    @UriParam(label = "codec")
     String charsetName;
 
     public MllpEndpoint(String uri, MllpComponent component) {

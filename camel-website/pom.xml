@@ -81,6 +81,9 @@
                           <fileset dir="{basedir}/../../components">
                             <include name="**/src/main/docs/**"/>
                           </fileset>
+                          <fileset dir="{basedir}/../../camel-core">
+                            <include name="**/src/main/docs/**"/>
+                          </fileset>
                         </copy>
 
                         <mkdir dir="${basedir}/target/classes/user-manual" />

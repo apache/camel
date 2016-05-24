@@ -35,7 +35,7 @@ public enum NotifyForOperationsEnum {
 
     final String value;
 
-    private NotifyForOperationsEnum(String value) {
+    NotifyForOperationsEnum(String value) {
         this.value = value;
     }
 

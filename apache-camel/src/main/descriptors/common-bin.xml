@@ -54,6 +54,7 @@
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-core-osgi</include>
         <include>org.apache.camel:camel-cometd</include>
+        <include>org.apache.camel:camel-consul</include>
         <include>org.apache.camel:camel-context</include>
         <include>org.apache.camel:camel-couchdb</include>
         <include>org.apache.camel:camel-crypto</include>
@@ -66,6 +67,7 @@
         <include>org.apache.camel:camel-dozer</include>
         <include>org.apache.camel:camel-dropbox</include>
         <include>org.apache.camel:camel-eclipse</include>
+        <include>org.apache.camel:camel-ehcache</include>
         <include>org.apache.camel:camel-ejb</include>
         <include>org.apache.camel:camel-elasticsearch</include>
         <include>org.apache.camel:camel-elsql</include>
@@ -178,6 +180,7 @@
         <include>org.apache.camel:camel-quickfix</include>
         <include>org.apache.camel:camel-rabbitmq</include>
         <include>org.apache.camel:camel-restlet</include>
+        <include>org.apache.camel:camel-ribbon</include>
         <include>org.apache.camel:camel-rmi</include>
         <include>org.apache.camel:camel-routebox</include>
         <include>org.apache.camel:camel-rss</include>
@@ -225,6 +228,8 @@
         <include>org.apache.camel:camel-swagger</include>
         <include>org.apache.camel:camel-swagger-java</include> 
         <include>org.apache.camel:camel-tagsoup</include>
+        <include>org.apache.camel:camel-tarfile</include>
+        <include>org.apache.camel:camel-telegram</include>
         <include>org.apache.camel:camel-test</include>
         <include>org.apache.camel:camel-test-blueprint</include>
         <include>org.apache.camel:camel-test-cdi</include>

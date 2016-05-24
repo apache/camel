@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.InvalidPayloadRuntimeException;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
@@ -141,6 +142,11 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         this.transactionManager = transactionManager;
     }
 
+    @Override
+    public JpaComponent getComponent() {
+        return (JpaComponent) super.getComponent();
+    }
+
     public Producer createProducer() throws Exception {
         validate();
         return new JpaProducer(this, getProducerExpression());
@@ -161,6 +167,17 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         consumer.setDeleteHandler(getDeleteHandler());
         consumer.setPreDeleteHandler(getPreDeleteHandler());
         configureConsumer(consumer);
+        return consumer;
+    }
+
+    @Override
+    public PollingConsumer createPollingConsumer() throws Exception {
+        JpaPollingConsumer consumer = new JpaPollingConsumer(this);
+        consumer.setQuery(getQuery());
+        consumer.setNamedQuery(getNamedQuery());
+        consumer.setNativeQuery(getNativeQuery());
+        consumer.setParameters(getParameters());
+        consumer.setResultClass(getResultClass());
         return consumer;
     }
 

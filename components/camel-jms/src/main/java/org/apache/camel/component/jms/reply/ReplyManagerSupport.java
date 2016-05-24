@@ -19,7 +19,6 @@ package org.apache.camel.component.jms.reply;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -216,13 +215,13 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
         ReplyHandler answer = null;
 
-        // wait up till 5 seconds
+        // wait up until configured values
         boolean done = false;
         int counter = 0;
-        while (!done && counter++ < 50) {
+        while (!done && counter++ < endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedCounter()) {
             log.trace("Early reply not found handler at attempt {}. Waiting a bit longer.", counter);
             try {
-                Thread.sleep(100);
+                Thread.sleep(endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime());
             } catch (InterruptedException e) {
                 // ignore
             }

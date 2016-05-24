@@ -84,6 +84,13 @@ public interface KubernetesOperations {
     String LIST_NODES_BY_LABELS_OPERATION = "listNodesByLabels";
     String GET_NODE_OPERATION = "getNode";
     
+    // Config Maps
+    String LIST_CONFIGMAPS = "listConfigMaps";
+    String LIST_CONFIGMAPS_BY_LABELS_OPERATION = "listConfigMapsByLabels";
+    String GET_CONFIGMAP_OPERATION = "getConfigMap";
+    String CREATE_CONFIGMAP_OPERATION = "createConfigMap";
+    String DELETE_CONFIGMAP_OPERATION = "deleteConfigMap";
+    
     // Builds
     String LIST_BUILD = "listBuilds";
     String LIST_BUILD_BY_LABELS_OPERATION = "listBuildsByLabels";

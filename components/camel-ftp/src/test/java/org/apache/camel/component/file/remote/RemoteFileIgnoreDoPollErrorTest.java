@@ -111,12 +111,11 @@ public class RemoteFileIgnoreDoPollErrorTest {
             protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange, Exception cause) {
                 return ignoreCannotRetrieveFile;
             }
+
             @Override
-            protected void updateFileHeaders(GenericFile<Object> arg0, Message arg1) {
-                log.warn("not implemented");
-                
+            protected void updateFileHeaders(GenericFile<Object> genericFile, Message message) {
+                // noop
             }
-            
         };
     }
 }

@@ -69,7 +69,7 @@ public class CometdComponent extends UriEndpointComponent {
         Server server;
         int refCount;
 
-        public ConnectorRef(Connector connector, CometDServlet servlet, Server server) {
+        ConnectorRef(Connector connector, CometDServlet servlet, Server server) {
             this.connector = connector;
             this.servlet = servlet;
             this.server = server;
@@ -220,7 +220,7 @@ public class CometdComponent extends UriEndpointComponent {
         ServerConnector sslSocketConnector = null;
         if (sslContextParameters != null) {
             SslContextFactory sslContextFactory = new CometdComponentSslContextFactory();
-            sslContextFactory.setSslContext(sslContextParameters.createSSLContext());
+            sslContextFactory.setSslContext(sslContextParameters.createSSLContext(getCamelContext()));
             sslSocketConnector = new ServerConnector(server, sslContextFactory);
         } else {
             SslContextFactory sslContextFactory = new SslContextFactory();

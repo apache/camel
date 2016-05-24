@@ -54,9 +54,11 @@ _znode_) that will be the target of the endpoint:
 Options
 ^^^^^^^
 
+
 // endpoint options: START
 The ZooKeeper component supports 14 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -75,7 +77,9 @@ The ZooKeeper component supports 14 endpoint options which are listed below:
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 [[Zookeeper-Usecases]]
 Use cases

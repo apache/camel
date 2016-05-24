@@ -33,6 +33,10 @@ public class SjmsBatchComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        ConnectionFactory cf = resolveAndRemoveReferenceParameter(parameters, "connectionFactory", ConnectionFactory.class);
+        if (cf != null) {
+            setConnectionFactory(cf);
+        }
         ObjectHelper.notNull(connectionFactory, "connectionFactory");
         SjmsBatchEndpoint sjmsBatchEndpoint = new SjmsBatchEndpoint(uri, this, remaining);
         setProperties(sjmsBatchEndpoint, parameters);

@@ -226,6 +226,20 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         return answer;
     }
 
+    @Override
+    protected void updateFileHeaders(GenericFile<ChannelSftp.LsEntry> file, Message message) {
+        long length = file.getFile().getAttrs().getSize();
+        long modified = file.getFile().getAttrs().getMTime() * 1000L;
+        file.setFileLength(length);
+        file.setLastModified(modified);
+        if (length >= 0) {
+            message.setHeader(Exchange.FILE_LENGTH, length);
+        }
+        if (modified >= 0) {
+            message.setHeader(Exchange.FILE_LAST_MODIFIED, modified);
+        }
+    }
+
     private boolean isStepwise() {
         RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
         return config.isStepwise();

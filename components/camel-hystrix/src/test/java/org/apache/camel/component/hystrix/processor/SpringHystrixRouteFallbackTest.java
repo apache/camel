@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hystrix.processor;
 
-import org.apache.camel.component.hystrix.HystrixConstants;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;

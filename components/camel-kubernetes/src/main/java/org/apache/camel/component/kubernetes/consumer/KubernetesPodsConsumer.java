@@ -77,9 +77,9 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
         @Override
         public void run() {
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getOauthToken())) {
-                if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespaceName())) {
+                if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
                     getEndpoint().getKubernetesClient().pods()
-                            .inNamespace(getEndpoint().getKubernetesConfiguration().getNamespaceName())
+                            .inNamespace(getEndpoint().getKubernetesConfiguration().getNamespace())
                             .watch(new Watcher<Pod>() {
 
                                 @Override

@@ -45,11 +45,8 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
     /**
      * Constructs a new instance and records its association to the passed-in
      * channel.
-     *
-     * @param channel
-     *            the channel to which this consumer is attached
      */
-    public RabbitConsumer(RabbitMQConsumer consumer) {
+    RabbitConsumer(RabbitMQConsumer consumer) {
         // super(channel);
         this.consumer = consumer;
         try {
@@ -159,11 +156,13 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
         if (channel == null) {
             return;
         }
-        if (tag != null) {
+        if (tag != null && isChannelOpen()) {
             channel.basicCancel(tag);
         }
         try {
-            channel.close();
+            if (isChannelOpen()) {
+                channel.close();
+            }
         } catch (TimeoutException e) {
             log.error("Timeout occured");
             throw e;

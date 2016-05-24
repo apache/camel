@@ -36,7 +36,6 @@ import io.netty.buffer.ByteBufInputStream;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 
-
 /**
  * A set of converter methods for working with Netty types
  *
@@ -56,7 +55,12 @@ public final class NettyConverter {
         }
         byte[] bytes = new byte[buffer.readableBytes()];
         int readerIndex = buffer.readerIndex();
-        buffer.getBytes(readerIndex, bytes);
+        buffer.retain();
+        try {
+            buffer.getBytes(readerIndex, bytes);
+        } finally {
+            buffer.release();
+        }
         return bytes;
     }
 

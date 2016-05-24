@@ -23,7 +23,6 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
@@ -33,14 +32,11 @@ import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/sjms">Simple JMS</a> component.
  */
 public class SjmsComponent extends UriEndpointComponent implements HeaderFilterStrategyAware {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SjmsComponent.class);
 
     private ConnectionFactory connectionFactory;
     private ConnectionResource connectionResource;
@@ -105,31 +101,14 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
         timedTaskManager = new TimedTaskManager();
-
-        LOGGER.trace("Verify ConnectionResource");
-        if (getConnectionResource() == null) {
-            LOGGER.debug("No ConnectionResource provided. Initialize the ConnectionFactoryResource.");
-            // We always use a connection pool, even for a pool of 1
-            ConnectionFactoryResource connections = new ConnectionFactoryResource(getConnectionCount(), getConnectionFactory());
-            connections.fillPool();
-            setConnectionResource(connections);
-        } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
-            ((ConnectionFactoryResource) getConnectionResource()).fillPool();
-        }
     }
 
     @Override
     protected void doStop() throws Exception {
         if (timedTaskManager != null) {
             timedTaskManager.cancelTasks();
-        }
-
-        if (getConnectionResource() != null) {
-            if (getConnectionResource() instanceof ConnectionFactoryResource) {
-                ((ConnectionFactoryResource) getConnectionResource()).drainPool();
-            }
+            timedTaskManager = null;
         }
         super.doStop();
     }

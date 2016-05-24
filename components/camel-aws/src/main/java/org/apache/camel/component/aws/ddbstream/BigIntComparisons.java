@@ -25,7 +25,7 @@ interface BigIntComparisons {
      */
     boolean matches(BigInteger first, BigInteger second);
 
-    static enum Conditions implements BigIntComparisons {
+    enum Conditions implements BigIntComparisons {
         LT() {
             @Override
             public boolean matches(BigInteger first, BigInteger second) {

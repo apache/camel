@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
+import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
@@ -66,10 +68,13 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.log.Log4JLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eclipse.jetty.client.Address;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.RedirectListener;
-import org.eclipse.jetty.client.security.ProxyAuthorization;
+import org.eclipse.jetty.client.HttpProxy;
+import org.eclipse.jetty.client.Origin;
+import org.eclipse.jetty.client.ProxyConfiguration;
+import org.eclipse.jetty.client.Socks4Proxy;
+import org.eclipse.jetty.client.api.Authentication;
+import org.eclipse.jetty.client.util.BasicAuthentication;
+import org.eclipse.jetty.client.util.DigestAuthentication;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
@@ -116,6 +121,30 @@ public class CamelSalesforceMojo extends AbstractMojo {
     protected Integer httpProxyPort;
 
     /**
+     * Is it a SOCKS4 Proxy?
+     */
+    @Parameter(property = "camelSalesforce.isHttpProxySocks4")
+    protected boolean isHttpProxySocks4;
+
+    /**
+     * Is HTTP Proxy secure, i.e. using secure sockets, true by default.
+     */
+    @Parameter(property = "camelSalesforce.isHttpProxySecure")
+    protected boolean isHttpProxySecure = true;
+
+    /**
+     * Addresses to Proxy.
+     */
+    @Parameter(property = "camelSalesforce.httpProxyIncludedAddresses")
+    protected Set<String> httpProxyIncludedAddresses;
+
+    /**
+     * Addresses to NOT Proxy.
+     */
+    @Parameter(property = "camelSalesforce.httpProxyIncludedAddresses")
+    protected Set<String> httpProxyExcludedAddresses;
+
+    /**
      * Proxy authentication username.
      */
     @Parameter(property = "camelSalesforce.httpProxyUsername")
@@ -126,6 +155,24 @@ public class CamelSalesforceMojo extends AbstractMojo {
      */
     @Parameter(property = "camelSalesforce.httpProxyPassword")
     protected String httpProxyPassword;
+
+    /**
+     * Proxy authentication URI.
+     */
+    @Parameter(property = "camelSalesforce.httpProxyAuthUri")
+    protected String httpProxyAuthUri;
+
+    /**
+     * Proxy authentication realm.
+     */
+    @Parameter(property = "camelSalesforce.httpProxyRealm")
+    protected String httpProxyRealm;
+
+    /**
+     * Proxy uses Digest authentication.
+     */
+    @Parameter(property = "camelSalesforce.httpProxyUseDigestAuth")
+    protected boolean httpProxyUseDigestAuth;
 
     /**
      * Salesforce client id.
@@ -224,10 +271,8 @@ public class CamelSalesforceMojo extends AbstractMojo {
         }
 
         // connect to Salesforce
-        final HttpClient httpClient = createHttpClient();
-
-        final SalesforceSession session = new SalesforceSession(httpClient,
-                new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, false));
+        final SalesforceHttpClient httpClient = createHttpClient();
+        final SalesforceSession session = httpClient.getSession();
 
         getLog().info("Salesforce login...");
         try {
@@ -417,27 +462,32 @@ public class CamelSalesforceMojo extends AbstractMojo {
         getLog().info(String.format("Found %s matching Objects", objectNames.size()));
     }
 
-    protected HttpClient createHttpClient() throws MojoExecutionException {
+    protected SalesforceHttpClient createHttpClient() throws MojoExecutionException {
 
-        final HttpClient httpClient = new HttpClient();
-
-        // default settings
-        httpClient.registerListener(RedirectListener.class.getName());
-        httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
-        httpClient.setConnectTimeout(DEFAULT_TIMEOUT);
-        httpClient.setTimeout(DEFAULT_TIMEOUT);
+        final SalesforceHttpClient httpClient;
 
         // set ssl context parameters
         try {
+
             final SSLContextParameters contextParameters = sslContextParameters != null
                 ? sslContextParameters : new SSLContextParameters();
-            final SslContextFactory sslContextFactory = httpClient.getSslContextFactory();
+            final SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setSslContext(contextParameters.createSSLContext());
+
+            httpClient = new SalesforceHttpClient(sslContextFactory);
+
         } catch (GeneralSecurityException e) {
             throw new MojoExecutionException("Error creating default SSL context: " + e.getMessage(), e);
         } catch (IOException e) {
             throw new MojoExecutionException("Error creating default SSL context: " + e.getMessage(), e);
         }
+
+        // default settings
+        httpClient.setConnectTimeout(DEFAULT_TIMEOUT);
+        httpClient.setTimeout(DEFAULT_TIMEOUT);
+
+        // enable redirects, no need for a RedirectListener class in Jetty 9
+        httpClient.setFollowRedirects(true);
 
         // set HTTP client parameters
         if (httpClientProperties != null && !httpClientProperties.isEmpty()) {
@@ -452,24 +502,44 @@ public class CamelSalesforceMojo extends AbstractMojo {
         responseTimeout = httpClient.getTimeout() + 1000L;
 
         // set http proxy settings
+        // set HTTP proxy settings
         if (this.httpProxyHost != null && httpProxyPort != null) {
-            httpClient.setProxy(new Address(this.httpProxyHost, this.httpProxyPort));
+            Origin.Address proxyAddress = new Origin.Address(this.httpProxyHost, this.httpProxyPort);
+            ProxyConfiguration.Proxy proxy;
+            if (isHttpProxySocks4) {
+                proxy = new Socks4Proxy(proxyAddress, isHttpProxySecure);
+            } else {
+                proxy = new HttpProxy(proxyAddress, isHttpProxySecure);
+            }
+            if (httpProxyIncludedAddresses != null && !httpProxyIncludedAddresses.isEmpty()) {
+                proxy.getIncludedAddresses().addAll(httpProxyIncludedAddresses);
+            }
+            if (httpProxyExcludedAddresses != null && !httpProxyExcludedAddresses.isEmpty()) {
+                proxy.getExcludedAddresses().addAll(httpProxyExcludedAddresses);
+            }
+            httpClient.getProxyConfiguration().getProxies().add(proxy);
         }
         if (this.httpProxyUsername != null && httpProxyPassword != null) {
-            try {
-                httpClient.setProxyAuthentication(new ProxyAuthorization(this.httpProxyUsername, this.httpProxyPassword));
-            } catch (IOException e) {
-                throw new MojoExecutionException("Error configuring proxy authorization: " + e.getMessage(), e);
+
+            ObjectHelper.notEmpty(httpProxyAuthUri, "httpProxyAuthUri");
+            ObjectHelper.notEmpty(httpProxyRealm, "httpProxyRealm");
+
+            final Authentication authentication;
+            if (httpProxyUseDigestAuth) {
+                authentication = new DigestAuthentication(URI.create(httpProxyAuthUri),
+                    httpProxyRealm, httpProxyUsername, httpProxyPassword);
+            } else {
+                authentication = new BasicAuthentication(URI.create(httpProxyAuthUri),
+                    httpProxyRealm, httpProxyUsername, httpProxyPassword);
             }
+            httpClient.getAuthenticationStore().addAuthentication(authentication);
         }
 
-        // add redirect listener to handle Salesforce redirects
-        // this is ok to do since the RedirectListener is in the same classloader as Jetty client
-        String listenerClass = RedirectListener.class.getName();
-        if (httpClient.getRegisteredListeners() == null
-            || !httpClient.getRegisteredListeners().contains(listenerClass)) {
-            httpClient.registerListener(listenerClass);
-        }
+        // set session before calling start()
+        final SalesforceSession session = new SalesforceSession(httpClient,
+            httpClient.getTimeout(),
+            new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, false));
+        httpClient.setSession(session);
 
         try {
             httpClient.start();

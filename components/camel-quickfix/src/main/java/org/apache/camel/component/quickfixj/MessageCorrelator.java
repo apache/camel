@@ -74,7 +74,7 @@ public class MessageCorrelator implements QuickfixjEventListener {
 
         private Message replyMessage;
 
-        public MessageCorrelationRule(Exchange exchange, SessionID sessionID, MessagePredicate messageCriteria) {
+        MessageCorrelationRule(Exchange exchange, SessionID sessionID, MessagePredicate messageCriteria) {
             this.exchange = exchange;
             this.messageCriteria = messageCriteria;
         }

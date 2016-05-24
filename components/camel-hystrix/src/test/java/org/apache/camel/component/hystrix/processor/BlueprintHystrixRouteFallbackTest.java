@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hystrix.processor;
 
-import org.apache.camel.component.hystrix.HystrixConstants;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.junit.Test;
 

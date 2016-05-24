@@ -41,7 +41,7 @@ public class IBatisUnknownStatementTypeTest extends CamelTestSupport {
             fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("statementType must be specified on: Endpoint[ibatis://selectAllAccounts]", e.getCause().getCause().getMessage());
+            assertEquals("statementType must be specified on: ibatis://selectAllAccounts", e.getCause().getCause().getMessage());
         }
     }
 

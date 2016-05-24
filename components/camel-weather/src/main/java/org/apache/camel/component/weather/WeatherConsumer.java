@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.weather;
 
-import java.net.URL;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,23 +44,36 @@ public class WeatherConsumer extends ScheduledPollConsumer {
     @Override
     protected int poll() throws Exception {
         LOG.debug("Going to execute the Weather query {}", query);
-        String weather = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, new URL(query));
-        LOG.debug("Got back the Weather information {}", weather);
-        if (ObjectHelper.isEmpty(weather)) {
-            throw new IllegalStateException("Got the unexpected value '" + weather + "' as the result of the query '" + query + "'");
+        HttpClient httpClient = ((WeatherComponent) getEndpoint().getComponent()).getHttpClient();
+        GetMethod getMethod = new GetMethod(query);
+        try {
+            int status = httpClient.executeMethod(getMethod);
+            if (status != HttpStatus.SC_OK) {
+                LOG.warn("HTTP call for weather returned error status code {} - {} as a result with query: {}", status, getMethod.getStatusLine(), query);
+                return 0;
+            }
+            String weather = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, getMethod.getResponseBodyAsStream());
+            LOG.debug("Got back the Weather information {}", weather);
+            if (ObjectHelper.isEmpty(weather)) {
+                // empty response
+                return 0;
+            }
+
+            Exchange exchange = getEndpoint().createExchange();
+            String header = getEndpoint().getConfiguration().getHeaderName();
+            if (header != null) {
+                exchange.getIn().setHeader(header, weather);
+            } else {
+                exchange.getIn().setBody(weather);
+            }
+            exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, query);
+
+            getProcessor().process(exchange);
+
+            return 1;
+        } finally {
+            getMethod.releaseConnection();
         }
-
-        Exchange exchange = getEndpoint().createExchange();
-        String header = getEndpoint().getConfiguration().getHeaderName();
-        if (header != null) {
-            exchange.getIn().setHeader(header, weather);
-        } else {
-            exchange.getIn().setBody(weather);
-        }
-        exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, query);
-
-        getProcessor().process(exchange);
-
-        return 1;
     }
+
 }

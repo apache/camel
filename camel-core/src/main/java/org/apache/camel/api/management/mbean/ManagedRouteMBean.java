@@ -33,8 +33,11 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Route State")
     String getState();
 
-    @ManagedAttribute(description = "Route Uptime")
+    @ManagedAttribute(description = "Route Uptime [human readable text]")
     String getUptime();
+
+    @ManagedAttribute(description = "Route Uptime [milliseconds]")
+    long getUptimeMillis();
 
     /**
      * @deprecated use {@link #getExchangesInflight()}

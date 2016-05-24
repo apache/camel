@@ -231,18 +231,22 @@ Component Options
 ^^^^^^^^^^^^^^^^
 
 
+
 // component options: START
 The XML Security component supports 2 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | signerConfiguration | XmlSignerConfiguration | To use a shared XmlSignerConfiguration configuration to use as base for configuring endpoints.
 | verifierConfiguration | XmlVerifierConfiguration | To use a shared XmlVerifierConfiguration configuration to use as base for configuring endpoints.
 |=======================================================================
+{% endraw %}
 // component options: END
+
 
 
 
@@ -250,9 +254,11 @@ The XML Security component supports 2 options which are listed below.
 Endpoint Options
 ^^^^^^^^^^^^^^^^
 
+
 // endpoint options: START
 The XML Security component supports 38 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -295,7 +301,9 @@ The XML Security component supports 38 endpoint options which are listed below:
 | xmlSignature2Message | verify |  | XmlSignature2Message | Bean which maps the XML signature to the output-message after the validation. How this mapping should be done can be configured by the options outputNodeSearchType outputNodeSearch and removeSignatureElements. The default implementation offers three possibilities which are related to the three output node search types Default ElementName and XPath. The default implementation determines a node which is then serialized and set to the body of the output message If the search type is ElementName then the output node (which must be in this case an element) is determined by the local name and namespace defined in the search value (see option outputNodeSearch). If the search type is XPath then the output node is determined by the XPath specified in the search value (in this case the output node can be of type Element TextNode or Document). If the output node search type is Default then the following rules apply: In the enveloped XML signature case (there is a reference with URI= and transform http://www.w3.org/2000/09/xmldsigenveloped-signature) the incoming XML document without the Signature element is set to the output message body. In the non-enveloped XML signature case the message body is determined from a referenced Object; this is explained in more detail in chapter Output Node Determination in Enveloping XML Signature Case.
 | xmlSignatureChecker | verify |  | XmlSignatureChecker | This interface allows the application to check the XML signature before the validation is executed. This step is recommended in http://www.w3.org/TR/xmldsig-bestpractices/check-what-is-signed
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 [[XMLSecuritycomponent-OutputNodeDeterminationinEnvelopingXMLSignatureCase]]

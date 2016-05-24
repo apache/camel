@@ -61,7 +61,7 @@ public enum OperationName {
 
     private final String value;
 
-    private OperationName(String value) {
+    OperationName(String value) {
         this.value = value;
     }
 

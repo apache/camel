@@ -36,6 +36,7 @@ import javax.jms.Queue;
 import javax.jms.Session;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -63,6 +64,8 @@ public class SjmsBatchConsumer extends DefaultConsumer {
     private final int completionSize;
     private final int completionInterval;
     private final int completionTimeout;
+    private final Predicate completionPredicate;
+    private final boolean eagerCheckCompletion;
     private final int consumerCount;
     private final int pollDuration;
     private final ConnectionFactory connectionFactory;
@@ -90,6 +93,8 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         if (sjmsBatchEndpoint.isSendEmptyMessageWhenIdle() && completionTimeout <= 0 && completionInterval <= 0) {
             throw new IllegalArgumentException("SendEmptyMessageWhenIdle can only be enabled if either completionInterval or completionTimeout is also set");
         }
+        completionPredicate = sjmsBatchEndpoint.getCompletionPredicate();
+        eagerCheckCompletion = sjmsBatchEndpoint.isEagerCheckCompletion();
 
         pollDuration = sjmsBatchEndpoint.getPollDuration();
         if (pollDuration < 0) {
@@ -194,7 +199,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
         private final List<AtomicBoolean> triggers;
 
-        public CompletionIntervalTask(List<AtomicBoolean> triggers) {
+        CompletionIntervalTask(List<AtomicBoolean> triggers) {
             this.triggers = triggers;
         }
 
@@ -276,7 +281,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             private long startTime;
             private Exchange aggregatedExchange;
 
-            public BatchConsumptionTask(AtomicBoolean timeoutInterval) {
+            BatchConsumptionTask(AtomicBoolean timeoutInterval) {
                 this.timeoutInterval = timeoutInterval;
             }
 
@@ -328,6 +333,26 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                             final Exchange exchange = getEndpoint().createExchange(message, session);
                             aggregatedExchange = aggregationStrategy.aggregate(aggregatedExchange, exchange);
                             aggregatedExchange.setProperty(Exchange.BATCH_SIZE, messageCount);
+
+                            // is the batch complete by predicate?
+                            if (completionPredicate != null) {
+                                try {
+                                    boolean complete;
+                                    if (eagerCheckCompletion) {
+                                        complete = completionPredicate.matches(exchange);
+                                    } else {
+                                        complete = completionPredicate.matches(aggregatedExchange);
+                                    }
+                                    if (complete) {
+                                        // trigger completion predicate
+                                        LOG.trace("Completion batch due predicate");
+                                        completionBatch(session);
+                                        reset();
+                                    }
+                                } catch (Exception e) {
+                                    LOG.warn("Error during evaluation of completion predicate " + e.getMessage() + ". This exception is ignored.", e);
+                                }
+                            }
                         }
 
                         if (usingTimeout && startTime > 0) {

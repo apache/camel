@@ -37,9 +37,9 @@ public class ToObservableBodyTest extends RxTestSupport {
 
         // lets route the largeOrderIds to the mock endpoint for testing
         largeOrderIds.take(2).subscribe(body -> {
-                LOG.info("Processing  " + body);
-                producerTemplate.sendBody(mockEndpoint, body);
-            });
+            LOG.info("Processing  " + body);
+            producerTemplate.sendBody(mockEndpoint, body);
+        });
 
         // now lets send some orders in
         Order[] orders = {new Order("a", 49.95), new Order("b", 125.50), new Order("c", 22.95),

@@ -48,9 +48,9 @@ public class CacheConfiguration implements Cloneable {
     private long diskExpiryThreadIntervalSeconds;
     @UriParam
     private boolean objectCache;
-    @UriParam
+    @UriParam(label = "advanced")
     private CacheEventListenerRegistry eventListenerRegistry = new CacheEventListenerRegistry();
-    @UriParam
+    @UriParam(label = "advanced")
     private CacheLoaderRegistry cacheLoaderRegistry = new CacheLoaderRegistry();
 
     public CacheConfiguration() {

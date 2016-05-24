@@ -255,6 +255,20 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return answer;
     }
 
+    @Override
+    protected void updateFileHeaders(GenericFile<FTPFile> file, Message message) {
+        long length = file.getFile().getSize();
+        long modified = file.getFile().getTimestamp() != null ? file.getFile().getTimestamp().getTimeInMillis() : -1;
+        file.setFileLength(length);
+        file.setLastModified(modified);
+        if (length >= 0) {
+            message.setHeader(Exchange.FILE_LENGTH, length);
+        }
+        if (modified >= 0) {
+            message.setHeader(Exchange.FILE_LAST_MODIFIED, modified);
+        }
+    }
+
     private boolean isStepwise() {
         RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
         return config.isStepwise();

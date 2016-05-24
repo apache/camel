@@ -499,22 +499,22 @@ public class MllpServerResource extends ExternalResource {
 
         boolean raiseExceptionOnAcceptTimeout;
 
-        public ServerSocketThread() throws IOException {
+        ServerSocketThread() throws IOException {
             bind();
         }
 
-        public ServerSocketThread(int listenPort) throws IOException {
+        ServerSocketThread(int listenPort) throws IOException {
             this.listenPort = listenPort;
             bind();
         }
 
-        public ServerSocketThread(int listenPort, int backlog) throws IOException {
+        ServerSocketThread(int listenPort, int backlog) throws IOException {
             this.listenPort = listenPort;
             this.backlog = backlog;
             bind();
         }
 
-        public ServerSocketThread(String listenHost, int listenPort, int backlog) throws IOException {
+        ServerSocketThread(String listenHost, int listenPort, int backlog) throws IOException {
             this.listenHost = listenHost;
             this.listenPort = listenPort;
             this.backlog = backlog;

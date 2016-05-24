@@ -793,6 +793,29 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
         this.messageCreatedStrategy = messageCreatedStrategy;
     }
 
+    public int getWaitForProvisionCorrelationToBeUpdatedCounter() {
+        return getConfiguration().getWaitForProvisionCorrelationToBeUpdatedCounter();
+    }
+
+    /**
+     * Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS
+     * and when the option useMessageIDAsCorrelationID is enabled.
+     */
+    public void setWaitForProvisionCorrelationToBeUpdatedCounter(int counter) {
+        getConfiguration().setWaitForProvisionCorrelationToBeUpdatedCounter(counter);
+    }
+
+    public long getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime() {
+        return getConfiguration().getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime();
+    }
+
+    /**
+     * Interval in millis to sleep each time while waiting for provisional correlation id to be updated.
+     */
+    public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(long sleepingTime) {
+        getConfiguration().setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(sleepingTime);
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 

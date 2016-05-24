@@ -91,7 +91,7 @@ public class WebsocketComponent extends UriEndpointComponent {
         MemoryWebsocketStore memoryStore;
         int refCount;
 
-        public ConnectorRef(Server server, ServerConnector connector, WebsocketComponentServlet servlet, MemoryWebsocketStore memoryStore) {
+        ConnectorRef(Server server, ServerConnector connector, WebsocketComponentServlet servlet, MemoryWebsocketStore memoryStore) {
             this.server = server;
             this.connector = connector;
             this.servlet = servlet;
@@ -159,6 +159,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                 }
 
                 server.addConnector(connector);
+
                 LOG.trace("Jetty Connector added: {}", connector.getName());
 
                 // Create ServletContextHandler
@@ -213,6 +214,7 @@ public class WebsocketComponent extends UriEndpointComponent {
                 WebsocketProducer producer = WebsocketProducer.class.cast(prodcon);
                 producer.setStore(connectorRef.memoryStore);
             }
+            
         }
     }
 
@@ -229,9 +231,7 @@ public class WebsocketComponent extends UriEndpointComponent {
             ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
             if (connectorRef != null) {
                 if (connectorRef.decrement() == 0) {
-                    LOG.info("Stopping Jetty Server as the last connector is disconnecting: {}:{}"
-                            , connectorRef.connector.getHost()
-                            , connectorRef.connector.getPort());
+                    LOG.info("Stopping Jetty Server as the last connector is disconnecting: {}:{}", connectorRef.connector.getHost(), connectorRef.connector.getPort());
                     servlets.remove(createPathSpec(endpoint.getResourceUri()));
                     connectorRef.server.removeConnector(connectorRef.connector);
                     if (connectorRef.connector != null) {
@@ -340,6 +340,11 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     protected Server createServer() throws Exception {
         Server server = null;
+        if (minThreads == null && maxThreads == null && getThreadPool() == null) {
+            minThreads = 1;
+            // 1+selectors+acceptors
+            maxThreads = 1 + Runtime.getRuntime().availableProcessors() * 2;
+        }
         // configure thread pool if min/max given
         if (minThreads != null || maxThreads != null) {
             if (getThreadPool() != null) {
@@ -489,7 +494,7 @@ public class WebsocketComponent extends UriEndpointComponent {
         ServerConnector sslSocketConnector = null;
         if (sslContextParameters != null) {
             SslContextFactory sslContextFactory = new WebSocketComponentSslContextFactory();
-            sslContextFactory.setSslContext(sslContextParameters.createSSLContext());
+            sslContextFactory.setSslContext(sslContextParameters.createSSLContext(getCamelContext()));
             sslSocketConnector = new ServerConnector(server, sslContextFactory);
         } else {
             SslContextFactory sslContextFactory = new SslContextFactory();
@@ -687,7 +692,8 @@ public class WebsocketComponent extends UriEndpointComponent {
     }
 
     /**
-     * To set a value for minimum number of threads in server thread pool.
+     * To set a value for minimum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
+     * The default values for minThreads is 1.
      */
     public void setMinThreads(Integer minThreads) {
         this.minThreads = minThreads;
@@ -698,7 +704,8 @@ public class WebsocketComponent extends UriEndpointComponent {
     }
 
     /**
-     * To set a value for maximum number of threads in server thread pool.
+     * To set a value for maximum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
+     * The default values for maxThreads is 1 + 2 * noCores.
      */
     public void setMaxThreads(Integer maxThreads) {
         this.maxThreads = maxThreads;
@@ -709,7 +716,7 @@ public class WebsocketComponent extends UriEndpointComponent {
     }
 
     /**
-     * To use a custom thread pool for the server.
+     * To use a custom thread pool for the server. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
      */
     public void setThreadPool(ThreadPool threadPool) {
         this.threadPool = threadPool;

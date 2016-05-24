@@ -99,7 +99,6 @@ public class ValidatorEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-
         if (!schemaReaderConfigured) {
             if (resourceResolver != null) {
                 schemaReader.setResourceResolver(resourceResolver);
@@ -128,8 +127,6 @@ public class ValidatorEndpoint extends DefaultEndpoint {
 
         return new ValidatorProducer(this, validator);
     }
-
-
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {

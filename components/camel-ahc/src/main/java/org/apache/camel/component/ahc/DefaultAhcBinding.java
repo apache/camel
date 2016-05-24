@@ -109,6 +109,10 @@ public class DefaultAhcBinding implements AhcBinding {
                 builder.addHeader(entry.getKey(), headerValue);
             }
         }
+        
+        if (endpoint.isConnectionClose()) {
+            builder.addHeader("Connection", "close");
+        }
     }
 
     protected void populateBody(RequestBuilder builder, AhcEndpoint endpoint, Exchange exchange) throws CamelExchangeException {

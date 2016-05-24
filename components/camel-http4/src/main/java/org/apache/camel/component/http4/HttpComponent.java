@@ -282,8 +282,8 @@ public class HttpComponent extends HttpCommonComponent {
         builder.register("http", PlainConnectionSocketFactory.getSocketFactory());
         builder.register("http4", PlainConnectionSocketFactory.getSocketFactory());
         if (sslContextParams != null) {
-            builder.register("https", new SSLConnectionSocketFactory(sslContextParams.createSSLContext(), x509HostnameVerifier));
-            builder.register("https4", new SSLConnectionSocketFactory(sslContextParams.createSSLContext(), x509HostnameVerifier));
+            builder.register("https", new SSLConnectionSocketFactory(sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier));
+            builder.register("https4", new SSLConnectionSocketFactory(sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier));
         } else {
             builder.register("https4", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));
             builder.register("https", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));

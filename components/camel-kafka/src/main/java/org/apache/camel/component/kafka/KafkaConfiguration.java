@@ -17,7 +17,9 @@
 package org.apache.camel.component.kafka;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -102,6 +104,13 @@ public class KafkaConfiguration {
     @UriParam(label = "producer", defaultValue = "100")
     private Integer retryBackoffMs = 100;
 
+    @UriParam(label = "producer")
+    private ExecutorService workerPool;
+    @UriParam(label = "producer", defaultValue = "10")
+    private Integer workerPoolCoreSize = 10;
+    @UriParam(label = "producer", defaultValue = "20")
+    private Integer workerPoolMaxSize = 20;
+
     //Async producer config
     @UriParam(label = "producer", defaultValue = "10000")
     private Integer queueBufferingMaxMessages = 10000;
@@ -110,8 +119,8 @@ public class KafkaConfiguration {
     @UriParam(label = "producer")
     private String keySerializerClass;
 
-    @UriParam(label = "producer", defaultValue = "1")
-    private Integer requestRequiredAcks = 1;
+    @UriParam(label = "producer", enums = "0,1,all", defaultValue = "1")
+    private String requestRequiredAcks = "1";
     //buffer.memory
     @UriParam(label = "producer", defaultValue = "33554432")
     private Integer bufferMemorySize = 33554432;
@@ -858,7 +867,7 @@ public class KafkaConfiguration {
         this.bufferMemorySize = bufferMemorySize;
     }
 
-    public Integer getRequestRequiredAcks() {
+    public String getRequestRequiredAcks() {
         return requestRequiredAcks;
     }
 
@@ -875,7 +884,7 @@ public class KafkaConfiguration {
      * acks=all This means the leader will wait for the full set of in-sync replicas to acknowledge the record. This guarantees that the
      * record will not be lost as long as at least one in-sync replica remains alive. This is the strongest available guarantee.
      */
-    public void setRequestRequiredAcks(Integer requestRequiredAcks) {
+    public void setRequestRequiredAcks(String requestRequiredAcks) {
         this.requestRequiredAcks = requestRequiredAcks;
     }
 
@@ -1158,5 +1167,39 @@ public class KafkaConfiguration {
         this.seekToBeginning = seekToBeginning;
     }
 
+    public ExecutorService getWorkerPool() {
+        return workerPool;
+    }
 
+    /**
+     * To use a custom worker pool for continue routing {@link Exchange} after kafka server has acknowledge
+     * the message that was sent to it from {@link KafkaProducer} using asynchronous non-blocking processing.
+     */
+    public void setWorkerPool(ExecutorService workerPool) {
+        this.workerPool = workerPool;
+    }
+
+    public Integer getWorkerPoolCoreSize() {
+        return workerPoolCoreSize;
+    }
+
+    /**
+     * Number of core threads for the worker pool for continue routing {@link Exchange} after kafka server has acknowledge
+     * the message that was sent to it from {@link KafkaProducer} using asynchronous non-blocking processing.
+     */
+    public void setWorkerPoolCoreSize(Integer workerPoolCoreSize) {
+        this.workerPoolCoreSize = workerPoolCoreSize;
+    }
+
+    public Integer getWorkerPoolMaxSize() {
+        return workerPoolMaxSize;
+    }
+
+    /**
+     * Maximum number of threads for the worker pool for continue routing {@link Exchange} after kafka server has acknowledge
+     * the message that was sent to it from {@link KafkaProducer} using asynchronous non-blocking processing.
+     */
+    public void setWorkerPoolMaxSize(Integer workerPoolMaxSize) {
+        this.workerPoolMaxSize = workerPoolMaxSize;
+    }
 }

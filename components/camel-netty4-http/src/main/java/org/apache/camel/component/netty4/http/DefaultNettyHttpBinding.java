@@ -93,8 +93,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             // keep the body as is, and use type converters
             answer.setBody(request.content());
         } else {
-            // turn the body into stream cached
+            // turn the body into stream cached (on the client/consumer side we can facade the netty stream instead of converting to byte array)
             NettyChannelBufferStreamCache cache = new NettyChannelBufferStreamCache(request.content());
+            // add on completion to the cache which is needed for Camel to keep track of the lifecycle of the cache
+            exchange.addOnCompletion(new NettyChannelBufferStreamCacheOnCompletion(cache));
             answer.setBody(cache);
         }
         return answer;
@@ -209,7 +211,13 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             String charset = "UTF-8";
 
             // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
-            String body = request.content().toString(Charset.forName(charset));
+            String body = null;
+            ByteBuf buffer = request.content();
+            try {
+                body = buffer.toString(Charset.forName(charset));
+            } finally {
+                buffer.release();
+            }
             if (ObjectHelper.isNotEmpty(body)) {
                 for (String param : body.split("&")) {
                     String[] pair = param.split("=", 2);
@@ -260,8 +268,19 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             populateCamelHeaders(response, answer.getHeaders(), exchange, configuration);
         }
 
-        // keep the body as is, and use type converters
-        answer.setBody(response.content());
+        if (configuration.isDisableStreamCache()) {
+            // keep the body as is, and use type converters
+            answer.setBody(response.content());
+        } else {
+            // stores as byte array as the netty ByteBuf will be freed when the producer is done, and then we can no longer access the message body
+            response.retain();
+            try {
+                byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, response.content());
+                answer.setBody(bytes);
+            } finally {
+                response.release();
+            }
+        }
         return answer;
     }
 
@@ -311,7 +330,6 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         int code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, defaultCode, int.class);
         
         LOG.trace("HTTP Status Code: {}", code);
-
 
         // if there was an exception then use that as body
         if (cause != null) {

@@ -19,6 +19,7 @@ package org.apache.camel.component.elsql;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import javax.sql.DataSource;
 
 import com.opengamma.elsql.ElSql;
 import com.opengamma.elsql.ElSqlConfig;
@@ -52,6 +53,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
 
     private ElSql elSql;
     private NamedParameterJdbcTemplate namedJdbcTemplate;
+    private DataSource dataSource;
 
     @UriPath
     @Metadata(required = "true")
@@ -63,11 +65,13 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     @UriParam
     private ElSqlConfig elSqlConfig;
 
-    public ElsqlEndpoint(String uri, Component component, NamedParameterJdbcTemplate namedJdbcTemplate, String elsqlName, String resourceUri) {
+    public ElsqlEndpoint(String uri, Component component, NamedParameterJdbcTemplate namedJdbcTemplate, DataSource dataSource,
+                         String elsqlName, String resourceUri) {
         super(uri, component, null);
         this.elsqlName = elsqlName;
         this.resourceUri = resourceUri;
         this.namedJdbcTemplate = namedJdbcTemplate;
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -94,7 +98,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        ElsqlProducer result = new ElsqlProducer(this, elSql, elsqlName, namedJdbcTemplate);
+        ElsqlProducer result = new ElsqlProducer(this, elSql, elsqlName, namedJdbcTemplate, dataSource);
         return result;
     }
 

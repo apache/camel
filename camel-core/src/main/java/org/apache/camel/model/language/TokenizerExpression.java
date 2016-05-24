@@ -69,7 +69,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * The (start) token to use as tokenizer, for example \n for a new line token
+     * The (start) token to use as tokenizer, for example \n for a new line token.
+     * You can use simple language as the token to support dynamic tokens.
      */
     public void setToken(String token) {
         this.token = token;
@@ -81,6 +82,7 @@ public class TokenizerExpression extends ExpressionDefinition {
 
     /**
      * The end token to use as tokenizer if using start/end token pairs.
+     * You can use simple language as the token to support dynamic tokens.
      */
     public void setEndToken(String endToken) {
         this.endToken = endToken;
@@ -115,7 +117,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * To inherit namepaces from a root/parent tag name when using XML
+     * To inherit namespaces from a root/parent tag name when using XML
+     * You can use simple language as the tag name to support dynamic names.
      */
     public void setInheritNamespaceTagName(String inheritNamespaceTagName) {
         this.inheritNamespaceTagName = inheritNamespaceTagName;

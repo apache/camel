@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,11 +25,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.Version;
 import org.apache.camel.component.salesforce.api.dto.Versions;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.eclipse.jetty.http.HttpHeaders;
-import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.proxy.ConnectHandler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ConnectHandler;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.B64Code;
 import org.eclipse.jetty.util.StringUtil;
 import org.junit.AfterClass;
@@ -39,6 +35,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.eclipse.jetty.http.HttpHeader.PROXY_AUTHENTICATE;
+import static org.eclipse.jetty.http.HttpHeader.PROXY_AUTHORIZATION;
 
 /**
  * Test HTTP proxy configuration for Salesforce component.
@@ -49,6 +48,7 @@ public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
     private static final String HTTP_PROXY_HOST = "localhost";
     private static final String HTTP_PROXY_USER_NAME = "camel-user";
     private static final String HTTP_PROXY_PASSWORD = "camel-user-password";
+    private static final String HTTP_PROXY_REALM = "proxy-realm";
 
     private static Server server;
     private static int httpProxyPort;
@@ -79,26 +79,36 @@ public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
         // start a local HTTP proxy using Jetty server
         server = new Server();
 
-        Connector connector = new SelectChannelConnector();
+/*
+        final SSLContextParameters contextParameters = new SSLContextParameters();
+        final SslContextFactory sslContextFactory = new SslContextFactory();
+        sslContextFactory.setSslContext(contextParameters.createSSLContext());
+        ServerConnector connector = new ServerConnector(server, sslContextFactory);
+*/
+        ServerConnector connector = new ServerConnector(server);
+
         connector.setHost(HTTP_PROXY_HOST);
-        server.setConnectors(new Connector[]{connector});
+        server.addConnector(connector);
 
         final String authenticationString = "Basic "
             + B64Code.encode(HTTP_PROXY_USER_NAME + ":" + HTTP_PROXY_PASSWORD, StringUtil.__ISO_8859_1);
 
-        ConnectHandler handler = new ConnectHandler() {
+        ConnectHandler connectHandler = new ConnectHandler() {
             @Override
-            protected boolean handleAuthentication(HttpServletRequest request, HttpServletResponse response, String address) throws ServletException, IOException {
+            protected boolean handleAuthentication(HttpServletRequest request, HttpServletResponse response, String address) {
                 // validate proxy-authentication header
-                final String header = request.getHeader(HttpHeaders.PROXY_AUTHORIZATION);
+                final String header = request.getHeader(PROXY_AUTHORIZATION.toString());
                 if (!authenticationString.equals(header)) {
-                    throw new ServletException("Missing header " + HttpHeaders.PROXY_AUTHORIZATION);
+                    LOG.warn("Missing header " + PROXY_AUTHORIZATION);
+                    // ask for authentication header
+                    response.setHeader(PROXY_AUTHENTICATE.toString(), String.format("Basic realm=\"%s\"", HTTP_PROXY_REALM));
+                    return false;
                 }
-                LOG.info("CONNECT exchange contains required header " + HttpHeaders.PROXY_AUTHORIZATION);
-                return super.handleAuthentication(request, response, address);
+                LOG.info("Request contains required header " + PROXY_AUTHORIZATION);
+                return true;
             }
         };
-        server.setHandler(handler);
+        server.setHandler(connectHandler);
 
         LOG.info("Starting proxy server...");
         server.start();
@@ -116,8 +126,11 @@ public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
         // set HTTP proxy settings
         salesforce.setHttpProxyHost(HTTP_PROXY_HOST);
         salesforce.setHttpProxyPort(httpProxyPort);
+        salesforce.setIsHttpProxySecure(false);
         salesforce.setHttpProxyUsername(HTTP_PROXY_USER_NAME);
         salesforce.setHttpProxyPassword(HTTP_PROXY_PASSWORD);
+        salesforce.setHttpProxyAuthUri(String.format("http://%s:%s", HTTP_PROXY_HOST, httpProxyPort));
+        salesforce.setHttpProxyRealm(HTTP_PROXY_REALM);
 
         // set HTTP client properties
         final HashMap<String, Object> properties = new HashMap<String, Object>();

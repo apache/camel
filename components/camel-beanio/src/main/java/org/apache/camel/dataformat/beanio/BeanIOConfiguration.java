@@ -19,6 +19,8 @@ package org.apache.camel.dataformat.beanio;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
+import org.beanio.BeanReaderErrorHandler;
+
 /**
  * To configure the BeanIO data format, or BeanIO splitter.
  */
@@ -31,6 +33,7 @@ public class BeanIOConfiguration {
     private boolean ignoreInvalidRecords;
     private Charset encoding = Charset.defaultCharset();
     private Properties properties;
+    private BeanReaderErrorHandler beanReaderErrorHandler;
 
     public String getMapping() {
         return mapping;
@@ -86,5 +89,13 @@ public class BeanIOConfiguration {
 
     public void setProperties(Properties properties) {
         this.properties = properties;
+    }
+
+    public BeanReaderErrorHandler getBeanReaderErrorHandler() {
+        return beanReaderErrorHandler;
+    }
+
+    public void setBeanReaderErrorHandler(BeanReaderErrorHandler beanReaderErrorHandler) {
+        this.beanReaderErrorHandler = beanReaderErrorHandler;
     }
 }

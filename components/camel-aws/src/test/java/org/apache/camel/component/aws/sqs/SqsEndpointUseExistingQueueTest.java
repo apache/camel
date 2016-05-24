@@ -72,7 +72,7 @@ public class SqsEndpointUseExistingQueueTest extends CamelTestSupport {
     
     static class AmazonSQSClientMock extends AmazonSQSClient {
         
-        public AmazonSQSClientMock() {
+        AmazonSQSClientMock() {
             super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
         }
 

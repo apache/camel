@@ -43,9 +43,11 @@ The Geocoder component has no options.
 
 
 
+
 // endpoint options: START
 The Geocoder component supports 17 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -67,7 +69,9 @@ The Geocoder component supports 17 endpoint options which are listed below:
 | proxyHost | proxy |  | String | The proxy host name
 | proxyPort | proxy |  | Integer | The proxy port number
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 [[Geocoder-Exchangedataformat]]

@@ -107,24 +107,30 @@ Blobstore URI Options
 ^^^^^^^^^^^^^^^^^^^^^
 
 
+
 // component options: START
 The JClouds component supports 2 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | blobStores | List | To use the given BlobStore which must be configured when using blobstore.
 | computeServices | List | To use the given ComputeService which must be configured when use compute.
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
 // endpoint options: START
 The JClouds component supports 17 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -146,7 +152,9 @@ The JClouds component supports 17 endpoint options which are listed below:
 | operation | compute |  | String | Specifies the type of operation that will be performed to the blobstore.
 | user | compute |  | String | The user on the target node that will run the script.
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 You can have as many of these options as you like.

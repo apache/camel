@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyCsvFactory;
+import org.apache.camel.dataformat.bindy.FormatFactory;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
@@ -90,16 +91,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 String name = model.getClass().getName();
                 Map<String, Object> row = new HashMap<String, Object>(1);
                 row.put(name, model);
-                // search for @Link-ed fields and add them to the model
-                for (Field field : model.getClass().getDeclaredFields()) {
-                    Link linkField = field.getAnnotation(Link.class);
-                    if (linkField != null) {
-                        boolean accessible = field.isAccessible();
-                        field.setAccessible(true);
-                        row.put(field.getType().getName(), field.get(model));
-                        field.setAccessible(accessible);
-                    }
-                } 
+                row.putAll(createLinkedFieldsModel(model));
                 models.add(row);
             }
         }
@@ -190,7 +182,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 }
             }
 
-            // Test if models list is empty or not
+            // BigIntegerFormatFactory if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.size() == 0) {
                 throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
@@ -277,7 +269,9 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     @Override
-    protected BindyAbstractFactory createModelFactory() throws Exception {
-        return new BindyCsvFactory(getClassType());
+    protected BindyAbstractFactory createModelFactory(FormatFactory formatFactory) throws Exception {
+        BindyCsvFactory bindyCsvFactory = new BindyCsvFactory(getClassType());
+        bindyCsvFactory.setFormatFactory(formatFactory);
+        return bindyCsvFactory;
     }
 }

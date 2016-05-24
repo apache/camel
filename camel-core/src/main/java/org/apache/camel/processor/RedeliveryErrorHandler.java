@@ -48,6 +48,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -119,11 +120,58 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     /**
+     * Task for sleeping during redelivery attempts.
+     * <p/>
+     * This task is for the synchronous blocking. If using async delayed then a scheduled thread pool
+     * is used for sleeping and trigger redeliveries.
+     */
+    private final class RedeliverSleepTask {
+
+        private final RedeliveryPolicy policy;
+        private final long delay;
+
+        RedeliverSleepTask(RedeliveryPolicy policy, long delay) {
+            this.policy = policy;
+            this.delay = delay;
+        }
+
+        public boolean sleep() throws InterruptedException {
+            // for small delays then just sleep
+            if (delay < 1000) {
+                policy.sleep(delay);
+                return true;
+            }
+
+            StopWatch watch = new StopWatch();
+
+            log.debug("Sleeping for: {} millis until attempting redelivery", delay);
+            while (watch.taken() < delay) {
+                // sleep using 1 sec interval
+
+                long delta = delay - watch.taken();
+                long max = Math.min(1000, delta);
+                if (max > 0) {
+                    log.trace("Sleeping for: {} millis until waking up for re-check", max);
+                    Thread.sleep(max);
+                }
+
+                // are we preparing for shutdown then only do redelivery if allowed
+                if (preparingShutdown && !policy.isAllowRedeliveryWhileStopping()) {
+                    log.debug("Rejected redelivery while stopping");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    /**
      * Tasks which performs asynchronous redelivery attempts, and being triggered by a
      * {@link java.util.concurrent.ScheduledExecutorService} to avoid having any threads blocking if a task
      * has to be delayed before a redelivery attempt is performed.
      */
-    private class AsyncRedeliveryTask implements Callable<Boolean> {
+    private final class AsyncRedeliveryTask implements Callable<Boolean> {
 
         private final Exchange exchange;
         private final AsyncCallback callback;
@@ -439,8 +487,17 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                         try {
                             // we are doing synchronous redelivery and use thread sleep, so we keep track using a counter how many are sleeping
                             redeliverySleepCounter.incrementAndGet();
-                            data.currentRedeliveryPolicy.sleep(data.redeliveryDelay);
+                            RedeliverSleepTask task = new RedeliverSleepTask(data.currentRedeliveryPolicy, data.redeliveryDelay);
+                            boolean complete = task.sleep();
                             redeliverySleepCounter.decrementAndGet();
+                            if (!complete) {
+                                // the task was rejected
+                                exchange.setException(new RejectedExecutionException("Redelivery not allowed while stopping"));
+                                // mark the exchange as redelivery exhausted so the failure processor / dead letter channel can process the exchange
+                                exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
+                                // jump to start of loop which then detects that we are failed and exhausted
+                                continue;
+                            }
                         } catch (InterruptedException e) {
                             redeliverySleepCounter.decrementAndGet();
                             // we was interrupted so break out

@@ -131,7 +131,7 @@ public abstract class StompBaseTest extends CamelTestSupport {
 
     protected SSLContext getServerSSLContext() throws Exception {
         if (serverSslContext == null) {
-            serverSslContext = getServerSSLContextParameters().createSSLContext();
+            serverSslContext = getServerSSLContextParameters().createSSLContext(context);
         }
 
         return serverSslContext;
@@ -147,7 +147,7 @@ public abstract class StompBaseTest extends CamelTestSupport {
 
     protected SSLContext getClientSSLContext() throws Exception {
         if (clientSslContext == null) {
-            clientSslContext = getClientSSLContextParameters().createSSLContext();
+            clientSslContext = getClientSSLContextParameters().createSSLContext(context);
         }
 
         return clientSslContext;

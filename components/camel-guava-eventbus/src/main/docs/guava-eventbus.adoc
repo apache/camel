@@ -48,23 +48,29 @@ Options
 
 
 
+
 // component options: START
 The Guava EventBus component supports 2 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | eventBus | EventBus | To use the given Guava EventBus instance
 | listenerInterface | Class<?> | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option.
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 // endpoint options: START
 The Guava EventBus component supports 7 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -76,7 +82,9 @@ The Guava EventBus component supports 7 endpoint options which are listed below:
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 
 [[GuavaEventBus-Usage]]

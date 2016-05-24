@@ -86,6 +86,7 @@
     <module>camel-cmis</module>
     <module>camel-coap</module>
     <module>camel-cometd</module>
+    <module>camel-consul</module>
     <module>camel-context</module>
     <module>camel-couchdb</module>
     <module>camel-crypto</module>
@@ -96,6 +97,7 @@
     <module>camel-dozer</module>
     <module>camel-dropbox</module>
     <module>camel-eclipse</module>
+    <module>camel-ehcache</module>
     <module>camel-ejb</module>
     <module>camel-elasticsearch</module>
     <module>camel-elsql</module>
@@ -201,6 +203,7 @@
     <module>camel-quickfix</module>
     <module>camel-rabbitmq</module>
     <module>camel-restlet</module>
+    <module>camel-ribbon</module>
     <module>camel-rmi</module>
     <module>camel-routebox</module>
     <module>camel-rss</module>
@@ -247,6 +250,7 @@
     <module>camel-swagger-java</module>
     <module>camel-tagsoup</module>
     <module>camel-tarfile</module>
+    <module>camel-telegram</module>
     <module>camel-twitter</module>
     <module>camel-undertow</module>
     <module>camel-univocity-parsers</module>

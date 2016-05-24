@@ -22,7 +22,6 @@ import java.util.Map;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.aws.common.AwsExchangeUtil;
@@ -39,7 +38,6 @@ public abstract class AbstractDdbCommand {
         this.configuration = configuration;
         this.exchange = exchange;
     }
-
 
     public abstract void execute();
 
@@ -71,11 +69,14 @@ public abstract class AbstractDdbCommand {
         msg.setHeader(DdbConstants.ATTRIBUTES, attributes);
     }
     
-    protected void addToResult(String headerKey, Object value) {
+    protected void addToResults(Map<String, Object> map) {
         Message msg = getMessageForResponse(exchange);
-        msg.setHeader(headerKey, value);
+        for (Map.Entry<String, Object> en : map.entrySet()) {
+            msg.setHeader(en.getKey(), en.getValue());
+        }
     }
 
+    @SuppressWarnings("unchecked")
     protected Map<String, AttributeValue> determineKey() {
         return exchange.getIn().getHeader(DdbConstants.KEY, Map.class);
     }

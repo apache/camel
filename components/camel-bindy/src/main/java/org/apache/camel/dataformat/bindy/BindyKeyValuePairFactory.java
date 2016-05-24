@@ -232,7 +232,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
                         if (l != null) {
 
-                            // Test if object exist
+                            // BigIntegerFormatFactory if object exist
                             if (!l.isEmpty()) {
                                 obj = l.get(0);
                             } else {
@@ -279,7 +279,11 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                             if (value != null) {
 
                                 // Create format object to format the field
-                                Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), keyValuePairField, field.getAnnotation(BindyConverter.class));
+                                FormattingOptions formattingOptions = ConverterUtils.convert(keyValuePairField,
+                                        field.getType(),
+                                        field.getAnnotation(BindyConverter.class),
+                                        getLocale());
+                                Format<?> format = formatFactory.getFormat(formattingOptions);
 
                                 // format the value of the key received
                                 result = formatField(format, value, key, line);
@@ -305,7 +309,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                 // Relation OneToMany
                                 for (int i = 0; i < values.size(); i++) {
 
-                                    // Test if object exist
+                                    // BigIntegerFormatFactory if object exist
                                     if ((!l.isEmpty()) && (l.size() > i)) {
                                         obj = l.get(i);
                                     } else {
@@ -315,7 +319,11 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                     value = values.get(i);
 
                                     // Create format object to format the field
-                                    Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), keyValuePairField, field.getAnnotation(BindyConverter.class));
+                                    FormattingOptions formattingOptions = ConverterUtils.convert(keyValuePairField,
+                                            field.getType(),
+                                            field.getAnnotation(BindyConverter.class),
+                                            getLocale());
+                                    Format<?> format = formatFactory.getFormat(formattingOptions);
 
                                     // format the value of the key received
                                     Object result = formatField(format, value, key, line);
@@ -444,7 +452,11 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
             // Create format
             @SuppressWarnings("unchecked")
-            Format<Object> format = (Format<Object>)FormatFactory.getFormat(type, getLocale(), keyValuePairField, field.getAnnotation(BindyConverter.class));
+            FormattingOptions formattingOptions = ConverterUtils.convert(keyValuePairField,
+                    field.getType(),
+                    field.getAnnotation(BindyConverter.class),
+                    getLocale());
+            Format<Object> format = (Format<Object>) formatFactory.getFormat(formattingOptions);
 
             // Get object to be formatted
             Object obj = model.get(field.getDeclaringClass().getName());
@@ -618,7 +630,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 }
 
                 if (section != null) {
-                    // Test if section number is not null
+                    // BigIntegerFormatFactory if section number is not null
                     ObjectHelper.notNull(section.number(), "No number has been defined for the section");
 
                     // Get section number and add it to the sections

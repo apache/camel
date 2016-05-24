@@ -152,7 +152,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
         private final Exchange camelExchange;
         private final AsyncCallback callback;
 
-        public UndertowProducerCallback(ClientConnection connection, ByteBuffer body, Exchange camelExchange, AsyncCallback callback) {
+        UndertowProducerCallback(ClientConnection connection, ByteBuffer body, Exchange camelExchange, AsyncCallback callback) {
             this.connection = connection;
             this.body = body;
             this.camelExchange = camelExchange;

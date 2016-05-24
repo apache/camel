@@ -18,6 +18,7 @@ package org.apache.camel.component.salesforce;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,10 +44,13 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.eclipse.jetty.client.Address;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.RedirectListener;
-import org.eclipse.jetty.client.security.ProxyAuthorization;
+import org.eclipse.jetty.client.HttpProxy;
+import org.eclipse.jetty.client.Origin;
+import org.eclipse.jetty.client.ProxyConfiguration;
+import org.eclipse.jetty.client.Socks4Proxy;
+import org.eclipse.jetty.client.api.Authentication;
+import org.eclipse.jetty.client.util.BasicAuthentication;
+import org.eclipse.jetty.client.util.DigestAuthentication;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +63,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
 
     private static final int CONNECTION_TIMEOUT = 60000;
-    private static final long RESPONSE_TIMEOUT = 60000;
     private static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
     private static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
@@ -75,16 +78,23 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
     // Proxy host and port
     private String httpProxyHost;
     private Integer httpProxyPort;
+    private boolean isHttpProxySocks4;
+    private boolean isHttpProxySecure = true;
+    private Set<String> httpProxyIncludedAddresses;
+    private Set<String> httpProxyExcludedAddresses;
 
     // Proxy basic authentication
     private String httpProxyUsername;
     private String httpProxyPassword;
+    private String httpProxyAuthUri;
+    private String httpProxyRealm;
+    private boolean httpProxyUseDigestAuth;
 
     // DTO packages to scan
     private String[] packages;
 
     // component state
-    private HttpClient httpClient;
+    private SalesforceHttpClient httpClient;
     private SalesforceSession session;
     private Map<String, Class<?>> classMap;
 
@@ -179,19 +189,17 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
             if (config != null && config.getHttpClient() != null) {
                 httpClient = config.getHttpClient();
             } else {
-                httpClient = new HttpClient();
-                // default settings
-                httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
+                // set ssl context parameters if set
+                final SSLContextParameters contextParameters = sslContextParameters != null
+                    ? sslContextParameters : new SSLContextParameters();
+                final SslContextFactory sslContextFactory = new SslContextFactory();
+                sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
+
+                httpClient = new SalesforceHttpClient(sslContextFactory);
+                // default settings, use httpClientProperties to set other properties
                 httpClient.setConnectTimeout(CONNECTION_TIMEOUT);
-                httpClient.setTimeout(RESPONSE_TIMEOUT);
             }
         }
-
-        // set ssl context parameters
-        final SSLContextParameters contextParameters = sslContextParameters != null
-            ? sslContextParameters : new SSLContextParameters();
-        final SslContextFactory sslContextFactory = httpClient.getSslContextFactory();
-        sslContextFactory.setSslContext(contextParameters.createSSLContext());
 
         // set HTTP client parameters
         if (httpClientProperties != null && !httpClientProperties.isEmpty()) {
@@ -201,29 +209,46 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
         // set HTTP proxy settings
         if (this.httpProxyHost != null && httpProxyPort != null) {
-            httpClient.setProxy(new Address(this.httpProxyHost, this.httpProxyPort));
+            Origin.Address proxyAddress = new Origin.Address(this.httpProxyHost, this.httpProxyPort);
+            ProxyConfiguration.Proxy proxy; 
+            if (isHttpProxySocks4) {
+                proxy = new Socks4Proxy(proxyAddress, isHttpProxySecure);
+            } else {
+                proxy = new HttpProxy(proxyAddress, isHttpProxySecure);
+            }
+            if (httpProxyIncludedAddresses != null && !httpProxyIncludedAddresses.isEmpty()) {
+                proxy.getIncludedAddresses().addAll(httpProxyIncludedAddresses);
+            }
+            if (httpProxyExcludedAddresses != null && !httpProxyExcludedAddresses.isEmpty()) {
+                proxy.getExcludedAddresses().addAll(httpProxyExcludedAddresses);
+            }
+            httpClient.getProxyConfiguration().getProxies().add(proxy);
         }
         if (this.httpProxyUsername != null && httpProxyPassword != null) {
-            httpClient.setProxyAuthentication(new ProxyAuthorization(this.httpProxyUsername, this.httpProxyPassword));
-        }
 
-        // add redirect listener to handle Salesforce redirects
-        // this is ok to do since the RedirectListener is in the same classloader as Jetty client
-        String listenerClass = RedirectListener.class.getName();
-        if (httpClient.getRegisteredListeners() == null
-                || !httpClient.getRegisteredListeners().contains(listenerClass)) {
-            httpClient.registerListener(listenerClass);
-        }
-        // SalesforceSecurityListener can't be registered the same way
-        // since Jetty HttpClient's Class.forName() can't see it
+            ObjectHelper.notEmpty(httpProxyAuthUri, "httpProxyAuthUri");
+            ObjectHelper.notEmpty(httpProxyRealm, "httpProxyRealm");
 
-        // start the Jetty client to initialize thread pool, etc.
-        httpClient.start();
+            final Authentication authentication;
+            if (httpProxyUseDigestAuth) {
+                authentication = new DigestAuthentication(new URI(httpProxyAuthUri),
+                    httpProxyRealm, httpProxyUsername, httpProxyPassword);
+            } else {
+                authentication = new BasicAuthentication(new URI(httpProxyAuthUri),
+                    httpProxyRealm, httpProxyUsername, httpProxyPassword);
+            }
+            httpClient.getAuthenticationStore().addAuthentication(authentication);
+        }
 
         // support restarts
         if (null == this.session) {
-            this.session = new SalesforceSession(httpClient, loginConfig);
+            this.session = new SalesforceSession(httpClient, httpClient.getTimeout(), loginConfig);
         }
+        // set session before calling start()
+        httpClient.setSession(this.session);
+
+        // start the Jetty client to initialize thread pool, etc.
+        httpClient.start();
 
         // login at startup if lazyLogin is disabled
         if (!loginConfig.isLazyLogin()) {
@@ -441,6 +466,83 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         this.httpProxyPassword = httpProxyPassword;
     }
 
+    public boolean isHttpProxySocks4() {
+        return isHttpProxySocks4;
+    }
+
+    /**
+     * Enable for Socks4 proxy, false by default
+     */
+    public void setIsHttpProxySocks4(boolean isHttpProxySocks4) {
+        this.isHttpProxySocks4 = isHttpProxySocks4;
+    }
+
+    public boolean isHttpProxySecure() {
+        return isHttpProxySecure;
+    }
+
+    /**
+     * Enable for TLS connections, true by default
+     */
+    public void setIsHttpProxySecure(boolean isHttpProxySecure) {
+        this.isHttpProxySecure = isHttpProxySecure;
+    }
+
+    public Set<String> getHttpProxyIncludedAddresses() {
+        return httpProxyIncludedAddresses;
+    }
+
+    /**
+     * HTTP proxy included addresses
+     */
+    public void setHttpProxyIncludedAddresses(Set<String> httpProxyIncludedAddresses) {
+        this.httpProxyIncludedAddresses = httpProxyIncludedAddresses;
+    }
+
+    public Set<String> getHttpProxyExcludedAddresses() {
+        return httpProxyExcludedAddresses;
+    }
+
+    /**
+     * HTTP proxy excluded addresses
+     */
+    public void setHttpProxyExcludedAddresses(Set<String> httpProxyExcludedAddresses) {
+        this.httpProxyExcludedAddresses = httpProxyExcludedAddresses;
+    }
+
+    public String getHttpProxyAuthUri() {
+        return httpProxyAuthUri;
+    }
+
+    /**
+     * HTTP proxy authentication URI
+     */
+    public void setHttpProxyAuthUri(String httpProxyAuthUri) {
+        this.httpProxyAuthUri = httpProxyAuthUri;
+    }
+
+    public String getHttpProxyRealm() {
+        return httpProxyRealm;
+    }
+
+    /**
+     * HTTP proxy authentication realm
+     */
+    public void setHttpProxyRealm(String httpProxyRealm) {
+        this.httpProxyRealm = httpProxyRealm;
+    }
+
+    public boolean isHttpProxyUseDigestAuth() {
+        return httpProxyUseDigestAuth;
+    }
+
+    /**
+     * Use HTTP proxy Digest authentication, false by default
+     */
+    public void setHttpProxyUseDigestAuth(boolean httpProxyUseDigestAuth) {
+        this.httpProxyUseDigestAuth = httpProxyUseDigestAuth;
+    }
+
     public String[] getPackages() {
         return packages;
     }
@@ -469,5 +571,4 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
     public Map<String, Class<?>> getClassMap() {
         return classMap;
     }
-
 }

@@ -47,6 +47,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     public static final String GRIDFS_OPERATION = "gridfs.operation";
     public static final String GRIDFS_METADATA = "gridfs.metadata";
     public static final String GRIDFS_CHUNKSIZE = "gridfs.chunksize";
+    public static final String GRIDFS_FILE_ID_PRODUCED = "gridfs.fileid";
 
     private static final Logger LOG = LoggerFactory.getLogger(GridFsEndpoint.class);
 

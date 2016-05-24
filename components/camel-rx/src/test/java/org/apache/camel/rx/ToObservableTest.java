@@ -34,10 +34,10 @@ public class ToObservableTest extends RxTestSupport {
 
         Observable<Message> observable = reactiveCamel.toObservable("timer://foo?fixedRate=true&period=100");
         observable.take(4).subscribe(message -> {
-                String body = "Processing message headers " + message.getHeaders();
-                LOG.info(body);
-                producerTemplate.sendBody(mockEndpoint, body);
-            });
+            String body = "Processing message headers " + message.getHeaders();
+            LOG.info(body);
+            producerTemplate.sendBody(mockEndpoint, body);
+        });
 
         mockEndpoint.assertIsSatisfied();
     }

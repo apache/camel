@@ -21,7 +21,6 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Locale;
-
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
@@ -43,9 +42,9 @@ import org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty4.http.SecurityAuthenticator;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -247,13 +246,17 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                     // the decoded part is base64 encoded, so we need to decode that
                     ByteBuf buf = NettyConverter.toByteBuffer(decoded.getBytes());
                     ByteBuf out = Base64.decode(buf);
-                    String userAndPw = out.toString(Charset.defaultCharset());
-                    String username = ObjectHelper.before(userAndPw, ":");
-                    String password = ObjectHelper.after(userAndPw, ":");
-                    HttpPrincipal principal = new HttpPrincipal(username, password);
-
-                    LOG.debug("Extracted Basic Auth principal from HTTP header: {}", principal);
-                    return principal;
+                    try {
+                        String userAndPw = out.toString(Charset.defaultCharset());
+                        String username = ObjectHelper.before(userAndPw, ":");
+                        String password = ObjectHelper.after(userAndPw, ":");
+                        HttpPrincipal principal = new HttpPrincipal(username, password);
+                        LOG.debug("Extracted Basic Auth principal from HTTP header: {}", principal);
+                        return principal;
+                    } finally {
+                        buf.release();
+                        out.release();
+                    }
                 }
             }
         }

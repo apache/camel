@@ -40,10 +40,11 @@ import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.Handler;
 
-import org.apache.camel.AsyncEndpoint;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
@@ -1131,15 +1132,13 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         this.username = username;
     }
 
-
-
     /**
      * We need to override the {@link ClientImpl#setParameters} method
      * to insert parameters into CXF Message for {@link DataFormat#PAYLOAD} mode.
      */
     class CamelCxfClientImpl extends ClientImpl {
 
-        public CamelCxfClientImpl(Bus bus, Endpoint ep) {
+        CamelCxfClientImpl(Bus bus, Endpoint ep) {
             super(bus, ep);
         }
 

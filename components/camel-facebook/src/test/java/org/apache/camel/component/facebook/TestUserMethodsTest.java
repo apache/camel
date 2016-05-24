@@ -53,8 +53,7 @@ public class TestUserMethodsTest extends CamelFacebookTestSupport {
         // make friends, not enemies
         final Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("CamelFacebook.testUser2", testUser2);
-        Boolean worked = template().requestBodyAndHeaders("direct:makeFriendTestUser"
-            , testUser1, headers, Boolean.class);
+        Boolean worked = template().requestBodyAndHeaders("direct:makeFriendTestUser", testUser1, headers, Boolean.class);
         assertTrue("Friends not made", worked);
 
         // get app test users

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.ddb;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
@@ -26,6 +27,7 @@ import com.amazonaws.services.dynamodbv2.model.KeysAndAttributes;
 import org.apache.camel.Exchange;
 
 public class BatchGetItemsCommand extends AbstractDdbCommand {
+
     public BatchGetItemsCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration, Exchange exchange) {
         super(ddbClient, configuration, exchange);
     }
@@ -35,8 +37,10 @@ public class BatchGetItemsCommand extends AbstractDdbCommand {
         BatchGetItemResult result = ddbClient.batchGetItem(
                 new BatchGetItemRequest().withRequestItems(determineBatchItems()));
 
-        addToResult(DdbConstants.BATCH_RESPONSE, result.getResponses());
-        addToResult(DdbConstants.UNPROCESSED_KEYS, result.getUnprocessedKeys());
+        Map tmp = new HashMap<>();
+        tmp.put(DdbConstants.BATCH_RESPONSE, result.getResponses());
+        tmp.put(DdbConstants.UNPROCESSED_KEYS, result.getUnprocessedKeys());
+        addToResults(tmp);        
     }
 
     @SuppressWarnings("unchecked")

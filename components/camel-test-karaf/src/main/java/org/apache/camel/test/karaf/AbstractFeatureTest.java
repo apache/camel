@@ -75,7 +75,7 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 
 public abstract class AbstractFeatureTest {
 
-    static final Long SERVICE_TIMEOUT = 30000L;
+    public static final Long SERVICE_TIMEOUT = 30000L;
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractFeatureTest.class);
 
     @Inject
@@ -249,7 +249,7 @@ public abstract class AbstractFeatureTest {
         }
         if (karafVersion == null) {
             // setup the default version of it
-            karafVersion = "4.0.4";
+            karafVersion = "4.0.5";
         }
         return karafVersion;
     }

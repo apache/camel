@@ -19,7 +19,11 @@ package org.apache.camel.component.etcd.policy;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 
-public class EtcdRoutePolicyMain {
+public final class EtcdRoutePolicyMain {
+
+    private EtcdRoutePolicyMain() {
+    }
+
     public static void main(final String[] args) throws Exception {
         Main main = new Main();
         main.addRouteBuilder(new RouteBuilder() {

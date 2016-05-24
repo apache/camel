@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyFixedLengthFactory;
+import org.apache.camel.dataformat.bindy.FormatFactory;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
@@ -84,6 +85,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                 String name = model.getClass().getName();
                 Map<String, Object> row = new HashMap<String, Object>();
                 row.put(name, model);
+                row.putAll(createLinkedFieldsModel(model));
                 models.add(row);
             }
         } else {
@@ -237,7 +239,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                 }
             }
 
-            // Test if models list is empty or not
+            // BigIntegerFormatFactory if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.size() == 0) {
                 throw new java.lang.IllegalArgumentException("No records have been defined in the the file");
@@ -290,18 +292,21 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     }
 
     @Override
-    protected BindyAbstractFactory createModelFactory() throws Exception {
+    protected BindyAbstractFactory createModelFactory(FormatFactory formatFactory) throws Exception {
 
         BindyFixedLengthFactory factory = new BindyFixedLengthFactory(getClassType());
+        factory.setFormatFactory(formatFactory);
         
         // Optionally initialize the header factory... using header model classes
         if (factory.hasHeader()) {
             this.headerFactory = new BindyFixedLengthFactory(factory.header());
+            this.headerFactory.setFormatFactory(formatFactory);
         }
         
         // Optionally initialize the footer factory... using footer model classes
         if (factory.hasFooter()) {
             this.footerFactory = new BindyFixedLengthFactory(factory.footer());
+            this.footerFactory.setFormatFactory(formatFactory);
         }
         
         return factory;

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.salesforce.internal.streaming;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,18 +27,16 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import org.apache.camel.CamelException;
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceConsumer;
+import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.apache.camel.component.salesforce.internal.client.SalesforceSecurityListener;
 import org.apache.camel.support.ServiceSupport;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
 import org.cometd.client.transport.ClientTransport;
 import org.cometd.client.transport.LongPollingTransport;
-import org.eclipse.jetty.client.ContentExchange;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.http.HttpHeaders;
-import org.eclipse.jetty.http.HttpSchemes;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.http.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -184,10 +181,10 @@ public class SubscriptionHelper extends ServiceSupport {
 
     private BayeuxClient createClient() throws Exception {
         // use default Jetty client from SalesforceComponent, its shared by all consumers
-        final HttpClient httpClient = component.getConfig().getHttpClient();
+        final SalesforceHttpClient httpClient = component.getConfig().getHttpClient();
 
         Map<String, Object> options = new HashMap<String, Object>();
-        options.put(ClientTransport.TIMEOUT_OPTION, httpClient.getTimeout());
+        options.put(ClientTransport.MAX_NETWORK_DELAY_OPTION, httpClient.getTimeout());
 
         // check login access token
         if (session.getAccessToken() == null) {
@@ -197,29 +194,15 @@ public class SubscriptionHelper extends ServiceSupport {
 
         LongPollingTransport transport = new LongPollingTransport(options, httpClient) {
             @Override
-            protected void customize(ContentExchange exchange) {
-                super.customize(exchange);
-                // add SalesforceSecurityListener to handle token expiry
-                final String accessToken = session.getAccessToken();
-                try {
-                    final boolean isHttps = HttpSchemes.HTTPS.equals(String.valueOf(exchange.getScheme()));
-                    exchange.setEventListener(new SalesforceSecurityListener(
-                            httpClient.getDestination(exchange.getAddress(), isHttps),
-                            exchange, session, accessToken));
-                } catch (IOException e) {
-                    throw new RuntimeException(
-                            String.format("Error adding SalesforceSecurityListener to exchange %s", e.getMessage()),
-                            e);
-                }
+            protected void customize(Request request) {
+                super.customize(request);
 
                 // add current security token obtained from session
-                exchange.setRequestHeader(HttpHeaders.AUTHORIZATION,
-                        "OAuth " + accessToken);
+                request.header(HttpHeader.AUTHORIZATION, "OAuth " + session.getAccessToken());
             }
         };
 
         BayeuxClient client = new BayeuxClient(getEndpointUrl(), transport);
-        client.setDebugEnabled(false);
         return client;
     }
 

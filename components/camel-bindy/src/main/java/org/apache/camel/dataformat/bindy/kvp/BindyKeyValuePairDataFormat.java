@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
+import org.apache.camel.dataformat.bindy.FormatFactory;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
@@ -137,7 +138,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
                 }
             }
 
-            // Test if models list is empty or not
+            // BigIntegerFormatFactory if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.size() == 0) {
                 throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
@@ -151,7 +152,9 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
         }
     }
 
-    protected BindyAbstractFactory createModelFactory() throws Exception {
-        return new BindyKeyValuePairFactory(getClassType());
+    protected BindyAbstractFactory createModelFactory(FormatFactory formatFactory) throws Exception {
+        BindyKeyValuePairFactory bindyKeyValuePairFactory = new BindyKeyValuePairFactory(getClassType());
+        bindyKeyValuePairFactory.setFormatFactory(formatFactory);
+        return bindyKeyValuePairFactory;
     }
 }

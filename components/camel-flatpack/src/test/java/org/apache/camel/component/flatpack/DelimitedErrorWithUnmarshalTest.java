@@ -41,7 +41,7 @@ public class DelimitedErrorWithUnmarshalTest extends AbstractJUnit4SpringContext
 
     @Test
     public void testCamel() throws Exception {
-        results.expectedMessageCount(2);
+        results.expectedMessageCount(3);
         dataset.setExpectedMessageCount(1);
         results.assertIsSatisfied();
         dataset.assertIsSatisfied();

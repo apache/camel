@@ -26,6 +26,7 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -72,7 +73,12 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     @Override
     public Producer createProducer() throws Exception {
-        return createProducer(this);
+        KafkaProducer producer = createProducer(this);
+        if (isSynchronous()) {
+            return new SynchronousDelegateProducer(producer);
+        } else {
+            return producer;
+        }
     }
 
     @Override
@@ -86,7 +92,13 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KafkaTopic[" + configuration.getTopic() + "]", configuration.getConsumerStreams());
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KafkaConsumer[" + configuration.getTopic() + "]", configuration.getConsumerStreams());
+    }
+
+    public ExecutorService createProducerExecutor() {
+        int core = getConfiguration().getWorkerPoolCoreSize();
+        int max = getConfiguration().getWorkerPoolMaxSize();
+        return getCamelContext().getExecutorServiceManager().newThreadPool(this, "KafkaProducer[" + configuration.getTopic() + "]", core, max);
     }
 
     public Exchange createKafkaExchange(ConsumerRecord record) {
@@ -407,7 +419,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         configuration.setSslKeyPassword(sslKeyPassword);
     }
 
-    public Integer getRequestRequiredAcks() {
+    public String getRequestRequiredAcks() {
         return configuration.getRequestRequiredAcks();
     }
 
@@ -467,7 +479,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return configuration.getSslCipherSuites();
     }
 
-    public void setRequestRequiredAcks(Integer requestRequiredAcks) {
+    public void setRequestRequiredAcks(String requestRequiredAcks) {
         configuration.setRequestRequiredAcks(requestRequiredAcks);
     }
 
@@ -658,4 +670,27 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         this.bridgeEndpoint = bridgeEndpoint;
     }
 
+    public void setWorkerPool(ExecutorService workerPool) {
+        configuration.setWorkerPool(workerPool);
+    }
+
+    public void setWorkerPoolMaxSize(Integer workerPoolMaxSize) {
+        configuration.setWorkerPoolMaxSize(workerPoolMaxSize);
+    }
+
+    public Integer getWorkerPoolMaxSize() {
+        return configuration.getWorkerPoolMaxSize();
+    }
+
+    public Integer getWorkerPoolCoreSize() {
+        return configuration.getWorkerPoolCoreSize();
+    }
+
+    public ExecutorService getWorkerPool() {
+        return configuration.getWorkerPool();
+    }
+
+    public void setWorkerPoolCoreSize(Integer workerPoolCoreSize) {
+        configuration.setWorkerPoolCoreSize(workerPoolCoreSize);
+    }
 }

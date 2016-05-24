@@ -131,6 +131,10 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return route.getUptime();
     }
 
+    public long getUptimeMillis() {
+        return route.getUptimeMillis();
+    }
+
     public Integer getInflightExchanges() {
         return (int) super.getExchangesInflight();
     }

@@ -245,18 +245,17 @@ public class MimeMultipartDataFormat implements DataFormat {
             BodyPart bp = (BodyPart) content;
             camelMessage.setBody(bp.getInputStream());
             contentType = bp.getContentType();
-        } else {
-            // Last fallback: I don't see how this can happen, but we do this
-            // just to be safe
-            camelMessage.setBody(content);
-        }
-        if (contentType != null && !DEFAULT_CONTENT_TYPE.equals(contentType)) {
-            camelMessage.setHeader(CONTENT_TYPE, contentType);
-            ContentType ct = new ContentType(contentType);
-            String charset = ct.getParameter("charset");
-            if (charset != null) {
-                camelMessage.setHeader(Exchange.CONTENT_ENCODING, MimeUtility.javaCharset(charset));
+            if (contentType != null && !DEFAULT_CONTENT_TYPE.equals(contentType)) {
+                camelMessage.setHeader(CONTENT_TYPE, contentType);
+                ContentType ct = new ContentType(contentType);
+                String charset = ct.getParameter("charset");
+                if (charset != null) {
+                    camelMessage.setHeader(Exchange.CONTENT_ENCODING, MimeUtility.javaCharset(charset));
+                }
             }
+        } else {
+            // If we find no body part, try to leave the message alone
+            LOG.info("no MIME part found");
         }
         return camelMessage;
     }

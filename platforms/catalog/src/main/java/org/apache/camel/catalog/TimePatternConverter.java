@@ -23,12 +23,10 @@ import java.util.regex.Pattern;
  * This class is a copy from camel-core so we can use it independent to validate uris with time patterns
  */
 public final class TimePatternConverter {
-
     private static final String NUMBERS_ONLY_STRING_PATTERN = "^[-]?(\\d)+$";
-    private static final String REPLACEMENT_PATTERN = "[our|inute|econd](s)?";
-    private static final String HOUR_REGEX_PATTERN = "((\\d)*(\\d))[h|H]";
-    private static final String MINUTES_REGEX_PATTERN = "((\\d)*(\\d))[m|M]";
-    private static final String SECONDS_REGEX_PATTERN = "((\\d)*(\\d))[s|S]";
+    private static final String HOUR_REGEX_PATTERN = "((\\d)*(\\d))h(our(s)?)?";
+    private static final String MINUTES_REGEX_PATTERN = "((\\d)*(\\d))m(in(ute(s)?)?)?";
+    private static final String SECONDS_REGEX_PATTERN = "((\\d)*(\\d))s(ec(ond)?(s)?)?";
 
     /**
      * Utility classes should not have a public constructor.
@@ -39,6 +37,8 @@ public final class TimePatternConverter {
     public static long toMilliSeconds(String source) throws IllegalArgumentException {
         long milliseconds = 0;
         boolean foundFlag = false;
+
+        checkCorrectnessOfPattern(source);
         Matcher matcher;
 
         matcher = createMatcher(NUMBERS_ONLY_STRING_PATTERN, source);
@@ -47,16 +47,13 @@ public final class TimePatternConverter {
             //       This String -> long converter will be used for all strings.
             milliseconds = Long.valueOf(source);
         } else {
-            matcher = createMatcher(REPLACEMENT_PATTERN, source);
-            String replacedSource = matcher.replaceAll("");
-
-            matcher = createMatcher(HOUR_REGEX_PATTERN, replacedSource);
+            matcher = createMatcher(HOUR_REGEX_PATTERN, source);
             if (matcher.find()) {
                 milliseconds = milliseconds + (3600000 * Long.valueOf(matcher.group(1)));
                 foundFlag = true;
             }
 
-            matcher = createMatcher(MINUTES_REGEX_PATTERN, replacedSource);
+            matcher = createMatcher(MINUTES_REGEX_PATTERN, source);
             if (matcher.find()) {
                 long minutes = Long.valueOf(matcher.group(1));
                 if ((minutes > 59) && foundFlag) {
@@ -66,7 +63,7 @@ public final class TimePatternConverter {
                 milliseconds = milliseconds + (60000 * minutes);
             }
 
-            matcher = createMatcher(SECONDS_REGEX_PATTERN, replacedSource);
+            matcher = createMatcher(SECONDS_REGEX_PATTERN, source);
             if (matcher.find()) {
                 long seconds = Long.valueOf(matcher.group(1));
                 if ((seconds > 59) && foundFlag) {
@@ -84,6 +81,37 @@ public final class TimePatternConverter {
         }
 
         return milliseconds;
+    }
+
+    private static void checkCorrectnessOfPattern(String source) {
+        //replace only numbers once
+        Matcher matcher = createMatcher(NUMBERS_ONLY_STRING_PATTERN, source);
+        String replaceSource = matcher.replaceFirst("");
+
+        //replace hour string once
+        matcher = createMatcher(HOUR_REGEX_PATTERN, replaceSource);
+        if (matcher.find() && matcher.find()) {
+            throw new IllegalArgumentException("Hours should not be specified more then once: " + source);
+        }
+        replaceSource = matcher.replaceFirst("");
+
+        //replace minutes once
+        matcher = createMatcher(MINUTES_REGEX_PATTERN, replaceSource);
+        if (matcher.find() && matcher.find()) {
+            throw new IllegalArgumentException("Minutes should not be specified more then once: " + source);
+        }
+        replaceSource = matcher.replaceFirst("");
+
+        //replace seconds once
+        matcher = createMatcher(SECONDS_REGEX_PATTERN, replaceSource);
+        if (matcher.find() && matcher.find()) {
+            throw new IllegalArgumentException("Seconds should not be specified more then once: " + source);
+        }
+        replaceSource = matcher.replaceFirst("");
+
+        if (replaceSource.length() > 0) {
+            throw new IllegalArgumentException("Illegal characters: " + source);
+        }
     }
 
     private static Matcher createMatcher(String regexPattern, String source) {

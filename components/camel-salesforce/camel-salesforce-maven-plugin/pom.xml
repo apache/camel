@@ -32,11 +32,6 @@
   <name>Camel :: Salesforce :: Maven plugin</name>
   <description>Camel Salesforce Maven plugin</description>
 
-  <properties>
-    <!-- TODO: upgrade to jetty 9 -->
-    <jetty8-version>8.1.17.v20150415</jetty8-version>
-  </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -107,6 +102,12 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-salesforce</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.cometd.java</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.velocity</groupId>
@@ -134,7 +135,19 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
-      <version>${jetty8-version}</version>
+      <version>${jetty9-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+      <version>${jetty9-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-proxy</artifactId>
+      <version>${jetty9-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

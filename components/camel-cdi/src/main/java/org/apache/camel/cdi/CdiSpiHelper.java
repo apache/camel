@@ -47,6 +47,7 @@ import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.util.Nonbinding;
 
 import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
@@ -202,18 +203,17 @@ final class CdiSpiHelper {
     /**
      * Generates a unique signature for an {@link Annotation}.
      */
-    private static String createAnnotationId(Annotation annotation) {
+    static String createAnnotationId(Annotation annotation) {
         Method[] methods = doPrivileged(
             (PrivilegedAction<Method[]>) () -> annotation.annotationType().getDeclaredMethods());
 
         return Stream.of(methods)
+            .filter(method -> !method.isAnnotationPresent(Nonbinding.class))
             .sorted(comparing(Method::getName))
-            .collect(() -> new StringJoiner(",", "@(", ")"),
+            .collect(() -> new StringJoiner(",", "@" + annotation.annotationType().getCanonicalName() + "(", ")"),
                 (joiner, method) -> {
                     try {
-                        joiner
-                            .add(method.getName()).add("=")
-                            .add(method.invoke(annotation).toString());
+                        joiner.add(method.getName() + "=" + method.invoke(annotation).toString());
                     } catch (NullPointerException | IllegalArgumentException | IllegalAccessException | InvocationTargetException cause) {
                         throw new RuntimeException(
                             "Error while accessing member [" + method.getName() + "]"

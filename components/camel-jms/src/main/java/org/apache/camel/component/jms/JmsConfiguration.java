@@ -173,6 +173,13 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(defaultValue = "1", label = "advanced",
             description = "Specify the limit for the number of consumers that are allowed to be idle at any given time.")
     private int idleConsumerLimit = 1;
+    @UriParam(defaultValue = "100", label = "advanced",
+            description = "Interval in millis to sleep each time while waiting for provisional correlation id to be updated.")
+    private long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = 100L;
+    @UriParam(defaultValue = "50", label = "advanced",
+            description = "Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS"
+                    + " and when the option useMessageIDAsCorrelationID is enabled.")
+    private int waitForProvisionCorrelationToBeUpdatedCounter = 50;
     @UriParam(label = "consumer",
             description = "Specifies the maximum number of concurrent consumers when consuming from JMS (not for request/reply over JMS)."
                     + " See also the maxMessagesPerTask option to control dynamic scaling up/down of threads."
@@ -1057,6 +1064,29 @@ public class JmsConfiguration implements Cloneable {
         this.idleConsumerLimit = idleConsumerLimit;
     }
 
+    public int getWaitForProvisionCorrelationToBeUpdatedCounter() {
+        return waitForProvisionCorrelationToBeUpdatedCounter;
+    }
+
+    /**
+     * Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS
+     * and when the option useMessageIDAsCorrelationID is enabled.
+     */
+    public void setWaitForProvisionCorrelationToBeUpdatedCounter(int counter) {
+        this.waitForProvisionCorrelationToBeUpdatedCounter = counter;
+    }
+
+    public long getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime() {
+        return waitForProvisionCorrelationToBeUpdatedThreadSleepingTime;
+    }
+
+    /**
+     * Interval in millis to sleep each time while waiting for provisional correlation id to be updated.
+     */
+    public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(long sleepingTime) {
+        this.waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = sleepingTime;
+    }
+    
     public int getMaxConcurrentConsumers() {
         return maxConcurrentConsumers;
     }

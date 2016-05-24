@@ -1257,6 +1257,26 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         configuration.setSelector(selector);
     }
 
+    @ManagedAttribute
+    public int getWaitForProvisionCorrelationToBeUpdatedCounter() {
+        return configuration.getWaitForProvisionCorrelationToBeUpdatedCounter();
+    }
+
+    @ManagedAttribute
+    public void setWaitForProvisionCorrelationToBeUpdatedCounter(int counter) {
+        configuration.setWaitForProvisionCorrelationToBeUpdatedCounter(counter);
+    }
+
+    @ManagedAttribute
+    public long getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime() {
+        return configuration.getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime();
+    }
+
+    @ManagedAttribute
+    public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(long sleepingTime) {
+        configuration.setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(sleepingTime);
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 

@@ -208,11 +208,14 @@ Component options
 
 
 
+
+
 // component options: START
-The JMS component supports 69 options which are listed below.
+The JMS component supports 71 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -285,8 +288,13 @@ The JMS component supports 69 options which are listed below.
 | queueBrowseStrategy | QueueBrowseStrategy | To use a custom QueueBrowseStrategy when browsing queues
 | headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 | messageCreatedStrategy | MessageCreatedStrategy | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.
+| waitForProvisionCorrelationToBeUpdatedCounter | int | Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS and when the option useMessageIDAsCorrelationID is enabled.
+| waitForProvisionCorrelationToBeUpdatedThreadSleepingTime | long | Interval in millis to sleep each time while waiting for provisional correlation id to be updated.
 |=======================================================================
+{% endraw %}
 // component options: END
+
+
 
 
 
@@ -296,9 +304,13 @@ Endpoint options
 
 
 
-// endpoint options: START
-The JMS component supports 76 endpoint options which are listed below:
 
+
+
+// endpoint options: START
+The JMS component supports 78 endpoint options which are listed below:
+
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -373,13 +385,19 @@ The JMS component supports 76 endpoint options which are listed below:
 | transferExchange | advanced | false | boolean | You can transfer the exchange over the wire instead of just the body and headers. The following fields are transferred: In body Out body Fault body In headers Out headers Fault headers exchange properties exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. You must enable this option on both the producer and consumer side so Camel knows the payloads is an Exchange and not a regular payload.
 | transferFault | advanced | false | boolean | If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side then the fault flag on link org.apache.camel.MessageisFault() will be send back in the response as a JMS header with the key link JmsConstantsJMS_TRANSFER_FAULT. If the client is Camel the returned fault flag will be set on the link org.apache.camel.MessagesetFault(boolean). You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws.
 | useMessageIDAsCorrelationID | advanced | false | boolean | Specifies whether JMSMessageID should always be used as JMSCorrelationID for InOut messages.
+| waitForProvisionCorrelationToBeUpdatedCounter | advanced | 50 | int | Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS and when the option useMessageIDAsCorrelationID is enabled.
+| waitForProvisionCorrelationToBeUpdatedThreadSleepingTime | advanced | 100 | long | Interval in millis to sleep each time while waiting for provisional correlation id to be updated.
 | transacted | transaction | false | boolean | Specifies whether to use transacted mode
 | lazyCreateTransactionManager | transaction (advanced) | true | boolean | If true Camel will create a JmsTransactionManager if there is no transactionManager injected when option transacted=true.
 | transactionManager | transaction (advanced) |  | PlatformTransactionManager | The Spring transaction manager to use.
 | transactionName | transaction (advanced) |  | String | The name of the transaction to use.
 | transactionTimeout | transaction (advanced) | -1 | int | The timeout value of the transaction (in seconds) if using transacted mode.
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
+
+
 
 
 

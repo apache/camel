@@ -195,7 +195,7 @@ public class ZooKeeperElection {
         private SequenceComparator comparator = new SequenceComparator();
         private ZooKeeperEndpoint zep;
 
-        public ElectoralMonitorRoute(ZooKeeperEndpoint zep) {
+        ElectoralMonitorRoute(ZooKeeperEndpoint zep) {
             this.zep = zep;
             zep.getConfiguration().setListChildren(true);
             zep.getConfiguration().setSendEmptyMessageOnDelete(true);

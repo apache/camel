@@ -23,6 +23,7 @@ import javax.jms.Session;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.sjms.SjmsHeaderFilterStrategy;
@@ -33,6 +34,7 @@ import org.apache.camel.component.sjms.jms.JmsBinding;
 import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -65,6 +67,10 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     private int completionTimeout = DEFAULT_COMPLETION_TIMEOUT;
     @UriParam(defaultValue = "1000")
     private int completionInterval;
+    @UriParam(javaType = "java.lang.String")
+    private Predicate completionPredicate;
+    @UriParam
+    private boolean eagerCheckCompletion;
     @UriParam
     private boolean sendEmptyMessageWhenIdle;
     @UriParam(defaultValue = "1000")
@@ -210,6 +216,38 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
      */
     public void setCompletionInterval(int completionInterval) {
         this.completionInterval = completionInterval;
+    }
+
+    public Predicate getCompletionPredicate() {
+        return completionPredicate;
+    }
+
+    /**
+     * The completion predicate, which causes batches to be completed when the predicate evaluates as true.
+     * <p/>
+     * The predicate can also be configured using the simple language using the string syntax.
+     * You may want to set the option eagerCheckCompletion to true to let the predicate match the incoming message,
+     * as otherwise it matches the aggregated message.
+     */
+    public void setCompletionPredicate(Predicate completionPredicate) {
+        this.completionPredicate = completionPredicate;
+    }
+
+    public void setCompletionPredicate(String predicate) {
+        // uses simple language
+        this.completionPredicate = SimpleLanguage.predicate(predicate);
+    }
+
+    public boolean isEagerCheckCompletion() {
+        return eagerCheckCompletion;
+    }
+
+    /**
+     * Use eager completion checking which means that the completionPredicate will use the incoming Exchange.
+     * As opposed to without eager completion checking the completionPredicate will use the aggregated Exchange.
+     */
+    public void setEagerCheckCompletion(boolean eagerCheckCompletion) {
+        this.eagerCheckCompletion = eagerCheckCompletion;
     }
 
     public boolean isSendEmptyMessageWhenIdle() {

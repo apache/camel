@@ -40,9 +40,9 @@ public class ToObservableUoWTest extends RxTestSupport {
 
         Observable<Message> observable = reactiveCamel.toObservable("file://target/foo?move=done");
         observable.subscribe(message -> {
-                String body = message.getBody(String.class);
-                producerTemplate.sendBody("mock:results", body);
-            });
+            String body = message.getBody(String.class);
+            producerTemplate.sendBody("mock:results", body);
+        });
 
         producerTemplate.sendBodyAndHeader("file://target/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
         producerTemplate.sendBodyAndHeader("file://target/foo", "Bye World", Exchange.FILE_NAME, "bye.txt");

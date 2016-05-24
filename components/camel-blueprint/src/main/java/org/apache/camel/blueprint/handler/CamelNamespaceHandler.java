@@ -79,6 +79,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -649,6 +650,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     private static ComponentMetadata getDataformatResolverReference(ParserContext context, String dataformat) {
+        // we cannot resolve dataformat names using property placeholders at this point in time
+        if (dataformat.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
+            return null;
+        }
         ComponentDefinitionRegistry componentDefinitionRegistry = context.getComponentDefinitionRegistry();
         ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.dataformatResolver." + dataformat);
         if (cm == null) {
@@ -679,6 +684,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     private static ComponentMetadata getLanguageResolverReference(ParserContext context, String language) {
+        // we cannot resolve language names using property placeholders at this point in time
+        if (language.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
+            return null;
+        }
         ComponentDefinitionRegistry componentDefinitionRegistry = context.getComponentDefinitionRegistry();
         ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.languageResolver." + language);
         if (cm == null) {
@@ -709,6 +718,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     private static ComponentMetadata getComponentResolverReference(ParserContext context, String component) {
+        // we cannot resolve component names using property placeholders at this point in time
+        if (component.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
+            return null;
+        }
         ComponentDefinitionRegistry componentDefinitionRegistry = context.getComponentDefinitionRegistry();
         ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.componentResolver." + component);
         if (cm == null) {
@@ -987,6 +1000,8 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                         findOutputComponents(route.getOutputs(), components, languages, dataformats);
                     } else if (o instanceof ToDefinition) {
                         findUriComponent(((ToDefinition) o).getUri(), components);
+                    } else if (o instanceof ToDynamicDefinition) {
+                        findUriComponent(((ToDynamicDefinition) o).getUri(), components);
                     }
                 }
             }
@@ -1040,7 +1055,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 }
             } catch (UnsupportedOperationException e) {
                 LOG.warn("Unable to add dependencies to Camel components OSGi services. "
-                    + "The Apache Aries blueprint implementation used is too old and the blueprint bundle can not see the org.apache.camel.spi package.");
+                    + "The Apache Aries blueprint implementation used is too old and the blueprint bundle cannot see the org.apache.camel.spi package.");
                 components.clear();
                 languages.clear();
                 dataformats.clear();

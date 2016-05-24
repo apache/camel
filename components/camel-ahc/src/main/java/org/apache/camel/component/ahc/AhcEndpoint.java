@@ -63,6 +63,8 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private AsyncHttpClientConfig clientConfig;
     @UriParam(label = "advanced", prefix = "clientConfig.", multiValue = true)
     private Map<String, Object> clientConfigOptions;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean connectionClose;
 
     public AhcEndpoint(String endpointUri, AhcComponent component, URI httpUri) {
         super(endpointUri, component);
@@ -230,6 +232,17 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         this.clientConfigOptions = clientConfigOptions;
     }
 
+    public boolean isConnectionClose() {
+        return connectionClose;
+    }
+    
+    /**
+     * Define if the Connection Close header has to be added to HTTP Request. This parameter is false by default
+     */
+    public void setConnectionClose(boolean connectionClose) {
+        this.connectionClose = connectionClose;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -241,7 +254,7 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                 AsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
                 
                 if (sslContextParameters != null) {
-                    SSLContext ssl = sslContextParameters.createSSLContext();
+                    SSLContext ssl = sslContextParameters.createSSLContext(getCamelContext());
                     builder.setSSLContext(ssl);
                 }
                 
@@ -249,7 +262,7 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             } else {
                 if (sslContextParameters != null) {
                     AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
-                    SSLContext ssl = sslContextParameters.createSSLContext();
+                    SSLContext ssl = sslContextParameters.createSSLContext(getCamelContext());
                     builder.setSSLContext(ssl);
                     config = builder.build();
                 }

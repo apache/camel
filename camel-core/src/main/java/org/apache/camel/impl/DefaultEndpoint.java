@@ -147,7 +147,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     public boolean equals(Object object) {
         if (object instanceof DefaultEndpoint) {
             DefaultEndpoint that = (DefaultEndpoint)object;
-            return ObjectHelper.equal(this.getEndpointUri(), that.getEndpointUri());
+            // must also match the same CamelContext in case we compare endpoints from different contexts
+            String thisContextName = this.getCamelContext() != null ? this.getCamelContext().getName() : null;
+            String thatContextName = that.getCamelContext() != null ? that.getCamelContext().getName() : null;
+            return ObjectHelper.equal(this.getEndpointUri(), that.getEndpointUri()) && ObjectHelper.equal(thisContextName, thatContextName);
         }
         return false;
     }
@@ -161,7 +164,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
             } catch (RuntimeException e) {
                 // ignore any exception and use null for building the string value
             }
-            endpointUriToString = String.format("Endpoint[%s]", URISupport.sanitizeUri(value));
+            // ensure to sanitize uri so we do not show sensitive information such as passwords
+            endpointUriToString = URISupport.sanitizeUri(value);
         }
         return endpointUriToString;
     }

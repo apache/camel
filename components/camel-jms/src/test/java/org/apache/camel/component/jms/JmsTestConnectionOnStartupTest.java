@@ -46,7 +46,7 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
             context.start();
             fail("Should have thrown an exception");
         } catch (FailedToCreateConsumerException e) {
-            assertEquals("Failed to create Consumer for endpoint: Endpoint[activemq://queue:foo?testConnectionOnStartup=true]. "
+            assertEquals("Failed to create Consumer for endpoint: activemq://queue:foo?testConnectionOnStartup=true. "
                 + "Reason: Cannot get JMS Connection on startup for destination foo", e.getMessage());
         }
     }
@@ -64,7 +64,7 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
             context.start();
             fail("Should have thrown an exception");
         } catch (FailedToCreateProducerException e) {
-            assertTrue(e.getMessage().startsWith("Failed to create Producer for endpoint: Endpoint[activemq://queue:foo?testConnectionOnStartup=true]."));
+            assertTrue(e.getMessage().startsWith("Failed to create Producer for endpoint: activemq://queue:foo?testConnectionOnStartup=true."));
             assertTrue(e.getMessage().contains("java.net.ConnectException"));
         }
     }

@@ -211,7 +211,7 @@ public enum DockerOperation {
     private Map<String, Class<?>> parameters;
 
 
-    private DockerOperation(String text, boolean canConsume, boolean canProduce, Object... params) {
+    DockerOperation(String text, boolean canConsume, boolean canProduce, Object... params) {
 
         this.text = text;
         this.canConsume = canConsume;

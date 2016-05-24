@@ -127,7 +127,7 @@ public class InfinispanConsumer extends DefaultConsumer {
     private class ContinuousQueryEventListener implements ContinuousQueryListener<Object, Object> {
         private final String cacheName;
 
-        public ContinuousQueryEventListener(String cacheName) {
+        ContinuousQueryEventListener(String cacheName) {
             this.cacheName = cacheName;
         }
 

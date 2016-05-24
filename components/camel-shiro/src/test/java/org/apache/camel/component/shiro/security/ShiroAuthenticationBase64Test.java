@@ -93,7 +93,7 @@ public class ShiroAuthenticationBase64Test extends CamelTestSupport {
     
     private static class TestShiroSecurityTokenInjector extends ShiroSecurityTokenInjector {
 
-        public TestShiroSecurityTokenInjector(ShiroSecurityToken shiroSecurityToken, byte[] bytes) {
+        TestShiroSecurityTokenInjector(ShiroSecurityToken shiroSecurityToken, byte[] bytes) {
             super(shiroSecurityToken, bytes);
             setBase64(true);
         }

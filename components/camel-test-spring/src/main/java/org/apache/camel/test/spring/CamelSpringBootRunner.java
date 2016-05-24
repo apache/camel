@@ -16,8 +16,11 @@
  */
 package org.apache.camel.test.spring;
 
+import java.util.List;
+
 import org.junit.runners.model.InitializationError;
 import org.springframework.test.context.TestContextManager;
+import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
@@ -55,11 +58,28 @@ public class CamelSpringBootRunner extends SpringJUnit4ClassRunner {
             // turn off auto starting spring as we need to do this later
             System.setProperty("skipStartingCamelContext", "true");
 
-            // inject Camel first, and then disable jmx and add the stop-watch
-            registerTestExecutionListeners(new CamelSpringTestContextLoaderTestExecutionListener());
-            registerTestExecutionListeners(new DisableJmxTestExecutionListener());
-            registerTestExecutionListeners(new CamelSpringBootExecutionListener());
-            registerTestExecutionListeners(new StopWatchTestExecutionListener());
+            // is Camel already registered
+            if (!alreadyRegistered()) {
+                // inject Camel first, and then disable jmx and add the stop-watch
+                List<TestExecutionListener> list = getTestExecutionListeners();
+                list.add(0, new CamelSpringTestContextLoaderTestExecutionListener());
+                list.add(1, new DisableJmxTestExecutionListener());
+                list.add(2, new CamelSpringBootExecutionListener());
+                list.add(3, new StopWatchTestExecutionListener());
+            }
+        }
+
+        private boolean alreadyRegistered() {
+            List<TestExecutionListener> list = getTestExecutionListeners();
+            if (list != null) {
+                for (TestExecutionListener listener : list) {
+                    if (listener instanceof CamelSpringTestContextLoaderTestExecutionListener) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
     }

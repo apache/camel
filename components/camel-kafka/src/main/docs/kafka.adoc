@@ -59,16 +59,36 @@ Options (Camel 2.16 or older)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
+
+
 // component options: START
-The Kafka component has no options.
+The Kafka component supports 1 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,8",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| workerPool | ExecutorService | To use a shared custom worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing. If using this option then you must handle the lifecycle of the thread pool to shut the pool down when no longer needed.
+|=======================================================================
+{% endraw %}
 // component options: END
 
 
 
 
-// endpoint options: START
-The Kafka component supports 71 endpoint options which are listed below:
 
+
+
+
+
+
+
+// endpoint options: START
+The Kafka component supports 74 endpoint options which are listed below:
+
+{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -119,7 +139,7 @@ The Kafka component supports 71 endpoint options which are listed below:
 | queueBufferingMaxMessages | producer | 10000 | Integer | The maximum number of unsent messages that can be queued up the producer when using async mode before either the producer must be blocked or data must be dropped.
 | receiveBufferBytes | producer | 32768 | Integer | The size of the TCP receive buffer (SO_RCVBUF) to use when reading data.
 | reconnectBackoffMs | producer | 50 | Integer | The amount of time to wait before attempting to reconnect to a given host. This avoids repeatedly connecting to a host in a tight loop. This backoff applies to all requests sent by the consumer to the broker.
-| requestRequiredAcks | producer | 1 | Integer | The number of acknowledgments the producer requires the leader to have received before considering a request complete. This controls the durability of records that are sent. The following settings are common: acks=0 If set to zero then the producer will not wait for any acknowledgment from the server at all. The record will be immediately added to the socket buffer and considered sent. No guarantee can be made that the server has received the record in this case and the retries configuration will not take effect (as the client won't generally know of any failures). The offset given back for each record will always be set to -1. acks=1 This will mean the leader will write the record to its local log but will respond without awaiting full acknowledgement from all followers. In this case should the leader fail immediately after acknowledging the record but before the followers have replicated it then the record will be lost. acks=all This means the leader will wait for the full set of in-sync replicas to acknowledge the record. This guarantees that the record will not be lost as long as at least one in-sync replica remains alive. This is the strongest available guarantee.
+| requestRequiredAcks | producer | 1 | String | The number of acknowledgments the producer requires the leader to have received before considering a request complete. This controls the durability of records that are sent. The following settings are common: acks=0 If set to zero then the producer will not wait for any acknowledgment from the server at all. The record will be immediately added to the socket buffer and considered sent. No guarantee can be made that the server has received the record in this case and the retries configuration will not take effect (as the client won't generally know of any failures). The offset given back for each record will always be set to -1. acks=1 This will mean the leader will write the record to its local log but will respond without awaiting full acknowledgement from all followers. In this case should the leader fail immediately after acknowledging the record but before the followers have replicated it then the record will be lost. acks=all This means the leader will wait for the full set of in-sync replicas to acknowledge the record. This guarantees that the record will not be lost as long as at least one in-sync replica remains alive. This is the strongest available guarantee.
 | requestTimeoutMs | producer | 30000 | Integer | The amount of time the broker will wait trying to meet the request.required.acks requirement before sending back an error to the client.
 | retries | producer | 0 | Integer | Setting a value greater than zero will cause the client to resend any record whose send fails with a potentially transient error. Note that this retry is no different than if the client resent the record upon receiving the error. Allowing retries will potentially change the ordering of records because if two records are sent to a single partition and the first fails and is retried but the second succeeds then the second record may appear first.
 | retryBackoffMs | producer | 100 | Integer | Before each retry the producer refreshes the metadata of relevant topics to see if a new leader has been elected. Since leader election takes a bit of time this property specifies the amount of time that the producer waits before refreshing the metadata.
@@ -141,10 +161,19 @@ The Kafka component supports 71 endpoint options which are listed below:
 | sslTruststoreLocation | producer |  | String | The location of the trust store file.
 | sslTruststorePassword | producer |  | String | The password for the trust store file.
 | sslTruststoreType | producer | JKS | String | The file format of the trust store file. Default value is JKS.
+| workerPool | producer |  | ExecutorService | To use a custom worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing.
+| workerPoolCoreSize | producer | 10 | Integer | Number of core threads for the worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing.
+| workerPoolMaxSize | producer | 20 | Integer | Maximum number of threads for the worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+{% endraw %}
 // endpoint options: END
+
+
+
+
+
 
 
 

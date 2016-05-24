@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.slf4j.Logger;
@@ -43,6 +44,7 @@ public class FileChangedReadLockTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/changed/out/slowfile.dat");
+        mock.expectedHeaderReceived(Exchange.FILE_LENGTH, expectedFileLength());
 
         writeSlowFile();
 
@@ -69,6 +71,14 @@ public class FileChangedReadLockTest extends ContextTestSupport {
         fos.flush();
         fos.close();
         LOG.debug("Writing slow file DONE...");
+    }
+
+    long expectedFileLength() {
+        long length = 0;
+        for (int i = 0; i < 20; i++) {
+            length += ("Line " + i + LS).getBytes().length;
+        }
+        return length;
     }
 
     @Override

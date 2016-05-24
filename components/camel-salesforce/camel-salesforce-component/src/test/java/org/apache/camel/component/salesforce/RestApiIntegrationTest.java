@@ -23,6 +23,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -45,11 +46,10 @@ import org.apache.camel.component.salesforce.dto.generated.Line_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpExchange;
-import org.eclipse.jetty.client.RedirectListener;
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.client.api.ContentResponse;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.Test;
@@ -71,21 +71,59 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         String accessToken = sf.getSession().getAccessToken();
 
         SslContextFactory sslContextFactory = new SslContextFactory();
+        sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext(context));
+        HttpClient httpClient = new HttpClient(sslContextFactory);
+        httpClient.setConnectTimeout(60000);
+        httpClient.start();
+
+        String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
+        Request logoutGet = httpClient.newRequest(uri)
+            .method(HttpMethod.GET)
+            .timeout(1, TimeUnit.MINUTES);
+
+        ContentResponse response = logoutGet.send();
+        assertEquals(HttpStatus.OK_200, response.getStatus());
+
+        doTestGetGlobalObjects("");
+    }
+
+    @Test
+    public void testRetryFailure() throws Exception {
+        SalesforceComponent sf = context().getComponent("salesforce", SalesforceComponent.class);
+        String accessToken = sf.getSession().getAccessToken();
+
+        SslContextFactory sslContextFactory = new SslContextFactory();
         sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext());
         HttpClient httpClient = new HttpClient(sslContextFactory);
         httpClient.setConnectTimeout(60000);
-        httpClient.setTimeout(60000);
-        httpClient.registerListener(RedirectListener.class.getName());
         httpClient.start();
 
-        ContentExchange logoutGet = new ContentExchange(true);
-        logoutGet.setURL(sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken);
-        logoutGet.setMethod(HttpMethods.GET);
-        httpClient.send(logoutGet);
-        assertEquals(HttpExchange.STATUS_COMPLETED, logoutGet.waitForDone());
-        assertEquals(HttpStatus.OK_200, logoutGet.getResponseStatus());
+        String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
+        Request logoutGet = httpClient.newRequest(uri)
+            .method(HttpMethod.GET)
+            .timeout(1, TimeUnit.MINUTES);
 
-        doTestGetGlobalObjects("");
+        ContentResponse response = logoutGet.send();
+        assertEquals(HttpStatus.OK_200, response.getStatus());
+
+        // set component config to bad password to cause relogin attempts to fail
+        final String password = sf.getLoginConfig().getPassword();
+        sf.getLoginConfig().setPassword("bad_password");
+
+        try {
+            doTestGetGlobalObjects("");
+            fail("Expected CamelExecutionException!");
+        } catch (CamelExecutionException e) {
+            if (e.getCause() instanceof SalesforceException) {
+                SalesforceException cause = (SalesforceException) e.getCause();
+                assertEquals("Expected 400 on authentication retry failure", HttpStatus.BAD_REQUEST_400, cause.getStatusCode());
+            } else {
+                fail("Expected SalesforceException!");
+            }
+        } finally {
+            // reset password and retries to allow other tests to pass
+            sf.getLoginConfig().setPassword(password);
+        }
     }
 
     @Test
@@ -197,7 +235,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         doTestCreateUpdateDelete("Xml");
     }
 
-    private void doTestCreateUpdateDelete(String suffix) throws InterruptedException {
+    private void doTestCreateUpdateDelete(String suffix) throws Exception {
         Merchandise__c merchandise = new Merchandise__c();
         merchandise.setName("Wee Wee Wee Plane");
         merchandise.setDescription__c("Microlite plane");
@@ -232,7 +270,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         doTestCreateUpdateDeleteWithId("Xml");
     }
 
-    private void doTestCreateUpdateDeleteWithId(String suffix) throws InterruptedException {
+    private void doTestCreateUpdateDeleteWithId(String suffix) throws Exception {
         // get line item with Name 1
         Line_Item__c lineItem = template().requestBody("direct:getSObjectWithId" + suffix, TEST_LINE_ITEM_ID,
             Line_Item__c.class);
@@ -273,8 +311,13 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
     @Test
     public void testGetBlobField() throws Exception {
-        doTestGetBlobField("");
-        doTestGetBlobField("Xml");
+        SalesforceComponent component = context().getComponent("salesforce", SalesforceComponent.class);
+        try {
+            doTestGetBlobField("");
+            doTestGetBlobField("Xml");
+        } finally {
+            // reset response content buffer size
+        }
     }
 
     public void doTestGetBlobField(String suffix) throws Exception {
@@ -305,7 +348,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         doTestQuery("Xml");
     }
 
-    private void doTestQuery(String suffix) throws InterruptedException {
+    private void doTestQuery(String suffix) throws Exception {
         QueryRecordsLine_Item__c queryRecords = template().requestBody("direct:query" + suffix, null,
             QueryRecordsLine_Item__c.class);
         assertNotNull(queryRecords);
@@ -320,7 +363,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @SuppressWarnings("unchecked")
-    private void doTestSearch(String suffix) throws InterruptedException {
+    private void doTestSearch(String suffix) throws Exception {
 
         Object obj = template().requestBody("direct:search" + suffix, (Object) null);
         List<SearchResult> searchResults = null;

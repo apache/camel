@@ -157,7 +157,7 @@ public class ZooKeeperProducer extends DefaultProducer {
         int version;
         String node;
 
-        public ProductionContext(ZooKeeper connection, Exchange exchange) {
+        ProductionContext(ZooKeeper connection, Exchange exchange) {
             this.connection = connection;
             this.exchange = exchange;
             this.in = exchange.getIn();

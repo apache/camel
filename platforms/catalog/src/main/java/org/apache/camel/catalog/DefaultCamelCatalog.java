@@ -736,6 +736,11 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
+    public boolean validateTimePattern(String pattern) {
+        return validateInteger(pattern);
+    }
+
+    @Override
     public EndpointValidationResult validateEndpointProperties(String uri) {
         return validateEndpointProperties(uri, false);
     }

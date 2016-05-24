@@ -44,7 +44,7 @@ public class HttpClientRouteTest extends BaseJettyTest {
     }
     
     private void testHttpClient(String uri) throws Exception {
-        System.getProperties().put("HTTPClient.dontChunkRequests", "yes");
+        System.setProperty("HTTPClient.dontChunkRequests", "yes");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
         mockEndpoint.expectedBodiesReceived("<b>Hello World</b>");

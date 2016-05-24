@@ -183,6 +183,16 @@ public class SimpleLanguage extends LanguageSupport {
     }
 
     /**
+     * Does the expression include a simple function.
+     *
+     * @param expression the expression
+     * @return <tt>true</tt> if one or more simple function is included in the expression
+     */
+    public static boolean hasSimpleFunction(String expression) {
+        return SimpleTokenizer.hasFunctionStartToken(expression);
+    }
+
+    /**
      * Change the start tokens used for functions.
      * <p/>
      * This can be used to alter the function tokens to avoid clashes with other

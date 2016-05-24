@@ -54,29 +54,29 @@ public class WebsocketEndpoint extends DefaultEndpoint {
 
     @UriParam(label = "producer")
     private Boolean sendToAll;
-    @UriParam
+    @UriParam(label = "monitoring")
     private boolean enableJmx;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean sessionSupport;
-    @UriParam
+    @UriParam(label = "cors")
     private boolean crossOriginFilterOn;
-    @UriParam
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam
+    @UriParam(label = "cors")
     private String allowedOrigins;
-    @UriParam
+    @UriParam(label = "cors")
     private String filterPath;
-    @UriParam
+    @UriParam(label = "consumer")
     private String staticResources;
-    @UriParam(defaultValue = "8192")
+    @UriParam(label = "advanced", defaultValue = "8192")
     private Integer bufferSize;
-    @UriParam(defaultValue = "300000")
+    @UriParam(label = "advanced", defaultValue = "300000")
     private Integer maxIdleTime;
-    @UriParam
+    @UriParam(label = "advanced")
     private Integer maxTextMessageSize;
     @UriParam(defaultValue = "-1")
     private Integer maxBinaryMessageSize;
-    @UriParam(defaultValue = "13")
+    @UriParam(label = "advanced", defaultValue = "13")
     private Integer minVersion;
 
     public WebsocketEndpoint(WebsocketComponent component, String uri, String resourceUri, Map<String, Object> parameters) {

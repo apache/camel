@@ -259,7 +259,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
 
         private final File fileToDelete;
 
-        public DeleteTarFileOnCompletion(File fileToDelete) {
+        DeleteTarFileOnCompletion(File fileToDelete) {
             this.fileToDelete = fileToDelete;
         }
 

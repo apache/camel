@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
@@ -396,6 +397,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // must use file from exchange as it can be updated due the
         // preMoveNamePrefix/preMoveNamePostfix options
         final GenericFile<T> target = getExchangeFileProperty(exchange);
+
+        // we can begin processing the file so update file headers on the Camel message
+        // in case it took some time to acquire read lock, and file size/timestamp has been updated since etc
+        updateFileHeaders(target, exchange.getIn());
+
         // must use full name when downloading so we have the correct path
         final String name = target.getAbsoluteFilePath();
         try {
@@ -474,6 +480,15 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         return true;
     }
+
+    /**
+     * Updates the information on {@link Message} after we have acquired read-lock and
+     * can begin process the file.
+     *
+     * @param file    the file
+     * @param message the Camel message to update its headers
+     */
+    protected abstract void updateFileHeaders(GenericFile<T> file, Message message);
 
     /**
      * Override if required.  Files are retrieved / returns true by default
@@ -604,6 +619,15 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             }
         }
 
+        if (isDirectory && endpoint.getFilterDirectory() != null) {
+            // create a dummy exchange as Exchange is needed for expression evaluation
+            Exchange dummy = endpoint.createExchange(file);
+            boolean matches = endpoint.getFilterDirectory().matches(dummy);
+            if (!matches) {
+                return false;
+            }
+        }
+
         // directories are regarded as matched if filter accepted them
         if (isDirectory) {
             return true;
@@ -628,6 +652,15 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                 if (!name.equals(fileExpressionResult)) {
                     return false;
                 }
+            }
+        }
+
+        if (endpoint.getFilterFile() != null) {
+            // create a dummy exchange as Exchange is needed for expression evaluation
+            Exchange dummy = endpoint.createExchange(file);
+            boolean matches = endpoint.getFilterFile().matches(dummy);
+            if (!matches) {
+                return false;
             }
         }
 
