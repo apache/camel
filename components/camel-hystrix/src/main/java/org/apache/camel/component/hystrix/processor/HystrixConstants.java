@@ -14,25 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hystrix;
+package org.apache.camel.component.hystrix.processor;
 
-import java.util.Map;
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+public interface HystrixConstants {
 
-/**
- * Represents the component that manages {@link HystrixComponent}.
- */
-public class HystrixComponent extends UriEndpointComponent {
+    // Hystrix EIP response properties
+    String HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION = "CamelHystrixSuccessfulExecution";
+    String HYSTRIX_RESPONSE_FROM_FALLBACK = "CamelHystrixResponseFromFallback";
+    String HYSTRIX_RESPONSE_SHORT_CIRCUITED = "CamelHystrixResponseShortCircuited";
+    String HYSTRIX_RESPONSE_TIMED_OUT = "CamelHystrixResponseTimedOut";
+    String HYSTRIX_RESPONSE_REJECTED = "CamelHystrixResponseRejected";
 
-    public HystrixComponent() {
-        super(HystrixEndpoint.class);
-    }
-
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        HystrixConfiguration configuration = new HystrixConfiguration();
-        configuration.setGroupKey(remaining);
-        setProperties(configuration, parameters);
-        return new HystrixEndpoint(uri, this, configuration);
-    }
 }
