@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.weather;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.camel.component.weather.geolocation.FreeGeoIpGeoLocationProvider;
@@ -23,6 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.HttpConnectionManager;
 
 import static org.apache.camel.component.weather.WeatherLanguage.en;
@@ -62,6 +67,14 @@ public class WeatherConfiguration {
     private WeatherLanguage language = en;
     @UriParam
     private String headerName;
+    @UriParam
+    private String zip;
+    @UriParam
+    private List<String> ids;
+    @UriParam
+    private Integer cnt;
+    @UriParam
+    private WeatherApi weatherApi;
 
     @UriParam(label = "proxy")
     private String proxyHost;
@@ -341,5 +354,68 @@ public class WeatherConfiguration {
      */
     public void setProxyAuthHost(String proxyAuthHost) {
         this.proxyAuthHost = proxyAuthHost;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    /**
+     * Zip-code, e.g. 94040,us
+     */
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    public List<String> getIds() {
+        return (List<String>) ids;
+    }
+
+    public void addId(String id) {
+        if (ids == null) {
+            ids = new ArrayList<>();
+        }
+        ids.add(id);
+    }
+
+    /**
+     * List of id's of city/stations
+     */
+    public void setIds(String id, String... ids) {
+        Iterator<?> it = ObjectHelper.createIterator(id);
+        while (it.hasNext()) {
+            String myId = (String) it.next();
+            addId(myId);
+        }
+        this.ids = Arrays.asList(ids);
+    }
+
+    /**
+     * List of id's of city/stations
+     */
+    public void setIds(List<String> ids) {
+        this.ids = ids;
+    }
+
+    public Integer getCnt() {
+        return cnt;
+    }
+
+    /**
+     * Number of results to be found
+     */
+    public void setCnt(Integer cnt) {
+        this.cnt = cnt;
+    }
+
+    public WeatherApi getWeatherApi() {
+        return weatherApi;
+    }
+
+    /**
+     * The API to be use (current, forecast/3 hour, forecast daily, station
+     */
+    public void setWeatherApi(WeatherApi weatherApi) {
+        this.weatherApi = weatherApi;
     }
 }

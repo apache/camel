@@ -18,6 +18,7 @@ package org.apache.camel.component.weather;
 
 import org.apache.camel.component.weather.geolocation.GeoLocation;
 import org.apache.camel.component.weather.geolocation.GeoLocationProvider;
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -47,10 +48,12 @@ public class WeatherQuery {
 
     public String getQuery(String location) throws Exception {
         String answer = "http://api.openweathermap.org/data/2.5/";
+        boolean point = false;
 
         if (weatherConfiguration.getLat() != null && weatherConfiguration.getLon() != null
                 && weatherConfiguration.getRightLon() == null && weatherConfiguration.getTopLat() == null) {
-            location = "lat=" + weatherConfiguration.getLat() + "&lon=" + weatherConfiguration.getLon();
+            location = createLatLonQueryString();
+            point = true;
         } else if (weatherConfiguration.getLat() != null && weatherConfiguration.getLon() != null
                 && weatherConfiguration.getRightLon() != null && weatherConfiguration.getTopLat() != null) {
             location = "bbox=" + weatherConfiguration.getLon() + ","
@@ -58,8 +61,15 @@ public class WeatherQuery {
                     + weatherConfiguration.getRightLon() + ","
                     + weatherConfiguration.getTopLat() + ","
                     + weatherConfiguration.getZoom() + "&cluster=yes";
+        } else if (!isEmpty(weatherConfiguration.getZip())) {
+            location = "zip=" + weatherConfiguration.getZip();
+        } else if (weatherConfiguration.getIds() != null && weatherConfiguration.getIds().size() > 0) {
+            location = "id=" + String.join(",", weatherConfiguration.getIds());
         } else if (isEmpty(location) || "current".equals(location)) {
-            location = getCurrentGeoLocation();
+            GeoLocation geoLocation = getCurrentGeoLocation();
+            weatherConfiguration.setLat(geoLocation.getLatitude());
+            weatherConfiguration.setLon(geoLocation.getLongitude());
+            location = createLatLonQueryString();
         } else {
             // assuming the location is a town or country
             location = "q=" + location;
@@ -67,12 +77,13 @@ public class WeatherQuery {
 
         location = location + "&lang=" + weatherConfiguration.getLanguage();
 
-        if (weatherConfiguration.getTopLat() != null && weatherConfiguration.getRightLon() != null) {
-            answer += "box/city?" + location;
-        } else if (isEmpty(weatherConfiguration.getPeriod())) {
-            answer += "weather?" + location;
-        } else {
-            answer += "forecast/daily?" + location + "&cnt=" + weatherConfiguration.getPeriod();
+        String context = createContext();
+        answer += context + location;
+
+        if (!isEmpty(weatherConfiguration.getPeriod())) {
+            answer += "&cnt=" + weatherConfiguration.getPeriod();
+        } else if (weatherConfiguration.getCnt() != null) {
+            answer += "&cnt=" + weatherConfiguration.getCnt();
         }
 
         // append the desired measurement unit if not the default (which is metric)
@@ -93,9 +104,62 @@ public class WeatherQuery {
 
     }
 
-    String getCurrentGeoLocation() throws Exception {
-        GeoLocation geoLocation = geoLocationProvider.getCurrentGeoLocation();
-        return "lat=" + geoLocation.getLatitude() + "&lon=" + geoLocation.getLongitude();
+    private String createContext() {
+        String answer;
+        if (isBoxedQuery()) {
+            if (weatherConfiguration.getWeatherApi() == WeatherApi.Station) {
+                answer = "box/station?";
+            } else {
+                answer = "box/city?";
+            }
+        } else if (isGeoLocation() && weatherConfiguration.getCnt() != null) {
+            if (weatherConfiguration.getWeatherApi() == WeatherApi.Station) {
+                answer = "station/find?";
+            } else {
+                answer = "find?";
+            }
+        } else if (weatherConfiguration.getIds() != null && weatherConfiguration.getIds().size() > 0) {
+            if (weatherConfiguration.getIds().size() == 1) {
+                if (!isEmpty(weatherConfiguration.getPeriod())) {
+                    if (weatherConfiguration.getWeatherApi() == WeatherApi.Hourly) {
+                        answer = "forecast?";
+                    } else {
+                        answer = "forecast/daily?";
+                    }
+                } else if (weatherConfiguration.getWeatherApi() == WeatherApi.Station) {
+                    answer = "station?";
+                } else {
+                    answer = "weather?";
+                }
+            } else {
+                answer = "group?";
+            }
+        } else if (isEmpty(weatherConfiguration.getPeriod())) {
+            answer = "weather?";
+        } else {
+            if (weatherConfiguration.getWeatherApi() == WeatherApi.Hourly) {
+                answer = "forecast?";
+            } else {
+                answer = "forecast/daily?";
+            }
+        }
+        return answer;
+    }
+
+    private boolean isGeoLocation() {
+        return weatherConfiguration.getLat() != null && weatherConfiguration.getLon() != null;
+    }
+
+    private String createLatLonQueryString() {
+        return "lat=" + weatherConfiguration.getLat() + "&lon=" + weatherConfiguration.getLon();
+    }
+
+    private boolean isBoxedQuery() {
+        return weatherConfiguration.getTopLat() != null && weatherConfiguration.getRightLon() != null;
+    }
+
+    GeoLocation getCurrentGeoLocation() throws Exception {
+        return geoLocationProvider.getCurrentGeoLocation();
     }
 
     void setGeoLocationProvider(GeoLocationProvider geoLocationProvider) {

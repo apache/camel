@@ -16,26 +16,8 @@
  */
 package org.apache.camel.component.weather;
 
-import org.apache.camel.builder.RouteBuilder;
+public enum WeatherApi {
 
-public class CurrentWeatherConsumerXmlTest extends BaseWeatherConsumerTest {
-
-    @Override
-    protected void checkWeatherContent(String weather) {
-        log.debug("The weather in {} format is {}{}", WeatherMode.XML, LS, weather);
-
-        assertStringContains(weather, "<coord");
-        assertStringContains(weather, "<temperature");
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("weather:foo?mode=XML&appid=9162755b2efa555823cfe0451d7fff38&ids=2747373").to("mock:result");
-            }
-        };
-    }
+    Current, Station, Hourly, Daily
 
 }
