@@ -26,6 +26,7 @@ import org.apache.camel.component.file.GenericFileConverter;
 import org.apache.camel.converter.CamelConverter;
 import org.apache.camel.converter.CollectionConverter;
 import org.apache.camel.converter.DateTimeConverter;
+import org.apache.camel.converter.DurationConverter;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.NIOConverter;
 import org.apache.camel.converter.ObjectConverter;
@@ -73,6 +74,7 @@ public class CorePackageScanClassResolver implements PackageScanClassResolver {
         converters.add(FutureTypeConverter.class);
         converters.add(BeanConverter.class);
         converters.add(GenericFileConverter.class);
+        converters.add(DurationConverter.class);
     }
 
     @Override
