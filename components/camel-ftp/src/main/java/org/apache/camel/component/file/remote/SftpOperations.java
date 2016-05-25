@@ -279,7 +279,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         String knownHostsFile = sftpConfig.getKnownHostsFile();
         if (knownHostsFile == null && sftpConfig.isUseUserKnownHostsFile()) {
             knownHostsFile = System.getProperty("user.home") + "/.ssh/known_hosts";
-            LOG.info("Known host file not configured, using user known host file: " + knownHostsFile);
+            LOG.info("Known host file not configured, using user known host file: {}", knownHostsFile);
         }
         jsch.setKnownHosts(ObjectHelper.isEmpty(knownHostsFile) ? null : knownHostsFile);
 

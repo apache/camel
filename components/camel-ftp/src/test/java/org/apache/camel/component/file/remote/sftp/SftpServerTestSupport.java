@@ -51,17 +51,17 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
         deleteDirectory(FTP_ROOT_DIR);
 
         oldUserHome = System.getProperty("user.home");
-        
+
         System.setProperty("user.home", "target/user-home");
-        
+
         String simulatedUserHome = "target/user-home";
-        String simulatedUserSsh  = "target/user-home/.ssh";
+        String simulatedUserSsh = "target/user-home/.ssh";
         deleteDirectory(simulatedUserHome);
-		createDirectory(simulatedUserHome);
-		createDirectory(simulatedUserSsh);
-		
-		FileUtils.copyInputStreamToFile(getClass().getClassLoader().getResourceAsStream("known_hosts"), new File(simulatedUserSsh+"/known_hosts"));
-        
+        createDirectory(simulatedUserHome);
+        createDirectory(simulatedUserSsh);
+
+        FileUtils.copyInputStreamToFile(getClass().getClassLoader().getResourceAsStream("known_hosts"), new File(simulatedUserSsh + "/known_hosts"));
+
         super.setUp();
 
         setUpServer();
