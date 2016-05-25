@@ -26,9 +26,8 @@ import java.util.UUID;
 
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.codec.binary.Base64;
 
 import com.google.common.base.Optional;
 import com.google.common.net.HostAndPort;
@@ -49,8 +48,6 @@ import com.orbitz.consul.model.session.SessionCreatedResponse;
  */
 public class ConsulRegistry implements Registry {
 
-	private static final Logger logger = Logger.getLogger(ConsulRegistry.class);
-
 	private String hostname = "localhost";
 	private int port = 8500;
 	private Consul consul;
@@ -66,7 +63,6 @@ public class ConsulRegistry implements Registry {
 		super();
 		this.hostname = hostname;
 		this.port = port;
-		logger.debug("get consul client for: " + hostname + ":" + port);
 		HostAndPort hostAndPort = HostAndPort.fromParts(hostname, port);
 		this.consul = Consul.builder().withHostAndPort(hostAndPort).build();
 	}
@@ -75,7 +71,6 @@ public class ConsulRegistry implements Registry {
 	private ConsulRegistry(Builder builder) {
 		this.hostname = builder.hostname;
 		this.port = builder.port;
-		logger.debug("get consul client for: " + hostname + ":" + port);
 		HostAndPort hostAndPort = HostAndPort.fromParts(hostname, port);
 		this.consul = Consul.builder().withHostAndPort(hostAndPort).build();
 	}
@@ -84,12 +79,10 @@ public class ConsulRegistry implements Registry {
 	public Object lookupByName(String key) {
 		// Substitute $ character in key
 		key = key.replaceAll("\\$", "/");
-		logger.debug("lookup by name: " + key);
 		kvClient = consul.keyValueClient();
 		Optional<String> result = kvClient.getValueAsString(key);
 		if (result.isPresent()) {
 			byte[] postDecodedValue = Base64.decodeBase64(result.get());
-			logger.debug("got result: " + postDecodedValue);
 			return SerializationUtils.deserialize(postDecodedValue);
 		}
 		return null;
@@ -97,7 +90,6 @@ public class ConsulRegistry implements Registry {
 
 	@Override
 	public <T> T lookupByNameAndType(String name, Class<T> type) {
-		logger.debug("lookup by name: " + name + " and type: " + type);
 		Object object = lookupByName(name);
 		if (object == null)
 			return null;
@@ -112,12 +104,10 @@ public class ConsulRegistry implements Registry {
 
 	@Override
 	public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-		logger.debug("find by type with name: " + type);
 		Object obj = null;
 		Map<String, T> result = new HashMap<String, T>();
 		// encode $ signs as they occur in subclass types
 		String keyPrefix = type.getName().replaceAll("\\$", "/");
-		logger.debug("keyPrefix: " + keyPrefix);
 		kvClient = consul.keyValueClient();
 		List<String> keys = null;
 		try {
@@ -141,21 +131,18 @@ public class ConsulRegistry implements Registry {
 	@Override
 	public <T> Set<T> findByType(Class<T> type) {
 		String keyPrefix = type.getName().replaceAll("\\$", "/");
-		logger.debug("find by type using keyPrefix: " + keyPrefix);
 		Object object = null;
 		Set<T> result = new HashSet<T>();
 		List<String> keys = null;
 		try {
 			keys = kvClient.getKeys(keyPrefix);
 		} catch (ConsulException e) {
-			logger.debug("no keys found");
 			return result;
 		}
 		if (keys != null) {
 			for (String key : keys) {
 				// change bookmark back into actual key
 				key = key.substring((key.lastIndexOf('/') + 1));
-				logger.debug("now going for key :" + key);
 				object = lookupByName(key.replaceAll("\\$", "/"));
 				if (type.isInstance(object)) {
 					result.add(type.cast(object));
@@ -210,10 +197,8 @@ public class ConsulRegistry implements Registry {
 		byte[] preEncodedValue = Base64.encodeBase64(serializedObject);
 		String value = new String(preEncodedValue);
 		// store the actual class
-		logger.debug("store value: " + value + " ,under key: " + key);
 		kvClient.putValue(key, value);
 		// store just as a bookmark
-		logger.debug("store bookmark: " + 1 + " ,under key: " + object.getClass().getName().replaceAll("\\$", "/") + "/" + key);
 		kvClient.putValue(object.getClass().getName().replaceAll("\\$", "/") + "/" + key, "1");
 		kvClient.releaseLock(lockKey, sessionId);
 	}
