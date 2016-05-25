@@ -52,13 +52,6 @@ public class WeatherComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         WeatherConfiguration configuration = new WeatherConfiguration(this);
 
-        String ids = getAndRemoveParameter(parameters, "ids", String.class);
-        Iterator<?> it = ObjectHelper.createIterator(ids);
-        while (it.hasNext()) {
-            String id = (String) it.next();
-            configuration.addId(id);
-        }
-
         // and then override from parameters
         setProperties(configuration, parameters);
 

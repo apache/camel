@@ -32,7 +32,6 @@ import org.apache.commons.httpclient.HttpConnectionManager;
 
 import static org.apache.camel.component.weather.WeatherLanguage.en;
 import static org.apache.camel.component.weather.WeatherMode.JSON;
-import static org.apache.camel.component.weather.WeatherUnits.METRIC;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 @UriParams
@@ -69,7 +68,7 @@ public class WeatherConfiguration {
     private String headerName;
     @UriParam
     private String zip;
-    @UriParam
+    @UriParam(javaType = "java.lang.String")
     private List<String> ids;
     @UriParam
     private Integer cnt;
@@ -371,28 +370,20 @@ public class WeatherConfiguration {
         return (List<String>) ids;
     }
 
-    public void addId(String id) {
+    /**
+     * List of id's of city/stations. You can separate multiple ids by comma.
+     */
+    public void setIds(String id) {
         if (ids == null) {
             ids = new ArrayList<>();
         }
-        ids.add(id);
-    }
-
-    /**
-     * List of id's of city/stations
-     */
-    public void setIds(String id, String... ids) {
         Iterator<?> it = ObjectHelper.createIterator(id);
         while (it.hasNext()) {
             String myId = (String) it.next();
-            addId(myId);
+            ids.add(myId);
         }
-        this.ids = Arrays.asList(ids);
     }
 
-    /**
-     * List of id's of city/stations
-     */
     public void setIds(List<String> ids) {
         this.ids = ids;
     }
@@ -413,7 +404,7 @@ public class WeatherConfiguration {
     }
 
     /**
-     * The API to be use (current, forecast/3 hour, forecast daily, station
+     * The API to be use (current, forecast/3 hour, forecast daily, station)
      */
     public void setWeatherApi(WeatherApi weatherApi) {
         this.weatherApi = weatherApi;

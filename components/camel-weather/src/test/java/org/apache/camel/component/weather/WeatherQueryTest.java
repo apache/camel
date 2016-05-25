@@ -169,7 +169,7 @@ public class WeatherQueryTest {
     @Test
     public void testMultiIdQuery() throws Exception {
         WeatherConfiguration weatherConfiguration = new WeatherConfiguration(new WeatherComponent());
-        weatherConfiguration.setIds("524901", "703448");
+        weatherConfiguration.setIds("524901,703448");
         weatherConfiguration.setMode(WeatherMode.JSON);
         weatherConfiguration.setLanguage(WeatherLanguage.nl);
         weatherConfiguration.setAppid(APPID);
