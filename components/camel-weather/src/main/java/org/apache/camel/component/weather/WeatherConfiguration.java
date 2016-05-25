@@ -18,6 +18,7 @@ package org.apache.camel.component.weather;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -26,6 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.HttpConnectionManager;
 
 import static org.apache.camel.component.weather.WeatherLanguage.en;
@@ -375,10 +377,16 @@ public class WeatherConfiguration {
         }
         ids.add(id);
     }
+
     /**
      * List of id's of city/stations
      */
-    public void setIds(String... ids) {
+    public void setIds(String id, String... ids) {
+        Iterator<?> it = ObjectHelper.createIterator(id);
+        while (it.hasNext()) {
+            String myId = (String) it.next();
+            addId(myId);
+        }
         this.ids = Arrays.asList(ids);
     }
 
