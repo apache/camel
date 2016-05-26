@@ -16,10 +16,7 @@
  */
 package org.apache.camel.converter;
 
-
 import java.time.Duration;
-import java.util.Date;
-import java.util.TimeZone;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TypeConversionException;
@@ -41,6 +38,7 @@ public class DurationConverterTest extends ContextTestSupport {
         Duration duration = Duration.parse("P60000000000000D");
         try {
             context.getTypeConverter().convertTo(long.class, duration);
+            fail("Should throw exception");
         } catch (TypeConversionException e) {
             assertIsInstanceOf(ArithmeticException.class, e.getCause().getCause());
         }
@@ -55,7 +53,7 @@ public class DurationConverterTest extends ContextTestSupport {
     }
 
     public void testToString() throws Exception {
-        Duration duration= Duration.parse("PT2H6M20.31S");
+        Duration duration = Duration.parse("PT2H6M20.31S");
 
         String durationAsString = context.getTypeConverter().convertTo(String.class, duration);
         assertNotNull(durationAsString);
