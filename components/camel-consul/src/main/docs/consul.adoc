@@ -47,8 +47,9 @@ The Consul component has no options.
 
 
 
+
 // endpoint options: START
-The Consul component supports 20 endpoint options which are listed below:
+The Consul component supports 22 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -56,20 +57,22 @@ The Consul component supports 20 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | apiEndpoint | common |  | String | *Required* The API endpoint
 | connectTimeoutMillis | common |  | Long | Connect timeout for OkHttpClient
+| dc | common |  | String | The data center
 | key | common |  | String | The default key. Can be overridden by CamelConsulKey
 | pingInstance | common | true | boolean | Configure if the AgentClient should attempt a ping before returning the Consul instance
 | readTimeoutMillis | common |  | Long | Read timeout for OkHttpClient
+| tags | common |  | String | Set tags
 | url | common |  | String | The Consul agent URL
 | writeTimeoutMillis | common |  | Long | Write timeout for OkHttpClient
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | action | producer |  | String | The default action. Can be overridden by CamelConsulAction
+| valueAsString | producer | false | boolean | Default to transform values retrieved from Consul i.e. on KV endpoint to string.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | blockSeconds | watch | 10 | Integer | The second to wait for a watch event default 10 seconds
 | firstIndex | watch | 0 | long | The first index for watch for default 0
 | recursive | watch | false | boolean | Recursively watch default false
-| valueAsString | kv | false | boolean | Default to transform values retrieved from Consul i.e. on KV endpoint to string.
 | aclToken | security |  | String | Sets the ACL token to be used with Consul
 | password | security |  | String | Sets the password to be used for basic authentication
 | sslContextParameters | security |  | SSLContextParameters | SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters instance.
@@ -77,6 +80,7 @@ The Consul component supports 20 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 [[Consul-Headers]]

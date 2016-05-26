@@ -125,6 +125,16 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     /**
+     * Configures the Service Call EIP using Consul
+     * <p/>
+     * Use <tt>end</tt> when configuration is complete, to return back to the Service Call EIP.
+     */
+    public ConsulConfigurationDefinition consulConfiguration() {
+        serviceCallConfiguration = new ConsulConfigurationDefinition(this);
+        return (ConsulConfigurationDefinition) serviceCallConfiguration;
+    }
+
+    /**
      * Configures the ServiceCall using the given configuration
      */
     public ServiceCallDefinition serviceCallConfiguration(ServiceCallConfigurationDefinition configuration) {

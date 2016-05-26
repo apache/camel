@@ -40,6 +40,7 @@ import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.remote.ConsulConfigurationDefinition;
 import org.apache.camel.model.remote.KubernetesConfigurationDefinition;
 import org.apache.camel.model.remote.RibbonConfigurationDefinition;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -146,6 +147,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("streamCaching", CamelStreamCachingStrategyDefinition.class, false, false);
         addBeanDefinitionParser("propertyPlaceholder", CamelPropertyPlaceholderDefinition.class, false, false);
         addBeanDefinitionParser("hystrixConfiguration", HystrixConfigurationDefinition.class, false, false);
+        addBeanDefinitionParser("consulConfiguration", ConsulConfigurationDefinition.class, false, false);
         addBeanDefinitionParser("kubernetesConfiguration", KubernetesConfigurationDefinition.class, false, false);
         addBeanDefinitionParser("ribbonConfiguration", RibbonConfigurationDefinition.class, false, false);
 

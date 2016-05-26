@@ -51,7 +51,7 @@ public class ConsulComponent extends UriEndpointComponent {
     }
 
     private ConsulConfiguration createConfiguration(Map<String, Object> parameters) throws Exception {
-        ConsulConfiguration configuration = new ConsulConfiguration();
+        ConsulConfiguration configuration = new ConsulConfiguration(getCamelContext());
         setProperties(configuration, parameters);
 
         return configuration;

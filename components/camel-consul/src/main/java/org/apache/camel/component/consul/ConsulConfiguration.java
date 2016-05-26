@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.consul;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.orbitz.consul.Consul;
+import org.apache.camel.CamelContext;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
@@ -25,6 +31,10 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 public class ConsulConfiguration {
     @UriParam
     private String url;
+    @UriParam
+    private String dc;
+    @UriParam(javaType = "java.lang.String")
+    private Set<String> tags;
 
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
@@ -44,25 +54,29 @@ public class ConsulConfiguration {
     @UriParam(defaultValue = "true")
     private boolean pingInstance = true;
 
-
-    @UriParam(label = "producer")
-    private String action;
-
-    @UriParam(label = "producer,kv", defaultValue = "false")
-    private boolean valueAsString;
-
     @UriParam
     private String key;
+    @UriParam(label = "producer")
+    private String action;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean valueAsString;
 
     @UriParam(label = "consumer,watch", defaultValue = "10")
     private Integer blockSeconds = 10;
-
     @UriParam(label = "consumer,watch", defaultValue = "0")
     private long firstIndex;
-
     @UriParam(label = "consumer,watch", defaultValue = "false")
     private boolean recursive;
 
+    private final CamelContext context;
+
+    public ConsulConfiguration(CamelContext context) {
+        this.context = context;
+    }
+
+    public CamelContext getContext() {
+        return this.context;
+    }
 
     public String getUrl() {
         return url;
@@ -73,6 +87,36 @@ public class ConsulConfiguration {
      */
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getDc() {
+        return dc;
+    }
+
+    /**
+     * The data center
+     */
+    public void setDc(String dc) {
+        this.dc = dc;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    /**
+     * Set tags
+     */
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
+    }
+
+    /**
+     * Set tags
+     */
+    public void setTags(String tagsAsString) {
+        this.tags = new HashSet<>();
+        Collections.addAll(tags, tagsAsString.split(","));
     }
 
     public SSLContextParameters getSslContextParameters() {
@@ -233,5 +277,34 @@ public class ConsulConfiguration {
      */
     public void setRecursive(boolean recursive) {
         this.recursive = recursive;
+    }
+
+    public Consul createConsulClient() throws Exception {
+        Consul.Builder builder = Consul.builder();
+        builder.withPing(pingInstance);
+
+        if (ObjectHelper.isNotEmpty(url)) {
+            builder.withUrl(url);
+        }
+        if (ObjectHelper.isNotEmpty(context) && ObjectHelper.isNotEmpty(sslContextParameters)) {
+            builder.withSslContext(sslContextParameters.createSSLContext(context));
+        }
+        if (ObjectHelper.isNotEmpty(aclToken)) {
+            builder.withAclToken(aclToken);
+        }
+        if (requiresBasicAuthentication()) {
+            builder.withBasicAuth(userName, password);
+        }
+        if (ObjectHelper.isNotEmpty(connectTimeoutMillis)) {
+            builder.withConnectTimeoutMillis(connectTimeoutMillis);
+        }
+        if (ObjectHelper.isNotEmpty(readTimeoutMillis)) {
+            builder.withReadTimeoutMillis(readTimeoutMillis);
+        }
+        if (ObjectHelper.isNotEmpty(writeTimeoutMillis)) {
+            builder.withWriteTimeoutMillis(writeTimeoutMillis);
+        }
+
+        return builder.build();
     }
 }

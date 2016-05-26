@@ -17,6 +17,10 @@
 package org.apache.camel.component.consul;
 
 public interface ConsulConstants {
+    // Service Call EIP
+    String CONSUL_SERVER_IP = "CamelConsulServerIp";
+    String CONSUL_SERVER_PORT = "CamelConsulServerPort";
+
     String CONSUL_ACTION = "CamelConsulAction";
     String CONSUL_KEY = "CamelConsulKey";
     String CONSUL_EVENT_ID = "CamelConsulEventId";

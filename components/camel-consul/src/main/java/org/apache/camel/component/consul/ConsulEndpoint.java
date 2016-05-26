@@ -96,32 +96,7 @@ public class ConsulEndpoint extends DefaultEndpoint {
 
     public synchronized Consul getConsul() throws Exception {
         if (consul == null) {
-            Consul.Builder builder = Consul.builder();
-            builder.withPing(configuration.isPingInstance());
-
-            if (ObjectHelper.isNotEmpty(configuration.getUrl())) {
-                builder.withUrl(configuration.getUrl());
-            }
-            if (ObjectHelper.isNotEmpty(configuration.getSslContextParameters())) {
-                builder.withSslContext(configuration.getSslContextParameters().createSSLContext(getCamelContext()));
-            }
-            if (ObjectHelper.isNotEmpty(configuration.getAclToken())) {
-                builder.withAclToken(configuration.getAclToken());
-            }
-            if (configuration.requiresBasicAuthentication()) {
-                builder.withBasicAuth(configuration.getUserName(), configuration.getPassword());
-            }
-            if (ObjectHelper.isNotEmpty(configuration.getConnectTimeoutMillis())) {
-                builder.withConnectTimeoutMillis(configuration.getConnectTimeoutMillis());
-            }
-            if (ObjectHelper.isNotEmpty(configuration.getReadTimeoutMillis())) {
-                builder.withReadTimeoutMillis(configuration.getReadTimeoutMillis());
-            }
-            if (ObjectHelper.isNotEmpty(configuration.getWriteTimeoutMillis())) {
-                builder.withWriteTimeoutMillis(configuration.getWriteTimeoutMillis());
-            }
-
-            consul = builder.build();
+            consul = configuration.createConsulClient();
         }
 
         return consul;
