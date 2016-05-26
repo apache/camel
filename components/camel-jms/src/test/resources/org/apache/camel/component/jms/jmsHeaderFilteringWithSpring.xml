@@ -36,7 +36,7 @@
         <property name="headerFilterStrategy">
             <bean
                 class="org.apache.camel.component.jms.JmsHeaderFilterStrategy">
-                <property name="outFilter">
+                <property name="inFilter">
                     <set>
                         <value>JMSXUserID</value>
                         <value>JMSXAppID</value>
@@ -46,12 +46,12 @@
                         <value>JMSXRcvTimestamp</value>
                         <value>JMSXRecvTimestamp</value>
                         <value>JMSXState</value>
-                        <value>anotherheader</value>
+                        <value>testheader</value>
                     </set>
                 </property>
-                <property name="inFilter">
+                <property name="outFilter">
                     <set>
-                        <value>testheader</value>
+                        <value>anotherheader</value>
                     </set>
                 </property>
                 <property name="inFilterPattern" value="(org_apache_camel)[_|a-z|A-Z|0-9]*(test)[_|a-z|A-Z|0-9]*"/>                
