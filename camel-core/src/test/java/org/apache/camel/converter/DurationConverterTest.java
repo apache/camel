@@ -27,9 +27,6 @@ import org.apache.camel.TypeConversionException;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-/**
- *
- */
 public class DurationConverterTest extends ContextTestSupport {
 
     public void testToMillis() throws Exception {
@@ -46,8 +43,6 @@ public class DurationConverterTest extends ContextTestSupport {
             context.getTypeConverter().convertTo(long.class, duration);
         } catch (TypeConversionException e) {
             assertIsInstanceOf(ArithmeticException.class, e.getCause().getCause());
-            assertThat(e.getMessage(), is("Error during type conversion from type: java.time.Duration to the required type: " +
-                    "long with value PT1440000000000000H due java.lang.ArithmeticException: long overflow"));
         }
     }
 
