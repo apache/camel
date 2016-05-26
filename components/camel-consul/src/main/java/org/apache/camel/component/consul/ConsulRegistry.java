@@ -26,8 +26,8 @@ import java.util.UUID;
 
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.SerializationUtils;
 
 import com.google.common.base.Optional;
 import com.google.common.net.HostAndPort;
@@ -47,7 +47,7 @@ import com.orbitz.consul.model.session.SessionCreatedResponse;
  * 
  */
 public class ConsulRegistry implements Registry {
-
+	
 	private String hostname = "localhost";
 	private int port = 8500;
 	private Consul consul;
