@@ -235,6 +235,7 @@
     * [Servlet](servlet.adoc)
     * [Servlet Listener](servletlistener.adoc)
     * [Shiro](shiro-security.adoc)
+    * [SIP](sip.adoc)
     * [SJMS](sjms.adoc)
     * [SJMS Batch](sjms-batch.adoc)
     * [Telegram](telegram.adoc)
