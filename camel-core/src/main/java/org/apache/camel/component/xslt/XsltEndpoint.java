@@ -25,6 +25,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
+import org.xml.sax.EntityResolver;
 
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
@@ -90,6 +91,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private boolean allowStAX = true;
     @UriParam
     private boolean deleteOutputFile;
+    @UriParam(label = "advanced")
+    private EntityResolver entityResolver;
 
     @Deprecated
     public XsltEndpoint(String endpointUri, Component component, XsltBuilder xslt, String resourceUri,
@@ -340,6 +343,17 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.deleteOutputFile = deleteOutputFile;
     }
 
+    public EntityResolver getEntityResolver() {
+        return entityResolver;
+    }
+
+    /**
+     * To use a custom org.xml.sax.EntityResolver with javax.xml.transform.sax.SAXSource.
+     */
+    public void setEntityResolver(EntityResolver entityResolver) {
+        this.entityResolver = entityResolver;
+    }
+
     public Map<String, Object> getParameters() {
         return parameters;
     }
@@ -417,6 +431,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         xslt.setFailOnNullBody(failOnNullBody);
         xslt.transformerCacheSize(transformerCacheSize);
         xslt.setUriResolver(uriResolver);
+        xslt.setEntityResolver(entityResolver);
         xslt.setAllowStAX(allowStAX);
         xslt.setDeleteOutputFile(deleteOutputFile);
 
