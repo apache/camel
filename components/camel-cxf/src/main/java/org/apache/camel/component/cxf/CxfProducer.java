@@ -79,12 +79,10 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         if (client == null) {
             client = endpoint.createClient();
         }
-        // Apply the server configurer if it is possible 
-        if (endpoint.getCxfEndpointConfigurer() != null) {
-            endpoint.getCxfEndpointConfigurer().configureClient(client);
-        }
+
+        endpoint.getChainedCxfEndpointConfigurer().configureClient(client);
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();

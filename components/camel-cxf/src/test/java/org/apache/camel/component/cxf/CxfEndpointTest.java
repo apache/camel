@@ -24,6 +24,7 @@ import org.apache.camel.component.cxf.CxfEndpoint.CamelCxfClientImpl;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.endpoint.Client;
@@ -99,11 +100,13 @@ public class CxfEndpointTest extends Assert {
     public void testCxfEndpointConfigurer() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         CxfEndpointConfigurer configurer = EasyMock.createMock(CxfEndpointConfigurer.class);
+        SSLContextParameters sslContextParameters = EasyMock.createMock(SSLContextParameters.class);
         Processor processor = EasyMock.createMock(Processor.class);
         registry.put("myConfigurer", configurer);
+        registry.put("sslContextParameters", sslContextParameters);
         CamelContext camelContext = new DefaultCamelContext(registry);
         CxfComponent cxfComponent = new CxfComponent(camelContext);
-        CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI + "&cxfEndpointConfigurer=#myConfigurer");
+        CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI + "&cxfEndpointConfigurer=#myConfigurer&sslContextParameters=sslContextParameters");
         
         configurer.configure(EasyMock.isA(AbstractWSDLBasedEndpointFactory.class));
         EasyMock.expectLastCall();

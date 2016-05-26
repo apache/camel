@@ -24,6 +24,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
     private static final Logger LOG = LoggerFactory.getLogger(CxfComponent.class);
 
     private Boolean allowStreaming;
-    
+
     public CxfComponent() {
         super(CxfEndpoint.class);
     }
@@ -74,7 +75,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
                 parameters.put("defaultBus", value);
             }
         }
-        
+
         if (allowStreaming != null && !parameters.containsKey("allowStreaming")) {
             parameters.put("allowStreaming", Boolean.toString(allowStreaming));
         }
@@ -97,6 +98,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
             // endpoint URI does not specify a bean
             result = createCxfEndpoint(remaining);
         }
+
         if (result.getCamelContext() == null) {
             result.setCamelContext(getCamelContext());
         }
@@ -129,4 +131,5 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
         CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
         cxfEndpoint.updateEndpointUri(uri);
     }
+
 }
