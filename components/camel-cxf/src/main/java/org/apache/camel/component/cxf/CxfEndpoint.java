@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
@@ -69,6 +70,7 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.BindingConfiguration;
@@ -163,6 +165,10 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private String defaultOperationNamespace;
     @UriParam(label = "producer")
     private boolean wrapped;
+    @UriParam(label = "producer")
+    private SSLContextParameters sslContextParameters;
+    @UriParam(label = "producer")
+    private HostnameVerifier hostnameVerifier;
     @UriParam
     private Boolean wrappedStyle;
     @UriParam(label = "advanced")
@@ -1132,6 +1138,21 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         this.username = username;
     }
 
+    public CxfEndpointConfigurer getChainedCxfEndpointConfigurer() {
+        return ChainedCxfEndpointConfigurer
+                .create(getNullSafeCxfEndpointConfigurer(),
+                        SslCxfEndpointConfigurer.create(sslContextParameters, getCamelContext()))
+                .addChild(HostnameVerifierCxfEndpointConfigurer.create(hostnameVerifier));
+    }
+
+    private CxfEndpointConfigurer getNullSafeCxfEndpointConfigurer() {
+        if (cxfEndpointConfigurer == null) {
+            return new ChainedCxfEndpointConfigurer.NullCxfEndpointConfigurer();
+        } else {
+            return cxfEndpointConfigurer;
+        }
+    }
+
     /**
      * We need to override the {@link ClientImpl#setParameters} method
      * to insert parameters into CXF Message for {@link DataFormat#PAYLOAD} mode.
@@ -1397,4 +1418,26 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         this.continuationTimeout = continuationTimeout;
     }
 
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * The Camel SSL setting reference. Use the # notation to reference the SSL Context.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    public HostnameVerifier getHostnameVerifier() {
+        return hostnameVerifier;
+    }
+
+    /**
+     * The hostname verifier to be used. Use the # notation to reference a HostnameVerifier
+     * from the registry.
+     */
+    public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
+        this.hostnameVerifier = hostnameVerifier;
+    }
 }
