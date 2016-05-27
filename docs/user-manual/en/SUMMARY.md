@@ -267,6 +267,7 @@
     * [Lzf](lzf.adoc)
     * [Protobuf](protobuf.adoc)
     * [XML JSON](xmljson.adoc)
+    * [YAML](yaml.adoc)
 
 * User Guide
     * [Karaf](karaf.adoc)
