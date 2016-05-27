@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.file.remote.sftp;
 
+import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.Arrays;
 
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.io.FileUtils;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
@@ -41,11 +43,25 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
     protected static final String FTP_ROOT_DIR = "target/res/home";
     protected SshServer sshd;
     protected boolean canTest;
+    protected String oldUserHome;
 
     @Override
     @Before
     public void setUp() throws Exception {
         deleteDirectory(FTP_ROOT_DIR);
+
+        oldUserHome = System.getProperty("user.home");
+
+        System.setProperty("user.home", "target/user-home");
+
+        String simulatedUserHome = "target/user-home";
+        String simulatedUserSsh = "target/user-home/.ssh";
+        deleteDirectory(simulatedUserHome);
+        createDirectory(simulatedUserHome);
+        createDirectory(simulatedUserSsh);
+
+        FileUtils.copyInputStreamToFile(getClass().getClassLoader().getResourceAsStream("known_hosts"), new File(simulatedUserSsh + "/known_hosts"));
+
         super.setUp();
 
         setUpServer();
@@ -88,6 +104,12 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
     @Override
     @After
     public void tearDown() throws Exception {
+        if (oldUserHome != null) {
+            System.setProperty("user.home", oldUserHome);
+        } else {
+            System.clearProperty("user.home");
+        }
+
         super.tearDown();
 
         tearDownServer();

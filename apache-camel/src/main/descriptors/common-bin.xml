@@ -228,6 +228,7 @@
         <include>org.apache.camel:camel-swagger</include>
         <include>org.apache.camel:camel-swagger-java</include> 
         <include>org.apache.camel:camel-tagsoup</include>
+        <include>org.apache.camel:camel-tarfile</include>
         <include>org.apache.camel:camel-telegram</include>
         <include>org.apache.camel:camel-test</include>
         <include>org.apache.camel:camel-test-blueprint</include>
