@@ -38,7 +38,6 @@ import org.springframework.batch.core.launch.JobLauncher;
 @UriEndpoint(scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName", producerOnly = true, label = "spring,batch,scheduling")
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
-
     @UriPath
     @Metadata(required = "true")
     private String jobName;
@@ -152,7 +151,6 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         this.jobLauncher = jobLauncher;
     }
 
-
     /**
      * Explicitly defines if the jobName shouls be taken from the headers instead of the URI.
      */
@@ -160,10 +158,8 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         this.jobFromHeader = jobFromHeader;
     }
 
-
     public Boolean getJobFromHeader() {
         return jobFromHeader;
     }
-
 
 }

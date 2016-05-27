@@ -68,7 +68,6 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:error")
     MockEndpoint errorEndpoint;
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -82,8 +81,6 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
             }
         };
     }
-
-
 
     @Override
     public JndiRegistry createRegistry() throws Exception {
@@ -129,7 +126,6 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         mockEndpoint.expectedMessageCount(1);
         errorEndpoint.expectedMessageCount(0);
 
-        //dynamic job work if header is present and the job exists
         final Map<String, Object> headers = new HashMap<>();
         headers.put(SpringBatchComponent.JOB_NAME, "dynamicMockjob");
 
@@ -138,7 +134,6 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         mockEndpoint.assertIsSatisfied();
         errorEndpoint.assertIsSatisfied();
     }
-
 
     @Test
     public void shouldInjectJobToEndpoint() throws IllegalAccessException {
