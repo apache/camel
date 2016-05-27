@@ -33,8 +33,6 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     @UriParam(label = "security")
     private String knownHostsFile;
-    @UriParam(label = "security", defaultValue = "true")
-    private boolean useUserKnownHostsFile = true;
     @UriParam(label = "security")
     private String knownHostsUri;
     @UriParam(label = "security")
@@ -96,17 +94,6 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     public String getKnownHostsUri() {
         return knownHostsUri;
-    }
-
-    public boolean isUseUserKnownHostsFile() {
-        return useUserKnownHostsFile;
-    }
-
-    /**
-     * If knownHostFile has not been explicit configured then use the host file from System.getProperty(user.home)/.ssh/known_hosts
-     */
-    public void setUseUserKnownHostsFile(boolean useUserKnownHostsFile) {
-        this.useUserKnownHostsFile = useUserKnownHostsFile;
     }
 
     /**

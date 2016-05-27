@@ -131,7 +131,7 @@
     <commons-pool2-version>2.4.2</commons-pool2-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <compress-lzf-version>1.0.3</compress-lzf-version>
-    <consul-client-version>0.12.2</consul-client-version>
+    <consul-client-version>0.12.0</consul-client-version>
     <consul-client-bundle-version>0.12.0_1</consul-client-bundle-version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
     <cxf-version>3.1.6</cxf-version>
@@ -464,7 +464,7 @@
     <quartz-version-range>[1.8,2)</quartz-version-range>
     <quartz2-version>2.2.3</quartz2-version>
     <quickfix-bundle-version>1.6.1_1</quickfix-bundle-version>
-    <rabbitmq-amqp-client-version>3.6.2</rabbitmq-amqp-client-version>
+    <rabbitmq-amqp-client-version>3.6.1</rabbitmq-amqp-client-version>
     <reflections-bundle-version>0.9.10_3</reflections-bundle-version>
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
     <rest-assured-version>2.9.0</rest-assured-version>
@@ -1717,11 +1717,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-tagsoup</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-tarfile</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

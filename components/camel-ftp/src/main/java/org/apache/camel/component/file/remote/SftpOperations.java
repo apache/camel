@@ -276,13 +276,6 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             jsch.setKnownHosts(new ByteArrayInputStream(sftpConfig.getKnownHosts()));
         }
 
-        String knownHostsFile = sftpConfig.getKnownHostsFile();
-        if (knownHostsFile == null && sftpConfig.isUseUserKnownHostsFile()) {
-            knownHostsFile = System.getProperty("user.home") + "/.ssh/known_hosts";
-            LOG.info("Known host file not configured, using user known host file: {}", knownHostsFile);
-        }
-        jsch.setKnownHosts(ObjectHelper.isEmpty(knownHostsFile) ? null : knownHostsFile);
-
         final Session session = jsch.getSession(configuration.getUsername(), configuration.getHost(), configuration.getPort());
 
         if (isNotEmpty(sftpConfig.getStrictHostKeyChecking())) {
