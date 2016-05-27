@@ -76,7 +76,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start").to("spring-batch:mockJob").to("mock:test");
                 from("direct:dynamic").
-                        to("spring-batch:mockJob?jobFromHeader=true").
+                        to("spring-batch:fake?jobFromHeader=true").
                         errorHandler(deadLetterChannel("mock:error")).
                         to("mock:test");
             }
