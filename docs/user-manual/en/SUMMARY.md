@@ -240,6 +240,7 @@
     * [SJMS Batch](sjms-batch.adoc)
     * [Slack](slack.adoc)
     * [SMPP](smpp.adoc)
+    * [SNMP](snmp.adoc)
     * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
     * [Websocket](websocket.adoc)
