@@ -56,7 +56,6 @@ public class SpringBatchProducer extends DefaultProducer {
             job2run = CamelContextHelper.mandatoryLookup(getEndpoint().getCamelContext(), messageJobName, Job.class);
         }
 
-
         if (job2run == null) {
             exchange.setException(new CamelExchangeException("jobName was not specified in the endpoint construction "
                     + " and header " + SpringBatchComponent.JOB_NAME + " could not be found", exchange));
