@@ -23,6 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,8 +38,13 @@ import org.springframework.batch.core.launch.JobLauncher;
 @UriEndpoint(scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName", producerOnly = true, label = "spring,batch,scheduling")
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+
+    @UriPath
+    @Metadata(required = "true")
     private String jobName;
+
+    @UriParam(defaultValue = "false")
+    private Boolean jobFromHeader;
 
     /**
      * @deprecated will be removed in Camel 3.0
@@ -46,6 +52,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
      */
     @Deprecated
     private String jobLauncherRef;
+
     @UriParam
     private JobLauncher jobLauncher;
 
@@ -83,7 +90,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         if (jobLauncher == null) {
             jobLauncher = resolveJobLauncher();
         }
-        if (job == null && jobName != null) {
+        if (job == null && jobName != null && jobFromHeader == null) {
             job = CamelContextHelper.mandatoryLookup(getCamelContext(), jobName, Job.class);
         }
     }
@@ -144,4 +151,19 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
     public void setJobLauncher(JobLauncher jobLauncher) {
         this.jobLauncher = jobLauncher;
     }
+
+
+    /**
+     * Explicitly defines if the jobName shouls be taken from the headers instead of the URI.
+     */
+    public void setJobFromHeader(Boolean jobFromHeader) {
+        this.jobFromHeader = jobFromHeader;
+    }
+
+
+    public Boolean getJobFromHeader() {
+        return jobFromHeader;
+    }
+
+
 }
