@@ -48,7 +48,6 @@ import static org.mockito.BDDMockito.*;
 public class SpringBatchEndpointTest extends CamelTestSupport {
 
     // Fixtures
-
     @Mock
     JobLauncher jobLauncher;
 
@@ -77,7 +76,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start").to("spring-batch:mockJob").to("mock:test");
                 from("direct:dynamic").
-                        to("spring-batch:dynamic").
+                        to("spring-batch:mockJob?jobFromHeader=true").
                         errorHandler(deadLetterChannel("mock:error")).
                         to("mock:test");
             }
@@ -111,7 +110,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void dynamicJobWorksIfHeaderWithInvalidJobName() throws Exception {
+    public void dynamicJobFailsIfHeaderWithInvalidJobName() throws Exception {
 
         mockEndpoint.expectedMessageCount(0);
         errorEndpoint.expectedMessageCount(1);
@@ -125,11 +124,11 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void dynamicJobWorksIfHeaderPressentWithvalidJob() throws Exception {
+    public void dynamicJobWorksIfHeaderPressentWithValidJob() throws Exception {
 
         mockEndpoint.expectedMessageCount(1);
         errorEndpoint.expectedMessageCount(0);
-        Thread.sleep(5000);
+
         //dynamic job work if header is present and the job exists
         final Map<String, Object> headers = new HashMap<>();
         headers.put(SpringBatchComponent.JOB_NAME, "dynamicMockjob");
