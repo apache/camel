@@ -266,7 +266,8 @@
     * [Jaxb](jaxb.adoc)
     * [Jibx](jibx.adoc)
     * [Lzf](lzf.adoc)
-    * [Protobuf](protobuf.adoc)
+    * [SOAP](soap.adoc)
+    * [YAML](yaml.adoc)
     * [XML JSON](xmljson.adoc)
     * [YAML](yaml.adoc)
 
