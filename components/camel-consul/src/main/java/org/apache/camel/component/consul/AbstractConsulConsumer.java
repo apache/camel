@@ -25,9 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * @author lburgazzoli
- */
 public abstract class AbstractConsulConsumer<C> extends DefaultConsumer {
     protected final ConsulEndpoint endpoint;
     protected final ConsulConfiguration configuration;

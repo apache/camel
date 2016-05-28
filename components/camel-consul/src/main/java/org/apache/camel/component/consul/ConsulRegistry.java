@@ -41,7 +41,6 @@ import org.apache.commons.lang.SerializationUtils;
 /**
  * Apache Camel Plug-in for Consul Registry (Objects stored under kv/key as well
  * as bookmarked under kv/[type]/key to avoid iteration over types)
- * 
  */
 public class ConsulRegistry implements Registry {
 
@@ -107,7 +106,7 @@ public class ConsulRegistry implements Registry {
         // encode $ signs as they occur in subclass types
         String keyPrefix = type.getName().replaceAll("\\$", "/");
         kvClient = consul.keyValueClient();
-        List<String> keys = null;
+        List<String> keys;
         try {
             keys = kvClient.getKeys(keyPrefix);
         } catch (ConsulException e) {
@@ -151,11 +150,10 @@ public class ConsulRegistry implements Registry {
     }
 
     public void remove(String key) {
-        // create session to avoid conflicts (not sure if that is safe
-        // enough)
+        // create session to avoid conflicts (not sure if that is safe enough)
         SessionClient sessionClient = consul.sessionClient();
         String sessionName = "session_" + UUID.randomUUID().toString();
-        //
+
         SessionCreatedResponse response = sessionClient
                 .createSession(ImmutableSession.builder().name(sessionName).build());
         String sessionId = response.getId();

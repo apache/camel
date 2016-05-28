@@ -27,7 +27,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
-
 @UriEndpoint(scheme = "consul", title = "Consul", syntax = "consul://apiEndpoint", label = "api,cloud")
 public class ConsulEndpoint extends DefaultEndpoint {
 

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.consul.enpoint;
 
 import com.orbitz.consul.EventClient;
@@ -27,6 +26,7 @@ import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulEndpoint;
 
 public class ConsulEventProducer extends AbstractConsulProducer<EventClient> {
+
     public ConsulEventProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
         super(endpoint, configuration, c -> c.eventClient());
     }

@@ -24,7 +24,6 @@ import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.HeaderSelectorProducer;
 
-
 public abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
     private final ConsulEndpoint endpoint;
     private final ConsulConfiguration configuration;

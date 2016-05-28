@@ -22,6 +22,7 @@ import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulEndpoint;
 
 public class ConsulAgentProducer extends AbstractConsulProducer<AgentClient> {
+
     public ConsulAgentProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
         super(endpoint, configuration, c -> c.agentClient());
 

@@ -33,6 +33,7 @@ import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 
 public class ConsulEventConsumer extends AbstractConsulConsumer<EventClient> {
+
     public ConsulEventConsumer(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor) {
         super(endpoint, configuration, processor, c -> c.eventClient());
     }
