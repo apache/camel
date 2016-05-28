@@ -161,6 +161,7 @@ public class CxfRsProducer extends DefaultProducer {
             cfb.setBus(bus);
         }
         WebClient client = cfb.createWebClient();
+        ((CxfRsEndpoint) getEndpoint()).getChainedCxfRsEndpointConfigurer().configureClient(client);
         String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
         Class<?> responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
         Type genericType = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, Type.class);

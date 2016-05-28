@@ -79,4 +79,8 @@ public final class CXFTestSupport {
     public static int getPort6() {
         return PORT6;
     }
+
+    public static int getSslPort() {
+        return SSL_PORT;
+    }
 }

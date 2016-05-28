@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -39,6 +40,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
@@ -102,6 +104,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private boolean throwExceptionOnFailure = true;
     @UriParam(label = "producer,advanced", defaultValue = "10")
     private int maxClientCacheSize = 10;
+    @UriParam(label = "producer")
+    private SSLContextParameters sslContextParameters;
+    @UriParam(label = "producer")
+    private HostnameVerifier hostnameVerifier;
     @UriParam
     private boolean loggingFeatureEnabled;
     @UriParam
@@ -116,6 +122,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private boolean performInvocation;
     @UriParam(label = "advanced")
     private boolean propagateContexts;
+    @UriParam(label = "advanced")
+    private CxfRsEndpointConfigurer cxfRsEndpointConfigurer;
 
     public CxfRsEndpoint() {
     }
@@ -204,6 +212,12 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return skipFaultLogging;
     }
 
+    public CxfRsEndpointConfigurer getChainedCxfRsEndpointConfigurer() {
+        return ChainedCxfRsEndpointConfigurer
+                .create(getNullSafeCxfRsEndpointConfigurer(),
+                        SslCxfRsEndpointConfigurer.create(sslContextParameters, getCamelContext()))
+                .addChild(HostnameVerifierCxfRsEndpointConfigurer.create(hostnameVerifier));
+    }
     /**
      * This option controls whether the PhaseInterceptorChain skips logging the Fault that it catches.
      */
@@ -237,6 +251,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
         setupCommonFactoryProperties(sfb);
         sfb.setStart(false);
+        getNullSafeCxfRsEndpointConfigurer().configure(sfb);
+    }
+
+    private CxfRsEndpointConfigurer getNullSafeCxfRsEndpointConfigurer() {
+        if (cxfRsEndpointConfigurer == null) {
+            return new ChainedCxfRsEndpointConfigurer.NullCxfRsEndpointConfigurer();
+        }
+        return cxfRsEndpointConfigurer;
     }
 
     private void processResourceModel(JAXRSServerFactoryBean sfb) {
@@ -283,6 +305,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
         setupCommonFactoryProperties(cfb);
         cfb.setThreadSafe(true);
+        getNullSafeCxfRsEndpointConfigurer().configure(cfb);
     }
 
     protected void setupCommonFactoryProperties(AbstractJAXRSFactoryBean factory) {
@@ -723,5 +746,41 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     private static class InterceptorHolder extends AbstractBasicInterceptorProvider {
     }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * The Camel SSL setting reference. Use the # notation to reference the SSL Context.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    public HostnameVerifier getHostnameVerifier() {
+        return hostnameVerifier;
+    }
+
+    /**
+     * The hostname verifier to be used. Use the # notation to reference a HostnameVerifier
+     * from the registry.
+     */
+    public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
+        this.hostnameVerifier = hostnameVerifier;
+    }
+
+    public CxfRsEndpointConfigurer getCxfRsEndpointConfigurer() {
+        return cxfRsEndpointConfigurer;
+    }
+
+    /**
+     * This option could apply the implementation of org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer which supports to configure the CXF endpoint
+     * in  programmatic way. User can configure the CXF server and client by implementing configure{Server/Client} method of CxfEndpointConfigurer.
+     */
+    public void setCxfRsEndpointConfigurer(CxfRsEndpointConfigurer configurer) {
+        this.cxfRsEndpointConfigurer = configurer;
+    }
+
 
 }

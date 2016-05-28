@@ -378,9 +378,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
         sfb.setBus(getBus());
         sfb.setStart(false);
-        if (getCxfEndpointConfigurer() != null) {
-            getCxfEndpointConfigurer().configure(sfb);
-        }
+        getNullSafeCxfEndpointConfigurer().configure(sfb);
     }
 
     /**
@@ -575,9 +573,8 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
 
         factoryBean.setBus(getBus());
-        if (getCxfEndpointConfigurer() != null) {
-            getCxfEndpointConfigurer().configure(factoryBean);
-        }
+
+        getNullSafeCxfEndpointConfigurer().configure(factoryBean);
     }
 
     // Package private methods
@@ -1234,7 +1231,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                 if (nd instanceof Document) {
                     nd = ((Document)nd).getDocumentElement();
                 }
-                return ((Element)nd).getLocalName();
+                return nd.getLocalName();
             } else if (source instanceof StaxSource) {
                 StaxSource s = (StaxSource)source;
                 r = s.getXMLStreamReader();

@@ -14,36 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf;
+package org.apache.camel.component.cxf.jaxrs;
 
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.component.cxf.common.AbstractHostnameVerifierEndpointConfigurer;
-import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
+import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
+import org.apache.cxf.jaxrs.client.Client;
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
 
-public final class HostnameVerifierCxfEndpointConfigurer extends AbstractHostnameVerifierEndpointConfigurer implements CxfEndpointConfigurer {
+public final class HostnameVerifierCxfRsEndpointConfigurer extends AbstractHostnameVerifierEndpointConfigurer implements CxfRsEndpointConfigurer {
 
-    private HostnameVerifierCxfEndpointConfigurer(HostnameVerifier hostnameVerifier) {
+    private HostnameVerifierCxfRsEndpointConfigurer(HostnameVerifier hostnameVerifier) {
         super(hostnameVerifier);
     }
 
-    public static CxfEndpointConfigurer create(HostnameVerifier hostnameVerifier) {
+    public static CxfRsEndpointConfigurer create(HostnameVerifier hostnameVerifier) {
         if (hostnameVerifier == null) {
-            return new ChainedCxfEndpointConfigurer.NullCxfEndpointConfigurer();
+            return new ChainedCxfRsEndpointConfigurer.NullCxfRsEndpointConfigurer();
         } else {
-            return new HostnameVerifierCxfEndpointConfigurer(hostnameVerifier);
+            return new HostnameVerifierCxfRsEndpointConfigurer(hostnameVerifier);
         }
     }
     @Override
-    public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
+    public void configure(AbstractJAXRSFactoryBean factoryBean) {
     }
 
     @Override
     public void configureClient(Client client) {
-        HTTPConduit httpConduit = (HTTPConduit) client.getConduit();
+        HTTPConduit httpConduit = (HTTPConduit) WebClient.getConfig(client).getConduit();
         setupHttpConduit(httpConduit);
     }
 

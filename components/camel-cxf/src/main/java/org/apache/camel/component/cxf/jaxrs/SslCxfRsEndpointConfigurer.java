@@ -14,38 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf;
+package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.common.AbstractSslEndpointConfigurer;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
+import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
+import org.apache.cxf.jaxrs.client.Client;
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
 
-public final class SslCxfEndpointConfigurer extends AbstractSslEndpointConfigurer implements CxfEndpointConfigurer {
+public final class SslCxfRsEndpointConfigurer extends AbstractSslEndpointConfigurer implements CxfRsEndpointConfigurer {
 
-    private SslCxfEndpointConfigurer(SSLContextParameters sslContextParameters,
-                                     CamelContext camelContext) {
+    private SslCxfRsEndpointConfigurer(SSLContextParameters sslContextParameters,
+                                       CamelContext camelContext) {
         super(sslContextParameters, camelContext);
     }
 
-    public static CxfEndpointConfigurer create(SSLContextParameters sslContextParameters, CamelContext camelContext) {
+    public static CxfRsEndpointConfigurer create(SSLContextParameters sslContextParameters, CamelContext camelContext) {
         if (sslContextParameters == null) {
-            return new ChainedCxfEndpointConfigurer.NullCxfEndpointConfigurer();
+            return new ChainedCxfRsEndpointConfigurer.NullCxfRsEndpointConfigurer();
         } else {
-            return new SslCxfEndpointConfigurer(sslContextParameters, camelContext);
+            return new SslCxfRsEndpointConfigurer(sslContextParameters, camelContext);
         }
     }
 
     @Override
-    public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
+    public void configure(AbstractJAXRSFactoryBean factoryBean) {
     }
 
     @Override
     public void configureClient(Client client) {
-        HTTPConduit httpConduit = (HTTPConduit) client.getConduit();
+        HTTPConduit httpConduit = (HTTPConduit) WebClient.getConfig(client).getConduit();
         setupHttpConduit(httpConduit);
     }
 
