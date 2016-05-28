@@ -48,7 +48,7 @@ public class SpringBatchProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
 
         JobParameters jobParameters = prepareJobParameters(exchange.getIn().getHeaders());
-        String messageJobName = jobParameters.getString(SpringBatchComponent.JOB_NAME);
+        String messageJobName = jobParameters.getString(SpringBatchConstants.JOB_NAME);
 
         Job job2run = this.job;
 
@@ -58,7 +58,7 @@ public class SpringBatchProducer extends DefaultProducer {
 
         if (job2run == null) {
             exchange.setException(new CamelExchangeException("jobName was not specified in the endpoint construction "
-                    + " and header " + SpringBatchComponent.JOB_NAME + " could not be found", exchange));
+                    + " and header " + SpringBatchConstants.JOB_NAME + " could not be found", exchange));
             return;
         }
 

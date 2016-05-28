@@ -42,7 +42,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
     @Metadata(required = "true")
     private String jobName;
 
-    @UriParam(defaultValue = "false")
+    @UriParam
     private Boolean jobFromHeader;
 
     /**
