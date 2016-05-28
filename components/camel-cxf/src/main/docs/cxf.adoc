@@ -263,10 +263,16 @@ cases.
 PhaseInterceptorChain skips logging the Fault that it catches.
 
 |`cxfEndpointConfigurer` |No |New in *Camel 2.11*. This option could apply the implementation of
-`org.apache.camel.component.cxf.CxfEndpointConfigurer which `supports to
+`org.apache.camel.component.cxf.CxfEndpointConfigurer` which supports to
 configure the CXF endpoint in  programmatic way. Since *Camel
-2.15.0,*user can configure the CXF server and client by implementing
-configure\{Server|Client} method of `CxfEndpointConfigurer`.
+2.15.0*,user can configure the CXF server and client by implementing
+configure\{Server/Client} method of `CxfEndpointConfigurer`.
+
+|`sslContextParameters` |No |New in *Camel 2.18.0*. This option can be use to reference a
+Camel SSL-context. You can reference the SSL-context by using the # convention.
+
+|`hostnameVerifier` |No |New in *Camel 2.18.0*. This option can be used to reference a
+HostnameVerifier from the registry using the # convention.
 
 |`username` |No |New in *Camel 2.12.3* This option is used to set the basic
 authentication information of username for the CXF client.
@@ -274,7 +280,7 @@ authentication information of username for the CXF client.
 |`password` |No |New in *Camel 2.12.3* This option is used to set the basic
 authentication information of password for the CXF client.
 
-|`continuationTimeout` |No |New in *Camel 2.14.0*This option is used to set the CXF continuation
+|`continuationTimeout` |No |New in *Camel 2.14.0*. This option is used to set the CXF continuation
 timeout which could be used in CxfConsumer by default when the CXF
 server is using Jetty or Servlet transport. (Before *Camel 2.14.0*,
 CxfConsumer just set the continuation timeout to be 0, which means the
