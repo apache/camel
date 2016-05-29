@@ -17,15 +17,10 @@
 package org.apache.camel.component.mongodb;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
-import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 
-import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +32,8 @@ public class MongoDbTailTrackingManager {
 
     private final MongoClient connection;
     private final MongoDbTailTrackingConfig config;
-    private MongoCollection<Document> dbCol;
-    private Document trackingObj;
+    private MongoCollection<BasicDBObject> dbCol;
+    private BasicDBObject trackingObj;
     
     public MongoDbTailTrackingManager(MongoClient connection, MongoDbTailTrackingConfig config) {
         this.connection = connection;
@@ -50,15 +45,15 @@ public class MongoDbTailTrackingManager {
             return;
         }
         
-        dbCol = connection.getDatabase(config.db).getCollection(config.collection);
-        Document filter = new Document("persistentId", config.persistentId);
+        dbCol = connection.getDatabase(config.db).getCollection(config.collection, BasicDBObject.class);
+        BasicDBObject filter = new BasicDBObject("persistentId", config.persistentId);
         trackingObj = dbCol.find(filter).first();
         if (trackingObj == null) {
             dbCol.insertOne(filter);
             trackingObj = dbCol.find(filter).first();
         }
         // keep only the _id, the rest is useless and causes more overhead during update
-        trackingObj = new Document("_id", trackingObj.get("_id"));
+        trackingObj = new BasicDBObject("_id", trackingObj.get("_id"));
     }
     
     public synchronized void persistToStore() {
@@ -70,7 +65,7 @@ public class MongoDbTailTrackingManager {
             LOG.debug("Persisting lastVal={} to store, collection: {}", lastVal, config.collection);
         }
         
-        Document updateObj = new Document().append("$set", new BasicDBObject(config.field, lastVal));
+        BasicDBObject updateObj = new BasicDBObject().append("$set", new BasicDBObject(config.field, lastVal));
         dbCol.updateOne(trackingObj, updateObj);
         trackingObj = dbCol.find().first();
     }
