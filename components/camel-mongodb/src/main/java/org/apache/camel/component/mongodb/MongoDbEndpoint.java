@@ -31,6 +31,9 @@ import com.mongodb.MongoClient;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -101,6 +104,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     private DBCollection dbCollection;
     private DB db;
+    private MongoDatabase mongoDatabase;
+    private MongoCollection<BasicDBObject> mongoCollection;
 
     // ======= Constructors ===============================================
 
@@ -206,6 +211,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             throw new CamelMongoDbException("Missing required endpoint configuration: database and/or collection");
         }
         db = mongoConnection.getDB(database);
+        mongoDatabase = mongoConnection.getDatabase(database);
         if (db == null) {
             throw new CamelMongoDbException("Could not initialise MongoDbComponent. Database " + database + " does not exist.");
         }
@@ -214,6 +220,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
                 throw new CamelMongoDbException("Could not initialise MongoDbComponent. Collection " + collection + " and createCollection is false.");
             }
             dbCollection = db.getCollection(collection);
+            mongoCollection = mongoDatabase.getCollection(collection, BasicDBObject.class);
 
             LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. Address list: {}, Db: {}, Collection: {}",
                     new Object[]{mongoConnection.getAllAddress().toString(), db.getName(), dbCollection.getName()});
@@ -637,5 +644,13 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      */
     public void setOutputType(MongoDbOutputType outputType) {
         this.outputType = outputType;
+    }
+
+    public MongoDatabase getMongoDatabase() {
+        return mongoDatabase;
+    }
+
+    public MongoCollection<BasicDBObject> getMongoCollection() {
+        return mongoCollection;
     }
 }
