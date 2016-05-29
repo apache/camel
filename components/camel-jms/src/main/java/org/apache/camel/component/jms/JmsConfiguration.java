@@ -183,6 +183,9 @@ public class JmsConfiguration implements Cloneable {
             description = "Specifies the maximum number of concurrent consumers when using request/reply over JMS."
                     + " See also the maxMessagesPerTask option to control dynamic scaling up/down of threads.")
     private int replyToMaxConcurrentConsumers;
+    @UriParam(label = "producer", defaultValue = "1",
+            description = "Specifies the maximum number of concurrent consumers for continue routing when timeout occurred when using request/reply over JMS.")
+    private int replyToOnTimeoutMaxConcurrentConsumers = 1;
     // JmsTemplate only
     @UriParam(label = "producer", defaultValue = "false",
             description = "Set if the deliveryMode, priority or timeToLive qualities of service should be used when sending messages."
@@ -1082,6 +1085,17 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setReplyToMaxConcurrentConsumers(int replyToMaxConcurrentConsumers) {
         this.replyToMaxConcurrentConsumers = replyToMaxConcurrentConsumers;
+    }
+
+    public int getReplyToOnTimeoutMaxConcurrentConsumers() {
+        return replyToOnTimeoutMaxConcurrentConsumers;
+    }
+
+    /**
+     * Specifies the maximum number of concurrent consumers for continue routing when timeout occurred when using request/reply over JMS.
+     */
+    public void setReplyToOnTimeoutMaxConcurrentConsumers(int replyToOnTimeoutMaxConcurrentConsumers) {
+        this.replyToOnTimeoutMaxConcurrentConsumers = replyToOnTimeoutMaxConcurrentConsumers;
     }
 
     public boolean isExplicitQosEnabled() {

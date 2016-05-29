@@ -604,6 +604,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public int getReplyToOnTimeoutMaxConcurrentConsumers() {
+        return getConfiguration().getReplyToOnTimeoutMaxConcurrentConsumers();
+    }
+
+    @ManagedAttribute
     public int getMaxMessagesPerTask() {
         return getConfiguration().getMaxMessagesPerTask();
     }
