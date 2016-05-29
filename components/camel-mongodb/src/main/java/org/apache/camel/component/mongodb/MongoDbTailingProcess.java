@@ -39,6 +39,7 @@ public class MongoDbTailingProcess implements Runnable {
 
     public volatile boolean keepRunning = true;
     public volatile boolean stopped; // = false
+    private volatile CountDownLatch stoppedLatch;
 
     private final DBCollection dbCol;
     private final MongoDbEndpoint endpoint;
@@ -98,6 +99,7 @@ public class MongoDbTailingProcess implements Runnable {
      */
     @Override
     public void run() {
+        stoppedLatch = new CountDownLatch(1);
         while (keepRunning) {
             doRun();
             // if the previous call didn't return because we have stopped running, then regenerate the cursor
@@ -120,6 +122,7 @@ public class MongoDbTailingProcess implements Runnable {
         }
 
         stopped = true;
+        stoppedLatch.countDown();
     }
 
     protected void stop() throws Exception {
@@ -131,8 +134,7 @@ public class MongoDbTailingProcess implements Runnable {
         if (cursor != null) {
             cursor.close();
         }
-        // wait until the main loop acknowledges the stop
-        while (!stopped) { }
+        awaitStopped();
         if (LOG.isInfoEnabled()) {
             LOG.info("Stopped MongoDB Tailable Cursor consumer, bound to collection: {}", "db: " + dbCol.getDB() + ", col: " + dbCol.getName());
         }
@@ -183,4 +185,12 @@ public class MongoDbTailingProcess implements Runnable {
         }
         return answer;
     }
+
+    private void awaitStopped() throws InterruptedException {
+        if (!stopped) {
+            LOG.info("Going to wait for stopping");
+            stoppedLatch.await();
+        }
+    }
+
 }
