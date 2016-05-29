@@ -18,7 +18,6 @@
 package org.apache.camel.component.mongodb;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.Bytes;
