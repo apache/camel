@@ -46,8 +46,8 @@ public class SmppUtilsTest {
 
     @Test
     public void formatTime() {
-        assertEquals("-300101000000000-", SmppUtils.formatTime(new Date(0L)));
-        assertEquals("-300101024640000-", SmppUtils.formatTime(new Date(10000000L)));
+        assertEquals("-300101000000000+", SmppUtils.formatTime(new Date(0L)));
+        assertEquals("-300101024640000+", SmppUtils.formatTime(new Date(10000000L)));
     }
     
     @Test

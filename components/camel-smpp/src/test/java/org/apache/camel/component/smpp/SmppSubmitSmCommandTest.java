@@ -217,12 +217,12 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, new Date(2222222));
         exchange.getIn().setHeader(SmppConstants.PROTOCOL_ID, (byte) 1);
         exchange.getIn().setHeader(SmppConstants.PRIORITY_FLAG, (byte) 2);
-        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS).value());
+        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
         exchange.getIn().setHeader(SmppConstants.REPLACE_IF_PRESENT_FLAG, ReplaceIfPresentFlag.REPLACE.value());
         exchange.getIn().setBody("short message body");
         expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"),
-                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100-"), eq("-300101003702200-"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
+                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100+"), eq("-300101003702200+"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)),
                 eq(ReplaceIfPresentFlag.REPLACE.value()), eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes())))
                 .andReturn("1");
 
@@ -251,7 +251,7 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, new Date(2222222));
         exchange.getIn().setHeader(SmppConstants.PROTOCOL_ID, (byte) 1);
         exchange.getIn().setHeader(SmppConstants.PRIORITY_FLAG, (byte) 2);
-        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS).value());
+        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
         exchange.getIn().setHeader(SmppConstants.REPLACE_IF_PRESENT_FLAG, ReplaceIfPresentFlag.REPLACE.value());
         exchange.getIn().setBody("short message body");
         Map<String, String> optionalParameters = new LinkedHashMap<String, String>();
@@ -264,7 +264,7 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETERS, optionalParameters);
         expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"),
-                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100-"), eq("-300101003702200-"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
+                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100+"), eq("-300101003702200+"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)),
                 eq(ReplaceIfPresentFlag.REPLACE.value()), eq(DataCodings.newInstance((byte) 0)), eq((byte) 0),
                 aryEq("short message body".getBytes()), eq(new OptionalParameter.Source_subaddress("1292".getBytes())),
                 eq(new OptionalParameter.Additional_status_info_text("urgent".getBytes())), eq(new OptionalParameter.Dest_addr_subunit((byte) 4)),
@@ -297,7 +297,7 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, new Date(2222222));
         exchange.getIn().setHeader(SmppConstants.PROTOCOL_ID, (byte) 1);
         exchange.getIn().setHeader(SmppConstants.PRIORITY_FLAG, (byte) 2);
-        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS).value());
+        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
         exchange.getIn().setHeader(SmppConstants.REPLACE_IF_PRESENT_FLAG, ReplaceIfPresentFlag.REPLACE.value());
         exchange.getIn().setBody("short message body");
         Map<Short, Object> optionalParameters = new LinkedHashMap<Short, Object>();
@@ -318,7 +318,7 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETER, optionalParameters);
         expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"),
-                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100-"), eq("-300101003702200-"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
+                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100+"), eq("-300101003702200+"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)),
                 eq(ReplaceIfPresentFlag.REPLACE.value()), eq(DataCodings.newInstance((byte) 0)), eq((byte) 0),
                 aryEq("short message body".getBytes()),
                 eq(new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "1292")),
@@ -360,12 +360,12 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, "000003000000000R"); // three days
         exchange.getIn().setHeader(SmppConstants.PROTOCOL_ID, (byte) 1);
         exchange.getIn().setHeader(SmppConstants.PRIORITY_FLAG, (byte) 2);
-        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS).value());
+        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
         exchange.getIn().setHeader(SmppConstants.REPLACE_IF_PRESENT_FLAG, ReplaceIfPresentFlag.REPLACE.value());
         exchange.getIn().setBody("short message body");
         expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"),
-                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100-"), eq("000003000000000R"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
+                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100+"), eq("000003000000000R"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)),
                 eq(ReplaceIfPresentFlag.REPLACE.value()), eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes())))
                 .andReturn("1");
 
