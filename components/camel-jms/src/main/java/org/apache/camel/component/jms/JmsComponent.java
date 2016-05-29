@@ -391,6 +391,13 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
     }
 
     /**
+     * Specifies the maximum number of concurrent consumers for continue routing when timeout occurred when using request/reply over JMS.
+     */
+    public void setReplyOnTimeoutToMaxConcurrentConsumers(int maxConcurrentConsumers) {
+        getConfiguration().setReplyToOnTimeoutMaxConcurrentConsumers(maxConcurrentConsumers);
+    }
+
+    /**
      * The number of messages per task. -1 is unlimited.
      * If you use a range for concurrent consumers (eg min < max), then this option can be used to set
      * a value to eg 100 to control how fast the consumers will shrink when less work is required.
