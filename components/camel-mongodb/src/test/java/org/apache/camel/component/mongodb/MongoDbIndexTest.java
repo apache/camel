@@ -54,7 +54,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
 
         Object result = template.requestBodyAndHeaders("direct:dynamicityEnabled", body, headers);
 
-        assertEquals("Response isn't of type WriteResult", WriteResult.class, result.getClass());
+        assertEquals("Response isn't of type WriteResult", BasicDBObject.class, result.getClass());
 
         DBCollection dynamicCollection = mongo.getDB("otherDB").getCollection("otherCollection");
 
@@ -97,7 +97,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
 
         Object result = template.requestBodyAndHeaders("direct:dynamicityEnabled", body, headers);
 
-        assertEquals("Response isn't of type WriteResult", WriteResult.class, result.getClass());
+        assertEquals("Response isn't of type WriteResult", BasicDBObject.class, result.getClass());
 
         DBCollection dynamicCollection = db.getCollection("otherCollection");
 
@@ -131,7 +131,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
 
         Object result = template.requestBodyAndHeaders("direct:dynamicityEnabledWithIndexUri", body, headers);
 
-        assertEquals("Response isn't of type WriteResult", WriteResult.class, result.getClass());
+        assertEquals("Response isn't of type WriteResult", BasicDBObject.class, result.getClass());
 
         DBCollection dynamicCollection = db.getCollection("otherCollection");
 

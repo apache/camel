@@ -20,13 +20,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
@@ -102,8 +102,6 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     @UriParam
     private MongoDbOutputType outputType;
 
-    private DBCollection dbCollection;
-    private DB db;
     private MongoDatabase mongoDatabase;
     private MongoCollection<BasicDBObject> mongoCollection;
 
@@ -210,24 +208,22 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         if (database == null || (collection == null && !(MongoDbOperation.getDbStats.equals(operation) || MongoDbOperation.command.equals(operation)))) {
             throw new CamelMongoDbException("Missing required endpoint configuration: database and/or collection");
         }
-        db = mongoConnection.getDB(database);
         mongoDatabase = mongoConnection.getDatabase(database);
-        if (db == null) {
+        if (mongoDatabase == null) {
             throw new CamelMongoDbException("Could not initialise MongoDbComponent. Database " + database + " does not exist.");
         }
         if (collection != null) {
-            if (!createCollection && !db.collectionExists(collection)) {
+            if (!createCollection && !databaseContainsCollection(collection)) {
                 throw new CamelMongoDbException("Could not initialise MongoDbComponent. Collection " + collection + " and createCollection is false.");
             }
-            dbCollection = db.getCollection(collection);
             mongoCollection = mongoDatabase.getCollection(collection, BasicDBObject.class);
 
             LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. Address list: {}, Db: {}, Collection: {}",
-                    new Object[]{mongoConnection.getAllAddress().toString(), db.getName(), dbCollection.getName()});
+                    new Object[]{mongoConnection.getAllAddress().toString(), mongoDatabase.getName(), collection});
 
             try {
                 if (ObjectHelper.isNotEmpty(collectionIndex)) {
-                    ensureIndex(dbCollection, createIndex());
+                    ensureIndex(mongoCollection, createIndex());
                 }
             } catch (Exception e) {
                 throw new CamelMongoDbException("Error creating index", e);
@@ -235,14 +231,19 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         }
     }
 
+    private boolean databaseContainsCollection(String collection) {
+        return StreamSupport.stream(mongoDatabase.listCollectionNames().spliterator(), false)
+                .anyMatch(collection::equals);
+    }
+
     /**
      * Add Index
      *
      * @param collection
      */
-    public void ensureIndex(DBCollection collection, List<DBObject> dynamicIndex) {
+    public void ensureIndex(MongoCollection<BasicDBObject> collection, List<BasicDBObject> dynamicIndex) {
         if (dynamicIndex != null && !dynamicIndex.isEmpty()) {
-            for (DBObject index : dynamicIndex) {
+            for (BasicDBObject index : dynamicIndex) {
                 LOG.debug("create BDObject Index {}", index);
                 collection.createIndex(index);
             }
@@ -255,14 +256,14 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * @return technical list index
      */
     @SuppressWarnings("unchecked")
-    public List<DBObject> createIndex() throws Exception {
-        List<DBObject> indexList = new ArrayList<DBObject>();
+    public List<BasicDBObject> createIndex() throws Exception {
+        List<BasicDBObject> indexList = new ArrayList<>();
 
         if (ObjectHelper.isNotEmpty(collectionIndex)) {
             HashMap<String, String> indexMap = new ObjectMapper().readValue(collectionIndex, HashMap.class);
 
             for (Map.Entry<String, String> set : indexMap.entrySet()) {
-                DBObject index = new BasicDBObject();
+                BasicDBObject index = new BasicDBObject();
                 // MongoDB 2.4 upwards is restrictive about the type of the 'single field index' being
                 // in use below (set.getValue())) as only an integer value type is accepted, otherwise
                 // server will throw an exception, see more details:
@@ -395,14 +396,6 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     public boolean isCreateCollection() {
         return createCollection;
-    }
-
-    public DB getDb() {
-        return db;
-    }
-
-    public DBCollection getDbCollection() {
-        return dbCollection;
     }
 
     /**

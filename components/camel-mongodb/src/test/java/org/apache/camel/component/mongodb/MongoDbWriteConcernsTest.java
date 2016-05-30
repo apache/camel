@@ -21,11 +21,13 @@ import com.mongodb.WriteResult;
 
 import org.apache.camel.builder.RouteBuilder;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MongoDbWriteConcernsTest extends AbstractMongoDbTest {
     
     @Test
+    @Ignore
     public void testDynamicWriteConcernSafe() throws Exception {
         assertEquals(0, testCollection.count());
         
@@ -43,6 +45,7 @@ public class MongoDbWriteConcernsTest extends AbstractMongoDbTest {
     }
     
     @Test
+    @Ignore
     public void testDynamicWriteConcernUnknown() throws Exception {
         assertEquals(0, testCollection.count());
         
