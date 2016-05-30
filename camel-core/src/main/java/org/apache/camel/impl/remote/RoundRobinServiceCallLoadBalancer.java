@@ -17,31 +17,22 @@
 
 package org.apache.camel.impl.remote;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.spi.ServiceCallLoadBalancer;
 import org.apache.camel.spi.ServiceCallServer;
 
-public class RoundRobinServiceCallLoadBalancer implements ServiceCallLoadBalancer<ServiceCallServer> {
+public class RoundRobinServiceCallLoadBalancer<S extends ServiceCallServer> implements ServiceCallLoadBalancer<S> {
     private int counter = -1;
 
     @SuppressWarnings("uncheked")
     @Override
-    public ServiceCallServer chooseServer(Collection<ServiceCallServer> servers) {
-        List<ServiceCallServer> list;
-        if (servers instanceof List) {
-            list = (List<ServiceCallServer>)servers;
-        } else {
-            list = new ArrayList<>(servers);
-        }
-
-        int size = list.size();
-        if (++counter >= size) {
+    public S chooseServer(List<S> servers) {
+        int size = servers.size();
+        if (++counter >= size || size == 1) {
             counter = 0;
         }
-        return list.get(counter);
+        return servers.get(counter);
     }
 
     @Override

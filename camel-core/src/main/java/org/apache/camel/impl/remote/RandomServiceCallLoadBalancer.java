@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl.remote;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -33,19 +31,11 @@ public class RandomServiceCallLoadBalancer implements ServiceCallLoadBalancer<Se
 
     @SuppressWarnings("uncheked")
     @Override
-    public ServiceCallServer chooseServer(Collection<ServiceCallServer> servers) {
-        List<ServiceCallServer> list;
-        if (servers instanceof List) {
-            list = (List<ServiceCallServer>)servers;
-        } else {
-            list = new ArrayList<>(servers);
-        }
+    public ServiceCallServer chooseServer(List<ServiceCallServer> servers) {
+        int size = servers.size();
+        int index = (size > 1) ? random.nextInt(size) : 0;
 
-        int size = list.size();
-        int ran = this.random.nextInt(size);
-
-        servers.stream().limit(1);
-        return list.get(ran);
+        return servers.get(index);
     }
 
     @Override

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Allows SPIs to implement custom load balancing strategies for the Service Call EIP.
@@ -31,6 +31,6 @@ public interface ServiceCallLoadBalancer<T extends ServiceCallServer> {
      * @param servers  list of servers
      * @return the chosen server to use.
      */
-    T chooseServer(Collection<T> servers);
+    T chooseServer(List<T> servers);
 
 }

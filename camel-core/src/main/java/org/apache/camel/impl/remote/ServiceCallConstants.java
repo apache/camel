@@ -18,7 +18,7 @@ package org.apache.camel.impl.remote;
 
 
 public interface ServiceCallConstants {
-    String SERVICE_NAME = "CamelServiceCallServiceNa,e";
+    String SERVICE_NAME = "CamelServiceCallServiceName";
     String SERVER_IP = "CamelServiceCallServerIp";
     String SERVER_PORT = "CamelServiceCallServerPort";
 }

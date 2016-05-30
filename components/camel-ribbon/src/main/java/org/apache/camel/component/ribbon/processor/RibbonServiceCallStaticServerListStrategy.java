@@ -17,7 +17,6 @@
 package org.apache.camel.component.ribbon.processor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.netflix.client.config.IClientConfig;
@@ -98,12 +97,12 @@ public class RibbonServiceCallStaticServerListStrategy extends AbstractServerLis
     }
 
     @Override
-    public Collection<RibbonServer> getInitialListOfServers(String name) {
+    public List<RibbonServer> getInitialListOfServers(String name) {
         return getInitialListOfServers();
     }
 
     @Override
-    public Collection<RibbonServer> getUpdatedListOfServers(String name) {
+    public List<RibbonServer> getUpdatedListOfServers(String name) {
         return getUpdatedListOfServers();
     }
 }

@@ -16,89 +16,55 @@
  */
 package org.apache.camel.component.kubernetes.processor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import io.fabric8.kubernetes.api.model.EndpointAddress;
 import io.fabric8.kubernetes.api.model.EndpointPort;
-import io.fabric8.kubernetes.api.model.EndpointSubset;
-import io.fabric8.kubernetes.api.model.Endpoints;
 import io.fabric8.kubernetes.client.AutoAdaptableKubernetesClient;
-import org.apache.camel.spi.ServiceCallServerListStrategy;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.impl.remote.DefaultServiceCallServer;
+import org.apache.camel.impl.remote.DefaultServiceCallServerListStrategy;
+import org.apache.camel.spi.ServiceCallServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Discovers where services are running on which servers in Kubernetes.
  */
-public class KubernetesServiceCallServerListStrategy extends ServiceSupport implements ServiceCallServerListStrategy<KubernetesServer> {
+public abstract class KubernetesServiceCallServerListStrategy extends DefaultServiceCallServerListStrategy<ServiceCallServer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesServiceCallServerListStrategy.class);
     private static final int FIRST = 0;
 
-    private String namespace;
-    private String portName;
+    private final KubernetesConfiguration configuration;
+    private final String namespace;
+    private final String portName;
     private AutoAdaptableKubernetesClient client;
 
-    public KubernetesServiceCallServerListStrategy(String namespace, String portName, AutoAdaptableKubernetesClient client) {
-        this.namespace = namespace;
-        this.portName = portName;
-        this.client = client;
+
+    public KubernetesServiceCallServerListStrategy(KubernetesConfiguration configuration) {
+        this.configuration = configuration;
+        this.namespace = configuration.getNamespace() != null ? configuration.getNamespace() : System.getenv("KUBERNETES_NAMESPACE");
+        this.portName = configuration.getPortName();
+        this.client = null;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Collection<KubernetesServer> getInitialListOfServers(String name) {
-        return Collections.EMPTY_LIST;
-    }
-
-    public Collection<KubernetesServer> getUpdatedListOfServers(String name) {
-        LOG.debug("Discovering endpoints from namespace: {} with name: {}", namespace, name);
-        Endpoints endpoints = client.endpoints().inNamespace(namespace).withName(name).get();
-        List<KubernetesServer> result = new ArrayList<>();
-        if (endpoints != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Found {} endpoints in namespace: {} for name: {} and portName: {}", endpoints.getSubsets().size(), namespace, name, portName);
-            }
-            for (EndpointSubset subset : endpoints.getSubsets()) {
-                if (subset.getPorts().size() == 1) {
-                    EndpointPort port = subset.getPorts().get(FIRST);
-                    for (EndpointAddress address : subset.getAddresses()) {
-                        result.add(new KubernetesServer(address.getIp(), port.getPort()));
-                    }
-                } else {
-                    for (EndpointPort port : subset.getPorts()) {
-                        if (ObjectHelper.isEmpty(portName) || portName.endsWith(port.getName())) {
-                            for (EndpointAddress address : subset.getAddresses()) {
-                                result.add(new KubernetesServer(address.getIp(), port.getPort()));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        if (client != null) {
-            IOHelper.close(client);
-        }
-    }
-
     public String toString() {
         return "KubernetesServiceDiscovery";
+    }
+
+    protected ServiceCallServer newServer(EndpointAddress address, EndpointPort port) {
+        return new DefaultServiceCallServer(address.getIp(), port.getPort());
+    }
+
+    protected KubernetesConfiguration getConfiguration() {
+        return this.configuration;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public String getPortName() {
+        return portName;
     }
 }

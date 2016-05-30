@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.consul.processor.service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,8 +23,6 @@ import com.orbitz.consul.model.catalog.CatalogService;
 import com.orbitz.consul.model.health.ServiceHealth;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.spi.ServiceCallServer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class ConsulServiceCallServerListStrategies {
     private ConsulServiceCallServerListStrategies() {
@@ -37,7 +34,7 @@ public final class ConsulServiceCallServerListStrategies {
         }
 
         @Override
-        public Collection<ServiceCallServer> getUpdatedListOfServers(String name) {
+        public List<ServiceCallServer> getUpdatedListOfServers(String name) {
             List<CatalogService> services = getCatalogClient()
                 .getService(name, getCatalogOptions())
                 .getResponse();

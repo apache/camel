@@ -87,6 +87,12 @@ public class KubernetesConfiguration {
 
     @UriParam(label = "consumer")
     private String namespace;
+
+    @UriParam
+    private String portName;
+
+    @UriParam
+    private String dnsDomain;
     
     @UriParam(label = "consumer", defaultValue = "1")
     private int poolSize = 1;
@@ -289,6 +295,27 @@ public class KubernetesConfiguration {
         this.namespace = namespace;
     }
 
+    public String getPortName() {
+        return portName;
+    }
+
+    /**
+     * The port name, used for ServiceCall EIP
+     */
+    public void setPortName(String portName) {
+        this.portName = portName;
+    }
+
+    public String getDnsDomain() {
+        return dnsDomain;
+    }
+
+    /**
+     * The dns domain, used for ServiceCall EIP
+     */
+    public void setDnsDomain(String dnsDomain) {
+        this.dnsDomain = dnsDomain;
+    }
 
     /**
      * @deprecated use {@link #getNamespace()}

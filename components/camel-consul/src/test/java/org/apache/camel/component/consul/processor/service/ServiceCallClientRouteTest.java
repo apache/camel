@@ -24,10 +24,7 @@ import com.orbitz.consul.model.agent.ImmutableRegistration;
 import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulTestSupport;
-import org.apache.camel.impl.remote.RoundRobinServiceCallLoadBalancer;
-import org.apache.camel.model.remote.ConsulConfigurationDefinition;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -82,9 +79,7 @@ public class ServiceCallClientRouteTest extends ConsulTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(SERVICE_COUNT);
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder(expectedBodies);
 
-        for (int i = 0; i < SERVICE_COUNT; i++) {
-            template.sendBody("direct:start", "ping");
-        }
+        registrations.forEach(r -> template.sendBody("direct:start", "ping"));
 
         assertMockEndpointsSatisfied();
     }
@@ -98,25 +93,21 @@ public class ServiceCallClientRouteTest extends ConsulTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                ConsulConfigurationDefinition config = new ConsulConfigurationDefinition();
-                config.setComponent("http");
-                config.setLoadBalancer(new RoundRobinServiceCallLoadBalancer());
-                config.setServerListStrategy(ConsulServiceCallServerListStrategies.onDemand(
-                    new ConsulConfiguration(context())
-                ));
-
-                // register configuration
-                context.setServiceCallConfiguration(config);
-
                 from("direct:start")
-                    .serviceCall(SERVICE_NAME)
+                    .serviceCall()
+                        .name(SERVICE_NAME)
+                        .consulConfiguration()
+                            .component("http")
+                            .loadBalancer("roundrobin")
+                            .serverListStrategy("ondemand")
+                        .end()
                     .to("log:org.apache.camel.component.consul.processor.service?level=INFO&showAll=true&multiline=true")
                     .to("mock:result");
 
-                for (int i = SERVICE_PORT_BASE; i < SERVICE_PORT_BASE + SERVICE_COUNT; i++) {
-                    fromF("jetty:http://127.0.0.1:%d", i)
-                        .transform().simple("${in.body} on " + i);
-                }
+                registrations.forEach(r ->
+                    fromF("jetty:http://%s:%d", r.getAddress().get(), r.getPort().get())
+                        .transform().simple("${in.body} on " + r.getPort().get())
+                );
             }
         };
     }

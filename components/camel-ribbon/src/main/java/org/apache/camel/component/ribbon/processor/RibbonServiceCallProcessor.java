@@ -38,7 +38,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Traceable;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
-import org.apache.camel.component.ribbon.RibbonConstants;
+import org.apache.camel.impl.remote.DefaultServiceCallExpression;
+import org.apache.camel.impl.remote.ServiceCallConstants;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ServiceCallServerListStrategy;
@@ -68,7 +69,7 @@ public class RibbonServiceCallProcessor extends ServiceSupport implements AsyncP
     private ZoneAwareLoadBalancer<RibbonServer> ribbonLoadBalancer;
     private IRule rule;
     private IPing ping;
-    private final RibbonServiceCallExpression serviceCallExpression;
+    private final DefaultServiceCallExpression serviceCallExpression;
     private Map<String, String> ribbonClientConfig;
     private SendDynamicProcessor processor;
 
@@ -98,7 +99,7 @@ public class RibbonServiceCallProcessor extends ServiceSupport implements AsyncP
         this.configuration = configuration;
         this.rule = configuration.getRule();
         this.ping = configuration.getPing();
-        this.serviceCallExpression = new RibbonServiceCallExpression(this.name, this.scheme, this.contextPath, this.uri);
+        this.serviceCallExpression = new DefaultServiceCallExpression(this.name, this.scheme, this.contextPath, this.uri);
     }
 
     @Override
@@ -129,8 +130,9 @@ public class RibbonServiceCallProcessor extends ServiceSupport implements AsyncP
         LOG.debug("Service {} active at server: {}:{}", name, ip, port);
 
         // set selected server as header
-        exchange.getIn().setHeader(RibbonConstants.RIBBON_SERVER_IP, ip);
-        exchange.getIn().setHeader(RibbonConstants.RIBBON_SERVER_PORT, port);
+        exchange.getIn().setHeader(ServiceCallConstants.SERVER_IP, ip);
+        exchange.getIn().setHeader(ServiceCallConstants.SERVER_PORT, port);
+        exchange.getIn().setHeader(ServiceCallConstants.SERVICE_NAME, name);
 
         // use the dynamic send processor to call the service
         return processor.process(exchange, callback);

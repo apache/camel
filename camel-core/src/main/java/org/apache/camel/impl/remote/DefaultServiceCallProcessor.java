@@ -16,7 +16,7 @@
  */
 package org.apache.camel.impl.remote;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
@@ -25,13 +25,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ServiceCallLoadBalancer;
 import org.apache.camel.spi.ServiceCallServer;
 import org.apache.camel.spi.ServiceCallServerListStrategy;
-import org.apache.camel.support.ServiceCallExpressionSupport;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -39,19 +39,19 @@ import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultServiceCallProcessor extends ServiceSupport implements AsyncProcessor, CamelContextAware, Traceable, IdAware {
+public class DefaultServiceCallProcessor<S extends ServiceCallServer> extends ServiceSupport implements AsyncProcessor, CamelContextAware, Traceable, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultServiceCallProcessor.class);
 
-    private final ServiceCallExpressionSupport serviceCallExpression;
     private final ExchangePattern exchangePattern;
-    private final String uri;
     private final String name;
     private final String scheme;
+    private final String uri;
     private final String contextPath;
     private CamelContext camelContext;
     private String id;
-    private ServiceCallServerListStrategy<ServiceCallServer> serverListStrategy;
-    private ServiceCallLoadBalancer<ServiceCallServer> loadBalancer;
+    private ServiceCallServerListStrategy<S> serverListStrategy;
+    private ServiceCallLoadBalancer<S> loadBalancer;
+    private Expression serviceCallExpression;
     private SendDynamicProcessor processor;
 
     public DefaultServiceCallProcessor(String name, String scheme, String uri, ExchangePattern exchangePattern) {
@@ -110,40 +110,76 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
         return id;
     }
 
-    public ServiceCallLoadBalancer<ServiceCallServer> getLoadBalancer() {
+    public String getName() {
+        return name;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public ExchangePattern getExchangePattern() {
+        return exchangePattern;
+    }
+
+    public ServiceCallLoadBalancer<S> getLoadBalancer() {
         return loadBalancer;
     }
 
-    public void setLoadBalancer(ServiceCallLoadBalancer<ServiceCallServer> loadBalancer) {
+    public void setLoadBalancer(ServiceCallLoadBalancer<S> loadBalancer) {
         this.loadBalancer = loadBalancer;
     }
 
-    public DefaultServiceCallProcessor loadBalancer(ServiceCallLoadBalancer<ServiceCallServer> loadBalancer) {
+    public DefaultServiceCallProcessor loadBalancer(ServiceCallLoadBalancer<S> loadBalancer) {
         setLoadBalancer(loadBalancer);
         return this;
     }
 
-    public ServiceCallServerListStrategy<ServiceCallServer> getServerListStrategy() {
+    public ServiceCallServerListStrategy<S> getServerListStrategy() {
         return serverListStrategy;
     }
 
-    public void setServerListStrategy(ServiceCallServerListStrategy<ServiceCallServer> serverListStrategy) {
+    public void setServerListStrategy(ServiceCallServerListStrategy<S> serverListStrategy) {
         this.serverListStrategy = serverListStrategy;
     }
 
-    public DefaultServiceCallProcessor serverListStrategy(ServiceCallServerListStrategy<ServiceCallServer> serverListStrategy) {
+    public DefaultServiceCallProcessor serverListStrategy(ServiceCallServerListStrategy<S> serverListStrategy) {
         setServerListStrategy(serverListStrategy);
         return this;
     }
 
+    public void setServiceCallExpression(Expression serviceCallExpression) {
+        this.serviceCallExpression = serviceCallExpression;
+    }
+
+    public Expression getServiceCallExpression() {
+        return serviceCallExpression;
+    }
+
+    public DefaultServiceCallProcessor serviceCallExpression(Expression serviceCallExpression) {
+        setServiceCallExpression(serviceCallExpression);
+        return this;
+    }
+
+    public AsyncProcessor getProcessor() {
+        return processor;
+    }
+
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notEmpty(getName(), "name", "serviceName");
         ObjectHelper.notNull(camelContext, "camelContext");
-        ObjectHelper.notNull(serverListStrategy, "serverListStrategy");
-        ObjectHelper.notNull(loadBalancer, "loadBalancer");
+        ObjectHelper.notNull(serviceCallExpression, "serviceCallExpression");
 
-
-        LOG.info("ConsulsServiceCall at dc: {} with service name: {} is using load balancer: {} and service discovery: {}",
+        LOG.info("ServiceCall with service name: {} is using load balancer: {} and service discovery: {}",
             name, loadBalancer, serverListStrategy);
 
         processor = new SendDynamicProcessor(uri, serviceCallExpression);
@@ -167,24 +203,14 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        Collection<ServiceCallServer> servers = null;
-        String serviceName = exchange.getIn().getHeader(ServiceCallConstants.SERVICE_NAME, name, String.class);
-        try {
-            servers = serverListStrategy.getUpdatedListOfServers(serviceName);
-            if (servers == null || servers.isEmpty()) {
-                exchange.setException(new RejectedExecutionException("No active services with name " + name));
-            }
-        } catch (Throwable e) {
-            exchange.setException(e);
-        }
+        final String serviceName = exchange.getIn().getHeader(ServiceCallConstants.SERVICE_NAME, name, String.class);
+        final ServiceCallServer server = chooseServer(exchange, serviceName);
 
         if (exchange.getException() != null) {
             callback.done(true);
             return true;
         }
 
-        // let the client load balancer chose which server to use
-        ServiceCallServer server = loadBalancer.chooseServer(servers);
         String ip = server.getIp();
         int port = server.getPort();
         LOG.debug("Service {} active at server: {}:{}", name, ip, port);
@@ -192,8 +218,33 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
         // set selected server as header
         exchange.getIn().setHeader(ServiceCallConstants.SERVER_IP, ip);
         exchange.getIn().setHeader(ServiceCallConstants.SERVER_PORT, port);
+        exchange.getIn().setHeader(ServiceCallConstants.SERVICE_NAME, serviceName);
 
         // use the dynamic send processor to call the service
         return processor.process(exchange, callback);
+    }
+
+    protected S chooseServer(Exchange exchange, String serviceName) {
+        ObjectHelper.notNull(serverListStrategy, "serverListStrategy");
+        ObjectHelper.notNull(loadBalancer, "loadBalancer");
+
+        S server = null;
+
+        try {
+            List<S> servers = serverListStrategy.getUpdatedListOfServers(serviceName);
+            if (servers == null || servers.isEmpty()) {
+                exchange.setException(new RejectedExecutionException("No active services with name " + name));
+            }
+
+            // let the client load balancer chose which server to use
+            server = servers.size() > 1 ?  loadBalancer.chooseServer(servers) : servers.get(0);
+            if (server == null) {
+                exchange.setException(new RejectedExecutionException("No active services with name " + name));
+            }
+        } catch (Throwable e) {
+            exchange.setException(e);
+        }
+
+        return server;
     }
 }

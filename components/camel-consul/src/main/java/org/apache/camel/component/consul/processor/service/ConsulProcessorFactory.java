@@ -16,11 +16,52 @@
  */
 package org.apache.camel.component.consul.processor.service;
 
+import java.util.Map;
+import java.util.Optional;
+
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.component.consul.ConsulConfiguration;
+import org.apache.camel.impl.remote.DefaultServiceCallProcessor;
 import org.apache.camel.impl.remote.DefaultServiceCallProcessorFactory;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.ServiceCallServer;
+import org.apache.camel.spi.ServiceCallServerListStrategy;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * {@link ProcessorFactory} that creates the Consul implementation of the ServiceCall EIP.
  */
-public class ConsulProcessorFactory extends DefaultServiceCallProcessorFactory {
+public class ConsulProcessorFactory extends DefaultServiceCallProcessorFactory<ConsulConfiguration, ServiceCallServer> {
+    @Override
+    protected ConsulConfiguration createConfiguration(RouteContext routeContext) throws Exception {
+        return new ConsulConfiguration(routeContext.getCamelContext());
+    }
+
+    @Override
+    protected DefaultServiceCallProcessor createProcessor(
+            String name,
+            String component,
+            String uri,
+            ExchangePattern mep,
+            ConsulConfiguration conf,
+            Map<String, String> properties) throws Exception {
+
+        return new ConsulServiceCallProcessor(name, component, uri, mep, conf);
+    }
+
+    @Override
+    protected Optional<ServiceCallServerListStrategy> builtInServerListStrategy(ConsulConfiguration conf, String name) throws Exception {
+        ServiceCallServerListStrategy strategy = null;
+        if (ObjectHelper.equal("ondemand", name, true)) {
+            strategy = new ConsulServiceCallServerListStrategies.OnDemand(conf);
+        }
+
+        return Optional.ofNullable(strategy);
+    }
+
+    @Override
+    protected ServiceCallServerListStrategy<ServiceCallServer> createDefaultServerListStrategy(ConsulConfiguration conf) throws Exception {
+        return new ConsulServiceCallServerListStrategies.OnDemand(conf);
+    }
 }

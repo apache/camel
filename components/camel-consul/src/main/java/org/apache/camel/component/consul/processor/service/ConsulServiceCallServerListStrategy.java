@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.consul.processor.service;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import com.orbitz.consul.CatalogClient;
@@ -30,13 +28,12 @@ import com.orbitz.consul.option.CatalogOptions;
 import com.orbitz.consul.option.ImmutableCatalogOptions;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.impl.remote.DefaultServiceCallServer;
+import org.apache.camel.impl.remote.DefaultServiceCallServerListStrategy;
 import org.apache.camel.spi.ServiceCallServer;
-import org.apache.camel.spi.ServiceCallServerListStrategy;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 
-abstract class ConsulServiceCallServerListStrategy extends ServiceSupport implements ServiceCallServerListStrategy<ServiceCallServer> {
+abstract class ConsulServiceCallServerListStrategy extends DefaultServiceCallServerListStrategy<ServiceCallServer> {
     private final Consul client;
     private final CatalogOptions catalogOptions;
 
@@ -52,21 +49,6 @@ abstract class ConsulServiceCallServerListStrategy extends ServiceSupport implem
         }
 
         catalogOptions = builder.build();
-    }
-
-    @Override
-    public Collection<ServiceCallServer> getInitialListOfServers(String name) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
     }
 
     @Override

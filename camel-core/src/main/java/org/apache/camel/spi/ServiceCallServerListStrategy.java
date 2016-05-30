@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Allows SPIs to implement custom server list strategies for the Service Call EIP.
@@ -33,7 +33,7 @@ public interface ServiceCallServerListStrategy<T extends ServiceCallServer> {
      *
      * @param name the service name
      */
-    Collection<T> getInitialListOfServers(String name);
+    List<T> getInitialListOfServers(String name);
 
     /**
      * Gets the updated list of servers.
@@ -44,6 +44,6 @@ public interface ServiceCallServerListStrategy<T extends ServiceCallServer> {
      *
      * @param name the service name
      */
-    Collection<T> getUpdatedListOfServers(String name);
+    List<T> getUpdatedListOfServers(String name);
 
 }
