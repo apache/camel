@@ -38,12 +38,10 @@ import org.apache.camel.util.ObjectHelper;
 
 abstract class ConsulServiceCallServerListStrategy extends ServiceSupport implements ServiceCallServerListStrategy<ServiceCallServer> {
     private final Consul client;
-    private final String name;
     private final CatalogOptions catalogOptions;
 
-    ConsulServiceCallServerListStrategy(ConsulConfiguration configuration, String name) throws Exception {
+    ConsulServiceCallServerListStrategy(ConsulConfiguration configuration) throws Exception {
         this.client = configuration.createConsulClient();
-        this.name = name;
 
         ImmutableCatalogOptions.Builder builder = ImmutableCatalogOptions.builder();
         if (ObjectHelper.isNotEmpty(configuration.getDc())) {
@@ -57,7 +55,7 @@ abstract class ConsulServiceCallServerListStrategy extends ServiceSupport implem
     }
 
     @Override
-    public Collection<ServiceCallServer> getInitialListOfServers() {
+    public Collection<ServiceCallServer> getInitialListOfServers(String name) {
         return Collections.emptyList();
     }
 
@@ -90,10 +88,6 @@ abstract class ConsulServiceCallServerListStrategy extends ServiceSupport implem
 
     protected HealthClient getHealthClient() {
         return client.healthClient();
-    }
-
-    protected String getName() {
-        return name;
     }
 
     protected CatalogOptions getCatalogOptions() {

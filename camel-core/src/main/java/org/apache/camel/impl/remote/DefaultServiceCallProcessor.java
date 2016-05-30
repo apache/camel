@@ -138,7 +138,6 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notEmpty(name, "name", this);
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(serverListStrategy, "serverListStrategy");
         ObjectHelper.notNull(loadBalancer, "loadBalancer");
@@ -169,8 +168,9 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Collection<ServiceCallServer> servers = null;
+        String serviceName = exchange.getIn().getHeader(ServiceCallConstants.SERVICE_NAME, name, String.class);
         try {
-            servers = serverListStrategy.getUpdatedListOfServers();
+            servers = serverListStrategy.getUpdatedListOfServers(serviceName);
             if (servers == null || servers.isEmpty()) {
                 exchange.setException(new RejectedExecutionException("No active services with name " + name));
             }
@@ -190,8 +190,8 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
         LOG.debug("Service {} active at server: {}:{}", name, ip, port);
 
         // set selected server as header
-        exchange.getIn().setHeader(DefaultServiceCallExpression.SERVER_IP, ip);
-        exchange.getIn().setHeader(DefaultServiceCallExpression.SERVER_PORT, port);
+        exchange.getIn().setHeader(ServiceCallConstants.SERVER_IP, ip);
+        exchange.getIn().setHeader(ServiceCallConstants.SERVER_PORT, port);
 
         // use the dynamic send processor to call the service
         return processor.process(exchange, callback);

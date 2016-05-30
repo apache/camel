@@ -31,6 +31,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Traceable;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.impl.remote.ServiceCallConstants;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ServiceCallLoadBalancer;
@@ -104,8 +105,9 @@ public class KubernetesClientServiceCallProcessor extends ServiceSupport impleme
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Collection<KubernetesServer> servers = null;
+        String serviceName = exchange.getIn().getHeader(ServiceCallConstants.SERVICE_NAME, name, String.class);
         try {
-            servers = serverListStrategy.getUpdatedListOfServers();
+            servers = serverListStrategy.getUpdatedListOfServers(serviceName);
             if (servers == null || servers.isEmpty()) {
                 exchange.setException(new RejectedExecutionException("No active services with name " + name + " in namespace " + namespace));
             }
@@ -183,7 +185,7 @@ public class KubernetesClientServiceCallProcessor extends ServiceSupport impleme
             loadBalancer = new RandomLoadBalancer();
         }
         if (serverListStrategy == null) {
-            serverListStrategy = new KubernetesServiceCallServerListStrategy(name, namespace, null, createKubernetesClient());
+            serverListStrategy = new KubernetesServiceCallServerListStrategy(namespace, null, createKubernetesClient());
         }
         LOG.info("KubernetesServiceCall at namespace: {} with service name: {} is using load balancer: {} and service discovery: {}", namespace, name, loadBalancer, serverListStrategy);
 

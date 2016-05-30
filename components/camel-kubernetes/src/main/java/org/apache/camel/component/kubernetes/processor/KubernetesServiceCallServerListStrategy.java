@@ -41,13 +41,11 @@ public class KubernetesServiceCallServerListStrategy extends ServiceSupport impl
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesServiceCallServerListStrategy.class);
     private static final int FIRST = 0;
 
-    private String name;
     private String namespace;
     private String portName;
     private AutoAdaptableKubernetesClient client;
 
-    public KubernetesServiceCallServerListStrategy(String name, String namespace, String portName, AutoAdaptableKubernetesClient client) {
-        this.name = name;
+    public KubernetesServiceCallServerListStrategy(String namespace, String portName, AutoAdaptableKubernetesClient client) {
         this.namespace = namespace;
         this.portName = portName;
         this.client = client;
@@ -55,11 +53,11 @@ public class KubernetesServiceCallServerListStrategy extends ServiceSupport impl
 
     @Override
     @SuppressWarnings("unchecked")
-    public Collection<KubernetesServer> getInitialListOfServers() {
+    public Collection<KubernetesServer> getInitialListOfServers(String name) {
         return Collections.EMPTY_LIST;
     }
 
-    public Collection<KubernetesServer> getUpdatedListOfServers() {
+    public Collection<KubernetesServer> getUpdatedListOfServers(String name) {
         LOG.debug("Discovering endpoints from namespace: {} with name: {}", namespace, name);
         Endpoints endpoints = client.endpoints().inNamespace(namespace).withName(name).get();
         List<KubernetesServer> result = new ArrayList<>();

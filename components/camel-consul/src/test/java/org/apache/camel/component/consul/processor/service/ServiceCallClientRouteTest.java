@@ -102,8 +102,7 @@ public class ServiceCallClientRouteTest extends ConsulTestSupport {
                 config.setComponent("http");
                 config.setLoadBalancer(new RoundRobinServiceCallLoadBalancer());
                 config.setServerListStrategy(ConsulServiceCallServerListStrategies.onDemand(
-                    new ConsulConfiguration(context()),
-                    SERVICE_NAME
+                    new ConsulConfiguration(context())
                 ));
 
                 // register configuration

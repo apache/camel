@@ -30,8 +30,10 @@ public interface ServiceCallServerListStrategy<T extends ServiceCallServer> {
      * Gets the initial list of servers.
      * <p/>
      * This method may return <tt>null</tt> or an empty list.
+     *
+     * @param name the service name
      */
-    Collection<T> getInitialListOfServers();
+    Collection<T> getInitialListOfServers(String name);
 
     /**
      * Gets the updated list of servers.
@@ -39,7 +41,9 @@ public interface ServiceCallServerListStrategy<T extends ServiceCallServer> {
      * This method can either be called on-demand prior to a service call, or have
      * a background job that is scheduled to update the list, or a watcher
      * that triggers when the list of servers changes.
+     *
+     * @param name the service name
      */
-    Collection<T> getUpdatedListOfServers();
+    Collection<T> getUpdatedListOfServers(String name);
 
 }

@@ -28,24 +28,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ConsulServiceCallServerListStrategies {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulServiceCallServerListStrategies.class);
-
     private ConsulServiceCallServerListStrategies() {
     }
 
     public static final class OnDemand extends ConsulServiceCallServerListStrategy {
-        public OnDemand(ConsulConfiguration configuration, String name) throws Exception {
-            super(configuration, name);
+        public OnDemand(ConsulConfiguration configuration) throws Exception {
+            super(configuration);
         }
 
         @Override
-        public Collection<ServiceCallServer> getUpdatedListOfServers() {
+        public Collection<ServiceCallServer> getUpdatedListOfServers(String name) {
             List<CatalogService> services = getCatalogClient()
-                .getService(getName(), getCatalogOptions())
+                .getService(name, getCatalogOptions())
                 .getResponse();
 
             List<ServiceHealth> healths = getHealthClient()
-                .getAllServiceInstances(getName(), getCatalogOptions())
+                .getAllServiceInstances(name, getCatalogOptions())
                 .getResponse();
 
             return services.stream()
@@ -64,7 +62,7 @@ public final class ConsulServiceCallServerListStrategies {
     // Helpers
     // *************************************************************************
 
-    public static ConsulServiceCallServerListStrategy onDemand(ConsulConfiguration configuration, String name) throws Exception {
-        return new OnDemand(configuration, name);
+    public static ConsulServiceCallServerListStrategy onDemand(ConsulConfiguration configuration) throws Exception {
+        return new OnDemand(configuration);
     }
 }

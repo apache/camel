@@ -22,14 +22,11 @@ import org.apache.camel.support.ServiceCallExpressionSupport;
 import org.apache.camel.util.ExchangeHelper;
 
 public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
-    public static final String SERVER_IP = "CamelServiceCallServerIp";
-    public static final String SERVER_PORT = "CamelServiceCallServerPort";
-
     private final String ipHeader;
     private final String portHeader;
 
     public DefaultServiceCallExpression(String name, String scheme, String contextPath, String uri) {
-        this(name, scheme, contextPath, uri, SERVER_IP, SERVER_PORT);
+        this(name, scheme, contextPath, uri, ServiceCallConstants.SERVER_IP, ServiceCallConstants.SERVER_PORT);
     }
 
     public DefaultServiceCallExpression(String name, String scheme, String contextPath, String uri, String ipHeader, String portHeader) {
