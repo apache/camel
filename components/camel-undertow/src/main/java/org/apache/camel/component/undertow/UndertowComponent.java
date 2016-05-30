@@ -135,7 +135,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
 
         RestConfiguration config = configuration;
         if (config == null) {
-            config = getCamelContext().getRestConfiguration("undertow", true);
+            config = camelContext.getRestConfiguration("undertow", true);
         }
         if (config.getScheme() != null) {
             scheme = config.getScheme();
@@ -206,7 +206,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         }
 
         UndertowEndpoint endpoint = camelContext.getEndpoint(url, UndertowEndpoint.class);
-        setProperties(endpoint, parameters);
+        setProperties(camelContext, endpoint, parameters);
 
         if (!map.containsKey("undertowHttpBinding")) {
             // use the rest binding, if not using a custom http binding
@@ -216,7 +216,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+            setProperties(camelContext, consumer, config.getConsumerProperties());
         }
 
         return consumer;

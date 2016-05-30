@@ -250,9 +250,19 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param parameters  properties to set
      */
     protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {        
+        setProperties(getCamelContext(), bean, parameters);
+    }
+
+    /**
+     * Sets the bean properties on the given bean using the given {@link CamelContext}
+     * @param camelContext  the {@link CamelContext} to use
+     * @param bean  the bean
+     * @param parameters  properties to set
+     */
+    protected void setProperties(CamelContext camelContext, Object bean, Map<String, Object> parameters) throws Exception {
         // set reference properties first as they use # syntax that fools the regular properties setter
-        EndpointHelper.setReferenceProperties(getCamelContext(), bean, parameters);
-        EndpointHelper.setProperties(getCamelContext(), bean, parameters);
+        EndpointHelper.setReferenceProperties(camelContext, bean, parameters);
+        EndpointHelper.setProperties(camelContext, bean, parameters);
     }
 
     /**

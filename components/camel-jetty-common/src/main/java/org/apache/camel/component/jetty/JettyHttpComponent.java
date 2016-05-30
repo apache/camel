@@ -1041,7 +1041,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         // if no explicit port/host configured, then use port from rest configuration
         RestConfiguration config = configuration;
         if (config == null) {
-            config = getCamelContext().getRestConfiguration("jetty", true);
+            config = camelContext.getRestConfiguration("jetty", true);
         }
         if (config.getScheme() != null) {
             scheme = config.getScheme();
@@ -1112,7 +1112,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         }
         
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
-        setProperties(endpoint, parameters);
+        setProperties(camelContext, endpoint, parameters);
 
         if (!map.containsKey("httpBindingRef")) {
             // use the rest binding, if not using a custom http binding
@@ -1124,7 +1124,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+            setProperties(camelContext, consumer, config.getConsumerProperties());
         }
 
         return consumer;
