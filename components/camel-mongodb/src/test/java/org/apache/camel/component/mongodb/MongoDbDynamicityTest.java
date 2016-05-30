@@ -41,15 +41,13 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
         headers.put(MongoDbConstants.DATABASE, "otherDB");
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
         Object result = template.requestBodyAndHeaders("direct:noDynamicity", body, headers);
-        assertEquals("Response isn't of type WriteResult", WriteResult.class, result.getClass());
-        
+
         DBObject b = testCollection.findOne("testInsertDynamicityDisabled");
         assertNotNull("No record with 'testInsertDynamicityDisabled' _id", b);
         
         body = "{\"_id\": \"testInsertDynamicityDisabledExplicitly\", \"a\" : \"1\"}";
         result = template.requestBodyAndHeaders("direct:noDynamicityExplicit", body, headers);
-        assertEquals("Response isn't of type WriteResult", WriteResult.class, result.getClass());
-        
+
         b = testCollection.findOne("testInsertDynamicityDisabledExplicitly");
         assertNotNull("No record with 'testInsertDynamicityDisabledExplicitly' _id", b);
         
@@ -68,8 +66,6 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(MongoDbConstants.DATABASE, "otherDB");
         Object result = template.requestBodyAndHeaders("direct:dynamicityEnabled", body, headers);
-        
-        assertEquals("Response isn't of type WriteResult", WriteResult.class, result.getClass());
         
         DBCollection dynamicCollection = mongo.getDB("otherDB").getCollection(testCollection.getName());
         
@@ -95,8 +91,6 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
         Object result = template.requestBodyAndHeaders("direct:dynamicityEnabled", body, headers);
         
-        assertEquals("Response isn't of type WriteResult", WriteResult.class, result.getClass());
-        
         DBCollection dynamicCollection = db.getCollection("otherCollection");
         
         DBObject b = dynamicCollection.findOne("testInsertDynamicityEnabledCollectionOnly");
@@ -120,8 +114,6 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
         headers.put(MongoDbConstants.DATABASE, "otherDB");
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
         Object result = template.requestBodyAndHeaders("direct:dynamicityEnabled", body, headers);
-        
-        assertEquals("Response isn't of type WriteResult", WriteResult.class, result.getClass());
         
         DBCollection dynamicCollection = mongo.getDB("otherDB").getCollection("otherCollection");
         

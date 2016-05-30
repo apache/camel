@@ -20,8 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.client.MongoCursor;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -42,9 +45,9 @@ public class MongoDbOutputTypeTest extends AbstractMongoDbTest {
             headers.put(MongoDbConstants.NUM_TO_SKIP, numToSkip);
             headers.put(MongoDbConstants.LIMIT, 100);
             Object result = template.requestBodyAndHeaders("direct:findAllDBCursor", (Object) null, headers);
-            assertTrue("Result is not of type DBCursor", result instanceof DBCursor);
+            assertTrue("Result is not of type DBCursor", result instanceof MongoCursor);
 
-            DBCursor resultCursor = (DBCursor) result;
+            MongoCursor<BasicDBObject> resultCursor = (MongoCursor<BasicDBObject>) result;
             // Ensure that all returned documents contain all fields
             while (resultCursor.hasNext()) {
                 DBObject dbObject = resultCursor.next();
