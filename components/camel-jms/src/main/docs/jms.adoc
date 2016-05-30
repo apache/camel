@@ -210,8 +210,9 @@ Component options
 
 
 
+
 // component options: START
-The JMS component supports 71 options which are listed below.
+The JMS component supports 72 options which are listed below.
 
 
 
@@ -246,6 +247,7 @@ The JMS component supports 71 options which are listed below.
 | idleConsumerLimit | int | Specify the limit for the number of consumers that are allowed to be idle at any given time.
 | maxConcurrentConsumers | int | Specifies the maximum number of concurrent consumers when consuming from JMS (not for request/reply over JMS). See also the maxMessagesPerTask option to control dynamic scaling up/down of threads. When doing request/reply over JMS then the option replyToMaxConcurrentConsumers is used to control number of concurrent consumers on the reply message listener.
 | replyToMaxConcurrentConsumers | int | Specifies the maximum number of concurrent consumers when using request/reply over JMS. See also the maxMessagesPerTask option to control dynamic scaling up/down of threads.
+| replyOnTimeoutToMaxConcurrentConsumers | int | Specifies the maximum number of concurrent consumers for continue routing when timeout occurred when using request/reply over JMS.
 | maxMessagesPerTask | int | The number of messages per task. -1 is unlimited. If you use a range for concurrent consumers (eg min max) then this option can be used to set a value to eg 100 to control how fast the consumers will shrink when less work is required.
 | messageConverter | MessageConverter | To use a custom Spring org.springframework.jms.support.converter.MessageConverter so you can be in control how to map to/from a javax.jms.Message.
 | mapJmsMessage | boolean | Specifies whether Camel should auto map the received JMS message to a suited payload type such as javax.jms.TextMessage to a String etc. See section about how mapping works below for more details.
@@ -298,6 +300,7 @@ The JMS component supports 71 options which are listed below.
 
 
 
+
 [[JMS-Endpointoptions]]
 Endpoint options
 ++++++++++++++++
@@ -307,8 +310,9 @@ Endpoint options
 
 
 
+
 // endpoint options: START
-The JMS component supports 78 endpoint options which are listed below:
+The JMS component supports 79 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -346,6 +350,7 @@ The JMS component supports 78 endpoint options which are listed below:
 | priority | producer | 4 | int | Values greater than 1 specify the message priority when sending (where 0 is the lowest priority and 9 is the highest). The explicitQosEnabled option must also be enabled in order for this option to have any effect.
 | replyToConcurrentConsumers | producer | 1 | int | Specifies the default number of concurrent consumers when doing request/reply over JMS. See also the maxMessagesPerTask option to control dynamic scaling up/down of threads.
 | replyToMaxConcurrentConsumers | producer |  | int | Specifies the maximum number of concurrent consumers when using request/reply over JMS. See also the maxMessagesPerTask option to control dynamic scaling up/down of threads.
+| replyToOnTimeoutMaxConcurrentConsumers | producer | 1 | int | Specifies the maximum number of concurrent consumers for continue routing when timeout occurred when using request/reply over JMS.
 | replyToOverride | producer |  | String | Provides an explicit ReplyTo destination in the JMS message which overrides the setting of replyTo. It is useful if you want to forward the message to a remote Queue and receive the reply message from the ReplyTo destination.
 | replyToType | producer |  | ReplyToType | Allows for explicitly specifying which kind of strategy to use for replyTo queues when doing request/reply over JMS. Possible values are: Temporary Shared or Exclusive. By default Camel will use temporary queues. However if replyTo has been configured then Shared is used by default. This option allows you to use exclusive queues instead of shared ones. See Camel JMS documentation for more details and especially the notes about the implications if running in a clustered environment and the fact that Shared reply queues has lower performance than its alternatives Temporary and Exclusive.
 | requestTimeout | producer | 20000 | long | The timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds). The default is 20 seconds. You can include the header CamelJmsRequestTimeout to override this endpoint configured timeout value and thus have per message individual timeout values. See also the requestTimeoutCheckerInterval option.
@@ -395,6 +400,7 @@ The JMS component supports 78 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
