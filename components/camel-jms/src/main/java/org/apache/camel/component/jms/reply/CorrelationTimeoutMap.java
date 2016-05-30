@@ -43,7 +43,7 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
         this.listener = listener;
     }
 
-    public boolean onEviction(String key, ReplyHandler value) {
+    public boolean onEviction(final String key, final ReplyHandler value) {
         try {
             if (listener != null) {
                 listener.onEviction(key);
