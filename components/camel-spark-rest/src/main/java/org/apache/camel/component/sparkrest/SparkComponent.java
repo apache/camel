@@ -284,7 +284,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
         RestConfiguration config = configuration;
         if (config == null) {
-            config = getCamelContext().getRestConfiguration("spark-rest", true);
+            config = camelContext.getRestConfiguration("spark-rest", true);
         }
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -329,7 +329,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
         // get the endpoint
         SparkEndpoint endpoint = camelContext.getEndpoint(url, SparkEndpoint.class);
-        setProperties(endpoint, parameters);
+        setProperties(camelContext, endpoint, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
@@ -341,7 +341,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
             config.getConsumerProperties().put("enableCors", true);
         }
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+            setProperties(camelContext, consumer, config.getConsumerProperties());
         }
         return consumer;
     }
