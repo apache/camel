@@ -29,9 +29,6 @@
     <description>Camel SMPP support</description>
 
     <properties>
-      <camel.osgi.import.before.defaults>
-        org.jsmpp.*;version="[2.2,2.3)"
-      </camel.osgi.import.before.defaults>
       <camel.osgi.export.pkg>org.apache.camel.component.smpp.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>
           org.apache.camel.spi.ComponentResolver;component=smpp,
