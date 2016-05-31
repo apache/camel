@@ -44,14 +44,14 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertEquals("Test collection should not contain any records", 0L, result);
 
         // Insert a record and test that the endpoint now returns 1
-        testCollection.insert((DBObject) JSON.parse("{a:60}"));
+        testCollection.insertOne((BasicDBObject) JSON.parse("{a:60}"));
         result = template.requestBody("direct:count", "irrelevantBody");
         assertTrue("Result is not of type Long", result instanceof Long);
         assertEquals("Test collection should contain 1 record", 1L, result);
-        testCollection.remove(new BasicDBObject());
+        testCollection.deleteOne(new BasicDBObject());
         
         // test dynamicity
-        dynamicCollection.insert((DBObject) JSON.parse("{a:60}"));
+        dynamicCollection.insertOne((BasicDBObject) JSON.parse("{a:60}"));
         result = template.requestBodyAndHeader("direct:count", "irrelevantBody", MongoDbConstants.COLLECTION, dynamicCollectionName);
         assertTrue("Result is not of type Long", result instanceof Long);
         assertEquals("Dynamic collection should contain 1 record", 1L, result);
@@ -63,7 +63,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertEquals(0, testCollection.count());
         Object result = template.requestBody("direct:insert", "{\"_id\":\"testInsertString\", \"scientist\":\"Einstein\"}");
         assertTrue(result instanceof BasicDBObject);
-        DBObject b = testCollection.findOne("testInsertString");
+        DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertString")).first();
         assertNotNull("No record with 'testInsertString' _id", b);
     }
 
@@ -93,14 +93,14 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertEquals("Number of records persisted must be 2", 2, testCollection.count());
         
         // Testing the save logic
-        DBObject record1 = testCollection.findOne("testSave1");
+        DBObject record1 = testCollection.find(new BasicDBObject("_id", "testSave1")).first();
         assertEquals("Scientist field of 'testSave1' must equal 'Einstein'", "Einstein", record1.get("scientist"));
         record1.put("scientist", "Darwin");
         
         result = template.requestBody("direct:save", record1);
         assertTrue(result instanceof UpdateResult);
         
-        record1 = testCollection.findOne("testSave1");
+        record1 = testCollection.find(new BasicDBObject("_id", "testSave1")).first();
         assertEquals("Scientist field of 'testSave1' must equal 'Darwin' after save operation", "Darwin", record1.get("scientist"));
 
     }
@@ -130,7 +130,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertEquals(100L, testCollection.count());
         
         // Testing the update logic
-        DBObject extraField = new BasicDBObject("extraField", true);
+        BasicDBObject extraField = new BasicDBObject("extraField", true);
         assertEquals("Number of records with 'extraField' flag on must equal 50", 50L, testCollection.count(extraField));
         assertEquals("Number of records with 'scientist' field = Darwin on must equal 0", 0, testCollection.count(new BasicDBObject("scientist", "Darwin")));
 
@@ -162,7 +162,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertEquals(100L, testCollection.count());
         
         // Testing the update logic
-        DBObject extraField = new BasicDBObject("extraField", true);
+        BasicDBObject extraField = new BasicDBObject("extraField", true);
         assertEquals("Number of records with 'extraField' flag on must equal 50", 50L, testCollection.count(extraField));
         
         Object result = template.requestBody("direct:remove", extraField);

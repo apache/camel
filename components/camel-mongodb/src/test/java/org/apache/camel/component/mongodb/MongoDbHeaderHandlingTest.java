@@ -58,7 +58,7 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
         //TODO: WriteResult isn't return when inserting
         //assertTrue(result.getOut().getBody() instanceof WriteResult);
         assertEquals("An input header was not returned", "def", result.getOut().getHeader("abc"));
-        DBObject b = testCollection.findOne("testInsertString");
+        DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertString")).first();
         assertNotNull("No record with 'testInsertString' _id", b);
     }
     
@@ -72,7 +72,7 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
         assertEquals("Number of records persisted must be 2", 2, testCollection.count());
         
         // Testing the save logic
-        final DBObject record1 = testCollection.findOne("testSave1");
+        final DBObject record1 = testCollection.find(new BasicDBObject("_id", "testSave1")).first();
         assertEquals("Scientist field of 'testSave1' must equal 'Einstein'", "Einstein", record1.get("scientist"));
         record1.put("scientist", "Darwin");
         
@@ -87,7 +87,7 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
         assertTrue(resultExch.getOut().getBody().equals(record1));
         assertTrue(resultExch.getOut().getHeader(MongoDbConstants.WRITERESULT) instanceof UpdateResult);
 
-        DBObject record2 = testCollection.findOne("testSave1");
+        DBObject record2 = testCollection.find(new BasicDBObject("_id", "testSave1")).first();
         assertEquals("Scientist field of 'testSave1' must equal 'Darwin' after save operation", "Darwin", record2.get("scientist"));
 
     }
