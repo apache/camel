@@ -16,11 +16,31 @@
  */
 package org.apache.camel.model.config;
 
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
+
+import org.apache.camel.model.OtherAttributesAware;
 
 @XmlType(name = "resequencerConfig")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class ResequencerConfig {
+public abstract class ResequencerConfig implements OtherAttributesAware {
+
+    // use xs:any to support optional property placeholders
+    @XmlAnyAttribute
+    private Map<QName, Object> otherAttributes;
+
+    @Override
+    public Map<QName, Object> getOtherAttributes() {
+        return otherAttributes;
+    }
+
+    @Override
+    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
+        this.otherAttributes = otherAttributes;
+    }
+
 }
