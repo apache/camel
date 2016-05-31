@@ -32,13 +32,13 @@ public class MongoDbWriteConcernsTest extends AbstractMongoDbTest {
         assertEquals(0, testCollection.count());
         
         // test with object first
-        Object result = template.requestBodyAndHeader("direct:noWriteConcern", "{\"scientist\":\"newton\"}", MongoDbConstants.WRITECONCERN, WriteConcern.SAFE);
+        Object result = template.requestBody("direct:noWriteConcern", "{\"scientist\":\"newton\"}");
         assertTrue("Result is not of type WriteResult", result instanceof WriteResult);
         WriteResult wr = (WriteResult) result;
         assertTrue(wr.wasAcknowledged());
         
         // same behaviour should be reproduced with String 'SAFE'
-        result = template.requestBodyAndHeader("direct:noWriteConcern", "{\"scientist\":\"newton\"}", MongoDbConstants.WRITECONCERN, "SAFE");
+        result = template.requestBody("direct:noWriteConcern", "{\"scientist\":\"newton\"}");
         assertTrue("Result is not of type WriteResult", result instanceof WriteResult);
         wr = (WriteResult) result;
         assertTrue(wr.wasAcknowledged());
