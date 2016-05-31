@@ -26,6 +26,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -141,6 +142,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         if (bg == null) {
             // create new pool which we should shutdown when stopping as its not shared
             bossGroup = new NettyServerBossPoolBuilder()
+                    .withNativeTransport(configuration.isNativeTransport())
                     .withBossCount(configuration.getBossCount())
                     .withName("NettyServerTCPBoss")
                     .build();
@@ -149,6 +151,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         if (wg == null) {
             // create new pool which we should shutdown when stopping as its not shared
             workerGroup = new NettyWorkerPoolBuilder()
+                    .withNativeTransport(configuration.isNativeTransport())
                     .withWorkerCount(configuration.getWorkerCount())
                     .withName("NettyServerTCPWorker")
                     .build();
@@ -156,7 +159,11 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         }
         
         serverBootstrap = new ServerBootstrap();
-        serverBootstrap.group(bg, wg).channel(NioServerSocketChannel.class);
+        if (configuration.isNativeTransport()) {
+            serverBootstrap.group(bg, wg).channel(EpollServerSocketChannel.class);
+        } else {
+            serverBootstrap.group(bg, wg).channel(NioServerSocketChannel.class);
+        }
         serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, configuration.isKeepAlive());
         serverBootstrap.childOption(ChannelOption.TCP_NODELAY, configuration.isTcpNoDelay());
         serverBootstrap.option(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());

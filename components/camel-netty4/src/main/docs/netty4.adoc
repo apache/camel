@@ -77,8 +77,10 @@ The Netty4 component supports 3 options which are listed below.
 
 
 
+
+
 // endpoint options: START
-The Netty4 component supports 72 endpoint options which are listed below:
+The Netty4 component supports 73 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -126,6 +128,7 @@ The Netty4 component supports 72 endpoint options which are listed below:
 | useByteBuf | producer (advanced) | false | boolean | If the useByteBuf is true netty producer will turn the message body into ByteBuf before sending it out.
 | bootstrapConfiguration | advanced |  | NettyServerBootstrapConfiguration | To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| nativeTransport | advanced | false | boolean | Whether to use native transport instead of NIO. Native transport takes advantage of the host operating system and is only supported on some platforms. You need to add the netty JAR for the host operating system you are using. See more details at: http://netty.io/wiki/native-transports.html
 | options | advanced |  | Map | Allows to configure additional netty options using option. as prefix. For example option.child.keepAlive=false to set the netty option child.keepAlive=false. See the Netty documentation for possible options that can be used.
 | receiveBufferSize | advanced | 65536 | int | The TCP/UDP buffer sizes to be used during inbound communication. Size is bytes.
 | receiveBufferSizePredictor | advanced |  | int | Configures the buffer size predictor. See details at Jetty documentation and this mail thread.
@@ -159,6 +162,8 @@ The Netty4 component supports 72 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
+
 
 
 

@@ -93,6 +93,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected String enabledProtocols = DEFAULT_ENABLED_PROTOCOLS;
     @UriParam(label = "security")
     protected String passphrase;
+    @UriParam(label = "advanced")
+    protected boolean nativeTransport;
     @UriParam(label = "consumer,advanced")
     protected EventLoopGroup bossGroup;
     @UriParam(label = "consumer,advanced")
@@ -465,6 +467,18 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         this.options = options;
     }
 
+    public boolean isNativeTransport() {
+        return nativeTransport;
+    }
+
+    /**
+     * Whether to use native transport instead of NIO. Native transport takes advantage of the host operating system and is only supported on some platforms.
+     * You need to add the netty JAR for the host operating system you are using. See more details at: http://netty.io/wiki/native-transports.html
+     */
+    public void setNativeTransport(boolean nativeTransport) {
+        this.nativeTransport = nativeTransport;
+    }
+
     public EventLoopGroup getBossGroup() {
         return bossGroup;
     }
@@ -475,7 +489,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     public void setBossGroup(EventLoopGroup bossGroup) {
         this.bossGroup = bossGroup;
     }
-    
+
     public EventLoopGroup getWorkerGroup() {
         return workerGroup;
     }

@@ -29,6 +29,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoop;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import org.apache.camel.CamelContext;
@@ -120,6 +121,7 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
         if (wg == null) {
             // create new pool which we should shutdown when stopping as its not shared
             workerGroup = new NettyWorkerPoolBuilder()
+                    .withNativeTransport(configuration.isNativeTransport())
                     .withWorkerCount(configuration.getWorkerCount())
                     .withName("NettyServerTCPWorker")
                     .build();
@@ -127,7 +129,11 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
         }
         
         clientBootstrap = new Bootstrap();
-        clientBootstrap.channel(NioSocketChannel.class);
+        if (configuration.isNativeTransport()) {
+            clientBootstrap.channel(EpollSocketChannel.class);
+        } else {
+            clientBootstrap.channel(NioSocketChannel.class);
+        }
         clientBootstrap.group(wg);
         clientBootstrap.option(ChannelOption.SO_KEEPALIVE, configuration.isKeepAlive());
         clientBootstrap.option(ChannelOption.TCP_NODELAY, configuration.isTcpNoDelay());

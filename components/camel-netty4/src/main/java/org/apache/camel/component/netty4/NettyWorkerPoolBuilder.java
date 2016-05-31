@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty4;
 
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 
@@ -29,6 +30,7 @@ public final class NettyWorkerPoolBuilder {
     private String name = "NettyWorker";
     private String pattern;
     private int workerCount;
+    private boolean nativeTransport;
     private volatile EventLoopGroup workerPool;
 
     public void setName(String name) {
@@ -41,6 +43,10 @@ public final class NettyWorkerPoolBuilder {
 
     public void setWorkerCount(int workerCount) {
         this.workerCount = workerCount;
+    }
+
+    public void setNativeTransport(boolean nativeTransport) {
+        this.nativeTransport = nativeTransport;
     }
 
     public NettyWorkerPoolBuilder withName(String name) {
@@ -58,12 +64,21 @@ public final class NettyWorkerPoolBuilder {
         return this;
     }
 
+    public NettyWorkerPoolBuilder withNativeTransport(boolean nativeTransport) {
+        setNativeTransport(nativeTransport);
+        return this;
+    }
+
     /**
      * Creates a new worker pool.
      */
     public EventLoopGroup build() {
         int count = workerCount > 0 ? workerCount : NettyHelper.DEFAULT_IO_THREADS;
-        workerPool = new NioEventLoopGroup(count, new CamelThreadFactory(pattern, name, false));
+        if (nativeTransport) {
+            workerPool = new EpollEventLoopGroup(count, new CamelThreadFactory(pattern, name, false));
+        } else {
+            workerPool = new NioEventLoopGroup(count, new CamelThreadFactory(pattern, name, false));
+        }
         return workerPool;
     }
 

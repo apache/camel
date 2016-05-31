@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty4;
 
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 
@@ -30,6 +31,7 @@ public final class NettyServerBossPoolBuilder {
     private String name = "NettyServerBoss";
     private String pattern;
     private int bossCount = 1;
+    private boolean nativeTransport;
 
     public void setName(String name) {
         this.name = name;
@@ -41,6 +43,10 @@ public final class NettyServerBossPoolBuilder {
 
     public void setBossCount(int bossCount) {
         this.bossCount = bossCount;
+    }
+
+    public void setNativeTransport(boolean nativeTransport) {
+        this.nativeTransport = nativeTransport;
     }
 
     public NettyServerBossPoolBuilder withName(String name) {
@@ -58,10 +64,19 @@ public final class NettyServerBossPoolBuilder {
         return this;
     }
 
+    public NettyServerBossPoolBuilder withNativeTransport(boolean nativeTransport) {
+        setNativeTransport(nativeTransport);
+        return this;
+    }
+
     /**
      * Creates a new boss pool.
      */
     public EventLoopGroup build() {
-        return new NioEventLoopGroup(bossCount, new CamelThreadFactory(pattern, name, false));
+        if (nativeTransport) {
+            return new EpollEventLoopGroup(bossCount, new CamelThreadFactory(pattern, name, false));
+        } else {
+            return new NioEventLoopGroup(bossCount, new CamelThreadFactory(pattern, name, false));
+        }
     }
 }

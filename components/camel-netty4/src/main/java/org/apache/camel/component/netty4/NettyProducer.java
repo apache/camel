@@ -30,6 +30,8 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollDatagramChannel;
+import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.DefaultChannelGroup;
@@ -93,7 +95,9 @@ public class NettyProducer extends DefaultAsyncProducer {
         super.doStart();
         if (configuration.getWorkerGroup() == null) {
             // create new pool which we should shutdown when stopping as its not shared
-            workerGroup = new NettyWorkerPoolBuilder().withWorkerCount(configuration.getWorkerCount())
+            workerGroup = new NettyWorkerPoolBuilder()
+                .withNativeTransport(configuration.isNativeTransport())
+                .withWorkerCount(configuration.getWorkerCount())
                 .withName("NettyClientTCPWorker").build();
         }
         
@@ -391,7 +395,11 @@ public class NettyProducer extends DefaultAsyncProducer {
         if (isTcp()) {
             // its okay to create a new bootstrap for each new channel
             Bootstrap clientBootstrap = new Bootstrap();
-            clientBootstrap.channel(NioSocketChannel.class);
+            if (configuration.isNativeTransport()) {
+                clientBootstrap.channel(EpollSocketChannel.class);
+            } else {
+                clientBootstrap.channel(NioSocketChannel.class);
+            }
             clientBootstrap.group(getWorkerGroup());
             clientBootstrap.option(ChannelOption.SO_KEEPALIVE, configuration.isKeepAlive());
             clientBootstrap.option(ChannelOption.TCP_NODELAY, configuration.isTcpNoDelay());
@@ -418,7 +426,11 @@ public class NettyProducer extends DefaultAsyncProducer {
         } else {
             // its okay to create a new bootstrap for each new channel
             Bootstrap connectionlessClientBootstrap = new Bootstrap();
-            connectionlessClientBootstrap.channel(NioDatagramChannel.class);
+            if (configuration.isNativeTransport()) {
+                connectionlessClientBootstrap.channel(EpollDatagramChannel.class);
+            } else {
+                connectionlessClientBootstrap.channel(NioDatagramChannel.class);
+            }
             connectionlessClientBootstrap.group(getWorkerGroup());
             connectionlessClientBootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, configuration.getConnectTimeout());
             connectionlessClientBootstrap.option(ChannelOption.SO_BROADCAST, configuration.isBroadcast());

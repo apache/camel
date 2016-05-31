@@ -28,6 +28,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.FixedRecvByteBufAllocator;
+import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.DatagramChannel;
@@ -121,6 +122,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         if (wg == null) {
             // create new pool which we should shutdown when stopping as its not shared
             workerGroup = new NettyWorkerPoolBuilder()
+                    .withNativeTransport(configuration.isNativeTransport())
                     .withWorkerCount(configuration.getWorkerCount())
                     .withName("NettyServerTCPWorker")
                     .build();
@@ -128,7 +130,11 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         }
         
         Bootstrap bootstrap = new Bootstrap();
-        bootstrap.group(wg).channel(NioDatagramChannel.class);
+        if (configuration.isNativeTransport()) {
+            bootstrap.group(wg).channel(EpollDatagramChannel.class);
+        } else {
+            bootstrap.group(wg).channel(NioDatagramChannel.class);
+        }
         // We cannot set the child option here      
         bootstrap.option(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());
         bootstrap.option(ChannelOption.SO_SNDBUF, configuration.getSendBufferSize());
