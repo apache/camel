@@ -63,6 +63,14 @@ public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, Lin
         super.setConfiguration(configuration);
     }
 
+    /**
+     * To use the shared configuration
+     */
+    @Override
+    public LinkedInConfiguration getConfiguration() {
+        return super.getConfiguration();
+    }
+ 
     @Override
     protected Endpoint createEndpoint(String uri, String methodName, LinkedInApiName apiName,
                                       LinkedInConfiguration endpointConfiguration) {
