@@ -18,13 +18,8 @@ package org.apache.camel.component.mongodb;
 
 import java.util.Formatter;
 
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
-import com.mongodb.WriteConcern;
+import com.mongodb.*;
 import com.mongodb.util.JSON;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -34,6 +29,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+
 
 public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
