@@ -24,8 +24,6 @@ import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.ReadPreference;
@@ -70,8 +68,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private MongoDbOperation operation;
     @UriParam(defaultValue = "true")
     private boolean createCollection = true;
-    @UriParam(enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY,SAFE")
-    private WriteConcern writeConcern;
+    @UriParam(defaultValue = "ACKNOWLEDGED", enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY,SAFE")
+    private WriteConcern writeConcern = WriteConcern.ACKNOWLEDGED;
     private WriteConcern writeConcernRef;
     @UriParam(label = "advanced")
     private ReadPreference readPreference;
@@ -175,9 +173,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
                 throw new IllegalArgumentException("consumerType, tailTracking, cursorRegenerationDelay options cannot appear on a producer endpoint");
             }
         } else if (role == 'C') {
-            if (!ObjectHelper.isEmpty(operation) || !ObjectHelper.isEmpty(writeConcern) || writeConcernRef != null
-                   || dynamicity || outputType != null) {
-                throw new IllegalArgumentException("operation, writeConcern, writeConcernRef, dynamicity, outputType "
+            if (!ObjectHelper.isEmpty(operation) || dynamicity || outputType != null) {
+                throw new IllegalArgumentException("operation, dynamicity, outputType "
                         + "options cannot appear on a consumer endpoint");
             }
             if (consumerType == MongoDbConsumerType.tailable) {

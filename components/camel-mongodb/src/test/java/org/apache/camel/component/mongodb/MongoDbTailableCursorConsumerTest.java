@@ -19,17 +19,13 @@ package org.apache.camel.component.mongodb;
 import java.util.Calendar;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.CreateCollectionOptions;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
 import org.junit.Test;
 
 public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
@@ -128,7 +124,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
                 new CreateCollectionOptions()
                         .capped(true)
                         .sizeInBytes(1000000000)
-                        .maxDocuments(100));
+                        .maxDocuments(1000));
         cappedTestCollection = db.getCollection(cappedTestCollectionName, BasicDBObject.class);
         addTestRoutes();
         context.startRoute("tailableCursorConsumer1");
@@ -171,7 +167,10 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         // create a capped collection with max = 1000
         // BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get()
         db.createCollection(cappedTestCollectionName,
-                new CreateCollectionOptions().capped(true).sizeInBytes(1000000000).maxDocuments(1000));
+                new CreateCollectionOptions()
+                        .capped(true)
+                        .sizeInBytes(1000000000)
+                        .maxDocuments(1000));
         cappedTestCollection = db.getCollection(cappedTestCollectionName, BasicDBObject.class);
         cappedTestCollection.createIndex(new BasicDBObject("increasing", 1));
 
@@ -244,7 +243,10 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         // create a capped collection with max = 1000
         //BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get()
         db.createCollection(cappedTestCollectionName,
-                new CreateCollectionOptions().capped(true).sizeInBytes(1000000000).maxDocuments(1000));
+                new CreateCollectionOptions()
+                        .capped(true)
+                        .sizeInBytes(1000000000)
+                        .maxDocuments(1000));
         cappedTestCollection = db.getCollection(cappedTestCollectionName, BasicDBObject.class);
         addTestRoutes();
         context.startRoute("tailableCursorConsumer2");
@@ -318,7 +320,10 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         // create a capped collection with max = 1000
         //BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get()
         db.createCollection(cappedTestCollectionName,
-                new CreateCollectionOptions().capped(true).sizeInBytes(1000000000).maxDocuments(1000));
+                new CreateCollectionOptions()
+                        .capped(true)
+                        .sizeInBytes(1000000000)
+                        .maxDocuments(1000));
         cappedTestCollection = db.getCollection(cappedTestCollectionName, BasicDBObject.class);
         addTestRoutes();
         context.startRoute("tailableCursorConsumer3");
