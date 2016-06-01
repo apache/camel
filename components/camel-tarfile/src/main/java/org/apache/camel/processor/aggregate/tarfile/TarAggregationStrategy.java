@@ -21,8 +21,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileMessage;
@@ -151,18 +153,21 @@ public class TarAggregationStrategy implements AggregationStrategy {
             tarFile = oldExchange.getIn().getBody(File.class);
         }
 
-        // Handle GenericFileMessages
-        if (GenericFileMessage.class.isAssignableFrom(newExchange.getIn().getClass())) {
+        Object body = newExchange.getIn().getBody();
+        if (body instanceof WrappedFile) {
+            body = ((WrappedFile) body).getFile();
+        }
+
+        if (body instanceof File) {
             try {
-                File appendFile = newExchange.getIn().getMandatoryBody(File.class);
-                if (appendFile != null) {
-                    addFileToTar(tarFile, appendFile, this.preserveFolderStructure ? newExchange.getIn().toString() : null);
+                File appendFile = (File) body;
+                // do not try to append empty files
+                if (appendFile.length() > 0) {
+                    String entryName = preserveFolderStructure ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class) : newExchange.getIn().getMessageId();
+                    addFileToTar(tarFile, appendFile, this.preserveFolderStructure ? entryName : null);
                     GenericFile<File> genericFile =
                             FileConsumer.asGenericFile(
-                                    tarFile.getParent(),
-                                    tarFile,
-                                    null,      // Do not set charset here, that will cause the tar file to be handled as ASCII later which breaks it..
-                                    false);
+                                    tarFile.getParent(), tarFile, Charset.defaultCharset().toString(), false);
                     genericFile.bindToExchange(answer);
                 }
             } catch (Exception e) {
@@ -172,15 +177,18 @@ public class TarAggregationStrategy implements AggregationStrategy {
             // Handle all other messages
             try {
                 byte[] buffer = newExchange.getIn().getMandatoryBody(byte[].class);
-                String entryName = useFilenameHeader ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class) : newExchange.getIn().getMessageId();
-                addEntryToTar(tarFile, entryName, buffer, buffer.length);
-                GenericFile<File> genericFile = FileConsumer.asGenericFile(tarFile.getParent(), tarFile, null, false);
-                genericFile.bindToExchange(answer);
+                // do not try to append empty data
+                if (buffer.length > 0) {
+                    String entryName = useFilenameHeader ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class) : newExchange.getIn().getMessageId();
+                    addEntryToTar(tarFile, entryName, buffer, buffer.length);
+                    GenericFile<File> genericFile = FileConsumer.asGenericFile(
+                            tarFile.getParent(), tarFile, Charset.defaultCharset().toString(), false);
+                    genericFile.bindToExchange(answer);
+                }
             } catch (Exception e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
         }
-
         return answer;
     }
 
