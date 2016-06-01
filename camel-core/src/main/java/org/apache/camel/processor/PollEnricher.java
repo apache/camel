@@ -21,14 +21,19 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.impl.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.impl.ConsumerCache;
+import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.EmptyConsumerCache;
+import org.apache.camel.impl.EventDrivenPollingConsumer;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -208,6 +213,21 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
             return true;
         }
 
+        // grab the real delegate consumer that performs the actual polling
+        Consumer delegate = consumer;
+        if (consumer instanceof EventDrivenPollingConsumer) {
+            delegate = ((EventDrivenPollingConsumer) consumer).getDelegateConsumer();
+        }
+
+        // is the consumer bridging the error handler?
+        boolean bridgeErrorHandler = false;
+        if (delegate instanceof DefaultConsumer) {
+            ExceptionHandler handler = ((DefaultConsumer) delegate).getExceptionHandler();
+            if (handler != null && handler instanceof BridgeExceptionHandlerToErrorHandler) {
+                bridgeErrorHandler = true;
+            }
+        }
+
         Exchange resourceExchange;
         try {
             if (timeout < 0) {
@@ -235,9 +255,21 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
             consumerCache.releasePollingConsumer(endpoint, consumer);
         }
 
+        // remember current redelivery stats
+        Object redeliveried = exchange.getIn().getHeader(Exchange.REDELIVERED);
+        Object redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER);
+        Object redeliveryMaxCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_MAX_COUNTER);
+
+        // if we are bridging error handler and failed then remember the caused exception
+        Throwable cause = null;
+        if (resourceExchange != null && bridgeErrorHandler) {
+            cause = resourceExchange.getException();
+        }
+
         try {
             if (!isAggregateOnException() && (resourceExchange != null && resourceExchange.isFailed())) {
                 // copy resource exchange onto original exchange (preserving pattern)
+                // and preserve redelivery headers
                 copyResultsPreservePattern(exchange, resourceExchange);
             } else {
                 prepareResult(exchange);
@@ -252,6 +284,37 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
                     // handover any synchronization
                     if (resourceExchange != null) {
                         resourceExchange.handoverCompletions(exchange);
+                    }
+                }
+            }
+
+            // if we failed then restore caused exception
+            if (cause != null) {
+                // restore caused exception
+                exchange.setException(cause);
+                // remove the exhausted marker as we want to be able to perform redeliveries with the error handler
+                exchange.removeProperties(Exchange.REDELIVERY_EXHAUSTED);
+
+                // preserve the redelivery stats
+                if (redeliveried != null) {
+                    if (exchange.hasOut()) {
+                        exchange.getOut().setHeader(Exchange.REDELIVERED, redeliveried);
+                    } else {
+                        exchange.getIn().setHeader(Exchange.REDELIVERED, redeliveried);
+                    }
+                }
+                if (redeliveryCounter != null) {
+                    if (exchange.hasOut()) {
+                        exchange.getOut().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
+                    } else {
+                        exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
+                    }
+                }
+                if (redeliveryMaxCounter != null) {
+                    if (exchange.hasOut()) {
+                        exchange.getOut().setHeader(Exchange.REDELIVERY_MAX_COUNTER, redeliveryMaxCounter);
+                    } else {
+                        exchange.getIn().setHeader(Exchange.REDELIVERY_MAX_COUNTER, redeliveryMaxCounter);
                     }
                 }
             }

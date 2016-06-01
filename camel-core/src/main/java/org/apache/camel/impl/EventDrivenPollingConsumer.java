@@ -174,6 +174,10 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         this.interruptedExceptionHandler = interruptedExceptionHandler;
     }
 
+    public Consumer getDelegateConsumer() {
+        return consumer;
+    }
+
     protected void handleInterruptedException(InterruptedException e) {
         getInterruptedExceptionHandler().handleException(e);
     }
