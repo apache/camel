@@ -102,8 +102,9 @@ The Netty4 HTTP component supports 6 options which are listed below.
 
 
 
+
 // endpoint options: START
-The Netty4 HTTP component supports 80 endpoint options which are listed below:
+The Netty4 HTTP component supports 81 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -162,6 +163,7 @@ The Netty4 HTTP component supports 80 endpoint options which are listed below:
 | disableStreamCache | advanced | false | boolean | Determines whether or not the raw input stream from Netty HttpRequestgetContent() or HttpResponsetgetContent() is cached or not (Camel will read the stream into a in light-weight memory based Stream caching) cache. By default Camel will cache the Netty input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. Mind that if you enable this option then you cannot read the Netty stream multiple times out of the box and you would need manually to reset the reader index on the Netty raw stream. Also Netty will auto-close the Netty stream when the Netty HTTP server/HTTP client is done processing which means that if the asynchronous routing engine is in use then any asynchronous thread that may continue routing the org.apache.camel.Exchange may not be able to read the Netty stream because Netty has closed it.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | headerFilterStrategy | advanced |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers.
+| nativeTransport | advanced | false | boolean | Whether to use native transport instead of NIO. Native transport takes advantage of the host operating system and is only supported on some platforms. You need to add the netty JAR for the host operating system you are using. See more details at: http://netty.io/wiki/native-transports.html
 | nettyHttpBinding | advanced |  | NettyHttpBinding | To use a custom org.apache.camel.component.netty4.http.NettyHttpBinding for binding to/from Netty and Camel Message API.
 | options | advanced |  | Map | Allows to configure additional netty options using option. as prefix. For example option.child.keepAlive=false to set the netty option child.keepAlive=false. See the Netty documentation for possible options that can be used.
 | receiveBufferSize | advanced | 65536 | int | The TCP/UDP buffer sizes to be used during inbound communication. Size is bytes.
@@ -192,6 +194,7 @@ The Netty4 HTTP component supports 80 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
