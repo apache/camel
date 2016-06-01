@@ -23,7 +23,6 @@ import java.util.List;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.WriteConcern;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -33,7 +32,6 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.MessageHelper;
@@ -142,21 +140,21 @@ public class MongoDbProducer extends DefaultProducer {
 
     // ----------- MongoDB operations ----------------
 
+    //returns result in body
     protected void doCommand(Exchange exchange) throws Exception {
         Document result;
         MongoDatabase db = calculateDb(exchange);
         BasicDBObject cmdObj = exchange.getIn().getMandatoryBody(BasicDBObject.class);
 
-        //TODO Manage the read preference
         result = db.runCommand(cmdObj);
 
-
-        Message responseMessage = prepareResponseMessage(exchange, MongoDbOperation.command);
-        responseMessage.setBody(result);
+        copyHeaders(exchange);
+        moveBodyToOutIfResultIsReturnedAsHeader(exchange, MongoDbOperation.command);
+        processAndTransferResult(result, exchange, MongoDbOperation.command);
     }
 
     protected void doGetStats(Exchange exchange, MongoDbOperation operation) throws Exception {
-        Document result = null;
+        Document result;
 
         if (operation == MongoDbOperation.getColStats) {
             result = calculateDb(exchange).runCommand(createCollStatsCommand(calculateCollectionName(exchange)));
@@ -167,8 +165,9 @@ public class MongoDbProducer extends DefaultProducer {
             throw new CamelMongoDbException("Internal error: wrong operation for getStats variant" + operation);
         }
 
-        Message responseMessage = prepareResponseMessage(exchange, operation);
-        responseMessage.setBody(result);
+        copyHeaders(exchange);
+        moveBodyToOutIfResultIsReturnedAsHeader(exchange, operation);
+        processAndTransferResult(result, exchange, operation);
     }
 
     private BasicDBObject createDbStatsCommand() {
@@ -185,11 +184,9 @@ public class MongoDbProducer extends DefaultProducer {
 
         DeleteResult result = dbCol.deleteMany(removeObj);
 
-        Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.remove);
-        // we always return the WriteResult, because whether the getLastError was called or not,
-        // the user will have the means to call it or obtain the cached CommandResult
-        processAndTransferDeleteResult(result, exchange);
-        resultMessage.setHeader(MongoDbConstants.RECORDS_AFFECTED, result.getDeletedCount());
+        copyHeaders(exchange);
+        moveBodyToOutIfResultIsReturnedAsHeader(exchange, MongoDbOperation.remove);
+        processAndTransferResult(result, exchange, MongoDbOperation.remove);
     }
 
     @SuppressWarnings("unchecked")
@@ -207,7 +204,6 @@ public class MongoDbProducer extends DefaultProducer {
         Boolean upsert = exchange.getIn().getHeader(MongoDbConstants.UPSERT, Boolean.class);
 
         UpdateResult result;
-        WriteConcern wc = extractWriteConcern(exchange);
         // In API 2.7, the default upsert and multi values of update(DBObject, DBObject) are false, false, so we unconditionally invoke the
         // full-signature method update(DBObject, DBObject, boolean, boolean). However, the default behaviour may change in the future, 
         // so it's safer to be explicit at this level for full determinism
@@ -227,11 +223,9 @@ public class MongoDbProducer extends DefaultProducer {
             result = dbCol.updateOne(updateCriteria, objNew, options);
         }
 
-        Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.update);
-        // we always return the WriteResult, because whether the getLastError was called or not, the user will have the means to call it or 
-        // obtain the cached CommandResult
-        processAndTransferUpdateResult(result, exchange);
-        resultMessage.setHeader(MongoDbConstants.RECORDS_AFFECTED, result.getModifiedCount());
+        copyHeaders(exchange);
+        moveBodyToOutIfResultIsReturnedAsHeader(exchange, MongoDbOperation.update);
+        processAndTransferResult(result, exchange, MongoDbOperation.update);
     }
 
     /**
@@ -249,21 +243,9 @@ public class MongoDbProducer extends DefaultProducer {
         UpdateResult result = dbCol.replaceOne(queryObject, saveObj, options);
         exchange.getIn().setHeader(MongoDbConstants.OID, saveObj.get("_id"));
 
-        prepareResponseMessage(exchange, MongoDbOperation.save);
-        //TODO: insertOne doesn't return a WriteResult
-        // we always return the WriteResult, because whether the getLastError was called or not, the user will have the means to call it or 
-        // obtain the cached CommandResult
-        processAndTransferUpdateResult(result, exchange);
-    }
-
-    private void processAndTransferResult(Object result, Exchange exchange) {
-        // determine where to set the WriteResult: as the OUT body or as an IN message header
-        if (endpoint.isWriteResultAsHeader()) {
-            exchange.getOut().setHeader(MongoDbConstants.WRITERESULT, result);
-        } else {
-            exchange.getOut().setBody(result);
-        }
-
+        copyHeaders(exchange);
+        moveBodyToOutIfResultIsReturnedAsHeader(exchange, MongoDbOperation.save);
+        processAndTransferResult(result, exchange, MongoDbOperation.save);
     }
 
     protected void doFindById(Exchange exchange) throws Exception {
@@ -279,9 +261,11 @@ public class MongoDbProducer extends DefaultProducer {
             ret = dbCol.find(o).filter(fieldFilter).first();
         }
 
-        Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.save);
-        resultMessage.setBody(ret);
-        resultMessage.setHeader(MongoDbConstants.RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
+        copyHeaders(exchange);
+        moveBodyToOutIfResultIsReturnedAsHeader(exchange, MongoDbOperation.save);
+        processAndTransferResult(ret, exchange, MongoDbOperation.save);
+        //exchange.getOut().setBody(ret);
+        exchange.getOut().setHeader(MongoDbConstants.RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -318,9 +302,9 @@ public class MongoDbProducer extends DefaultProducer {
             exchange.getIn().setHeader(MongoDbConstants.OID, oids);
         }
 
-        prepareResponseMessage(exchange, MongoDbOperation.insert);
-
-        processAndTransferResult(insert, exchange);
+        copyHeaders(exchange);
+        moveBodyToOutIfResultIsReturnedAsHeader(exchange, MongoDbOperation.insert);
+        processAndTransferResult(insert, exchange, MongoDbOperation.insert);
     }
 
     protected void doFindAll(Exchange exchange) throws Exception {
@@ -364,16 +348,17 @@ public class MongoDbProducer extends DefaultProducer {
                 ret.limit(limit.intValue());
             }
 
-            Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.findAll);
+            copyHeaders(exchange);
+            moveBodyToOutIfResultIsReturnedAsHeader(exchange, MongoDbOperation.findAll);
             if (MongoDbOutputType.DBCursor.equals(endpoint.getOutputType())) {
-                resultMessage.setBody(ret.iterator());
+                processAndTransferResult(ret.iterator(), exchange, MongoDbOperation.findAll);
             } else {
                 List<BasicDBObject> result = new ArrayList<>();
                 ret.iterator().forEachRemaining(result::add);
-                resultMessage.setBody(result);
+                processAndTransferResult(result, exchange, MongoDbOperation.findAll);
                 //TODO: decide what to do with total number of elements (count query needed).
                 //resultMessage.setHeader(MongoDbConstants.RESULT_TOTAL_SIZE, ret.....);
-                resultMessage.setHeader(MongoDbConstants.RESULT_PAGE_SIZE, result.size());
+                exchange.getOut().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, result.size());
             }
         } finally {
             // make sure the cursor is closed
@@ -396,9 +381,10 @@ public class MongoDbProducer extends DefaultProducer {
             ret = dbCol.find(o).filter(fieldFilter).first();
         }
 
-        Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.findOneByQuery);
-        resultMessage.setBody(ret);
-        resultMessage.setHeader(MongoDbConstants.RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
+        copyHeaders(exchange);
+        moveBodyToOutIfResultIsReturnedAsHeader(exchange, MongoDbOperation.findOneByQuery);
+        processAndTransferResult(ret, exchange, MongoDbOperation.findOneByQuery);
+        exchange.getOut().setHeader(MongoDbConstants.RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
     }
 
     protected void doCount(Exchange exchange) throws Exception {
@@ -410,8 +396,10 @@ public class MongoDbProducer extends DefaultProducer {
         } else {
             answer = dbCol.count(query);
         }
-        Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.count);
-        resultMessage.setBody(answer);
+
+        copyHeaders(exchange);
+        moveBodyToOutIfResultIsReturnedAsHeader(exchange, MongoDbOperation.count);
+        processAndTransferResult(answer, exchange, MongoDbOperation.count);
     }
 
     /**
@@ -421,6 +409,7 @@ public class MongoDbProducer extends DefaultProducer {
      * @param exchange
      * @throws Exception
      */
+    //always returns result as body
     protected void doAggregate(Exchange exchange) throws Exception {
         MongoCollection<BasicDBObject> dbCol = calculateCollection(exchange);
         DBObject query = exchange.getIn().getMandatoryBody(DBObject.class);
@@ -446,8 +435,9 @@ public class MongoDbProducer extends DefaultProducer {
         }
 
         aggregationResult.iterator().forEachRemaining(dbIterator::add);
-        Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.aggregate);
-        resultMessage.setBody(dbIterator);
+        copyHeaders(exchange);
+        moveBodyToOutIfResultIsReturnedAsHeader(exchange, MongoDbOperation.aggregate);
+        processAndTransferResult(dbIterator, exchange, MongoDbOperation.aggregate);
     }
 
     // --------- Convenience methods -----------------------
@@ -488,7 +478,8 @@ public class MongoDbProducer extends DefaultProducer {
         // dynamic calculation is an option. In most cases it won't be used and we should not penalise all users with running this
         // resolution logic on every Exchange if they won't be using this functionality at all
         if (!endpoint.isDynamicity()) {
-            return endpoint.getMongoCollection();
+            return endpoint.getMongoCollection()
+                    .withWriteConcern(endpoint.getWriteConcern());
         }
 
         String dynamicDB = exchange.getIn().getHeader(MongoDbConstants.DATABASE, String.class);
@@ -500,7 +491,8 @@ public class MongoDbProducer extends DefaultProducer {
         MongoCollection<BasicDBObject> dbCol;
 
         if (dynamicDB == null && dynamicCollection == null) {
-            dbCol = endpoint.getMongoCollection();
+            dbCol = endpoint.getMongoCollection()
+                    .withWriteConcern(endpoint.getWriteConcern());
         } else {
             MongoDatabase db = calculateDb(exchange);
 
@@ -524,44 +516,6 @@ public class MongoDbProducer extends DefaultProducer {
         return dbCol;
     }
 
-    private void processAndTransferDeleteResult(DeleteResult result, Exchange exchange) {
-        // determine where to set the WriteResult: as the OUT body or as an IN message header
-        if (endpoint.isWriteResultAsHeader()) {
-            exchange.getOut().setHeader(MongoDbConstants.WRITERESULT, result);
-        } else {
-            exchange.getOut().setBody(result);
-        }
-    }
-
-    private void processAndTransferUpdateResult(UpdateResult result, Exchange exchange) {
-        // determine where to set the WriteResult: as the OUT body or as an IN message header
-        if (endpoint.isWriteResultAsHeader()) {
-            exchange.getOut().setHeader(MongoDbConstants.WRITERESULT, result);
-        } else {
-            exchange.getOut().setBody(result);
-        }
-    }
-
-    private WriteConcern extractWriteConcern(Exchange exchange) throws CamelMongoDbException {
-        Object o = exchange.getIn().getHeader(MongoDbConstants.WRITECONCERN);
-
-        if (o == null) {
-            return null;
-        } else if (o instanceof WriteConcern) {
-            return ObjectHelper.cast(WriteConcern.class, o);
-        } else if (o instanceof String) {
-            WriteConcern answer = WriteConcern.valueOf(ObjectHelper.cast(String.class, o));
-            if (answer == null) {
-                throw new CamelMongoDbException("WriteConcern specified in the " + MongoDbConstants.WRITECONCERN + " header, with value " + o
-                        + " could not be resolved to a WriteConcern type");
-            }
-        }
-
-        // should never get here
-        LOG.warn("A problem occurred while resolving the Exchange's Write Concern");
-        return null;
-    }
-
     @SuppressWarnings("rawtypes")
     private List<DBObject> attemptConvertToList(List insertList, Exchange exchange) throws CamelMongoDbException {
         List<DBObject> dbObjectList = new ArrayList<DBObject>(insertList.size());
@@ -577,17 +531,27 @@ public class MongoDbProducer extends DefaultProducer {
         return dbObjectList;
     }
 
-    private Message prepareResponseMessage(Exchange exchange, MongoDbOperation operation) {
-        Message answer = exchange.getOut();
-        MessageHelper.copyHeaders(exchange.getIn(), answer, false);
-        if (isWriteOperation(operation) && endpoint.isWriteResultAsHeader()) {
-            answer.setBody(exchange.getIn().getBody());
-        }
-        return answer;
-    }
-
     private boolean isWriteOperation(MongoDbOperation operation) {
         return MongoDbComponent.WRITE_OPERATIONS.contains(operation);
+    }
+
+    private void copyHeaders(Exchange exchange) {
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), false);
+    }
+
+    private void moveBodyToOutIfResultIsReturnedAsHeader(Exchange exchange, MongoDbOperation operation) {
+        if (isWriteOperation(operation) && endpoint.isWriteResultAsHeader()) {
+            exchange.getOut().setBody(exchange.getIn().getBody());
+        }
+    }
+
+    private void processAndTransferResult(Object result, Exchange exchange, MongoDbOperation operation) {
+        // determine where to set the WriteResult: as the OUT body or as an IN message header
+        if (isWriteOperation(operation) && endpoint.isWriteResultAsHeader()) {
+            exchange.getOut().setHeader(MongoDbConstants.WRITERESULT, result);
+        } else {
+            exchange.getOut().setBody(result);
+        }
     }
 
 }
