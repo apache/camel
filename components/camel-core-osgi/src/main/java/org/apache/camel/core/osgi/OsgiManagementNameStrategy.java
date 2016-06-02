@@ -46,7 +46,7 @@ public class OsgiManagementNameStrategy extends DefaultManagementNameStrategy {
     private final BundleContext bundleContext;
 
     public OsgiManagementNameStrategy(CamelContext camelContext, BundleContext bundleContext) {
-        super(camelContext, "#symbolicName#", "#symbolicName#-#counter#");
+        super(camelContext, "#symbolicName#-#name#", "#symbolicName#-#name#-#counter#");
         this.bundleContext = bundleContext;
     }
 
