@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mongodb;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -253,24 +254,28 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * @return technical list index
      */
     @SuppressWarnings("unchecked")
-    public List<BasicDBObject> createIndex() throws Exception {
-        List<BasicDBObject> indexList = new ArrayList<>();
+    public List<BasicDBObject> createIndex() {
+        try {
+            List<BasicDBObject> indexList = new ArrayList<>();
 
-        if (ObjectHelper.isNotEmpty(collectionIndex)) {
-            HashMap<String, String> indexMap = new ObjectMapper().readValue(collectionIndex, HashMap.class);
+            if (ObjectHelper.isNotEmpty(collectionIndex)) {
+                HashMap<String, String> indexMap = new ObjectMapper().readValue(collectionIndex, HashMap.class);
 
-            for (Map.Entry<String, String> set : indexMap.entrySet()) {
-                BasicDBObject index = new BasicDBObject();
-                // MongoDB 2.4 upwards is restrictive about the type of the 'single field index' being
-                // in use below (set.getValue())) as only an integer value type is accepted, otherwise
-                // server will throw an exception, see more details:
-                // http://docs.mongodb.org/manual/release-notes/2.4/#improved-validation-of-index-types
-                index.put(set.getKey(), set.getValue());
+                for (Map.Entry<String, String> set : indexMap.entrySet()) {
+                    BasicDBObject index = new BasicDBObject();
+                    // MongoDB 2.4 upwards is restrictive about the type of the 'single field index' being
+                    // in use below (set.getValue())) as only an integer value type is accepted, otherwise
+                    // server will throw an exception, see more details:
+                    // http://docs.mongodb.org/manual/release-notes/2.4/#improved-validation-of-index-types
+                    index.put(set.getKey(), set.getValue());
 
-                indexList.add(index);
+                    indexList.add(index);
+                }
             }
+            return indexList;
+        } catch (IOException e) {
+            throw new CamelMongoDbException("createIndex failed", e);
         }
-        return indexList;
     }
 
     /**
