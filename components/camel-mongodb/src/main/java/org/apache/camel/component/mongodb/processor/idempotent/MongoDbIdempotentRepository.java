@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mongodb.processor.idempotent;
 
-
 import com.mongodb.ErrorCategory;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -25,31 +24,31 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.bson.BsonDocument;
 import org.bson.Document;
-
 
 @ManagedResource(description = "Mongo db based message id repository")
 public class MongoDbIdempotentRepository<E> extends ServiceSupport implements IdempotentRepository<E> {
 
-    private MongoClient cli;
+    private MongoClient mongoClient;
     private String collectionName;
     private String dbName;
-
     private MongoCollection<Document> collection;
 
+    public MongoDbIdempotentRepository() {
+    }
 
-    public MongoDbIdempotentRepository(MongoClient cli, String collectionName, String dbName) {
-        this.cli = cli;
+    public MongoDbIdempotentRepository(MongoClient mongoClient, String collectionName, String dbName) {
+        this.mongoClient = mongoClient;
         this.collectionName = collectionName;
         this.dbName = dbName;
-        collection = cli.getDatabase(dbName).getCollection(collectionName);
+        this.collection = mongoClient.getDatabase(dbName).getCollection(collectionName);
     }
 
     @ManagedOperation(description = "Adds the key to the store")
     @Override
     public boolean add(E key) {
-
         Document document = new Document("_id", key);
         try {
             collection.insertOne(document);
@@ -57,7 +56,6 @@ public class MongoDbIdempotentRepository<E> extends ServiceSupport implements Id
             if (ex.getError().getCategory() == ErrorCategory.DUPLICATE_KEY) {
                 return false;
             }
-
             throw ex;
         }
         return true;
@@ -92,20 +90,26 @@ public class MongoDbIdempotentRepository<E> extends ServiceSupport implements Id
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(mongoClient, "cli");
+        ObjectHelper.notNull(dbName, "dbName");
+        ObjectHelper.notNull(collectionName, "collectionName");
 
+        if (collection == null) {
+            this.collection = mongoClient.getDatabase(dbName).getCollection(collectionName);
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-
+        // noop
     }
 
-    public MongoClient getCli() {
-        return cli;
+    public MongoClient getMongoClient() {
+        return mongoClient;
     }
 
-    public void setCli(MongoClient cli) {
-        this.cli = cli;
+    public void setMongoClient(MongoClient mongoClient) {
+        this.mongoClient = mongoClient;
     }
 
     public String getCollectionName() {
