@@ -21,7 +21,6 @@ import java.util.UUID;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import org.apache.camel.component.mongodb.AbstractMongoDbTest;
-import org.apache.camel.util.ServiceHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +32,7 @@ public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
     @Before
     @After
     public void clearDB() {
-        testCollection.remove(new BasicDBObject());
+        testCollection.deleteMany(new BasicDBObject());
     }
 
     @Override
