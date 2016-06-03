@@ -51,6 +51,8 @@ public class ElasticsearchConfiguration {
     private int port = ElasticsearchConstants.DEFAULT_PORT;
     @UriParam(defaultValue = "true")
     private Boolean clientTransportSniff = true;
+    @UriParam(defaultValue = "/usr/share/elasticsearch")
+    private String pathHome = "/usr/share/elasticsearch";
 
     /**
      * Name of cluster or use local for local mode
@@ -178,4 +180,15 @@ public class ElasticsearchConfiguration {
     public void setTransportAddressesList(List<InetSocketTransportAddress> transportAddressesList) {
         this.transportAddressesList = transportAddressesList;
     }
+
+    /**
+     * The path.home property of ElasticSearch configuration. You need to provide a valid path, otherwise the default, /usr/share/elasticsearch, will be used.
+     */
+	public String getPathHome() {
+		return pathHome;
+	}
+
+	public void setPathHome(String pathHome) {
+		this.pathHome = pathHome;
+	}
 }
