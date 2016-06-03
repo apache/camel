@@ -308,15 +308,15 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("elasticsearch://local?operation=INDEX");
-                from("direct:index").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet");
-                from("direct:get").to("elasticsearch://local?operation=GET_BY_ID&indexName=twitter&indexType=tweet");
-                from("direct:multiget").to("elasticsearch://local?operation=MULTIGET&indexName=twitter&indexType=tweet");
-                from("direct:delete").to("elasticsearch://local?operation=DELETE&indexName=twitter&indexType=tweet");
-                from("direct:search").to("elasticsearch://local?operation=SEARCH&indexName=twitter&indexType=tweet");
-                from("direct:update").to("elasticsearch://local?operation=UPDATE&indexName=twitter&indexType=tweet");
-                from("direct:exists").to("elasticsearch://local?operation=EXISTS");
-                from("direct:multisearch").to("elasticsearch://local?operation=MULTISEARCH&indexName=test");
+                from("direct:start").to("elasticsearch://local?operation=INDEX&pathHome=target/home");
+                from("direct:index").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet&pathHome=target/home");
+                from("direct:get").to("elasticsearch://local?operation=GET_BY_ID&indexName=twitter&indexType=tweet&pathHome=target/home");
+                from("direct:multiget").to("elasticsearch://local?operation=MULTIGET&indexName=twitter&indexType=tweet&pathHome=target/home");
+                from("direct:delete").to("elasticsearch://local?operation=DELETE&indexName=twitter&indexType=tweet&pathHome=target/home");
+                from("direct:search").to("elasticsearch://local?operation=SEARCH&indexName=twitter&indexType=tweet&pathHome=target/home");
+                from("direct:update").to("elasticsearch://local?operation=UPDATE&indexName=twitter&indexType=tweet&pathHome=target/home");
+                from("direct:exists").to("elasticsearch://local?operation=EXISTS&pathHome=target/home");
+                from("direct:multisearch").to("elasticsearch://local?operation=MULTISEARCH&indexName=test&pathHome=target/home");
             }
         };
     }

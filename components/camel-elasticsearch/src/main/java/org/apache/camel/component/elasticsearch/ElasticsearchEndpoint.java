@@ -82,6 +82,7 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
             } else {
                 LOG.info("Joining ElasticSearch cluster " + configuration.getClusterName());
             }
+            
             if (configuration.getIp() != null) {
                 this.client = TransportClient.builder().settings(getSettings()).build()
                     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(configuration.getIp()), configuration.getPort()));
@@ -100,6 +101,7 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
                 if (!configuration.isLocal() && configuration.getClusterName() != null) {
                     builder.clusterName(configuration.getClusterName());
                 }
+                builder.getSettings().put("path.home", configuration.getPathHome());
                 node = builder.node();
                 client = node.client();
             }
@@ -113,6 +115,7 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
                 .put("node.client", true)
                 .put("client.transport.sniff", configuration.getClientTransportSniff())
                 .put("http.enabled", false)
+                .put("path.home", configuration.getPathHome())
                 .build();
     }
 
