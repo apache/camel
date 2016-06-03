@@ -351,11 +351,19 @@ public class MongoDbProducer extends DefaultProducer {
         DBObject o = exchange.getIn().getMandatoryBody(DBObject.class);
         DBObject ret;
 
+        DBObject sortBy = exchange.getIn().getHeader(MongoDbConstants.SORT_BY, DBObject.class);
         DBObject fieldFilter = exchange.getIn().getHeader(MongoDbConstants.FIELDS_FILTER, DBObject.class);
-        if (fieldFilter == null) {
+
+        if (fieldFilter != null && sortBy != null) {
+            ret = dbCol.findOne(o, fieldFilter, sortBy);
+        } else if (fieldFilter != null && sortBy == null ) {
+            ret = dbCol.findOne(o, fieldFilter);
+        } else if (fieldFilter == null && sortBy != null ){
+        	// TODO should we apply a default projection that includes everything?
+            LOG.debug("Passed findOne() operation with sortBy header but no fieldFilter header - ignoring sortBy");
             ret = dbCol.findOne(o);
         } else {
-            ret = dbCol.findOne(o, fieldFilter);
+            ret = dbCol.findOne(o);
         }
 
         Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.findOneByQuery);
