@@ -351,11 +351,15 @@ public class MongoDbProducer extends DefaultProducer {
         DBObject o = exchange.getIn().getMandatoryBody(DBObject.class);
         DBObject ret;
 
+        DBObject sortBy = exchange.getIn().getHeader(MongoDbConstants.SORT_BY, DBObject.class);
         DBObject fieldFilter = exchange.getIn().getHeader(MongoDbConstants.FIELDS_FILTER, DBObject.class);
-        if (fieldFilter == null) {
-            ret = dbCol.findOne(o);
-        } else {
+
+        if (sortBy != null) {
+            ret = dbCol.findOne(o, fieldFilter, sortBy);
+        } else if (fieldFilter != null) {
             ret = dbCol.findOne(o, fieldFilter);
+        } else {
+            ret = dbCol.findOne(o);
         }
 
         Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.findOneByQuery);
