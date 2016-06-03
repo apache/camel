@@ -40,6 +40,11 @@ import org.springframework.context.ApplicationContextAware;
 public class CamelEndpointFactoryBean extends AbstractCamelEndpointFactoryBean implements FactoryBean<Endpoint>, ApplicationContextAware {
     @XmlTransient
     private ApplicationContext applicationContext;
+    // ref is needed as transient as namespace parser registerEndpointsWithIdsDefinedInFromOrToTypes
+    // will discover <endpoint>, <to> etc and parse those eager and would attempt to call setRef on
+    // this factory bean for a <to id="foo" ref="bar"/> that is using both id and ref.
+    @XmlTransient
+    private String ref;
 
     @Override
     protected CamelContext getCamelContextWithId(String camelContextId) {
@@ -54,5 +59,13 @@ public class CamelEndpointFactoryBean extends AbstractCamelEndpointFactoryBean i
     public Endpoint getObject() throws Exception {
         Endpoint answer = super.getObject();
         return answer;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
     }
 }
