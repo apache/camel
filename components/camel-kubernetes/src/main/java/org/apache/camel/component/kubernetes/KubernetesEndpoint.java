@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The kubernetes component allows to work with Kubernetes PaaS.
  */
-@UriEndpoint(scheme = "kubernetes", title = "Kubernetes", syntax = "kubernetes:master", label = "container,cloud,paas")
+@UriEndpoint(scheme = "kubernetes", title = "Kubernetes", syntax = "kubernetes:masterUrl", label = "container,cloud,paas")
 public class KubernetesEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesEndpoint.class);
