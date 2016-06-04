@@ -18,21 +18,17 @@ package org.apache.camel.component.redis;
 
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.HeaderSelectorProducer;
 
-final class RedisProducer extends HeaderSelectorProducer {
+public final class PubSubRedisProcessorsCreator extends AbstractRedisProcessorCreator {
 
-    RedisProducer(Endpoint endpoint,
-                         String header,
-                         String defaultHeaderValue,
-                         RedisProcessorsCreator redisProcessorsCreator) {
-        super(endpoint, header, defaultHeaderValue);
+    Map<Command, Processor> getProcessors(RedisClient redisClient, ExchangeConverter exchangeConverter) {
+        bind(Command.PUBLISH, exchange -> redisClient.publish(exchangeConverter.getChannel(exchange),
+                exchangeConverter.getMessage(exchange)));
+        //missing psubscribe, pubsub, punsubscribe, subscribe, unsubscribe
+        //psubscribe, subscribe are used in consumer
 
-        for (Map.Entry<Command, Processor> entry : redisProcessorsCreator.getRedisProcessors().entrySet()) {
-            bind(entry.getKey().name(), entry.getValue());
-        }
+        return result;
     }
 
 }

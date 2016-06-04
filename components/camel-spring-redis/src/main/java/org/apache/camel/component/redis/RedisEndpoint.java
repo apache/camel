@@ -31,10 +31,13 @@ public class RedisEndpoint extends DefaultEndpoint {
 
     @UriParam
     private RedisConfiguration configuration;
+    private RedisProcessorsCreator redisProcessorsCreator;
 
     public RedisEndpoint(String uri, RedisComponent component, RedisConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+        redisProcessorsCreator = new AllRedisProcessorsCreator(new RedisClient(configuration.getRedisTemplate()),
+                ((RedisComponent)getComponent()).getExchangeConverter());
     }
 
     public Producer createProducer() throws Exception {
@@ -43,10 +46,9 @@ public class RedisEndpoint extends DefaultEndpoint {
             defaultCommand = Command.SET;
         }
         return new RedisProducer(this,
-                new RedisClient(configuration.getRedisTemplate()),
                 RedisConstants.COMMAND,
                 defaultCommand.name(),
-                ((RedisComponent)getComponent()).getExchangeConverter());
+                redisProcessorsCreator);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
