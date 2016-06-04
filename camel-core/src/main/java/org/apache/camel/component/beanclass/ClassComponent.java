@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.ConstantBeanHolder;
+import org.apache.camel.component.bean.ConstantTypeBeanHolder;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
@@ -44,19 +45,30 @@ public class ClassComponent extends BeanComponent {
         // bean name is the FQN
         String name = endpoint.getBeanName();
         Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(name);
-        // create bean
-        Object bean = getCamelContext().getInjector().newInstance(clazz);
 
         // the bean.xxx options is for the bean
         Map<String, Object> options = IntrospectionSupport.extractProperties(parameters, "bean.");
         endpoint.setParameters(options);
 
-        // now set additional properties on it
-        setProperties(bean, options);
+        BeanHolder holder;
+
+        // if there is options then we need to create a bean instance
+        if (!options.isEmpty()) {
+            // create bean
+            Object bean = getCamelContext().getInjector().newInstance(clazz);
+
+            // now set additional properties on it
+            setProperties(bean, options);
+
+            holder = new ConstantBeanHolder(bean, getCamelContext());
+        } else {
+            // otherwise refer to the type
+            holder = new ConstantTypeBeanHolder(clazz, getCamelContext());
+        }
+
         validateParameters(uri, options, null);
 
         // and register the bean as a holder on the endpoint
-        BeanHolder holder = new ConstantBeanHolder(bean, getCamelContext());
         endpoint.setBeanHolder(holder);
 
         return endpoint;
