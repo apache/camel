@@ -82,12 +82,9 @@ public class RedisClient {
     }
 
     public void quit() {
-        redisTemplate.execute(new RedisCallback<Object>() {
-            @Override
-            public Object doInRedis(RedisConnection connection) throws DataAccessException {
-                connection.close();
-                return null;
-            }
+        redisTemplate.execute((RedisCallback<Object>) connection -> {
+            connection.close();
+            return null;
         });
     }
 
@@ -156,21 +153,15 @@ public class RedisClient {
     }
 
     public void setbit(final String key, final Long offset, final Boolean value) {
-        redisTemplate.execute(new RedisCallback<Object>() {
-            @Override
-            public Object doInRedis(RedisConnection connection) throws DataAccessException {
-                connection.setBit(key.getBytes(), offset, value);
-                return null;
-            }
+        redisTemplate.execute((RedisCallback<Object>) connection -> {
+            connection.setBit(key.getBytes(), offset, value);
+            return null;
         });
     }
 
     public Boolean getbit(final String key, final Long offset) {
-        return redisTemplate.execute(new RedisCallback<Boolean>() {
-            @Override
-            public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
-                return connection.getBit(key.getBytes(), offset);
-            }
+        return redisTemplate.execute((RedisCallback<Boolean>) connection -> {
+            return connection.getBit(key.getBytes(), offset);
         });
     }
 
@@ -255,20 +246,14 @@ public class RedisClient {
     }
 
     public String echo(final String value) {
-        return redisTemplate.execute(new RedisCallback<String>() {
-            @Override
-            public String doInRedis(RedisConnection connection) throws DataAccessException {
-                return new String(connection.echo(value.getBytes()));
-            }
+        return redisTemplate.execute((RedisCallback<String>) connection -> {
+            return new String(connection.echo(value.getBytes()));
         });
     }
 
     public String ping() {
-        return redisTemplate.execute(new RedisCallback<String>() {
-            @Override
-            public String doInRedis(RedisConnection connection) throws DataAccessException {
-                return connection.ping();
-            }
+        return redisTemplate.execute((RedisCallback<String>) connection -> {
+            return connection.ping();
         });
     }
 
@@ -344,6 +329,10 @@ public class RedisClient {
 
     public Long lpush(String key, Object value) {
         return redisTemplate.opsForList().leftPush(key, value);
+    }
+
+    public Long lpushx(String key, Object value) {
+        return redisTemplate.opsForList().leftPushIfPresent(key, value);
     }
 
     public void del(Collection<String> keys) {

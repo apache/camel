@@ -38,7 +38,15 @@ public class RedisEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new RedisProducer(this, configuration);
+        Command defaultCommand = configuration.getCommand();
+        if (defaultCommand == null) {
+            defaultCommand = Command.SET;
+        }
+        return new RedisProducer(this,
+                new RedisClient(configuration.getRedisTemplate()),
+                RedisConstants.COMMAND,
+                defaultCommand.name(),
+                ((RedisComponent)getComponent()).getExchangeConverter());
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
