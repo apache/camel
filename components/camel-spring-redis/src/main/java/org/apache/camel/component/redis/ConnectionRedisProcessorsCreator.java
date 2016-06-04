@@ -18,21 +18,17 @@ package org.apache.camel.component.redis;
 
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.HeaderSelectorProducer;
 
-final class RedisProducer extends HeaderSelectorProducer {
+public class ConnectionRedisProcessorsCreator extends AbstractRedisProcessorCreator {
 
-    RedisProducer(Endpoint endpoint,
-                         String header,
-                         String defaultHeaderValue,
-                         RedisProcessorsCreator redisProcessorsCreator) {
-        super(endpoint, header, defaultHeaderValue);
+    Map<Command, Processor> getProcessors(RedisClient redisClient, ExchangeConverter exchangeConverter) {
+        bind(Command.ECHO, wrap(exchange -> redisClient.echo(exchangeConverter.getStringValue(exchange))));
+        bind(Command.PING, wrap(exchange -> redisClient.ping()));
+        bind(Command.QUIT, exchange -> redisClient.quit());
 
-        for (Map.Entry<Command, Processor> entry : redisProcessorsCreator.getRedisProcessors().entrySet()) {
-            bind(entry.getKey().name(), entry.getValue());
-        }
+        return result;
     }
+
 
 }
