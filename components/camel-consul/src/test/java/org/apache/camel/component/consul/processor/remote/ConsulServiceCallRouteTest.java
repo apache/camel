@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.processor.service;
+package org.apache.camel.component.consul.processor.remote;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 @Ignore
-public class ServiceCallClientRouteTest extends ConsulTestSupport {
+public class ConsulServiceCallRouteTest extends ConsulTestSupport {
     private static final String SERVICE_NAME = "http-service";
     private static final int SERVICE_COUNT = 5;
     private static final int SERVICE_PORT_BASE = 8080;

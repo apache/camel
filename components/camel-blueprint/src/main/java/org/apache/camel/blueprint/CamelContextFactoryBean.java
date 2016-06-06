@@ -146,6 +146,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class, required = false),
         @XmlElement(name = "kubernetesConfiguration", type = KubernetesConfigurationDefinition.class, required = false),
         @XmlElement(name = "ribbonConfiguration", type = RibbonConfigurationDefinition.class, required = false),
+        @XmlElement(name = "consulConfiguration", type = RibbonConfigurationDefinition.class, required = false),
         @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
         @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
         @XmlElement(name = "proxy", type = CamelProxyFactoryBean.class, required = false),

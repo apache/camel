@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.processor.service;
+package org.apache.camel.component.consul.processor.remote;
 
 import java.util.Map;
 import java.util.Optional;
@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * {@link ProcessorFactory} that creates the Consul implementation of the ServiceCall EIP.
  */
-public class ConsulProcessorFactory extends DefaultServiceCallProcessorFactory<ConsulConfiguration, ServiceCallServer> {
+public class ConsulServiceCallProcessorFactory extends DefaultServiceCallProcessorFactory<ConsulConfiguration, ServiceCallServer> {
     @Override
     protected ConsulConfiguration createConfiguration(RouteContext routeContext) throws Exception {
         return new ConsulConfiguration(routeContext.getCamelContext());

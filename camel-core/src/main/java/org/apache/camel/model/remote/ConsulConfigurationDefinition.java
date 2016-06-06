@@ -36,10 +36,6 @@ public class ConsulConfigurationDefinition extends ServiceCallConfigurationDefin
     private String url;
     @XmlAttribute
     private String dc;
-    //@XmlAttribute
-    //private Set<String> tags;
-    //@XmlAttribute @Metadata(label = "security")
-    //private SSLContextParameters sslContextParameters;
     @XmlAttribute @Metadata(label = "security")
     private String aclToken;
     @XmlAttribute @Metadata(label = "security")
@@ -81,24 +77,6 @@ public class ConsulConfigurationDefinition extends ServiceCallConfigurationDefin
     public void setDc(String dc) {
         this.dc = dc;
     }
-
-    /*
-    public Set<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<String> tags) {
-        this.tags = tags;
-    }
-
-    public SSLContextParameters getSslContextParameters() {
-        return sslContextParameters;
-    }
-
-    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
-        this.sslContextParameters = sslContextParameters;
-    }
-    */
 
     public String getAclToken() {
         return aclToken;
@@ -169,18 +147,6 @@ public class ConsulConfigurationDefinition extends ServiceCallConfigurationDefin
         setDc(dc);
         return this;
     }
-
-    /*
-    public ConsulConfigurationDefinition tags(Set<String> tags) {
-        setTags(tags);
-        return this;
-    }
-
-    public ConsulConfigurationDefinition sslContextParameters(SSLContextParameters sslContextParameters) {
-        setSslContextParameters(sslContextParameters);
-        return this;
-    }
-    */
 
     public ConsulConfigurationDefinition aclToken(String aclToken) {
         setAclToken(aclToken);

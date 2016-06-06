@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.consul.processor.service;
+package org.apache.camel.component.consul.processor.remote;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.consul.ConsulConfiguration;

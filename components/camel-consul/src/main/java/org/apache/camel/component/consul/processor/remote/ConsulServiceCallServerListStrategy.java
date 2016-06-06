@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.processor.service;
+package org.apache.camel.component.consul.processor.remote;
 
 import java.util.List;
 
