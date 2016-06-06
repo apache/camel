@@ -76,6 +76,10 @@ public class PdfProducer extends DefaultProducer {
         default:
             throw new IllegalArgumentException(String.format("Unknown operation %s", pdfConfiguration.getOperation()));
         }
+        // propagate headers
+        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+        exchange.getOut().setAttachments(exchange.getIn().getAttachments());
+        // and set result
         exchange.getOut().setBody(result);
     }
 
