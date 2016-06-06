@@ -241,6 +241,7 @@
     * [Slack](slack.adoc)
     * [SMPP](smpp.adoc)
     * [SNMP](snmp.adoc)
+    * [Solr](solr.adoc)
     * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
     * [Websocket](websocket.adoc)
