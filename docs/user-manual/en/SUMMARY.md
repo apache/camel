@@ -242,6 +242,7 @@
     * [SMPP](smpp.adoc)
     * [SNMP](snmp.adoc)
     * [Solr](solr.adoc)
+    * [Spark](spark.adoc)
     * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
     * [Websocket](websocket.adoc)
