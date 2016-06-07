@@ -263,11 +263,18 @@ public class MongoDbProducer extends DefaultProducer {
                 MongoCollection<BasicDBObject> dbCol = calculateCollection(exch);
                 BasicDBObject o = exch.getIn().getMandatoryBody(BasicDBObject.class);
 
+                BasicDBObject sortBy = exch.getIn().getHeader(MongoDbConstants.SORT_BY, BasicDBObject.class);
                 BasicDBObject fieldFilter = exch.getIn().getHeader(MongoDbConstants.FIELDS_FILTER, BasicDBObject.class);
+
                 if (fieldFilter == null) {
                     fieldFilter = new BasicDBObject();
                 }
-                BasicDBObject ret = dbCol.find(o).projection(fieldFilter).first();
+                
+                if (sortBy == null) {
+                	sortBy = new BasicDBObject();
+                }
+                
+                BasicDBObject ret = dbCol.find(o).projection(fieldFilter).sort(sortBy).first();
                 exch.getOut().setHeader(MongoDbConstants.RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
                 return ret;
             } catch (InvalidPayloadException e) {
