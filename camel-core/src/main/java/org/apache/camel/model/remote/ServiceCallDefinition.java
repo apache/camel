@@ -143,6 +143,17 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         serviceCallConfiguration = new EtcdConfigurationDefinition(this);
         return (EtcdConfigurationDefinition) serviceCallConfiguration;
     }
+
+    /**
+     * Configures the Service Call EIP using Dns
+     * <p/>
+     * Use <tt>end</tt> when configuration is complete, to return back to the Service Call EIP.
+     */
+    public DnsConfigurationDefinition dnsConfiguration() {
+        serviceCallConfiguration = new DnsConfigurationDefinition(this);
+        return (DnsConfigurationDefinition) serviceCallConfiguration;
+    }
+
     /**
      * Configures the ServiceCall using the given configuration
      */

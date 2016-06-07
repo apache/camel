@@ -57,6 +57,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.remote.ConsulConfigurationDefinition;
+import org.apache.camel.model.remote.DnsConfigurationDefinition;
 import org.apache.camel.model.remote.EtcdConfigurationDefinition;
 import org.apache.camel.model.remote.KubernetesConfigurationDefinition;
 import org.apache.camel.model.remote.RibbonConfigurationDefinition;
@@ -156,6 +157,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlElements({
             @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class, required = false),
             @XmlElement(name = "consulConfiguration", type = ConsulConfigurationDefinition.class, required = false),
+            @XmlElement(name = "dnsConfiguration", type = DnsConfigurationDefinition.class, required = false),
             @XmlElement(name = "etcdConfiguration", type = EtcdConfigurationDefinition.class, required = false),
             @XmlElement(name = "kubernetesConfiguration", type = KubernetesConfigurationDefinition.class, required = false),
             @XmlElement(name = "ribbonConfiguration", type = RibbonConfigurationDefinition.class, required = false),
