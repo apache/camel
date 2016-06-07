@@ -73,7 +73,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
      * Use the default Jackson {@link ObjectMapper} and {@link Map}
      */
     public JacksonDataFormat() {
-        this(HashMap.class);
+        this(Object.class);
     }
 
     /**
