@@ -249,6 +249,7 @@
     * [Spring-Batch](spring-batch.adoc)
     * [Spring-Boot](spring-boot.adoc)
     * [Spring-Event](spring-event.adoc)
+    * [Spring-Integration](spring-integration.adoc)
     * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
     * [Websocket](websocket.adoc)
