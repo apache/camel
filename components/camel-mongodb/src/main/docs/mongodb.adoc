@@ -169,8 +169,8 @@ from("direct:findById")
 ------------------------------------------------------------------------------
 
 
-TIP: *Supports fields filter*. This operation supports specifying a fields filter. See
-link:mongodb.html[Specifying a fields filter].
+TIP: *Supports optional parameters*. This operation supports specifying a fields filter. See
+link:mongodb.html[Specifying optional parameters].
 
 [[MongoDB-findOneByQuery]]
 findOneByQuery
@@ -201,8 +201,8 @@ from("direct:findOneByQuery")
     .to("mock:resultFindOneByQuery");
 ------------------------------------------------------------------------------------
 
-TIP: *Supports fields filter*. This operation supports specifying a fields filter. See
-link:mongodb.html[Specifying a fields filter].
+TIP: *Supports optional parameters*. This operation supports specifying a fields filter and/or a sort clause. See
+link:mongodb.html[Specifying optional parameters].
 
 [[MongoDB-findAll]]
 findAll
@@ -259,10 +259,6 @@ changed even after a cursor is iterated, in which case the setting will
 apply on the next batch retrieval. |int/Integer
 |=======================================================================
 
-Additionally, you can set a sortBy criteria by putting the relevant
-`DBObject` describing your sorting in the `CamelMongoDbSortBy` header,
-quick constant: `MongoDbConstants.SORT_BY`.
-
 The `findAll` operation will also return the following OUT headers to
 enable you to iterate through result pages if you are using paging:
 
@@ -277,8 +273,8 @@ consideration. |int/Integer
 consideration. |int/Integer
 |=======================================================================
 
-TIP: *Supports fields filter*. This operation supports specifying a fields filter. See
-link:mongodb.html[Specifying a fields filter].
+TIP: *Supports optional parameters*. This operation supports specifying a fields filter and/or a sort clause. See
+link:mongodb.html[Specifying optional parameters].
 
 [[MongoDB-count]]
 count
@@ -311,9 +307,9 @@ DBObject query = ...
 Long count = template.requestBodyAndHeader("direct:count", query, MongoDbConstants.COLLECTION, "dynamicCollectionName");
 ------------------------------------------------------------------------------------------------------------------------
 
-[[MongoDB-Specifyingafieldsfilter]]
-Specifying a fields filter
-++++++++++++++++++++++++++
+[[MongoDB-Specifyingoptionalparameters]]
+Specifying a fields filter (projection)
++++++++++++++++++++++++++++++++++++++++
 
 Query operations will, by default, return the matching objects in their
 entirety (with all their fields). If your documents are large and you
@@ -333,6 +329,40 @@ the creation of DBObjects. It retrieves all fields except `_id` and
 DBObject fieldFilter = BasicDBObjectBuilder.start().add("_id", 0).add("boringField", 0).get();
 Object result = template.requestBodyAndHeader("direct:findAll", (Object) null, MongoDbConstants.FIELDS_FILTER, fieldFilter);
 ----------------------------------------------------------------------------------------------------------------------------
+
+Specifying a sort clause
+++++++++++++++++++++++++
+
+There is a often a requirement to fetch the min/max record from a 
+collection based on sorting by a particular field. In Mongo the 
+operation is performed using syntax similar to:
+
+[source]
+----------------------------------------------------------------------------------------------------------------------------
+db.collection.find().sort({_id: -1}).limit(1)
+// or
+db.collection.findOne({$query:{},$orderby:{_id:-1}})
+----------------------------------------------------------------------------------------------------------------------------
+
+In a Camel route the SORT_BY header can be used with the findOneByQuery 
+operation to achieve the same result. If the FIELDS_FILTER header is also
+specified the operation will return a single field/value pair 
+that can be passed directly to another component (for example, a 
+parameterized MyBatis SELECT query). This example demonstrates fetching 
+the temporally newest document from a collection and reducing the result 
+to a single field, based on the `documentTimestamp` field:
+
+[source,java]
+----------------------------------------------------------------------------------------------------------------------------
+.from("direct:someTriggeringEvent")
+.setHeader(MongoDbConstants.SORT_BY).constant("{\"documentTimestamp\": -1}")
+.setHeader(MongoDbConstants.FIELDS_FILTER).constant("{\"documentTimestamp\": 1}")
+.setBody().constant("{}")
+.to("mongodb:myDb?database=local&collection=myDemoCollection&operation=findOneByQuery")
+.to("direct:aMyBatisParameterizedSelect")
+;
+----------------------------------------------------------------------------------------------------------------------------
+
 
 [[MongoDB-Create/updateoperations]]
 Create/update operations
