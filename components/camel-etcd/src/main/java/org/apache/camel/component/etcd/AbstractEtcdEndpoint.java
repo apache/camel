@@ -16,11 +16,7 @@
  */
 package org.apache.camel.component.etcd;
 
-import java.net.URI;
-import javax.net.ssl.SSLContext;
-
 import mousio.etcd4j.EtcdClient;
-import mousio.etcd4j.EtcdSecurityContext;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -68,33 +64,6 @@ public abstract class AbstractEtcdEndpoint extends DefaultEndpoint {
     }
 
     public EtcdClient createClient() throws Exception {
-        String[] uris;
-        if (configuration.getUris() != null) {
-            uris = configuration.getUris().split(",");
-        } else {
-            uris = EtcdConstants.ETCD_DEFAULT_URIS.split(",");
-        }
-
-        URI[] etcdUriList = new URI[uris.length];
-
-        int i = 0;
-        for (String uri : uris) {
-            etcdUriList[i++] = URI.create(getCamelContext().resolvePropertyPlaceholders(uri));
-        }
-
-        return new EtcdClient(
-            new EtcdSecurityContext(
-                createSslContext(configuration),
-                configuration.getUserName(),
-                configuration.getPassword()),
-            etcdUriList
-        );
-    }
-
-    private SSLContext createSslContext(EtcdConfiguration configuration) throws Exception {
-        if (configuration.getSslContextParameters() != null) {
-            return configuration.getSslContextParameters().createSSLContext(getCamelContext());
-        }
-        return null;
+        return configuration.createClient();
     }
 }

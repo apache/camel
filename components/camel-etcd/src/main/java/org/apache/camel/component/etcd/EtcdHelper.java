@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.etcd;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import mousio.etcd4j.responses.EtcdErrorCode;
 import mousio.etcd4j.responses.EtcdException;
 
@@ -31,5 +34,11 @@ public final class EtcdHelper  {
         }
 
         return false;
+    }
+
+    public static ObjectMapper createObjectMapper() {
+        return new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 }

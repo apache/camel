@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
-public class EtcdTest extends CamelTestSupport {
+public class EtcdTestSupport extends CamelTestSupport {
     protected static final Processor NODE_TO_VALUE_IN = new Processor() {
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -40,6 +40,6 @@ public class EtcdTest extends CamelTestSupport {
     }
 
     protected EtcdClient getClient() {
-        return new EtcdClient(URI.create("http://localhost:4001"));
+        return new EtcdClient(URI.create("http://localhost:2379"));
     }
 }

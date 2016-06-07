@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 //@Ignore("Etcd must be started manually")
-public class EtcdWatchTest extends EtcdTest {
+public class EtcdWatchTest extends EtcdTestSupport {
 
     @Test
     public void testWatchWithPath() throws Exception {

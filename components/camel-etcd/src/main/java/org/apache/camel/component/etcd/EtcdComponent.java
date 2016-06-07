@@ -49,7 +49,7 @@ public class EtcdComponent extends UriEndpointComponent {
         }
 
         EtcdNamespace namespace = getCamelContext().getTypeConverter().mandatoryConvertTo(EtcdNamespace.class, ns);
-        EtcdConfiguration configuration = loadConfiguration(new EtcdConfiguration(), parameters);
+        EtcdConfiguration configuration = loadConfiguration(new EtcdConfiguration(getCamelContext()), parameters);
 
         if (namespace != null) {
             // path must start with leading slash

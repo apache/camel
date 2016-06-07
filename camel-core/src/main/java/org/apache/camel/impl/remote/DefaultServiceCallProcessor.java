@@ -234,12 +234,12 @@ public class DefaultServiceCallProcessor<S extends ServiceCallServer> extends Se
             List<S> servers = serverListStrategy.getUpdatedListOfServers(serviceName);
             if (servers == null || servers.isEmpty()) {
                 exchange.setException(new RejectedExecutionException("No active services with name " + name));
-            }
-
-            // let the client load balancer chose which server to use
-            server = servers.size() > 1 ?  loadBalancer.chooseServer(servers) : servers.get(0);
-            if (server == null) {
-                exchange.setException(new RejectedExecutionException("No active services with name " + name));
+            } else {
+                // let the client load balancer chose which server to use
+                server = servers.size() > 1 ? loadBalancer.chooseServer(servers) : servers.get(0);
+                if (server == null) {
+                    exchange.setException(new RejectedExecutionException("No active services with name " + name));
+                }
             }
         } catch (Throwable e) {
             exchange.setException(e);

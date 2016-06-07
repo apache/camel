@@ -84,16 +84,16 @@ public abstract class DefaultServiceCallProcessorFactory<C, S extends ServiceCal
             throw new IllegalStateException("The ServiceCall: " + definition + " must be configured before it can be used.");
         }
 
-        // extract the properties from the configuration from the model
-        Map<String, Object> parameters = new HashMap<>();
-        if (configRef != null) {
-            IntrospectionSupport.getProperties(configRef, parameters, null);
-        }
-        if (config != null) {
-            IntrospectionSupport.getProperties(config, parameters, null);
-        }
-
         if (cfg != null) {
+            // extract the properties from the configuration from the model
+            Map<String, Object> parameters = new HashMap<>();
+            if (configRef != null) {
+                IntrospectionSupport.getProperties(configRef, parameters, null);
+            }
+            if (config != null) {
+                IntrospectionSupport.getProperties(config, parameters, null);
+            }
+
             IntrospectionSupport.setProperties(cfg, parameters);
         }
 
@@ -139,10 +139,10 @@ public abstract class DefaultServiceCallProcessorFactory<C, S extends ServiceCal
         Map<String, String> properties = configureProperties(routeContext, config, configRef);
 
         DefaultServiceCallProcessor processor = createProcessor(name, component, uri, mep, cfg, properties);
-        if (sl != null && processor.getServerListStrategy() != null) {
+        if (sl != null && processor.getServerListStrategy() == null) {
             processor.setServerListStrategy(sl);
         }
-        if (lb != null && processor.getLoadBalancer() != null) {
+        if (lb != null && processor.getLoadBalancer() == null) {
             processor.setLoadBalancer(lb);
         }
 

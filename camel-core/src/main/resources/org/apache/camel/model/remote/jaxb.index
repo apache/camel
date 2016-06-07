@@ -15,6 +15,7 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 ConsulConfigurationDefinition
+EtcdConfigurationDefinition
 KubernetesConfigurationDefinition
 RibbonConfigurationDefinition
 ServiceCallDefinition

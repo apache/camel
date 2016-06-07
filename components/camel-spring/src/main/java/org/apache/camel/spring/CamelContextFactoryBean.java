@@ -19,7 +19,6 @@ package org.apache.camel.spring;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -58,6 +57,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.remote.ConsulConfigurationDefinition;
+import org.apache.camel.model.remote.EtcdConfigurationDefinition;
 import org.apache.camel.model.remote.KubernetesConfigurationDefinition;
 import org.apache.camel.model.remote.RibbonConfigurationDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
@@ -155,7 +155,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private CamelJMXAgentDefinition camelJMXAgent;
     @XmlElements({
             @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class, required = false),
-            @XmlElement(name = "consulConfiguration", type = KubernetesConfigurationDefinition.class, required = false),
+            @XmlElement(name = "consulConfiguration", type = ConsulConfigurationDefinition.class, required = false),
+            @XmlElement(name = "etcdConfiguration", type = EtcdConfigurationDefinition.class, required = false),
             @XmlElement(name = "kubernetesConfiguration", type = KubernetesConfigurationDefinition.class, required = false),
             @XmlElement(name = "ribbonConfiguration", type = RibbonConfigurationDefinition.class, required = false),
             @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
