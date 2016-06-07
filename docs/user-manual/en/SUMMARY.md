@@ -246,6 +246,7 @@
     * [Spark-Rest](spark-rest.adoc)
     * [Splunk](splunk.adoc)
     * [Spring](spring.adoc)
+    * [Spring Batch](spring-batch.adoc)
     * [Spring Event](spring-event.adoc)
     * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
