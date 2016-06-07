@@ -156,7 +156,7 @@
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
     <ehcache-version>2.10.1</ehcache-version>
-    <ehcache3-version>3.0.1</ehcache3-version>
+    <ehcache3-version>3.0.2</ehcache3-version>
     <elasticsearch-bundle-version>2.3.1_1</elasticsearch-bundle-version>
     <elasticsearch-guava-version>18.0</elasticsearch-guava-version>
     <elasticsearch-version>2.3.1</elasticsearch-version>
