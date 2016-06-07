@@ -244,6 +244,7 @@
     * [Solr](solr.adoc)
     * [Spark](spark.adoc)
     * [Spark-Rest](spark-rest.adoc)
+    * [Splunk](splunk.adoc)
     * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
     * [Websocket](websocket.adoc)
