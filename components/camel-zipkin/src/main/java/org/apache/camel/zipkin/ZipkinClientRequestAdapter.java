@@ -71,7 +71,6 @@ public final class ZipkinClientRequestAdapter implements ClientRequestAdapter {
         }
     }
 
-    @Override
     public String getClientServiceName() {
         return serviceName;
     }
