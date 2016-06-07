@@ -243,6 +243,7 @@
     * [SNMP](snmp.adoc)
     * [Solr](solr.adoc)
     * [Spark](spark.adoc)
+    * [Spark-Rest](spark-rest.adoc)
     * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
     * [Websocket](websocket.adoc)
