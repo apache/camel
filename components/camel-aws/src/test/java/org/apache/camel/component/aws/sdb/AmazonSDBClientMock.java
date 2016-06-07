@@ -22,10 +22,15 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.simpledb.AmazonSimpleDBClient;
 import com.amazonaws.services.simpledb.model.Attribute;
 import com.amazonaws.services.simpledb.model.BatchDeleteAttributesRequest;
+import com.amazonaws.services.simpledb.model.BatchDeleteAttributesResult;
 import com.amazonaws.services.simpledb.model.BatchPutAttributesRequest;
+import com.amazonaws.services.simpledb.model.BatchPutAttributesResult;
 import com.amazonaws.services.simpledb.model.CreateDomainRequest;
+import com.amazonaws.services.simpledb.model.CreateDomainResult;
 import com.amazonaws.services.simpledb.model.DeleteAttributesRequest;
+import com.amazonaws.services.simpledb.model.DeleteAttributesResult;
 import com.amazonaws.services.simpledb.model.DeleteDomainRequest;
+import com.amazonaws.services.simpledb.model.DeleteDomainResult;
 import com.amazonaws.services.simpledb.model.DomainMetadataRequest;
 import com.amazonaws.services.simpledb.model.DomainMetadataResult;
 import com.amazonaws.services.simpledb.model.GetAttributesRequest;
@@ -35,6 +40,7 @@ import com.amazonaws.services.simpledb.model.ListDomainsRequest;
 import com.amazonaws.services.simpledb.model.ListDomainsResult;
 import com.amazonaws.services.simpledb.model.NoSuchDomainException;
 import com.amazonaws.services.simpledb.model.PutAttributesRequest;
+import com.amazonaws.services.simpledb.model.PutAttributesResult;
 import com.amazonaws.services.simpledb.model.SelectRequest;
 import com.amazonaws.services.simpledb.model.SelectResult;
 
@@ -56,33 +62,38 @@ public class AmazonSDBClientMock extends AmazonSimpleDBClient {
     }
     
     @Override
-    public void batchDeleteAttributes(BatchDeleteAttributesRequest batchDeleteAttributesRequest) throws AmazonServiceException, AmazonClientException {
+    public BatchDeleteAttributesResult batchDeleteAttributes(BatchDeleteAttributesRequest batchDeleteAttributesRequest) throws AmazonServiceException, AmazonClientException {
         this.batchDeleteAttributesRequest = batchDeleteAttributesRequest;
+        return new BatchDeleteAttributesResult();
     }
     
     @Override
-    public void batchPutAttributes(BatchPutAttributesRequest batchPutAttributesRequest) throws AmazonServiceException, AmazonClientException {
+    public BatchPutAttributesResult batchPutAttributes(BatchPutAttributesRequest batchPutAttributesRequest) throws AmazonServiceException, AmazonClientException {
         this.batchPutAttributesRequest = batchPutAttributesRequest;
+        return new BatchPutAttributesResult();
     }
     
     @Override
-    public void createDomain(CreateDomainRequest createDomainRequest) throws AmazonServiceException, AmazonClientException {
+    public CreateDomainResult createDomain(CreateDomainRequest createDomainRequest) throws AmazonServiceException, AmazonClientException {
         this.createDomainRequest = createDomainRequest;
+        return new CreateDomainResult();
     }
     
     @Override
-    public void deleteAttributes(DeleteAttributesRequest deleteAttributesRequest) throws AmazonServiceException, AmazonClientException {
+    public DeleteAttributesResult deleteAttributes(DeleteAttributesRequest deleteAttributesRequest) throws AmazonServiceException, AmazonClientException {
         this.deleteAttributesRequest = deleteAttributesRequest;
         
         String domainName = deleteAttributesRequest.getDomainName();
         if ("MissingDomain".equals(domainName)) {
             throw new NoSuchDomainException(domainName);
         }
+        return new DeleteAttributesResult();
     }
     
     @Override
-    public void deleteDomain(DeleteDomainRequest deleteDomainRequest) throws AmazonServiceException, AmazonClientException {
+    public DeleteDomainResult deleteDomain(DeleteDomainRequest deleteDomainRequest) throws AmazonServiceException, AmazonClientException {
         this.deleteDomainRequest = deleteDomainRequest;
+        return new DeleteDomainResult();
     }
 
     @Override
@@ -125,8 +136,9 @@ public class AmazonSDBClientMock extends AmazonSimpleDBClient {
     }
 
     @Override
-    public void putAttributes(PutAttributesRequest putAttributesRequest) throws AmazonServiceException, AmazonClientException {
+    public PutAttributesResult putAttributes(PutAttributesRequest putAttributesRequest) throws AmazonServiceException, AmazonClientException {
         this.putAttributesRequest = putAttributesRequest;
+        return new PutAttributesResult();
     }
     
     @Override

@@ -40,6 +40,7 @@ import com.amazonaws.services.ec2.model.MonitorInstancesResult;
 import com.amazonaws.services.ec2.model.Monitoring;
 import com.amazonaws.services.ec2.model.MonitoringState;
 import com.amazonaws.services.ec2.model.RebootInstancesRequest;
+import com.amazonaws.services.ec2.model.RebootInstancesResult;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
@@ -254,8 +255,8 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
     }
 
     @Override
-    public void rebootInstances(RebootInstancesRequest rebootInstancesRequest) {
-        return;
+    public RebootInstancesResult rebootInstances(RebootInstancesRequest rebootInstancesRequest) {
+        return new RebootInstancesResult();
     }
     
     @Override
