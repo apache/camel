@@ -31,7 +31,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.validator.msv.*</camel.osgi.export.pkg>
-    <camel.osgi.import.pkg>org.apache.camel,*</camel.osgi.import.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=msv</camel.osgi.export.service>
   </properties>
 
