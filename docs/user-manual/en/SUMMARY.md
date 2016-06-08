@@ -263,6 +263,7 @@
     * [Stream](stream.adoc)
     * [Stringtemplate](string-template.adoc)
     * [Swagger](swagger.adoc)
+    * [Swagger Java](swagger-java.adoc)
     * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
     * [Websocket](websocket.adoc)
