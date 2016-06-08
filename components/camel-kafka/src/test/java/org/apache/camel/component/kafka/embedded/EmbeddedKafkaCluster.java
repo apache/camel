@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Properties;
 
 import kafka.admin.AdminUtils;
+import kafka.admin.RackAwareMode;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
 import kafka.utils.ZkUtils;
@@ -66,7 +67,7 @@ public class EmbeddedKafkaCluster {
 
     public void createTopics(String... topics) {
         for (String topic : topics) {
-            AdminUtils.createTopic(getZkUtils(), topic, 2, 1, new Properties());
+            AdminUtils.createTopic(getZkUtils(), topic, 2, 1, new Properties(), RackAwareMode.Enforced$.MODULE$);
         }
     }
 
