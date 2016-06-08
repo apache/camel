@@ -355,6 +355,7 @@
             <id>validate</id>
             <goals>
               <goal>validate-components</goal>
+              <goal>prepare-spring-boot-auto-configuration</goal>
             </goals>
             <phase>prepare-package</phase>
           </execution>
@@ -534,10 +535,32 @@
       </activation>
 
       <dependencies>
+
+        <!-- to support spring-boot auto configuration in the Camel components -->
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot</artifactId>
+          <version>${spring-boot-version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-autoconfigure</artifactId>
+          <version>${spring-boot-version}</version>
+          <scope>provided</scope>
+        </dependency>
+
         <!-- enable the APT processor -->
         <dependency>
           <groupId>org.apache.camel</groupId>
           <artifactId>apt</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <!-- enable Spring Boot configuration APT processor -->
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-configuration-processor</artifactId>
+          <version>${spring-boot-version}</version>
           <scope>provided</scope>
         </dependency>
       </dependencies>

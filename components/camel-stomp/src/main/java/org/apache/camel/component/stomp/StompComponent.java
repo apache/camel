@@ -23,7 +23,30 @@ import org.apache.camel.impl.UriEndpointComponent;
 
 public class StompComponent extends UriEndpointComponent {
 
-    private StompConfiguration configuration = new StompConfiguration();
+    /**
+     * To use the shared stomp configuration
+     */
+    private StompConfiguration configuration;
+
+    /**
+     * The URI of the Stomp broker to connect to
+     */
+    private String brokerUrl;
+
+    /**
+     * The username
+     */
+    private String login;
+
+    /**
+     * The password
+     */
+    private String passcode;
+
+    /**
+     * The virtual host
+     */
+    private String host;
 
     public StompComponent() {
         super(StompEndpoint.class);
@@ -41,6 +64,13 @@ public class StompComponent extends UriEndpointComponent {
         StompEndpoint endpoint = new StompEndpoint(uri, this, config, destination);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        configuration.setBrokerURL(brokerUrl);
     }
 
     public StompConfiguration getConfiguration() {

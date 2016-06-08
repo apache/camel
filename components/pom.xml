@@ -31,6 +31,22 @@
   <description>Camel Components</description>
   <packaging>pom</packaging>
 
+  <!-- to support spring-boot auto configuration in the Camel components -->
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot</artifactId>
+      <version>${spring-boot-version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+      <version>${spring-boot-version}</version>
+      <scope>provided</scope>
+    </dependency>
+ </dependencies>
+
   <modules>
     <!-- we want to test these modules first to catch any errors early as possible -->
     <module>camel-test</module>
@@ -286,15 +302,16 @@
               <goal>prepare-components</goal>
             </goals>
             <phase>generate-resources</phase>
-         </execution>
+          </execution>
           <execution>
             <id>validate</id>
             <goals>
               <goal>validate-components</goal>
+              <goal>prepare-spring-boot-auto-configuration</goal>
             </goals>
             <phase>prepare-package</phase>
-         </execution>
-         <execution>
+          </execution>
+          <execution>
             <id>readme</id>
             <goals>
               <goal>update-readme</goal>
@@ -317,14 +334,22 @@
       </activation>
 
       <dependencies>
-        <!-- enable the APT processor -->
+        <!-- enable Camel APT processors -->
         <dependency>
           <groupId>org.apache.camel</groupId>
           <artifactId>apt</artifactId>
           <version>${project.version}</version>
           <scope>provided</scope>
         </dependency>
+        <!-- enable Spring Boot configuration APT processor -->
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-configuration-processor</artifactId>
+          <version>${spring-boot-version}</version>
+          <scope>provided</scope>
+        </dependency>
       </dependencies>
     </profile>
   </profiles>
+
 </project>
