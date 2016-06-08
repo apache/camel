@@ -31,6 +31,8 @@
 
   <properties>
     <camel.osgi.import>
+      !org.springframework.boot.*,
+      !org.springframework.context.annotation.*;resolution:=optional,
       !org.apache.camel.component.cxf,
       !org.apache.camel.component.cxf.blueprint,
       !org.apache.camel.component.cxf.converter,
@@ -61,7 +63,6 @@
       org.apache.camel.blueprint;resolution:=optional,
       *
     </camel.osgi.import>
-
     <camel.osgi.export>
       org.apache.camel.component.cxf;${camel.osgi.version},
       org.apache.camel.component.cxf.blueprint;${camel.osgi.version},
