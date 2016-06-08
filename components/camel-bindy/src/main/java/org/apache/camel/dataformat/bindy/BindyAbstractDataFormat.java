@@ -134,16 +134,22 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
 
     protected Map<String, Object> createLinkedFieldsModel(Object model) throws IllegalAccessException {
         Map<String, Object> row = new HashMap<>();
+        createLinkedFieldsModel(model, row);
+        return row;
+    }
+
+    protected void createLinkedFieldsModel(Object model, Map<String, Object> row) throws IllegalAccessException {
         for (Field field : model.getClass().getDeclaredFields()) {
             Link linkField = field.getAnnotation(Link.class);
             if (linkField != null) {
                 boolean accessible = field.isAccessible();
                 field.setAccessible(true);
-                row.put(field.getType().getName(), field.get(model));
+                if (!row.containsKey(field.getType().getName())) {
+                    row.put(field.getType().getName(), field.get(model));
+                }
                 field.setAccessible(accessible);
             }
         }
-        return row;
     }
 
     protected abstract BindyAbstractFactory createModelFactory(FormatFactory formatFactory) throws Exception;
