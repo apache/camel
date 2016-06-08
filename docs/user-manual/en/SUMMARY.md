@@ -261,6 +261,8 @@
     * [StAX](stax.adoc)
     * [Stomp](stomp.adoc)
     * [Stream](stream.adoc)
+    * [Stringtemplate](string-template.adoc)
+    * [Swagger](swagger.adoc)
     * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
     * [Websocket](websocket.adoc)
