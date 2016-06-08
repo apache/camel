@@ -254,6 +254,7 @@
     * [Spring-Ldap](spring-ldap.adoc)
     * [Spring-Redis](spring-redis.adoc)
     * [Spring-Security](spring-security.adoc)
+    * [Spring-Web-Services](spring-ws.adoc)
     * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
     * [Websocket](websocket.adoc)
