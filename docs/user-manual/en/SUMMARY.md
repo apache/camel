@@ -291,6 +291,7 @@
     * [Lzf](lzf.adoc)
     * [Syslog](syslog.adoc)
     * [SOAP](soap.adoc)
+    * [Tagsoup](tagsoup.adoc)
     * [YAML](yaml.adoc)
     * [XML JSON](xmljson.adoc)
     * [YAML](yaml.adoc)
