@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ public class NettyHttpOperationFailedException extends CamelException {
     private final int statusCode;
     private final String statusText;
     private final transient HttpContent content;
-    private String contentAsString;
+    private final String contentAsString;
 
     public NettyHttpOperationFailedException(String uri, int statusCode, String statusText, String location, HttpContent content) {
         super("Netty HTTP operation failed invoking " + uri + " with statusCode: " + statusCode + (location != null ? ", redirectLocation: " + location : ""));
@@ -42,11 +42,14 @@ public class NettyHttpOperationFailedException extends CamelException {
         this.statusText = statusText;
         this.redirectLocation = location;
         this.content = content;
+
+        String str = "";
         try {
-            this.contentAsString = NettyConverter.toString(content.content(), null);
+            str = NettyConverter.toString(content.content(), null);
         } catch (UnsupportedEncodingException e) {
             // ignore
         }
+        this.contentAsString = str;
     }
 
     public String getUri() {

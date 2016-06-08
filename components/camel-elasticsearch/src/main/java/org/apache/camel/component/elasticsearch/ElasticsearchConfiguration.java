@@ -184,11 +184,11 @@ public class ElasticsearchConfiguration {
     /**
      * The path.home property of ElasticSearch configuration. You need to provide a valid path, otherwise the default, /usr/share/elasticsearch, will be used.
      */
-	public String getPathHome() {
-		return pathHome;
-	}
+    public String getPathHome() {
+        return pathHome;
+    }
 
-	public void setPathHome(String pathHome) {
-		this.pathHome = pathHome;
-	}
+    public void setPathHome(String pathHome) {
+        this.pathHome = pathHome;
+    }
 }

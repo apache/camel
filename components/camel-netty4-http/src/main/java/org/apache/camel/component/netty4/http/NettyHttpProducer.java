@@ -75,7 +75,7 @@ public class NettyHttpProducer extends NettyProducer {
         }
 
         // need to release the request when we are done
-        exchange.addOnCompletion(new SynchronizationAdapter(){
+        exchange.addOnCompletion(new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
                 if (request instanceof ReferenceCounted) {
@@ -118,7 +118,7 @@ public class NettyHttpProducer extends NettyProducer {
                             response.content().retain();
 
                             // need to release the response when we are done
-                            exchange.addOnCompletion(new SynchronizationAdapter(){
+                            exchange.addOnCompletion(new SynchronizationAdapter() {
                                 @Override
                                 public void onDone(Exchange exchange) {
                                     if (response.refCnt() > 0) {
