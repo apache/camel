@@ -45,8 +45,9 @@ The Kubernetes component has no options.
 
 
 
+
 // endpoint options: START
-The Kubernetes component supports 23 endpoint options which are listed below:
+The Kubernetes component supports 25 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -55,7 +56,9 @@ The Kubernetes component supports 23 endpoint options which are listed below:
 | masterUrl | common |  | String | *Required* Kubernetes Master url
 | apiVersion | common |  | String | The Kubernetes API Version to use
 | category | common |  | String | *Required* Kubernetes Producer and Consumer category
+| dnsDomain | common |  | String | The dns domain used for ServiceCall EIP
 | kubernetesClient | common |  | DefaultKubernetesClient | Default KubernetesClient to use if provided
+| portName | common |  | String | The port name used for ServiceCall EIP
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | namespace | consumer |  | String | The namespace
 | poolSize | consumer | 1 | int | The Consumer pool size
@@ -78,6 +81,7 @@ The Kubernetes component supports 23 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
