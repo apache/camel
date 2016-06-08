@@ -252,6 +252,7 @@
     * [Spring-Integration](spring-integration.adoc)
     * [Spring-Javaconfig](spring-java-config.adoc)
     * [Spring-Ldap](spring-ldap.adoc)
+    * [Spring-Redis](spring-redis.adoc)
     * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
     * [Websocket](websocket.adoc)
