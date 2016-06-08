@@ -44,7 +44,7 @@ link:dependency-injection.html[Dependency Injection] which does not
 require an in-depth knowledge of CDI, Spring + Spring Test or Guice.
 Supports JUnit 3.x (deprecated) and JUnit 4.x based tests.
 
-|link:camel-test-cdi.html[CDI Testing] |camel-test-cdi | Provides a JUnit 4
+|link:cdi-testing.html[CDI Testing] |camel-test-cdi | Provides a JUnit 4
 runner that bootstraps a test environment using CDI so that you don't have
 to be familiar with any CDI testing frameworks and can concentrate on the
 testing logic of your Camel CDI applications. +
