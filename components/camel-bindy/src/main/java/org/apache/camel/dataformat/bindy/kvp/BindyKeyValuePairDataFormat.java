@@ -21,12 +21,15 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
@@ -59,19 +62,26 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
-        BindyAbstractFactory factory = getFactory();
-        List<Map<String, Object>> models = (ArrayList<Map<String, Object>>)body;
-        byte[] crlf;
+        final BindyAbstractFactory factory = getFactory();
+        final byte[] crlf = ConverterUtils.getByteReturn(factory.getCarriageReturn());
+        final TypeConverter converter = exchange.getContext().getTypeConverter();
 
-        // Get CRLF
-        crlf = ConverterUtils.getByteReturn(factory.getCarriageReturn());
+        // the body may not be a prepared list of map that bindy expects so help
+        // a bit here and create one if needed
+        final Iterator<Object> it = ObjectHelper.createIterator(body);
+        while (it.hasNext()) {
+            Object model = it.next();
 
-        for (Map<String, Object> model : models) {
-            String result = factory.unbind(model);
-            byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
-            outputStream.write(bytes);
+            Map<String, Object> row;
+            if (model instanceof Map) {
+                row = (Map<String, Object>) model;
+            } else {
+                row = Collections.singletonMap(model.getClass().getName(), model);
+            }
 
-            // Add a carriage return
+            String result = factory.unbind(row);
+
+            outputStream.write(converter.convertTo(byte[].class, exchange, result));
             outputStream.write(crlf);
         }
     }
