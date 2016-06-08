@@ -70,7 +70,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
     private boolean enableJacksonTypeConverter;
 
     /**
-     * Use the default Jackson {@link ObjectMapper} and {@link Map}
+     * Use the default Jackson {@link ObjectMapper} and {@link Object}
      */
     public JacksonDataFormat() {
         this(Object.class);
