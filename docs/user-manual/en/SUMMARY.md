@@ -289,6 +289,7 @@
     * [Jaxb](jaxb.adoc)
     * [Jibx](jibx.adoc)
     * [Lzf](lzf.adoc)
+    * [Syslog](syslog.adoc)
     * [SOAP](soap.adoc)
     * [YAML](yaml.adoc)
     * [XML JSON](xmljson.adoc)
