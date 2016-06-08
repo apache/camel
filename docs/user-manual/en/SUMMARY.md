@@ -265,8 +265,6 @@
     * [Swagger](swagger.adoc)
     * [Swagger Java](swagger-java.adoc)
     * [Telegram](telegram.adoc)
-    * [Test](test.adoc)
-    * [Test Blueprint](test-blueprint.adoc)
     * [Twitter](twitter.adoc)
     * [Websocket](websocket.adoc)
     * [XML Security](xmlsecurity.adoc)
@@ -301,4 +299,6 @@
 * User Guide
     * [Karaf](karaf.adoc)
     * [Testing](testing.adoc)
+        * [Test](test.adoc)
+        * [Test Blueprint](test-blueprint.adoc)
         * [CDI Testing](cdi-testing.adoc)

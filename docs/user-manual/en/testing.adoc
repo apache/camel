@@ -65,7 +65,7 @@ parity with the plain JUnit 3.x/4.x based testing approach. Notice
 older Camel release use `camel-test` which has built-in
 link:spring-testing.html[Spring Testing].
 
-|link:blueprint-testing.html[Blueprint Testing] |camel-test-blueprint
+|link:test-blueprint.html[Blueprint Testing] |camel-test-blueprint
 |*Camel 2.10:* Provides the ability to do unit testing on blueprint
 configurations
 
