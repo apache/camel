@@ -258,6 +258,7 @@
     * [SQL](sql.adoc)
         * [SQL-Stored](sql-stored.adoc)
     * [SSH](ssh.adoc)
+    * [StAX](stax.adoc)
     * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
     * [Websocket](websocket.adoc)
