@@ -39,7 +39,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
 
     @UriPath @Metadata(required = "true")
     private CryptoOperation cryptoOperation;
-    @UriParam @Metadata(required = "true")
+    @UriPath @Metadata(required = "true")
     private String name;
     @UriParam
     private PrivateKey privateKey;
