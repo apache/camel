@@ -260,6 +260,7 @@
     * [SSH](ssh.adoc)
     * [StAX](stax.adoc)
     * [Stomp](stomp.adoc)
+    * [Stream](stream.adoc)
     * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
     * [Websocket](websocket.adoc)
