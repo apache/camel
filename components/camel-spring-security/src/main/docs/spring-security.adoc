@@ -1,0 +1,217 @@
+[[SpringSecurity-SpringSecurity]]
+Spring Security
+~~~~~~~~~~~~~~~
+
+*Available as of Camel 2.3*
+
+The *camel-spring-security* component provides role-based authorization
+for Camel routes. It leverages the authentication and user services
+provided by
+http://static.springsource.org/spring-security/site/index.html[Spring
+Security] (formerly Acegi Security) and adds a declarative, role-based
+policy system to control whether a route can be executed by a given
+principal.
+
+If you are not familiar with the Spring Security authentication and
+authorization system, please review the current reference documentation
+on the SpringSource web site linked above.
+
+[[SpringSecurity-Creatingauthorizationpolicies]]
+Creating authorization policies
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Access to a route is controlled by an instance of a
+`SpringSecurityAuthorizationPolicy` object. A policy object contains the
+name of the Spring Security authority (role) required to run a set of
+endpoints and references to Spring Security `AuthenticationManager` and
+`AccessDecisionManager` objects used to determine whether the current
+principal has been assigned that role. Policy objects may be configured
+as Spring beans or by using an `<authorizationPolicy>` element in Spring
+XML.
+
+The `<authorizationPolicy>` element may contain the following
+attributes:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Default Value |Description
+
+|`id` |`null` |The unique Spring bean identifier which is used to reference the policy
+in routes (required)
+
+|`access` |`null` |The Spring Security authority name that is passed to the access decision
+manager (required)
+
+|`authenticationManager` |`authenticationManager` |The name of the Spring Security `AuthenticationManager` object in the
+context
+
+|`accessDecisionManager` |`accessDecisionManager` |The name of the Spring Security `AccessDecisionManager` object in the
+context
+
+|`authenticationAdapter` |DefaultAuthenticationAdapter |*Camel 2.4* The name of a *camel-spring-security*
+`AuthenticationAdapter` object in the context that is used to convert a
+`javax.security.auth.Subject` into a Spring Security `Authentication`
+instance.
+
+|`useThreadSecurityContext` |`true` |If a `javax.security.auth.Subject` cannot be found in the In message
+header under Exchange.AUTHENTICATION, check the Spring Security
+`SecurityContextHolder` for an `Authentication` object.
+
+|`alwaysReauthenticate` |`false` |If set to true, the `SpringSecurityAuthorizationPolicy` will always call
+`AuthenticationManager.authenticate()` each time the policy is accessed.
+|=======================================================================
+
+[[SpringSecurity-ControllingaccesstoCamelroutes]]
+Controlling access to Camel routes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A Spring Security `AuthenticationManager` and `AccessDecisionManager`
+are required to use this component. Here is an example of how to
+configure these objects in Spring XML using the Spring Security
+namespace:
+
+Now that the underlying security objects are set up, we can use them to
+configure an authorization policy and use that policy to control access
+to a route:
+
+In this example, the endpoint `mock:end` will not be executed unless a
+Spring Security `Authentication` object that has been or can be
+authenticated and contains the `ROLE_ADMIN` authority can be located by
+the _admin_ `SpringSecurityAuthorizationPolicy`.
+
+[[SpringSecurity-Authentication]]
+Authentication
+^^^^^^^^^^^^^^
+
+The process of obtaining security credentials that are used for
+authorization is not specified by this component. You can write your own
+processors or components which get authentication information from the
+exchange depending on your needs. For example, you might create a
+processor that gets credentials from an HTTP request header originating
+in the link:jetty.html[Jetty] component. No matter how the credentials
+are collected, they need to be placed in the In message or the
+`SecurityContextHolder` so the Camel link:spring-security.html[Spring
+Security] component can access them:
+
+[source,java]
+----------------------------------------------------------------------------------------------------------------------
+import javax.security.auth.Subject;
+import org.apache.camel.*;
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.security.authentication.*;
+
+
+public class MyAuthService implements Processor {
+    public void process(Exchange exchange) throws Exception {
+        // get the username and password from the HTTP header
+        // http://en.wikipedia.org/wiki/Basic_access_authentication
+        String userpass = new String(Base64.decodeBase64(exchange.getIn().getHeader("Authorization", String.class)));
+        String[] tokens = userpass.split(":");
+        
+        // create an Authentication object
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(tokens[0], tokens[1]);
+
+        // wrap it in a Subject
+        Subject subject = new Subject();
+        subject.getPrincipals().add(authToken);
+
+        // place the Subject in the In message
+        exchange.getIn().setHeader(Exchange.AUTHENTICATION, subject);
+
+        // you could also do this if useThreadSecurityContext is set to true
+        // SecurityContextHolder.getContext().setAuthentication(authToken);
+    }
+}
+----------------------------------------------------------------------------------------------------------------------
+
+The `SpringSecurityAuthorizationPolicy` will automatically authenticate
+the `Authentication` object if necessary.
+
+There are two issues to be aware of when using the
+`SecurityContextHolder` instead of or in addition to the
+`Exchange.AUTHENTICATION` header. First, the context holder uses a
+thread-local variable to hold the `Authentication` object. Any routes
+that cross thread boundaries, like *seda* or *jms*, will lose the
+`Authentication` object. Second, the Spring Security system appears to
+expect that an `Authentication` object in the context is already
+authenticated and has roles (see the Technical Overview
+http://static.springsource.org/spring-security/site/docs/3.0.x/reference/technical-overview.html#tech-intro-authentication[section
+5.3.1] for more details).
+
+The default behavior of *camel-spring-security* is to look for a
+`Subject` in the `Exchange.AUTHENTICATION` header. This `Subject` must
+contain at least one principal, which must be a subclass of
+`org.springframework.security.core.Authentication`. You can customize
+the mapping of `Subject` to `Authentication` object by providing an
+implementation of the
+`org.apache.camel.component.spring.security.AuthenticationAdapter` to
+your `<authorizationPolicy>` bean. This can be useful if you are working
+with components that do not use Spring Security but do provide a
+`Subject`. At this time, only the link:cxf.html[CXF] component populates
+the `Exchange.AUTHENTICATION` header.
+
+[[SpringSecurity-Handlingauthenticationandauthorizationerrors]]
+Handling authentication and authorization errors
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If authentication or authorization fails in the
+`SpringSecurityAuthorizationPolicy`, a `CamelAuthorizationException`
+will be thrown. This can be handled using Camel's standard exception
+handling methods, like the link:exception-clause.html[Exception Clause].
+The `CamelAuthorizationException` will have a reference to the ID of the
+policy which threw the exception so you can handle errors based on the
+policy as well as the type of exception:
+
+[source,xml]
+------------------------------------------------------------------------------------------
+<onException>
+  <exception>org.springframework.security.authentication.AccessDeniedException</exception>
+  <choice>
+    <when>
+      <simple>${exception.policyId} == 'user'</simple>
+      <transform>
+        <constant>You do not have ROLE_USER access!</constant>
+      </transform>
+    </when>
+    <when>
+      <simple>${exception.policyId} == 'admin'</simple>
+      <transform>
+        <constant>You do not have ROLE_ADMIN access!</constant>
+      </transform>
+    </when>
+  </choice>
+</onException>
+------------------------------------------------------------------------------------------
+
+[[SpringSecurity-Dependencies]]
+Dependencies
+^^^^^^^^^^^^
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+-------------------------------------------------
+ 
+<dependency> 
+  <groupId>org.apache.camel</groupId> 
+  <artifactId>camel-spring-security</artifactId> 
+  <version>2.4.0</version> 
+</dependency> 
+-------------------------------------------------
+
+This dependency will also pull in
+`org.springframework.security:spring-security-core:3.0.3.RELEASE` and
+`org.springframework.security:spring-security-config:3.0.3.RELEASE`.
+
+[[SpringSecurity-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+
+* link:components.html[Components]
+
