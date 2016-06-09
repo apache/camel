@@ -48,11 +48,32 @@ Where *label* is an arbitrary text value describing the endpoint. +
 URI Options
 ^^^^^^^^^^^
 
+
 // component options: START
+The Bean Validator component has no options.
 // component options: END
 
+
+
 // endpoint options: START
+The Bean Validator component supports 8 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| label | producer |  | String | *Required* Where label is an arbitrary text value describing the endpoint
+| constraintValidatorFactory | producer |  | ConstraintValidatorFactory | To use a custom ConstraintValidatorFactory
+| group | producer | javax.validation.groups.Default | String | To use a custom validation group
+| messageInterpolator | producer |  | MessageInterpolator | To use a custom MessageInterpolator
+| traversableResolver | producer |  | TraversableResolver | To use a custom TraversableResolver
+| validationProviderResolver | producer |  | ValidationProviderResolver | To use a a custom ValidationProviderResolver
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 [[BeanValidator-OSGideployment]]
 OSGi deployment

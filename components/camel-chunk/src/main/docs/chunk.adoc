@@ -40,11 +40,33 @@ format, `?option=value&option=value&...`
 Options
 ^^^^^^^
 
+
 // component options: START
+The Chunk component has no options.
 // component options: END
 
+
+
 // endpoint options: START
+The Chunk component supports 9 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| resourceUri | producer |  | String | *Required* Path to the resource or a reference to lookup a bean in the Registry to use as the resource
+| contentCache | producer | false | boolean | Sets whether to use resource content cache or not
+| encoding | producer |  | String | Define the encoding of the body
+| extension | producer |  | String | Define the file extension of the template
+| themeFolder | producer |  | String | Define the themes folder to scan
+| themeLayer | producer |  | String | Define the theme layer to elaborate
+| themeSubfolder | producer |  | String | Define the themes subfolder to scan
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 Chunk component will look for a specific template in _themes_ folder
 with extensions _.chtml_ or _.cxml. _If you need to specify a different
