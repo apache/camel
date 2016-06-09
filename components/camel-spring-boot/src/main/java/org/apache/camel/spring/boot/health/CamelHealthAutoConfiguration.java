@@ -26,13 +26,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@ConditionalOnClass({HealthIndicator.class})
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 public class CamelHealthAutoConfiguration {
 
-    @Bean
     @ConditionalOnClass({CamelContext.class})
     @ConditionalOnMissingBean(CamelHealthIndicator.class)
-    public HealthIndicator camelHealthIndicator(CamelContext camelContext) {
-        return new CamelHealthIndicator(camelContext);
+    protected static class CamelHealthIndicatorInitializer {
+
+        @Bean
+        public HealthIndicator camelHealthIndicator(CamelContext camelContext) {
+            return new CamelHealthIndicator(camelContext);
+        }
+
     }
+
 }
