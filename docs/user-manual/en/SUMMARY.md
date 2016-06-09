@@ -304,6 +304,7 @@
     * [XML Rpc](xmlrpc.adoc)
     * [XStream](xstream.adoc)
     * [YAML](yaml.adoc)
+    * [Zipfile](zipfile.adoc)
 
 * User Guide
     * [Karaf](karaf.adoc)
