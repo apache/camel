@@ -270,6 +270,7 @@
     * [URLRewrite](urlrewrite.adoc)
     * [Velocity](velocity.adoc)
     * [Vertx](vertx.adoc)
+    * [Weather](weather.adoc)
     * [Websocket](websocket.adoc)
     * [XML Security](xmlsecurity.adoc)
     * [Yammer](yammer.adoc)
