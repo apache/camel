@@ -269,6 +269,7 @@
     * [Undertow](undertow.adoc)
     * [URLRewrite](urlrewrite.adoc)
     * [Velocity](velocity.adoc)
+    * [Vertx](vertx.adoc)
     * [Websocket](websocket.adoc)
     * [XML Security](xmlsecurity.adoc)
     * [Yammer](yammer.adoc)
