@@ -19,6 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 
 /**
  * Unit test for aggregate grouped exchanges.
@@ -44,8 +45,7 @@ public class AggregateGroupedExchangeCompletionSizeTest extends ContextTestSuppo
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(constant(true)).completionSize(3)
-                    .groupExchanges()
+                    .aggregate(new GroupedExchangeAggregationStrategy()).constant(true).completionSize(3)
                     .to("mock:result");
             }
         };
