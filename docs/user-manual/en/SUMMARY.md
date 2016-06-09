@@ -300,6 +300,7 @@
     * [Univocity Parsers](univocity-parsers.adoc)
     * [XML Beans](xmlbeans.adoc)
     * [XML JSON](xmljson.adoc)
+    * [XML Rpc](xmlrpc.adoc)
     * [YAML](yaml.adoc)
 
 * User Guide
