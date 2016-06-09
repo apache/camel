@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.braintree;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +26,6 @@ import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Customer;
 import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Result;
-import com.google.common.collect.Lists;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.AddressGatewayApiMethod;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 
 public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport {
-
     private static final Logger LOG = LoggerFactory.getLogger(AddressGatewayIntegrationTest.class);
     private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(AddressGatewayApiMethod.class).getName();
 
@@ -51,7 +50,7 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
     public AddressGatewayIntegrationTest() {
         this.customer = null;
         this.gateway = null;
-        this.addressIds = Lists.newLinkedList();
+        this.addressIds = new LinkedList<>();
     }
 
     @Override

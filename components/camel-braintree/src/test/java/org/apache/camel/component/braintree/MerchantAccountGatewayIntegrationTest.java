@@ -29,12 +29,8 @@ import org.apache.camel.component.braintree.internal.BraintreeConstants;
 import org.apache.camel.component.braintree.internal.MerchantAccountGatewayApiMethod;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MerchantAccountGatewayIntegrationTest extends AbstractBraintreeTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MerchantAccountGatewayIntegrationTest.class);
     private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(MerchantAccountGatewayApiMethod.class).getName();
 
     @Ignore

@@ -26,13 +26,9 @@ import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.BraintreeConstants;
 import org.apache.camel.component.braintree.internal.WebhookNotificationGatewayApiMethod;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintreeTestSupport {
-
     private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(WebhookNotificationGatewayApiMethod.class).getName();
-    private static final Logger LOG = LoggerFactory.getLogger(WebhookNotificationGatewayIntegrationTest.class);
 
     @Test
     public void testParse() throws Exception {
