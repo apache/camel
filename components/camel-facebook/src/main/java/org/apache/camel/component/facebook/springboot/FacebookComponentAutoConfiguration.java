@@ -37,7 +37,8 @@ public class FacebookComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(FacebookComponent.class)
-    public FacebookComponent configureComponent(CamelContext camelContext,
+    public FacebookComponent configureFacebookComponent(
+            CamelContext camelContext,
             FacebookComponentConfiguration configuration) throws Exception {
         FacebookComponent component = new FacebookComponent();
         component.setCamelContext(camelContext);

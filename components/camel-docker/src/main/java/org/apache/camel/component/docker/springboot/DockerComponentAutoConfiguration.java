@@ -37,7 +37,7 @@ public class DockerComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(DockerComponent.class)
-    public DockerComponent configureComponent(CamelContext camelContext,
+    public DockerComponent configureDockerComponent(CamelContext camelContext,
             DockerComponentConfiguration configuration) throws Exception {
         DockerComponent component = new DockerComponent();
         component.setCamelContext(camelContext);

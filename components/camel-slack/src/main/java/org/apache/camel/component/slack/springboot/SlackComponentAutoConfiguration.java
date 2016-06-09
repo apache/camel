@@ -37,7 +37,7 @@ public class SlackComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SlackComponent.class)
-    public SlackComponent configureComponent(CamelContext camelContext,
+    public SlackComponent configureSlackComponent(CamelContext camelContext,
             SlackComponentConfiguration configuration) throws Exception {
         SlackComponent component = new SlackComponent();
         component.setCamelContext(camelContext);

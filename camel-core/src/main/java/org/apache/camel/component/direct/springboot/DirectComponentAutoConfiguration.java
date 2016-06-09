@@ -37,7 +37,7 @@ public class DirectComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(DirectComponent.class)
-    public DirectComponent configureComponent(CamelContext camelContext,
+    public DirectComponent configureDirectComponent(CamelContext camelContext,
             DirectComponentConfiguration configuration) throws Exception {
         DirectComponent component = new DirectComponent();
         component.setCamelContext(camelContext);

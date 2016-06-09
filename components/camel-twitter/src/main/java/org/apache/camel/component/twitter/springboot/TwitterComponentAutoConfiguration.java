@@ -37,7 +37,8 @@ public class TwitterComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(TwitterComponent.class)
-    public TwitterComponent configureComponent(CamelContext camelContext,
+    public TwitterComponent configureTwitterComponent(
+            CamelContext camelContext,
             TwitterComponentConfiguration configuration) throws Exception {
         TwitterComponent component = new TwitterComponent();
         component.setCamelContext(camelContext);

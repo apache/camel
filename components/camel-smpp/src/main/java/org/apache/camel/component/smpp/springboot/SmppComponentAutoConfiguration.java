@@ -37,7 +37,7 @@ public class SmppComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SmppComponent.class)
-    public SmppComponent configureComponent(CamelContext camelContext,
+    public SmppComponent configureSmppComponent(CamelContext camelContext,
             SmppComponentConfiguration configuration) throws Exception {
         SmppComponent component = new SmppComponent();
         component.setCamelContext(camelContext);

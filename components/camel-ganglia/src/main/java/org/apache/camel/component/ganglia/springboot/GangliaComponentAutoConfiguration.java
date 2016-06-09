@@ -37,7 +37,8 @@ public class GangliaComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(GangliaComponent.class)
-    public GangliaComponent configureComponent(CamelContext camelContext,
+    public GangliaComponent configureGangliaComponent(
+            CamelContext camelContext,
             GangliaComponentConfiguration configuration) throws Exception {
         GangliaComponent component = new GangliaComponent();
         component.setCamelContext(camelContext);

@@ -37,7 +37,7 @@ public class HttpComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(HttpComponent.class)
-    public HttpComponent configureComponent(CamelContext camelContext,
+    public HttpComponent configureHttpComponent(CamelContext camelContext,
             HttpComponentConfiguration configuration) throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(camelContext);

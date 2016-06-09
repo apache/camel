@@ -37,7 +37,7 @@ public class XQueryComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(XQueryComponent.class)
-    public XQueryComponent configureComponent(CamelContext camelContext,
+    public XQueryComponent configureXQueryComponent(CamelContext camelContext,
             XQueryComponentConfiguration configuration) throws Exception {
         XQueryComponent component = new XQueryComponent();
         component.setCamelContext(camelContext);

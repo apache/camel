@@ -37,7 +37,7 @@ public class WsComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(WsComponent.class)
-    public WsComponent configureComponent(CamelContext camelContext,
+    public WsComponent configureWsComponent(CamelContext camelContext,
             WsComponentConfiguration configuration) throws Exception {
         WsComponent component = new WsComponent();
         component.setCamelContext(camelContext);

@@ -37,7 +37,7 @@ public class SshComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SshComponent.class)
-    public SshComponent configureComponent(CamelContext camelContext,
+    public SshComponent configureSshComponent(CamelContext camelContext,
             SshComponentConfiguration configuration) throws Exception {
         SshComponent component = new SshComponent();
         component.setCamelContext(camelContext);

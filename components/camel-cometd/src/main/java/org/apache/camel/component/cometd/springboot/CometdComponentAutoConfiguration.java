@@ -37,7 +37,7 @@ public class CometdComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(CometdComponent.class)
-    public CometdComponent configureComponent(CamelContext camelContext,
+    public CometdComponent configureCometdComponent(CamelContext camelContext,
             CometdComponentConfiguration configuration) throws Exception {
         CometdComponent component = new CometdComponent();
         component.setCamelContext(camelContext);

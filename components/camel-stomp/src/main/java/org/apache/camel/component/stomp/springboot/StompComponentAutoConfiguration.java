@@ -37,7 +37,7 @@ public class StompComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(StompComponent.class)
-    public StompComponent configureComponent(CamelContext camelContext,
+    public StompComponent configureStompComponent(CamelContext camelContext,
             StompComponentConfiguration configuration) throws Exception {
         StompComponent component = new StompComponent();
         component.setCamelContext(camelContext);

@@ -37,7 +37,8 @@ public class PaxLoggingComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(PaxLoggingComponent.class)
-    public PaxLoggingComponent configureComponent(CamelContext camelContext,
+    public PaxLoggingComponent configurePaxLoggingComponent(
+            CamelContext camelContext,
             PaxLoggingComponentConfiguration configuration) throws Exception {
         PaxLoggingComponent component = new PaxLoggingComponent();
         component.setCamelContext(camelContext);

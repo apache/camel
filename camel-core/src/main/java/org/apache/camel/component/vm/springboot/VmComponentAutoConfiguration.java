@@ -37,7 +37,7 @@ public class VmComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(VmComponent.class)
-    public VmComponent configureComponent(CamelContext camelContext,
+    public VmComponent configureVmComponent(CamelContext camelContext,
             VmComponentConfiguration configuration) throws Exception {
         VmComponent component = new VmComponent();
         component.setCamelContext(camelContext);

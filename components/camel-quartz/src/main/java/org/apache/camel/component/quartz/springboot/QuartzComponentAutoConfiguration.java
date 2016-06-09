@@ -37,7 +37,7 @@ public class QuartzComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(QuartzComponent.class)
-    public QuartzComponent configureComponent(CamelContext camelContext,
+    public QuartzComponent configureQuartzComponent(CamelContext camelContext,
             QuartzComponentConfiguration configuration) throws Exception {
         QuartzComponent component = new QuartzComponent();
         component.setCamelContext(camelContext);

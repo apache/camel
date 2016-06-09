@@ -37,7 +37,8 @@ public class ZooKeeperComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ZooKeeperComponent.class)
-    public ZooKeeperComponent configureComponent(CamelContext camelContext,
+    public ZooKeeperComponent configureZooKeeperComponent(
+            CamelContext camelContext,
             ZooKeeperComponentConfiguration configuration) throws Exception {
         ZooKeeperComponent component = new ZooKeeperComponent();
         component.setCamelContext(camelContext);

@@ -37,7 +37,7 @@ public class VertxComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(VertxComponent.class)
-    public VertxComponent configureComponent(CamelContext camelContext,
+    public VertxComponent configureVertxComponent(CamelContext camelContext,
             VertxComponentConfiguration configuration) throws Exception {
         VertxComponent component = new VertxComponent();
         component.setCamelContext(camelContext);

@@ -37,7 +37,7 @@ public class HdfsComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(HdfsComponent.class)
-    public HdfsComponent configureComponent(CamelContext camelContext,
+    public HdfsComponent configureHdfsComponent(CamelContext camelContext,
             HdfsComponentConfiguration configuration) throws Exception {
         HdfsComponent component = new HdfsComponent();
         component.setCamelContext(camelContext);

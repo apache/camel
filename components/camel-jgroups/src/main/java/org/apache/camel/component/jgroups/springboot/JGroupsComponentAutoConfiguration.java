@@ -37,7 +37,8 @@ public class JGroupsComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JGroupsComponent.class)
-    public JGroupsComponent configureComponent(CamelContext camelContext,
+    public JGroupsComponent configureJGroupsComponent(
+            CamelContext camelContext,
             JGroupsComponentConfiguration configuration) throws Exception {
         JGroupsComponent component = new JGroupsComponent();
         component.setCamelContext(camelContext);

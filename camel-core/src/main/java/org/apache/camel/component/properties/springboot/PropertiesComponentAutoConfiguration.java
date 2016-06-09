@@ -37,7 +37,8 @@ public class PropertiesComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(PropertiesComponent.class)
-    public PropertiesComponent configureComponent(CamelContext camelContext,
+    public PropertiesComponent configurePropertiesComponent(
+            CamelContext camelContext,
             PropertiesComponentConfiguration configuration) throws Exception {
         PropertiesComponent component = new PropertiesComponent();
         component.setCamelContext(camelContext);

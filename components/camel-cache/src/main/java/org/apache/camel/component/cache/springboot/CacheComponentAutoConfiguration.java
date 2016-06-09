@@ -37,7 +37,7 @@ public class CacheComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(CacheComponent.class)
-    public CacheComponent configureComponent(CamelContext camelContext,
+    public CacheComponent configureCacheComponent(CamelContext camelContext,
             CacheComponentConfiguration configuration) throws Exception {
         CacheComponent component = new CacheComponent();
         component.setCamelContext(camelContext);

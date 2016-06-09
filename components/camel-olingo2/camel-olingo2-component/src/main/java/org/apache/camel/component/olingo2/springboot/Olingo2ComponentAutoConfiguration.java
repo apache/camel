@@ -37,7 +37,8 @@ public class Olingo2ComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(Olingo2Component.class)
-    public Olingo2Component configureComponent(CamelContext camelContext,
+    public Olingo2Component configureOlingo2Component(
+            CamelContext camelContext,
             Olingo2ComponentConfiguration configuration) throws Exception {
         Olingo2Component component = new Olingo2Component();
         component.setCamelContext(camelContext);

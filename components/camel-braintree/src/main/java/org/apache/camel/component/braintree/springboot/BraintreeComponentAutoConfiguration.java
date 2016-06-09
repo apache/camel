@@ -37,7 +37,8 @@ public class BraintreeComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(BraintreeComponent.class)
-    public BraintreeComponent configureComponent(CamelContext camelContext,
+    public BraintreeComponent configureBraintreeComponent(
+            CamelContext camelContext,
             BraintreeComponentConfiguration configuration) throws Exception {
         BraintreeComponent component = new BraintreeComponent();
         component.setCamelContext(camelContext);

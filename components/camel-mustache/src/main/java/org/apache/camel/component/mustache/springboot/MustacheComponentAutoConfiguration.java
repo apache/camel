@@ -37,7 +37,8 @@ public class MustacheComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MustacheComponent.class)
-    public MustacheComponent configureComponent(CamelContext camelContext,
+    public MustacheComponent configureMustacheComponent(
+            CamelContext camelContext,
             MustacheComponentConfiguration configuration) throws Exception {
         MustacheComponent component = new MustacheComponent();
         component.setCamelContext(camelContext);

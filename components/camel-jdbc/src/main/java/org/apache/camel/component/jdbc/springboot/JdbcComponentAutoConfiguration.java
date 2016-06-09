@@ -37,7 +37,7 @@ public class JdbcComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JdbcComponent.class)
-    public JdbcComponent configureComponent(CamelContext camelContext,
+    public JdbcComponent configureJdbcComponent(CamelContext camelContext,
             JdbcComponentConfiguration configuration) throws Exception {
         JdbcComponent component = new JdbcComponent();
         component.setCamelContext(camelContext);

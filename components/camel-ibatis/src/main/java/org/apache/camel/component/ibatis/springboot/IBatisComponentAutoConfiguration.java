@@ -37,7 +37,7 @@ public class IBatisComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(IBatisComponent.class)
-    public IBatisComponent configureComponent(CamelContext camelContext,
+    public IBatisComponent configureIBatisComponent(CamelContext camelContext,
             IBatisComponentConfiguration configuration) throws Exception {
         IBatisComponent component = new IBatisComponent();
         component.setCamelContext(camelContext);

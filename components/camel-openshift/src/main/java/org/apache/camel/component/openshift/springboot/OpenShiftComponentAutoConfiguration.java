@@ -37,7 +37,8 @@ public class OpenShiftComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(OpenShiftComponent.class)
-    public OpenShiftComponent configureComponent(CamelContext camelContext,
+    public OpenShiftComponent configureOpenShiftComponent(
+            CamelContext camelContext,
             OpenShiftComponentConfiguration configuration) throws Exception {
         OpenShiftComponent component = new OpenShiftComponent();
         component.setCamelContext(camelContext);

@@ -37,7 +37,7 @@ public class JoltComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JoltComponent.class)
-    public JoltComponent configureComponent(CamelContext camelContext,
+    public JoltComponent configureJoltComponent(CamelContext camelContext,
             JoltComponentConfiguration configuration) throws Exception {
         JoltComponent component = new JoltComponent();
         component.setCamelContext(camelContext);

@@ -37,7 +37,7 @@ public class JmsComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JmsComponent.class)
-    public JmsComponent configureComponent(CamelContext camelContext,
+    public JmsComponent configureJmsComponent(CamelContext camelContext,
             JmsComponentConfiguration configuration) throws Exception {
         JmsComponent component = new JmsComponent();
         component.setCamelContext(camelContext);

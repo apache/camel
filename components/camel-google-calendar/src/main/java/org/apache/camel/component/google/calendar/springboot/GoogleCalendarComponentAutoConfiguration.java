@@ -37,7 +37,7 @@ public class GoogleCalendarComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(GoogleCalendarComponent.class)
-    public GoogleCalendarComponent configureComponent(
+    public GoogleCalendarComponent configureGoogleCalendarComponent(
             CamelContext camelContext,
             GoogleCalendarComponentConfiguration configuration)
             throws Exception {

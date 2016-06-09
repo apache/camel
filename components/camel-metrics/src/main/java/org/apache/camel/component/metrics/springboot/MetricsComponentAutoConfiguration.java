@@ -37,7 +37,8 @@ public class MetricsComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MetricsComponent.class)
-    public MetricsComponent configureComponent(CamelContext camelContext,
+    public MetricsComponent configureMetricsComponent(
+            CamelContext camelContext,
             MetricsComponentConfiguration configuration) throws Exception {
         MetricsComponent component = new MetricsComponent();
         component.setCamelContext(camelContext);

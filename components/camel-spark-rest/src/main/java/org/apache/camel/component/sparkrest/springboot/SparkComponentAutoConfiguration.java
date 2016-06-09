@@ -37,7 +37,7 @@ public class SparkComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SparkComponent.class)
-    public SparkComponent configureComponent(CamelContext camelContext,
+    public SparkComponent configureSparkComponent(CamelContext camelContext,
             SparkComponentConfiguration configuration) throws Exception {
         SparkComponent component = new SparkComponent();
         component.setCamelContext(camelContext);

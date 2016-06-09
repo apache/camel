@@ -37,7 +37,7 @@ public class YammerComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(YammerComponent.class)
-    public YammerComponent configureComponent(CamelContext camelContext,
+    public YammerComponent configureYammerComponent(CamelContext camelContext,
             YammerComponentConfiguration configuration) throws Exception {
         YammerComponent component = new YammerComponent();
         component.setCamelContext(camelContext);

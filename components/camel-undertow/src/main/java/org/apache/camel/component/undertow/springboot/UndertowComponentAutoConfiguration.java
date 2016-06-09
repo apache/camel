@@ -37,7 +37,8 @@ public class UndertowComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(UndertowComponent.class)
-    public UndertowComponent configureComponent(CamelContext camelContext,
+    public UndertowComponent configureUndertowComponent(
+            CamelContext camelContext,
             UndertowComponentConfiguration configuration) throws Exception {
         UndertowComponent component = new UndertowComponent();
         component.setCamelContext(camelContext);

@@ -37,7 +37,7 @@ public class AvroComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(AvroComponent.class)
-    public AvroComponent configureComponent(CamelContext camelContext,
+    public AvroComponent configureAvroComponent(CamelContext camelContext,
             AvroComponentConfiguration configuration) throws Exception {
         AvroComponent component = new AvroComponent();
         component.setCamelContext(camelContext);

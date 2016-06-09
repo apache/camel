@@ -37,7 +37,8 @@ public class MyBatisComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MyBatisComponent.class)
-    public MyBatisComponent configureComponent(CamelContext camelContext,
+    public MyBatisComponent configureMyBatisComponent(
+            CamelContext camelContext,
             MyBatisComponentConfiguration configuration) throws Exception {
         MyBatisComponent component = new MyBatisComponent();
         component.setCamelContext(camelContext);

@@ -37,7 +37,8 @@ public class WebsocketComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(WebsocketComponent.class)
-    public WebsocketComponent configureComponent(CamelContext camelContext,
+    public WebsocketComponent configureWebsocketComponent(
+            CamelContext camelContext,
             WebsocketComponentConfiguration configuration) throws Exception {
         WebsocketComponent component = new WebsocketComponent();
         component.setCamelContext(camelContext);

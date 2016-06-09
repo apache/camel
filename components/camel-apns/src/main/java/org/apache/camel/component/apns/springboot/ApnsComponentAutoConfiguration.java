@@ -37,7 +37,7 @@ public class ApnsComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ApnsComponent.class)
-    public ApnsComponent configureComponent(CamelContext camelContext,
+    public ApnsComponent configureApnsComponent(CamelContext camelContext,
             ApnsComponentConfiguration configuration) throws Exception {
         ApnsComponent component = new ApnsComponent();
         component.setCamelContext(camelContext);

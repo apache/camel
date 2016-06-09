@@ -37,7 +37,7 @@ public class LuceneComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(LuceneComponent.class)
-    public LuceneComponent configureComponent(CamelContext camelContext,
+    public LuceneComponent configureLuceneComponent(CamelContext camelContext,
             LuceneComponentConfiguration configuration) throws Exception {
         LuceneComponent component = new LuceneComponent();
         component.setCamelContext(camelContext);

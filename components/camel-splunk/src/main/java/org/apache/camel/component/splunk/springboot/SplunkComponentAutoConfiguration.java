@@ -37,7 +37,7 @@ public class SplunkComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SplunkComponent.class)
-    public SplunkComponent configureComponent(CamelContext camelContext,
+    public SplunkComponent configureSplunkComponent(CamelContext camelContext,
             SplunkComponentConfiguration configuration) throws Exception {
         SplunkComponent component = new SplunkComponent();
         component.setCamelContext(camelContext);

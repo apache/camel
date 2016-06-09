@@ -37,7 +37,7 @@ public class XsltComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(XsltComponent.class)
-    public XsltComponent configureComponent(CamelContext camelContext,
+    public XsltComponent configureXsltComponent(CamelContext camelContext,
             XsltComponentConfiguration configuration) throws Exception {
         XsltComponent component = new XsltComponent();
         component.setCamelContext(camelContext);

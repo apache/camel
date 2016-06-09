@@ -37,7 +37,7 @@ public class NagiosComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(NagiosComponent.class)
-    public NagiosComponent configureComponent(CamelContext camelContext,
+    public NagiosComponent configureNagiosComponent(CamelContext camelContext,
             NagiosComponentConfiguration configuration) throws Exception {
         NagiosComponent component = new NagiosComponent();
         component.setCamelContext(camelContext);

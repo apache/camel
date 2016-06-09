@@ -37,7 +37,8 @@ public class LinkedInComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(LinkedInComponent.class)
-    public LinkedInComponent configureComponent(CamelContext camelContext,
+    public LinkedInComponent configureLinkedInComponent(
+            CamelContext camelContext,
             LinkedInComponentConfiguration configuration) throws Exception {
         LinkedInComponent component = new LinkedInComponent();
         component.setCamelContext(camelContext);

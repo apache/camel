@@ -37,7 +37,8 @@ public class SqlStoredComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SqlStoredComponent.class)
-    public SqlStoredComponent configureComponent(CamelContext camelContext,
+    public SqlStoredComponent configureSqlStoredComponent(
+            CamelContext camelContext,
             SqlStoredComponentConfiguration configuration) throws Exception {
         SqlStoredComponent component = new SqlStoredComponent();
         component.setCamelContext(camelContext);

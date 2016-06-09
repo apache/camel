@@ -37,7 +37,7 @@ public class AMQPComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(AMQPComponent.class)
-    public AMQPComponent configureComponent(CamelContext camelContext,
+    public AMQPComponent configureAMQPComponent(CamelContext camelContext,
             AMQPComponentConfiguration configuration) throws Exception {
         AMQPComponent component = new AMQPComponent();
         component.setCamelContext(camelContext);

@@ -37,7 +37,8 @@ public class ValidatorComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ValidatorComponent.class)
-    public ValidatorComponent configureComponent(CamelContext camelContext,
+    public ValidatorComponent configureValidatorComponent(
+            CamelContext camelContext,
             ValidatorComponentConfiguration configuration) throws Exception {
         ValidatorComponent component = new ValidatorComponent();
         component.setCamelContext(camelContext);

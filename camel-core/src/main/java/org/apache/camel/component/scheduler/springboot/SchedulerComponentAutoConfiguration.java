@@ -37,7 +37,8 @@ public class SchedulerComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SchedulerComponent.class)
-    public SchedulerComponent configureComponent(CamelContext camelContext,
+    public SchedulerComponent configureSchedulerComponent(
+            CamelContext camelContext,
             SchedulerComponentConfiguration configuration) throws Exception {
         SchedulerComponent component = new SchedulerComponent();
         component.setCamelContext(camelContext);

@@ -37,7 +37,8 @@ public class KestrelComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(KestrelComponent.class)
-    public KestrelComponent configureComponent(CamelContext camelContext,
+    public KestrelComponent configureKestrelComponent(
+            CamelContext camelContext,
             KestrelComponentConfiguration configuration) throws Exception {
         KestrelComponent component = new KestrelComponent();
         component.setCamelContext(camelContext);

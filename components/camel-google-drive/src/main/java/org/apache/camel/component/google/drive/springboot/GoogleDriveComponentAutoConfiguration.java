@@ -37,7 +37,8 @@ public class GoogleDriveComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(GoogleDriveComponent.class)
-    public GoogleDriveComponent configureComponent(CamelContext camelContext,
+    public GoogleDriveComponent configureGoogleDriveComponent(
+            CamelContext camelContext,
             GoogleDriveComponentConfiguration configuration) throws Exception {
         GoogleDriveComponent component = new GoogleDriveComponent();
         component.setCamelContext(camelContext);

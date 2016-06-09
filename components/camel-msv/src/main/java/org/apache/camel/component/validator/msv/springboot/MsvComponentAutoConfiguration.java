@@ -37,7 +37,7 @@ public class MsvComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MsvComponent.class)
-    public MsvComponent configureComponent(CamelContext camelContext,
+    public MsvComponent configureMsvComponent(CamelContext camelContext,
             MsvComponentConfiguration configuration) throws Exception {
         MsvComponent component = new MsvComponent();
         component.setCamelContext(camelContext);

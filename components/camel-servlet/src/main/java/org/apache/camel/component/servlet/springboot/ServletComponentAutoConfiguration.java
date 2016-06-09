@@ -37,7 +37,8 @@ public class ServletComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ServletComponent.class)
-    public ServletComponent configureComponent(CamelContext camelContext,
+    public ServletComponent configureServletComponent(
+            CamelContext camelContext,
             ServletComponentConfiguration configuration) throws Exception {
         ServletComponent component = new ServletComponent();
         component.setCamelContext(camelContext);

@@ -37,7 +37,8 @@ public class ElasticsearchComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ElasticsearchComponent.class)
-    public ElasticsearchComponent configureComponent(CamelContext camelContext,
+    public ElasticsearchComponent configureElasticsearchComponent(
+            CamelContext camelContext,
             ElasticsearchComponentConfiguration configuration) throws Exception {
         ElasticsearchComponent component = new ElasticsearchComponent();
         component.setCamelContext(camelContext);

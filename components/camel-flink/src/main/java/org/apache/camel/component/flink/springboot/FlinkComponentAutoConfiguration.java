@@ -37,7 +37,7 @@ public class FlinkComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(FlinkComponent.class)
-    public FlinkComponent configureComponent(CamelContext camelContext,
+    public FlinkComponent configureFlinkComponent(CamelContext camelContext,
             FlinkComponentConfiguration configuration) throws Exception {
         FlinkComponent component = new FlinkComponent();
         component.setCamelContext(camelContext);

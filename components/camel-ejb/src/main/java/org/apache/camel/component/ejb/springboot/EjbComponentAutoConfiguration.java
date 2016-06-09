@@ -37,7 +37,7 @@ public class EjbComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(EjbComponent.class)
-    public EjbComponent configureComponent(CamelContext camelContext,
+    public EjbComponent configureEjbComponent(CamelContext camelContext,
             EjbComponentConfiguration configuration) throws Exception {
         EjbComponent component = new EjbComponent();
         component.setCamelContext(camelContext);

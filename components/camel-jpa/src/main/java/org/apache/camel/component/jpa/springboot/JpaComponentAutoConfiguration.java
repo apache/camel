@@ -37,7 +37,7 @@ public class JpaComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JpaComponent.class)
-    public JpaComponent configureComponent(CamelContext camelContext,
+    public JpaComponent configureJpaComponent(CamelContext camelContext,
             JpaComponentConfiguration configuration) throws Exception {
         JpaComponent component = new JpaComponent();
         component.setCamelContext(camelContext);

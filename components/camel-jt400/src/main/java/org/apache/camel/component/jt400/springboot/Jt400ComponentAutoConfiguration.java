@@ -37,7 +37,7 @@ public class Jt400ComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(Jt400Component.class)
-    public Jt400Component configureComponent(CamelContext camelContext,
+    public Jt400Component configureJt400Component(CamelContext camelContext,
             Jt400ComponentConfiguration configuration) throws Exception {
         Jt400Component component = new Jt400Component();
         component.setCamelContext(camelContext);

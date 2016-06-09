@@ -217,9 +217,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
 
         String body = createBody(model.getShortJavaType());
+        String methodName = "configure" + model.getShortJavaType();
 
         MethodSource<JavaClassSource> method = javaClass.addMethod()
-                .setName("configureComponent")
+                .setName(methodName)
                 .setPublic()
                 .setBody(body)
                 .setReturnType(model.getShortJavaType())

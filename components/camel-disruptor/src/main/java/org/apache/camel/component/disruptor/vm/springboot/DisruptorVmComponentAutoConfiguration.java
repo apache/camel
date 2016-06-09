@@ -37,7 +37,8 @@ public class DisruptorVmComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(DisruptorVmComponent.class)
-    public DisruptorVmComponent configureComponent(CamelContext camelContext,
+    public DisruptorVmComponent configureDisruptorVmComponent(
+            CamelContext camelContext,
             DisruptorVmComponentConfiguration configuration) throws Exception {
         DisruptorVmComponent component = new DisruptorVmComponent();
         component.setCamelContext(camelContext);

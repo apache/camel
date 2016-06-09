@@ -37,7 +37,8 @@ public class SpringBatchComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SpringBatchComponent.class)
-    public SpringBatchComponent configureComponent(CamelContext camelContext,
+    public SpringBatchComponent configureSpringBatchComponent(
+            CamelContext camelContext,
             SpringBatchComponentConfiguration configuration) throws Exception {
         SpringBatchComponent component = new SpringBatchComponent();
         component.setCamelContext(camelContext);

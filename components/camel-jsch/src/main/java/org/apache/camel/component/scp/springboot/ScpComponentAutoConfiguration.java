@@ -37,7 +37,7 @@ public class ScpComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ScpComponent.class)
-    public ScpComponent configureComponent(CamelContext camelContext,
+    public ScpComponent configureScpComponent(CamelContext camelContext,
             ScpComponentConfiguration configuration) throws Exception {
         ScpComponent component = new ScpComponent();
         component.setCamelContext(camelContext);

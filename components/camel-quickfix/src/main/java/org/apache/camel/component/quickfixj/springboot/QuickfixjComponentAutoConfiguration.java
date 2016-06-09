@@ -37,7 +37,8 @@ public class QuickfixjComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(QuickfixjComponent.class)
-    public QuickfixjComponent configureComponent(CamelContext camelContext,
+    public QuickfixjComponent configureQuickfixjComponent(
+            CamelContext camelContext,
             QuickfixjComponentConfiguration configuration) throws Exception {
         QuickfixjComponent component = new QuickfixjComponent();
         component.setCamelContext(camelContext);

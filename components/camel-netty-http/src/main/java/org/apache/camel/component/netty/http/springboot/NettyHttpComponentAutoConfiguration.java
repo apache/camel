@@ -37,7 +37,8 @@ public class NettyHttpComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(NettyHttpComponent.class)
-    public NettyHttpComponent configureComponent(CamelContext camelContext,
+    public NettyHttpComponent configureNettyHttpComponent(
+            CamelContext camelContext,
             NettyHttpComponentConfiguration configuration) throws Exception {
         NettyHttpComponent component = new NettyHttpComponent();
         component.setCamelContext(camelContext);

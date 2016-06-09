@@ -37,7 +37,7 @@ public class HBaseComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(HBaseComponent.class)
-    public HBaseComponent configureComponent(CamelContext camelContext,
+    public HBaseComponent configureHBaseComponent(CamelContext camelContext,
             HBaseComponentConfiguration configuration) throws Exception {
         HBaseComponent component = new HBaseComponent();
         component.setCamelContext(camelContext);

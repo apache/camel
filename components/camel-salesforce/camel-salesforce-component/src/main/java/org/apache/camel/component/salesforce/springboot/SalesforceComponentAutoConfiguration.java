@@ -37,7 +37,8 @@ public class SalesforceComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SalesforceComponent.class)
-    public SalesforceComponent configureComponent(CamelContext camelContext,
+    public SalesforceComponent configureSalesforceComponent(
+            CamelContext camelContext,
             SalesforceComponentConfiguration configuration) throws Exception {
         SalesforceComponent component = new SalesforceComponent();
         component.setCamelContext(camelContext);

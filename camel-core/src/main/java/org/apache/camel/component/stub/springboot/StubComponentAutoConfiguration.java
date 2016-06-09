@@ -37,7 +37,7 @@ public class StubComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(StubComponent.class)
-    public StubComponent configureComponent(CamelContext camelContext,
+    public StubComponent configureStubComponent(CamelContext camelContext,
             StubComponentConfiguration configuration) throws Exception {
         StubComponent component = new StubComponent();
         component.setCamelContext(camelContext);

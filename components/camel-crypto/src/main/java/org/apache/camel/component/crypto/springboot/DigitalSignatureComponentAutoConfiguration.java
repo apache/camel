@@ -37,7 +37,7 @@ public class DigitalSignatureComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(DigitalSignatureComponent.class)
-    public DigitalSignatureComponent configureComponent(
+    public DigitalSignatureComponent configureDigitalSignatureComponent(
             CamelContext camelContext,
             DigitalSignatureComponentConfiguration configuration)
             throws Exception {

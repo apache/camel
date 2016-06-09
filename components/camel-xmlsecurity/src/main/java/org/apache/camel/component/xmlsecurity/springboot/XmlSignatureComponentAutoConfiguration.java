@@ -37,7 +37,8 @@ public class XmlSignatureComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(XmlSignatureComponent.class)
-    public XmlSignatureComponent configureComponent(CamelContext camelContext,
+    public XmlSignatureComponent configureXmlSignatureComponent(
+            CamelContext camelContext,
             XmlSignatureComponentConfiguration configuration) throws Exception {
         XmlSignatureComponent component = new XmlSignatureComponent();
         component.setCamelContext(camelContext);

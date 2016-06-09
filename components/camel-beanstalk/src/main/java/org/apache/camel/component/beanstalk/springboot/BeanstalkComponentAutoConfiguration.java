@@ -37,7 +37,8 @@ public class BeanstalkComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(BeanstalkComponent.class)
-    public BeanstalkComponent configureComponent(CamelContext camelContext,
+    public BeanstalkComponent configureBeanstalkComponent(
+            CamelContext camelContext,
             BeanstalkComponentConfiguration configuration) throws Exception {
         BeanstalkComponent component = new BeanstalkComponent();
         component.setCamelContext(camelContext);

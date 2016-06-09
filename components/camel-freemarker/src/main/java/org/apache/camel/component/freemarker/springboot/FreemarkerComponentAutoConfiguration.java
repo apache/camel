@@ -37,7 +37,8 @@ public class FreemarkerComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(FreemarkerComponent.class)
-    public FreemarkerComponent configureComponent(CamelContext camelContext,
+    public FreemarkerComponent configureFreemarkerComponent(
+            CamelContext camelContext,
             FreemarkerComponentConfiguration configuration) throws Exception {
         FreemarkerComponent component = new FreemarkerComponent();
         component.setCamelContext(camelContext);

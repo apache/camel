@@ -37,7 +37,7 @@ public class LogComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(LogComponent.class)
-    public LogComponent configureComponent(CamelContext camelContext,
+    public LogComponent configureLogComponent(CamelContext camelContext,
             LogComponentConfiguration configuration) throws Exception {
         LogComponent component = new LogComponent();
         component.setCamelContext(camelContext);

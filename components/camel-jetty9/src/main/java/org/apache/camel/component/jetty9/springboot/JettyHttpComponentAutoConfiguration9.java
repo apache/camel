@@ -37,7 +37,8 @@ public class JettyHttpComponentAutoConfiguration9 {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JettyHttpComponent9.class)
-    public JettyHttpComponent9 configureComponent(CamelContext camelContext,
+    public JettyHttpComponent9 configureJettyHttpComponent9(
+            CamelContext camelContext,
             JettyHttpComponentConfiguration9 configuration) throws Exception {
         JettyHttpComponent9 component = new JettyHttpComponent9();
         component.setCamelContext(camelContext);

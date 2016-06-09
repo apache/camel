@@ -37,7 +37,8 @@ public class EventAdminComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(EventAdminComponent.class)
-    public EventAdminComponent configureComponent(CamelContext camelContext,
+    public EventAdminComponent configureEventAdminComponent(
+            CamelContext camelContext,
             EventAdminComponentConfiguration configuration) throws Exception {
         EventAdminComponent component = new EventAdminComponent();
         component.setCamelContext(camelContext);

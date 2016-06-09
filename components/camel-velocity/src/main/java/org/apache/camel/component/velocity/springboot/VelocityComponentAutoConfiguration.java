@@ -37,7 +37,8 @@ public class VelocityComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(VelocityComponent.class)
-    public VelocityComponent configureComponent(CamelContext camelContext,
+    public VelocityComponent configureVelocityComponent(
+            CamelContext camelContext,
             VelocityComponentConfiguration configuration) throws Exception {
         VelocityComponent component = new VelocityComponent();
         component.setCamelContext(camelContext);

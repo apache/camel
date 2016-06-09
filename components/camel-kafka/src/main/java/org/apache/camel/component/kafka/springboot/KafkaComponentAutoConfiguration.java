@@ -37,7 +37,7 @@ public class KafkaComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(KafkaComponent.class)
-    public KafkaComponent configureComponent(CamelContext camelContext,
+    public KafkaComponent configureKafkaComponent(CamelContext camelContext,
             KafkaComponentConfiguration configuration) throws Exception {
         KafkaComponent component = new KafkaComponent();
         component.setCamelContext(camelContext);

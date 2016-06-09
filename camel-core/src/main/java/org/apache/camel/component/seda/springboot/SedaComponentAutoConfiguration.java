@@ -37,7 +37,7 @@ public class SedaComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SedaComponent.class)
-    public SedaComponent configureComponent(CamelContext camelContext,
+    public SedaComponent configureSedaComponent(CamelContext camelContext,
             SedaComponentConfiguration configuration) throws Exception {
         SedaComponent component = new SedaComponent();
         component.setCamelContext(camelContext);

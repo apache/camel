@@ -37,7 +37,8 @@ public class GuavaEventBusComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(GuavaEventBusComponent.class)
-    public GuavaEventBusComponent configureComponent(CamelContext camelContext,
+    public GuavaEventBusComponent configureGuavaEventBusComponent(
+            CamelContext camelContext,
             GuavaEventBusComponentConfiguration configuration) throws Exception {
         GuavaEventBusComponent component = new GuavaEventBusComponent();
         component.setCamelContext(camelContext);

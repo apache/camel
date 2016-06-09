@@ -37,7 +37,8 @@ public class RestletComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(RestletComponent.class)
-    public RestletComponent configureComponent(CamelContext camelContext,
+    public RestletComponent configureRestletComponent(
+            CamelContext camelContext,
             RestletComponentConfiguration configuration) throws Exception {
         RestletComponent component = new RestletComponent();
         component.setCamelContext(camelContext);

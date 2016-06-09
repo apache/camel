@@ -37,7 +37,7 @@ public class BoxComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(BoxComponent.class)
-    public BoxComponent configureComponent(CamelContext camelContext,
+    public BoxComponent configureBoxComponent(CamelContext camelContext,
             BoxComponentConfiguration configuration) throws Exception {
         BoxComponent component = new BoxComponent();
         component.setCamelContext(camelContext);

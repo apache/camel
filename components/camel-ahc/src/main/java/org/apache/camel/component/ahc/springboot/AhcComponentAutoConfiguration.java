@@ -37,7 +37,7 @@ public class AhcComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(AhcComponent.class)
-    public AhcComponent configureComponent(CamelContext camelContext,
+    public AhcComponent configureAhcComponent(CamelContext camelContext,
             AhcComponentConfiguration configuration) throws Exception {
         AhcComponent component = new AhcComponent();
         component.setCamelContext(camelContext);

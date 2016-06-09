@@ -37,7 +37,8 @@ public class HazelcastComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(HazelcastComponent.class)
-    public HazelcastComponent configureComponent(CamelContext camelContext,
+    public HazelcastComponent configureHazelcastComponent(
+            CamelContext camelContext,
             HazelcastComponentConfiguration configuration) throws Exception {
         HazelcastComponent component = new HazelcastComponent();
         component.setCamelContext(camelContext);

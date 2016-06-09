@@ -37,7 +37,7 @@ public class ElsqlComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ElsqlComponent.class)
-    public ElsqlComponent configureComponent(CamelContext camelContext,
+    public ElsqlComponent configureElsqlComponent(CamelContext camelContext,
             ElsqlComponentConfiguration configuration) throws Exception {
         ElsqlComponent component = new ElsqlComponent();
         component.setCamelContext(camelContext);

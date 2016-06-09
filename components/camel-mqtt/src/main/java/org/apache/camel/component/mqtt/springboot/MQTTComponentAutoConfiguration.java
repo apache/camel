@@ -37,7 +37,7 @@ public class MQTTComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MQTTComponent.class)
-    public MQTTComponent configureComponent(CamelContext camelContext,
+    public MQTTComponent configureMQTTComponent(CamelContext camelContext,
             MQTTComponentConfiguration configuration) throws Exception {
         MQTTComponent component = new MQTTComponent();
         component.setCamelContext(camelContext);

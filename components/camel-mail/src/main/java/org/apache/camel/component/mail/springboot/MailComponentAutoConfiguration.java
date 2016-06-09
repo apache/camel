@@ -37,7 +37,7 @@ public class MailComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MailComponent.class)
-    public MailComponent configureComponent(CamelContext camelContext,
+    public MailComponent configureMailComponent(CamelContext camelContext,
             MailComponentConfiguration configuration) throws Exception {
         MailComponent component = new MailComponent();
         component.setCamelContext(camelContext);

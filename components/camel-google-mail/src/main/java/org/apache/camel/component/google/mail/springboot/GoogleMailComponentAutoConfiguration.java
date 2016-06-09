@@ -37,7 +37,8 @@ public class GoogleMailComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(GoogleMailComponent.class)
-    public GoogleMailComponent configureComponent(CamelContext camelContext,
+    public GoogleMailComponent configureGoogleMailComponent(
+            CamelContext camelContext,
             GoogleMailComponentConfiguration configuration) throws Exception {
         GoogleMailComponent component = new GoogleMailComponent();
         component.setCamelContext(camelContext);

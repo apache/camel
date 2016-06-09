@@ -37,7 +37,8 @@ public class DirectVmComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(DirectVmComponent.class)
-    public DirectVmComponent configureComponent(CamelContext camelContext,
+    public DirectVmComponent configureDirectVmComponent(
+            CamelContext camelContext,
             DirectVmComponentConfiguration configuration) throws Exception {
         DirectVmComponent component = new DirectVmComponent();
         component.setCamelContext(camelContext);

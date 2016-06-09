@@ -37,7 +37,7 @@ public class Mina2ComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(Mina2Component.class)
-    public Mina2Component configureComponent(CamelContext camelContext,
+    public Mina2Component configureMina2Component(CamelContext camelContext,
             Mina2ComponentConfiguration configuration) throws Exception {
         Mina2Component component = new Mina2Component();
         component.setCamelContext(camelContext);

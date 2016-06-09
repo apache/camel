@@ -37,7 +37,8 @@ public class JcloudsComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JcloudsComponent.class)
-    public JcloudsComponent configureComponent(CamelContext camelContext,
+    public JcloudsComponent configureJcloudsComponent(
+            CamelContext camelContext,
             JcloudsComponentConfiguration configuration) throws Exception {
         JcloudsComponent component = new JcloudsComponent();
         component.setCamelContext(camelContext);

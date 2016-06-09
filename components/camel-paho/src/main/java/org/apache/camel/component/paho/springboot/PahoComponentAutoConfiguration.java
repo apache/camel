@@ -37,7 +37,7 @@ public class PahoComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(PahoComponent.class)
-    public PahoComponent configureComponent(CamelContext camelContext,
+    public PahoComponent configurePahoComponent(CamelContext camelContext,
             PahoComponentConfiguration configuration) throws Exception {
         PahoComponent component = new PahoComponent();
         component.setCamelContext(camelContext);

@@ -37,7 +37,7 @@ public class CxfComponentAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(CxfComponent.class)
-    public CxfComponent configureComponent(CamelContext camelContext,
+    public CxfComponent configureCxfComponent(CamelContext camelContext,
             CxfComponentConfiguration configuration) throws Exception {
         CxfComponent component = new CxfComponent();
         component.setCamelContext(camelContext);
