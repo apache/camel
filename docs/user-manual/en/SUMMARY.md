@@ -302,6 +302,7 @@
     * [XML Beans](xmlbeans.adoc)
     * [XML JSON](xmljson.adoc)
     * [XML Rpc](xmlrpc.adoc)
+    * [XStream](xstream.adoc)
     * [YAML](yaml.adoc)
 
 * User Guide
