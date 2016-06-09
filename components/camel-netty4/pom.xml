@@ -43,7 +43,7 @@
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId>
-      <version>${netty41-version}</version>
+      <version>${netty-version}</version>
     </dependency>
     <dependency>
       <groupId>commons-pool</groupId>
