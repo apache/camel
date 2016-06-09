@@ -298,6 +298,7 @@
     * [SOAP](soap.adoc)
     * [Tagsoup](tagsoup.adoc)
     * [Univocity Parsers](univocity-parsers.adoc)
+    * [XML Beans](xmlbeans.adoc)
     * [XML JSON](xmljson.adoc)
     * [YAML](yaml.adoc)
 

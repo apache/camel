@@ -1,0 +1,36 @@
+[[XmlBeans-XmlBeans]]
+XmlBeans
+~~~~~~~~
+
+XmlBeans is a link:data-format.html[Data Format] which uses the
+http://xmlbeans.apache.org/[XmlBeans library] to unmarshal an XML
+payload into Java objects or to marshal Java objects into an XML
+payload.
+
+[source,java]
+-------------------------------
+from("activemq:My.Queue").
+  unmarshal().xmlBeans().
+  to("mqseries:Another.Queue");
+-------------------------------
+
+[[XmlBeans-Dependencies]]
+Dependencies
+^^^^^^^^^^^^
+
+To use XmlBeans in your camel routes you need to add the dependency on
+*camel-xmlbeans* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+link:download.html[the download page for the latest versions]).
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-xmlbeans</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------
