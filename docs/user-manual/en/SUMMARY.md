@@ -275,6 +275,7 @@
     * [XML Security](xmlsecurity.adoc)
     * [XMPP](xmpp.adoc)
     * [Yammer](yammer.adoc)
+    * [Zipkin](zipkin.adoc)
     * [ZooKeeper](zookeeper.adoc)
 
 * [Expression Languages](languages.adoc)
