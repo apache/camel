@@ -50,6 +50,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     public static final int BUFFER_SIZE = 128 * 1024;
 
+    private static final String[] EXCLUDE_DOC_FILES = {"camel-core-osgi", "camel-core-xml", "camel-http-common", "camel-jetty-common"};
+
     private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
 
     private static final int UNUSED_LABELS_WARN = 15;
@@ -708,7 +710,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             File[] components = componentsDir.listFiles();
             if (components != null) {
                 for (File dir : components) {
-                    if (dir.isDirectory() && !"target".equals(dir.getName()) && !dir.getName().startsWith(".")) {
+                    if (dir.isDirectory() && !"target".equals(dir.getName()) && !dir.getName().startsWith(".") && !excludeDocumentDir(dir.getName())) {
                         File target = new File(dir, "src/main/docs");
 
                         int before = adocFiles.size();
@@ -1132,6 +1134,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 out.close();
             }
         }
+    }
+
+    private static boolean excludeDocumentDir(String name) {
+        for (String exclude : EXCLUDE_DOC_FILES) {
+            if (exclude.equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
