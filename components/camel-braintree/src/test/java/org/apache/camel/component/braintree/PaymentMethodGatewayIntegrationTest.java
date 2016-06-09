@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.braintree;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +26,6 @@ import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.PaymentMethod;
 import com.braintreegateway.PaymentMethodRequest;
 import com.braintreegateway.Result;
-import com.google.common.collect.Lists;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.PaymentMethodGatewayApiMethod;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public class PaymentMethodGatewayIntegrationTest extends AbstractBraintreeTestSu
     public PaymentMethodGatewayIntegrationTest() {
         this.customer = null;
         this.gateway = null;
-        this.paymentMethodsTokens = Lists.newLinkedList();
+        this.paymentMethodsTokens = new LinkedList<>();
     }
 
     @Override

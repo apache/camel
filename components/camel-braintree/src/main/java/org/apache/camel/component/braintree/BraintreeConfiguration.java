@@ -23,12 +23,12 @@ import java.util.logging.Logger;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import org.apache.camel.component.braintree.internal.BraintreeApiName;
+import org.apache.camel.component.braintree.internal.BraintreeLogHandler;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /**
  * Component configuration for Braintree component.
@@ -214,14 +214,13 @@ public class BraintreeConfiguration {
      */
     private Environment getBraintreeEnvironment() {
         String name = getEnvironment();
-
-        if (Environment.DEVELOPMENT.getEnvironmentName().equalsIgnoreCase(name)) {
+        if (ObjectHelper.equal(Environment.DEVELOPMENT.getEnvironmentName(), name, true)) {
             return Environment.DEVELOPMENT;
         }
-        if (Environment.SANDBOX.getEnvironmentName().equalsIgnoreCase(name)) {
+        if (ObjectHelper.equal(Environment.SANDBOX.getEnvironmentName(), name, true)) {
             return Environment.SANDBOX;
         }
-        if (Environment.PRODUCTION.getEnvironmentName().equalsIgnoreCase(name)) {
+        if (ObjectHelper.equal(Environment.PRODUCTION.getEnvironmentName(), name, true)) {
             return Environment.PRODUCTION;
         }
 
@@ -258,8 +257,7 @@ public class BraintreeConfiguration {
             logger.removeHandler(handler);
         }
 
-        // Add SLF4J bridge
-        logger.addHandler(new SLF4JBridgeHandler());
+        logger.addHandler(new BraintreeLogHandler());
 
         if (httpLogLevel != null) {
             logger.setLevel(httpLogLevel);

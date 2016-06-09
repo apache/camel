@@ -28,8 +28,6 @@ import com.braintreegateway.ValidationError;
 import com.braintreegateway.ValidationErrorCode;
 import com.braintreegateway.ValidationErrors;
 import com.braintreegateway.exceptions.NotFoundException;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.CustomerGatewayApiMethod;
@@ -168,13 +166,15 @@ public class CustomerGatewayIntegrationTest extends AbstractBraintreeTestSupport
         assertNotNull(errors);
         assertNotNull(errors.getAllDeepValidationErrors());
 
-        assertNotNull(Iterables.find(errors.getAllDeepValidationErrors(), new Predicate<ValidationError>() {
-                @Override
-                public boolean apply(ValidationError o) {
-                    return o.getCode() == ValidationErrorCode.CUSTOMER_EMAIL_FORMAT_IS_INVALID;
-                }
+        ValidationError invalidMailError = null;
+        for (ValidationError error : errors.getAllDeepValidationErrors()) {
+            if (error.getCode() == ValidationErrorCode.CUSTOMER_EMAIL_FORMAT_IS_INVALID) {
+                invalidMailError = error;
+                break;
             }
-        ));
+        }
+
+        assertNotNull(invalidMailError);
     }
 
     // *************************************************************************

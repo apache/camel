@@ -18,22 +18,18 @@ package org.apache.camel.component.braintree;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.ClientTokenGatewayApiMethod;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class ClientTokenGatewayIntegrationTest extends AbstractBraintreeTestSupport {
-
     private static final String PATH_PREFIX = getApiNameAsString(ClientTokenGatewayApiMethod.class);
-    private static final Logger LOG = LoggerFactory.getLogger(ClientTokenGatewayIntegrationTest.class);
 
     @Test
     public void testClientTokenGeneration() throws Exception {
         final String token = requestBody("direct://GENERATE", null, String.class);
 
-        assertTrue(StringUtils.isNotBlank(token));
+        assertTrue(ObjectHelper.isNotEmpty(token));
     }
 
     @Override
