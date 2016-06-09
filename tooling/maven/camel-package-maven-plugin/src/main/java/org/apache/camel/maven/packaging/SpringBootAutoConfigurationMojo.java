@@ -109,7 +109,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
         // create auto configuration for the components
         if (!componentNames.isEmpty()) {
-            getLog().info("Found " + componentNames.size() + " components");
+            getLog().debug("Found " + componentNames.size() + " components");
             for (String componentName : componentNames) {
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
@@ -180,7 +180,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     FileUtils.write(target, code, false);
                     getLog().info("Updated existing file: " + target);
                 } else {
-                    getLog().info("No changes to existing file: " + target);
+                    getLog().debug("No changes to existing file: " + target);
                 }
             } else {
                 FileUtils.write(target, code);
@@ -250,7 +250,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     FileUtils.write(target, code, false);
                     getLog().info("Updated existing file: " + target);
                 } else {
-                    getLog().info("No changes to existing file: " + target);
+                    getLog().debug("No changes to existing file: " + target);
                 }
             } else {
                 FileUtils.write(target, code);
@@ -287,7 +287,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 }
 
                 if (found) {
-                    getLog().info("No changes to existing file: " + target);
+                    getLog().debug("No changes to existing file: " + target);
                 } else {
                     // find last non empty line, so we can add our new line after that
                     int lastLine = 0;

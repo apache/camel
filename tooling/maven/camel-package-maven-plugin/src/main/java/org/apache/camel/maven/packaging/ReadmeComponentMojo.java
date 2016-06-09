@@ -89,7 +89,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
         // only if there is components we should update the documentation files
         if (!componentNames.isEmpty()) {
-            getLog().info("Found " + componentNames.size() + " components");
+            getLog().debug("Found " + componentNames.size() + " components");
             for (String componentName : componentNames) {
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
@@ -110,9 +110,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
                     } else if (exists) {
-                        getLog().info("No changes to doc file: " + file);
+                        getLog().debug("No changes to doc file: " + file);
                     } else {
-                        getLog().info("No component doc file: " + file);
+                        getLog().warn("No component doc file: " + file);
                     }
                 }
             }
