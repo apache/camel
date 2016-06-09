@@ -99,6 +99,7 @@
     * [Bean](bean.adoc)
     * [Beanstalk](beanstalk.adoc)
     * [Bean-validator](bean-validator.adoc)
+    * [Binding](binding.adoc)
     * [Bindy](bindy.adoc)
     * [Blueprint](blueprint-testing.adoc)
     * [Boon](boon.adoc)
