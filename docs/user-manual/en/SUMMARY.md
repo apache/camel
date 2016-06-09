@@ -73,6 +73,12 @@
         * Using Camel questions
             * [How do I configure endpoints](how-do-i-configure-endpoints.adoc)
 
+* Core Components
+    * [Bean](bean.adoc)
+    * [Binding](binding.adoc)
+    * [Mock](mock.adoc)
+    * [Properties](properties.adoc)
+
 * Components
     * [Async Http Client (AHC)](ahc.adoc)
     * [AHC Websocket (AHC-WS)](ahc-ws.adoc)
@@ -96,10 +102,8 @@
     * [Bam](bam.adoc)
     * [Barcode](barcode-data-format.adoc)
     * [Base64](base64.adoc)
-    * [Bean](bean.adoc)
     * [Beanstalk](beanstalk.adoc)
     * [Bean-validator](bean-validator.adoc)
-    * [Binding](binding.adoc)
     * [Bindy](bindy.adoc)
     * [Blueprint](blueprint-testing.adoc)
     * [Boon](boon.adoc)
@@ -202,7 +206,6 @@
     * [Mustache](mustache.adoc)
     * [Mvel](mvel.adoc)
     * [Mybatis](mybatis.adoc)
-    * [Mock](mock.adoc)
     * [Nagios](nagios.adoc)
     * [Netty](netty.adoc)
     * [Netty4](netty4.adoc)
@@ -217,7 +220,6 @@
     * [PDF](pdf.adoc)
     * [PGEvent](pgevent.adoc)
     * [Printer](lpr.adoc)
-    * [Properties](properties.adoc)
     * [Quartz](quartz.adoc)
     * [Quartz2](quartz2.adoc)
     * [Quickfix](quickfix.adoc)
