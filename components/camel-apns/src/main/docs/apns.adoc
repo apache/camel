@@ -54,36 +54,11 @@ apns:consumer[?options]
 Options
 ^^^^^^^
 
-[[APNS-Producer]]
-Producer
-++++++++
+// component options: START
+// component options: END
 
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Property |Default |Description
-|`tokens` |        |Empty by default. Configure this property in case you want to statically
-declare tokens related to devices you want to notify. Tokens are
-separated by comma.
-|=======================================================================
-
-[[APNS-Consumer]]
-Consumer
-++++++++
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Property |Default |Description
-|`delay` |`3600` |Delay in seconds between each poll.
-
-|`initialDelay` |`10` |Seconds before polling starts.
-
-|`timeUnit` |`SECONDS` |Time Unit for polling.
-
-|`userFixedDelay` |`true` |If `true`, use fixed delay between pools, otherwise fixed rate is used.
-See
-http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/ScheduledExecutorService.html[ScheduledExecutorService]
-in JDK for details.
-|=======================================================================
+// endpoint options: START
+// endpoint options: END
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`

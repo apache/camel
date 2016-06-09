@@ -58,53 +58,18 @@ details here].
 By the way, you cannot specify several tubes when you are writing jobs
 into Beanstalk.
 
-[[Beanstalk-CommonURIoptions]]
-Common URI options
-^^^^^^^^^^^^^^^^^^
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Default value |Description
+[[Beanstalk-options]]
+Beanstalk options
+^^^^^^^^^^^^^^^^^
 
-|jobPriority |1000 |Job priority. (0 is the highest,
-see http://github.com/kr/beanstalkd/blob/v1.3/doc/protocol.txt[Beanstalk
-protocol])
+// component options: START
+// component options: END
 
-|jobDelay |0 |Job delay in seconds.
-
-|jobTimeToRun |60 |Job time to run in seconds. (when 0, the beanstalkd daemon raises it to
-1 automatically,
-see http://github.com/kr/beanstalkd/blob/v1.3/doc/protocol.txt[Beanstalk
-protocol])
-
-|=======================================================================
- 
-
-[[Beanstalk-ProducerUIRoptions]]
-Producer URI options
-^^^^^^^^^^^^^^^^^^^^
+// endpoint options: START
+// endpoint options: END
 
 Producer behavior is affected by the `command` parameter which tells
 what to do with the job, it can be
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Default value |Description
-
-|command |put |* `put` means to put the job into Beanstalk. Job body is specified in
-the Camel message body. Job ID will be returned
-in _beanstalk.jobId_ message header.
-* `delete`, `release`, `touch` or `bury` expect Job ID in the message
-header _beanstalk.jobId_. Result of the operation is returned
-in _beanstalk.result_ message header
-* `kick` expects the number of jobs to kick in the message body and
-returns the number of jobs actually kicked out in the message
-header _beanstalk.result_.
-|=======================================================================
- 
-
-[[Beanstalk-ConsumerUIRoptions]]
-Consumer UIR options
-^^^^^^^^^^^^^^^^^^^^
 
 The consumer may delete the job immediately after reserving it or wait
 until Camel routes process it. While the first scenario is more like a
@@ -125,18 +90,6 @@ is `true`.
 Be careful when specifying `release`, as the failed job will immediately
 become available in the same tube and your consumer will try to acquire
 it again. You can `release` and specify _jobDelay_ though.
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Default value |Description
-
-|onFailure |bury |Command to use when processing failed. You can choose among: bury,
-delete or release.
-
-|useBlockIO |true |Whether to use blockIO.
-
-|awaitJob |true |Whether to wait for job to complete before ack the job from beanstalk
-|=======================================================================
 
 The beanstalk consumer is a Scheduled link:polling-consumer.html[Polling
 Consumer] which means there is more options you can configure, such as

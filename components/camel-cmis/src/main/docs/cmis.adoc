@@ -21,34 +21,14 @@ You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
 [[CMIS-URIOptions]]
-URI Options
-^^^^^^^^^^^
+CMIS Options
+^^^^^^^^^^^^
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Name |Default Value |Context |Description
+// component options: START
+// component options: END
 
-|queryMode |`false` |Producer |If true, will execute the cmis query from the message body and return
-result, otherwise will create a node in the cmis repository
-
-|query |`String` |Consumer |The cmis query to execute against the repository. If not specified, the
-consumer will retrieve every node from the content repository by
-iterating the content tree recursively
-
-|username |`null` |Both |Username for the cmis repository
-
-|password |`null` |Both |Password for the cmis repository
-
-|repositoryId |`null` |Both |The Id of the repository to use. If not specified the first available
-repository is used
-
-|pageSize |`100` |Both |Number of nodes to retrieve per page
-
-|readCount |`0` |Both |Max number of nodes to read
-
-|readContent |`false` |Both |If set to true, the content of document node will be retrieved in
-addition to the properties
-|=======================================================================
+// endpoint options: START
+// endpoint options: END
 
 [[CMIS-Usage]]
 Usage

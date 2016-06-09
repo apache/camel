@@ -31,6 +31,16 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
+[[Atmosphere-Websocket-Options]]
+Atmosphere-Websocket Options
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+// component options: START
+// component options: END
+
+// endpoint options: START
+// endpoint options: END
+
 [[Atmosphere-Websocket-URIFormat]]
 URI Format
 ^^^^^^^^^^

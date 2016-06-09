@@ -45,81 +45,11 @@ You can append query options to the URI in the following format,
 Options
 ^^^^^^^
 
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Default Value |Description
+// component options: START
+// component options: END
 
-|`maxElementsInMemory` |`1000` |The number of elements that may be stored in the defined cache
-
-|`memoryStoreEvictionPolicy` |`MemoryStoreEvictionPolicy.LFU` |The number of elements that may be stored in the defined cache. Options
-include
-
-* MemoryStoreEvictionPolicy.LFU - Least frequently used
-* MemoryStoreEvictionPolicy.LRU - Least recently used
-* MemoryStoreEvictionPolicy.FIFO - first in first out, the oldest
-element by creation time
-
-|`overflowToDisk` |`true` |Specifies whether cache may overflow to disk
-
-|`eternal` |`false` |Sets whether elements are eternal. If eternal, timeouts are ignored and
-the +
- element never expires.
-
-|`timeToLiveSeconds` |`300` |The maximum time between creation time and when an element expires. +
- Is used only if the element is not eternal
-
-|`timeToIdleSeconds` |`300` |The maximum amount of time between accesses before an element expires
-
-|`diskPersistent` |`false` |Whether the disk store persists between restarts of the Virtual Machine.
-
-|`diskExpiryThreadIntervalSeconds` |`120` |The number of seconds between runs of the disk expiry thread.
-
-|`cacheManagerFactory` |`null` |*Camel 2.8:* If you want to use a custom factory which instantiates and
-creates the EHCache `net.sf.ehcache.CacheManager`.  
- _Type:_ abstract org.apache.camel.component.cache.CacheManagerFactory
-
-|`eventListenerRegistry` |`null` |*Camel 2.8:* Sets a list of EHCache
-`net.sf.ehcache.event.CacheEventListener` for all new caches- no need to
-define it per cache in EHCache xml config anymore.  
- _Type:_ org.apache.camel.component.cache.CacheEventListenerRegistry
-
-|`cacheLoaderRegistry` |`null` |*Camel 2.8:* Sets a list of
-`org.apache.camel.component.cache.CacheLoaderWrapper` that extends
-EHCache `net.sf.ehcache.loader.CacheLoader` for all new caches- no need
-to define it per cache in EHCache xml config anymore.  
- _Type:_ org.apache.camel.component.cache.CacheLoaderRegistry
-
-|`key` |`null` |*Camel 2.10:* To configure using a cache key by default. If a key is
-provided in the message header, then the key from the header takes
-precedence.
-
-|`operation` |`null` |*Camel 2.10:* To configure using an cache operation by default. If an
-operation in the message header, then the operation from the header
-takes precedence.
-
-|`objectCache` |`false` |*Camel 2.15:* Whether to turn on allowing to store non serializable
-objects in the cache. If this option is enabled then overflow to disk
-cannot be enabled as well.
-|=======================================================================
-
-[[Cache-CacheComponentoptions]]
-Cache Component options
-^^^^^^^^^^^^^^^^^^^^^^^
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Default Value |Description
-
-|`configuration` |  | To use a custom `org.apache.camel.component.cache.CacheConfiguration`
-configuration.
-
-|`cacheManagerFactory` |  | To use a custom `org.apache.camel.component.cache.CacheManagerFactory`.
-
-|`configurationFile` |  | *Camel 2.13/2.12.3:* To configure the location of the `ehcache.xml` file
-to use, such as `classpath:com/foo/mycache.xml` to load from classpath.
-If no configuration is given, then the default settings from EHCache is
-used.
-|=======================================================================
+// endpoint options: START
+// endpoint options: END
 
 [[Cache-SendingReceivingMessagestofromthecache]]
 Sending/Receiving Messages to/from the cache

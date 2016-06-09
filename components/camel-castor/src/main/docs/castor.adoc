@@ -112,22 +112,11 @@ on multiple routes. You have to set the <castor> element directly in
 Options
 ^^^^^^^
 
-Castor supports the following options
+// component options: START
+// component options: END
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Option |Type |Default |Description
-
-|encoding |String |UTF-8 |Encoding to use when marshalling an Object to XML
-
-|validation |Boolean |false |Whether validation is turned on or off.
-
-|mappingFile |String |null |Path to a Castor mapping file to load from the classpath.
-
-|packages |String[] |null |Add additional packages to Castor XmlContext
-
-|classNames |String[] |null |Add additional class names to Castor XmlContext
-|=======================================================================
+// endpoint options: START
+// endpoint options: END
 
 [[Castor-Dependencies]]
 Dependencies

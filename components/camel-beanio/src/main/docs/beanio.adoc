@@ -16,26 +16,12 @@ XML] file where you define the mapping from the flat format to Objects
 [[BeanIO-Options]]
 Options
 ^^^^^^^
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Option |Default |Description
 
-|mapping |  | The BeanIO mapping file. The option is mandatory. Is by default loaded
-from the classpath. You can prefix with `file:`, `http:`, or
-`classpath:` to denote from where to load the mapping file.
+// component options: START
+// component options: END
 
-|streamName |  |The name of the stream to use. This option is mandatory.
-
-|ignoreUnidentifiedRecords |`false` |Whether to ignore unidentified records.
-
-|ignoreUnexpectedRecords |`false` |Whether to ignore unexpected records.
-
-|ignoreInvalidRecords |`false` |Whether to ignore invalid records.
-
-|encoding |Platform default |The charset to use.
-
-|beanReaderErrorHandler | |A custom BeanReaderErrorHandler implementation to use in your dataformat definition
-|=======================================================================
+// endpoint options: START
+// endpoint options: END
 
 [[BeanIO-Usage]]
 Usage

@@ -176,22 +176,11 @@ wrapping.
 Avro RPC URI Options
 ^^^^^^^^^^^^^^^^^^^^
 
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Version |Description
-|`protocolClassName`|  | The class name of the avro protocol.
+// component options: START
+// component options: END
 
-|`singleParameter` |2.12 |If true, consumer parameter won't be wrapped into array. Will fail if
-protocol specifies more then 1 parameter for the message
-
-|`protocol` | | Avro protocol object. Can be used instead of `protocolClassName` when
-complex protocol needs to be created. One cane used #name notation to
-refer beans from the Registry
-
-|`reflectionProtocol` |2.12 |If protocol object provided is reflection protocol. Should be used only
-with `protocol` parameter because for `protocolClassName` protocol type
-will be autodetected
-|=======================================================================
+// endpoint options: START
+// endpoint options: END
 
 [[avro-AvroRPCHeaders]]
 Avro RPC Headers

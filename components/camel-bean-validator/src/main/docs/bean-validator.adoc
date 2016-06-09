@@ -47,25 +47,12 @@ Where *label* is an arbitrary text value describing the endpoint. +
 [[BeanValidator-URIOptions]]
 URI Options
 ^^^^^^^^^^^
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Option |Default |Description
 
-|`group` |`javax.validation.groups.Default` |The custom validation group to use.
+// component options: START
+// component options: END
 
-|`validationProviderResolver` |Depends on JSR303 jar provided. |Camel *2.13.0*: Reference to a custom
-`javax.validation.ValidationProviderResolver` in the
-link:registry.html[Registry].
-
-|`messageInterpolator` |`org.hibernate.validator.engine.ResourceBundleMessageInterpolator` |Reference to a custom `javax.validation.MessageInterpolator` in the
-link:registry.html[Registry].
-
-|`traversableResolver` |`org.hibernate.validator.engine.resolver.DefaultTraversableResolver` |Reference to a custom `javax.validation.TraversableResolver` in the
-link:registry.html[Registry].
-
-|`constraintValidatorFactory` |`org.hibernate.validator.engine.ConstraintValidatorFactoryImpl` |Reference to a custom `javax.validation.ConstraintValidatorFactory` in
-the link:registry.html[Registry].
-|=======================================================================
+// endpoint options: START
+// endpoint options: END
 
 [[BeanValidator-OSGideployment]]
 OSGi deployment

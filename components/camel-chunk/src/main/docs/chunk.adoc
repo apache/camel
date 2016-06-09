@@ -39,22 +39,12 @@ format, `?option=value&option=value&...`
 [[Chunk-Options]]
 Options
 ^^^^^^^
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Option |Default |Description
 
-|`encoding` |`null` |Character encoding of the resource content.
+// component options: START
+// component options: END
 
-|themesFolder |`null` |Alternative folder to scan for a template name.
-
-|themeSubfolder |`null` |Alternative subfolder to scan for a template name if themeFolder
-parameter is set.
-
-|`themeLayer` |`null` |A specific layer of a template file to use as template.
-
-|`extension` |`null` |Alternative extension to scan for a template name if themeFolder and
-themeSubfolder are set.
-|=======================================================================
+// endpoint options: START
+// endpoint options: END
 
 Chunk component will look for a specific template in _themes_ folder
 with extensions _.chtml_ or _.cxml. _If you need to specify a different

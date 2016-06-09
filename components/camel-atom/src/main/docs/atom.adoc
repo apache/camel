@@ -36,48 +36,11 @@ Where *atomUri* is the URI to the Atom feed to poll.
 Options
 ^^^^^^^
 
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Property |Default |Description
-|`splitEntries` |`true` |If `true` Camel will poll the feed and for the subsequent polls return
-each entry poll by poll. If the feed contains 7 entries then Camel will
-return the first entry on the first poll, the 2nd entry on the next
-poll, until no more entries where as Camel will do a new update on the
-feed. If `false` then Camel will poll a fresh feed on every invocation.
+// component options: START
+// component options: END
 
-|`filter` |`true` |Is only used by the split entries to filter the entries to return. Camel
-will default use the `UpdateDateFilter` that only return new entries
-from the feed. So the client consuming from the feed never receives the
-same entry more than once. The filter will return the entries ordered by
-the newest last.
-
-|`lastUpdate` |`null` |Is only used by the filter, as the starting timestamp for selection
-never entries (uses the `entry.updated` timestamp). Syntax format is:
-`yyyy-MM-ddTHH:MM:ss`. Example: `2007-12-24T17:45:59`.
-
-|`throttleEntries` |`true` |*Camel 2.5:* Sets whether all entries identified in a single feed poll
-should be delivered immediately. If `true`, only one entry is processed
-per `consumer.delay`. Only applicable when `splitEntries` is set to
-`true`.
-
-|`feedHeader` |`true` |Sets whether to add the Abdera Feed object as a header.
-
-|`sortEntries` |`false` |If `splitEntries` is `true`, this sets whether to sort those entries by
-updated date.
-
-|`consumer.delay` |`500` |Delay in millis between each poll.
-
-|`consumer.initialDelay` |`1000` |Millis before polling starts. 
-
-|`consumer.userFixedDelay` |`false` |If `true`, use fixed delay between pools, otherwise fixed rate is used.
-See
-http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/ScheduledExecutorService.html[ScheduledExecutorService]
-in JDK for details.
-
-|`username` |  | *Camel 2.16:* For basic authentication when polling from a HTTP feed
-
-|`password` |  | *Camel 2.16:* For basic authentication when polling from a HTTP feed
-|=======================================================================
+// endpoint options: START
+// endpoint options: END
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`

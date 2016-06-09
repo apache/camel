@@ -44,6 +44,12 @@ AHC-WS Options
 As the AHC-WS component is based on the AHC component, you can use the
 various configuration options of the AHC component.
 
+// component options: START
+// component options: END
+
+// endpoint options: START
+// endpoint options: END
+
 [[AHC-WS-WritingandReadingDataoverWebsocket]]
 Writing and Reading Data over Websocket
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

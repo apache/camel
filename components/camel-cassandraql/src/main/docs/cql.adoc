@@ -54,26 +54,46 @@ To fine tune the Cassandra connection (SSL options, pooling options,
 load balancing policy, retry policy, reconnection policy...), create
 your own Cluster instance and give it to the Camel endpoint.
 
-[[Cassandra-EndpointOptions]]
-Endpoint Options
-~~~~~~~~~~~~~~~~
+[[Cassandra-Options]]
+Cassandra Options
+~~~~~~~~~~~~~~~~~
 
-[width="100%",cols="<34%,<33%,<33%",options="header",]
+
+// component options: START
+The Cassandra CQL component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Cassandra CQL component supports 18 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
-|Option |Default |Description
-|`clusterName` |  |Cluster name
-
-|`username and password` |  |Session authentication
-
-|`cql` |  |CQL query. Can be overriden with a message header.
-
-|`consistencyLevel` |  |`ANY`, `ONE`, `TWO`, `QUORUM`, `LOCAL_QUORUM`...
-
-|`prepareStatements` |`true` |Use prepared statement (default) or not
-
-|`resultSetConversionStrategy` |`ALL` |How is ResultSet converted
-transformed into message body `ALL`, `ONE`, `LIMIT_10`, `LIMIT_100`...
+| Name | Group | Default | Java Type | Description
+| beanRef | common |  | String | beanRef is defined using bean:id
+| hosts | common |  | String | Hostname(s) cassansdra server(s). Multiple hosts can be separated by comma.
+| port | common |  | Integer | Port number of cassansdra server(s)
+| keyspace | common |  | String | Keyspace to use
+| cluster | common |  | Cluster | To use the Cluster instance (you would normally not use this option)
+| clusterName | common |  | String | Cluster name
+| consistencyLevel | common |  | ConsistencyLevel | Consistency level to use
+| cql | common |  | String | CQL query to perform. Can be overridden with the message header with key CamelCqlQuery.
+| loadBalancingPolicy | common |  | String | To use a specific LoadBalancingPolicy
+| password | common |  | String | Password for session authentication
+| prepareStatements | common | true | boolean | Whether to use PreparedStatements or regular Statements
+| resultSetConversionStrategy | common |  | String | To use a custom class that implements logic for converting ResultSet into message body ALL ONE LIMIT_10 LIMIT_100...
+| session | common |  | Session | To use the Session instance (you would normally not use this option)
+| username | common |  | String | Username for session authentication
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+{% endraw %}
+// endpoint options: END
+
 
 [[Cassandra-Messages]]
 Messages
