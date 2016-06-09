@@ -268,6 +268,7 @@
     * [Twitter](twitter.adoc)
     * [Undertow](undertow.adoc)
     * [URLRewrite](urlrewrite.adoc)
+    * [Velocity](velocity.adoc)
     * [Websocket](websocket.adoc)
     * [XML Security](xmlsecurity.adoc)
     * [Yammer](yammer.adoc)
