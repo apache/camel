@@ -96,6 +96,7 @@
     * [Bam](bam.adoc)
     * [Barcode](barcode-data-format.adoc)
     * [Base64](base64.adoc)
+    * [Bean](bean.adoc)
     * [Beanstalk](beanstalk.adoc)
     * [Bean-validator](bean-validator.adoc)
     * [Bindy](bindy.adoc)
