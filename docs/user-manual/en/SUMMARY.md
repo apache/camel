@@ -300,5 +300,6 @@
     * [Karaf](karaf.adoc)
     * [Testing](testing.adoc)
         * [Test](test.adoc)
-        * [Test Blueprint](test-blueprint.adoc)
+        * [Blueprint Testing](test-blueprint.adoc)
         * [CDI Testing](cdi-testing.adoc)
+        * [Spring Testing](spring-testing.adoc)
