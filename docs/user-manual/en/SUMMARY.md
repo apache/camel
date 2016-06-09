@@ -266,6 +266,7 @@
     * [Swagger Java](swagger-java.adoc)
     * [Telegram](telegram.adoc)
     * [Twitter](twitter.adoc)
+    * [Undertow](undertow.adoc)
     * [Websocket](websocket.adoc)
     * [XML Security](xmlsecurity.adoc)
     * [Yammer](yammer.adoc)
