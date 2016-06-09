@@ -246,7 +246,9 @@ public class PropertiesComponent extends UriEndpointComponent {
      * This option will override any default locations and only use the locations from this option.
      */
     public void setLocation(String location) {
-        setLocations(location.split(","));
+        if (location != null) {
+            setLocations(location.split(","));
+        }
     }
 
     public String getEncoding() {
