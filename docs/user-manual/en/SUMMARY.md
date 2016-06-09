@@ -106,7 +106,7 @@
     * [Box](box.adoc)
     * [Braintree](braintree.adoc)
     * [Cache](cache.adoc)
-    * [Cassandraql](cassandra.adoc)
+    * [Cassandraql](cql.adoc)
     * [Castor](castor.adoc)
     * [CDI](cdi.adoc)
     * [Chunk](chunk.adoc)
