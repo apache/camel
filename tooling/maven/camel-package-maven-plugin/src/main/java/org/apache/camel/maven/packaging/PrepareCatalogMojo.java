@@ -50,7 +50,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     public static final int BUFFER_SIZE = 128 * 1024;
 
-    private static final String[] EXCLUDE_DOC_FILES = {"camel-core-osgi", "camel-core-xml", "camel-http-common", "camel-jetty-common"};
+    private static final String[] EXCLUDE_DOC_FILES = {"camel-core-osgi", "camel-core-xml", "camel-http-common", "camel-jetty", "camel-jetty-common"};
 
     private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
 
