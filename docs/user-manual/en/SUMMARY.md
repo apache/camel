@@ -273,6 +273,7 @@
     * [Weather](weather.adoc)
     * [Websocket](websocket.adoc)
     * [XML Security](xmlsecurity.adoc)
+    * [XMPP](xmpp.adoc)
     * [Yammer](yammer.adoc)
     * [ZooKeeper](zookeeper.adoc)
 
