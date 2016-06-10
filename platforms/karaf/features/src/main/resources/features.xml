@@ -293,7 +293,7 @@
   <feature name='camel-cm-sms' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${cxf-version-range}'>cxf-specs</feature>
-    <bundle dependency='true'>wrap:mvn:com.googlecode.libphonenumber/libphonenumber/${libphonenumber-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.libphonenumber/${libphonenumber-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
