@@ -70,7 +70,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
     private final StaxConverter staxConverter = new StaxConverter();
     private TypeConverter parentTypeConverter;
     private boolean prettyPrint = true;
-    private boolean objectFactory = false;
+    private boolean objectFactory;
     private CamelContext camelContext;
 
     public boolean isPrettyPrint() {
@@ -216,7 +216,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
         if (isObjectFactory()) {
             return hasXmlRootElement(type) || JaxbHelper.getJaxbElementFactoryMethod(camelContext, type) != null;
         } else {
-        	return hasXmlRootElement(type);
+            return hasXmlRootElement(type);
         }
     }
 
