@@ -85,7 +85,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     private String noNamespaceSchemaLocation;
 
     private boolean prettyPrint = true;
-    private boolean objectFactory = true;
+    private boolean objectFactory;
     private boolean ignoreJAXBElement = true;
     private boolean mustBeJAXBElement = true;
     private boolean filterNonXmlChars;
