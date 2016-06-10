@@ -76,6 +76,7 @@
 * Core Components
     * [Bean](bean.adoc)
     * [Binding](binding.adoc)
+    * [Browse](browse.adoc)
     * [Mock](mock.adoc)
     * [Properties](properties.adoc)
 
