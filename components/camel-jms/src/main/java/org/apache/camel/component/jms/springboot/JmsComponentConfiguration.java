@@ -58,7 +58,7 @@ public class JmsComponentConfiguration {
      * queue on the JMS broker. To avoid this its recommended to enable this
      * option.
      */
-    private boolean acceptMessagesWhileStopping;
+    private Boolean acceptMessagesWhileStopping = false;
     /**
      * Whether the DefaultMessageListenerContainer used in the reply managers
      * for request-reply messaging allow the
@@ -68,7 +68,7 @@ public class JmsComponentConfiguration {
      * ability is enabled by default in the regular JMS consumers but to enable
      * for reply managers you must enable this flag.
      */
-    private boolean allowReplyManagerQuickStop;
+    private Boolean allowReplyManagerQuickStop = false;
     /**
      * The JMS acknowledgement mode defined as an Integer. Allows you to set
      * vendor-specific extensions to the acknowledgment mode. For the regular
@@ -81,7 +81,7 @@ public class JmsComponentConfiguration {
      * but sometimes can catch early any issues with the underlying JMS provider
      * and the use of JMS properties
      */
-    private boolean eagerLoadingOfProperties;
+    private Boolean eagerLoadingOfProperties = false;
     /**
      * The JMS acknowledgement name which is one of: SESSION_TRANSACTED
      * CLIENT_ACKNOWLEDGE AUTO_ACKNOWLEDGE DUPS_OK_ACKNOWLEDGE
@@ -90,7 +90,7 @@ public class JmsComponentConfiguration {
     /**
      * Specifies whether the consumer container should auto-startup.
      */
-    private boolean autoStartup;
+    private Boolean autoStartup = false;
     /**
      * Sets the cache level by ID for the underlying JMS resources. See
      * cacheLevelName option for more details.
@@ -142,7 +142,7 @@ public class JmsComponentConfiguration {
     /**
      * Specifies whether persistent delivery is used by default.
      */
-    private boolean deliveryPersistent;
+    private Boolean deliveryPersistent = false;
     /**
      * Specifies the delivery mode to be used. Possible values are Possibles
      * values are those defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1
@@ -178,7 +178,7 @@ public class JmsComponentConfiguration {
      * Allows to control whether stacktraces should be logged or not by the
      * default errorHandler.
      */
-    private boolean errorHandlerLogStackTrace;
+    private Boolean errorHandlerLogStackTrace = false;
     /**
      * Set if the deliveryMode priority or timeToLive qualities of service
      * should be used when sending messages. This option is based on Spring's
@@ -187,12 +187,12 @@ public class JmsComponentConfiguration {
      * option which operates at message granularity reading QoS properties
      * exclusively from the Camel In message headers.
      */
-    private boolean explicitQosEnabled;
+    private Boolean explicitQosEnabled = false;
     /**
      * Specifies whether the listener session should be exposed when consuming
      * messages.
      */
-    private boolean exposeListenerSession;
+    private Boolean exposeListenerSession = false;
     /**
      * Specifies the limit for idle executions of a receive task not having
      * received any message within its execution. If this limit is reached the
@@ -244,16 +244,16 @@ public class JmsComponentConfiguration {
      * suited payload type such as javax.jms.TextMessage to a String etc. See
      * section about how mapping works below for more details.
      */
-    private boolean mapJmsMessage;
+    private Boolean mapJmsMessage = false;
     /**
      * When sending specifies whether message IDs should be added.
      */
-    private boolean messageIdEnabled;
+    private Boolean messageIdEnabled = false;
     /**
      * Specifies whether timestamps should be enabled by default on sending
      * messages.
      */
-    private boolean messageTimestampEnabled;
+    private Boolean messageTimestampEnabled = false;
     /**
      * If true Camel will always make a JMS message copy of the message when it
      * is passed to the producer for sending. Copying the message is needed in
@@ -261,12 +261,12 @@ public class JmsComponentConfiguration {
      * (incidentally Camel will set the alwaysCopyMessage option to true if a
      * replyToDestinationSelectorName is set)
      */
-    private boolean alwaysCopyMessage;
+    private Boolean alwaysCopyMessage = false;
     /**
      * Specifies whether JMSMessageID should always be used as JMSCorrelationID
      * for InOut messages.
      */
-    private boolean useMessageIDAsCorrelationID;
+    private Boolean useMessageIDAsCorrelationID = false;
     /**
      * Values greater than 1 specify the message priority when sending (where 0
      * is the lowest priority and 9 is the highest). The explicitQosEnabled
@@ -277,7 +277,7 @@ public class JmsComponentConfiguration {
      * Specifies whether to inhibit the delivery of messages published by its
      * own connection.
      */
-    private boolean pubSubNoLocal;
+    private Boolean pubSubNoLocal = false;
     /**
      * The timeout for receiving messages (in milliseconds).
      */
@@ -293,7 +293,7 @@ public class JmsComponentConfiguration {
      * and a clientId.
      */
     @Deprecated
-    private boolean subscriptionDurable;
+    private Boolean subscriptionDurable = false;
     /**
      * Allows you to specify a custom task executor for consuming messages.
      */
@@ -306,12 +306,12 @@ public class JmsComponentConfiguration {
     /**
      * Specifies whether to use transacted mode
      */
-    private boolean transacted;
+    private Boolean transacted = false;
     /**
      * If true Camel will create a JmsTransactionManager if there is no
      * transactionManager injected when option transacted=true.
      */
-    private boolean lazyCreateTransactionManager;
+    private Boolean lazyCreateTransactionManager = false;
     /**
      * The Spring transaction manager to use.
      */
@@ -332,7 +332,7 @@ public class JmsComponentConfiguration {
      * exception on startup. This ensures that Camel is not started with failed
      * connections. The JMS producers is tested as well.
      */
-    private boolean testConnectionOnStartup;
+    private Boolean testConnectionOnStartup = false;
     /**
      * Whether to startup the JmsConsumer message listener asynchronously when
      * starting a route. For example if a JmsConsumer cannot get a connection to
@@ -345,19 +345,19 @@ public class JmsComponentConfiguration {
      * will not be able to receive messages; You can then restart the route to
      * retry.
      */
-    private boolean asyncStartListener;
+    private Boolean asyncStartListener = false;
     /**
      * Whether to stop the JmsConsumer message listener asynchronously when
      * stopping a route.
      */
-    private boolean asyncStopListener;
+    private Boolean asyncStopListener = false;
     /**
      * When using mapJmsMessage=false Camel will create a new JMS message to
      * send to a new JMS destination if you touch the headers (get or set)
      * during the route. Set this option to true to force Camel to send the
      * original JMS message that was received.
      */
-    private boolean forceSendOriginalMessage;
+    private Boolean forceSendOriginalMessage = false;
     /**
      * The timeout for waiting for a reply when using the InOut Exchange Pattern
      * (in milliseconds). The default is 20 seconds. You can include the header
@@ -383,7 +383,7 @@ public class JmsComponentConfiguration {
      * enable this option on both the producer and consumer side so Camel knows
      * the payloads is an Exchange and not a regular payload.
      */
-    private boolean transferExchange;
+    private Boolean transferExchange = false;
     /**
      * If enabled and you are using Request Reply messaging (InOut) and an
      * Exchange failed on the consumer side then the caused Exception will be
@@ -396,7 +396,7 @@ public class JmsComponentConfiguration {
      * wrapped in an outer exception such as
      * org.apache.camel.RuntimeCamelException when returned to the producer.
      */
-    private boolean transferException;
+    private Boolean transferException = false;
     /**
      * If enabled and you are using Request Reply messaging (InOut) and an
      * Exchange failed with a SOAP fault (not exception) on the consumer side
@@ -407,7 +407,7 @@ public class JmsComponentConfiguration {
      * You may want to enable this when using Camel components that support
      * faults such as SOAP based such as cxf or spring-ws.
      */
-    private boolean transferFault;
+    private Boolean transferFault = false;
     /**
      * Allows you to use your own implementation of the
      * org.springframework.jms.core.JmsOperations interface. Camel uses
@@ -444,7 +444,7 @@ public class JmsComponentConfiguration {
      * explicitQosEnabled option by contrast will only use options set on the
      * endpoint and not values from the message header.
      */
-    private boolean preserveMessageQos;
+    private Boolean preserveMessageQos = false;
     /**
      * Whether the JmsConsumer processes the Exchange asynchronously. If enabled
      * then the JmsConsumer may pickup the next message from the JMS queue while
@@ -456,26 +456,26 @@ public class JmsComponentConfiguration {
      * asyncConsumer=true does not run asynchronously as transaction must be
      * executed synchronously (Camel 3.0 may support async transactions).
      */
-    private boolean asyncConsumer;
+    private Boolean asyncConsumer = false;
     /**
      * Whether to allow sending messages with no body. If this option is false
      * and the message body is null then an JMSException is thrown.
      */
-    private boolean allowNullBody;
+    private Boolean allowNullBody = false;
     /**
      * Only applicable when sending to JMS destination using InOnly (eg fire and
      * forget). Enabling this option will enrich the Camel Exchange with the
      * actual JMSMessageID that was used by the JMS client when the message was
      * sent to the JMS destination.
      */
-    private boolean includeSentJMSMessageID;
+    private Boolean includeSentJMSMessageID = false;
     /**
      * Whether to include all JMSXxxx properties when mapping from JMS to Camel
      * Message. Setting this to true will include properties such as JMSXAppID
      * and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy
      * then this option does not apply.
      */
-    private boolean includeAllJMSXProperties;
+    private Boolean includeAllJMSXProperties = false;
     /**
      * Specifies what default TaskExecutor type to use in the
      * DefaultMessageListenerContainer for both consumer endpoints and the
@@ -539,20 +539,20 @@ public class JmsComponentConfiguration {
         this.configuration = configuration;
     }
 
-    public boolean isAcceptMessagesWhileStopping() {
+    public Boolean getAcceptMessagesWhileStopping() {
         return acceptMessagesWhileStopping;
     }
 
     public void setAcceptMessagesWhileStopping(
-            boolean acceptMessagesWhileStopping) {
+            Boolean acceptMessagesWhileStopping) {
         this.acceptMessagesWhileStopping = acceptMessagesWhileStopping;
     }
 
-    public boolean isAllowReplyManagerQuickStop() {
+    public Boolean getAllowReplyManagerQuickStop() {
         return allowReplyManagerQuickStop;
     }
 
-    public void setAllowReplyManagerQuickStop(boolean allowReplyManagerQuickStop) {
+    public void setAllowReplyManagerQuickStop(Boolean allowReplyManagerQuickStop) {
         this.allowReplyManagerQuickStop = allowReplyManagerQuickStop;
     }
 
@@ -564,11 +564,11 @@ public class JmsComponentConfiguration {
         this.acknowledgementMode = acknowledgementMode;
     }
 
-    public boolean isEagerLoadingOfProperties() {
+    public Boolean getEagerLoadingOfProperties() {
         return eagerLoadingOfProperties;
     }
 
-    public void setEagerLoadingOfProperties(boolean eagerLoadingOfProperties) {
+    public void setEagerLoadingOfProperties(Boolean eagerLoadingOfProperties) {
         this.eagerLoadingOfProperties = eagerLoadingOfProperties;
     }
 
@@ -580,11 +580,11 @@ public class JmsComponentConfiguration {
         this.acknowledgementModeName = acknowledgementModeName;
     }
 
-    public boolean isAutoStartup() {
+    public Boolean getAutoStartup() {
         return autoStartup;
     }
 
-    public void setAutoStartup(boolean autoStartup) {
+    public void setAutoStartup(Boolean autoStartup) {
         this.autoStartup = autoStartup;
     }
 
@@ -644,11 +644,11 @@ public class JmsComponentConfiguration {
         this.connectionFactory = connectionFactory;
     }
 
-    public boolean isDeliveryPersistent() {
+    public Boolean getDeliveryPersistent() {
         return deliveryPersistent;
     }
 
-    public void setDeliveryPersistent(boolean deliveryPersistent) {
+    public void setDeliveryPersistent(Boolean deliveryPersistent) {
         this.deliveryPersistent = deliveryPersistent;
     }
 
@@ -693,27 +693,27 @@ public class JmsComponentConfiguration {
         this.errorHandlerLoggingLevel = errorHandlerLoggingLevel;
     }
 
-    public boolean isErrorHandlerLogStackTrace() {
+    public Boolean getErrorHandlerLogStackTrace() {
         return errorHandlerLogStackTrace;
     }
 
-    public void setErrorHandlerLogStackTrace(boolean errorHandlerLogStackTrace) {
+    public void setErrorHandlerLogStackTrace(Boolean errorHandlerLogStackTrace) {
         this.errorHandlerLogStackTrace = errorHandlerLogStackTrace;
     }
 
-    public boolean isExplicitQosEnabled() {
+    public Boolean getExplicitQosEnabled() {
         return explicitQosEnabled;
     }
 
-    public void setExplicitQosEnabled(boolean explicitQosEnabled) {
+    public void setExplicitQosEnabled(Boolean explicitQosEnabled) {
         this.explicitQosEnabled = explicitQosEnabled;
     }
 
-    public boolean isExposeListenerSession() {
+    public Boolean getExposeListenerSession() {
         return exposeListenerSession;
     }
 
-    public void setExposeListenerSession(boolean exposeListenerSession) {
+    public void setExposeListenerSession(Boolean exposeListenerSession) {
         this.exposeListenerSession = exposeListenerSession;
     }
 
@@ -775,44 +775,44 @@ public class JmsComponentConfiguration {
         this.messageConverter = messageConverter;
     }
 
-    public boolean isMapJmsMessage() {
+    public Boolean getMapJmsMessage() {
         return mapJmsMessage;
     }
 
-    public void setMapJmsMessage(boolean mapJmsMessage) {
+    public void setMapJmsMessage(Boolean mapJmsMessage) {
         this.mapJmsMessage = mapJmsMessage;
     }
 
-    public boolean isMessageIdEnabled() {
+    public Boolean getMessageIdEnabled() {
         return messageIdEnabled;
     }
 
-    public void setMessageIdEnabled(boolean messageIdEnabled) {
+    public void setMessageIdEnabled(Boolean messageIdEnabled) {
         this.messageIdEnabled = messageIdEnabled;
     }
 
-    public boolean isMessageTimestampEnabled() {
+    public Boolean getMessageTimestampEnabled() {
         return messageTimestampEnabled;
     }
 
-    public void setMessageTimestampEnabled(boolean messageTimestampEnabled) {
+    public void setMessageTimestampEnabled(Boolean messageTimestampEnabled) {
         this.messageTimestampEnabled = messageTimestampEnabled;
     }
 
-    public boolean isAlwaysCopyMessage() {
+    public Boolean getAlwaysCopyMessage() {
         return alwaysCopyMessage;
     }
 
-    public void setAlwaysCopyMessage(boolean alwaysCopyMessage) {
+    public void setAlwaysCopyMessage(Boolean alwaysCopyMessage) {
         this.alwaysCopyMessage = alwaysCopyMessage;
     }
 
-    public boolean isUseMessageIDAsCorrelationID() {
+    public Boolean getUseMessageIDAsCorrelationID() {
         return useMessageIDAsCorrelationID;
     }
 
     public void setUseMessageIDAsCorrelationID(
-            boolean useMessageIDAsCorrelationID) {
+            Boolean useMessageIDAsCorrelationID) {
         this.useMessageIDAsCorrelationID = useMessageIDAsCorrelationID;
     }
 
@@ -824,11 +824,11 @@ public class JmsComponentConfiguration {
         this.priority = priority;
     }
 
-    public boolean isPubSubNoLocal() {
+    public Boolean getPubSubNoLocal() {
         return pubSubNoLocal;
     }
 
-    public void setPubSubNoLocal(boolean pubSubNoLocal) {
+    public void setPubSubNoLocal(Boolean pubSubNoLocal) {
         this.pubSubNoLocal = pubSubNoLocal;
     }
 
@@ -848,11 +848,11 @@ public class JmsComponentConfiguration {
         this.recoveryInterval = recoveryInterval;
     }
 
-    public boolean isSubscriptionDurable() {
+    public Boolean getSubscriptionDurable() {
         return subscriptionDurable;
     }
 
-    public void setSubscriptionDurable(boolean subscriptionDurable) {
+    public void setSubscriptionDurable(Boolean subscriptionDurable) {
         this.subscriptionDurable = subscriptionDurable;
     }
 
@@ -872,20 +872,20 @@ public class JmsComponentConfiguration {
         this.timeToLive = timeToLive;
     }
 
-    public boolean isTransacted() {
+    public Boolean getTransacted() {
         return transacted;
     }
 
-    public void setTransacted(boolean transacted) {
+    public void setTransacted(Boolean transacted) {
         this.transacted = transacted;
     }
 
-    public boolean isLazyCreateTransactionManager() {
+    public Boolean getLazyCreateTransactionManager() {
         return lazyCreateTransactionManager;
     }
 
     public void setLazyCreateTransactionManager(
-            boolean lazyCreateTransactionManager) {
+            Boolean lazyCreateTransactionManager) {
         this.lazyCreateTransactionManager = lazyCreateTransactionManager;
     }
 
@@ -914,35 +914,35 @@ public class JmsComponentConfiguration {
         this.transactionTimeout = transactionTimeout;
     }
 
-    public boolean isTestConnectionOnStartup() {
+    public Boolean getTestConnectionOnStartup() {
         return testConnectionOnStartup;
     }
 
-    public void setTestConnectionOnStartup(boolean testConnectionOnStartup) {
+    public void setTestConnectionOnStartup(Boolean testConnectionOnStartup) {
         this.testConnectionOnStartup = testConnectionOnStartup;
     }
 
-    public boolean isAsyncStartListener() {
+    public Boolean getAsyncStartListener() {
         return asyncStartListener;
     }
 
-    public void setAsyncStartListener(boolean asyncStartListener) {
+    public void setAsyncStartListener(Boolean asyncStartListener) {
         this.asyncStartListener = asyncStartListener;
     }
 
-    public boolean isAsyncStopListener() {
+    public Boolean getAsyncStopListener() {
         return asyncStopListener;
     }
 
-    public void setAsyncStopListener(boolean asyncStopListener) {
+    public void setAsyncStopListener(Boolean asyncStopListener) {
         this.asyncStopListener = asyncStopListener;
     }
 
-    public boolean isForceSendOriginalMessage() {
+    public Boolean getForceSendOriginalMessage() {
         return forceSendOriginalMessage;
     }
 
-    public void setForceSendOriginalMessage(boolean forceSendOriginalMessage) {
+    public void setForceSendOriginalMessage(Boolean forceSendOriginalMessage) {
         this.forceSendOriginalMessage = forceSendOriginalMessage;
     }
 
@@ -963,27 +963,27 @@ public class JmsComponentConfiguration {
         this.requestTimeoutCheckerInterval = requestTimeoutCheckerInterval;
     }
 
-    public boolean isTransferExchange() {
+    public Boolean getTransferExchange() {
         return transferExchange;
     }
 
-    public void setTransferExchange(boolean transferExchange) {
+    public void setTransferExchange(Boolean transferExchange) {
         this.transferExchange = transferExchange;
     }
 
-    public boolean isTransferException() {
+    public Boolean getTransferException() {
         return transferException;
     }
 
-    public void setTransferException(boolean transferException) {
+    public void setTransferException(Boolean transferException) {
         this.transferException = transferException;
     }
 
-    public boolean isTransferFault() {
+    public Boolean getTransferFault() {
         return transferFault;
     }
 
-    public void setTransferFault(boolean transferFault) {
+    public void setTransferFault(Boolean transferFault) {
         this.transferFault = transferFault;
     }
 
@@ -1011,43 +1011,43 @@ public class JmsComponentConfiguration {
         this.replyToType = replyToType;
     }
 
-    public boolean isPreserveMessageQos() {
+    public Boolean getPreserveMessageQos() {
         return preserveMessageQos;
     }
 
-    public void setPreserveMessageQos(boolean preserveMessageQos) {
+    public void setPreserveMessageQos(Boolean preserveMessageQos) {
         this.preserveMessageQos = preserveMessageQos;
     }
 
-    public boolean isAsyncConsumer() {
+    public Boolean getAsyncConsumer() {
         return asyncConsumer;
     }
 
-    public void setAsyncConsumer(boolean asyncConsumer) {
+    public void setAsyncConsumer(Boolean asyncConsumer) {
         this.asyncConsumer = asyncConsumer;
     }
 
-    public boolean isAllowNullBody() {
+    public Boolean getAllowNullBody() {
         return allowNullBody;
     }
 
-    public void setAllowNullBody(boolean allowNullBody) {
+    public void setAllowNullBody(Boolean allowNullBody) {
         this.allowNullBody = allowNullBody;
     }
 
-    public boolean isIncludeSentJMSMessageID() {
+    public Boolean getIncludeSentJMSMessageID() {
         return includeSentJMSMessageID;
     }
 
-    public void setIncludeSentJMSMessageID(boolean includeSentJMSMessageID) {
+    public void setIncludeSentJMSMessageID(Boolean includeSentJMSMessageID) {
         this.includeSentJMSMessageID = includeSentJMSMessageID;
     }
 
-    public boolean isIncludeAllJMSXProperties() {
+    public Boolean getIncludeAllJMSXProperties() {
         return includeAllJMSXProperties;
     }
 
-    public void setIncludeAllJMSXProperties(boolean includeAllJMSXProperties) {
+    public void setIncludeAllJMSXProperties(Boolean includeAllJMSXProperties) {
         this.includeAllJMSXProperties = includeAllJMSXProperties;
     }
 

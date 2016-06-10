@@ -38,12 +38,12 @@ public class FlatpackDataFormatConfiguration {
     /**
      * Delimited or fixed. Is by default false = delimited
      */
-    private Boolean fixed;
+    private Boolean fixed = false;
     /**
      * Whether the first line is ignored for delimited files (for the column
      * headers). Is by default true.
      */
-    private Boolean ignoreFirstRecord;
+    private Boolean ignoreFirstRecord = true;
     /**
      * If the text is qualified with a char such as "
      */
@@ -56,12 +56,12 @@ public class FlatpackDataFormatConfiguration {
      * Allows for lines to be shorter than expected and ignores the extra
      * characters
      */
-    private Boolean allowShortLines;
+    private Boolean allowShortLines = false;
     /**
      * Allows for lines to be longer than expected and ignores the extra
      * characters.
      */
-    private Boolean ignoreExtraColumns;
+    private Boolean ignoreExtraColumns = false;
 
     public String getParserFactoryRef() {
         return parserFactoryRef;

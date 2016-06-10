@@ -30,7 +30,7 @@ public class Base64DataFormatConfiguration {
      * To specific a maximum line length for the encoded data. By default 76 is
      * used.
      */
-    private Integer lineLength;
+    private Integer lineLength = 76;
     /**
      * The line separators to use. By default \r\n is used.
      */
@@ -40,7 +40,7 @@ public class Base64DataFormatConfiguration {
      * is only applied to encode operations. Decoding seamlessly handles both
      * modes. Is by default false.
      */
-    private Boolean urlSafe;
+    private Boolean urlSafe = false;
 
     public Integer getLineLength() {
         return lineLength;

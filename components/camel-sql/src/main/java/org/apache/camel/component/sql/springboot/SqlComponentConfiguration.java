@@ -35,7 +35,7 @@ public class SqlComponentConfiguration {
      * Sets whether to use placeholder and replace all placeholder characters
      * with sign in the SQL queries. This option is default true
      */
-    private boolean usePlaceholder;
+    private Boolean usePlaceholder = true;
 
     public DataSource getDataSource() {
         return dataSource;
@@ -45,11 +45,11 @@ public class SqlComponentConfiguration {
         this.dataSource = dataSource;
     }
 
-    public boolean isUsePlaceholder() {
+    public Boolean getUsePlaceholder() {
         return usePlaceholder;
     }
 
-    public void setUsePlaceholder(boolean usePlaceholder) {
+    public void setUsePlaceholder(Boolean usePlaceholder) {
         this.usePlaceholder = usePlaceholder;
     }
 }

@@ -29,7 +29,7 @@ public class LZFDataFormatConfiguration {
     /**
      * Enable encoding (compress) using multiple processing cores.
      */
-    private Boolean usingParallelCompression;
+    private Boolean usingParallelCompression = false;
 
     public Boolean getUsingParallelCompression() {
         return usingParallelCompression;

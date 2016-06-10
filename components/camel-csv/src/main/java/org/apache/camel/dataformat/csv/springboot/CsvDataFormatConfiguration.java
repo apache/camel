@@ -39,7 +39,7 @@ public class CsvDataFormatConfiguration {
     /**
      * Disables the comment marker of the reference format.
      */
-    private Boolean commentMarkerDisabled;
+    private Boolean commentMarkerDisabled = false;
     /**
      * Sets the comment marker of the reference format.
      */
@@ -51,7 +51,7 @@ public class CsvDataFormatConfiguration {
     /**
      * Use for disabling using escape character
      */
-    private Boolean escapeDisabled;
+    private Boolean escapeDisabled = false;
     /**
      * Sets the escape character to use
      */
@@ -59,7 +59,7 @@ public class CsvDataFormatConfiguration {
     /**
      * Use for disabling headers
      */
-    private Boolean headerDisabled;
+    private Boolean headerDisabled = false;
     /**
      * To configure the CSV headers
      */
@@ -67,19 +67,19 @@ public class CsvDataFormatConfiguration {
     /**
      * Whether to allow missing column names.
      */
-    private Boolean allowMissingColumnNames;
+    private Boolean allowMissingColumnNames = false;
     /**
      * Whether to ignore empty lines.
      */
-    private Boolean ignoreEmptyLines;
+    private Boolean ignoreEmptyLines = false;
     /**
      * Whether to ignore surrounding spaces
      */
-    private Boolean ignoreSurroundingSpaces;
+    private Boolean ignoreSurroundingSpaces = false;
     /**
      * Used to disable null strings
      */
-    private Boolean nullStringDisabled;
+    private Boolean nullStringDisabled = false;
     /**
      * Sets the null string
      */
@@ -87,7 +87,7 @@ public class CsvDataFormatConfiguration {
     /**
      * Used to disable quotes
      */
-    private Boolean quoteDisabled;
+    private Boolean quoteDisabled = false;
     /**
      * Sets the quote which by default is
      */
@@ -103,7 +103,7 @@ public class CsvDataFormatConfiguration {
     /**
      * Whether to skip the header record in the output
      */
-    private Boolean skipHeaderRecord;
+    private Boolean skipHeaderRecord = false;
     /**
      * Sets the quote mode
      */
@@ -112,13 +112,13 @@ public class CsvDataFormatConfiguration {
      * Whether the unmarshalling should produce an iterator that reads the lines
      * on the fly or if all the lines must be read at one.
      */
-    private Boolean lazyLoad;
+    private Boolean lazyLoad = false;
     /**
      * Whether the unmarshalling should produce maps for the lines values
      * instead of lists. It requires to have header (either defined or
      * collected).
      */
-    private Boolean useMaps;
+    private Boolean useMaps = false;
     /**
      * Refers to a custom CsvRecordConverter to lookup from the registry to use.
      */

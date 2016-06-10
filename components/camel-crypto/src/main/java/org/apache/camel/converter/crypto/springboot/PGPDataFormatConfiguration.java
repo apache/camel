@@ -73,12 +73,12 @@ public class PGPDataFormatConfiguration {
      * This option will cause PGP to base64 encode the encrypted text making it
      * available for copy/paste etc.
      */
-    private Boolean armored;
+    private Boolean armored = false;
     /**
      * Adds an integrity check/sign into the encryption file. The default value
      * is true.
      */
-    private Boolean integrity;
+    private Boolean integrity = true;
     /**
      * Java Cryptography Extension (JCE) provider default is Bouncy Castle (BC).
      * Alternatively you can use for example the IAIK JCE provider; in this case

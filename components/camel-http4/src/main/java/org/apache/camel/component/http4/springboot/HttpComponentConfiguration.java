@@ -60,7 +60,7 @@ public class HttpComponentConfiguration {
      * the incoming data from the request to Java and that can be a potential
      * security risk.
      */
-    private boolean allowJavaSerializedObject;
+    private Boolean allowJavaSerializedObject = false;
     /**
      * To use a custom org.apache.http.protocol.HttpContext when executing
      * requests.
@@ -140,11 +140,11 @@ public class HttpComponentConfiguration {
         this.httpConfiguration = httpConfiguration;
     }
 
-    public boolean isAllowJavaSerializedObject() {
+    public Boolean getAllowJavaSerializedObject() {
         return allowJavaSerializedObject;
     }
 
-    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+    public void setAllowJavaSerializedObject(Boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 

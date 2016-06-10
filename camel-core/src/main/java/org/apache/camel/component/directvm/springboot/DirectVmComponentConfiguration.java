@@ -33,11 +33,11 @@ public class DirectVmComponentConfiguration {
      * then we can tell the producer to block and wait for the consumer to
      * become active.
      */
-    private boolean block;
+    private Boolean block = false;
     /**
      * The timeout value to use if block is enabled.
      */
-    private long timeout;
+    private long timeout = 30000;
     /**
      * Sets a HeaderFilterStrategy that will only be applied on producer
      * endpoints (on both directions: request and response). Default value:
@@ -48,13 +48,13 @@ public class DirectVmComponentConfiguration {
      * Whether to propagate or not properties from the producer side to the
      * consumer side and viceversa. Default value: true.
      */
-    private boolean propagateProperties;
+    private Boolean propagateProperties = true;
 
-    public boolean isBlock() {
+    public Boolean getBlock() {
         return block;
     }
 
-    public void setBlock(boolean block) {
+    public void setBlock(Boolean block) {
         this.block = block;
     }
 
@@ -75,11 +75,11 @@ public class DirectVmComponentConfiguration {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
-    public boolean isPropagateProperties() {
+    public Boolean getPropagateProperties() {
         return propagateProperties;
     }
 
-    public void setPropagateProperties(boolean propagateProperties) {
+    public void setPropagateProperties(Boolean propagateProperties) {
         this.propagateProperties = propagateProperties;
     }
 }

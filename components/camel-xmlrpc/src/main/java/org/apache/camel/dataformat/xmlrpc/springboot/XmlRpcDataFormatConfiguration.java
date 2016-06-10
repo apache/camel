@@ -29,7 +29,7 @@ public class XmlRpcDataFormatConfiguration {
     /**
      * Whether to unmarshal request or response Is by default false
      */
-    private Boolean request;
+    private Boolean request = false;
 
     public Boolean getRequest() {
         return request;

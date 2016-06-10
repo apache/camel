@@ -96,7 +96,7 @@ public class JettyHttpComponentConfiguration9 {
      * If this option is true Jetty JMX support will be enabled for this
      * endpoint.
      */
-    private boolean enableJmx;
+    private Boolean enableJmx = false;
     /**
      * To use a custom org.apache.camel.component.jetty.JettyHttpBinding which
      * are used to customize how a response should be written for the producer.
@@ -135,7 +135,7 @@ public class JettyHttpComponentConfiguration9 {
     /**
      * Whether or not to use Jetty continuations for the Jetty Server.
      */
-    private boolean useContinuation;
+    private Boolean useContinuation = false;
     /**
      * To configure security using SSLContextParameters
      */
@@ -174,7 +174,7 @@ public class JettyHttpComponentConfiguration9 {
      * other camel-jetty endpoint is share the same port otherwise this option
      * may not work as expected.
      */
-    private boolean sendServerVersion;
+    private Boolean sendServerVersion = false;
     /**
      * Whether to allow java serialization when a request uses
      * context-type=application/x-java-serialized-object This is by default
@@ -182,7 +182,7 @@ public class JettyHttpComponentConfiguration9 {
      * the incoming data from the request to Java and that can be a potential
      * security risk.
      */
-    private boolean allowJavaSerializedObject;
+    private Boolean allowJavaSerializedObject = false;
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
@@ -278,11 +278,11 @@ public class JettyHttpComponentConfiguration9 {
         this.threadPool = threadPool;
     }
 
-    public boolean isEnableJmx() {
+    public Boolean getEnableJmx() {
         return enableJmx;
     }
 
-    public void setEnableJmx(boolean enableJmx) {
+    public void setEnableJmx(Boolean enableJmx) {
         this.enableJmx = enableJmx;
     }
 
@@ -344,11 +344,11 @@ public class JettyHttpComponentConfiguration9 {
         this.continuationTimeout = continuationTimeout;
     }
 
-    public boolean isUseContinuation() {
+    public Boolean getUseContinuation() {
         return useContinuation;
     }
 
-    public void setUseContinuation(boolean useContinuation) {
+    public void setUseContinuation(Boolean useContinuation) {
         this.useContinuation = useContinuation;
     }
 
@@ -409,19 +409,19 @@ public class JettyHttpComponentConfiguration9 {
         this.proxyPort = proxyPort;
     }
 
-    public boolean isSendServerVersion() {
+    public Boolean getSendServerVersion() {
         return sendServerVersion;
     }
 
-    public void setSendServerVersion(boolean sendServerVersion) {
+    public void setSendServerVersion(Boolean sendServerVersion) {
         this.sendServerVersion = sendServerVersion;
     }
 
-    public boolean isAllowJavaSerializedObject() {
+    public Boolean getAllowJavaSerializedObject() {
         return allowJavaSerializedObject;
     }
 
-    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+    public void setAllowJavaSerializedObject(Boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 

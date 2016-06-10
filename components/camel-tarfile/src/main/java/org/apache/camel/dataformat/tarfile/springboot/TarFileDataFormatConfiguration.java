@@ -31,7 +31,7 @@ public class TarFileDataFormatConfiguration {
      * allows to work with the splitter EIP to split the data using an iterator
      * in a streaming mode.
      */
-    private Boolean usingIterator;
+    private Boolean usingIterator = false;
 
     public Boolean getUsingIterator() {
         return usingIterator;

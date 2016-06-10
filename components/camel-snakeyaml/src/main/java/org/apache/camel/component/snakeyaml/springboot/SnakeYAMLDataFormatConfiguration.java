@@ -54,12 +54,12 @@ public class SnakeYAMLDataFormatConfiguration {
     /**
      * Use ApplicationContextClassLoader as custom ClassLoader
      */
-    private Boolean useApplicationContextClassLoader;
+    private Boolean useApplicationContextClassLoader = true;
     /**
      * Force the emitter to produce a pretty YAML document when using the flow
      * style.
      */
-    private Boolean prettyFlow;
+    private Boolean prettyFlow = false;
 
     public YAMLLibrary getLibrary() {
         return library;

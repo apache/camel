@@ -62,12 +62,12 @@ public class CryptoDataFormatConfiguration {
      * Flag indicating that a Message Authentication Code should be calculated
      * and appended to the encrypted data.
      */
-    private Boolean shouldAppendHMAC;
+    private Boolean shouldAppendHMAC = false;
     /**
      * Flag indicating that the configured IV should be inlined into the
      * encrypted data stream. Is by default false.
      */
-    private Boolean inline;
+    private Boolean inline = false;
 
     public String getAlgorithm() {
         return algorithm;

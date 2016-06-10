@@ -44,7 +44,7 @@ public class ServletComponentConfiguration {
      * Exchange. This is turn off by default as this may require servet specific
      * configuration to enable this when using Servlet's.
      */
-    private boolean attachmentMultipartBinding;
+    private Boolean attachmentMultipartBinding = false;
     /**
      * To use a custom HttpBinding to control the mapping between Camel message
      * and HttpClient.
@@ -61,7 +61,7 @@ public class ServletComponentConfiguration {
      * the incoming data from the request to Java and that can be a potential
      * security risk.
      */
-    private boolean allowJavaSerializedObject;
+    private Boolean allowJavaSerializedObject = false;
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
@@ -84,11 +84,11 @@ public class ServletComponentConfiguration {
         this.httpRegistry = httpRegistry;
     }
 
-    public boolean isAttachmentMultipartBinding() {
+    public Boolean getAttachmentMultipartBinding() {
         return attachmentMultipartBinding;
     }
 
-    public void setAttachmentMultipartBinding(boolean attachmentMultipartBinding) {
+    public void setAttachmentMultipartBinding(Boolean attachmentMultipartBinding) {
         this.attachmentMultipartBinding = attachmentMultipartBinding;
     }
 
@@ -108,11 +108,11 @@ public class ServletComponentConfiguration {
         this.httpConfiguration = httpConfiguration;
     }
 
-    public boolean isAllowJavaSerializedObject() {
+    public Boolean getAllowJavaSerializedObject() {
         return allowJavaSerializedObject;
     }
 
-    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+    public void setAllowJavaSerializedObject(Boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 

@@ -32,17 +32,17 @@ public class DirectComponentConfiguration {
      * then we can tell the producer to block and wait for the consumer to
      * become active.
      */
-    private boolean block;
+    private Boolean block = false;
     /**
      * The timeout value to use if block is enabled.
      */
-    private long timeout;
+    private long timeout = 30000;
 
-    public boolean isBlock() {
+    public Boolean getBlock() {
         return block;
     }
 
-    public void setBlock(boolean block) {
+    public void setBlock(Boolean block) {
         this.block = block;
     }
 

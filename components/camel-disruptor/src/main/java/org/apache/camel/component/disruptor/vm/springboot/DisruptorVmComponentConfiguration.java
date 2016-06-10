@@ -36,7 +36,7 @@ public class DisruptorVmComponentConfiguration {
     /**
      * To configure the default value for multiple consumers
      */
-    private boolean defaultMultipleConsumers;
+    private Boolean defaultMultipleConsumers = false;
     /**
      * To configure the default value for DisruptorProducerType The default
      * value is Multi.
@@ -51,7 +51,7 @@ public class DisruptorVmComponentConfiguration {
      * To configure the default value for block when full The default value is
      * true.
      */
-    private boolean defaultBlockWhenFull;
+    private Boolean defaultBlockWhenFull = false;
     /**
      * To configure the ring buffer size
      */
@@ -70,11 +70,11 @@ public class DisruptorVmComponentConfiguration {
         this.defaultConcurrentConsumers = defaultConcurrentConsumers;
     }
 
-    public boolean isDefaultMultipleConsumers() {
+    public Boolean getDefaultMultipleConsumers() {
         return defaultMultipleConsumers;
     }
 
-    public void setDefaultMultipleConsumers(boolean defaultMultipleConsumers) {
+    public void setDefaultMultipleConsumers(Boolean defaultMultipleConsumers) {
         this.defaultMultipleConsumers = defaultMultipleConsumers;
     }
 
@@ -94,11 +94,11 @@ public class DisruptorVmComponentConfiguration {
         this.defaultWaitStrategy = defaultWaitStrategy;
     }
 
-    public boolean isDefaultBlockWhenFull() {
+    public Boolean getDefaultBlockWhenFull() {
         return defaultBlockWhenFull;
     }
 
-    public void setDefaultBlockWhenFull(boolean defaultBlockWhenFull) {
+    public void setDefaultBlockWhenFull(Boolean defaultBlockWhenFull) {
         this.defaultBlockWhenFull = defaultBlockWhenFull;
     }
 

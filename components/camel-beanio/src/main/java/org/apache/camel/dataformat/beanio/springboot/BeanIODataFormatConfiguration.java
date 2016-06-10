@@ -39,15 +39,15 @@ public class BeanIODataFormatConfiguration {
     /**
      * Whether to ignore unidentified records.
      */
-    private Boolean ignoreUnidentifiedRecords;
+    private Boolean ignoreUnidentifiedRecords = false;
     /**
      * Whether to ignore unexpected records.
      */
-    private Boolean ignoreUnexpectedRecords;
+    private Boolean ignoreUnexpectedRecords = false;
     /**
      * Whether to ignore invalid records.
      */
-    private Boolean ignoreInvalidRecords;
+    private Boolean ignoreInvalidRecords = false;
     /**
      * The charset to use. Is by default the JVM platform default charset.
      */

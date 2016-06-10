@@ -49,13 +49,13 @@ public class XmlJsonDataFormatConfiguration {
      * (XML to JSon conversion). If disabled XML string 12 turns into 'x: '1'
      * 'y': '2' . Otherwise it turns into 'a': 'x: '1' 'y': '2' .
      */
-    private Boolean forceTopLevelObject;
+    private Boolean forceTopLevelObject = false;
     /**
      * Flag to be tolerant to incomplete namespace prefixes. Used for
      * unmarshalling (JSON to XML conversion). In most cases json-lib
      * automatically changes this flag at runtime to match the processing.
      */
-    private Boolean namespaceLenient;
+    private Boolean namespaceLenient = false;
     /**
      * Specifies the name of the top-level element. Used for unmarshalling (JSON
      * to XML conversion). If not set json-lib will use arrayName or objectName
@@ -70,24 +70,24 @@ public class XmlJsonDataFormatConfiguration {
      * text values or disregarded. Used for marshalling (XML to JSon
      * conversion).
      */
-    private Boolean skipWhitespace;
+    private Boolean skipWhitespace = false;
     /**
      * Determines whether leading and trailing white spaces will be omitted from
      * String values. Used for marshalling (XML to JSon conversion).
      */
-    private Boolean trimSpaces;
+    private Boolean trimSpaces = false;
     /**
      * Signals whether namespaces should be ignored. By default they will be
      * added to the JSON output using xmlns elements. Used for marshalling (XML
      * to JSon conversion).
      */
-    private Boolean skipNamespaces;
+    private Boolean skipNamespaces = false;
     /**
      * Removes the namespace prefixes from XML qualified elements so that the
      * resulting JSON string does not contain them. Used for marshalling (XML to
      * JSon conversion).
      */
-    private Boolean removeNamespacePrefixes;
+    private Boolean removeNamespacePrefixes = false;
     /**
      * With expandable properties JSON array elements are converted to XML as a
      * sequence of repetitive XML elements with the local name equal to the JSON

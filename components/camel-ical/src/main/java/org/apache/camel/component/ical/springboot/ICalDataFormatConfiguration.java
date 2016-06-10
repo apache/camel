@@ -29,7 +29,7 @@ public class ICalDataFormatConfiguration {
     /**
      * Whether to validate.
      */
-    private Boolean validating;
+    private Boolean validating = false;
 
     public Boolean getValidating() {
         return validating;

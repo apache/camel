@@ -40,7 +40,7 @@ public class IBatisComponentConfiguration {
     /**
      * Whether to use transactions. This option is by default true.
      */
-    private boolean useTransactions;
+    private Boolean useTransactions = false;
 
     public SqlMapClient getSqlMapClient() {
         return sqlMapClient;
@@ -58,11 +58,11 @@ public class IBatisComponentConfiguration {
         this.sqlMapConfig = sqlMapConfig;
     }
 
-    public boolean isUseTransactions() {
+    public Boolean getUseTransactions() {
         return useTransactions;
     }
 
-    public void setUseTransactions(boolean useTransactions) {
+    public void setUseTransactions(Boolean useTransactions) {
         this.useTransactions = useTransactions;
     }
 }

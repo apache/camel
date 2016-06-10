@@ -39,28 +39,28 @@ public class JaxbDataFormatConfiguration {
     /**
      * To enable pretty printing output nicely formatted. Is by default false.
      */
-    private Boolean prettyPrint;
+    private Boolean prettyPrint = false;
     /**
      * Whether to allow using ObjectFactory classes to create the POJO classes
      * during marshalling. This only applies to POJO classes that has not been
      * annotated with JAXB and providing jaxb.index descriptor files.
      */
-    private Boolean objectFactory;
+    private Boolean objectFactory = false;
     /**
      * Whether to ignore JAXBElement elements - only needed to be set to false
      * in very special use-cases.
      */
-    private Boolean ignoreJAXBElement;
+    private Boolean ignoreJAXBElement = false;
     /**
      * Whether marhsalling must be java objects with JAXB annotations. And if
      * not then it fails. This option can be set to false to relax that such as
      * when the data is already in XML format.
      */
-    private Boolean mustBeJAXBElement;
+    private Boolean mustBeJAXBElement = false;
     /**
      * To ignore non xml characheters and replace them with an empty space.
      */
-    private Boolean filterNonXmlChars;
+    private Boolean filterNonXmlChars = false;
     /**
      * To overrule and use a specific encoding
      */
@@ -74,7 +74,7 @@ public class JaxbDataFormatConfiguration {
      * behaviours you need set property partClass. Camel will pass this class to
      * JAXB's unmarshaler.
      */
-    private Boolean fragment;
+    private Boolean fragment = false;
     /**
      * Name of class used for fragment parsing. See more details at the fragment
      * option.

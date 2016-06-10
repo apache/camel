@@ -31,13 +31,13 @@ public class ScpComponentConfiguration {
      * down to DEBUG logging by default. But setting this option to true turns
      * on the verbose logging again.
      */
-    private boolean verboseLogging;
+    private Boolean verboseLogging = false;
 
-    public boolean isVerboseLogging() {
+    public Boolean getVerboseLogging() {
         return verboseLogging;
     }
 
-    public void setVerboseLogging(boolean verboseLogging) {
+    public void setVerboseLogging(Boolean verboseLogging) {
         this.verboseLogging = verboseLogging;
     }
 }

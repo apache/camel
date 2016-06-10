@@ -30,7 +30,7 @@ public class ZipDataFormatConfiguration {
      * To specify a specific compression between 0-9. -1 is default compression
      * 0 is no compression and 9 is best compression.
      */
-    private Integer compressionLevel;
+    private Integer compressionLevel = -1;
 
     public Integer getCompressionLevel() {
         return compressionLevel;

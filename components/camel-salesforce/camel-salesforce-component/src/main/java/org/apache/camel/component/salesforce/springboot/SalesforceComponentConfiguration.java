@@ -67,11 +67,11 @@ public class SalesforceComponentConfiguration {
     /**
      * Enable for Socks4 proxy false by default
      */
-    private boolean isHttpProxySocks4;
+    private Boolean isHttpProxySocks4 = false;
     /**
      * Enable for TLS connections true by default
      */
-    private boolean isHttpProxySecure;
+    private Boolean isHttpProxySecure = false;
     /**
      * HTTP proxy included addresses
      */
@@ -91,7 +91,7 @@ public class SalesforceComponentConfiguration {
     /**
      * Use HTTP proxy Digest authentication false by default
      */
-    private boolean httpProxyUseDigestAuth;
+    private Boolean httpProxyUseDigestAuth = false;
     /**
      * Package names to scan for DTO classes (multiple packages can be separated
      * by comma).
@@ -163,19 +163,19 @@ public class SalesforceComponentConfiguration {
         this.httpProxyPassword = httpProxyPassword;
     }
 
-    public boolean isIsHttpProxySocks4() {
+    public Boolean getIsHttpProxySocks4() {
         return isHttpProxySocks4;
     }
 
-    public void setIsHttpProxySocks4(boolean isHttpProxySocks4) {
+    public void setIsHttpProxySocks4(Boolean isHttpProxySocks4) {
         this.isHttpProxySocks4 = isHttpProxySocks4;
     }
 
-    public boolean isIsHttpProxySecure() {
+    public Boolean getIsHttpProxySecure() {
         return isHttpProxySecure;
     }
 
-    public void setIsHttpProxySecure(boolean isHttpProxySecure) {
+    public void setIsHttpProxySecure(Boolean isHttpProxySecure) {
         this.isHttpProxySecure = isHttpProxySecure;
     }
 
@@ -213,11 +213,11 @@ public class SalesforceComponentConfiguration {
         this.httpProxyRealm = httpProxyRealm;
     }
 
-    public boolean isHttpProxyUseDigestAuth() {
+    public Boolean getHttpProxyUseDigestAuth() {
         return httpProxyUseDigestAuth;
     }
 
-    public void setHttpProxyUseDigestAuth(boolean httpProxyUseDigestAuth) {
+    public void setHttpProxyUseDigestAuth(Boolean httpProxyUseDigestAuth) {
         this.httpProxyUseDigestAuth = httpProxyUseDigestAuth;
     }
 

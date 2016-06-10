@@ -60,7 +60,7 @@ public class PropertiesComponentConfiguration {
     /**
      * Whether or not to cache loaded properties. The default value is true.
      */
-    private boolean cache;
+    private Boolean cache = false;
     /**
      * Optional prefix prepended to property names before resolution.
      */
@@ -74,12 +74,12 @@ public class PropertiesComponentConfiguration {
      * propertyPrefix and propertySuffix before falling back the plain property
      * name specified. If false only the augmented property name is searched.
      */
-    private boolean fallbackToUnaugmentedProperty;
+    private Boolean fallbackToUnaugmentedProperty = false;
     /**
      * Whether to silently ignore if a location cannot be located such as a
      * properties file not found.
      */
-    private boolean ignoreMissingLocation;
+    private Boolean ignoreMissingLocation = false;
     /**
      * Sets the value of the prefix token used to identify properties to
      * replace. Setting a value of null restores the default token (link link
@@ -147,11 +147,11 @@ public class PropertiesComponentConfiguration {
         this.propertiesParser = propertiesParser;
     }
 
-    public boolean isCache() {
+    public Boolean getCache() {
         return cache;
     }
 
-    public void setCache(boolean cache) {
+    public void setCache(Boolean cache) {
         this.cache = cache;
     }
 
@@ -171,20 +171,20 @@ public class PropertiesComponentConfiguration {
         this.propertySuffix = propertySuffix;
     }
 
-    public boolean isFallbackToUnaugmentedProperty() {
+    public Boolean getFallbackToUnaugmentedProperty() {
         return fallbackToUnaugmentedProperty;
     }
 
     public void setFallbackToUnaugmentedProperty(
-            boolean fallbackToUnaugmentedProperty) {
+            Boolean fallbackToUnaugmentedProperty) {
         this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
     }
 
-    public boolean isIgnoreMissingLocation() {
+    public Boolean getIgnoreMissingLocation() {
         return ignoreMissingLocation;
     }
 
-    public void setIgnoreMissingLocation(boolean ignoreMissingLocation) {
+    public void setIgnoreMissingLocation(Boolean ignoreMissingLocation) {
         this.ignoreMissingLocation = ignoreMissingLocation;
     }
 

@@ -54,7 +54,7 @@ public class XMLSecurityDataFormatConfiguration {
      * the contents of the XML Element false = Element Level true = Element
      * Content Level
      */
-    private Boolean secureTagContents;
+    private Boolean secureTagContents = false;
     /**
      * The cipher algorithm to be used for encryption/decryption of the
      * asymmetric key. The available choices are: XMLCipher.RSA_v1dot5
@@ -96,7 +96,7 @@ public class XMLSecurityDataFormatConfiguration {
      * Whether to add the public key used to encrypt the session key as a
      * KeyValue in the EncryptedKey structure or not.
      */
-    private Boolean addKeyValueForEncryptedKey;
+    private Boolean addKeyValueForEncryptedKey = true;
 
     public String getXmlCipherAlgorithm() {
         return xmlCipherAlgorithm;

@@ -33,7 +33,7 @@ public class QuartzComponentConfiguration {
      * Whether or not the scheduler should be auto started. This options is
      * default true
      */
-    private boolean autoStartScheduler;
+    private Boolean autoStartScheduler = false;
     /**
      * Seconds to wait before starting the quartz scheduler.
      */
@@ -42,12 +42,12 @@ public class QuartzComponentConfiguration {
      * Whether to prefix the quartz job with the endpoint id. This option is
      * default false.
      */
-    private boolean prefixJobNameWithEndpointId;
+    private Boolean prefixJobNameWithEndpointId = false;
     /**
      * Whether to enable Quartz JMX which allows to manage the Quartz scheduler
      * from JMX. This options is default true
      */
-    private boolean enableJmx;
+    private Boolean enableJmx = false;
     /**
      * Properties to configure the Quartz scheduler.
      */
@@ -63,7 +63,7 @@ public class QuartzComponentConfiguration {
      * to false to reuse Quartz scheduler instances between multiple
      * CamelContext's.
      */
-    private boolean prefixInstanceName;
+    private Boolean prefixInstanceName = false;
     /**
      * To use the custom SchedulerFactory which is used to create the Scheduler.
      */
@@ -74,11 +74,11 @@ public class QuartzComponentConfiguration {
      */
     private Scheduler scheduler;
 
-    public boolean isAutoStartScheduler() {
+    public Boolean getAutoStartScheduler() {
         return autoStartScheduler;
     }
 
-    public void setAutoStartScheduler(boolean autoStartScheduler) {
+    public void setAutoStartScheduler(Boolean autoStartScheduler) {
         this.autoStartScheduler = autoStartScheduler;
     }
 
@@ -90,20 +90,20 @@ public class QuartzComponentConfiguration {
         this.startDelayedSeconds = startDelayedSeconds;
     }
 
-    public boolean isPrefixJobNameWithEndpointId() {
+    public Boolean getPrefixJobNameWithEndpointId() {
         return prefixJobNameWithEndpointId;
     }
 
     public void setPrefixJobNameWithEndpointId(
-            boolean prefixJobNameWithEndpointId) {
+            Boolean prefixJobNameWithEndpointId) {
         this.prefixJobNameWithEndpointId = prefixJobNameWithEndpointId;
     }
 
-    public boolean isEnableJmx() {
+    public Boolean getEnableJmx() {
         return enableJmx;
     }
 
-    public void setEnableJmx(boolean enableJmx) {
+    public void setEnableJmx(Boolean enableJmx) {
         this.enableJmx = enableJmx;
     }
 
@@ -123,11 +123,11 @@ public class QuartzComponentConfiguration {
         this.propertiesFile = propertiesFile;
     }
 
-    public boolean isPrefixInstanceName() {
+    public Boolean getPrefixInstanceName() {
         return prefixInstanceName;
     }
 
-    public void setPrefixInstanceName(boolean prefixInstanceName) {
+    public void setPrefixInstanceName(Boolean prefixInstanceName) {
         this.prefixInstanceName = prefixInstanceName;
     }
 

@@ -59,7 +59,7 @@ public class AhcComponentConfiguration {
      * the incoming data from the request to Java and that can be a potential
      * security risk.
      */
-    private boolean allowJavaSerializedObject;
+    private Boolean allowJavaSerializedObject = false;
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
@@ -99,11 +99,11 @@ public class AhcComponentConfiguration {
         this.sslContextParameters = sslContextParameters;
     }
 
-    public boolean isAllowJavaSerializedObject() {
+    public Boolean getAllowJavaSerializedObject() {
         return allowJavaSerializedObject;
     }
 
-    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+    public void setAllowJavaSerializedObject(Boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 

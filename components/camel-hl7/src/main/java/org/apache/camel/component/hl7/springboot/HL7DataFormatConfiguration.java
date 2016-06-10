@@ -29,7 +29,7 @@ public class HL7DataFormatConfiguration {
     /**
      * Whether to validate the HL7 message Is by default true.
      */
-    private Boolean validate;
+    private Boolean validate = true;
 
     public Boolean getValidate() {
         return validate;

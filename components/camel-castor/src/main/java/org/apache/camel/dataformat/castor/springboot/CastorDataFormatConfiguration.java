@@ -33,7 +33,7 @@ public class CastorDataFormatConfiguration {
     /**
      * Whether validation is turned on or off. Is by default true.
      */
-    private Boolean validation;
+    private Boolean validation = true;
     /**
      * Encoding to use when marshalling an Object to XML. Is by default UTF-8
      */

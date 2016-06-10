@@ -35,7 +35,7 @@ public class JacksonDataFormatConfiguration {
     /**
      * To enable pretty printing output nicely formatted. Is by default false.
      */
-    private Boolean prettyPrint;
+    private Boolean prettyPrint = false;
     /**
      * Which json library to use such. Is by default xstream
      */
@@ -60,7 +60,7 @@ public class JacksonDataFormatConfiguration {
      * Used for JMS users to allow the JMSType header from the JMS spec to
      * specify a FQN classname to use to unmarshal to.
      */
-    private Boolean allowJmsType;
+    private Boolean allowJmsType = false;
     /**
      * Refers to a custom collection type to lookup in the registry to use. This
      * option should rarely be used but allows to use different collection types
@@ -70,12 +70,12 @@ public class JacksonDataFormatConfiguration {
     /**
      * To unarmshal to a List of Map or a List of Pojo.
      */
-    private Boolean useList;
+    private Boolean useList = false;
     /**
      * Whether to enable the JAXB annotations module when using jackson. When
      * enabled then JAXB annotations can be used by Jackson.
      */
-    private Boolean enableJaxbAnnotationModule;
+    private Boolean enableJaxbAnnotationModule = false;
     /**
      * To use custom Jackson modules com.fasterxml.jackson.databind.Module
      * specified as a String with FQN class names. Multiple classes can be

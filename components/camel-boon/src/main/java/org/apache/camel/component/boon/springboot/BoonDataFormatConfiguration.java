@@ -33,7 +33,7 @@ public class BoonDataFormatConfiguration {
     /**
      * To unarmshal to a List of Map or a List of Pojo.
      */
-    private Boolean useList;
+    private Boolean useList = false;
 
     public String getUnmarshalTypeName() {
         return unmarshalTypeName;

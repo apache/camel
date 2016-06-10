@@ -29,7 +29,7 @@ public class UniVocityCsvDataFormatConfiguration {
     /**
      * Whether or not all values must be quoted when writing them.
      */
-    private Boolean quoteAllFields;
+    private Boolean quoteAllFields = false;
     /**
      * The quote symbol.
      */
@@ -49,28 +49,28 @@ public class UniVocityCsvDataFormatConfiguration {
     /**
      * Whether or not the empty lines must be ignored. The default value is true
      */
-    private Boolean skipEmptyLines;
+    private Boolean skipEmptyLines = true;
     /**
      * Whether or not the trailing white spaces must ignored. The default value
      * is true
      */
-    private Boolean ignoreTrailingWhitespaces;
+    private Boolean ignoreTrailingWhitespaces = true;
     /**
      * Whether or not the leading white spaces must be ignored. The default
      * value is true
      */
-    private Boolean ignoreLeadingWhitespaces;
+    private Boolean ignoreLeadingWhitespaces = true;
     /**
      * Whether or not the headers are disabled. When defined this option
      * explicitly sets the headers as null which indicates that there is no
      * header. The default value is false
      */
-    private Boolean headersDisabled;
+    private Boolean headersDisabled = false;
     /**
      * Whether or not the header must be read in the first line of the test
      * document The default value is false
      */
-    private Boolean headerExtractionEnabled;
+    private Boolean headerExtractionEnabled = false;
     /**
      * The maximum number of record to read.
      */
@@ -97,13 +97,13 @@ public class UniVocityCsvDataFormatConfiguration {
      * on the fly or if all the lines must be read at one. The default value is
      * false
      */
-    private Boolean lazyLoad;
+    private Boolean lazyLoad = false;
     /**
      * Whether the unmarshalling should produce maps for the lines values
      * instead of lists. It requires to have header (either defined or
      * collected). The default value is false
      */
-    private Boolean asMap;
+    private Boolean asMap = false;
 
     public Boolean getQuoteAllFields() {
         return quoteAllFields;

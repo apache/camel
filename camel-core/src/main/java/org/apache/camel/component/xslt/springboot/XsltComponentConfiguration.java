@@ -54,13 +54,13 @@ public class XsltComponentConfiguration {
      * forced to reload at runtime via JMX using the clearCachedStylesheet
      * operation.
      */
-    private boolean contentCache;
+    private Boolean contentCache = true;
     /**
      * Whether to use Saxon as the transformerFactoryClass. If enabled then the
      * class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to
      * the classpath.
      */
-    private boolean saxon;
+    private Boolean saxon = false;
 
     public XmlConverter getXmlConverter() {
         return xmlConverter;
@@ -86,19 +86,19 @@ public class XsltComponentConfiguration {
         this.uriResolver = uriResolver;
     }
 
-    public boolean isContentCache() {
+    public Boolean getContentCache() {
         return contentCache;
     }
 
-    public void setContentCache(boolean contentCache) {
+    public void setContentCache(Boolean contentCache) {
         this.contentCache = contentCache;
     }
 
-    public boolean isSaxon() {
+    public Boolean getSaxon() {
         return saxon;
     }
 
-    public void setSaxon(boolean saxon) {
+    public void setSaxon(Boolean saxon) {
         this.saxon = saxon;
     }
 }

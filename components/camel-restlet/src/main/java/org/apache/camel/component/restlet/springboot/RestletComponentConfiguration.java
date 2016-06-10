@@ -110,7 +110,7 @@ public class RestletComponentConfiguration {
      * request input stream into a stream cache and put it into message body if
      * this option is false to support reading the stream multiple times.
      */
-    private boolean disableStreamCache;
+    private Boolean disableStreamCache = false;
     /**
      * To configure the port number for the restlet consumer routes. This allows
      * to configure this once to reuse the same port for these consumers.
@@ -253,11 +253,11 @@ public class RestletComponentConfiguration {
         this.maxQueued = maxQueued;
     }
 
-    public boolean isDisableStreamCache() {
+    public Boolean getDisableStreamCache() {
         return disableStreamCache;
     }
 
-    public void setDisableStreamCache(boolean disableStreamCache) {
+    public void setDisableStreamCache(Boolean disableStreamCache) {
         this.disableStreamCache = disableStreamCache;
     }
 

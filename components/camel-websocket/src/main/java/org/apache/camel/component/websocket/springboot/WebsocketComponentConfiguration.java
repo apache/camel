@@ -64,7 +64,7 @@ public class WebsocketComponentConfiguration {
      * If this option is true Jetty JMX support will be enabled for this
      * endpoint. See Jetty JMX support for more details.
      */
-    private boolean enableJmx;
+    private Boolean enableJmx = false;
     /**
      * To set a value for minimum number of threads in server thread pool.
      * MaxThreads/minThreads or threadPool fields are required due to switch to
@@ -141,11 +141,11 @@ public class WebsocketComponentConfiguration {
         this.sslKeystore = sslKeystore;
     }
 
-    public boolean isEnableJmx() {
+    public Boolean getEnableJmx() {
         return enableJmx;
     }
 
-    public void setEnableJmx(boolean enableJmx) {
+    public void setEnableJmx(Boolean enableJmx) {
         this.enableJmx = enableJmx;
     }
 

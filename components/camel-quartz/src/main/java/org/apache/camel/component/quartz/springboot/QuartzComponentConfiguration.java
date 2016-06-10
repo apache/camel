@@ -54,12 +54,12 @@ public class QuartzComponentConfiguration {
      * Whether or not the scheduler should be auto started. This options is
      * default true
      */
-    private boolean autoStartScheduler;
+    private Boolean autoStartScheduler = false;
     /**
      * Whether to enable Quartz JMX which allows to manage the Quartz scheduler
      * from JMX. This options is default true
      */
-    private boolean enableJmx;
+    private Boolean enableJmx = false;
 
     public SchedulerFactory getFactory() {
         return factory;
@@ -101,19 +101,19 @@ public class QuartzComponentConfiguration {
         this.startDelayedSeconds = startDelayedSeconds;
     }
 
-    public boolean isAutoStartScheduler() {
+    public Boolean getAutoStartScheduler() {
         return autoStartScheduler;
     }
 
-    public void setAutoStartScheduler(boolean autoStartScheduler) {
+    public void setAutoStartScheduler(Boolean autoStartScheduler) {
         this.autoStartScheduler = autoStartScheduler;
     }
 
-    public boolean isEnableJmx() {
+    public Boolean getEnableJmx() {
         return enableJmx;
     }
 
-    public void setEnableJmx(boolean enableJmx) {
+    public void setEnableJmx(Boolean enableJmx) {
         this.enableJmx = enableJmx;
     }
 }
