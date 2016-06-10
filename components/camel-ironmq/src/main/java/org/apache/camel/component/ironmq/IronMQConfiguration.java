@@ -121,7 +121,7 @@ public class IronMQConfiguration {
     }
 
     /**
-     * IronMq Cloud url. Urls for public clusters: mq-aws-us-east-1-1.iron.io (US), mq-aws-eu-west-1-1.iron.io (EU)
+     * IronMq Cloud url. Urls for public clusters: https://mq-aws-us-east-1-1.iron.io (US) and https://mq-aws-eu-west-1-1.iron.io (EU)
      */
     public void setIronMQCloud(String ironMQCloud) {
         this.ironMQCloud = ironMQCloud;

@@ -54,7 +54,7 @@ The ironmq component supports 31 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | queueName | common |  | String | *Required* The name of the IronMQ queue
 | client | common |  | Client | Reference to a io.iron.ironmq.Client in the Registry.
-| ironMQCloud | common | https://mq-aws-us-east-1-1.iron.io | String | IronMq Cloud url. Urls for public clusters: mq-aws-us-east-1-1.iron.io (US) mq-aws-eu-west-1-1.iron.io (EU)
+| ironMQCloud | common | https://mq-aws-us-east-1-1.iron.io | String | IronMq Cloud url. Urls for public clusters: https://mq-aws-us-east-1-1.iron.io (US) and https://mq-aws-eu-west-1-1.iron.io (EU)
 | preserveHeaders | common | false | boolean | Should message headers be preserved when publishing messages. This will add the Camel headers to the Iron MQ message as a json payload with a header list and a message body. Useful when Camel is both consumer and producer.
 | projectId | common |  | String | IronMQ projectId
 | token | common |  | String | IronMQ token
@@ -142,8 +142,8 @@ Consume 50 messages pr. poll from the queue 'testqueue' on aws eu, and save the 
 
 [source,java]
 --------------------------------------------------
-from("ironmq:testqueue?ironMQCloud=mq-aws-eu-west-1-1.iron.io&projectId=myIronMQProjectid&token=myIronMQToken&maxMessagesPerPoll=50")
-  .to("file:somefolder);
+from("ironmq:testqueue?ironMQCloud=https://mq-aws-eu-west-1-1.iron.io&projectId=myIronMQProjectid&token=myIronMQToken&maxMessagesPerPoll=50")
+  .to("file:somefolder");
 --------------------------------------------------
 
 Producer example
@@ -152,6 +152,6 @@ Dequeue from activemq jms and enqueue the messages on IronMQ.
 
 [source,java]
 --------------------------------------------------
-from("activemq:foo)
+from("activemq:foo")
   .to("ironmq:testqueue?projectId=myIronMQProjectid&token=myIronMQToken");
 --------------------------------------------------
