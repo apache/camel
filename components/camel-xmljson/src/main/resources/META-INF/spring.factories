@@ -16,6 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.avro.springboot.AvroComponentAutoConfiguration,\
-org.apache.camel.dataformat.avro.springboot.AvroDataFormatAutoConfiguration
-
+org.apache.camel.dataformat.xmljson.springboot.XmlJsonDataFormatAutoConfiguration

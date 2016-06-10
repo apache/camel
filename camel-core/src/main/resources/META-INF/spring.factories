@@ -24,7 +24,15 @@ org.apache.camel.component.scheduler.springboot.SchedulerComponentAutoConfigurat
 org.apache.camel.component.seda.springboot.SedaComponentAutoConfiguration,\
 org.apache.camel.component.stub.springboot.StubComponentAutoConfiguration,\
 org.apache.camel.component.validator.springboot.ValidatorComponentAutoConfiguration,\
-org.apache.camel.component.xslt.springboot.XsltComponentAutoConfiguration
+org.apache.camel.component.xslt.springboot.XsltComponentAutoConfiguration,\
+org.apache.camel.impl.springboot.GzipDataFormatAutoConfiguration,\
+org.apache.camel.impl.springboot.SerializationDataFormatAutoConfiguration,\
+org.apache.camel.impl.springboot.StringDataFormatAutoConfiguration,\
+org.apache.camel.impl.springboot.ZipDataFormatAutoConfiguration
+
+
+
+
 
 
 
