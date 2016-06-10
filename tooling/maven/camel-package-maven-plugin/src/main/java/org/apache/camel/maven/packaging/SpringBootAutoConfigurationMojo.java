@@ -203,12 +203,24 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
             String type = option.getJavaType();
             type = type.replaceAll("\\<\\?\\>", "");
+            // favor using Boolean types over boolean with Spring Boot
+            if ("boolean".equals(type)) {
+                type = "java.lang.Boolean";
+            }
+
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
             if ("true".equals(option.getDeprecated())) {
                 prop.getField().addAnnotation(Deprecated.class);
             }
             if (!Strings.isBlank(option.getDescription())) {
                 prop.getField().getJavaDoc().setFullText(option.getDescription());
+            }
+            if (!Strings.isBlank(option.getDefaultValue())) {
+                if ("java.lang.String".equals(option.getJavaType())) {
+                    prop.getField().setStringInitializer(option.getDefaultValue());
+                } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
+                    prop.getField().setLiteralInitializer(option.getDefaultValue());
+                }
             }
         }
 
@@ -266,12 +278,24 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
             String type = option.getJavaType();
             type = type.replaceAll("\\<\\?\\>", "");
+            // favor using Boolean types over boolean with Spring Boot
+            if ("boolean".equals(type)) {
+                type = "java.lang.Boolean";
+            }
+
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
             if ("true".equals(option.getDeprecated())) {
                 prop.getField().addAnnotation(Deprecated.class);
             }
             if (!Strings.isBlank(option.getDescription())) {
                 prop.getField().getJavaDoc().setFullText(option.getDescription());
+            }
+            if (!Strings.isBlank(option.getDefaultValue())) {
+                if ("java.lang.String".equals(option.getType())) {
+                    prop.getField().setStringInitializer(option.getDefaultValue());
+                } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
+                    prop.getField().setLiteralInitializer(option.getDefaultValue());
+                }
             }
         }
 
@@ -734,6 +758,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setJavaType(getSafeValue("javaType", row));
             option.setDeprecated(getSafeValue("deprecated", row));
             option.setDescription(getSafeValue("description", row));
+            option.setDefaultValue(getSafeValue("defaultValue", row));
             component.addComponentOption(option);
         }
 
@@ -782,6 +807,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setJavaType(getSafeValue("javaType", row));
             option.setDeprecated(getSafeValue("deprecated", row));
             option.setDescription(getSafeValue("description", row));
+            option.setDefaultValue(getSafeValue("defaultValue", row));
             dataFormat.addDataFormatOption(option);
         }
 

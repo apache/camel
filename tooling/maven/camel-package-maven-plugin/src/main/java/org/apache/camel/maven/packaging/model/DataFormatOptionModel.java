@@ -24,6 +24,7 @@ public class DataFormatOptionModel {
     private String javaType;
     private String deprecated;
     private String description;
+    private String defaultValue;
 
     public String getName() {
         return name;
@@ -71,6 +72,14 @@ public class DataFormatOptionModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     public String getShortJavaType() {
