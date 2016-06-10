@@ -43,7 +43,7 @@ public class DumpModelAsXmlAggregateRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").routeId("myRoute")
                     .to("log:input")
-                    .aggregate(header("userId"),new GroupedExchangeAggregationStrategy()).completionSize(3)
+                    .aggregate(header("userId"), new GroupedExchangeAggregationStrategy()).completionSize(3)
                     .to("mock:aggregate")
                     .end()
                     .to("mock:result");
