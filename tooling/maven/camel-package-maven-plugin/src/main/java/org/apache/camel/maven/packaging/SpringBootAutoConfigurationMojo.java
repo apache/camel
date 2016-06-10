@@ -62,6 +62,9 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  */
 public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
+    // xml beans does not work with Spring Boot APT compiler plugin
+    private static final String[] EXCLUDE_DATAFORMATS = {"xmlBeans"};
+
     /**
      * The maven project.
      *
@@ -154,6 +157,13 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 String json = loadDataFormaatJson(jsonFiles, dataFormatName);
                 if (json != null) {
                     DataFormatModel model = generateDataFormatModel(dataFormatName, json);
+
+                    // should we skip the data format?
+                    for (String exclude : EXCLUDE_DATAFORMATS) {
+                        if (exclude.equals(model.getName())) {
+                            return;
+                        }
+                    }
 
                     // only create source code if the component has options that can be used in auto configuration
                     if (!model.getDataFormatOptions().isEmpty()) {
