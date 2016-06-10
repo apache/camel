@@ -202,7 +202,7 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                     throw e;
                 }
                 final String location = e.getResponse().getResponseHeaderValue("Location");
-                redirectQuery = location.substring(location.indexOf('?') + 1);
+                redirectQuery = new URL(location).getQuery();
             }
             final Map<String, String> params = new HashMap<String, String>();
             final Matcher matcher = QUERY_PARAM_PATTERN.matcher(redirectQuery);
