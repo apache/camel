@@ -51,7 +51,7 @@ public final class Mina2Helper {
         // thread hanging forever
         LOG.trace("Waiting for write to complete for body: {} using session: {}", body, session);
         if (!future.awaitUninterruptibly(10000L)) {
-            String message = "Cannot write body: " + body + " using session: " + session;
+            String message = "Cannot write body: " + body.getClass().getCanonicalName() + " using session: " + session;
             if (future.getException() != null) {
                 throw new CamelExchangeException(message, exchange, future.getException());
             } else {
