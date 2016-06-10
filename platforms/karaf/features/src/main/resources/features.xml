@@ -446,13 +446,13 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-afterburner/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-common/${netty41-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty41-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty41-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty41-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty41-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty41-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty41-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
     <bundle dependency='true'>mvn:org.mousio/etcd4j/${etcd4j-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-etcd/${project.version}</bundle>
   </feature>
