@@ -70,7 +70,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
     private final StaxConverter staxConverter = new StaxConverter();
     private TypeConverter parentTypeConverter;
     private boolean prettyPrint = true;
-    private boolean objectFactory = true;
+    private boolean objectFactory = false;
     private CamelContext camelContext;
 
     public boolean isPrettyPrint() {
@@ -154,10 +154,12 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
                 if (hasXmlRootElement(value.getClass())) {
                     return marshall(type, exchange, value, null);
                 }
-                CamelContext context = exchange != null ? exchange.getContext() : camelContext;
-                Method objectFactoryMethod = JaxbHelper.getJaxbElementFactoryMethod(context, value.getClass());
-                if (objectFactoryMethod != null) {
-                    return marshall(type, exchange, value, objectFactoryMethod);
+                if (isObjectFactory()) {
+                    CamelContext context = exchange != null ? exchange.getContext() : camelContext;
+                    Method objectFactoryMethod = JaxbHelper.getJaxbElementFactoryMethod(context, value.getClass());
+                    if (objectFactoryMethod != null) {
+                        return marshall(type, exchange, value, objectFactoryMethod);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -211,7 +213,11 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
     }
 
     protected <T> boolean isJaxbType(Class<T> type) {
-        return hasXmlRootElement(type) || JaxbHelper.getJaxbElementFactoryMethod(camelContext, type) != null;
+        if (isObjectFactory()) {
+            return hasXmlRootElement(type) || JaxbHelper.getJaxbElementFactoryMethod(camelContext, type) != null;
+        } else {
+        	return hasXmlRootElement(type);
+        }
     }
 
     private <T> T castJaxbType(Object o, Class<T> type) {

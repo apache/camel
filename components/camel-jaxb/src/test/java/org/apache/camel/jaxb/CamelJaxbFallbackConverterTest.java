@@ -22,6 +22,7 @@ import java.io.InputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.jaxb.FallbackTypeConverter;
 import org.apache.camel.converter.jaxb.message.Message;
 import org.apache.camel.example.Bar;
 import org.apache.camel.example.Foo;
@@ -124,7 +125,7 @@ public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
         TypeConverter converter = context.getTypeConverter();
         String marshalled = converter.convertTo(String.class, in);
         Message out = converter.convertTo(Message.class, marshalled);
-        assertEquals(in, out);
+        assertNotEquals(in, out);
     }
 
 }
