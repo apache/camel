@@ -31,10 +31,6 @@ public class StringDataFormatConfiguration {
      * charset.
      */
     private String charset;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getCharset() {
         return charset;
@@ -42,13 +38,5 @@ public class StringDataFormatConfiguration {
 
     public void setCharset(String charset) {
         this.charset = charset;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

@@ -34,10 +34,6 @@ public class JibxDataFormatConfiguration {
      * To use a custom binding factory
      */
     private String bindingName;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getUnmarshallClass() {
         return unmarshallClass;
@@ -53,13 +49,5 @@ public class JibxDataFormatConfiguration {
 
     public void setBindingName(String bindingName) {
         this.bindingName = bindingName;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

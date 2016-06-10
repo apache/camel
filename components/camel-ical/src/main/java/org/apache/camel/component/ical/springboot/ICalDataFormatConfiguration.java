@@ -30,10 +30,6 @@ public class ICalDataFormatConfiguration {
      * Whether to validate.
      */
     private Boolean validating;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public Boolean getValidating() {
         return validating;
@@ -41,13 +37,5 @@ public class ICalDataFormatConfiguration {
 
     public void setValidating(Boolean validating) {
         this.validating = validating;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

@@ -104,10 +104,6 @@ public class JaxbDataFormatConfiguration {
      * To define the location of the namespaceless schema
      */
     private String noNamespaceSchemaLocation;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getContextPath() {
         return contextPath;
@@ -227,13 +223,5 @@ public class JaxbDataFormatConfiguration {
 
     public void setNoNamespaceSchemaLocation(String noNamespaceSchemaLocation) {
         this.noNamespaceSchemaLocation = noNamespaceSchemaLocation;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

@@ -139,6 +139,39 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
+    private void executeDataFormat() throws MojoExecutionException, MojoFailureException {
+        // find the data format names
+        List<String> dataFormatNames = findDataFormatNames();
+
+        final Set<File> jsonFiles = new TreeSet<File>();
+        // we can reuse the component model filter
+        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+
+        // create auto configuration for the components
+        if (!dataFormatNames.isEmpty()) {
+            getLog().debug("Found " + dataFormatNames.size() + " dataformats");
+            for (String dataFormatName : dataFormatNames) {
+                String json = loadDataFormaatJson(jsonFiles, dataFormatName);
+                if (json != null) {
+                    DataFormatModel model = generateDataFormatModel(dataFormatName, json);
+
+                    // only create source code if the component has options that can be used in auto configuration
+                    if (!model.getDataFormatOptions().isEmpty()) {
+
+                        // use springboot as sub package name so the code is not in normal
+                        // package so the Spring Boot JARs can be optional at runtime
+                        int pos = model.getJavaType().lastIndexOf(".");
+                        String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+                        createDataFormatConfigurationSource(pkg, model);
+                        createDataFormatAutoConfigurationSource(pkg, model);
+                        createDataFormatSpringFactorySource(pkg, model);
+                    }
+                }
+            }
+        }
+    }
+
     private void createComponentConfigurationSource(String packageName, ComponentModel model) throws MojoFailureException {
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
@@ -216,6 +249,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
         for (DataFormatOptionModel option : model.getDataFormatOptions()) {
+            // skip option with name id in data format as we do not need that
+            if ("id".equals(option.getName())) {
+                continue;
+            }
             // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
             String type = option.getJavaType();
             type = type.replaceAll("\\<\\?\\>", "");
@@ -400,39 +437,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
-    private void executeDataFormat() throws MojoExecutionException, MojoFailureException {
-        // find the data format names
-        List<String> dataFormatNames = findDataFormatNames();
-
-        final Set<File> jsonFiles = new TreeSet<File>();
-        // we can reuse the component model filter
-        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
-
-        // create auto configuration for the components
-        if (!dataFormatNames.isEmpty()) {
-            getLog().debug("Found " + dataFormatNames.size() + " dataformats");
-            for (String dataFormatName : dataFormatNames) {
-                String json = loadDataFormaatJson(jsonFiles, dataFormatName);
-                if (json != null) {
-                    DataFormatModel model = generateDataFormatModel(dataFormatName, json);
-
-                    // only create source code if the component has options that can be used in auto configuration
-                    if (!model.getDataFormatOptions().isEmpty()) {
-
-                        // use springboot as sub package name so the code is not in normal
-                        // package so the Spring Boot JARs can be optional at runtime
-                        int pos = model.getJavaType().lastIndexOf(".");
-                        String pkg = model.getJavaType().substring(0, pos) + ".springboot";
-
-                        createDataFormatConfigurationSource(pkg, model);
-                        createDataFormatAutoConfigurationSource(pkg, model);
-                        createDataFormatSpringFactorySource(pkg, model);
-                    }
-                }
-            }
-        }
-    }
-
     private void createComponentSpringFactorySource(String packageName, ComponentModel model) throws MojoFailureException {
         StringBuilder sb = new StringBuilder();
         sb.append("org.springframework.boot.autoconfigure.EnableAutoConfiguration=\\\n");
@@ -583,7 +587,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("component.setCamelContext(camelContext);\n");
         sb.append("\n");
         sb.append("Map<String, Object> parameters = new HashMap<>();\n");
-        sb.append("IntrospectionSupport.getProperties(configuration, parameters, null);\n");
+        sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
         sb.append("\n");
         sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), component, parameters);\n");
         sb.append("\n");
@@ -599,7 +603,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("}\n");
         sb.append("\n");
         sb.append("Map<String, Object> parameters = new HashMap<>();\n");
-        sb.append("IntrospectionSupport.getProperties(configuration, parameters, null);\n");
+        sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
         sb.append("\n");
         sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), dataformat, parameters);\n");
         sb.append("\n");

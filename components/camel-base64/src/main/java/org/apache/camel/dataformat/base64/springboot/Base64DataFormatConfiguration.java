@@ -41,10 +41,6 @@ public class Base64DataFormatConfiguration {
      * modes. Is by default false.
      */
     private Boolean urlSafe;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public Integer getLineLength() {
         return lineLength;
@@ -68,13 +64,5 @@ public class Base64DataFormatConfiguration {
 
     public void setUrlSafe(Boolean urlSafe) {
         this.urlSafe = urlSafe;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

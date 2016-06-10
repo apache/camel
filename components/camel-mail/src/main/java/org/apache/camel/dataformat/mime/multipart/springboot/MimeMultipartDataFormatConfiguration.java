@@ -51,10 +51,6 @@ public class MimeMultipartDataFormatConfiguration {
      * binary (true) or Base-64 encoded (false) Default is false.
      */
     private Boolean binaryContent;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getMultipartSubType() {
         return multipartSubType;
@@ -94,13 +90,5 @@ public class MimeMultipartDataFormatConfiguration {
 
     public void setBinaryContent(Boolean binaryContent) {
         this.binaryContent = binaryContent;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

@@ -25,17 +25,4 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "camel.dataformat.gzip")
 public class GzipDataFormatConfiguration {
-
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 }

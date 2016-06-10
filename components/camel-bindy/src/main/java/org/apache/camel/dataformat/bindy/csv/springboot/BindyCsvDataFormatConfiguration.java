@@ -40,10 +40,6 @@ public class BindyCsvDataFormatConfiguration {
      * the JVM platform default locale then use the name default
      */
     private String locale;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public BindyType getType() {
         return type;
@@ -67,13 +63,5 @@ public class BindyCsvDataFormatConfiguration {
 
     public void setLocale(String locale) {
         this.locale = locale;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

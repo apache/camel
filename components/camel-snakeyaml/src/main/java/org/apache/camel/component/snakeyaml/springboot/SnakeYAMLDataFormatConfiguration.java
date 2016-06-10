@@ -60,10 +60,6 @@ public class SnakeYAMLDataFormatConfiguration {
      * style.
      */
     private Boolean prettyFlow;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public YAMLLibrary getLibrary() {
         return library;
@@ -128,13 +124,5 @@ public class SnakeYAMLDataFormatConfiguration {
 
     public void setPrettyFlow(Boolean prettyFlow) {
         this.prettyFlow = prettyFlow;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

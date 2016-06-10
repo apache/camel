@@ -30,10 +30,6 @@ public class HL7DataFormatConfiguration {
      * Whether to validate the HL7 message Is by default true.
      */
     private Boolean validate;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public Boolean getValidate() {
         return validate;
@@ -41,13 +37,5 @@ public class HL7DataFormatConfiguration {
 
     public void setValidate(Boolean validate) {
         this.validate = validate;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

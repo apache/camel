@@ -123,10 +123,6 @@ public class CsvDataFormatConfiguration {
      * Refers to a custom CsvRecordConverter to lookup from the registry to use.
      */
     private String recordConverterRef;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getFormatRef() {
         return formatRef;
@@ -310,13 +306,5 @@ public class CsvDataFormatConfiguration {
 
     public void setRecordConverterRef(String recordConverterRef) {
         this.recordConverterRef = recordConverterRef;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

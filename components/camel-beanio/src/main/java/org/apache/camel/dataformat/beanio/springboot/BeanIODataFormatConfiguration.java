@@ -52,10 +52,6 @@ public class BeanIODataFormatConfiguration {
      * The charset to use. Is by default the JVM platform default charset.
      */
     private String encoding;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getMapping() {
         return mapping;
@@ -103,13 +99,5 @@ public class BeanIODataFormatConfiguration {
 
     public void setEncoding(String encoding) {
         this.encoding = encoding;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

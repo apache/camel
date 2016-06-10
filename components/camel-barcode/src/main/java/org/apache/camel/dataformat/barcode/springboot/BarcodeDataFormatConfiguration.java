@@ -42,10 +42,6 @@ public class BarcodeDataFormatConfiguration {
      * Barcode format such as QR-Code
      */
     private String barcodeFormat;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public Integer getWidth() {
         return width;
@@ -77,13 +73,5 @@ public class BarcodeDataFormatConfiguration {
 
     public void setBarcodeFormat(String barcodeFormat) {
         this.barcodeFormat = barcodeFormat;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

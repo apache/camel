@@ -62,10 +62,6 @@ public class FlatpackDataFormatConfiguration {
      * characters.
      */
     private Boolean ignoreExtraColumns;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getParserFactoryRef() {
         return parserFactoryRef;
@@ -129,13 +125,5 @@ public class FlatpackDataFormatConfiguration {
 
     public void setIgnoreExtraColumns(Boolean ignoreExtraColumns) {
         this.ignoreExtraColumns = ignoreExtraColumns;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

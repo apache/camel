@@ -84,10 +84,6 @@ public class XStreamDataFormatConfiguration {
      * tag.
      */
     private Map<java.lang.String, java.lang.String[]> implicitCollections;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getPermissions() {
         return permissions;
@@ -159,13 +155,5 @@ public class XStreamDataFormatConfiguration {
 
     public void setImplicitCollections(Map<String, String[]> implicitCollections) {
         this.implicitCollections = implicitCollections;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

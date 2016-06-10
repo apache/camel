@@ -32,10 +32,6 @@ public class TarFileDataFormatConfiguration {
      * in a streaming mode.
      */
     private Boolean usingIterator;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public Boolean getUsingIterator() {
         return usingIterator;
@@ -43,13 +39,5 @@ public class TarFileDataFormatConfiguration {
 
     public void setUsingIterator(Boolean usingIterator) {
         this.usingIterator = usingIterator;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

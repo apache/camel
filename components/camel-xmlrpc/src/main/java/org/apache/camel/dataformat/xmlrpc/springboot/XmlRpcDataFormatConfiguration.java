@@ -30,10 +30,6 @@ public class XmlRpcDataFormatConfiguration {
      * Whether to unmarshal request or response Is by default false
      */
     private Boolean request;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public Boolean getRequest() {
         return request;
@@ -41,13 +37,5 @@ public class XmlRpcDataFormatConfiguration {
 
     public void setRequest(Boolean request) {
         this.request = request;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

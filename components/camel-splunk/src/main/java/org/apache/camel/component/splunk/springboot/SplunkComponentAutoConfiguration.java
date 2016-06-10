@@ -42,7 +42,8 @@ public class SplunkComponentAutoConfiguration {
         SplunkComponent component = new SplunkComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();
-        IntrospectionSupport.getProperties(configuration, parameters, null);
+        IntrospectionSupport.getProperties(configuration, parameters, null,
+                false);
         IntrospectionSupport.setProperties(camelContext,
                 camelContext.getTypeConverter(), component, parameters);
         return component;

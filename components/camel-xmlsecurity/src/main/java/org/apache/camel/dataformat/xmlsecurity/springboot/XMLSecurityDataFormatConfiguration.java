@@ -97,10 +97,6 @@ public class XMLSecurityDataFormatConfiguration {
      * KeyValue in the EncryptedKey structure or not.
      */
     private Boolean addKeyValueForEncryptedKey;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getXmlCipherAlgorithm() {
         return xmlCipherAlgorithm;
@@ -189,13 +185,5 @@ public class XMLSecurityDataFormatConfiguration {
 
     public void setAddKeyValueForEncryptedKey(Boolean addKeyValueForEncryptedKey) {
         this.addKeyValueForEncryptedKey = addKeyValueForEncryptedKey;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

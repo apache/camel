@@ -101,10 +101,6 @@ public class UniVocityFixedWidthDataFormatConfiguration {
      * collected). The default value is false
      */
     private Boolean asMap;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public Boolean getSkipTrailingCharsUntilNewline() {
         return skipTrailingCharsUntilNewline;
@@ -233,13 +229,5 @@ public class UniVocityFixedWidthDataFormatConfiguration {
 
     public void setAsMap(Boolean asMap) {
         this.asMap = asMap;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

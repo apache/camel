@@ -101,10 +101,6 @@ public class JacksonXMLDataFormatConfiguration {
      * separated by comma
      */
     private String disableFeatures;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getXmlMapper() {
         return xmlMapper;
@@ -208,13 +204,5 @@ public class JacksonXMLDataFormatConfiguration {
 
     public void setDisableFeatures(String disableFeatures) {
         this.disableFeatures = disableFeatures;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

@@ -31,10 +31,6 @@ public class TidyMarkupDataFormatConfiguration {
      * java.lang.String. Is by default org.w3c.dom.Node
      */
     private String dataObjectType;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getDataObjectType() {
         return dataObjectType;
@@ -42,13 +38,5 @@ public class TidyMarkupDataFormatConfiguration {
 
     public void setDataObjectType(String dataObjectType) {
         this.dataObjectType = dataObjectType;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

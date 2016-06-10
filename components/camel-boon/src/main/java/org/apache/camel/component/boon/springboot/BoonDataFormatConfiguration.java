@@ -34,10 +34,6 @@ public class BoonDataFormatConfiguration {
      * To unarmshal to a List of Map or a List of Pojo.
      */
     private Boolean useList;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getUnmarshalTypeName() {
         return unmarshalTypeName;
@@ -53,13 +49,5 @@ public class BoonDataFormatConfiguration {
 
     public void setUseList(Boolean useList) {
         this.useList = useList;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

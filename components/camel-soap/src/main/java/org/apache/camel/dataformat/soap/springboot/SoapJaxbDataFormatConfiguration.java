@@ -71,10 +71,6 @@ public class SoapJaxbDataFormatConfiguration {
      * You can separate multiple schema files by using the '' character.
      */
     private String schema;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getContextPath() {
         return contextPath;
@@ -122,13 +118,5 @@ public class SoapJaxbDataFormatConfiguration {
 
     public void setSchema(String schema) {
         this.schema = schema;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

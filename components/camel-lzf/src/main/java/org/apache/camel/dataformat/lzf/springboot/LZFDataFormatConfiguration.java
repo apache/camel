@@ -30,10 +30,6 @@ public class LZFDataFormatConfiguration {
      * Enable encoding (compress) using multiple processing cores.
      */
     private Boolean usingParallelCompression;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public Boolean getUsingParallelCompression() {
         return usingParallelCompression;
@@ -41,13 +37,5 @@ public class LZFDataFormatConfiguration {
 
     public void setUsingParallelCompression(Boolean usingParallelCompression) {
         this.usingParallelCompression = usingParallelCompression;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

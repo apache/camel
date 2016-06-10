@@ -30,10 +30,6 @@ public class AvroDataFormatConfiguration {
      * Class name to use for marshal and unmarshalling
      */
     private String instanceClassName;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getInstanceClassName() {
         return instanceClassName;
@@ -41,13 +37,5 @@ public class AvroDataFormatConfiguration {
 
     public void setInstanceClassName(String instanceClassName) {
         this.instanceClassName = instanceClassName;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

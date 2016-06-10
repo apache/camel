@@ -102,10 +102,6 @@ public class XmlJsonDataFormatConfiguration {
      * for unmarshalling (JSON to XML conversion).
      */
     private String typeHints;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getEncoding() {
         return encoding;
@@ -201,13 +197,5 @@ public class XmlJsonDataFormatConfiguration {
 
     public void setTypeHints(String typeHints) {
         this.typeHints = typeHints;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

@@ -31,10 +31,6 @@ public class ZipDataFormatConfiguration {
      * 0 is no compression and 9 is best compression.
      */
     private Integer compressionLevel;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public Integer getCompressionLevel() {
         return compressionLevel;
@@ -42,13 +38,5 @@ public class ZipDataFormatConfiguration {
 
     public void setCompressionLevel(Integer compressionLevel) {
         this.compressionLevel = compressionLevel;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

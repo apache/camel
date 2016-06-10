@@ -46,10 +46,6 @@ public class CastorDataFormatConfiguration {
      * Add additional class names to Castor XmlContext
      */
     private String[] classes;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getMappingFile() {
         return mappingFile;
@@ -89,13 +85,5 @@ public class CastorDataFormatConfiguration {
 
     public void setClasses(String[] classes) {
         this.classes = classes;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

@@ -121,10 +121,6 @@ public class GsonDataFormatConfiguration {
      * org.apache.camel.xstream.permissions.
      */
     private String permissions;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getObjectMapper() {
         return objectMapper;
@@ -244,13 +240,5 @@ public class GsonDataFormatConfiguration {
 
     public void setPermissions(String permissions) {
         this.permissions = permissions;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

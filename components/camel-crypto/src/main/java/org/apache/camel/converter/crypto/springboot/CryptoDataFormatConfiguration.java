@@ -68,10 +68,6 @@ public class CryptoDataFormatConfiguration {
      * encrypted data stream. Is by default false.
      */
     private Boolean inline;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getAlgorithm() {
         return algorithm;
@@ -143,13 +139,5 @@ public class CryptoDataFormatConfiguration {
 
     public void setInline(Boolean inline) {
         this.inline = inline;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

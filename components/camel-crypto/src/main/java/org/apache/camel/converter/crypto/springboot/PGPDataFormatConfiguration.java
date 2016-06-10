@@ -119,10 +119,6 @@ public class PGPDataFormatConfiguration {
      * signature; otherwise an exception (PGPException) is thrown.
      */
     private String signatureVerificationOption;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getKeyUserid() {
         return keyUserid;
@@ -235,13 +231,5 @@ public class PGPDataFormatConfiguration {
     public void setSignatureVerificationOption(
             String signatureVerificationOption) {
         this.signatureVerificationOption = signatureVerificationOption;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

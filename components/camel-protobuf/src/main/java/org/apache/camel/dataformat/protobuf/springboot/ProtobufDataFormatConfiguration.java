@@ -30,10 +30,6 @@ public class ProtobufDataFormatConfiguration {
      * Name of class to use when unarmshalling
      */
     private String instanceClass;
-    /**
-     * Sets the value of the id property.
-     */
-    private String id;
 
     public String getInstanceClass() {
         return instanceClass;
@@ -41,13 +37,5 @@ public class ProtobufDataFormatConfiguration {
 
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }
