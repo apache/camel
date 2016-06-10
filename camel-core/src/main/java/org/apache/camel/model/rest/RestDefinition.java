@@ -590,8 +590,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      * Transforms this REST definition into a list of {@link org.apache.camel.model.RouteDefinition} which
      * Camel routing engine can add and run. This allows us to define REST services using this
      * REST DSL and turn those into regular Camel routes.
+     *
+     * @param camelContext The Camel context
      */
     public List<RouteDefinition> asRouteDefinition(CamelContext camelContext) {
+        ObjectHelper.notNull(camelContext, "CamelContext");
+
         // sanity check this rest definition do not have duplicates
         validateUniquePaths();
 
@@ -602,6 +606,26 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         for (RestConfiguration config : camelContext.getRestConfigurations()) {
             addRouteDefinition(camelContext, answer, config.getComponent());
         }
+        return answer;
+    }
+
+    /**
+     * Transforms this REST definition into a list of {@link org.apache.camel.model.RouteDefinition} which
+     * Camel routing engine can add and run. This allows us to define REST services using this
+     * REST DSL and turn those into regular Camel routes.
+     *
+     * @param camelContext        The Camel context
+     * @param restConfiguration   The rest configuration to use
+     */
+    public List<RouteDefinition> asRouteDefinition(CamelContext camelContext, RestConfiguration restConfiguration) {
+        ObjectHelper.notNull(camelContext, "CamelContext");
+        ObjectHelper.notNull(restConfiguration, "RestConfiguration");
+
+        // sanity check this rest definition do not have duplicates
+        validateUniquePaths();
+
+        List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
+        addRouteDefinition(camelContext, answer, restConfiguration.getComponent());
         return answer;
     }
 
