@@ -27,6 +27,7 @@ import org.apache.camel.component.jms.QueueBrowseStrategy;
 import org.apache.camel.component.jms.ReplyToType;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
@@ -847,10 +848,13 @@ public class AMQPComponentConfiguration {
         this.recoveryInterval = recoveryInterval;
     }
 
+    @Deprecated
+    @DeprecatedConfigurationProperty
     public Boolean getSubscriptionDurable() {
         return subscriptionDurable;
     }
 
+    @Deprecated
     public void setSubscriptionDurable(Boolean subscriptionDurable) {
         this.subscriptionDurable = subscriptionDurable;
     }

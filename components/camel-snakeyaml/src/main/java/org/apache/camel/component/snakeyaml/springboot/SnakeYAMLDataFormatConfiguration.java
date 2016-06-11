@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.snakeyaml.springboot;
 
+import org.apache.camel.component.snakeyaml.SnakeYAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -30,7 +31,7 @@ public class SnakeYAMLDataFormatConfiguration {
     /**
      * Which yaml library to use such. Is by default SnakeYAML
      */
-    private YAMLLibrary library;
+    private YAMLLibrary library = YAMLLibrary.SnakeYAML;
     /**
      * Class name of the java type to use when unarmshalling
      */

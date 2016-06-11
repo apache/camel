@@ -19,6 +19,7 @@ package org.apache.camel.component.ssh.springboot;
 import org.apache.camel.component.ssh.SshConfiguration;
 import org.apache.sshd.common.KeyPairProvider;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
 /**
  * The ssh component enables access to SSH servers such that you can send an SSH
@@ -157,10 +158,13 @@ public class SshComponentConfiguration {
         this.timeout = timeout;
     }
 
+    @Deprecated
+    @DeprecatedConfigurationProperty
     public String getCertFilename() {
         return certFilename;
     }
 
+    @Deprecated
     public void setCertFilename(String certFilename) {
         this.certFilename = certFilename;
     }

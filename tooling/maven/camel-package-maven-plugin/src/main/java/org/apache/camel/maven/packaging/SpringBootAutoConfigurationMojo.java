@@ -48,6 +48,7 @@ import org.jboss.forge.roaster.model.util.Strings;
 import org.sonatype.plexus.build.incremental.BuildContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -211,6 +212,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
             if ("true".equals(option.getDeprecated())) {
                 prop.getField().addAnnotation(Deprecated.class);
+                prop.getAccessor().addAnnotation(Deprecated.class);
+                prop.getMutator().addAnnotation(Deprecated.class);
+                // DeprecatedConfigurationProperty must be on getter when deprecated
+                prop.getAccessor().addAnnotation(DeprecatedConfigurationProperty.class);
             }
             if (!Strings.isBlank(option.getDescription())) {
                 prop.getField().getJavaDoc().setFullText(option.getDescription());
@@ -220,6 +225,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     prop.getField().setStringInitializer(option.getDefaultValue());
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
                     prop.getField().setLiteralInitializer(option.getDefaultValue());
+                } else if (!Strings.isBlank(option.getEnumValues())) {
+                    String enumShortName = type.substring(type.lastIndexOf(".") + 1);
+                    prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
+                    javaClass.addImport(model.getJavaType());
                 }
             }
         }
@@ -286,6 +295,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
             if ("true".equals(option.getDeprecated())) {
                 prop.getField().addAnnotation(Deprecated.class);
+                prop.getAccessor().addAnnotation(Deprecated.class);
+                prop.getMutator().addAnnotation(Deprecated.class);
+                // DeprecatedConfigurationProperty must be on getter when deprecated
+                prop.getAccessor().addAnnotation(DeprecatedConfigurationProperty.class);
             }
             if (!Strings.isBlank(option.getDescription())) {
                 prop.getField().getJavaDoc().setFullText(option.getDescription());
@@ -295,6 +308,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     prop.getField().setStringInitializer(option.getDefaultValue());
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
                     prop.getField().setLiteralInitializer(option.getDefaultValue());
+                } else if (!Strings.isBlank(option.getEnumValues())) {
+                    String enumShortName = type.substring(type.lastIndexOf(".") + 1);
+                    prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
+                    javaClass.addImport(model.getJavaType());
                 }
             }
         }
@@ -759,6 +776,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setDeprecated(getSafeValue("deprecated", row));
             option.setDescription(getSafeValue("description", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
+            option.setEnumValues(getSafeValue("enum", row));
             component.addComponentOption(option);
         }
 
@@ -777,6 +795,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setDeprecated(getSafeValue("deprecated", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setDescription(getSafeValue("description", row));
+            option.setEnumValues(getSafeValue("enum", row));
             component.addEndpointOption(option);
         }
 
@@ -808,6 +827,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setDeprecated(getSafeValue("deprecated", row));
             option.setDescription(getSafeValue("description", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
+            option.setEnumValues(getSafeValue("enum", row));
             dataFormat.addDataFormatOption(option);
         }
 

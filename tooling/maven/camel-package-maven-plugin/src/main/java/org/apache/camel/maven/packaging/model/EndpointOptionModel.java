@@ -30,6 +30,7 @@ public class EndpointOptionModel {
     private String deprecated;
     private String defaultValue;
     private String description;
+    private String enumValues;
 
     public String getName() {
         return name;
@@ -125,6 +126,14 @@ public class EndpointOptionModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getEnumValues() {
+        return enumValues;
+    }
+
+    public void setEnumValues(String enumValues) {
+        this.enumValues = enumValues;
     }
 
     public String getShortJavaType() {

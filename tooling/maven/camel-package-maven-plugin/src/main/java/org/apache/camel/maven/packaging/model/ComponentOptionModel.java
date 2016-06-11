@@ -25,6 +25,7 @@ public class ComponentOptionModel {
     private String deprecated;
     private String description;
     private String defaultValue;
+    private String enumValues;
 
     public String getName() {
         return name;
@@ -80,6 +81,14 @@ public class ComponentOptionModel {
 
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    public String getEnumValues() {
+        return enumValues;
+    }
+
+    public void setEnumValues(String enumValues) {
+        this.enumValues = enumValues;
     }
 
     public String getShortJavaType() {
