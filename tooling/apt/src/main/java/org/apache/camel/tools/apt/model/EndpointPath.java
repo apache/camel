@@ -28,19 +28,22 @@ public final class EndpointPath {
     private String defaultValue;
     private String documentation;
     private boolean deprecated;
+    private boolean secret;
     private String group;
     private String label;
     private boolean enumType;
     private Set<String> enums;
 
-    public EndpointPath(String name, String type, String required, String defaultValue, String documentation, boolean deprecated,
-                        String group, String label, boolean enumType, Set<String> enums) {
+    public EndpointPath(String name, String type, String required, String defaultValue, String documentation,
+                        boolean deprecated, boolean secret, String group, String label,
+                        boolean enumType, Set<String> enums) {
         this.name = name;
         this.type = type;
         this.required = required;
         this.defaultValue = defaultValue;
         this.documentation = documentation;
         this.deprecated = deprecated;
+        this.secret = secret;
         this.group = group;
         this.label = label;
         this.enumType = enumType;
@@ -69,6 +72,10 @@ public final class EndpointPath {
 
     public boolean isDeprecated() {
         return deprecated;
+    }
+
+    public boolean isSecret() {
+        return secret;
     }
 
     public String getEnumValuesAsHtml() {

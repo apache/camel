@@ -104,14 +104,15 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
                 String type = row.get("type");
                 String javaType = row.get("javaType");
                 String deprecated = row.get("deprecated") != null ? row.get("deprecated") : "";
+                String secret = row.get("secret") != null ? row.get("secret") : "";
                 String value = row.get("value") != null ? row.get("value") : "";
                 String defaultValue = row.get("defaultValue") != null ? row.get("defaultValue") : "";
                 String description = row.get("description") != null ? row.get("description") : "";
 
                 CompositeType ct = CamelOpenMBeanTypes.explainEndpointsCompositeType();
                 CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"option", "kind", "group", "label", "type", "java type", "deprecated", "value", "default value", "description"},
-                        new Object[]{name, kind, group, label, type, javaType, deprecated, value, defaultValue, description});
+                        new String[]{"option", "kind", "group", "label", "type", "java type", "deprecated", "secret", "value", "default value", "description"},
+                        new Object[]{name, kind, group, label, type, javaType, deprecated, secret, value, defaultValue, description});
                 answer.put(data);
             }
 

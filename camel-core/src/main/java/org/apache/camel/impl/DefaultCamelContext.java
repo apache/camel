@@ -1745,6 +1745,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String required = null;
                 String javaType = null;
                 String deprecated = null;
+                String secret = null;
                 String defaultValue = null;
                 String description = null;
                 for (Map<String, String> row : rows) {
@@ -1755,6 +1756,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         required = row.get("required");
                         javaType = row.get("javaType");
                         deprecated = row.get("deprecated");
+                        secret = row.get("secret");
                         defaultValue = row.get("defaultValue");
                         description = row.get("description");
                         break;
@@ -1762,7 +1764,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
 
                 // remember this option from the uri
-                dataFormatOptions.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                dataFormatOptions.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, secret, value, defaultValue, description});
             }
 
             // include other rows
@@ -1776,6 +1778,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String type = row.get("type");
                 String javaType = row.get("javaType");
                 String deprecated = row.get("deprecated");
+                String secret = row.get("secret");
                 value = URISupport.sanitizePath(value);
                 String description = row.get("description");
 
@@ -1788,7 +1791,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         if (isDataFormatOption) {
                             selected.put(name, dataFormatOptions.get(name));
                         } else {
-                            selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                            selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, secret, value, defaultValue, description});
                         }
                     }
                 }
@@ -1814,9 +1817,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String type = row[4];
                 String javaType = row[5];
                 String deprecated = row[6];
-                String value = row[7];
-                String defaultValue = row[8];
-                String description = row[9];
+                String secret = row[7];
+                String value = row[8];
+                String defaultValue = row[9];
+                String description = row[10];
 
                 // add json of the option
                 buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
@@ -1838,6 +1842,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
                 if (deprecated != null) {
                     csb.append("\"deprecated\": \"" + deprecated + "\"");
+                }
+                if (secret != null) {
+                    csb.append("\"secret\": \"" + secret + "\"");
                 }
                 if (value != null) {
                     csb.append("\"value\": \"" + value + "\"");
@@ -1905,6 +1912,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String required = null;
                 String javaType = null;
                 String deprecated = null;
+                String secret = null;
                 String defaultValue = null;
                 String description = null;
                 for (Map<String, String> row : rows) {
@@ -1916,6 +1924,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         required = row.get("required");
                         javaType = row.get("javaType");
                         deprecated = row.get("deprecated");
+                        secret = row.get("secret");
                         defaultValue = row.get("defaultValue");
                         description = row.get("description");
                         break;
@@ -1923,7 +1932,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
 
                 // add as selected row
-                selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
+                selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, secret, value, defaultValue, description});
             }
 
             // include other rows
@@ -1938,6 +1947,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String type = row.get("type");
                 String javaType = row.get("javaType");
                 String deprecated = row.get("deprecated");
+                String secret = row.get("secret");
                 value = URISupport.sanitizePath(value);
                 String description = row.get("description");
 
@@ -1945,7 +1955,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 if (includeAllOptions) {
                     // add as selected row
                     if (!selected.containsKey(name)) {
-                        selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
+                        selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, secret, value, defaultValue, description});
                     }
                 }
             }
@@ -1971,9 +1981,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String type = row[5];
                 String javaType = row[6];
                 String deprecated = row[7];
-                String value = row[8];
-                String defaultValue = row[9];
-                String description = row[10];
+                String secret = row[8];
+                String value = row[9];
+                String defaultValue = row[10];
+                String description = row[11];
 
                 // add json of the option
                 buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
@@ -1998,6 +2009,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
                 if (deprecated != null) {
                     csb.append("\"deprecated\": \"" + deprecated + "\"");
+                }
+                if (secret != null) {
+                    csb.append("\"secret\": \"" + secret + "\"");
                 }
                 if (value != null) {
                     csb.append("\"value\": \"" + value + "\"");
@@ -2065,6 +2079,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String required = null;
                 String javaType = null;
                 String deprecated = null;
+                String secret = null;
                 String defaultValue = null;
                 String description = null;
                 for (Map<String, String> row : rows) {
@@ -2076,6 +2091,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         required = row.get("required");
                         javaType = row.get("javaType");
                         deprecated = row.get("deprecated");
+                        secret = row.get("secret");
                         defaultValue = row.get("defaultValue");
                         description = row.get("description");
                         break;
@@ -2083,7 +2099,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
 
                 // remember this option from the uri
-                uriOptions.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
+                uriOptions.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, secret, value, defaultValue, description});
             }
 
             // include other rows
@@ -2098,6 +2114,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String type = row.get("type");
                 String javaType = row.get("javaType");
                 String deprecated = row.get("deprecated");
+                String secret = row.get("secret");
                 value = URISupport.sanitizePath(value);
                 String description = row.get("description");
 
@@ -2110,7 +2127,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         if (isUriOption) {
                             selected.put(name, uriOptions.get(name));
                         } else {
-                            selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, value, defaultValue, description});
+                            selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, secret, value, defaultValue, description});
                         }
                     }
                 }
@@ -2139,9 +2156,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String type = row[5];
                 String javaType = row[6];
                 String deprecated = row[7];
-                String value = row[8];
-                String defaultValue = row[9];
-                String description = row[10];
+                String secret = row[8];
+                String value = row[9];
+                String defaultValue = row[10];
+                String description = row[11];
 
                 // add json of the option
                 buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
@@ -2166,6 +2184,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
                 if (deprecated != null) {
                     csb.append("\"deprecated\": \"" + deprecated + "\"");
+                }
+                if (secret != null) {
+                    csb.append("\"secret\": \"" + secret + "\"");
                 }
                 if (value != null) {
                     csb.append("\"value\": \"" + value + "\"");

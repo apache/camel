@@ -663,6 +663,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 String description = null;
                 String label = null;
                 String deprecated = null;
+                String secret = null;
                 String status = context.hasComponent(name) != null ? "in use" : "on classpath";
                 String type = (String) entry.getValue().get("class");
                 String groupId = null;
@@ -688,6 +689,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                         label = row.get("label");
                     } else if (row.containsKey("deprecated")) {
                         deprecated = row.get("deprecated");
+                    } else if (row.containsKey("secret")) {
+                        secret = row.get("secret");
                     } else if (row.containsKey("javaType")) {
                         type = row.get("javaType");
                     } else if (row.containsKey("groupId")) {
@@ -700,8 +703,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 }
 
                 CompositeType ct = CamelOpenMBeanTypes.listComponentsCompositeType();
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"name", "title", "syntax", "description", "label", "deprecated", "status", "type", "groupId", "artifactId", "version"},
-                        new Object[]{name, title, syntax, description, label, deprecated, status, type, groupId, artifactId, version});
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"name", "title", "syntax", "description", "label", "deprecated", "secret",
+                        "status", "type", "groupId", "artifactId", "version"},
+                        new Object[]{name, title, syntax, description, label, deprecated, secret,
+                                status, type, groupId, artifactId, version});
                 answer.put(data);
             }
             return answer;

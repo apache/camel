@@ -34,6 +34,7 @@ public final class EndpointOption {
     private String prefix;
     private boolean multiValue;
     private boolean deprecated;
+    private boolean secret;
     private String group;
     private String label;
     private boolean enumType;
@@ -41,7 +42,7 @@ public final class EndpointOption {
 
     public EndpointOption(String name, String type, String required, String defaultValue, String defaultValueNote,
                           String documentation, String optionalPrefix, String prefix, boolean multiValue,
-                          boolean deprecated,  String group, String label,
+                          boolean deprecated, boolean secret, String group, String label,
                           boolean enumType, Set<String> enums) {
         this.name = name;
         this.type = type;
@@ -53,6 +54,7 @@ public final class EndpointOption {
         this.prefix = prefix;
         this.multiValue = multiValue;
         this.deprecated = deprecated;
+        this.secret = secret;
         this.group = group;
         this.label = label;
         this.enumType = enumType;
@@ -93,6 +95,10 @@ public final class EndpointOption {
 
     public boolean isDeprecated() {
         return deprecated;
+    }
+
+    public boolean isSecret() {
+        return secret;
     }
 
     public String getEnumValuesAsHtml() {

@@ -31,13 +31,15 @@ public final class ComponentOption {
     private String defaultValueNote;
     private String documentation;
     private boolean deprecated;
+    private boolean secret;
     private String group;
     private String label;
     private boolean enumType;
     private Set<String> enums;
 
     public ComponentOption(String name, String type, String required, String defaultValue, String defaultValueNote,
-                           String documentation, boolean deprecated, String group, String label, boolean enumType, Set<String> enums) {
+                           String documentation, boolean deprecated, boolean secret, String group, String label,
+                           boolean enumType, Set<String> enums) {
         this.name = name;
         this.type = type;
         this.required = required;
@@ -45,6 +47,7 @@ public final class ComponentOption {
         this.defaultValueNote = defaultValueNote;
         this.documentation = documentation;
         this.deprecated = deprecated;
+        this.secret = secret;
         this.label = group;
         this.label = label;
         this.enumType = enumType;
@@ -73,6 +76,10 @@ public final class ComponentOption {
 
     public boolean isDeprecated() {
         return deprecated;
+    }
+
+    public boolean isSecret() {
+        return secret;
     }
 
     public String getEnumValuesAsHtml() {

@@ -275,7 +275,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             boolean multiValue = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "property", required, entry.getType(), defaultValue, doc,
-                    entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
+                    entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
                     optionalPrefix, prefix, multiValue));
         }
         buffer.append("\n  },");
@@ -326,7 +326,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             boolean multiValue = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "path", required, entry.getType(), defaultValue, doc,
-                    entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
+                    entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
                     optionalPrefix, prefix, multiValue));
         }
 
@@ -371,7 +371,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             boolean multiValue = entry.isMultiValue();
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", required, entry.getType(), defaultValue,
-                    doc, entry.isDeprecated(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
+                    doc, entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
                     optionalPrefix, prefix, multiValue));
         }
         buffer.append("\n  }");
@@ -562,6 +562,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
                 String required = metadata != null ? metadata.required() : null;
                 String label = metadata != null ? metadata.label() : null;
+                boolean secret = metadata != null ? metadata.secret() : false;
 
                 // we do not yet have default values / notes / as no annotation support yet
                 // String defaultValueNote = param.defaultValueNote();
@@ -605,7 +606,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
                 String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                 ComponentOption option = new ComponentOption(name, fieldTypeName, required, defaultValue, defaultValueNote,
-                        docComment.trim(), deprecated, group, label, isEnum, enums);
+                        docComment.trim(), deprecated, secret, group, label, isEnum, enums);
                 componentOptions.add(option);
             }
 
@@ -634,6 +635,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
                 Metadata metadata = fieldElement.getAnnotation(Metadata.class);
                 boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+                Boolean secret = metadata != null ? metadata.secret() : null;
 
                 UriPath path = fieldElement.getAnnotation(UriPath.class);
                 String fieldName = fieldElement.getSimpleName().toString();
@@ -700,7 +702,8 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     }
 
                     String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
-                    EndpointPath ep = new EndpointPath(name, fieldTypeName, required, defaultValue, docComment, deprecated, group, label, isEnum, enums);
+                    boolean isSecret = secret != null ? secret : false;
+                    EndpointPath ep = new EndpointPath(name, fieldTypeName, required, defaultValue, docComment, deprecated, isSecret, group, label, isEnum, enums);
                     endpointPaths.add(ep);
                 }
 
@@ -783,9 +786,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                             fieldTypeName = param.javaType();
                         }
 
+                        boolean isSecret = secret != null ? secret : param.secret();
                         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                         EndpointOption option = new EndpointOption(name, fieldTypeName, required, defaultValue, defaultValueNote,
-                                docComment.trim(), paramOptionalPrefix, paramPrefix, multiValue, deprecated, group, label, isEnum, enums);
+                                docComment.trim(), paramOptionalPrefix, paramPrefix, multiValue, deprecated, isSecret, group, label, isEnum, enums);
                         endpointOptions.add(option);
                     }
                 }
