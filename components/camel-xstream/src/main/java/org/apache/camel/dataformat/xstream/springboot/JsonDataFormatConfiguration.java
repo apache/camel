@@ -38,7 +38,7 @@ public class JsonDataFormatConfiguration {
      */
     private Boolean prettyPrint = false;
     /**
-     * Which json library to use such. Is by default xstream
+     * Which json library to use such.
      */
     private JsonLibrary library = JsonLibrary.XStream;
     /**
