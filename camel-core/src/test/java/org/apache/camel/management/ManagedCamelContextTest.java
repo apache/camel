@@ -279,7 +279,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
         assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"integer\","
-                + " \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"value\": \"5\""));
+                + " \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"5\""));
 
         // and we should also have the javadoc documentation
         assertTrue(json.contains("Set the initial delay for stats (in millis)"));
@@ -312,7 +312,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
         assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"integer\","
-                + " \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"value\": \"5\""));
+                + " \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"5\""));
         // and we should also have the javadoc documentation
         assertTrue(json.contains("Set the initial delay for stats (in millis)"));
     }
@@ -392,7 +392,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("\"label\": \"core,endpoint\""));
         assertTrue(json.contains("\"defaultQueueFactory\": { \"kind\": \"property\", \"type\": \"object\", \"javaType\":"
             + " \"org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>\","));
-        assertTrue(json.contains("\"queueSize\": { \"kind\": \"property\", \"type\": \"integer\", \"javaType\": \"int\", \"deprecated\": \"false\", \"value\": \"0\""));
+        assertTrue(json.contains("\"queueSize\": { \"kind\": \"property\", \"type\": \"integer\", \"javaType\": \"int\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"0\""));
     }
 
     @Override

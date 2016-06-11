@@ -52,7 +52,7 @@ public class MockComponentConfigurationAndDocumentationTest extends ContextTestS
         assertNotNull(json);
 
         assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer\","
-                + " \"javaType\": \"int\", \"deprecated\": \"false\", \"value\": \"10\""));
+                + " \"javaType\": \"int\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"10\""));
     }
 
     @Test
