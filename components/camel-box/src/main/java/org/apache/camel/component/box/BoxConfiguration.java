@@ -42,14 +42,14 @@ public class BoxConfiguration {
     private String methodName;
     @UriParam
     private String clientId;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String clientSecret;
-    @UriParam(label = "security")
-    private IAuthSecureStorage authSecureStorage;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String userName;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String userPassword;
+    @UriParam(label = "advanced,security")
+    private IAuthSecureStorage authSecureStorage;
     @UriParam(label = "advanced")
     private OAuthRefreshListener refreshListener;
     @UriParam

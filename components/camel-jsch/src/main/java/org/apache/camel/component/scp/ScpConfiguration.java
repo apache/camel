@@ -32,11 +32,11 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     public static final String DEFAULT_MOD = "664";
     @UriParam(label = "security", defaultValue = "true")
     private boolean useUserKnownHostsFile = true;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String knownHostsFile;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String privateKeyFile;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String privateKeyFilePassphrase;
     @UriParam(enums = "no,yes", defaultValue = "no")
     private String strictHostKeyChecking;

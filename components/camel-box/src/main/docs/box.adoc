@@ -54,6 +54,7 @@ The Box component supports 1 options which are listed below.
 
 
 
+
 // endpoint options: START
 The Box component supports 21 endpoint options which are listed below:
 
@@ -64,7 +65,6 @@ The Box component supports 21 endpoint options which are listed below:
 | apiName | common |  | BoxApiName | *Required* What kind of operation to perform
 | methodName | common |  | String | *Required* What sub operation to use for the selected operation
 | clientId | common |  | String | Box application client ID
-| clientSecret | common |  | String | Box application client secret
 | inBody | common |  | String | Sets the name of a parameter to be passed in the exchange In Body
 | loginTimeout | common | 30 | int | Amount of time the component will wait for a response from Box.com default is 30 seconds
 | revokeOnShutdown | common | false | boolean | Flag to revoke OAuth refresh token on route shutdown default false. Will require a fresh refresh token on restart using either a custom IAuthSecureStorage or automatic component login by providing a user password
@@ -79,12 +79,14 @@ The Box component supports 21 endpoint options which are listed below:
 | refreshListener | advanced |  | OAuthRefreshListener | OAuth listener for token updates if the Camel application needs to use the access token outside the route
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | authSecureStorage | security |  | IAuthSecureStorage | OAuth Secure Storage callback can be used to provide and or save OAuth tokens. The callback may return null on first call to allow the component to login and authorize application and obtain an OAuth token which can then be saved in the secure storage. For the component to be able to create a token automatically a user password must be provided.
+| clientSecret | security |  | String | Box application client secret
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters.
 | userName | security |  | String | Box user name MUST be provided
 | userPassword | security |  | String | Box user password MUST be provided if authSecureStorage is not set or returns null on first call
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 [[Box-URIformat]]

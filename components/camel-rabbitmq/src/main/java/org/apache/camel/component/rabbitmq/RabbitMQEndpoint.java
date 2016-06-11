@@ -56,9 +56,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private int portNumber;
     @UriPath @Metadata(required = "true")
     private String exchangeName;
-    @UriParam(label = "security", defaultValue = ConnectionFactory.DEFAULT_USER)
+    @UriParam(label = "security", defaultValue = ConnectionFactory.DEFAULT_USER, secret = true)
     private String username = ConnectionFactory.DEFAULT_USER;
-    @UriParam(label = "security", defaultValue = ConnectionFactory.DEFAULT_PASS)
+    @UriParam(label = "security", defaultValue = ConnectionFactory.DEFAULT_PASS, secret = true)
     private String password = ConnectionFactory.DEFAULT_PASS;
     @UriParam(defaultValue = ConnectionFactory.DEFAULT_VHOST)
     private String vhost = ConnectionFactory.DEFAULT_VHOST;

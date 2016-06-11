@@ -158,13 +158,13 @@ public class JMXEndpoint extends DefaultEndpoint {
     /**
      * URI Property: credentials for making a remote connection
      */
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String user;
 
     /**
      * URI Property: credentials for making a remote connection
      */
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String password;
 
     /**

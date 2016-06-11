@@ -38,17 +38,17 @@ public class ServiceNowConfiguration {
             JsonInclude.Include.NON_NULL
         );
 
-    @UriParam @Metadata(required = "true")
+    @UriParam(label = "security", secret = true) @Metadata(required = "true")
     private String userName;
-    @UriParam @Metadata(required = "true")
+    @UriParam(label = "security", secret = true) @Metadata(required = "true")
     private String password;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String oauthClientId;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String oauthClientSecret;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String oauthTokenUrl;
-    @UriParam(label = "advanced")
+    @UriParam(label = "security")
     private String apiUrl;
     @UriParam
     private String resource;

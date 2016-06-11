@@ -37,10 +37,10 @@ public class KubernetesConfiguration {
     @UriParam
     private DefaultKubernetesClient kubernetesClient;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String username;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String password;
 
     @UriParam(label = "producer", enums = "listNamespaces,listNamespacesByLabels,getNamespace,createNamespace,deleteNamespace,listServices,listServicesByLabels,getService,createService,"
@@ -55,34 +55,34 @@ public class KubernetesConfiguration {
     @UriParam
     private String apiVersion;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String caCertData;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String caCertFile;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String clientCertData;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String clientCertFile;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String clientKeyAlgo;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String clientKeyData;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String clientKeyFile;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String clientKeyPassphrase;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String oauthToken;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private Boolean trustCerts;
 
     @UriParam(label = "consumer")

@@ -51,13 +51,13 @@ public class IrcConfiguration implements Cloneable {
     @UriPath(defaultValue = "6667,6668,6669")
     private int port;
     private int[] ports = {6667, 6668, 6669};
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam
     private String nickname;
     @UriParam
     private String realname;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String username;
     @UriParam(label = "security")
     private SSLTrustManager trustManager = new SSLDefaultTrustManager();
@@ -90,7 +90,7 @@ public class IrcConfiguration implements Cloneable {
     private boolean namesOnJoin;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String nickPassword;
 
     public IrcConfiguration() {

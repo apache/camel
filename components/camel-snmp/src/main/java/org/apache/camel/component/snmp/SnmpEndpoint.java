@@ -69,15 +69,15 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private long delay = 60000;
     @UriParam(defaultValue = "" + SecurityLevel.AUTH_PRIV, enums = "1,2,3", label = "security")
     private int securityLevel = SecurityLevel.AUTH_PRIV;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String securityName;
     @UriParam(enums = "MD5,SHA1", label = "security")
     private String authenticationProtocol;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String authenticationPassphrase;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String privacyProtocol;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String privacyPassphrase;
     @UriParam
     private String snmpContextName;

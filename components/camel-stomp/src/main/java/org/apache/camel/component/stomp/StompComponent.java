@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 
 public class StompComponent extends UriEndpointComponent {
 
@@ -36,11 +37,13 @@ public class StompComponent extends UriEndpointComponent {
     /**
      * The username
      */
+    @Metadata(label = "security", secret = true)
     private String login;
 
     /**
      * The password
      */
+    @Metadata(label = "security", secret = true)
     private String passcode;
 
     /**

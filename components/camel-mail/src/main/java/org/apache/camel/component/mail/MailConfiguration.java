@@ -51,9 +51,9 @@ public class MailConfiguration implements Cloneable {
     private String host;
     @UriPath
     private int port = -1;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String username;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam @Metadata(label = "producer")
     private String subject;

@@ -32,9 +32,9 @@ public class EtcdConfiguration {
     private String uris = EtcdConstants.ETCD_DEFAULT_URIS;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String userName;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam(label = "consumer")
     private boolean sendEmptyExchangeOnTimeout;

@@ -27,9 +27,9 @@ public class StompConfiguration implements Cloneable {
     @UriParam(defaultValue = "tcp://localhost:61613")
     @Metadata(required = "true")
     private String brokerURL = "tcp://localhost:61613";
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String login;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String passcode;
     @UriParam
     private String host;

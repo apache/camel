@@ -195,9 +195,9 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private CxfEndpointConfigurer cxfEndpointConfigurer;
     @UriParam(label = "advanced", defaultValue = "30000")
     private long continuationTimeout = 30000;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String username;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam(label = "advanced", prefix = "properties.", multiValue = true)
     private Map<String, Object> properties;

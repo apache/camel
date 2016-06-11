@@ -39,9 +39,9 @@ public class XmlRpcConfiguration {
     private boolean gzipCompressing;
     @UriParam
     private boolean gzipRequesting;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String basicUserName;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String basicPassword;
     @UriParam
     private int connectionTimeout;

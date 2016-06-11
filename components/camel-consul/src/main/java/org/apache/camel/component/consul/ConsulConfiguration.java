@@ -38,11 +38,11 @@ public class ConsulConfiguration {
 
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String aclToken;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String userName;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String password;
 
     @UriParam
@@ -104,15 +104,12 @@ public class ConsulConfiguration {
         return tags;
     }
 
-    /**
-     * Set tags
-     */
     public void setTags(Set<String> tags) {
         this.tags = tags;
     }
 
     /**
-     * Set tags
+     * Set tags. You can separate multiple tags by comma.
      */
     public void setTags(String tagsAsString) {
         this.tags = new HashSet<>();

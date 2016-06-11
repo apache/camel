@@ -46,9 +46,9 @@ public class SmppConfiguration implements Cloneable {
     private String host = "localhost";
     @UriPath(defaultValue = "2775")
     private Integer port = 2775;
-    @UriParam(label = "security", defaultValue = "smppclient")
+    @UriParam(label = "security", defaultValue = "smppclient", secret = true)
     private String systemId = "smppclient";
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String password = "password";
     @UriParam(label = "common", defaultValue = "cp")
     private String systemType = "cp";

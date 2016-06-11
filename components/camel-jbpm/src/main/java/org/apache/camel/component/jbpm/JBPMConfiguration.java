@@ -71,9 +71,9 @@ public class JBPMConfiguration {
     private List<OrganizationalEntity> entities;
     @UriParam(label = "filter")
     private List<Status> statuses;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String userName;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam
     private Integer timeout;
