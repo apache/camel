@@ -70,7 +70,9 @@ public class StompComponent extends UriEndpointComponent {
     protected void doStart() throws Exception {
         super.doStart();
 
-        configuration.setBrokerURL(brokerUrl);
+        if (configuration == null) {
+            configuration = new StompConfiguration();
+        }
     }
 
     public StompConfiguration getConfiguration() {
@@ -88,27 +90,39 @@ public class StompComponent extends UriEndpointComponent {
      * The URI of the Stomp broker to connect to
      */
     public void setBrokerURL(String brokerURL) {
-        getConfiguration().setBrokerURL(brokerURL);
+        if (configuration == null) {
+            configuration = new StompConfiguration();
+        }
+        configuration.setBrokerURL(brokerURL);
     }
 
     /**
      * The username
      */
     public void setLogin(String login) {
-        getConfiguration().setLogin(login);
+        if (configuration == null) {
+            configuration = new StompConfiguration();
+        }
+        configuration.setLogin(login);
     }
 
     /**
      * The password
      */
     public void setPasscode(String passcode) {
-        getConfiguration().setPasscode(passcode);
+        if (configuration == null) {
+            configuration = new StompConfiguration();
+        }
+        configuration.setPasscode(passcode);
     }
     
     /**
      * The virtual host
      */
     public void setHost(String host) {
-        getConfiguration().setHost(host);
+        if (configuration == null) {
+            configuration = new StompConfiguration();
+        }
+        configuration.setHost(host);
     }
 }
