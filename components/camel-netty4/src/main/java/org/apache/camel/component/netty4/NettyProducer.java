@@ -280,7 +280,9 @@ public class NettyProducer extends DefaultAsyncProducer {
         final Channel channel = existing;
         final AsyncCallback producerCallback;
 
-        if(configuration.isReuseChannel()) {
+        if (configuration.isReuseChannel()) {
+            // use callback as-is because we should not put it back in the pool as NettyProducerCallback would do
+            // as when reuse channel is enabled it will put the channel back in the pool when exchange is done using on completion
             producerCallback = callback;
         } else {
             producerCallback = new NettyProducerCallback(channel, callback);
