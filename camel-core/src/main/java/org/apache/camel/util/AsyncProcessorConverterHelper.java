@@ -123,13 +123,21 @@ public final class AsyncProcessorConverterHelper {
                 return false;
             }
 
+            if (processor == null) {
+                return false;
+            }
+
             ProcessorToAsyncProcessorBridge that = (ProcessorToAsyncProcessorBridge) o;
             return processor.equals(that.processor);
         }
 
         @Override
         public int hashCode() {
-            return processor.hashCode();
+            if (processor != null) {
+                return processor.hashCode();
+            } else {
+                return 0;
+            }
         }
     }
 

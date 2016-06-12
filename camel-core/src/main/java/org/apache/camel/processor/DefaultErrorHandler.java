@@ -69,4 +69,8 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
         return "DefaultErrorHandler[" + output + "]";
     }
 
+    public Processor getDeadLetterProcessor() {
+        return deadLetter;
+    }
+
 }
