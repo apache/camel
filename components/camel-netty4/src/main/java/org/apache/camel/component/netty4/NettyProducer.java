@@ -278,7 +278,13 @@ public class NettyProducer extends DefaultAsyncProducer {
         
         // need to declare as final
         final Channel channel = existing;
-        final AsyncCallback producerCallback = new NettyProducerCallback(channel, callback);
+        final AsyncCallback producerCallback;
+
+        if(configuration.isReuseChannel()) {
+            producerCallback = callback;
+        } else {
+            producerCallback = new NettyProducerCallback(channel, callback);
+        }
 
         // setup state as attachment on the channel, so we can access the state later when needed
         putState(channel, new NettyCamelState(producerCallback, exchange));
