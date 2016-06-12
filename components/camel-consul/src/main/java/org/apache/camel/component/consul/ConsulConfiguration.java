@@ -104,6 +104,9 @@ public class ConsulConfiguration {
         return tags;
     }
 
+    /**
+     * Set tags. You can separate multiple tags by comma.
+     */
     public void setTags(Set<String> tags) {
         this.tags = tags;
     }
