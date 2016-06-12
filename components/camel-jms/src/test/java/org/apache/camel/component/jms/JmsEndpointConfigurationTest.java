@@ -95,14 +95,14 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
             resolveMandatoryEndpoint("jms:topic:Foo.Bar?username=James");
             fail("Expect the exception here");
         } catch (ResolveEndpointFailedException refe) {
-            assertEquals("Failed to resolve endpoint: jms://topic:Foo.Bar?username=James due to: The JmsComponent's username or password is null", refe.getMessage());
+            // expected
         }
 
         try {
             resolveMandatoryEndpoint("jms:topic:Foo.Bar?password=ABC");
             fail("Expect the exception here");
         } catch (ResolveEndpointFailedException refe) {
-            assertEquals("Failed to resolve endpoint: jms://topic:Foo.Bar?password=ABC due to: The JmsComponent's username or password is null", refe.getMessage());
+            // expected
         }
     }
 

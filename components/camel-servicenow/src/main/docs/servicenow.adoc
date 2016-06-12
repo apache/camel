@@ -40,6 +40,7 @@ The ServiceNow component has no options.
 
 
 
+
 // endpoint options: START
 The ServiceNow component supports 17 endpoint options which are listed below:
 
@@ -52,21 +53,22 @@ The ServiceNow component supports 17 endpoint options which are listed below:
 | excludeReferenceLink | producer |  | Boolean | True to exclude Table API links for reference fields (default: false)
 | inputDisplayValue | producer |  | Boolean | True to set raw value of input fields (default: false)
 | models | producer |  | String | Defines the default model to use for a table
-| password | producer |  | String | *Required* ServiceNow account password MUST be provided
 | resource | producer |  | String | The default resource can be overridden by header CamelServiceNowResource
 | suppressAutoSysField | producer |  | Boolean | True to suppress auto generation of system fields (default: false)
 | table | producer |  | String | The default table can be overridden by header CamelServiceNowTable
-| userName | producer |  | String | *Required* ServiceNow user account name MUST be provided
-| apiUrl | advanced |  | String | The ServiceNow REST API url
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | mapper | advanced |  | ObjectMapper | Sets Jackson's ObjectMapper to use for request/reply
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| apiUrl | security |  | String | The ServiceNow REST API url
 | oauthClientId | security |  | String | OAuth2 ClientID
 | oauthClientSecret | security |  | String | OAuth2 ClientSecret
 | oauthTokenUrl | security |  | String | OAuth token Url
+| password | security |  | String | *Required* ServiceNow account password MUST be provided
+| userName | security |  | String | *Required* ServiceNow user account name MUST be provided
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 [[ServiceNow-Headers]]

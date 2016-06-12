@@ -46,6 +46,7 @@ The IRC component has no options.
 
 
 
+
 // endpoint options: START
 The IRC component supports 26 endpoint options which are listed below:
 
@@ -58,11 +59,8 @@ The IRC component supports 26 endpoint options which are listed below:
 | autoRejoin | common | true | boolean | Whether to auto re-join when being kicked
 | namesOnJoin | common | false | boolean | Sends NAMES command to channel after joining it. link onReply has to be true in order to process the result which will have the header value irc.num = '353'.
 | nickname | common |  | String | The nickname used in chat.
-| nickPassword | common |  | String | Your IRC server nickname password.
-| password | common |  | String | The IRC server password.
 | persistent | common | true | boolean | Use persistent messages.
 | realname | common |  | String | The IRC user's actual name.
-| username | common |  | String | The IRC server user name.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | colors | advanced | true | boolean | Whether or not the server supports color codes.
@@ -77,11 +75,15 @@ The IRC component supports 26 endpoint options which are listed below:
 | onQuit | filter | true | boolean | Handle user quit events.
 | onReply | filter | false | boolean | Whether or not to handle general responses to commands or informational messages.
 | onTopic | filter | true | boolean | Handle topic change events.
+| nickPassword | security |  | String | Your IRC server nickname password.
+| password | security |  | String | The IRC server password.
 | sslContextParameters | security |  | SSLContextParameters | Used for configuring security using SSL. Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. Note that this setting overrides the trustManager option.
 | trustManager | security |  | SSLTrustManager | The trust manager used to verify the SSL server's certificate.
+| username | security |  | String | The IRC server user name.
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
