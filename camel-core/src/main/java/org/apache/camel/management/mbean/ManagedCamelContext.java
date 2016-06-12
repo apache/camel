@@ -703,10 +703,9 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 }
 
                 CompositeType ct = CamelOpenMBeanTypes.listComponentsCompositeType();
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"name", "title", "syntax", "description", "label", "deprecated", "secret",
-                        "status", "type", "groupId", "artifactId", "version"},
-                        new Object[]{name, title, syntax, description, label, deprecated, secret,
-                                status, type, groupId, artifactId, version});
+                CompositeData data = new CompositeDataSupport(ct,
+                        new String[]{"name", "title", "syntax", "description", "label", "deprecated", "secret", "status", "type", "groupId", "artifactId", "version"},
+                        new Object[]{name, title, syntax, description, label, deprecated, secret, status, type, groupId, artifactId, version});
                 answer.put(data);
             }
             return answer;

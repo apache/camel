@@ -36,7 +36,8 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType listTypeConvertersCompositeType() throws OpenDataException {
-        return new CompositeType("types", "From/To types", new String[]{"from", "to"},
+        return new CompositeType("types", "From/To types",
+                new String[]{"from", "to"},
                 new String[]{"From type", "To type"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING});
     }
@@ -47,10 +48,9 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType listRestServicesCompositeType() throws OpenDataException {
-        return new CompositeType("rests", "Rest Services", new String[]{"url", "baseUrl", "basePath", "uriTemplate", "method", "consumes",
-            "produces", "inType", "outType", "state", "routeId", "description"},
-                new String[]{"Url", "Base Url", "Base Path", "Uri Template", "Method", "Consumes",
-                    "Produces", "Input Type", "Output Type", "State", "Route Id", "Description"},
+        return new CompositeType("rests", "Rest Services",
+                new String[]{"url", "baseUrl", "basePath", "uriTemplate", "method", "consumes", "produces", "inType", "outType", "state", "routeId", "description"},
+                new String[]{"Url", "Base Url", "Base Path", "Uri Template", "Method", "Consumes", "Produces", "Input Type", "Output Type", "State", "Route Id", "Description"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
                                SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
@@ -61,7 +61,8 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType listEndpointsCompositeType() throws OpenDataException {
-        return new CompositeType("endpoints", "Endpoints", new String[]{"url", "static", "dynamic"},
+        return new CompositeType("endpoints", "Endpoints",
+                new String[]{"url", "static", "dynamic"},
                 new String[]{"Url", "Static", "Dynamic"},
                 new OpenType[]{SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN});
     }
@@ -72,7 +73,8 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType listRuntimeEndpointsCompositeType() throws OpenDataException {
-        return new CompositeType("endpoints", "Endpoints", new String[]{"index", "url", "routeId", "direction", "static", "dynamic", "hits"},
+        return new CompositeType("endpoints", "Endpoints",
+                new String[]{"index", "url", "routeId", "direction", "static", "dynamic", "hits"},
                 new String[]{"Index", "Url", "Route Id", "Direction", "Static", "Dynamic", "Hits"},
                 new OpenType[]{SimpleType.INTEGER, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN, SimpleType.LONG});
     }
@@ -95,7 +97,8 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType explainDataFormatsCompositeType() throws OpenDataException {
-        return new CompositeType("dataformats", "DataFormats", new String[]{"option", "kind", "label", "type", "java type", "deprecated", "secret", "value", "default value", "description"},
+        return new CompositeType("dataformats", "DataFormats",
+                new String[]{"option", "kind", "label", "type", "java type", "deprecated", "secret", "value", "default value", "description"},
                 new String[]{"Option", "Kind", "Label", "Type", "Java Type", "Deprecated", "Secret", "Value", "Default Value", "Description"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
                                SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
@@ -108,7 +111,8 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType explainEndpointsCompositeType() throws OpenDataException {
-        return new CompositeType("endpoints", "Endpoints", new String[]{"option", "kind", "group", "label", "type", "java type", "deprecated", "secret", "value", "default value", "description"},
+        return new CompositeType("endpoints", "Endpoints",
+                new String[]{"option", "kind", "group", "label", "type", "java type", "deprecated", "secret", "value", "default value", "description"},
                 new String[]{"Option", "Kind", "Group", "Label", "Type", "Java Type", "Deprecated", "Secret", "Value", "Default Value", "Description"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
                                SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
@@ -120,7 +124,8 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType explainEipsCompositeType() throws OpenDataException {
-        return new CompositeType("eips", "EIPs", new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
+        return new CompositeType("eips", "EIPs",
+                new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
                 new String[]{"Option", "Kind", "Label", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
                                SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
@@ -132,8 +137,8 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType listComponentsCompositeType() throws OpenDataException {
-        return new CompositeType("components", "Components", new String[]{"name", "title", "syntax", "description", "label", "deprecated",
-                "secret", "status", "type", "groupId", "artifactId", "version"},
+        return new CompositeType("components", "Components",
+                new String[]{"name", "title", "syntax", "description", "label", "deprecated", "secret", "status", "type", "groupId", "artifactId", "version"},
                 new String[]{"Name", "Title", "Syntax", "Description", "Label", "Deprecated", "Secret", "Status", "Type", "GroupId", "ArtifactId", "Version"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
                                SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
@@ -145,7 +150,8 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType listAwaitThreadsCompositeType() throws OpenDataException {
-        return new CompositeType("threads", "Threads", new String[]{"id", "name", "exchangeId", "routeId", "nodeId", "duration"},
+        return new CompositeType("threads", "Threads",
+                new String[]{"id", "name", "exchangeId", "routeId", "nodeId", "duration"},
                 new String[]{"Thread Id", "Thread name", "ExchangeId", "RouteId", "NodeId", "Duration"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
@@ -156,7 +162,8 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType listEipsCompositeType() throws OpenDataException {
-        return new CompositeType("eips", "EIPs", new String[]{"name", "title", "description", "label", "status", "type"},
+        return new CompositeType("eips", "EIPs",
+                new String[]{"name", "title", "description", "label", "status", "type"},
                 new String[]{"Name", "Title", "Description", "Label", "Status", "Type"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
@@ -167,7 +174,8 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType listInflightExchangesCompositeType() throws OpenDataException {
-        return new CompositeType("exchanges", "Exchanges", new String[]{"exchangeId", "fromRouteId", "routeId", "nodeId", "elapsed", "duration"},
+        return new CompositeType("exchanges", "Exchanges",
+                new String[]{"exchangeId", "fromRouteId", "routeId", "nodeId", "elapsed", "duration"},
                 new String[]{"Exchange Id", "From RouteId", "RouteId", "NodeId", "Elapsed", "Duration"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
@@ -178,7 +186,8 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType choiceCompositeType() throws OpenDataException {
-        return new CompositeType("predicates", "Predicates", new String[]{"predicate", "language", "matches"},
+        return new CompositeType("predicates", "Predicates",
+                new String[]{"predicate", "language", "matches"},
                 new String[]{"Predicate", "Language", "Matches"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.LONG});
     }
@@ -189,7 +198,8 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType loadbalancerExceptionsCompositeType() throws OpenDataException {
-        return new CompositeType("exceptions", "Exceptions", new String[]{"exception", "failures"},
+        return new CompositeType("exceptions", "Exceptions",
+                new String[]{"exception", "failures"},
                 new String[]{"Exception", "Failures"},
                 new OpenType[]{SimpleType.STRING, SimpleType.LONG});
     }
@@ -200,7 +210,8 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType endpointsUtilizationCompositeType() throws OpenDataException {
-        return new CompositeType("endpoints", "Endpoints", new String[]{"url", "hits"},
+        return new CompositeType("endpoints", "Endpoints",
+                new String[]{"url", "hits"},
                 new String[]{"Url", "Hits"},
                 new OpenType[]{SimpleType.STRING, SimpleType.LONG});
     }

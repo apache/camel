@@ -1879,7 +1879,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             if (json == null) {
                 return null;
             }
-
             List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("componentProperties", json, true);
 
             // selected rows to use for answer
@@ -1892,12 +1891,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             for (Map.Entry<String, Object> entry : options.entrySet()) {
                 String name = entry.getKey();
-
                 // skip unwanted options which is default inherited from DefaultComponent
                 if ("camelContext".equals(name) || "endpointClass".equals(name)) {
                     continue;
                 }
-
                 String value = "";
                 if (entry.getValue() != null) {
                     value = entry.getValue().toString();
@@ -1930,7 +1927,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         break;
                     }
                 }
-
                 // add as selected row
                 selected.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, secret, value, defaultValue, description});
             }
@@ -1950,7 +1946,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String secret = row.get("secret");
                 value = URISupport.sanitizePath(value);
                 String description = row.get("description");
-
                 // always include path options
                 if (includeAllOptions) {
                     // add as selected row
@@ -1961,7 +1956,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
 
             json = ObjectHelper.before(json, "  \"componentProperties\": {");
-
             StringBuilder buffer = new StringBuilder("  \"componentProperties\": {");
 
             boolean first = true;
@@ -2027,28 +2021,24 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
                 buffer.append(" }");
             }
-
             buffer.append("\n  }\n}\n");
-
             // insert the original first part of the json into the start of the buffer
             buffer.insert(0, json);
             return buffer.toString();
-
         } catch (Exception e) {
             // ignore and return empty response
             return null;
         }
     }
 
+    // CHECKSTYLE:OFF
     public String explainEndpointJson(String uri, boolean includeAllOptions) {
         try {
             URI u = new URI(uri);
-
             String json = getComponentParameterJsonSchema(u.getScheme());
             if (json == null) {
                 return null;
             }
-
             List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
 
             // selected rows to use for answer
@@ -2070,7 +2060,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     value = entry.getValue().toString();
                 }
                 value = URISupport.sanitizePath(value);
-
                 // find type and description from the json schema
                 String type = null;
                 String kind = null;
@@ -2097,7 +2086,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         break;
                     }
                 }
-
                 // remember this option from the uri
                 uriOptions.put(name, new String[]{name, kind, group, label, required, type, javaType, deprecated, secret, value, defaultValue, description});
             }
@@ -2117,9 +2105,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String secret = row.get("secret");
                 value = URISupport.sanitizePath(value);
                 String description = row.get("description");
-
                 boolean isUriOption = uriOptions.containsKey(name);
-
                 // always include from uri or path options
                 if (includeAllOptions || isUriOption || "path".equals(kind)) {
                     if (!selected.containsKey(name)) {
@@ -2135,7 +2121,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             // skip component properties
             json = ObjectHelper.before(json, "  \"componentProperties\": {");
-
             // and rewrite properties
             StringBuilder buffer = new StringBuilder("  \"properties\": {");
 
@@ -2202,18 +2187,16 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
                 buffer.append(" }");
             }
-
             buffer.append("\n  }\n}\n");
-
             // insert the original first part of the json into the start of the buffer
             buffer.insert(0, json);
             return buffer.toString();
-
         } catch (Exception e) {
             // ignore and return empty response
             return null;
         }
     }
+    // CHECKSTYLE:ON
 
     public String createRouteStaticEndpointJson(String routeId) {
         // lets include dynamic as well as we want as much data as possible
