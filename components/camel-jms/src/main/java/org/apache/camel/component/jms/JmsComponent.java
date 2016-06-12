@@ -28,6 +28,10 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -48,6 +52,8 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
  * @version 
  */
 public class JmsComponent extends UriEndpointComponent implements ApplicationContextAware, HeaderFilterStrategyAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JmsComponent.class);
 
     private static final String KEY_FORMAT_STRATEGY_PARAM = "jmsKeyFormatStrategy";
     private JmsConfiguration configuration;
@@ -281,6 +287,22 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
      */
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         getConfiguration().setConnectionFactory(connectionFactory);
+    }
+
+    /**
+     * Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.
+     */
+    @Metadata(secret = true)
+    public void setUsername(String username) {
+        getConfiguration().setUsername(username);
+    }
+
+    /**
+     * Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.
+     */
+    @Metadata(secret = true)
+    public void setPassword(String password) {
+        getConfiguration().setPassword(password);
     }
 
     /**
@@ -826,7 +848,6 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
     // Implementation methods
     // -------------------------------------------------------------------------
 
-
     @Override
     protected void doStart() throws Exception {
         if (headerFilterStrategy == null) {
@@ -901,19 +922,26 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
             endpoint.getConfiguration().setConnectionFactory(cf);
         }
 
-        String username = getAndRemoveParameter(parameters, "username", String.class);
-        String password = getAndRemoveParameter(parameters, "password", String.class);
-        if (username != null && password != null) {
+        // if username or password provided then wrap the connection factory
+        String cfUsername = getAndRemoveParameter(parameters, "username", String.class, getConfiguration().getUsername());
+        String cfPassword = getAndRemoveParameter(parameters, "password", String.class, getConfiguration().getPassword());
+        if (cfUsername != null && cfPassword != null) {
             cf = endpoint.getConfiguration().getConnectionFactory();
+            ObjectHelper.notNull(cf, "ConnectionFactory");
+            LOG.debug("Wrapping existing ConnectionFactory with UserCredentialsConnectionFactoryAdapter using username: {} and password: ******", cfUsername);
             UserCredentialsConnectionFactoryAdapter ucfa = new UserCredentialsConnectionFactoryAdapter();
             ucfa.setTargetConnectionFactory(cf);
-            ucfa.setPassword(password);
-            ucfa.setUsername(username);
+            ucfa.setPassword(cfPassword);
+            ucfa.setUsername(cfUsername);
             endpoint.getConfiguration().setConnectionFactory(ucfa);
         } else {
-            if (username != null || password != null) {
-                // exclude the the saturation of username and password are all empty
-                throw new IllegalArgumentException("The JmsComponent's username or password is null");
+            // if only username or password was provided then fail
+            if (cfUsername != null || cfPassword != null) {
+                if (cfUsername == null) {
+                    throw new IllegalArgumentException("Password must also be provided when using username/password as credentials.");
+                } else {
+                    throw new IllegalArgumentException("Username must also be provided when using username/password as credentials.");
+                }
             }
         }
 

@@ -62,15 +62,25 @@ public class JmsConfiguration implements Cloneable {
     public static final String TEMP_TOPIC_PREFIX = "temp:topic:";
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsConfiguration.class);
+
+    // these are too advanced and seldom used, we should consider removing those as there is plenty of options already
     private JmsOperations jmsOperations;
-    private DestinationResolver destinationResolver;
-    private ConnectionFactory connectionFactory;
     private ConnectionFactory templateConnectionFactory;
     private ConnectionFactory listenerConnectionFactory;
+
+    @UriParam(description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
+    private ConnectionFactory connectionFactory;
+    @UriParam(label = "security", secret = true, description = "Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.")
+    private String username;
+    @UriParam(label = "security", secret = true, description = "Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.")
+    private String password;
+
     private int acknowledgementMode = -1;
     @UriParam(defaultValue = "AUTO_ACKNOWLEDGE", enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE", label = "consumer",
             description = "The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE")
     private String acknowledgementModeName;
+    @UriParam(label = "advanced")
+    private DestinationResolver destinationResolver;
     // Used to configure the spring Container
     @UriParam(label = "advanced",
             description = "Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.")
@@ -721,6 +731,28 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public ConnectionFactory getListenerConnectionFactory() {
