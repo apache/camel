@@ -31,6 +31,7 @@ public class MQTTConsumerTest extends MQTTBaseTest {
     @Test
     public void testConsume() throws Exception {
         MQTT mqtt = new MQTT();
+        mqtt.setHost(MQTTTestSupport.getHostForMQTTEndpoint());
         BlockingConnection publisherConnection = mqtt.blockingConnection();
         Topic topic = new Topic(TEST_TOPIC, QoS.AT_MOST_ONCE);
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -50,7 +51,7 @@ public class MQTTConsumerTest extends MQTTBaseTest {
 
         return new RouteBuilder() {
             public void configure() {
-                from("mqtt:bar?subscribeTopicName=" + TEST_TOPIC)
+                from("mqtt:bar?subscribeTopicName=" + TEST_TOPIC + "&host=" + MQTTTestSupport.getHostForMQTTEndpoint())
                         .transform(body().convertToString())
                         .to("mock:result");
             }

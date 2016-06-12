@@ -39,6 +39,7 @@ public class MQTTConsumerWildcardTopicsTest extends MQTTBaseTest {
     @Test
     public void testConsumeMultipleTopicsWithWildcards() throws Exception {
         MQTT mqtt = new MQTT();
+        mqtt.setHost(MQTTTestSupport.getHostForMQTTEndpoint());
         BlockingConnection publisherConnection = mqtt.blockingConnection();
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(numberOfMessages * (PUBLISH_TOPICS.length - 1));
@@ -60,7 +61,7 @@ public class MQTTConsumerWildcardTopicsTest extends MQTTBaseTest {
 
         return new RouteBuilder() {
             public void configure() {
-                from("mqtt:bar?subscribeTopicNames=" + TEST_TOPICS_WITH_WILDCARDS)
+                from("mqtt:bar?subscribeTopicNames=" + TEST_TOPICS_WITH_WILDCARDS + "&host=" + MQTTTestSupport.getHostForMQTTEndpoint())
                     .transform(body().convertToString())
                     .to("mock:result");
             }
