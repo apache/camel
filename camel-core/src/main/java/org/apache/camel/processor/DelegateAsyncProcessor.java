@@ -83,6 +83,10 @@ public class DelegateAsyncProcessor extends ServiceSupport implements DelegatePr
         ServiceHelper.stopServices(processor);
     }
 
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(processor);
+    }
+
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
