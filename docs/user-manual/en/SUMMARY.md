@@ -78,6 +78,7 @@
     * [Binding](binding.adoc)
     * [Browse](browse.adoc)
     * [Class](class.adoc)
+    * [Controlbus](controlbus.adoc)
     * [Mock](mock.adoc)
     * [Properties](properties.adoc)
 
