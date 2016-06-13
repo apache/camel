@@ -101,4 +101,9 @@ public final class ZipkinClientRequestAdapter implements ClientRequestAdapter {
         }
         return list;
     }
+
+    @Override
+    public com.twitter.zipkin.gen.Endpoint serverAddress() {
+        return null;
+    }
 }
