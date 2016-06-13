@@ -82,6 +82,7 @@
     * [Dataformat](dataformat.adoc)
     * [Dataset](dataset.adoc)
     * [Direct](direct.adoc)
+    * [Direct-vm](direct-vm.adoc)
     * [Mock](mock.adoc)
     * [Properties](properties.adoc)
 
