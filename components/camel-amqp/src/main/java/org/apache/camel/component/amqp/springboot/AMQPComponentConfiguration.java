@@ -140,6 +140,16 @@ public class AMQPComponentConfiguration {
      */
     private ConnectionFactory connectionFactory;
     /**
+     * Username to use with the ConnectionFactory. You can also configure
+     * username/password directly on the ConnectionFactory.
+     */
+    private String username;
+    /**
+     * Password to use with the ConnectionFactory. You can also configure
+     * username/password directly on the ConnectionFactory.
+     */
+    private String password;
+    /**
      * Specifies whether persistent delivery is used by default.
      */
     private Boolean deliveryPersistent = false;
@@ -642,6 +652,22 @@ public class AMQPComponentConfiguration {
 
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Boolean getDeliveryPersistent() {
