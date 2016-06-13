@@ -81,6 +81,7 @@
     * [Controlbus](controlbus.adoc)
     * [Dataformat](dataformat.adoc)
     * [Dataset](dataset.adoc)
+    * [Direct](direct.adoc)
     * [Mock](mock.adoc)
     * [Properties](properties.adoc)
 
