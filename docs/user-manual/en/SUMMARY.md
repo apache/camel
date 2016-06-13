@@ -80,6 +80,7 @@
     * [Class](class.adoc)
     * [Controlbus](controlbus.adoc)
     * [Dataformat](dataformat.adoc)
+    * [Dataset](dataset.adoc)
     * [Mock](mock.adoc)
     * [Properties](properties.adoc)
 
