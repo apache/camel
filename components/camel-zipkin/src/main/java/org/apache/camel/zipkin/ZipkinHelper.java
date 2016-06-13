@@ -32,9 +32,9 @@ public final class ZipkinHelper {
 
     public static SpanId createSpanId(String traceId, String spanId, String parentSpanId) {
         if (parentSpanId != null) {
-            return SpanId.create(IdConversion.convertToLong(traceId), IdConversion.convertToLong(spanId), IdConversion.convertToLong(parentSpanId));
+            return SpanId.builder().traceId(IdConversion.convertToLong(traceId)).spanId(IdConversion.convertToLong(spanId)).parentId(IdConversion.convertToLong(parentSpanId)).build();
         }
-        return SpanId.create(IdConversion.convertToLong(traceId), IdConversion.convertToLong(spanId), null);
+        return SpanId.builder().traceId(IdConversion.convertToLong(traceId)).spanId(IdConversion.convertToLong(spanId)).build();
     }
 
     public static StreamCache prepareBodyForLogging(Exchange exchange, boolean streams) {
