@@ -79,6 +79,7 @@
     * [Browse](browse.adoc)
     * [Class](class.adoc)
     * [Controlbus](controlbus.adoc)
+    * [Dataformat](dataformat.adoc)
     * [Mock](mock.adoc)
     * [Properties](properties.adoc)
 
