@@ -77,6 +77,7 @@
     * [Bean](bean.adoc)
     * [Binding](binding.adoc)
     * [Browse](browse.adoc)
+    * [Class](class.adoc)
     * [Mock](mock.adoc)
     * [Properties](properties.adoc)
 
