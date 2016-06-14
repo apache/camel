@@ -813,7 +813,7 @@ from("file://inbox?move=backup/${date:now:yyyyMMdd}/${file:name}").to("...");
 
 See link:file-language.html[File Language] for more samples.
 
-[[File2-Avoidingreadingthesamefilemorethanonce(idempotentconsumer)]]
+[[File2-Avoidingreadingthesamefilemorethanonceidempotentconsumer]]
 Avoiding reading the same file more than once (idempotent consumer)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
