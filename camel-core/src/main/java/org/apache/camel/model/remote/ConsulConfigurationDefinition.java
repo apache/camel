@@ -138,46 +138,73 @@ public class ConsulConfigurationDefinition extends ServiceCallConfigurationDefin
     // Fluent API
     // -------------------------------------------------------------------------
 
+    /**
+     * The Consul agent URL
+     */
     public ConsulConfigurationDefinition url(String url) {
         setUrl(url);
         return this;
     }
 
+    /**
+     * The data center
+     */
     public ConsulConfigurationDefinition dc(String dc) {
         setDc(dc);
         return this;
     }
 
+    /**
+     * Sets the ACL token to be used with Consul
+     */
     public ConsulConfigurationDefinition aclToken(String aclToken) {
         setAclToken(aclToken);
         return this;
     }
 
+    /**
+     * Sets the username to be used for basic authentication
+     */
     public ConsulConfigurationDefinition userName(String userName) {
         setUserName(userName);
         return this;
     }
 
+    /**
+     * Sets the password to be used for basic authentication
+     */
     public ConsulConfigurationDefinition password(String password) {
         setPassword(password);
         return this;
     }
 
+    /**
+     * Connect timeout for OkHttpClient
+     */
     public ConsulConfigurationDefinition connectTimeoutMillis(Long connectTimeoutMillis) {
         setConnectTimeoutMillis(connectTimeoutMillis);
         return this;
     }
 
+    /**
+     * Read timeout for OkHttpClient
+     */
     public ConsulConfigurationDefinition readTimeoutMillis(Long readTimeoutMillis) {
         setReadTimeoutMillis(readTimeoutMillis);
         return this;
     }
 
+    /**
+     * Write timeout for OkHttpClient
+     */
     public ConsulConfigurationDefinition writeTimeoutMillis(Long writeTimeoutMillis) {
         setWriteTimeoutMillis(writeTimeoutMillis);
         return this;
     }
 
+    /**
+     * The second to wait for a watch event, default 10 seconds
+     */
     public ConsulConfigurationDefinition blockSeconds(Integer blockSeconds) {
         setBlockSeconds(blockSeconds);
         return this;

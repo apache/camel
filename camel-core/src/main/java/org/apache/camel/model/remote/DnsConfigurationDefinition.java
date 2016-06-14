@@ -65,16 +65,21 @@ public class DnsConfigurationDefinition extends ServiceCallConfigurationDefiniti
         this.domain = domain;
     }
 
-
     // -------------------------------------------------------------------------
     // Fluent API
     // -------------------------------------------------------------------------
-
+ 
+    /**
+     * The transport protocol of the desired service.
+     */
     public DnsConfigurationDefinition proto(String proto) {
         setProto(proto);
         return this;
     }
 
+    /**
+     * The domain name;
+     */
     public DnsConfigurationDefinition domain(String domain) {
         setDomain(domain);
         return this;

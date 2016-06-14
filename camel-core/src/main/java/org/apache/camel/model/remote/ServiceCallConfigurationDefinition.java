@@ -85,6 +85,9 @@ public abstract class ServiceCallConfigurationDefinition extends IdentifiedType 
         return loadBalancerRef;
     }
 
+    /**
+     * Sets a reference to a custom {@link org.apache.camel.spi.ServiceCallLoadBalancer} to use.
+     */
     public void setLoadBalancerRef(String loadBalancerRef) {
         this.loadBalancerRef = loadBalancerRef;
     }
@@ -101,6 +104,9 @@ public abstract class ServiceCallConfigurationDefinition extends IdentifiedType 
         return serverListStrategyRef;
     }
 
+    /**
+     * Sets a reference to a custom {@link org.apache.camel.spi.ServiceCallServerListStrategy} to use.
+     */
     public void setServerListStrategyRef(String serverListStrategyRef) {
         this.serverListStrategyRef = serverListStrategyRef;
     }
@@ -117,6 +123,13 @@ public abstract class ServiceCallConfigurationDefinition extends IdentifiedType 
         return properties;
     }
 
+    /**
+     * Set client properties to use.
+     * <p/>
+     * These properties are specific to what service call implementation are in 
+     * use. For example if using ribbon, then the client properties are define 
+     * in com.netflix.client.config.CommonClientConfigKey.
+     */
     public void setProperties(List<PropertyDefinition> properties) {
         this.properties = properties;
     }

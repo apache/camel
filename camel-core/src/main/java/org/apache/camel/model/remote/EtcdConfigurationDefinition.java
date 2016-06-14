@@ -98,26 +98,41 @@ public class EtcdConfigurationDefinition extends ServiceCallConfigurationDefinit
     // Fluent API
     // -------------------------------------------------------------------------
 
+    /**
+     * The URIs the client can connect to.
+     */
     public EtcdConfigurationDefinition uris(String uris) {
         setUris(uris);
         return this;
     }
 
+    /**
+     * The user name to use for basic authentication.
+     */
     public EtcdConfigurationDefinition userName(String userName) {
         setUserName(userName);
         return this;
     }
 
+    /**
+     * The password to use for basic authentication.
+     */
     public EtcdConfigurationDefinition password(String password) {
         setPassword(password);
         return this;
     }
 
+    /**
+     * To set the maximum time an action could take to complete.
+     */
     public EtcdConfigurationDefinition timeout(Long timeout) {
         setTimeout(timeout);
         return this;
     }
 
+    /**
+     * The path to look for for service discovery
+     */
     public EtcdConfigurationDefinition servicePath(String servicePath) {
         setServicePath(servicePath);
         return this;

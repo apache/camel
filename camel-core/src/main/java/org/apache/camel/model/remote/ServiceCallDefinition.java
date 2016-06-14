@@ -233,6 +233,9 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return serviceCallConfigurationRef;
     }
 
+    /**
+     * Refers to a ServiceCall configuration to use
+     */
     public void setServiceCallConfigurationRef(String serviceCallConfigurationRef) {
         this.serviceCallConfigurationRef = serviceCallConfigurationRef;
     }
@@ -253,6 +256,9 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return loadBalancerRef;
     }
 
+    /**
+     * Sets a reference to a custom {@link org.apache.camel.spi.ServiceCallLoadBalancer} to use.
+     */
     public void setLoadBalancerRef(String loadBalancerRef) {
         this.loadBalancerRef = loadBalancerRef;
     }
@@ -269,6 +275,9 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return serverListStrategyRef;
     }
 
+    /**
+     * Sets a reference to a custom {@link org.apache.camel.spi.ServiceCallServerListStrategy} to use.
+     */
     public void setServerListStrategyRef(String serverListStrategyRef) {
         this.serverListStrategyRef = serverListStrategyRef;
     }
