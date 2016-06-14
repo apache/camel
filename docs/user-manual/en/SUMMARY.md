@@ -85,6 +85,7 @@
     * [Direct-vm](direct-vm.adoc)
     * [File](file.adoc)
     * [Language](language.adoc)
+    * [Log](log.adoc)
     * [Mock](mock.adoc)
     * [Properties](properties.adoc)
 
