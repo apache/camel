@@ -17,7 +17,7 @@
 package org.apache.camel.component.salesforce.api;
 
 import org.apache.camel.component.salesforce.dto.generated.MSPTest;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;

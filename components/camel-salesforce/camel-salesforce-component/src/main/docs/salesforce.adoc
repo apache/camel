@@ -230,8 +230,10 @@ The Salesforce component supports 16 options which are listed below.
 
 
 
+
+
 // endpoint options: START
-The Salesforce component supports 36 endpoint options which are listed below:
+The Salesforce component supports 37 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -256,6 +258,7 @@ The Salesforce component supports 36 endpoint options which are listed below:
 | notifyForOperations | common |  | NotifyForOperationsEnum | Notify for operations options are ALL CREATE EXTENDED UPDATE (API version 29.0)
 | notifyForOperationUndelete | common |  | Boolean | Notify for un-delete operation defaults to false (API version = 29.0)
 | notifyForOperationUpdate | common |  | Boolean | Notify for update operation defaults to false (API version = 29.0)
+| objectMapper | common |  | ObjectMapper | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects.
 | reportId | common |  | String | Salesforce1 Analytics report Id
 | reportMetadata | common |  | ReportMetadata | Salesforce1 Analytics report metadata for filtering
 | resultId | common |  | String | Bulk API Result ID
@@ -276,6 +279,8 @@ The Salesforce component supports 36 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
+
 
 
 For obvious security reasons it is recommended that the clientId,

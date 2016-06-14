@@ -21,6 +21,8 @@
  */
 package $packageName;
 
+import java.util.Optional;
+
 ## add imports for XStreamConverter and PicklistEnumConverter if needed
 #set ( $hasPicklists = $utility.hasPicklists($desc) )
 #set ( $hasMultiSelectPicklists = $utility.hasMultiSelectPicklists($desc) )
@@ -47,15 +49,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 #if ( $hasMultiSelectPicklists )
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 #end
 
 /**
  * Salesforce DTO for SObject $desc.Name
  */
-@XStreamAlias("$desc.Name")
-public class $desc.Name extends AbstractSObjectBase {
+@XStreamAlias("${desc.Name}Optional")
+public class ${desc.Name}Optional extends AbstractSObjectBase {
 
 #foreach ( $field in $desc.Fields )
 #if ( $utility.notBaseField($field.Name) )
@@ -84,7 +84,7 @@ public class $desc.Name extends AbstractSObjectBase {
     @XStreamAlias("$fieldName")
 #end
 #end
-    private $fieldType $propertyName;
+    private Optional<$fieldType> $propertyName;
 
     @JsonProperty("$fieldName")
 #if ( $isMultiSelectPicklist )
@@ -93,9 +93,8 @@ public class $desc.Name extends AbstractSObjectBase {
 #else
     @JsonSerialize(using = MultiSelectPicklistSerializer.class)
 #end
-    @JsonInclude(value = Include.ALWAYS)
 #end
-    public $fieldType get$propertyName() {
+    public Optional<$fieldType> get$propertyName() {
         return this.$propertyName;
     }
 
@@ -107,7 +106,7 @@ public class $desc.Name extends AbstractSObjectBase {
     @JsonDeserialize(using = MultiSelectPicklistDeserializer.class)
 #end
 #end
-    public void set$propertyName($fieldType $propertyName) {
+    public void set$propertyName(Optional<$fieldType> $propertyName) {
         this.$propertyName = $propertyName;
     }
 

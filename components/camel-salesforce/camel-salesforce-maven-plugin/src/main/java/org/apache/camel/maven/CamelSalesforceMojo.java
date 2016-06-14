@@ -67,7 +67,6 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.log.Log4JLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.jetty.client.HttpProxy;
 import org.eclipse.jetty.client.Origin;
 import org.eclipse.jetty.client.ProxyConfiguration;
@@ -76,6 +75,8 @@ import org.eclipse.jetty.client.api.Authentication;
 import org.eclipse.jetty.client.util.BasicAuthentication;
 import org.eclipse.jetty.client.util.DigestAuthentication;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Goal to generate DTOs for Salesforce SObjects
@@ -90,7 +91,9 @@ public class CamelSalesforceMojo extends AbstractMojo {
     private static final String PACKAGE_NAME_PATTERN = "^[a-z]+(\\.[a-z][a-z0-9]*)*$";
 
     private static final String SOBJECT_POJO_VM = "/sobject-pojo.vm";
+    private static final String SOBJECT_POJO_OPTIONAL_VM = "/sobject-pojo-optional.vm";
     private static final String SOBJECT_QUERY_RECORDS_VM = "/sobject-query-records.vm";
+    private static final String SOBJECT_QUERY_RECORDS_OPTIONAL_VM = "/sobject-query-records-optional.vm";
     private static final String SOBJECT_PICKLIST_VM = "/sobject-picklist.vm";
 
     // used for velocity logging, to avoid creating velocity.log
@@ -247,6 +250,9 @@ public class CamelSalesforceMojo extends AbstractMojo {
     @Parameter(property = "camelSalesforce.packageName", defaultValue = "org.apache.camel.salesforce.dto")
     protected String packageName;
 
+    @Parameter(property = "camelSalesforce.useOptionals", defaultValue = "false")
+    protected boolean useOptionals;
+
     @Parameter(property = "camelSalesforce.useStringsForPicklists", defaultValue = "false")
     protected Boolean useStringsForPicklists;
 
@@ -269,7 +275,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
         engine.init();
 
         // make sure we can load both templates
-        if (!engine.resourceExists(SOBJECT_POJO_VM) || !engine.resourceExists(SOBJECT_QUERY_RECORDS_VM)) {
+        if (!engine.resourceExists(SOBJECT_POJO_VM) || !engine.resourceExists(SOBJECT_QUERY_RECORDS_VM) || !engine.resourceExists(SOBJECT_POJO_OPTIONAL_VM) || !engine.resourceExists(SOBJECT_QUERY_RECORDS_OPTIONAL_VM)) {
             throw new MojoExecutionException("Velocity templates not found");
         }
 
@@ -323,7 +329,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
                     objectNames.add(sObject.getName());
                 }
             } catch (Exception e) {
-                String msg = "Error getting global Objects " + e.getMessage();
+                String msg = "Error getting global Objects: " + e.getMessage();
                 throw new MojoExecutionException(msg, e);
             }
 
@@ -557,7 +563,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
         String fileName = description.getName() + JAVA_EXT;
         BufferedWriter writer = null;
         try {
-            final File pojoFile = new File(pkgDir, fileName);
+            File pojoFile = new File(pkgDir, fileName);
             writer = new BufferedWriter(new FileWriter(pojoFile));
 
             VelocityContext context = new VelocityContext();
@@ -567,11 +573,21 @@ public class CamelSalesforceMojo extends AbstractMojo {
             context.put("generatedDate", generatedDate);
             context.put("useStringsForPicklists", useStringsForPicklists);
 
-            Template pojoTemplate = engine.getTemplate(SOBJECT_POJO_VM);
+            Template pojoTemplate;
+            pojoTemplate = engine.getTemplate(SOBJECT_POJO_VM);
             pojoTemplate.merge(context, writer);
             // close pojoFile
             writer.close();
 
+            if (useOptionals) {
+                fileName = description.getName() + "Optional" + JAVA_EXT;
+                pojoTemplate = engine.getTemplate(SOBJECT_POJO_OPTIONAL_VM);
+                pojoFile = new File(pkgDir, fileName);
+                writer = new BufferedWriter(new FileWriter(pojoFile));
+                pojoTemplate.merge(context, writer);
+                // close pojoFile
+                writer.close();
+            }
             // write required Enumerations for any picklists
             for (SObjectField field : description.getFields()) {
                 if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
@@ -610,6 +626,24 @@ public class CamelSalesforceMojo extends AbstractMojo {
 
             // close QueryRecords file
             writer.close();
+
+            if (useOptionals) {
+                // write the QueryRecords Optional class
+                fileName = "QueryRecords" + description.getName() + "Optional" + JAVA_EXT;
+                queryFile = new File(pkgDir, fileName);
+                writer = new BufferedWriter(new FileWriter(queryFile));
+
+                context = new VelocityContext();
+                context.put("packageName", packageName);
+                context.put("desc", description);
+                context.put("generatedDate", generatedDate);
+
+                queryTemplate = engine.getTemplate(SOBJECT_QUERY_RECORDS_OPTIONAL_VM);
+                queryTemplate.merge(context, writer);
+
+                // close QueryRecords file
+                writer.close();
+            }
 
         } catch (Exception e) {
             String msg = "Error creating " + fileName + ": " + e.getMessage();
@@ -691,6 +725,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
         private static final String BASE64BINARY = "base64Binary";
         private static final String MULTIPICKLIST = "multipicklist";
         private static final String PICKLIST = "picklist";
+
         private Boolean useStringsForPicklists;
 
         public GeneratorUtility(Boolean useStringsForPicklists) {
@@ -780,7 +815,6 @@ public class CamelSalesforceMojo extends AbstractMojo {
         }
 
         public boolean isPicklist(SObjectField field) {
-//            return field.getPicklistValues() != null && !field.getPicklistValues().isEmpty();
             return PICKLIST.equals(field.getType());
         }
 

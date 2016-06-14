@@ -28,7 +28,7 @@ import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.SyncResponseCallback;
 import org.apache.camel.component.salesforce.internal.dto.PushTopic;
 import org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

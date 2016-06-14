@@ -18,7 +18,7 @@ package org.apache.camel.component.salesforce.api.dto;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * DTO for Salesforce Resources.
