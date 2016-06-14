@@ -19,20 +19,26 @@ package org.apache.camel.component.salesforce.api;
 import java.io.IOException;
 import java.lang.reflect.Array;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.BeanProperty;
-import org.codehaus.jackson.map.ContextualDeserializer;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.JsonMappingException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.BeanProperty;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 /**
  * Jackson deserializer base class for reading ';' separated strings for MultiSelect pick-lists.
  */
 public class StringMultiSelectPicklistDeserializer
-    extends JsonDeserializer<Object> implements ContextualDeserializer<Object> {
+    extends StdDeserializer<Object> implements ContextualDeserializer {
+
+	private static final long serialVersionUID = 7380774744798254325L;
+
+	protected StringMultiSelectPicklistDeserializer(Class<?> vc) {
+        super(vc);
+    }
 
     @Override
     public Object deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
@@ -51,17 +57,17 @@ public class StringMultiSelectPicklistDeserializer
 
             return resultArray;
         } catch (Exception e) {
-            throw new JsonParseException("Exception reading multi-select pick list value", jp.getCurrentLocation(), e);
+            throw new JsonParseException(jp, "Exception reading multi-select pick list value", jp.getCurrentLocation(), e);
         }
     }
 
     @Override
-    public JsonDeserializer<Object> createContextual(DeserializationConfig config, BeanProperty property) throws JsonMappingException {
+    public JsonDeserializer<?> createContextual(DeserializationContext context, BeanProperty property) throws JsonMappingException {
         final Class<?> rawClass = property.getType().getRawClass();
         final Class<?> componentType = rawClass.getComponentType();
         if (componentType == null || componentType != String.class) {
-            throw new JsonMappingException("Pick list String array expected for " + rawClass);
+            throw new JsonMappingException(context.getParser(), "Pick list String array expected for " + rawClass);
         }
-        return new StringMultiSelectPicklistDeserializer();
+        return new StringMultiSelectPicklistDeserializer(rawClass);
     }
 }

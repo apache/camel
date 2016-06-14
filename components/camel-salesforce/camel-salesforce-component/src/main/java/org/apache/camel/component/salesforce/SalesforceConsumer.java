@@ -25,16 +25,16 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.streaming.PushTopicHelper;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ServiceHelper;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * The Salesforce consumer.
@@ -51,6 +51,7 @@ public class SalesforceConsumer extends DefaultConsumer {
 
     private final SalesforceEndpoint endpoint;
     private final SubscriptionHelper subscriptionHelper;
+    private final ObjectMapper objectMapper;
 
     private final String topicName;
     private final Class<?> sObjectClass;
@@ -60,6 +61,12 @@ public class SalesforceConsumer extends DefaultConsumer {
     public SalesforceConsumer(SalesforceEndpoint endpoint, Processor processor, SubscriptionHelper helper) {
         super(endpoint, processor);
         this.endpoint = endpoint;
+        ObjectMapper configuredObjectMapper = endpoint.getConfiguration().getObjectMapper();
+        if (configuredObjectMapper != null) {
+            this.objectMapper = configuredObjectMapper;
+        } else {
+            this.objectMapper = OBJECT_MAPPER;
+        }
 
         // check minimum supported API version
         if (Double.valueOf(endpoint.getConfiguration().getApiVersion()) < MINIMUM_VERSION) {
@@ -158,7 +165,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         final Map<String, Object> sObject = (Map<String, Object>) data.get(SOBJECT_PROPERTY);
         try {
 
-            final String sObjectString = OBJECT_MAPPER.writeValueAsString(sObject);
+            final String sObjectString = objectMapper.writeValueAsString(sObject);
             log.debug("Received SObject: {}", sObjectString);
 
             if (sObjectClass == null) {
@@ -166,7 +173,7 @@ public class SalesforceConsumer extends DefaultConsumer {
                 in.setBody(sObject);
             } else {
                 // create the expected SObject
-                in.setBody(OBJECT_MAPPER.readValue(
+                in.setBody(objectMapper.readValue(
                         new StringReader(sObjectString), sObjectClass));
             }
         } catch (IOException e) {

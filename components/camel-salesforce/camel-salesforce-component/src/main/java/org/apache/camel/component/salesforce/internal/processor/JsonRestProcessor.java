@@ -35,10 +35,11 @@ import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SearchResult;
 import org.apache.camel.component.salesforce.api.dto.Version;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.type.TypeReference;
 import org.eclipse.jetty.util.StringUtil;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class JsonRestProcessor extends AbstractRestProcessor {
 
@@ -50,9 +51,13 @@ public class JsonRestProcessor extends AbstractRestProcessor {
     public JsonRestProcessor(SalesforceEndpoint endpoint) throws SalesforceException {
         super(endpoint);
 
-        this.objectMapper = new ObjectMapper();
-        // enable date time support including Joda DateTime
-        this.objectMapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+        if (endpoint.getConfiguration().getObjectMapper() != null) {
+            this.objectMapper = endpoint.getConfiguration().getObjectMapper();
+        } else {
+            this.objectMapper = new ObjectMapper();
+            // enable date time support including Joda DateTime
+            this.objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        }
     }
 
     @Override
@@ -127,7 +132,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                             + (in.getBody() == null ? null : in.getBody().getClass());
                         throw new SalesforceException(msg, null);
                     } else {
-                        request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8));
+                        request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8_CHARSET));
                     }
                 }
             }

@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 //CHECKSTYLE:OFF
 public class RecentItem extends AbstractDTOBase {
 

@@ -29,6 +29,8 @@ import org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnu
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Salesforce Endpoint configuration.
  */
@@ -144,6 +146,10 @@ public class SalesforceEndpointConfig implements Cloneable {
     // Salesforce Jetty9 HttpClient, set using reference
     @UriParam
     private SalesforceHttpClient httpClient;
+
+    // To allow custom ObjectMapper (for registering extra datatype modules)
+    @UriParam
+    private ObjectMapper objectMapper;
 
     public SalesforceEndpointConfig copy() {
         try {
@@ -483,6 +489,17 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     public SalesforceHttpClient getHttpClient() {
         return httpClient;
+    }
+
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
+    /**
+     * Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects.
+     */
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     public Map<String, Object> toValueMap() {

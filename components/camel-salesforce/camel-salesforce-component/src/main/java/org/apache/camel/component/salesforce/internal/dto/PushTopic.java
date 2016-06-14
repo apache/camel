@@ -21,7 +21,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 //CHECKSTYLE:OFF
 /**
