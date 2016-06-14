@@ -83,6 +83,7 @@
     * [Dataset](dataset.adoc)
     * [Direct](direct.adoc)
     * [Direct-vm](direct-vm.adoc)
+    * [File](file.adoc)
     * [Mock](mock.adoc)
     * [Properties](properties.adoc)
 
