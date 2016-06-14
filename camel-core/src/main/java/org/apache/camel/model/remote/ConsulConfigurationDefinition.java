@@ -21,8 +21,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
  * Consul remote service call configuration
@@ -50,6 +52,8 @@ public class ConsulConfigurationDefinition extends ServiceCallConfigurationDefin
     private Long writeTimeoutMillis;
     @XmlAttribute @Metadata(defaultValue = "10")
     private Integer blockSeconds = 10;
+    @XmlTransient
+    private SSLContextParameters sslContextParameters;
 
     public ConsulConfigurationDefinition() {
     }
@@ -134,6 +138,14 @@ public class ConsulConfigurationDefinition extends ServiceCallConfigurationDefin
         this.blockSeconds = blockSeconds;
     }
 
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
     // -------------------------------------------------------------------------
     // Fluent API
     // -------------------------------------------------------------------------
@@ -207,6 +219,14 @@ public class ConsulConfigurationDefinition extends ServiceCallConfigurationDefin
      */
     public ConsulConfigurationDefinition blockSeconds(Integer blockSeconds) {
         setBlockSeconds(blockSeconds);
+        return this;
+    }
+
+    /**
+     * To configure security using SSLContextParameters.
+     */
+    public ConsulConfigurationDefinition sslContextParameters(SSLContextParameters sslContextParameters) {
+        setSslContextParameters(sslContextParameters);
         return this;
     }
 }
