@@ -33,7 +33,7 @@ import org.junit.Test;
 
 public class FallbackTypeConverterObjectFactoryDisabledTest extends CamelTestSupport {
     
-    @Test(expected=CamelExecutionException.class)
+    @Test(expected = CamelExecutionException.class)
     public void testObjectFactoryFalse() throws Exception {
         Message in = new Message("Hello World");
         getMockEndpoint("mock:a").expectedBodiesReceived(in);
@@ -45,7 +45,7 @@ public class FallbackTypeConverterObjectFactoryDisabledTest extends CamelTestSup
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-    	context.getProperties().put(FallbackTypeConverter.OBJECT_FACTORY, "false");
+        context.getProperties().put(FallbackTypeConverter.OBJECT_FACTORY, "false");
         return new RouteBuilder(context) {
 
             @Override
