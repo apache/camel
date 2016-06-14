@@ -717,10 +717,10 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 }
             } else if (isMultiSelectPicklist(field)) {
                 if (useStringsForPicklists) {
-                    return description.getName() + "_" + enumTypeName(field.getName()) + "[]";
+                    return String.class.getName() + "[]";
                 } else {
                     // use a pick list enum array, enum will be created after generating the SObject class
-                    return enumTypeName(field.getName()) + "[]";
+                    return description.getName() + "_" + enumTypeName(field.getName()) + "[]";
                 }
             } else {
                 // map field to Java type
