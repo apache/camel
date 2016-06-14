@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.s3;
 import com.amazonaws.services.s3.AmazonS3;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.util.ObjectHelper;
 
 @UriParams
 public class S3Configuration implements Cloneable {
@@ -58,6 +59,8 @@ public class S3Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
+    @UriParam
+    private boolean pathStyleAccess;
 
     public long getPartSize() {
         return partSize;
@@ -264,5 +267,21 @@ public class S3Configuration implements Cloneable {
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    /**
+     * Whether or not the S3 client should use path style access
+     */
+    public void setPathStyleAccess(final boolean pathStyleAccess) {
+        this.pathStyleAccess = pathStyleAccess;
+    }
+
+    public boolean isPathStyleAccess() {
+        return pathStyleAccess;
+    }
+
+    boolean hasProxyConfiguration() {
+        return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
+
     }
 }
