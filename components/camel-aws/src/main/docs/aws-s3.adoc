@@ -42,8 +42,9 @@ The AWS S3 Storage Service component has no options.
 
 
 
+
 // endpoint options: START
-The AWS S3 Storage Service component supports 38 endpoint options which are listed below:
+The AWS S3 Storage Service component supports 39 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -53,6 +54,7 @@ The AWS S3 Storage Service component supports 38 endpoint options which are list
 | accessKey | common |  | String | Amazon AWS Access Key
 | amazonS3Client | common |  | AmazonS3 | Reference to a com.amazonaws.services.sqs.AmazonS3 in the link:registry.htmlRegistry.
 | amazonS3Endpoint | common |  | String | The region with which the AWS-S3 client wants to work with.
+| pathStyleAccess | common | false | boolean | Whether or not the S3 client should use path style access
 | policy | common |  | String | Camel 2.8.4: The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3setBucketPolicy() method.
 | proxyHost | common |  | String | Camel 2.16: To define a proxy host when instantiating the SQS client
 | proxyPort | common |  | Integer | Camel 2.16: Specify a proxy port to be used inside the client definition.
@@ -90,6 +92,7 @@ The AWS S3 Storage Service component supports 38 endpoint options which are list
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
