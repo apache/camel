@@ -24,19 +24,12 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.S3ClientOptions;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
+import org.apache.camel.*;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -125,7 +118,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
             createBucketRequest.setRegion(getConfiguration().getRegion());
         }
 
-        LOG.trace("Creating bucket [{}] in region [{}] with request [{}]...", new Object[]{configuration.getBucketName(), configuration.getRegion(), createBucketRequest});
+        LOG.trace("Creating bucket [{}] in region [{}] with request [{}]...", configuration.getBucketName(), configuration.getRegion(), createBucketRequest);
 
         s3Client.createBucket(createBucketRequest);
 
@@ -209,17 +202,21 @@ public class S3Endpoint extends ScheduledPollEndpoint {
      * Provide the possibility to override this method for an mock implementation
      */
     AmazonS3 createS3Client() {
-        AmazonS3 client = null;
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            ClientConfiguration clientConfiguration = new ClientConfiguration();
-            clientConfiguration.setProxyHost(configuration.getProxyHost());
-            clientConfiguration.setProxyPort(configuration.getProxyPort());
-            client = new AmazonS3Client(credentials, clientConfiguration);
-        } else {
-            client = new AmazonS3Client(credentials);
-        }
+        AmazonS3Client client= configuration.hasProxyConfiguration() ? createClientWithProxy(credentials) : new AmazonS3Client(credentials);
+
+        S3ClientOptions clientOptions = S3ClientOptions.builder()
+            .setPathStyleAccess(configuration.isPathStyleAccess())
+            .build();
+        client.setS3ClientOptions(clientOptions);
         return client;
+    }
+
+    private AmazonS3Client createClientWithProxy(final AWSCredentials credentials) {
+        ClientConfiguration clientConfiguration = new ClientConfiguration();
+        clientConfiguration.setProxyHost(configuration.getProxyHost());
+        clientConfiguration.setProxyPort(configuration.getProxyPort());
+        return new AmazonS3Client(credentials, clientConfiguration);
     }
 
     public int getMaxMessagesPerPoll() {
