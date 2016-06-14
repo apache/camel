@@ -23,7 +23,6 @@ import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.api.model.ConfigMapList;
 import io.fabric8.kubernetes.api.model.DoneableConfigMap;
-import io.fabric8.kubernetes.api.model.EditableConfigMap;
 import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.ClientResource;
 
@@ -138,7 +137,7 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
         }
         Map<String, String> labels = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, Map.class);
-        EditableConfigMap cfMapCreating = new ConfigMapBuilder().withNewMetadata().withName(cfMapName)
+        ConfigMap cfMapCreating = new ConfigMapBuilder().withNewMetadata().withName(cfMapName)
                 .withLabels(labels).endMetadata().withData(configMapData).build();
         configMap = getEndpoint().getKubernetesClient().configMaps()
                 .inNamespace(namespaceName).create(cfMapCreating);

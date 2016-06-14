@@ -19,7 +19,6 @@ package org.apache.camel.component.kubernetes.producer;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.DoneablePersistentVolumeClaim;
-import io.fabric8.kubernetes.api.model.EditablePersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimBuilder;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimList;
@@ -180,7 +179,7 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
                 .getHeader(
                         KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_CLAIMS_LABELS,
                         Map.class);
-        EditablePersistentVolumeClaim pvcCreating = new PersistentVolumeClaimBuilder()
+        PersistentVolumeClaim pvcCreating = new PersistentVolumeClaimBuilder()
                 .withNewMetadata().withName(pvcName).withLabels(labels)
                 .endMetadata().withSpec(pvcSpec).build();
         pvc = getEndpoint().getKubernetesClient().persistentVolumeClaims()

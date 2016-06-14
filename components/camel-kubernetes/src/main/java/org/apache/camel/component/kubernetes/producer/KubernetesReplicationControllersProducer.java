@@ -19,7 +19,6 @@ package org.apache.camel.component.kubernetes.producer;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.DoneableReplicationController;
-import io.fabric8.kubernetes.api.model.EditableReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationControllerBuilder;
 import io.fabric8.kubernetes.api.model.ReplicationControllerList;
@@ -190,7 +189,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS,
                 Map.class);
-        EditableReplicationController rcCreating = new ReplicationControllerBuilder()
+        ReplicationController rcCreating = new ReplicationControllerBuilder()
                 .withNewMetadata().withName(rcName).withLabels(labels)
                 .endMetadata().withSpec(rcSpec).build();
         rc = getEndpoint().getKubernetesClient().replicationControllers()

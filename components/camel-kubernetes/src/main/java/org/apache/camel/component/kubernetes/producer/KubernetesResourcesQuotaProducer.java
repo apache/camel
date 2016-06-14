@@ -19,7 +19,6 @@ package org.apache.camel.component.kubernetes.producer;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.DoneableResourceQuota;
-import io.fabric8.kubernetes.api.model.EditableResourceQuota;
 import io.fabric8.kubernetes.api.model.ResourceQuota;
 import io.fabric8.kubernetes.api.model.ResourceQuotaBuilder;
 import io.fabric8.kubernetes.api.model.ResourceQuotaList;
@@ -176,7 +175,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS,
                 Map.class);
-        EditableResourceQuota rqCreating = new ResourceQuotaBuilder()
+        ResourceQuota rqCreating = new ResourceQuotaBuilder()
                 .withNewMetadata().withName(rqName).withLabels(labels)
                 .endMetadata().withSpec(rqSpec).build();
         rq = getEndpoint().getKubernetesClient().resourceQuotas()

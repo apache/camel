@@ -19,7 +19,6 @@ package org.apache.camel.component.kubernetes.producer;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.DoneableService;
-import io.fabric8.kubernetes.api.model.EditableService;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.ServiceList;
@@ -179,7 +178,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
         }
         Map<String, String> labels = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_SERVICE_LABELS, Map.class);
-        EditableService serviceCreating = new ServiceBuilder()
+        Service serviceCreating = new ServiceBuilder()
                 .withNewMetadata().withName(serviceName).withLabels(labels)
                 .endMetadata().withSpec(serviceSpec).build();
         service = getEndpoint().getKubernetesClient().services()

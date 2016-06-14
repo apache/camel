@@ -19,7 +19,6 @@ package org.apache.camel.component.kubernetes.producer;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.DoneablePod;
-import io.fabric8.kubernetes.api.model.EditablePod;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodList;
@@ -160,7 +159,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
         Map<String, String> labels = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
-        EditablePod podCreating = new PodBuilder().withNewMetadata()
+        Pod podCreating = new PodBuilder().withNewMetadata()
                 .withName(podName).withLabels(labels).endMetadata()
                 .withSpec(podSpec).build();
         pod = getEndpoint().getKubernetesClient().pods()

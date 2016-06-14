@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.EditablePodTemplateSpec;
+import io.fabric8.kubernetes.api.model.PodTemplateSpec;
 import io.fabric8.kubernetes.api.model.PodTemplateSpecBuilder;
 import io.fabric8.kubernetes.api.model.ReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationControllerSpec;
@@ -145,7 +145,7 @@ public class KubernetesReplicationControllersProducerTest extends
                         ReplicationControllerSpec rcSpec = new ReplicationControllerSpec();
                         rcSpec.setReplicas(2);
                         PodTemplateSpecBuilder builder = new PodTemplateSpecBuilder();
-                        EditablePodTemplateSpec t = builder.withNewMetadata()
+                        PodTemplateSpec t = builder.withNewMetadata()
                                 .withName("nginx-template")
                                 .addToLabels("server", "nginx").endMetadata()
                                 .withNewSpec().addNewContainer()

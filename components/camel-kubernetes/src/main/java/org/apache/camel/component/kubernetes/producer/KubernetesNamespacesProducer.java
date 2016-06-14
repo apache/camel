@@ -19,7 +19,6 @@ package org.apache.camel.component.kubernetes.producer;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.DoneableNamespace;
-import io.fabric8.kubernetes.api.model.EditableNamespace;
 import io.fabric8.kubernetes.api.model.Namespace;
 import io.fabric8.kubernetes.api.model.NamespaceBuilder;
 import io.fabric8.kubernetes.api.model.NamespaceList;
@@ -134,7 +133,7 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         }
         Map<String, String> labels = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, Map.class);
-        EditableNamespace ns = new NamespaceBuilder().withNewMetadata()
+        Namespace ns = new NamespaceBuilder().withNewMetadata()
                 .withName(namespaceName).withLabels(labels).endMetadata()
                 .build();
         Namespace namespace = getEndpoint().getKubernetesClient().namespaces()
