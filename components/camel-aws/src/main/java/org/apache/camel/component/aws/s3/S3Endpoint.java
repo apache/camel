@@ -29,7 +29,14 @@ import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
-import org.apache.camel.*;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -203,12 +210,8 @@ public class S3Endpoint extends ScheduledPollEndpoint {
      */
     AmazonS3 createS3Client() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonS3Client client= configuration.hasProxyConfiguration() ? createClientWithProxy(credentials) : new AmazonS3Client(credentials);
-
-        S3ClientOptions clientOptions = S3ClientOptions.builder()
-            .setPathStyleAccess(configuration.isPathStyleAccess())
-            .build();
-        client.setS3ClientOptions(clientOptions);
+        AmazonS3Client client = configuration.hasProxyConfiguration() ? createClientWithProxy(credentials) : new AmazonS3Client(credentials);
+        client.setS3ClientOptions(new S3ClientOptions().withPathStyleAccess(configuration.isPathStyleAccess()));
         return client;
     }
 
