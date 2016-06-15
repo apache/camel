@@ -89,6 +89,7 @@
     * [Mock](mock.adoc)
     * [Properties](properties.adoc)
     * [Ref](ref.adoc)
+    * [Rest](rest.adoc)
 
 * Components
     * [Async Http Client (AHC)](ahc.adoc)
