@@ -20,12 +20,10 @@ import org.apache.camel.CamelContext;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.stereotype.Component;
 
 /**
  * Camel {@link HealthIndicator}.
  */
-@Component
 public class CamelHealthIndicator extends AbstractHealthIndicator {
 
     private CamelContext camelContext;
