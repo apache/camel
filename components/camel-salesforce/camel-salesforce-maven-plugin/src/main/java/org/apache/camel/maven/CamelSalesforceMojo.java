@@ -144,7 +144,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
     /**
      * Addresses to NOT Proxy.
      */
-    @Parameter(property = "camelSalesforce.httpProxyIncludedAddresses")
+    @Parameter(property = "camelSalesforce.httpProxyExcludedAddresses")
     protected Set<String> httpProxyExcludedAddresses;
 
     /**
