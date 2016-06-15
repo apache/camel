@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
-import org.joda.time.DateTime;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.joda.time.DateTime;
 //CHECKSTYLE:OFF
 public class AbstractSObjectBase extends AbstractDTOBase {
 

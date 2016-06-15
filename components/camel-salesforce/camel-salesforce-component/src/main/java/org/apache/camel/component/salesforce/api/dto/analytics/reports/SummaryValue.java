@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.salesforce.api.dto.analytics.reports;
 
-import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
-
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+
+import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 
 /**
  * Report results summary value DTO for data cells and aggregates.

@@ -34,9 +34,9 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 public class StringMultiSelectPicklistDeserializer
     extends StdDeserializer<Object> implements ContextualDeserializer {
 
-	private static final long serialVersionUID = 7380774744798254325L;
+    private static final long serialVersionUID = 7380774744798254325L;
 
-	protected StringMultiSelectPicklistDeserializer(Class<?> vc) {
+    protected StringMultiSelectPicklistDeserializer(Class<?> vc) {
         super(vc);
     }
 
