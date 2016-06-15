@@ -37,6 +37,8 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
@@ -75,8 +77,6 @@ import org.eclipse.jetty.client.api.Authentication;
 import org.eclipse.jetty.client.util.BasicAuthentication;
 import org.eclipse.jetty.client.util.DigestAuthentication;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Goal to generate DTOs for Salesforce SObjects
@@ -275,7 +275,10 @@ public class CamelSalesforceMojo extends AbstractMojo {
         engine.init();
 
         // make sure we can load both templates
-        if (!engine.resourceExists(SOBJECT_POJO_VM) || !engine.resourceExists(SOBJECT_QUERY_RECORDS_VM) || !engine.resourceExists(SOBJECT_POJO_OPTIONAL_VM) || !engine.resourceExists(SOBJECT_QUERY_RECORDS_OPTIONAL_VM)) {
+        if (!engine.resourceExists(SOBJECT_POJO_VM)
+                || !engine.resourceExists(SOBJECT_QUERY_RECORDS_VM)
+                || !engine.resourceExists(SOBJECT_POJO_OPTIONAL_VM)
+                || !engine.resourceExists(SOBJECT_QUERY_RECORDS_OPTIONAL_VM)) {
             throw new MojoExecutionException("Velocity templates not found");
         }
 

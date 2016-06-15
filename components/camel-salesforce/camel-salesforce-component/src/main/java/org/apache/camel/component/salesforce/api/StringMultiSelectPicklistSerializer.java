@@ -28,9 +28,9 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
  */
 public class StringMultiSelectPicklistSerializer extends StdSerializer<Object> {
 
-	private static final long serialVersionUID = 1406195556960561677L;
+    private static final long serialVersionUID = 1406195556960561677L;
 
-	protected StringMultiSelectPicklistSerializer(Class<Object> t) {
+    protected StringMultiSelectPicklistSerializer(Class<Object> t) {
         super(t);
     }
 

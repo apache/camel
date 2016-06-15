@@ -21,6 +21,8 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -33,8 +35,6 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ServiceHelper;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * The Salesforce consumer.

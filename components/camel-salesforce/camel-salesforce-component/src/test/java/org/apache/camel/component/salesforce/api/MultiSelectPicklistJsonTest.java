@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.salesforce.api;
 
-import org.apache.camel.component.salesforce.dto.generated.MSPTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.camel.component.salesforce.dto.generated.MSPTest;
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class MultiSelectPicklistJsonTest {
 

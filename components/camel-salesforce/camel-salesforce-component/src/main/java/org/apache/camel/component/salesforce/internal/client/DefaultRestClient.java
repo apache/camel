@@ -24,6 +24,8 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
@@ -36,8 +38,6 @@ import org.apache.camel.component.salesforce.internal.dto.RestChoices;
 import org.apache.camel.component.salesforce.internal.dto.RestErrors;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.util.InputStreamContentProvider;

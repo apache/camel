@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * DTO for Salesforce SOSL Search result record.
