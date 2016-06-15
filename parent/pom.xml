@@ -50,6 +50,7 @@
     <aries-blueprint-proxy-version>1.0.1</aries-blueprint-proxy-version>
     <aries-blueprint-proxy-impl-version>1.0.4</aries-blueprint-proxy-impl-version>
     <aries-util-version>1.1.1</aries-util-version>
+    <arquillian-container-se-managed-version>1.0.0.Final</arquillian-container-se-managed-version>
     <arquillian-version>1.1.11.Final</arquillian-version>
     <arquillian-weld-se-embedded-version>1.0.0.CR9</arquillian-weld-se-embedded-version>
     <asm-bundle-version>3.3.1_1</asm-bundle-version>
@@ -498,6 +499,8 @@
     <servlet-version-range>[3,4)</servlet-version-range>
     <shiro-version>1.2.4</shiro-version>
     <shrinkwrap-descriptors-version>2.0.0-alpha-8</shrinkwrap-descriptors-version>
+    <shrinkwrap-resolver-version>2.2.2</shrinkwrap-resolver-version>
+    <shrinkwrap-version>1.2.3</shrinkwrap-version>
     <sip-api-version>1.1</sip-api-version>
     <slf4j-api-version>1.7.21</slf4j-api-version>
     <slf4j-version>1.7.21</slf4j-version>

@@ -14,14 +14,6 @@
     <name>Camel :: Integration Tests :: Spring-Boot</name>
     <description>Spring-Boot Camel test</description>
 
-
-    <properties>
-        <arquillian.version>1.1.11.Final</arquillian.version>
-        <arquillian-container.version>1.0.0.Final</arquillian-container.version>
-        <shrinkwrap.version>1.2.3</shrinkwrap.version>
-        <shrinkwrap-resolver.version>2.2.2</shrinkwrap-resolver.version>
-    </properties>
-
     <dependencies>
 
         <dependency>
@@ -40,13 +32,13 @@
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
-            <version>${shrinkwrap.version}</version>
+            <version>${shrinkwrap-version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-impl-base</artifactId>
-            <version>${shrinkwrap.version}</version>
+            <version>${shrinkwrap-version}</version>
         </dependency>
 
         <dependency>
@@ -58,62 +50,62 @@
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
-            <version>${arquillian.version}</version>
+            <version>${arquillian-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
             <artifactId>container-se-managed</artifactId>
-            <version>${arquillian-container.version}</version>
+            <version>${arquillian-container-se-managed-version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-api</artifactId>
-            <version>${shrinkwrap-resolver.version}</version>
+            <version>${shrinkwrap-resolver-version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-spi</artifactId>
-            <version>${shrinkwrap-resolver.version}</version>
+            <version>${shrinkwrap-resolver-version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-api-maven</artifactId>
-            <version>${shrinkwrap-resolver.version}</version>
+            <version>${shrinkwrap-resolver-version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-spi-maven</artifactId>
-            <version>${shrinkwrap-resolver.version}</version>
+            <version>${shrinkwrap-resolver-version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-api-maven-archive</artifactId>
-            <version>${shrinkwrap-resolver.version}</version>
+            <version>${shrinkwrap-resolver-version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-            <version>${shrinkwrap-resolver.version}</version>
+            <version>${shrinkwrap-resolver-version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-impl-maven-archive</artifactId>
-            <version>${shrinkwrap-resolver.version}</version>
+            <version>${shrinkwrap-resolver-version}</version>
             <scope>test</scope>
         </dependency>
 
