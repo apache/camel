@@ -102,7 +102,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
 
         HttpServerChannelHandler handler = getHandler(request);
         if (handler != null) {
-            Attribute<HttpServerChannelHandler> attr = ctx.attr(SERVER_HANDLER_KEY);
+            Attribute<HttpServerChannelHandler> attr = ctx.channel().attr(SERVER_HANDLER_KEY);
             // store handler as attachment
             attr.set(handler);
             if (msg instanceof HttpContent) {
@@ -123,7 +123,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        Attribute<HttpServerChannelHandler> attr = ctx.attr(SERVER_HANDLER_KEY);
+        Attribute<HttpServerChannelHandler> attr = ctx.channel().attr(SERVER_HANDLER_KEY);
         HttpServerChannelHandler handler = attr.get();
         if (handler != null) {
             handler.exceptionCaught(ctx, cause);
@@ -150,12 +150,12 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         HttpServerChannelHandler answer = null;
 
         // need to strip out host and port etc, as we only need the context-path for matching
-        String method = request.getMethod().name();
+        String method = request.method().name();
         if (method == null) {
             return null;
         }
 
-        String path = request.getUri();
+        String path = request.uri();
         int idx = path.indexOf(token);
         if (idx > -1) {
             path = path.substring(idx + len);

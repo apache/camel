@@ -20,6 +20,7 @@ import java.nio.charset.Charset;
 
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -68,7 +69,7 @@ public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest
         HttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
                                                             NettyConverter.toByteBuffer(reply.getBytes()));
         
-        response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, reply.length());
+        response.headers().set(HttpHeaderNames.CONTENT_LENGTH.toString(), reply.length());
 
         return response;
     }

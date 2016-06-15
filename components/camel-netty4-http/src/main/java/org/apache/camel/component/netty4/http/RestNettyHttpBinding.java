@@ -48,7 +48,7 @@ public class RestNettyHttpBinding extends DefaultNettyHttpBinding {
     public void populateCamelHeaders(FullHttpRequest request, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
         super.populateCamelHeaders(request, headers, exchange, configuration);
 
-        String path = request.getUri();
+        String path = request.uri();
         if (path == null) {
             return;
         }

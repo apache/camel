@@ -61,7 +61,7 @@ public class NettyHttpBindingUseRelativePathInPostTest extends BaseNettyTest {
 
                         NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
                         FullHttpRequest request = in.getHttpRequest();
-                        assertEquals("Relative path not used in POST", "/myapp/myservice?query1=a&query2=b", request.getUri());
+                        assertEquals("Relative path not used in POST", "/myapp/myservice?query1=a&query2=b", request.uri());
 
                         // send a response
                         exchange.getOut().getHeaders().clear();

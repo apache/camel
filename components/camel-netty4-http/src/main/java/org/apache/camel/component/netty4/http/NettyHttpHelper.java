@@ -124,7 +124,7 @@ public final class NettyHttpHelper {
 
     public static Exception populateNettyHttpOperationFailedException(Exchange exchange, String url, FullHttpResponse response, int responseCode, boolean transferException) {
         String uri = url;
-        String statusText = response.getStatus().reasonPhrase();
+        String statusText = response.status().reasonPhrase();
 
         if (responseCode >= 300 && responseCode < 400) {
             String redirectLocation = response.headers().get("location");
