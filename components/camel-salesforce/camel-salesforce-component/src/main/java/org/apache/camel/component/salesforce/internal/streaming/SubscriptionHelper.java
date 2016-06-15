@@ -17,6 +17,8 @@
 package org.apache.camel.component.salesforce.internal.streaming;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -31,6 +33,8 @@ import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.support.ServiceSupport;
 import org.cometd.bayeux.Message;
+import org.cometd.bayeux.client.ClientSession;
+import org.cometd.bayeux.client.ClientSession.Extension;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
 import org.cometd.client.transport.ClientTransport;
@@ -56,6 +60,8 @@ public class SubscriptionHelper extends ServiceSupport {
 
     private static final String EXCEPTION_FIELD = "exception";
 
+    private static final double MINIMUM_REPLAY_VERSION = 36.0;
+
     private final SalesforceComponent component;
     private final SalesforceSession session;
     private final BayeuxClient client;
@@ -71,14 +77,14 @@ public class SubscriptionHelper extends ServiceSupport {
     private String connectError;
     private boolean reconnecting;
 
-    public SubscriptionHelper(SalesforceComponent component) throws Exception {
+    public SubscriptionHelper(SalesforceComponent component, String topicName) throws Exception {
         this.component = component;
         this.session = component.getSession();
 
         this.listenerMap = new ConcurrentHashMap<SalesforceConsumer, ClientSessionChannel.MessageListener>();
 
         // create CometD client
-        this.client = createClient();
+        this.client = createClient(topicName);
     }
 
     @Override
@@ -179,7 +185,7 @@ public class SubscriptionHelper extends ServiceSupport {
         }
     }
 
-    private BayeuxClient createClient() throws Exception {
+    private BayeuxClient createClient(String topicName) throws Exception {
         // use default Jetty client from SalesforceComponent, its shared by all consumers
         final SalesforceHttpClient httpClient = component.getConfig().getHttpClient();
 
@@ -203,6 +209,29 @@ public class SubscriptionHelper extends ServiceSupport {
         };
 
         BayeuxClient client = new BayeuxClient(getEndpointUrl(), transport);
+        Integer replayId = null;
+        String channelName = getChannelName(topicName);
+        Map<String, Integer> replayIdMap = component.getConfig().getInitialReplayIdMap();
+        if (replayIdMap != null) {
+            replayId = replayIdMap.get(channelName);
+        }
+        if (replayId == null) {
+            replayId = component.getConfig().getDefaultReplayId();
+        }
+        if (replayId != null) {
+            LOG.info("Sending replayId={} for channel {}", replayId, channelName);
+            List<Extension> extensions = client.getExtensions();
+            Extension ext = null;
+            for (Iterator<Extension> iter = extensions.iterator(); iter.hasNext(); ext = iter.next()) {
+                if (ext instanceof CometDReplayExtension) {
+                    iter.remove();
+                }
+            }
+            Map<String, Integer> dataMap = new HashMap<>();
+            dataMap.put(channelName, replayId);
+            ClientSession.Extension extension = new CometDReplayExtension<>(dataMap);
+            client.addExtension(extension);
+        }
         return client;
     }
 
@@ -344,7 +373,12 @@ public class SubscriptionHelper extends ServiceSupport {
     }
 
     public String getEndpointUrl() {
-        return component.getSession().getInstanceUrl() + "/cometd/" + component.getConfig().getApiVersion();
+        if (Double.valueOf(component.getConfig().getApiVersion()) >= MINIMUM_REPLAY_VERSION
+            && (component.getConfig().getDefaultReplayId() != null || !component.getConfig().getInitialReplayIdMap().isEmpty())) {
+            return component.getSession().getInstanceUrl() + "/cometd/replay/" + component.getConfig().getApiVersion();
+        } else {
+            return component.getSession().getInstanceUrl() + "/cometd/" + component.getConfig().getApiVersion();
+        }
     }
 
 }
