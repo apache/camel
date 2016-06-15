@@ -1753,6 +1753,21 @@ from("file://inbox")
     .end();
 ----------------------------------------------------------------------------------
 
+Take care of the fact that Bindy uses CHARSET_NAME property or the CHARSET_NAME header as define in the
+Exchange interface to do a characterset conversion of the inputstream received for unmarshalling.
+In some producers (e.g. file-endpoint) you can define a characterset. The characterset conversion
+can already been done by this producer. Sometimes you need to remove this property or header from the
+exchange before sending it to the unmarshal. If you don't remove it the conversion might be done twice
+which might lead to unwanted results.
+
+[source,java]
+---------------------------------
+from("file://inbox?charset=Cp922")
+  .removeProperty(Exchange.CHARSET_NAME)
+  .unmarshal("myBindyDataFormat")
+  .to("direct:handleOrders");
+---------------------------------
+
 [[Bindy-Marshaling]]
 Marshaling
 ++++++++++
