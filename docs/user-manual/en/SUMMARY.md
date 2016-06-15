@@ -90,6 +90,7 @@
     * [Properties](properties.adoc)
     * [Ref](ref.adoc)
     * [Rest](rest.adoc)
+    * [Scheduler](scheduler.adoc)
 
 * Components
     * [Async Http Client (AHC)](ahc.adoc)
