@@ -47,6 +47,7 @@ public class SalesforceConsumer extends DefaultConsumer {
     private static final String TYPE_PROPERTY = "type";
     private static final String CREATED_DATE_PROPERTY = "createdDate";
     private static final String SOBJECT_PROPERTY = "sobject";
+    private static final String REPLAY_ID_PROPERTY = "replayId";
     private static final double MINIMUM_VERSION = 24.0;
 
     private final SalesforceEndpoint endpoint;
@@ -152,6 +153,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         final Map<String, Object> event = (Map<String, Object>) data.get(EVENT_PROPERTY);
         final Object eventType = event.get(TYPE_PROPERTY);
         Object createdDate = event.get(CREATED_DATE_PROPERTY);
+        Object replayId = event.get(REPLAY_ID_PROPERTY);
         if (log.isDebugEnabled()) {
             log.debug(String.format("Received event %s on channel %s created on %s",
                     eventType, channel.getChannelId(), createdDate));
@@ -159,6 +161,9 @@ public class SalesforceConsumer extends DefaultConsumer {
 
         in.setHeader("CamelSalesforceEventType", eventType);
         in.setHeader("CamelSalesforceCreatedDate", createdDate);
+        if (replayId != null) {
+            in.setHeader("CamelSalesforceReplayId", replayId);
+        }
 
         // get SObject
         @SuppressWarnings("unchecked")

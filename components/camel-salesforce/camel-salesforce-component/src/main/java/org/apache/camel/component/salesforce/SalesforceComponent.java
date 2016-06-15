@@ -303,10 +303,10 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         }
     }
 
-    public SubscriptionHelper getSubscriptionHelper() throws Exception {
+    public SubscriptionHelper getSubscriptionHelper(String topicName) throws Exception {
         if (subscriptionHelper == null) {
             // lazily create subscription helper
-            subscriptionHelper = new SubscriptionHelper(this);
+            subscriptionHelper = new SubscriptionHelper(this, topicName);
 
             // also start the helper to connect to Salesforce
             ServiceHelper.startService(subscriptionHelper);
