@@ -76,6 +76,8 @@ public class CamelAutoConfiguration {
             camelContext.getManagementStrategy().getManagementAgent().setCreateConnector(config.isJmxCreateConnector());
         }
 
+        camelContext.setPackageScanClassResolver(new FatJarPackageScanClassResolver());
+
         return camelContext;
     }
 
