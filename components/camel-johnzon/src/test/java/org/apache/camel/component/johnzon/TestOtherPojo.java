@@ -14,20 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.dataformat;
+package org.apache.camel.component.johnzon;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+public class TestOtherPojo {
 
-/**
- * Represents the concrete Json libraries Camel supports.
- *
- * @version 
- */
-@XmlType
-@XmlEnum
-public enum JsonLibrary {
+    private String name;
+    private String country;
 
-    XStream, Jackson, Johnzon, Gson
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
 }

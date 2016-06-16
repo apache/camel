@@ -14,20 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.dataformat;
+package org.apache.camel.component.johnzon;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+public final class JohnzonConstants {
 
-/**
- * Represents the concrete Json libraries Camel supports.
- *
- * @version 
- */
-@XmlType
-@XmlEnum
-public enum JsonLibrary {
+    public static final String UNMARSHAL_TYPE = "CamelJohnzonUnmarshalType";
 
-    XStream, Jackson, Johnzon, Gson
-
+    private JohnzonConstants() {
+    }
 }

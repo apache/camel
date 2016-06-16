@@ -303,7 +303,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
     private static String asModelName(String name) {
         // special for some data formats
-        if ("json-gson".equals(name) || "json-jackson".equals(name) || "json-xstream".equals(name)) {
+        if ("json-gson".equals(name) || "json-jackson".equals(name) || "json-xstream".equals(name) || "json-johnzon".equals(name)) {
             return "json";
         } else if ("bindy-csv".equals(name) || "bindy-fixed".equals(name) || "bindy-kvp".equals(name)) {
             return "bindy";
@@ -324,6 +324,8 @@ public class PackageDataFormatMojo extends AbstractMojo {
             return "JSon Jackson";
         } else if ("json-xstream".equals(name)) {
             return "JSon XStream";
+        } else if ("json-johnzon".equals(name)) {
+            return "JSon Johnzon";
         } else if ("bindy-csv".equals(name)) {
             return "Bindy CSV";
         } else if ("bindy-fixed".equals(name)) {
