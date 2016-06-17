@@ -54,23 +54,57 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @UriParams
-public class SipConfiguration {    
+public class SipConfiguration {
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = LoggerFactory.getLogger(SipConfiguration.class);
+
+    /**
+     * The SIP library implementation used by the SipFactory for this camel component.
+     */
     private static final String IMPLEMENTATION = "gov.nist";
 
+    /**
+     * The SipComponent which uses this SipConfiguration to create a SipEndpoint. Primarily used to
+     * help with resolving the parameter list given when creating an endpoint.
+     */
     private SipComponent component;
 
-    private String protocol;
+    /**
+     *  Protocol used in the parseURI() method. Has to be equal to either "sip" or "sips" to be valid.
+     */
+    private String protocol;  //// TODO: 17/06/16 this does not need to be instance variable
+
+    /**
+     *  A map of parameters given in the sip URI when the SipEndpoint is created.
+     */
     private Map<String, Object> parameters;
 
+    /**
+     * The uri of the SipEndpoint. This object represents the SIP URI string given when the SipEndpoint is created.
+     */
     @UriPath @Metadata(required = "true")
     private URI uri;
+
+    /**
+     *  Allows the creation of (SIP) uri's.
+     */
     @UriParam
     private AddressFactory addressFactory;
+
+    /**
+     * Allows the creation of SIP request and response messages.
+     */
     @UriParam
     private MessageFactory messageFactory;
+
+    /**
+     * Allows the creation of the headers which are placed in the header field at the top of a SIP packet.
+     */
     @UriParam
     private HeaderFactory headerFactory;
+
     @UriParam
     private SipStack sipStack;
     @UriParam
