@@ -284,6 +284,27 @@ public class StaxConverter {
         }
     }
 
+    @Converter
+    public InputStream createInputStream(XMLStreamReader reader, Exchange exchange) {
+        XMLOutputFactory factory = getOutputFactory();
+        try {
+            String charsetName = IOHelper.getCharsetName(exchange, false);
+            return new XMLStreamReaderInputStream(reader, charsetName, factory);
+        } finally {
+            returnXMLOutputFactory(factory);
+        }
+    }
+
+    @Converter
+    public Reader createReader(XMLStreamReader reader, Exchange exchange) {
+        XMLOutputFactory factory = getOutputFactory();
+        try {
+            return new XMLStreamReaderReader(reader, factory);
+        } finally {
+            returnXMLOutputFactory(factory);
+        }
+    }
+
     private static boolean isWoodstox(Object factory) {
         return factory.getClass().getPackage().getName().startsWith("com.ctc.wstx");
     }
