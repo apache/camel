@@ -92,6 +92,7 @@
     * [Rest](rest.adoc)
     * [Scheduler](scheduler.adoc)
     * [Seda](seda.adoc)
+    * [Stub](stub.adoc)
 
 * Components
     * [Async Http Client (AHC)](ahc.adoc)
