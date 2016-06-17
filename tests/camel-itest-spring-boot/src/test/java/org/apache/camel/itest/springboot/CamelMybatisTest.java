@@ -35,6 +35,7 @@ public class CamelMybatisTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelMybatisTest.class))
+                .resource("components/mybatis-SqlMapConfig.xml", "SqlMapConfig.xml")
                 .build();
     }
 

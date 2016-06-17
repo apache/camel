@@ -35,6 +35,7 @@ public class CamelIbatisTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelIbatisTest.class))
+                .resource("components/ibatis-SqlMapConfig.xml", "SqlMapConfig.xml")
                 .build();
     }
 

@@ -17,6 +17,7 @@
 package org.apache.camel.itest.springboot.util;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -27,10 +28,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.camel.itest.springboot.ITestConfig;
 import org.apache.camel.itest.springboot.arquillian.SpringBootZipExporterImpl;
@@ -85,48 +85,79 @@ public final class ArquillianPackager {
         ark = ark.addAsManifestResource("BOOT-MANIFEST.MF", "MANIFEST.MF");
         ark = ark.addAsResource("spring-boot-itest.properties");
 
+        for (Map.Entry<String, String> res : config.getResources().entrySet()) {
+            ark = ark.addAsResource(res.getKey(), res.getValue());
+        }
+
         ark = ark.addAsDirectories("/lib");
 
-        String version = config.getMavenVersion();
+        String version = System.getProperty("itestComponentVersion");
+        if (version == null) {
+            config.getMavenVersion();
+        }
         if (version == null) {
             // It is missing when launching from IDE
             List<MavenResolvedArtifact> resolved = Arrays.asList(Maven.resolver().loadPomFromFile("pom.xml").importRuntimeDependencies().resolve().withTransitivity().asResolvedArtifact());
-            Optional<MavenResolvedArtifact> camelDep = resolved.stream().filter(dep -> dep.getCoordinate().getGroupId().equals("org.apache.camel")).findAny();
-            version = camelDep.map(art -> art.getCoordinate().getVersion()).orElse(null);
-            debug("Resolved version: " + version);
-            if (version == null) {
-                throw new IllegalStateException("Cannot determine the current version of the camel component");
+            for (MavenResolvedArtifact dep : resolved) {
+                if (dep.getCoordinate().getGroupId().equals("org.apache.camel")) {
+                    version = dep.getCoordinate().getVersion();
+                    break;
+                }
             }
         }
 
-        // Test dependencies
-        List<MavenDependency> testDependencies = new LinkedList<>();
-        if (config.getIncludeTestDependencies() || config.getUnitTestEnabled()) {
-
-            List<MavenResolvedArtifact> testArtifacts = Arrays.asList(Maven.resolver()
-                    .loadPomFromFile(config.getModulesPath() + config.getModuleName() + "/pom.xml")
-                    .importTestDependencies()
-                    .resolve().withoutTransitivity().asResolvedArtifact());
-
-            MavenDependencyExclusion[] excl = new MavenDependencyExclusion[]{MavenDependencies.createExclusion("org.slf4j", "slf4j-log4j12"), MavenDependencies.createExclusion("log4j", "log4j")};
-
-            testDependencies = testArtifacts.stream()
-                    .map(MavenResolvedArtifact::getCoordinate)
-                    .filter(ArquillianPackager::validTestDependency) // remove direct logging dependencies from test libs
-                    .map(c -> MavenDependencies.createDependency(c, ScopeType.RUNTIME, false, excl)) // remove transitive logging dependencies from test libs
-                    .collect(Collectors.toList());
+        debug("Resolved version: " + version);
+        if (version == null) {
+            throw new IllegalStateException("Cannot determine the current version of the camel component");
         }
 
+        MavenDependencyExclusion[] loggingHellExclusions = new MavenDependencyExclusion[]{MavenDependencies.createExclusion("org.slf4j", "slf4j-log4j12"), MavenDependencies.createExclusion("log4j",
+                "log4j"), MavenDependencies.createExclusion("org.slf4j", "slf4j-simple")};
 
-        MavenCoordinate jar = MavenCoordinates.createCoordinate(config.getMavenGroup(), config.getModuleName(), version, PackagingType.JAR, null);
-        MavenDependency dep = MavenDependencies.createDependency(jar, ScopeType.COMPILE, false);
+        // Module dependencies
+        List<MavenDependency> moduleDependencies = new LinkedList<>();
+
+        MavenCoordinate mainJar = MavenCoordinates.createCoordinate(config.getMavenGroup(), config.getModuleName(), version, PackagingType.JAR, null);
+        MavenDependency mainDep = MavenDependencies.createDependency(mainJar, ScopeType.COMPILE, false, loggingHellExclusions);
+        moduleDependencies.add(mainDep);
+
+        for (String canonicalForm : config.getAdditionalDependencies()) {
+            MavenCoordinate coord = MavenCoordinates.createCoordinate(canonicalForm);
+            MavenDependency dep = MavenDependencies.createDependency(coord, ScopeType.RUNTIME, false);
+            moduleDependencies.add(dep);
+        }
+
+        if (config.getIncludeProvidedDependencies() || config.getIncludeTestDependencies() || config.getUnitTestEnabled()) {
+
+            List<ScopeType> scopes = new LinkedList<>();
+            if (config.getIncludeTestDependencies() || config.getUnitTestEnabled()) {
+                scopes.add(ScopeType.TEST);
+            }
+            if (config.getIncludeProvidedDependencies()) {
+                scopes.add(ScopeType.PROVIDED);
+            }
+
+            List<MavenResolvedArtifact> moduleArtifacts = Arrays.asList(Maven.resolver()
+                    .loadPomFromFile(config.getModulesPath() + config.getModuleName() + "/pom.xml")
+                    .importDependencies(scopes.toArray(new ScopeType[]{}))
+                    .resolve().withoutTransitivity().asResolvedArtifact());
+
+
+            for (MavenResolvedArtifact art : moduleArtifacts) {
+                MavenCoordinate c = art.getCoordinate();
+                if (!validTestDependency(c)) {
+                    continue;
+                }
+                MavenDependency dep = MavenDependencies.createDependency(c, ScopeType.RUNTIME, false, loggingHellExclusions);
+                moduleDependencies.add(dep);
+            }
+        }
 
         List<File> dependencies = new LinkedList<>();
         dependencies.addAll(Arrays.asList(Maven.resolver()
                 .loadPomFromFile("pom.xml")
                 .importRuntimeDependencies()
-                .addDependencies(dep)
-                .addDependencies(testDependencies)
+                .addDependencies(moduleDependencies)
                 .resolve()
                 .withTransitivity()
                 .asFile()));
@@ -153,10 +184,15 @@ public final class ArquillianPackager {
 
     public static void copyResource(String folder, String fileNameRegex, String targetFolder) throws IOException {
 
-        Pattern pattern = Pattern.compile(fileNameRegex);
+        final Pattern pattern = Pattern.compile(fileNameRegex);
 
         File sourceFolder = new File(folder);
-        File[] candidates = sourceFolder.listFiles((dir, name) -> pattern.matcher(name).matches());
+        File[] candidates = sourceFolder.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return pattern.matcher(name).matches();
+            }
+        });
         if (candidates.length == 0) {
             Assert.fail("No file matching regex " + fileNameRegex + " has been found");
         }
@@ -166,7 +202,12 @@ public final class ArquillianPackager {
     }
 
     private static ClassLoader getExtensionClassloader() {
-        ClassLoader cl = AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader());
+        ClassLoader cl = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+            @Override
+            public ClassLoader run() {
+                return Thread.currentThread().getContextClassLoader();
+            }
+        });
         if (cl == null) {
             cl = ClassLoader.getSystemClassLoader();
         }
@@ -176,10 +217,15 @@ public final class ArquillianPackager {
 
     private static boolean validTestDependency(MavenCoordinate coordinate) {
 
-        Pattern log4j = Pattern.compile("^log4j$");
-        Pattern slf4jLog4j = Pattern.compile("^slf4j-log4j12$");
+        Pattern[] patterns = new Pattern[]{Pattern.compile("^log4j$"), Pattern.compile("^slf4j-log4j12$"), Pattern.compile("^slf4j-simple")};
 
-        boolean valid = !log4j.matcher(coordinate.getArtifactId()).matches() && !slf4jLog4j.matcher(coordinate.getArtifactId()).matches();
+        boolean valid = true;
+        for (Pattern p : patterns) {
+            if (p.matcher(coordinate.getArtifactId()).matches()) {
+                valid = false;
+                break;
+            }
+        }
 
         if (!valid) {
             debug("Discarded test dependency " + coordinate.toCanonicalForm());
@@ -211,7 +257,10 @@ public final class ArquillianPackager {
 
     private static JavaArchive addTestResources(JavaArchive ark, ITestConfig config) throws IOException {
         File test = new File(config.getModulesPath() + config.getModuleName() + "/target/test-classes/");
-        File[] fs = Optional.ofNullable(test.listFiles()).orElse(new File[]{});
+        File[] fs = test.listFiles();
+        if (fs == null) {
+            fs = new File[]{};
+        }
         LinkedList<File> testFiles = new LinkedList<>(Arrays.asList(fs));
         while (!testFiles.isEmpty()) {
             File f = testFiles.pop();
@@ -220,7 +269,10 @@ public final class ArquillianPackager {
                 ark = ark.addAsResource(f, relative);
             } else {
                 ark = ark.addAsDirectory(relative);
-                File[] files = Optional.ofNullable(f.listFiles()).orElse(new File[]{});
+                File[] files = f.listFiles();
+                if (files == null) {
+                    files = new File[]{};
+                }
                 testFiles.addAll(Arrays.asList(files));
             }
         }

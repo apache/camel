@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.itest.springboot.Command;
@@ -34,6 +34,7 @@ import org.junit.runner.notification.Failure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.RegexPatternTypeFilter;
 import org.springframework.stereotype.Component;
@@ -61,7 +62,11 @@ public class UnitTestCommand extends AbstractTestCommand implements Command {
 
         scanner.addIncludeFilter(new RegexPatternTypeFilter(pattern));
 
-        List<String> testClasses = new LinkedList<>(scanner.findCandidateComponents(config.getUnitTestBasePackage()).stream().map(bd -> bd.getBeanClassName()).collect(Collectors.toList()));
+        Set<BeanDefinition> defs = scanner.findCandidateComponents(config.getUnitTestBasePackage());
+        List<String> testClasses = new LinkedList<>();
+        for (BeanDefinition bd : defs) {
+            testClasses.add(bd.getBeanClassName());
+        }
 
         if (config.getUnitTestExclusionPattern() != null) {
             Pattern exclusionPattern = Pattern.compile(config.getUnitTestExclusionPattern());

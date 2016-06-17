@@ -17,7 +17,9 @@
 package org.apache.camel.itest.springboot;
 
 import java.io.InputStream;
-import java.util.Optional;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Properties;
 
 /**
@@ -79,6 +81,31 @@ public class ITestConfigBuilder {
         return this;
     }
 
+    public ITestConfigBuilder autostart(Boolean autostart) {
+        config.setAutoStartComponent(autostart);
+        return this;
+    }
+
+    public ITestConfigBuilder resource(String file, String dest) {
+        if (config.getResources() == null) {
+            config.setResources(new HashMap<>());
+        }
+        config.getResources().put(file, dest);
+        return this;
+    }
+
+    public ITestConfigBuilder dependency(String dependencyCanonicalForm) {
+        if (config.getAdditionalDependencies() == null) {
+            config.setAdditionalDependencies(new HashSet<>());
+        }
+        config.getAdditionalDependencies().add(dependencyCanonicalForm);
+        return this;
+    }
+
+    public ITestConfigBuilder resource(String file) {
+        return resource(file, file);
+    }
+
     public ITestConfig build() {
 
         // Checking conditions
@@ -88,35 +115,51 @@ public class ITestConfigBuilder {
 
         // Set the defaults
         if (config.getUnitTestEnabled() == null) {
-            config.setUnitTestEnabled(booleanProperty("unitTestEnabled").orElse(false));
+            config.setUnitTestEnabled(booleanPropertyOr("unitTestEnabled", false));
         }
 
         if (config.getMavenGroup() == null) {
-            config.setMavenGroup(property("mavenGroup").orElse("org.apache.camel"));
+            config.setMavenGroup(propertyOr("mavenGroup", "org.apache.camel"));
         }
 
         if (config.getMavenVersion() == null) {
-            config.setMavenVersion(property("mavenVersion").orElse(null));
+            config.setMavenVersion(propertyOr("mavenVersion", null));
         }
 
         if (config.getUnitTestInclusionPattern() == null) {
-            config.setUnitTestInclusionPattern(property("unitTestInclusionPattern").orElse("^.*Test$")); // All tests
+            config.setUnitTestInclusionPattern(propertyOr("unitTestInclusionPattern", "^.*Test$")); // All tests
         }
 
         if (config.getUnitTestExclusionPattern() == null) {
-            config.setUnitTestExclusionPattern(property("unitTestExclusionPattern").orElse(".*(\\.integration\\..*|XXXTest$)")); // Integration test
+            config.setUnitTestExclusionPattern(propertyOr("unitTestExclusionPattern", ".*(\\.integration\\..*|XXXTest$)")); // Integration test
         }
 
         if (config.getIncludeTestDependencies() == null) {
-            config.setIncludeTestDependencies(booleanProperty("includeTestDependencies").orElse(config.getUnitTestEnabled()));
+            config.setIncludeTestDependencies(booleanPropertyOr("includeTestDependencies", config.getUnitTestEnabled()));
+        }
+
+        if (config.getIncludeProvidedDependencies() == null) {
+            config.setIncludeProvidedDependencies(booleanPropertyOr("includeProvidedDependencies", true));
         }
 
         if (config.getModulesPath() == null) {
-            config.setModulesPath(property("modulesPath").orElse("../../components/"));
+            config.setModulesPath(propertyOr("modulesPath", "../../components/"));
         }
 
         if (config.getUnitTestBasePackage() == null) {
-            config.setUnitTestBasePackage(property("unitTestBasePackage").orElse("org.apache.camel"));
+            config.setUnitTestBasePackage(propertyOr("unitTestBasePackage", "org.apache.camel"));
+        }
+
+        if (config.getAutoStartComponent() == null) {
+            config.setAutoStartComponent(booleanPropertyOr("autostartComponent", true));
+        }
+
+        if (config.getResources() == null) {
+            config.setResources(Collections.emptyMap());
+        }
+
+        if (config.getAdditionalDependencies() == null) {
+            config.setAdditionalDependencies(Collections.emptySet());
         }
 
         return config;
@@ -126,7 +169,7 @@ public class ITestConfigBuilder {
         throw new IllegalStateException("Configuration is not complete: " + msg);
     }
 
-    private Optional<String> property(String name) {
+    private String propertyOr(String name, String defaultVal) {
         if (properties == null) {
             properties = new Properties();
             try {
@@ -137,10 +180,20 @@ public class ITestConfigBuilder {
             }
         }
 
-        return Optional.ofNullable(properties.getProperty(name));
+        String res = properties.getProperty(name);
+        if (res == null) {
+            res = defaultVal;
+        }
+        return res;
     }
 
-    private Optional<Boolean> booleanProperty(String name) {
-        return property(name).map(Boolean::valueOf);
+    private Boolean booleanPropertyOr(String name, Boolean defaultVal) {
+        String prop = propertyOr(name, null);
+        Boolean res = defaultVal;
+        if (prop != null) {
+            res = Boolean.valueOf(prop);
+        }
+
+        return res;
     }
 }

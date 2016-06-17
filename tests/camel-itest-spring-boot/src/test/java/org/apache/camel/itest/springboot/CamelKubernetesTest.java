@@ -27,6 +27,8 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class CamelKubernetesTest extends AbstractSpringBootTestSupport {
 
+    private static final String HIBERNATE_VALIDATOR_VERSION = System.getProperty("hibernateValidatorVersion", "5.2.4.Final");
+
     @Deployment
     public static Archive<?> createSpringBootPackage() throws Exception {
         return ArquillianPackager.springBootPackage(createTestConfig());
@@ -35,6 +37,7 @@ public class CamelKubernetesTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelKubernetesTest.class))
+                .dependency("org.hibernate:hibernate-validator:" + HIBERNATE_VALIDATOR_VERSION)
                 .build();
     }
 

@@ -42,7 +42,8 @@ public class ComponentTestCommand extends AbstractTestCommand implements Command
 
         logger.info("Getting Camel component: {}", component);
 
-        org.apache.camel.Component comp = context.getComponent(component, true, false);
+        org.apache.camel.Component comp = context.getComponent(component, true, config.getAutoStartComponent());
+
         assertNotNull("Cannot get module with name: " + component, comp);
 
         logger.info("Found Camel module: {} instance: {} with className: {}", component, comp, comp.getClass());

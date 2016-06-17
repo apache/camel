@@ -35,6 +35,7 @@ public class CamelBoxTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelBoxTest.class))
+                .autostart(false) // needs configuration
                 .build();
     }
 

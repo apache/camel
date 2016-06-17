@@ -32,7 +32,7 @@ public class JarExporter {
     public void exportJar() throws Exception {
 
         Archive<?> archive = ArquillianPackager.springBootPackage(new ITestConfigBuilder()
-                .module("camel-jetty9")
+                .module("camel-box")
                 .build());
 
 

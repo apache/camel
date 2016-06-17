@@ -35,6 +35,7 @@ public class CamelSalesforceTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelSalesforceTest.class))
+                .autostart(false) // needs configuration
                 .build();
     }
 

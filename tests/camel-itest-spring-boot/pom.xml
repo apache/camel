@@ -121,6 +121,20 @@
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
+                    <systemProperties>
+                        <property>
+                            <name>itestComponentVersion</name>
+                            <value>${project.version}</value>
+                        </property>
+                        <property>
+                            <name>springDataRedisVersion</name>
+                            <value>${spring-data-redis-version}</value>
+                        </property>
+                        <property>
+                            <name>hibernateValidatorVersion</name>
+                            <value>${hibernate-validator-version}</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>

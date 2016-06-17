@@ -17,6 +17,8 @@
 package org.apache.camel.itest.springboot;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A configuration bean for a test execution.
@@ -35,6 +37,8 @@ public class ITestConfig implements Serializable {
 
     private Boolean includeTestDependencies;
 
+    private Boolean includeProvidedDependencies;
+
     private Boolean unitTestEnabled;
 
     private String unitTestInclusionPattern;
@@ -44,6 +48,12 @@ public class ITestConfig implements Serializable {
     private String unitTestBasePackage;
 
     private Integer unitTestsExpectedNumber;
+
+    private Map<String, String> resources;
+
+    private Set<String> additionalDependencies;
+
+    private Boolean autoStartComponent;
 
     public ITestConfig() {
     }
@@ -88,6 +98,14 @@ public class ITestConfig implements Serializable {
         this.includeTestDependencies = includeTestDependencies;
     }
 
+    public Boolean getIncludeProvidedDependencies() {
+        return includeProvidedDependencies;
+    }
+
+    public void setIncludeProvidedDependencies(Boolean includeProvidedDependencies) {
+        this.includeProvidedDependencies = includeProvidedDependencies;
+    }
+
     public Boolean getUnitTestEnabled() {
         return unitTestEnabled;
     }
@@ -128,6 +146,30 @@ public class ITestConfig implements Serializable {
         this.unitTestsExpectedNumber = unitTestsExpectedNumber;
     }
 
+    public Map<String, String> getResources() {
+        return resources;
+    }
+
+    public Set<String> getAdditionalDependencies() {
+        return additionalDependencies;
+    }
+
+    public void setAdditionalDependencies(Set<String> additionalDependencies) {
+        this.additionalDependencies = additionalDependencies;
+    }
+
+    public void setResources(Map<String, String> resources) {
+        this.resources = resources;
+    }
+
+    public Boolean getAutoStartComponent() {
+        return autoStartComponent;
+    }
+
+    public void setAutoStartComponent(Boolean autoStartComponent) {
+        this.autoStartComponent = autoStartComponent;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ITestConfig{");
@@ -136,11 +178,15 @@ public class ITestConfig implements Serializable {
         sb.append(", mavenVersion='").append(mavenVersion).append('\'');
         sb.append(", modulesPath='").append(modulesPath).append('\'');
         sb.append(", includeTestDependencies=").append(includeTestDependencies);
+        sb.append(", includeProvidedDependencies=").append(includeProvidedDependencies);
         sb.append(", unitTestEnabled=").append(unitTestEnabled);
         sb.append(", unitTestInclusionPattern='").append(unitTestInclusionPattern).append('\'');
         sb.append(", unitTestExclusionPattern='").append(unitTestExclusionPattern).append('\'');
         sb.append(", unitTestBasePackage='").append(unitTestBasePackage).append('\'');
         sb.append(", unitTestsExpectedNumber=").append(unitTestsExpectedNumber);
+        sb.append(", resources=").append(resources);
+        sb.append(", additionalDependencies=").append(additionalDependencies);
+        sb.append(", autoStartComponent=").append(autoStartComponent);
         sb.append('}');
         return sb.toString();
     }
