@@ -103,6 +103,7 @@ public final class HazelcastComponentHelper {
         addMapping("valueCount", HazelcastConstants.VALUE_COUNT_OPERATION);
         addMapping("containsKey", HazelcastConstants.CONTAINS_KEY_OPERATION);
         addMapping("containsValue", HazelcastConstants.CONTAINS_VALUE_OPERATION);
+        addMapping("keySet", HazelcastConstants.GET_KEYS_OPERATION);
 
         // multimap
         addMapping("removevalue", HazelcastConstants.REMOVEVALUE_OPERATION);
