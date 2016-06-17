@@ -31,9 +31,11 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.kafka.clients.producer.Callback;
+import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.serialization.Serializer;
 
 public class KafkaProducer extends DefaultAsyncProducer {
 
@@ -47,8 +49,49 @@ public class KafkaProducer extends DefaultAsyncProducer {
         this.endpoint = endpoint;
     }
 
+    
+    Class<?> loadClass(Object o, ClassLoader loader) {
+        if (o == null || o instanceof Class) {
+            return (Class<?>)o;
+        }
+        String name = o.toString();
+        Class<?> c;
+        try {
+            c = Class.forName(name, true, loader);
+        } catch (ClassNotFoundException e) {
+            c = null;
+        }
+        if (c == null) {
+            try {
+                c = Class.forName(name, true, getClass().getClassLoader());
+            } catch (ClassNotFoundException e) {
+                c = null;
+            }
+        }
+        if (c == null) {
+            try {
+                c = Class.forName(name, true, org.apache.kafka.clients.producer.KafkaProducer.class.getClassLoader());
+            } catch (ClassNotFoundException e) {
+                c = null;
+            }
+        }
+        return c;
+    }
+    void replaceWithClass(Properties props, String key,  ClassLoader loader, Class<?> type) {
+        Class<?> c = loadClass(props.get(key), loader);
+        if (c != null) {
+            props.put(key, c);
+        }
+    }
+    
     Properties getProps() {
         Properties props = endpoint.getConfiguration().createProducerProperties();
+        if (endpoint.getCamelContext() != null) {
+            ClassLoader loader = endpoint.getCamelContext().getApplicationContextClassLoader();
+            replaceWithClass(props, "key.serializer", loader, Serializer.class);
+            replaceWithClass(props, "value.serializer", loader, Serializer.class);
+            replaceWithClass(props, "partitioner.class", loader, Partitioner.class);
+        }
         if (endpoint.getBrokers() != null) {
             props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, endpoint.getBrokers());
         }
