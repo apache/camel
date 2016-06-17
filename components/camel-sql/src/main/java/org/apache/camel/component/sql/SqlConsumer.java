@@ -210,9 +210,8 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 
-        // limit if needed
         if (maxMessagesPerPoll > 0 && total == maxMessagesPerPoll) {
-            log.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was more messages in this poll.");
+            log.debug("Maximum messages to poll is {} and there were exactly {} messages in this poll.", maxMessagesPerPoll, total);
         }
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
