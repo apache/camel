@@ -43,6 +43,7 @@ public class SObject extends AbstractDTOBase {
     private Boolean undeletable;
     private Boolean triggerable;
     private Boolean compactLayoutable;
+    private Boolean mruEnabled;
 
     public String getName() {
         return name;
@@ -242,5 +243,13 @@ public class SObject extends AbstractDTOBase {
 
     public void setCompactLayoutable(Boolean compactLayoutable) {
         this.compactLayoutable = compactLayoutable;
+    }
+
+    public Boolean getMruEnabled() {
+        return mruEnabled;
+    }
+
+    public void setMruEnabled(Boolean mruEnabled) {
+        this.mruEnabled = mruEnabled;
     }
 }
