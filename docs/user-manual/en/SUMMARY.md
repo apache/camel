@@ -91,6 +91,7 @@
     * [Ref](ref.adoc)
     * [Rest](rest.adoc)
     * [Scheduler](scheduler.adoc)
+    * [Seda](seda.adoc)
 
 * Components
     * [Async Http Client (AHC)](ahc.adoc)
