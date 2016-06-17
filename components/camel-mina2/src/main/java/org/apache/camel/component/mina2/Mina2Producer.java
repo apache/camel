@@ -65,6 +65,7 @@ import org.slf4j.LoggerFactory;
 public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Mina2Producer.class);
+    private final ResponseHandler handler;
     private IoSession session;
     private CountDownLatch latch;
     private boolean lazySessionCreation;
@@ -76,6 +77,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     private Mina2Configuration configuration;
     private IoSessionConfig connectorConfig;
     private ExecutorService workerPool;
+    private CountDownLatch closeLatch;
 
     public Mina2Producer(Mina2Endpoint endpoint) throws Exception {
         super(endpoint);
@@ -93,6 +95,8 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         } else if (protocol.equals("vm")) {
             setupVmProtocol(protocol);
         }
+        handler = new ResponseHandler();
+        connector.setHandler(handler);
     }
 
     @Override
@@ -146,7 +150,6 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             // only initialize latch if we should get a response
             latch = new CountDownLatch(1);
             // reset handler if we expect a response
-            ResponseHandler handler = (ResponseHandler) session.getHandler();
             handler.reset();
         }
 
@@ -171,7 +174,6 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             }
 
             // did we get a response
-            ResponseHandler handler = (ResponseHandler) session.getHandler();
             if (handler.getCause() != null) {
                 throw new CamelExchangeException("Error occurred in ResponseHandler", exchange, handler.getCause());
             } else if (!handler.isMessageReceived()) {
@@ -188,7 +190,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         }
     }
 
-    protected void maybeDisconnectOnDone(Exchange exchange) {
+    protected void maybeDisconnectOnDone(Exchange exchange) throws InterruptedException {
         if (session == null) {
             return;
         }
@@ -208,7 +210,16 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         }
         if (disconnect) {
             LOG.debug("Closing session when complete at address: {}", address);
-            session.close(true);
+            closeSessionIfNeededAndAwaitCloseInHandler(session);
+        }
+    }
+
+    private void closeSessionIfNeededAndAwaitCloseInHandler(IoSession sessionToBeClosed) throws InterruptedException {
+        closeLatch = new CountDownLatch(1);
+        if (!sessionToBeClosed.isClosing()) {
+            CloseFuture closeFuture = sessionToBeClosed.closeNow();
+            closeFuture.await(timeout, TimeUnit.MILLISECONDS);
+            closeLatch.await(timeout, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -241,10 +252,9 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         super.doShutdown();
     }
 
-    private void closeConnection() {
+    private void closeConnection() throws InterruptedException {
         if (session != null) {
-            CloseFuture closeFuture = session.close(true);
-            closeFuture.awaitUninterruptibly();
+            closeSessionIfNeededAndAwaitCloseInHandler(session);
         }
 
         connector.dispose(true);
@@ -255,14 +265,13 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             setSocketAddress(this.configuration.getProtocol());
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating connector to address: {} using connector: {} timeout: {} millis.", new Object[]{address, connector, timeout});
+            LOG.debug("Creating connector to address: {} using connector: {} timeout: {} millis.", address, connector, timeout);
         }
         // connect and wait until the connection is established
         if (connectorConfig != null) {
             connector.getSessionConfig().setAll(connectorConfig);
         }
 
-        connector.setHandler(new ResponseHandler());
         ConnectFuture future = connector.connect(address);
         future.awaitUninterruptibly();
         session = future.getSession();
@@ -342,7 +351,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             }
             addCodecFactory(service, codecFactory);
             LOG.debug("{}: Using TextLineCodecFactory: {} using encoding: {} line delimiter: {}({})",
-                      new Object[]{type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter});
+                    type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter);
             LOG.debug("Encoder maximum line length: {}. Decoder maximum line length: {}",
                     codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
         } else {
@@ -502,6 +511,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
                 // and could not return a response. We should count down to stop waiting for a response
                 countDown();
             }
+            closeLatch.countDown();
         }
 
         @Override
@@ -512,7 +522,11 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             this.messageReceived = false;
             this.cause = cause;
             if (ioSession != null) {
-                ioSession.close(true);
+                try {
+                    closeSessionIfNeededAndAwaitCloseInHandler(ioSession);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
 
