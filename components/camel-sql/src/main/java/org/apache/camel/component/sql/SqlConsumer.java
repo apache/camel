@@ -212,7 +212,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total == maxMessagesPerPoll) {
-            log.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was more messages in this poll.");
+            log.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there were more messages in this poll.");
         }
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
