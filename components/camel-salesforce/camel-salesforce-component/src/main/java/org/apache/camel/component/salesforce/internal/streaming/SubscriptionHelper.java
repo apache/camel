@@ -60,8 +60,6 @@ public class SubscriptionHelper extends ServiceSupport {
 
     private static final String EXCEPTION_FIELD = "exception";
 
-    private static final double MINIMUM_REPLAY_VERSION = 36.0;
-
     private final SalesforceComponent component;
     private final SalesforceSession session;
     private final BayeuxClient client;
@@ -373,12 +371,16 @@ public class SubscriptionHelper extends ServiceSupport {
     }
 
     public String getEndpointUrl() {
-        if (Double.valueOf(component.getConfig().getApiVersion()) >= MINIMUM_REPLAY_VERSION
-            && (component.getConfig().getDefaultReplayId() != null || !component.getConfig().getInitialReplayIdMap().isEmpty())) {
-            return component.getSession().getInstanceUrl() + "/cometd/replay/" + component.getConfig().getApiVersion();
-        } else {
-            return component.getSession().getInstanceUrl() + "/cometd/" + component.getConfig().getApiVersion();
+        // In version 36.0 replay is only enabled on a separate endpoint
+        if (Double.valueOf(component.getConfig().getApiVersion()) == 36.0) {
+            boolean replayOptionsPresent = component.getConfig().getDefaultReplayId() != null
+                    || !component.getConfig().getInitialReplayIdMap().isEmpty();
+            if (replayOptionsPresent) {
+                return component.getSession().getInstanceUrl() + "/cometd/replay/"
+                        + component.getConfig().getApiVersion();
+            }
         }
+        return component.getSession().getInstanceUrl() + "/cometd/" + component.getConfig().getApiVersion();
     }
 
 }
