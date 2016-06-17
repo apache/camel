@@ -141,6 +141,11 @@ public class KafkaProducer extends DefaultAsyncProducer {
                     }
                     return new ProducerRecord(msgTopic, msgList.next());
                 }
+
+                @Override
+                public void remove() {
+                    msgList.remove();					
+                }
             };
         }
         ProducerRecord record;
