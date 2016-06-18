@@ -174,7 +174,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
     }
 
     @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> browseInflightExchanges(String camelContextName, int limit, boolean sortByLongestDuration) throws Exception {
+    public List<Map<String, Object>> browseInflightExchanges(String camelContextName, String route, int limit, boolean sortByLongestDuration) throws Exception {
         CamelContext context = this.getLocalCamelContext(camelContextName);
         if (context == null) {
             return null;
@@ -187,7 +187,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             MBeanServer mBeanServer = agent.getMBeanServer();
             ObjectName on = new ObjectName(agent.getMBeanObjectDomainName() + ":type=services,name=DefaultInflightRepository,context=" + context.getManagementName());
             if (mBeanServer.isRegistered(on)) {
-                TabularData list = (TabularData) mBeanServer.invoke(on, "browse", new Object[]{limit, sortByLongestDuration}, new String[]{"int", "boolean"});
+                TabularData list = (TabularData) mBeanServer.invoke(on, "browse", new Object[]{route, limit, sortByLongestDuration}, new String[]{"java.lang.String", "int", "boolean"});
                 Collection<CompositeData> values = (Collection<CompositeData>) list.values();
                 for (CompositeData data : values) {
                     Map<String, Object> row = new LinkedHashMap<String, Object>();
