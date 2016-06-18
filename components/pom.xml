@@ -150,6 +150,7 @@
     <module>camel-ical</module>
     <module>camel-ignite</module>
     <module>camel-infinispan</module>
+    <module>camel-influxdb</module>
     <module>camel-irc</module>
     <module>camel-ironmq</module>
     <module>camel-jackson</module>

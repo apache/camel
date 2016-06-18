@@ -255,6 +255,7 @@
     <ignite-version>1.5.0.final</ignite-version>
     <ignite-version-range>[1.5.0-b1,1.6)</ignite-version-range>
     <infinispan-version>8.2.3.Final</infinispan-version>
+    <influx-java-driver-version>2.2</influx-java-driver-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <ironmq-version>3.0.4</ironmq-version>
@@ -1110,6 +1111,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-infinispan</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-influxdb</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
