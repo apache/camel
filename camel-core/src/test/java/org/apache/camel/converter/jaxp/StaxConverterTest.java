@@ -54,7 +54,8 @@ public class StaxConverterTest extends ContextTestSupport {
 
     static {
         StringBuilder sb = new StringBuilder(7000);
-        sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>").append("<list>");
+        // using quote character to make the plain characters comparison work with the generated xml
+        sb.append("<?xml version='1.0' encoding='utf-8'?>").append("<list>");
         int n = 6963 - TEST_XML.length();
         while (n > 0) {
             sb.append(TEST_XML);
