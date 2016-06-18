@@ -31,12 +31,15 @@ public class ContextInflight extends CamelCommandSupport {
             required = false, multiValued = false)
     int limit = -1;
 
+    @Argument(index = 1, name = "route", description = "The Camel route ID", required = false, multiValued = false)
+    String route;
+
     @Option(name = "--sort", aliases = "-s", description = "true = sort by longest duration, false = sort by exchange id",
             required = false, multiValued = false, valueToShowInHelp = "false")
     boolean sortByLongestDuration;
 
     protected Object doExecute() throws Exception {
-        ContextInflightCommand command = new ContextInflightCommand(name, limit, sortByLongestDuration);
+        ContextInflightCommand command = new ContextInflightCommand(name, route, limit, sortByLongestDuration);
         return command.execute(camelController, System.out, System.err);
     }
 

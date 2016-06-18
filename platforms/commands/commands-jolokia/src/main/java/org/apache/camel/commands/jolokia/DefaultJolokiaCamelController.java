@@ -235,7 +235,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
     }
 
     @Override
-    public List<Map<String, Object>> browseInflightExchanges(String camelContextName, int limit, boolean sortByLongestDuration) throws Exception {
+    public List<Map<String, Object>> browseInflightExchanges(String camelContextName, String route, int limit, boolean sortByLongestDuration) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
@@ -246,7 +246,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
         if (found != null) {
             String pattern = String.format("%s:context=%s,type=services,name=DefaultInflightRepository", found.getDomain(), found.getKeyProperty("context"));
             ObjectName on = ObjectName.getInstance(pattern);
-            J4pExecResponse er = jolokia.execute(new J4pExecRequest(on, "browse(int,boolean)", limit, sortByLongestDuration));
+            J4pExecResponse er = jolokia.execute(new J4pExecRequest(on, "browse(String,int,boolean)", route, limit, sortByLongestDuration));
             if (er != null) {
                 JSONObject data = er.getValue();
                 if (data != null) {
