@@ -93,94 +93,88 @@ public class SipConfiguration {
      * The SIP URI the SipEndpoint needsto connect to. This object represents the SIP uri string given
      * when the SipEndpoint is created. This object gets created through the normal URI object.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private SipURI sipUri;
 
     /**
      * The name of the SipStack. Defaults to "NAME_NOT_SET".
      */
-    @UriParam(defaultValue = "NAME_NOT_SET")
+    @UriParam(label = "common", defaultValue = "NAME_NOT_SET")
     private String stackName = "NAME_NOT_SET";
 
     /**
      * The transport method used to send and receive messages. Defaults to TCP.
      * Has to be equal to TCP or UDP to be valid.
      */
-    @UriParam(defaultValue = "tcp", enums = "tcp,udp")
+    @UriParam(label = "common", defaultValue = "tcp", enums = "tcp,udp")
     private String transport = "tcp";
 
     /**
      * The amount of times a SIP message is allowed to be forwarded. Defaults to 70.
      */
-    @UriParam(defaultValue = "70")
+    @UriParam(label = "proxy", defaultValue = "70")
     private int maxForwards = 70;
 
     /**
      * The amount of time a message received at an endpoint is considered valid.
      */
-    @UriParam(defaultValue = "3600")
+    @UriParam(label = "common", defaultValue = "3600")
     private int msgExpiration = 3600;
 
     /**
      * Determines whether requests are send via proxies.
      */
-    @UriParam
+    @UriParam(label = "proxy")
     private boolean useRouterForAllUris;
 
     /**
      * The amount of time to wait for a Response and/or Acknowledgement message to be received
      * from another SIP stack. Defaults to 10 seconds.
      */
-    @UriParam(defaultValue = "10000")
+    @UriParam(label = "common", defaultValue = "10000")
     private long receiveTimeoutMillis = 10000;
 
     /**
      * The maximum size of a message in bytes. Defaults to 1,048,576 B, roughly 1.05 MB.
      */
-    @UriParam(defaultValue = "1048576")
+    @UriParam(label = "advanced", defaultValue = "1048576")
     private int maxMessageSize = 1048576;
 
     /**
      * Whether connections should be cashed by the SipStack. This if useful for long
      * running conversations as cashing reduces the cost of connection creations.
      */
-    @UriParam
+    @UriParam(label = "common")
     private boolean cacheConnections; //todo check if this is used anywhere
 
     /**
      * The mime type of the body of the SIP message. Defaults to text.
      */
-    @UriParam(defaultValue = "text")
+    @UriParam(label = "common", defaultValue = "text")
     private String contentType = "text";
 
     /**
      * The mime subtype used in the body of the SIP message. Defaults to plain.
      */
-    @UriParam(defaultValue = "plain")
+    @UriParam(label = "common", defaultValue = "plain")
     private String contentSubType = "plain";
-
-    /**
-     * Whether every communication should take place inside a dialog. Defaults to off.
-     */
-    @UriParam(defaultValue = "off")
-    private String automaticDialogSupport = "off"; // FIXME: 18/06/16 currently not implemented
 
     /**
      * Name of server log file to use for logging.
      */
-    @UriParam
+    @UriParam(label = "logging")
     private String implementationServerLogFile;
 
     /**
      * Name of client debug log file to use for logging.
      */
-    @UriParam
+    @UriParam(label = "logging")
     private String implementationDebugLogFile;
 
     /**
      * Logging level for tracing. Defaults to 0.
      */
-    @UriParam(defaultValue = "0")
+    @UriParam(label = "logging", defaultValue = "0")
     private String implementationTraceLevel = "0";
 
     /**
@@ -189,7 +183,7 @@ public class SipConfiguration {
      * or
      * To headers are used (and thus the Endpoint is producing because it needs to <b>send to</b> the SIP URI.
      */
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean consumer;
 
     /**
@@ -197,154 +191,154 @@ public class SipConfiguration {
      * SipSubscriber when false. A SipPrecenceAgent is only for testing purposes. If the endpoint
      * is a consumer this should be false.
      */
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean presenceAgent;
 
     /**
      * The name of the events in notify/subscribe messages in String format.
      * Mandatory setting unless a registry based FromHeader is specified.
      */
-    @UriParam
+    @UriParam(label = "common")
     private String eventHeaderName;
 
     /**
      * An optional event ID which can be added the EventHeader
      */
-    @UriParam
+    @UriParam(label = "common")
     private String eventId;
 
     /**
      * Singleton factory for obtaining for the AddressFactory, HeaderFactory, MessageFactory and SipStack.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private SipFactory sipFactory;
 
     /**
      * Allows the creation of (SIP) uri's.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private AddressFactory addressFactory;
 
     /**
      * Allows the creation of SIP request and response messages.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private MessageFactory messageFactory;
 
     /**
      * Allows the creation of the headers which are placed in the header field at the top of a SIP packet.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private HeaderFactory headerFactory;
 
     /**
      * Allows the creation of SipProviders and SipListeners.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private SipStack sipStack; //does not get used currently?
 
     /**
      * The socket that a SipProvider uses to send and receive SIP messages.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private ListeningPoint listeningPoint;
 
     /**
      * Holds the username of the initiator/sender of a message.
      */
-    @UriParam
+    @UriParam(label = "common")
     private String fromUser;
 
     /**
      * Holds the host of the initiator/sender of a message.
      */
-    @UriParam
+    @UriParam(label = "common")
     private String fromHost;
 
     /**
      * Holds the port of the initiator/sender of a message.
      */
-    @UriParam
+    @UriParam(label = "common")
     private int fromPort;
 
     /**
      * Holds the username of the receiver of a message.
      */
-    @UriParam
+    @UriParam(label = "common")
     private String toUser;
 
     /**
      * Holds the host of the receiver of a message.
      */
-    @UriParam
+    @UriParam(label = "common")
     private String toHost;
 
     /**
      * Holds the port of the receiver of a message.
      */
-    @UriParam
+    @UriParam(label = "common")
     private int toPort;
 
     /**
      * Holds the from header which stores the original sender of a message.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private FromHeader fromHeader;
 
     /**
      * Holds the to header which stores the original retriever of a message.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private ToHeader toHeader;
 
     /**
      * Holds the Header which stores all proxies which forwarded a message from the sender to the receiver.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private List<ViaHeader> viaHeaders;
 
     /**
      * Holds the header which stores the content type of a message.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private ContentTypeHeader contentTypeHeader;
 
     /**
      * Holds the header which stores the Call-ID. It is used to uniquely identify a message.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private CallIdHeader callIdHeader;
 
     /**
      * Holds the header which stores how many times a message can (still) be forwarded.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private MaxForwardsHeader maxForwardsHeader;
 
     /**
      * Holds the header which stores the address of a request originator. The address can then be cashed by the
      * receiver to bypass sip proxies.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private ContactHeader contactHeader;
 
     /**
      * Holds the header which stores the event package a message would like to subscribe to or is being
      * notified of. An event header requires to have an event name and can optionally hold an event id.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private EventHeader eventHeader;
 
     /**
      * Holds the header which stores user specific data.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private ExtensionHeader extensionHeader;
 
     /**
      *  Holds the header which stores the amount of time the request or message-content is valid.
      */
-    @UriParam
+    @UriParam(label = "advanced")
     private ExpiresHeader expiresHeader;
 
 
@@ -809,17 +803,6 @@ public class SipConfiguration {
 
     public int getMaxMessageSize() {
         return maxMessageSize;
-    }
-
-    /**
-     * Setting to specify whether every communication should be associated with a dialog.
-     */
-    public void setAutomaticDialogSupport(String automaticDialogSupport) {
-        this.automaticDialogSupport = automaticDialogSupport;
-    }
-
-    public String getAutomaticDialogSupport() {
-        return automaticDialogSupport;
     }
 
     /**
