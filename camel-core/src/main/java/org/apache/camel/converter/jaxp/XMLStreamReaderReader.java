@@ -38,7 +38,7 @@ class XMLStreamReaderReader extends Reader {
     private char[] buffer;
     private int bpos;
 
-    public XMLStreamReaderReader(XMLStreamReader reader, XMLOutputFactory outfactory) {
+    XMLStreamReaderReader(XMLStreamReader reader, XMLOutputFactory outfactory) {
         this.reader = reader;
         this.buffer = new char[BUFFER_SIZE];
         this.chunk = new TrimmableCharArrayWriter();
