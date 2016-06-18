@@ -106,6 +106,7 @@
         <include>org.apache.camel:camel-ibatis</include>
         <include>org.apache.camel:camel-ical</include>
         <include>org.apache.camel:camel-infinispan</include>
+        <include>org.apache.camel:camel-influxdb</include>
         <include>org.apache.camel:camel-ignite</include>
         <include>org.apache.camel:camel-irc</include>
         <include>org.apache.camel:camel-ironmq</include>
