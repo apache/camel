@@ -40,11 +40,11 @@ public class SipEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         if (configuration.isPresenceAgent()) {
             SipPresenceAgent answer = new SipPresenceAgent(this, processor, configuration);
-            configureConsumer(answer);
+            super.configureConsumer(answer);
             return answer;
         } else {
             SipSubscriber answer = new SipSubscriber(this, processor, configuration);
-            configureConsumer(answer);
+            super.configureConsumer(answer);
             return answer;
         }
     }
