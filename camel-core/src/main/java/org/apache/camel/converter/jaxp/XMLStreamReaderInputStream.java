@@ -39,7 +39,7 @@ class XMLStreamReaderInputStream extends InputStream {
     private String charset;
     private int bpos;
 
-    public XMLStreamReaderInputStream(XMLStreamReader reader, String charset, XMLOutputFactory outfactory) {
+    XMLStreamReaderInputStream(XMLStreamReader reader, String charset, XMLOutputFactory outfactory) {
         this.reader = reader;
         this.buffer = new byte[BUFFER_SIZE];
         this.chunk = new TrimmableByteArrayOutputStream();
@@ -51,7 +51,7 @@ class XMLStreamReaderInputStream extends InputStream {
         }
     }
 
-    public XMLStreamReaderInputStream(XMLStreamReader reader, XMLOutputFactory outfactory) {
+    XMLStreamReaderInputStream(XMLStreamReader reader, XMLOutputFactory outfactory) {
         this(reader, "utf-8", outfactory);
     }
 
