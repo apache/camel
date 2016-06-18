@@ -67,7 +67,8 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     private static final Logger LOG = LoggerFactory.getLogger(Mina2Producer.class);
     private final ResponseHandler handler;
     private IoSession session;
-    private CountDownLatch latch;
+    private CountDownLatch responseLatch;
+    private CountDownLatch closeLatch;
     private boolean lazySessionCreation;
     private long timeout;
     private SocketAddress address;
@@ -77,7 +78,6 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     private Mina2Configuration configuration;
     private IoSessionConfig connectorConfig;
     private ExecutorService workerPool;
-    private CountDownLatch closeLatch;
 
     public Mina2Producer(Mina2Endpoint endpoint) throws Exception {
         super(endpoint);
@@ -147,8 +147,8 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
 
         // if sync is true then we should also wait for a response (synchronous mode)
         if (sync) {
-            // only initialize latch if we should get a response
-            latch = new CountDownLatch(1);
+            // only initialize responseLatch if we should get a response
+            responseLatch = new CountDownLatch(1);
             // reset handler if we expect a response
             handler.reset();
         }
@@ -168,7 +168,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         if (sync) {
             // wait for response, consider timeout
             LOG.debug("Waiting for response using timeout {} millis.", timeout);
-            boolean done = latch.await(timeout, TimeUnit.MILLISECONDS);
+            boolean done = responseLatch.await(timeout, TimeUnit.MILLISECONDS);
             if (!done) {
                 throw new ExchangeTimedOutException(exchange, timeout);
             }
@@ -421,21 +421,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         if (delimiter == null) {
             return LineDelimiter.DEFAULT;
         }
-
-        switch (delimiter) {
-        case DEFAULT:
-            return LineDelimiter.DEFAULT;
-        case AUTO:
-            return LineDelimiter.AUTO;
-        case UNIX:
-            return LineDelimiter.UNIX;
-        case WINDOWS:
-            return LineDelimiter.WINDOWS;
-        case MAC:
-            return LineDelimiter.MAC;
-        default:
-            throw new IllegalArgumentException("Unknown textline delimiter: " + delimiter);
-        }
+        return delimiter.getLineDelimiter();
     }
 
     private Charset getEncodingParameter(String type, Mina2Configuration configuration) {
@@ -492,11 +478,11 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             this.message = message;
             messageReceived = true;
             cause = null;
-            countDown();
+            notifyResultAvailable();
         }
 
-        protected void countDown() {
-            CountDownLatch downLatch = latch;
+        protected void notifyResultAvailable() {
+            CountDownLatch downLatch = responseLatch;
             if (downLatch != null) {
                 downLatch.countDown();
             }
@@ -509,9 +495,15 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
                 LOG.debug("Session closed but no message received from address: {}", address);
                 // session was closed but no message received. This could be because the remote server had an internal error
                 // and could not return a response. We should count down to stop waiting for a response
-                countDown();
+                notifyResultAvailable();
             }
-            closeLatch.countDown();
+            notifySessionClosed();
+        }
+
+        private void notifySessionClosed() {
+            if (closeLatch != null) {
+                closeLatch.countDown();
+            }
         }
 
         @Override
