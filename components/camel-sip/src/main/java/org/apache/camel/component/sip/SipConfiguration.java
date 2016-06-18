@@ -54,109 +54,329 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @UriParams
-public class SipConfiguration {    
+public class SipConfiguration {
+
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = LoggerFactory.getLogger(SipConfiguration.class);
+
+    /**
+     * The SIP library implementation used by the SipFactory for this camel component.
+     */
     private static final String IMPLEMENTATION = "gov.nist";
 
+    /**
+     * The SipComponent which uses this SipConfiguration to create a SipEndpoint. Primarily used to
+     * help with resolving the parameter list given when creating an endpoint.
+     */
     private SipComponent component;
 
+    /**
+     * The specified SIP Protocol that should be used. Has to be equal to either "sip" or "sips" to be valid.
+     */
     private String protocol;
+
+    /**
+     * A map of parameters given in the sip URI when the SipEndpoint is created.
+     */
     private Map<String, Object> parameters;
 
+    /**
+     * The SIP URI the SipEndpoint needs to connect to.
+     * This object represents the SIP URI string given when the SipEndpoint is created.
+     */
     @UriPath @Metadata(required = "true")
     private URI uri;
-    @UriParam(label = "advanced")
-    private AddressFactory addressFactory;
-    @UriParam(label = "advanced")
-    private MessageFactory messageFactory;
-    @UriParam(label = "advanced")
-    private HeaderFactory headerFactory;
-    @UriParam(label = "advanced")
-    private SipStack sipStack;
-    @UriParam(label = "advanced")
-    private ListeningPoint listeningPoint;
-    @UriParam(label = "advanced")
+
+    /**
+     * The SIP URI the SipEndpoint needsto connect to. This object represents the SIP uri string given
+     * when the SipEndpoint is created. This object gets created through the normal URI object.
+     */
+    @UriParam
     private SipURI sipUri;
-    @UriParam(label = "common", defaultValue = "NAME_NOT_SET")
+
+    /**
+     * The name of the SipStack. Defaults to "NAME_NOT_SET".
+     */
+    @UriParam(defaultValue = "NAME_NOT_SET")
     private String stackName = "NAME_NOT_SET";
-    @UriParam(label = "common", defaultValue = "tcp", enums = "tcp,udp")
+
+    /**
+     * The transport method used to send and receive messages. Defaults to TCP.
+     * Has to be equal to TCP or UDP to be valid.
+     */
+    @UriParam(defaultValue = "tcp", enums = "tcp,udp")
     private String transport = "tcp";
-    @UriParam(label = "proxy")
-    private int maxForwards;
-    @UriParam(label = "consumer")
-    private boolean consumer;
-    @UriParam(label = "common")
-    private String eventHeaderName;
-    @UriParam(label = "common")
-    private String eventId;
-    @UriParam(label = "common", defaultValue = "3600")
+
+    /**
+     * The amount of times a SIP message is allowed to be forwarded. Defaults to 70.
+     */
+    @UriParam(defaultValue = "70")
+    private int maxForwards = 70;
+
+    /**
+     * The amount of time a message received at an endpoint is considered valid.
+     */
+    @UriParam(defaultValue = "3600")
     private int msgExpiration = 3600;
-    @UriParam(label = "proxy")
+
+    /**
+     * Determines whether requests are send via proxies.
+     */
+    @UriParam
     private boolean useRouterForAllUris;
-    @UriParam(label = "common", defaultValue = "10000")
+
+    /**
+     * The amount of time to wait for a Response and/or Acknowledgement message to be received
+     * from another SIP stack. Defaults to 10 seconds.
+     */
+    @UriParam(defaultValue = "10000")
     private long receiveTimeoutMillis = 10000;
-    @UriParam(label = "advanced", defaultValue = "1048576")
+
+    /**
+     * The maximum size of a message in bytes. Defaults to 1,048,576 B, roughly 1.05 MB.
+     */
+    @UriParam(defaultValue = "1048576")
     private int maxMessageSize = 1048576;
-    @UriParam(label = "common")
-    private boolean cacheConnections;
-    @UriParam(label = "common", defaultValue = "text")
+
+    /**
+     * Whether connections should be cashed by the SipStack. This if useful for long
+     * running conversations as cashing reduces the cost of connection creations.
+     */
+    @UriParam
+    private boolean cacheConnections; //todo check if this is used anywhere
+
+    /**
+     * The mime type of the body of the SIP message. Defaults to text.
+     */
+    @UriParam(defaultValue = "text")
     private String contentType = "text";
-    @UriParam(label = "common", defaultValue = "plain")
+
+    /**
+     * The mime subtype used in the body of the SIP message. Defaults to plain.
+     */
+    @UriParam(defaultValue = "plain")
     private String contentSubType = "plain";
-    @UriParam(label = "logging")
+
+    /**
+     * Whether every communication should take place inside a dialog. Defaults to off.
+     */
+    @UriParam(defaultValue = "off")
+    private String automaticDialogSupport = "off"; // FIXME: 18/06/16 currently not implemented
+
+    /**
+     * Name of server log file to use for logging.
+     */
+    @UriParam
     private String implementationServerLogFile;
-    @UriParam(label = "logging")
+
+    /**
+     * Name of client debug log file to use for logging.
+     */
+    @UriParam
     private String implementationDebugLogFile;
-    @UriParam(label = "logging", defaultValue = "0")
+
+    /**
+     * Logging level for tracing. Defaults to 0.
+     */
+    @UriParam(defaultValue = "0")
     private String implementationTraceLevel = "0";
-    @UriParam(label = "advanced")
-    private SipFactory sipFactory;
-    @UriParam(label = "common")
-    private String fromUser;
-    @UriParam(label = "common")
-    private String fromHost;
-    @UriParam(label = "common")
-    private int fromPort;
-    @UriParam(label = "common")
-    private String toUser;
-    @UriParam(label = "common")
-    private String toHost;
-    @UriParam(label = "common")
-    private int toPort;
-    @UriParam(label = "consumer")
+
+    /**
+     * Whether the SipEndpoint is a consuming or producing endpoint. Determines if
+     * From headers are used (and thus the Endpoint is consuming because it <b>retrieves from</b> the SIP URI
+     * or
+     * To headers are used (and thus the Endpoint is producing because it needs to <b>send to</b> the SIP URI.
+     */
+    @UriParam
+    private boolean consumer;
+
+    /**
+     * The Consumer created by the SipEndpoint will be a SipPresenceAgent when true or
+     * SipSubscriber when false. A SipPrecenceAgent is only for testing purposes. If the endpoint
+     * is a consumer this should be false.
+     */
+    @UriParam
     private boolean presenceAgent;
-    @UriParam(label = "advanced")
+
+    /**
+     * The name of the events in notify/subscribe messages in String format.
+     * Mandatory setting unless a registry based FromHeader is specified.
+     */
+    @UriParam
+    private String eventHeaderName;
+
+    /**
+     * An optional event ID which can be added the EventHeader
+     */
+    @UriParam
+    private String eventId;
+
+    /**
+     * Singleton factory for obtaining for the AddressFactory, HeaderFactory, MessageFactory and SipStack.
+     */
+    @UriParam
+    private SipFactory sipFactory;
+
+    /**
+     * Allows the creation of (SIP) uri's.
+     */
+    @UriParam
+    private AddressFactory addressFactory;
+
+    /**
+     * Allows the creation of SIP request and response messages.
+     */
+    @UriParam
+    private MessageFactory messageFactory;
+
+    /**
+     * Allows the creation of the headers which are placed in the header field at the top of a SIP packet.
+     */
+    @UriParam
+    private HeaderFactory headerFactory;
+
+    /**
+     * Allows the creation of SipProviders and SipListeners.
+     */
+    @UriParam
+    private SipStack sipStack; //does not get used currently?
+
+    /**
+     * The socket that a SipProvider uses to send and receive SIP messages.
+     */
+    @UriParam
+    private ListeningPoint listeningPoint;
+
+    /**
+     * Holds the username of the initiator/sender of a message.
+     */
+    @UriParam
+    private String fromUser;
+
+    /**
+     * Holds the host of the initiator/sender of a message.
+     */
+    @UriParam
+    private String fromHost;
+
+    /**
+     * Holds the port of the initiator/sender of a message.
+     */
+    @UriParam
+    private int fromPort;
+
+    /**
+     * Holds the username of the receiver of a message.
+     */
+    @UriParam
+    private String toUser;
+
+    /**
+     * Holds the host of the receiver of a message.
+     */
+    @UriParam
+    private String toHost;
+
+    /**
+     * Holds the port of the receiver of a message.
+     */
+    @UriParam
+    private int toPort;
+
+    /**
+     * Holds the from header which stores the original sender of a message.
+     */
+    @UriParam
     private FromHeader fromHeader;
-    @UriParam(label = "advanced")
+
+    /**
+     * Holds the to header which stores the original retriever of a message.
+     */
+    @UriParam
     private ToHeader toHeader;
-    @UriParam(label = "advanced")
+
+    /**
+     * Holds the Header which stores all proxies which forwarded a message from the sender to the receiver.
+     */
+    @UriParam
     private List<ViaHeader> viaHeaders;
-    @UriParam(label = "advanced")
+
+    /**
+     * Holds the header which stores the content type of a message.
+     */
+    @UriParam
     private ContentTypeHeader contentTypeHeader;
-    @UriParam(label = "advanced")
+
+    /**
+     * Holds the header which stores the Call-ID. It is used to uniquely identify a message.
+     */
+    @UriParam
     private CallIdHeader callIdHeader;
-    @UriParam(label = "advanced")
+
+    /**
+     * Holds the header which stores how many times a message can (still) be forwarded.
+     */
+    @UriParam
     private MaxForwardsHeader maxForwardsHeader;
-    @UriParam(label = "advanced")
+
+    /**
+     * Holds the header which stores the address of a request originator. The address can then be cashed by the
+     * receiver to bypass sip proxies.
+     */
+    @UriParam
     private ContactHeader contactHeader;
-    @UriParam(label = "advanced")
+
+    /**
+     * Holds the header which stores the event package a message would like to subscribe to or is being
+     * notified of. An event header requires to have an event name and can optionally hold an event id.
+     */
+    @UriParam
     private EventHeader eventHeader;
-    @UriParam(label = "advanced")
+
+    /**
+     * Holds the header which stores user specific data.
+     */
+    @UriParam
     private ExtensionHeader extensionHeader;
-    @UriParam(label = "advanced")
+
+    /**
+     *  Holds the header which stores the amount of time the request or message-content is valid.
+     */
+    @UriParam
     private ExpiresHeader expiresHeader;
 
+
+    /**
+     * Constructs a configuration instance with every instance variable set to null or their default value
+     * expect the SipFactory
+     */
     public SipConfiguration() {
         sipFactory = SipFactory.getInstance();
         sipFactory.setPathName(IMPLEMENTATION);
     }
-    
+
+    /**
+     * Initialize the configuration with the SIP uri and parameters
+     *
+     * @param uri The SIP URI of the server the endpoint is connecting to
+     * @param parameters additional parameters used for connecting to the SIP URI
+     * @param component the SipComponent creating this SipConfiguration instance
+     */
     public void initialize(URI uri, Map<String, Object> parameters, SipComponent component) {
         this.setParameters(parameters);
         this.setComponent(component);
         this.setUri(uri);
     }
 
+    /**
+     * Creates all instances needed in this configuration based on the URI and the given parameters. Boolean values
+     * consumer and presenceAgent should be set before parsing the URI.
+     *
+     * @throws Exception when uri protocol does not match "sip" or "sips" or when important variables
+     * end up as null.
+     */
     public void parseURI() throws Exception {
         protocol = uri.getScheme();
         
@@ -206,6 +426,11 @@ public class SipConfiguration {
             setPresenceAgent(Boolean.valueOf((String) settings.get("presenceAgent")));
         }
 
+        /*
+         If the endpoint is a producer endpoint it will send information to the specified server at the SIP URI:
+            the ToUser, ToHost and ToPort variables are retrieved from the URI and
+            the FromUser, FromHost and FromPort variables must be given as parameters
+        */
         if (!consumer) {
             if (settings.containsKey("fromUser")) {
                 setFromUser((String) settings.get("fromUser"));
@@ -219,11 +444,18 @@ public class SipConfiguration {
             setToUser(uri.getUserInfo());
             setToHost(uri.getHost());
             setToPort(uri.getPort());
-        } else {
+        }
+        /*
+        if the endpoint is a consumer endpoint it will retrieve information from the specified server at the SIP URI:
+            the FromUser, FromHost and FromPort variables retrieved from the URI
+            the ToUser, ToHost and ToPort variables are not needed unless the endpoint is a PresenceAgent
+            and thus only for testing purposes
+        */
+        else {
             setFromUser(uri.getUserInfo());
             setFromHost(uri.getHost());
             setFromPort(uri.getPort());
-            if (!presenceAgent) {
+            if (!presenceAgent) { //only true when a PresenceAgent and thus not a consumer
                 if (settings.containsKey("toUser")) {
                     setToUser((String) settings.get("toUser"));
                 }
@@ -243,26 +475,35 @@ public class SipConfiguration {
         LOG.trace("Consumer:" + consumer + " StackName:" + stackName);
         LOG.trace("From User: " + getFromUser() + " From host: " + getFromHost() + " From Port: " + getFromPort());
          
-        createFactoriesAndHeaders(parameters, component);
-        
+        this.createFactoriesAndHeaders(parameters, component);
+
+        //// TODO: 18/06/16 figure out what sipUri does as a parameter
         sipUri = component.resolveAndRemoveReferenceParameter(parameters, "sipUri", SipURI.class, null);
         if (sipUri == null) {
             sipUri = addressFactory.createSipURI(getToUser(), getToHost() + ":" + getToPort());
         }
 
+        //throws exceptions when these mandatory instances end up as null
         ObjectHelper.notNull(fromUser, "From User");
         ObjectHelper.notNull(fromHost, "From Host");
         ObjectHelper.notNull(fromPort, "From Port");
         ObjectHelper.notNull(eventHeader, "Event Header");
         ObjectHelper.notNull(eventHeaderName, "Event Header Name");        
         ObjectHelper.notNull(eventId, "Event Id");        
-    }    
+    }
 
+    /**
+     * Creates the header, address and message factories along with the all the header instances.
+     *
+     * @param parameters the parameters given when endpoint got created
+     * @param component the SipComponent
+     * @throws Exception when something goes wrong looking up from the parameters map
+     */
     @SuppressWarnings("unchecked")
     private void createFactoriesAndHeaders(Map<String, Object> parameters, SipComponent component) throws Exception {
         headerFactory = sipFactory.createHeaderFactory();
         addressFactory = sipFactory.createAddressFactory();
-        setMessageFactory(sipFactory.createMessageFactory());
+        this.setMessageFactory(sipFactory.createMessageFactory());
         
         fromHeader = component.resolveAndRemoveReferenceParameter(parameters, "fromHeader", FromHeader.class, null);
         if (fromHeader == null) { 
@@ -283,6 +524,7 @@ public class SipConfiguration {
             createContentTypeHeader();
         }
 
+        //will end up null if not given as parameter. Use the setter to make a new call ID manually
         callIdHeader = component.resolveAndRemoveReferenceParameter(parameters, "callIdHeader", CallIdHeader.class, null);
         
         maxForwardsHeader = component.resolveAndRemoveReferenceParameter(parameters, "maxForwardsHeader", MaxForwardsHeader.class, null);
@@ -306,7 +548,23 @@ public class SipConfiguration {
         extensionHeader = component.resolveAndRemoveReferenceParameter(parameters, "extensionHeader", ExtensionHeader.class, null);
     }
 
-    public Request createSipRequest(long sequenceNumber, String requestMethod, Object body) throws ParseException, InvalidArgumentException {
+    /**
+     * Creates a new SIP request based on the stored headers in the configuration instance.
+     *
+     * @param sequenceNumber The decimal number used in the CSeq header
+     * @param requestMethod The SIP method used in the request
+     * @param body The body of the request
+     *
+     * @return A SIP request containing as headers the SIP URI, request method, CallID, CSeq number, From, To, Via
+     * and max forwards
+     *
+     * @throws ParseException when the headers cannot be used to create the request or the sequence number and request
+     * method cannot be used
+     * @throws InvalidArgumentException when the request method string is not a valid method string
+     */
+    public Request createSipRequest(long sequenceNumber, String requestMethod, Object body)
+            throws ParseException, InvalidArgumentException
+    {
         //SipConfiguration configuration = sipPublisher.getConfiguration();
         CSeqHeader cSeqHeader = getHeaderFactory().createCSeqHeader(sequenceNumber, requestMethod);
 
@@ -320,7 +578,8 @@ public class SipConfiguration {
             getToHeader(), 
             getViaHeaders(), 
             getMaxForwardsHeader());
-        
+
+        // Optional headers.
         if (getEventHeader() != null) {
             request.addHeader(getEventHeader());
         }
@@ -333,29 +592,51 @@ public class SipConfiguration {
         if (getExtensionHeader() != null) {
             request.addHeader(getExtensionHeader());
         }
+
+        // Set the body.
         request.setContent(body, getContentTypeHeader());
         
         return request;       
     }
-    
+
+    /**
+     * Creates a FromHeader based on the FromUser, FromHost and FromPort instance variables. The tag in the FromHeader
+     * is always "<username>_Header".
+     *
+     * @throws ParseException when parsing the information for the variables goes wrong
+     */
     private void createFromHeader() throws ParseException {
         SipURI fromAddress = getAddressFactory().createSipURI(getFromUser(), getFromHost());
         fromAddress.setPort(Integer.valueOf(getFromPort()).intValue());
         Address fromNameAddress = addressFactory.createAddress(fromAddress);
         fromNameAddress.setDisplayName(getFromUser());
-        
-        setFromHeader(headerFactory.createFromHeader(fromNameAddress, getFromUser() + "_Header"));        
+
+        //// FIXME: 18/06/16 tag MUST be globally unique and cryptographically random with at least 32 bits of randomness
+        setFromHeader(headerFactory.createFromHeader(fromNameAddress, getFromUser() + "_Header"));
     }
-    
+
+    /**
+     * Creates a ToHeader based on the ToUser, ToHost and ToPort instance variables. The tag in the ToHeader
+     * is always "<username>_Header".
+     *
+     * @throws ParseException
+     */
     private void createToHeader() throws ParseException {
         SipURI toAddress = getAddressFactory().createSipURI(getToUser(), getToHost());
         toAddress.setPort(getToPort());
         Address toNameAddress = addressFactory.createAddress(toAddress);
         toNameAddress.setDisplayName(getToUser());
-        
+
+        //// FIXME: 18/06/16 tag MUST be globally unique and cryptographically random with at least 32 bits of randomness
         setToHeader(headerFactory.createToHeader(toNameAddress, getToUser() + "_Header"));
     }
 
+    /**
+     * Creates the list of ViaHeaders and populates the list with the SIP URI from the sender
+     *
+     * @throws ParseException
+     * @throws InvalidArgumentException
+     */
     private void createViaHeaders() throws ParseException, InvalidArgumentException {
         viaHeaders = new ArrayList<ViaHeader>();
         ViaHeader viaHeader = headerFactory.createViaHeader(getFromHost(), getFromPort(),
@@ -364,19 +645,41 @@ public class SipConfiguration {
         viaHeaders.add(viaHeader);       
     }
 
+    /**
+     * Creates the ContentTypeHeader based on the content type and content subtype instance variables
+     *
+     * @throws ParseException
+     */
     private void createContentTypeHeader() throws ParseException {
         setContentTypeHeader(headerFactory.createContentTypeHeader(getContentType(), getContentSubType()));   
     }
-    
+
+    /**
+     * Creates the maxForwardHeader based on the maxForwards instance variable
+     *
+     * @throws ParseException
+     * @throws InvalidArgumentException
+     */
     private void createMaxForwardsHeader() throws ParseException, InvalidArgumentException {
         setMaxForwardsHeader(headerFactory.createMaxForwardsHeader(getMaxForwards()));   
     }
 
+    /**
+     * Creates the EventHeader based on the eventHeaderName and eventID instance variables
+     *
+     * @throws ParseException
+     */
     private void createEventHeader() throws ParseException {
         eventHeader = getHeaderFactory().createEventHeader(getEventHeaderName());
         eventHeader.setEventId(getEventId());        
     }
-    
+
+    /**
+     * Creates the ContactHeader based on a contact address made up from the fromUser, fromHost, fromPort and
+     * transport instance variables
+     *
+     * @throws ParseException
+     */
     private void createContactHeader() throws ParseException {
         SipURI contactURI = addressFactory.createSipURI(getFromUser(), getFromHost());
         contactURI.setTransportParam(getTransport());
@@ -389,11 +692,24 @@ public class SipConfiguration {
         contactHeader = headerFactory.createContactHeader(contactAddress);
     }
 
+    /**
+     * Creates the ExpiresHeader based on the msgExpiration instance variable
+     *
+     * @throws ParseException
+     * @throws InvalidArgumentException
+     */
     private void createExpiresHeader() throws ParseException, InvalidArgumentException {
         expiresHeader = getHeaderFactory().createExpiresHeader(getMsgExpiration());        
     }
-    
-    Properties createInitialProperties() {
+
+    /**
+     * creates a properties object holding information about the stack name, the limit on message size,
+     * whether connections should be cashed, if messages can be send via proxies and optionally where the logs
+     * are located
+     *
+     * @return a properties object holding the information stated above
+     */
+    public Properties createInitialProperties() {
         Properties properties = new Properties();
         properties.setProperty("javax.sip.STACK_NAME", getStackName());
         properties.setProperty("gov.nist.javax.sip.MAX_MESSAGE_SIZE", "" + getMaxMessageSize());
@@ -408,10 +724,6 @@ public class SipConfiguration {
         return properties;
     }
 
-    public AddressFactory getAddressFactory() {
-        return addressFactory;
-    }
-
     /**
      * To use a custom AddressFactory
      */
@@ -419,8 +731,8 @@ public class SipConfiguration {
         this.addressFactory = addressFactory;
     }
 
-    public MessageFactory getMessageFactory() {
-        return messageFactory;
+    public AddressFactory getAddressFactory() {
+        return addressFactory;
     }
 
     /**
@@ -430,8 +742,8 @@ public class SipConfiguration {
         this.messageFactory = messageFactory;
     }
 
-    public HeaderFactory getHeaderFactory() {
-        return headerFactory;
+    public MessageFactory getMessageFactory() {
+        return messageFactory;
     }
 
     /**
@@ -441,8 +753,8 @@ public class SipConfiguration {
         this.headerFactory = headerFactory;
     }
 
-    public SipStack getSipStack() {
-        return sipStack;
+    public HeaderFactory getHeaderFactory() {
+        return headerFactory;
     }
 
     /**
@@ -452,10 +764,9 @@ public class SipConfiguration {
         this.sipStack = sipStack;
     }
 
-    public SipURI getSipUri() {
-        return sipUri;
+    public SipStack getSipStack() {
+        return sipStack;
     }
-
     /**
      * To use a custom SipURI. If none configured, then the SipUri fallback to use the options toUser toHost:toPort
      */
@@ -463,8 +774,8 @@ public class SipConfiguration {
         this.sipUri = sipUri;
     }
 
-    public String getStackName() {
-        return stackName;
+    public SipURI getSipUri() {
+        return sipUri;
     }
 
     /**
@@ -474,8 +785,8 @@ public class SipConfiguration {
         this.stackName = stackName;
     }
 
-    public String getTransport() {
-        return transport;
+    public String getStackName() {
+        return stackName;
     }
 
     /**
@@ -485,8 +796,8 @@ public class SipConfiguration {
         this.transport = transport;
     }
 
-    public int getMaxMessageSize() {
-        return maxMessageSize;
+    public String getTransport() {
+        return transport;
     }
 
     /**
@@ -496,19 +807,31 @@ public class SipConfiguration {
         this.maxMessageSize = maxMessageSize;
     }
 
-    public boolean isCacheConnections() {
-        return cacheConnections;
+    public int getMaxMessageSize() {
+        return maxMessageSize;
     }
 
     /**
-     * Should connections be cached by the SipStack to reduce cost of connection creation. This is useful if the connection is used for long running conversations.
+     * Setting to specify whether every communication should be associated with a dialog.
+     */
+    public void setAutomaticDialogSupport(String automaticDialogSupport) {
+        this.automaticDialogSupport = automaticDialogSupport;
+    }
+
+    public String getAutomaticDialogSupport() {
+        return automaticDialogSupport;
+    }
+
+    /**
+     * Should connections be cached by the SipStack to reduce cost of connection creation.
+     * This is useful if the connection is used for long running conversations.
      */
     public void setCacheConnections(boolean cacheConnections) {
         this.cacheConnections = cacheConnections;
     }
 
-    public ListeningPoint getListeningPoint() {
-        return listeningPoint;
+    public boolean isCacheConnections() {
+        return cacheConnections;
     }
 
     /**
@@ -516,6 +839,10 @@ public class SipConfiguration {
      */
     public void setListeningPoint(ListeningPoint listeningPoint) {
         this.listeningPoint = listeningPoint;
+    }
+
+    public ListeningPoint getListeningPoint() {
+        return listeningPoint;
     }
 
     /**
@@ -552,7 +879,8 @@ public class SipConfiguration {
     }
 
     /**
-     * Setting for specifying amount of time to wait for a Response and/or Acknowledgement can be received from another SIP stack
+     * Setting for specifying amount of time to wait for a Response and/or Acknowledgement to be received
+     * from another SIP stack
      */
     public void setReceiveTimeoutMillis(long receiveTimeoutMillis) {
         this.receiveTimeoutMillis = receiveTimeoutMillis;
@@ -562,6 +890,9 @@ public class SipConfiguration {
         return receiveTimeoutMillis;
     }
 
+    /**
+     * Used for setting the parameters given when the SipComponent made the SipEndpoint
+     */
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
     }
@@ -570,16 +901,15 @@ public class SipConfiguration {
         return parameters;
     }
 
+    /**
+     *  Used for setting the component which made the SipConfiguration instance
+     */
     public void setComponent(SipComponent component) {
         this.component = component;
     }
 
     public SipComponent getComponent() {
         return component;
-    }
-
-    public String getImplementationServerLogFile() {
-        return implementationServerLogFile;
     }
 
     /**
@@ -589,8 +919,8 @@ public class SipConfiguration {
         this.implementationServerLogFile = implementationServerLogFile;
     }
 
-    public String getImplementationDebugLogFile() {
-        return implementationDebugLogFile;
+    public String getImplementationServerLogFile() {
+        return implementationServerLogFile;
     }
 
     /**
@@ -600,8 +930,8 @@ public class SipConfiguration {
         this.implementationDebugLogFile = implementationDebugLogFile;
     }
 
-    public String getImplementationTraceLevel() {
-        return implementationTraceLevel;
+    public String getImplementationDebugLogFile() {
+        return implementationDebugLogFile;
     }
 
     /**
@@ -611,8 +941,8 @@ public class SipConfiguration {
         this.implementationTraceLevel = implementationTraceLevel;
     }
 
-    public SipFactory getSipFactory() {
-        return sipFactory;
+    public String getImplementationTraceLevel() {
+        return implementationTraceLevel;
     }
 
     /**
@@ -622,8 +952,8 @@ public class SipConfiguration {
         this.sipFactory = sipFactory;
     }
 
-    public String getFromUser() {
-        return fromUser;
+    public SipFactory getSipFactory() {
+        return sipFactory;
     }
 
     /**
@@ -633,8 +963,8 @@ public class SipConfiguration {
         this.fromUser = fromUser;
     }
 
-    public String getFromHost() {
-        return fromHost;
+    public String getFromUser() {
+        return fromUser;
     }
 
     /**
@@ -644,8 +974,8 @@ public class SipConfiguration {
         this.fromHost = fromHost;
     }
 
-    public int getFromPort() {
-        return fromPort;
+    public String getFromHost() {
+        return fromHost;
     }
 
     /**
@@ -655,9 +985,7 @@ public class SipConfiguration {
         this.fromPort = fromPort;
     }
 
-    public String getToUser() {
-        return toUser;
-    }
+    public int getFromPort(){ return fromPort; }
 
     /**
      * Username of the message receiver. Mandatory setting unless a registry based custom ToHeader is specified.
@@ -666,8 +994,8 @@ public class SipConfiguration {
         this.toUser = toUser;
     }
 
-    public String getToHost() {
-        return toHost;
+    public String getToUser() {
+        return toUser;
     }
 
     /**
@@ -677,8 +1005,8 @@ public class SipConfiguration {
         this.toHost = toHost;
     }
 
-    public int getToPort() {
-        return toPort;
+    public String getToHost() {
+        return toHost;
     }
 
     /**
@@ -688,8 +1016,8 @@ public class SipConfiguration {
         this.toPort = toPort;
     }
 
-    public FromHeader getFromHeader() {
-        return fromHeader;
+    public int getToPort() {
+        return toPort;
     }
 
     /**
@@ -699,8 +1027,8 @@ public class SipConfiguration {
         this.fromHeader = fromHeader;
     }
 
-    public ToHeader getToHeader() {
-        return toHeader;
+    public FromHeader getFromHeader() {
+        return fromHeader;
     }
 
     /**
@@ -710,31 +1038,33 @@ public class SipConfiguration {
         this.toHeader = toHeader;
     }
 
-    public List<ViaHeader> getViaHeaders() {
-        return viaHeaders;
+    public ToHeader getToHeader() {
+        return toHeader;
     }
 
     /**
      * List of custom Header objects of the type javax.sip.header.ViaHeader.
-     * Each ViaHeader containing a proxy address for request forwarding. (Note this header is automatically updated by each proxy when the request arrives at its listener)
+     * Each ViaHeader containing a proxy address for request forwarding.
+     * (Note this header is automatically updated by each proxy when the request arrives at its listener)
      */
     public void setViaHeaders(List<ViaHeader> viaHeaders) {
         this.viaHeaders = viaHeaders;
     }
 
-    public ContentTypeHeader getContentTypeHeader() {
-        return contentTypeHeader;
+    public List<ViaHeader> getViaHeaders() {
+        return viaHeaders;
     }
 
     /**
-     * A custom Header object containing message content details. Must implement the type javax.sip.header.ContentTypeHeader
+     * A custom Header object containing message content details.
+     * Must implement the type javax.sip.header.ContentTypeHeader
      */
     public void setContentTypeHeader(ContentTypeHeader contentTypeHeader) {
         this.contentTypeHeader = contentTypeHeader;
     }
 
-    public CallIdHeader getCallIdHeader() {
-        return callIdHeader;
+    public ContentTypeHeader getContentTypeHeader() {
+        return contentTypeHeader;
     }
 
     /**
@@ -744,8 +1074,8 @@ public class SipConfiguration {
         this.callIdHeader = callIdHeader;
     }
 
-    public MaxForwardsHeader getMaxForwardsHeader() {
-        return maxForwardsHeader;
+    public CallIdHeader getCallIdHeader() {
+        return callIdHeader;
     }
 
     /**
@@ -756,8 +1086,8 @@ public class SipConfiguration {
         this.maxForwardsHeader = maxForwardsHeader;
     }
 
-    public ContactHeader getContactHeader() {
-        return contactHeader;
+    public MaxForwardsHeader getMaxForwardsHeader() {
+        return maxForwardsHeader;
     }
 
     /**
@@ -767,8 +1097,8 @@ public class SipConfiguration {
         this.contactHeader = contactHeader;
     }
 
-    public ExtensionHeader getExtensionHeader() {
-        return extensionHeader;
+    public ContactHeader getContactHeader() {
+        return contactHeader;
     }
 
     /**
@@ -776,6 +1106,10 @@ public class SipConfiguration {
      */
     public void setExtensionHeader(ExtensionHeader extensionHeader) {
         this.extensionHeader = extensionHeader;
+    }
+
+    public ExtensionHeader getExtensionHeader() {
+        return extensionHeader;
     }
 
     /**
@@ -790,7 +1124,8 @@ public class SipConfiguration {
     }
 
     /**
-     * This setting is used to determine whether the kind of header (FromHeader,ToHeader etc) that needs to be created for this endpoint
+     * This setting is used to determine whether the kind of header
+     * (FromHeader,ToHeader etc) that needs to be created for this endpoint
      */
     public void setConsumer(boolean consumer) {
         this.consumer = consumer;
@@ -812,7 +1147,7 @@ public class SipConfiguration {
     }
 
     /**
-     * Setting for a String based event type.
+     * Setting for a String based event Id. Mandatory setting unless a registry based FromHeader is specified
      */
     public void setEventHeaderName(String eventHeaderName) {
         this.eventHeaderName = eventHeaderName;
@@ -844,10 +1179,6 @@ public class SipConfiguration {
         return useRouterForAllUris;
     }
 
-    public int getMsgExpiration() {
-        return msgExpiration;
-    }
-
     /**
      * The amount of time a message received at an endpoint is considered valid
      */
@@ -855,8 +1186,8 @@ public class SipConfiguration {
         this.msgExpiration = msgExpiration;
     }
 
-    public ExpiresHeader getExpiresHeader() {
-        return expiresHeader;
+    public int getMsgExpiration() {
+        return msgExpiration;
     }
 
     /**
@@ -866,16 +1197,20 @@ public class SipConfiguration {
         this.expiresHeader = expiresHeader;
     }
 
-    public boolean isPresenceAgent() {
-        return presenceAgent;
+    public ExpiresHeader getExpiresHeader() {
+        return expiresHeader;
     }
 
     /**
      * This setting is used to distinguish between a Presence Agent & a consumer.
-     * This is due to the fact that the SIP Camel component ships with a basic Presence Agent (for testing purposes only). Consumers have to set this flag to true.
+     * This is due to the fact that the SIP Camel component ships with a basic Presence Agent (for testing purposes only).
+     * Consumers have to set this flag to true.
      */
     public void setPresenceAgent(boolean presenceAgent) {
         this.presenceAgent = presenceAgent;
     }
-    
+
+    public boolean isPresenceAgent() {
+        return presenceAgent;
+    }
 }
