@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.influxdb;
 
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -37,7 +36,7 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     private InfluxDB influxDB;
 
     @UriPath
-    @Metadata(required = "true", description="Connection to the influx database, of class InfluxDB.class")
+    @Metadata(required = "true", description = "Connection to the influx database, of class InfluxDB.class")
     private String connectionBean;
 
     @UriParam(description = "the name of the series where the points will be created, name can be modified dynamically by headers")
@@ -48,7 +47,11 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new InfluxDBProducer(this);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating influx db consumer");
+        }
+
+        return new InfluxDbProducer(this);
     }
 
     @Override
@@ -96,6 +99,7 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
 
     /**
      * Getter for databaseName
+     * 
      * @return the name of the database where the time series will be stored
      */
     public String getDatabaseName() {
@@ -104,6 +108,7 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
 
     /**
      * Setter for databaseName
+     * 
      * @param databaseName
      */
     public void setDatabaseName(String databaseName) {
@@ -112,7 +117,9 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
 
     /**
      * Getter for retentionPolicy
-     * @return the string that defines the retention policy to the data created by the endpoint
+     * 
+     * @return the string that defines the retention policy to the data created
+     *         by the endpoint
      */
     public String getRetentionPolicy() {
         return retentionPolicy;
@@ -120,15 +127,18 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
 
     /**
      * Setter for retentionPolicy
+     * 
      * @param retentionPolicy
      */
     public void setRetentionPolicy(String retentionPolicy) {
         this.retentionPolicy = retentionPolicy;
     }
-    
+
     /**
      * Getter for connectionBean
-     * @return the name of the bean for the {@link org.influxdb.InfluxDB} connection
+     * 
+     * @return the name of the bean for the {@link org.influxdb.InfluxDB}
+     *         connection
      */
     public String getConnectionBean() {
         return connectionBean;

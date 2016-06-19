@@ -16,16 +16,15 @@
  */
 package org.apache.camel.component.influxdb.converters;
 
-import org.apache.camel.Converter;
-import org.apache.camel.component.influxdb.InfluxDbConstants;
-import org.influxdb.dto.Point;
-
 import java.math.BigInteger;
 import java.util.Map;
 
-/**
- * Created by jose on 18/06/16.
- */
+import org.apache.camel.CamelException;
+import org.apache.camel.Converter;
+import org.apache.camel.component.influxdb.CamelInfluxDbException;
+import org.apache.camel.component.influxdb.InfluxDbConstants;
+import org.influxdb.dto.Point;
+
 @Converter
 public final class CamelInfluxDbConverters {
 
@@ -34,40 +33,39 @@ public final class CamelInfluxDbConverters {
     }
 
     @Converter
-    public static Point fromMapToPoint(Map<?, ?> map) {
-        Point p = null;
+    public static Point fromMapToPoint(Map<String, Object> map) {
+
         Object measurenmentName = map.get(InfluxDbConstants.MEASUREMENT_NAME);
 
-        String measurenmentNameString = (String) measurenmentName;
-        Point.Builder pointBuilder = Point.measurement(measurenmentNameString);
-
-        for (Object entry :map.keySet()) {
-            String key = entry.toString();
-            Object value = map.get(entry);
-
-            if (value instanceof Number) {
-                if (value instanceof Byte) {
-                    pointBuilder.addField(measurenmentNameString, ((Byte) value).doubleValue());
-                }
-                if (value instanceof Short) {
-                    pointBuilder.addField(measurenmentNameString, ((Short) value).doubleValue());
-                }
-                if (value instanceof Integer) {
-                    pointBuilder.addField(measurenmentNameString,  ((Integer) value).doubleValue());
-                }
-                if (value instanceof Long) {
-                    pointBuilder.addField(measurenmentNameString, ((Long) value).doubleValue());
-                }
-                if (value instanceof Double) {
-                    pointBuilder.addField(measurenmentNameString, ((BigInteger) value).doubleValue());
-                }
-
-            }
-
+        if (measurenmentName == null) {
+            throw new CamelInfluxDbException("Unable to find the header for the meassurenment");
         }
 
+        
+        String measurenmentNameString = measurenmentName.toString();
+        Point.Builder pointBuilder = Point.measurement(measurenmentNameString);
+        
+        map.remove(InfluxDbConstants.MEASUREMENT_NAME);
+      
+        pointBuilder.fields(map);
+        map.put(InfluxDbConstants.MEASUREMENT_NAME, measurenmentName);
+        
+        
+        // for (Object entry : map.keySet()) {
+        // String key = entry.toString();
+        // Object value = map.get(entry);
+        //
+        // if (value instanceof Number) {
+        // Number numberValue = (Number)value;
+        //
+        // pointBuilder.addField(key, numberValue);
+        //
+        // }
+        //
+        //
+        // }
 
-        return p;
+        return pointBuilder.build();
 
     }
 }

@@ -21,18 +21,14 @@ import org.apache.camel.impl.DefaultProducer;
 import org.influxdb.InfluxDB;
 import org.influxdb.dto.Point;
 
-
 /**
  * Created by jose on 18/06/16.
  */
-public class InfluxDBProducer  extends DefaultProducer  {
-
+public class InfluxDbProducer extends DefaultProducer {
 
     InfluxDbEndpoint endpoint;
 
-
-
-    public InfluxDBProducer(InfluxDbEndpoint endpoint) {
+    public InfluxDbProducer(InfluxDbEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }
@@ -70,14 +66,13 @@ public class InfluxDBProducer  extends DefaultProducer  {
     }
 
     private String calculateDatabaseName(Exchange exchange) {
-    	 String dbName = exchange.getIn().getHeader(InfluxDbConstants.DBNAME_HEADER, String.class);
+        String dbName = exchange.getIn().getHeader(InfluxDbConstants.DBNAME_HEADER, String.class);
 
-         if (dbName != null) {
-             return dbName;
-         }
+        if (dbName != null) {
+            return dbName;
+        }
 
-         return endpoint.getDatabaseName();
+        return endpoint.getDatabaseName();
     }
-
 
 }

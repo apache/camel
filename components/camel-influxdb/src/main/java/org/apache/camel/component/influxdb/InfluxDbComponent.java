@@ -16,17 +16,30 @@
  */
 package org.apache.camel.component.influxdb;
 
-public class CamelInfluxDbException extends RuntimeException {
+import java.util.Map;
 
-    public CamelInfluxDbException(String message, Throwable cause) {
-        super(message, cause);
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Created by jose on 18/06/16.
+ */
+public class InfluxDbComponent extends UriEndpointComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InfluxDbComponent.class);
+
+    public InfluxDbComponent() {
+        super(InfluxDbEndpoint.class);
     }
 
-    public CamelInfluxDbException(String message) {
-        super(message);
-    }
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating influx db endpoint");
+        }
 
-    public CamelInfluxDbException(Throwable cause) {
-        super(cause);
+        return null;
     }
 }

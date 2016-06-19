@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,28 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Map;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Created by jose on 18/06/16.
+ * 
  */
-public class InfluxDbComponent extends UriEndpointComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(InfluxDbComponent.class);
-
-    public InfluxDbComponent() {
-        super(InfluxDbEndpoint.class);
-    }
-
+public class InfluxDbConsumerTest extends AbstractInfluxDbTest {
+    
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return null;
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() {
+                
+                // tested routes
+                from("direct:test").
+                    to("influxdb:influxDbBean?database={{influxdb.testDb}}");
+                             
+            }
+        };
     }
+
 }

@@ -21,11 +21,13 @@ package org.apache.camel.component.influxdb;
  */
 public final class InfluxDbConstants {
 
+    public static final String MEASUREMENT_NAME = "camelInfluxDB.MeasurementName";
+    public static final String RETENTION_POLICY_HEADER = "camelInfluxDB.RetentionPolicy";
+    public static final String DBNAME_HEADER = "camelInfluxDB.databaseName";
+    
     private InfluxDbConstants() {
 
     }
 
-    public static final String MEASUREMENT_NAME = "camelInfluxDB.MeasurementName";
-    public static final String RETENTION_POLICY_HEADER = "camelInfluxDB.RetentionPolicy";
-	public static final String DBNAME_HEADER = "camelInfluxDB.databaseName";
+   
 }

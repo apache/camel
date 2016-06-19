@@ -14,19 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb;
 
-public class CamelInfluxDbException extends RuntimeException {
+import java.net.UnknownHostException;
 
-    public CamelInfluxDbException(String message, Throwable cause) {
-        super(message, cause);
-    }
+import org.influxdb.InfluxDB;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-    public CamelInfluxDbException(String message) {
-        super(message);
-    }
+import static org.mockito.Mockito.*;
 
-    public CamelInfluxDbException(Throwable cause) {
-        super(cause);
+@Configuration
+public class MockedInfluxDbConfiguration {
+
+    @Bean
+    public InfluxDB influxDbConnection() throws UnknownHostException {
+        InfluxDB mockedDbConnection = mock(InfluxDB.class);
+
+        return mockedDbConnection;
     }
 }
