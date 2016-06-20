@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 public class MockedInfluxDbConfiguration {
 
     @Bean
-    public InfluxDB influxDbConnection() throws UnknownHostException {
+    public InfluxDB influxDbBean() throws UnknownHostException {
         InfluxDB mockedDbConnection = mock(InfluxDB.class);
 
         return mockedDbConnection;

@@ -43,19 +43,30 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     private String databaseName;
 
     @UriParam(defaultValue = "default", description = "defines the retention policy for the points created in influxdb")
-    private String retentionPolicy;
+    private String retentionPolicy = "default";
+
+    /**
+     * @param uri
+     * @param influxDbComponent
+     */
+    public InfluxDbEndpoint(String uri, InfluxDbComponent influxDbComponent) {
+        super(uri, influxDbComponent);
+    }
 
     @Override
     public Producer createProducer() throws Exception {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating influx db consumer");
+            LOG.debug("Creating influx db producer connectionBean:{}, databaseName:{}, retentionPolicy:{}", connectionBean, databaseName, retentionPolicy);
         }
-
+        
         return new InfluxDbProducer(this);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating influx db consumer");
+        }
         return null;
     }
 

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,25 +17,57 @@
 
 package org.apache.camel.component.influxdb;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * 
  */
 
 public class InfluxDbConsumerTest extends AbstractInfluxDbTest {
+
+
+    @EndpointInject(uri = "mock:test")
+    MockEndpoint mockEndpoint;
+
+    @EndpointInject(uri = "mock:error")
+    MockEndpoint errorEndpoint;
+    
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                
+
                 // tested routes
-                from("direct:test").
-                    to("influxdb:influxDbBean?database={{influxdb.testDb}}");
-                             
+                from("direct:test").to("influxdb:influxDbBean?databaseName={{influxdb.testDb}}");
+
             }
         };
+    }
+
+    @Test
+    public void checkWiring() {
+
+    }
+    
+    public void writePointFromPoint() {
+        Map<String, Object> pointMap = createMapPoint();
+        sendBody("direct:dyanmic", pointMap);
+        
+    }
+    
+    private Map<String,Object> createMapPoint() {
+        Map<String, Object> pointMap = new HashMap<String, Object>();
+        
+        pointMap.put(InfluxDbConstants.DBNAME_HEADER, 1234);
+        
+        return pointMap;
     }
 
 }
