@@ -16,13 +16,19 @@
  */
 package org.apache.camel.component.etcd;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mousio.etcd4j.responses.EtcdErrorCode;
 import mousio.etcd4j.responses.EtcdException;
+import mousio.etcd4j.responses.EtcdKeysResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class EtcdHelper  {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EtcdHelper.class);
     private static final String OUTDATED_EVENT_MSG = "requested index is outdated and cleared";
 
     private EtcdHelper() {
@@ -40,5 +46,17 @@ public final class EtcdHelper  {
         return new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
+
+
+
+    public static void setIndex(AtomicLong index, EtcdKeysResponse response) {
+        if (response != null && response.node != null) {
+            index.set(response.node.modifiedIndex + 1);
+            LOGGER.debug("Index received={}, next={}", response.node.modifiedIndex, index.get());
+        } else {
+            index.set(response.etcdIndex + 1);
+            LOGGER.debug("Index received={}, next={}", response.node.modifiedIndex, index.get());
+        }
     }
 }
