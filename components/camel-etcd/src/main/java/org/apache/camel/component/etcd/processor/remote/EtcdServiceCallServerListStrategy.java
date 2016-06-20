@@ -21,11 +21,10 @@ import mousio.etcd4j.EtcdClient;
 import org.apache.camel.component.etcd.EtcdConfiguration;
 import org.apache.camel.component.etcd.EtcdHelper;
 import org.apache.camel.impl.remote.DefaultServiceCallServerListStrategy;
-import org.apache.camel.spi.ServiceCallServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EtcdServiceCallServerListStrategy extends DefaultServiceCallServerListStrategy<ServiceCallServer> {
+public class EtcdServiceCallServerListStrategy extends DefaultServiceCallServerListStrategy<EtcdServiceCallServer> {
     private static final Logger LOGGER = LoggerFactory.getLogger(EtcdServiceCallServerListStrategy.class);
     private static final ObjectMapper MAPPER = EtcdHelper.createObjectMapper();
 

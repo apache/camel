@@ -21,19 +21,18 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.etcd.EtcdConfiguration;
 import org.apache.camel.impl.remote.DefaultServiceCallProcessor;
 import org.apache.camel.spi.ProcessorFactory;
-import org.apache.camel.spi.ServiceCallServer;
 import org.apache.camel.spi.ServiceCallServerListStrategy;
 
 /**
  * {@link ProcessorFactory} that creates the Etcd implementation of the ServiceCall EIP.
  */
-public class EtcdServiceCallProcessor extends DefaultServiceCallProcessor<ServiceCallServer> {
+public class EtcdServiceCallProcessor extends DefaultServiceCallProcessor<EtcdServiceCallServer> {
     public EtcdServiceCallProcessor(String name, String scheme, String uri, ExchangePattern exchangePattern, EtcdConfiguration conf) {
         super(name, scheme, uri, exchangePattern);
     }
 
     @Override
-    public void setServerListStrategy(ServiceCallServerListStrategy<ServiceCallServer> serverListStrategy) {
+    public void setServerListStrategy(ServiceCallServerListStrategy<EtcdServiceCallServer> serverListStrategy) {
         if (!(serverListStrategy instanceof EtcdServiceCallServerListStrategy)) {
             throw new IllegalArgumentException("ServerListStrategy is not an instance of EtcdServiceCallServerListStrategy");
         }

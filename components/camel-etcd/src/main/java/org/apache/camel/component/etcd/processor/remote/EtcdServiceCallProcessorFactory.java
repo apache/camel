@@ -26,14 +26,13 @@ import org.apache.camel.impl.remote.DefaultServiceCallProcessor;
 import org.apache.camel.impl.remote.DefaultServiceCallProcessorFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.ServiceCallServer;
 import org.apache.camel.spi.ServiceCallServerListStrategy;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * {@link ProcessorFactory} that creates the Etcd implementation of the ServiceCall EIP.
  */
-public class EtcdServiceCallProcessorFactory extends DefaultServiceCallProcessorFactory<EtcdConfiguration, ServiceCallServer> {
+public class EtcdServiceCallProcessorFactory extends DefaultServiceCallProcessorFactory<EtcdConfiguration, EtcdServiceCallServer> {
     @Override
     protected EtcdConfiguration createConfiguration(RouteContext routeContext) throws Exception {
         return new EtcdConfiguration(routeContext.getCamelContext());
@@ -56,13 +55,15 @@ public class EtcdServiceCallProcessorFactory extends DefaultServiceCallProcessor
         ServiceCallServerListStrategy strategy = null;
         if (ObjectHelper.equal("ondemand", name, true)) {
             strategy = new EtcdServiceCallServerListStrategies.OnDemand(conf);
+        } else if (ObjectHelper.equal("watch", name, true)) {
+            strategy = new EtcdServiceCallServerListStrategies.OnDemand(conf);
         }
 
         return Optional.ofNullable(strategy);
     }
 
     @Override
-    protected ServiceCallServerListStrategy<ServiceCallServer> createDefaultServerListStrategy(EtcdConfiguration conf) throws Exception {
+    protected ServiceCallServerListStrategy<EtcdServiceCallServer> createDefaultServerListStrategy(EtcdConfiguration conf) throws Exception {
         return new EtcdServiceCallServerListStrategies.OnDemand(conf);
     }
 }
