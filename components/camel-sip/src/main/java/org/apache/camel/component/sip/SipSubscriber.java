@@ -28,34 +28,91 @@ import javax.sip.message.Request;
 import org.apache.camel.Processor;
 import org.apache.camel.component.sip.listener.SipSubscriptionListener;
 import org.apache.camel.impl.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Camel consumer which subscribes to events from the given URI
+ */
 public class SipSubscriber extends DefaultConsumer {
+
+    /**
+     * The logger of this class
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(SipSubscriber.class);
+
+    /**
+     * The configuration set by the SIP URI. Constructor sets the "consumer" value of the configuration to "true".
+     */
     private SipConfiguration configuration;
+
+    /**
+     * TODO document it
+     */
     private SipSubscriptionListener sipSubscriptionListener;
+
+    /**
+     * SIP entity which is responsible for sending requests and responses
+     */
     private SipProvider provider;
+
+    /**
+     * The Dialog that will store the SIP relationship between the subscribing entity and the notifying entity
+     */
     private Dialog subscriberDialog;
+
+    /**
+     * SipStack used to create Listening points on the given sip URI and to create a SipProvider to send messages back
+     */
     private SipStack sipStack;
 
+    /**
+     * Creates a consumer which subscribes to the given SIP uri in the configuration
+     *
+     * @param sipEndpoint the endpoint creating the consumer
+     * @param processor the processer in the camel route
+     * @param configuration the SIP configuration holding the URI and additional information
+     */
     public SipSubscriber(SipEndpoint sipEndpoint, Processor processor, SipConfiguration configuration) {
         super(sipEndpoint, processor);
         this.configuration = configuration;
         this.configuration.setConsumer(true);
     }
 
+    /**
+     * Starts the consumer by sending a SIP subscribe request
+     *
+     * @throws Exception when sending the subscription goes wrong
+     */
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        //set up the SipConfiguration for the consumer and create the SIP entities necessary for
+        //sending and receiving SIP messages
         Properties properties = configuration.createInitialProperties();
+        LOG.debug("The keyset in the properties: {}", properties.keySet());
+
         sipStack = configuration.getSipFactory().createSipStack(properties);
-        
+
         configuration.parseURI();
+
         sipSubscriptionListener = new SipSubscriptionListener(this);
-        ListeningPoint listeningPoint = 
-            sipStack.createListeningPoint(configuration.getFromHost(), Integer.valueOf(configuration.getFromPort()).intValue(), configuration.getTransport());
+
+        LOG.debug("Making listening point on host: {}, port: {} with transport {}",
+                configuration.getFromHost(),
+                Integer.valueOf(configuration.getFromPort()).intValue(),
+                configuration.getTransport());
+
+        ListeningPoint listeningPoint = sipStack.createListeningPoint(
+                configuration.getFromHost(),
+                Integer.valueOf(configuration.getFromPort()).intValue(),
+                configuration.getTransport());
+
         configuration.setListeningPoint(listeningPoint);
         provider = sipStack.createSipProvider(configuration.getListeningPoint());
         provider.addSipListener(sipSubscriptionListener);
-        
+
         if (configuration.getCallIdHeader() == null) {
             configuration.setCallIdHeader(provider.getNewCallId());
         }
@@ -75,11 +132,22 @@ public class SipSubscriber extends DefaultConsumer {
         subscriberTransactionId.sendRequest();
     }
 
+    /**
+     * Stops the consumer
+     *
+     * @throws Exception
+     */
     @Override
     protected void doStop() throws Exception {
-        super.doStop(); 
+        super.doStop();
+        sipStack.deleteListeningPoint(configuration.getListeningPoint());
+        sipStack.deleteSipProvider(provider);
+        sipStack.stop();
     }
 
+    /**
+     * for getting and setting the SipConfiguration
+     */
     public SipConfiguration getConfiguration() {
         return configuration;
     }
@@ -88,6 +156,9 @@ public class SipSubscriber extends DefaultConsumer {
         this.configuration = configuration;
     }
 
+    /**
+     * for getting and setting the SipSubscriptionListener
+     */
     public void setSipSubscriptionListener(SipSubscriptionListener sipSubscriptionListener) {
         this.sipSubscriptionListener = sipSubscriptionListener;
     }
@@ -96,6 +167,10 @@ public class SipSubscriber extends DefaultConsumer {
         return sipSubscriptionListener;
     }
 
+    /**
+     * for getting and setting the SipStack
+     * @param sipStack
+     */
     public void setSipStack(SipStack sipStack) {
         this.sipStack = sipStack;
     }
@@ -104,6 +179,10 @@ public class SipSubscriber extends DefaultConsumer {
         return sipStack;
     }
 
+    /**
+     * for getting and setting the SipProvider
+     * @return
+     */
     public SipProvider getProvider() {
         return provider;
     }
@@ -112,6 +191,9 @@ public class SipSubscriber extends DefaultConsumer {
         this.provider = provider;
     }
 
+    /**
+     * for getting the dialog between the subscriber and the notifier
+     */
     public Dialog getSubscriberDialog() {
         return subscriberDialog;
     }

@@ -53,6 +53,9 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Stores information used for sending and receiving SIP messages.
+ */
 @UriParams
 public class SipConfiguration {
 

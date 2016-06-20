@@ -29,14 +29,33 @@ import org.apache.camel.spi.UriParam;
  */
 @UriEndpoint(scheme = "sip,sips", title = "SIP", syntax = "sip:uri", label = "mobile")
 public class SipEndpoint extends DefaultEndpoint {
+
+    /**
+     * The SIP configuration which holds the information useful in regards to sending and receiving SIP requests
+     * and responses
+     */
     @UriParam
     private SipConfiguration configuration;
 
+    /**
+     * Creates a sip
+     *
+     * @param endpointUri
+     * @param component
+     * @param configuration
+     */
     public SipEndpoint(String endpointUri, Component component, SipConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
     }
 
+    /**
+     * Creates a subscribing consumer based
+     *
+     * @param processor  the given processor
+     * @return
+     * @throws Exception
+     */
     public Consumer createConsumer(Processor processor) throws Exception {
         if (configuration.isPresenceAgent()) {
             SipPresenceAgent answer = new SipPresenceAgent(this, processor, configuration);
