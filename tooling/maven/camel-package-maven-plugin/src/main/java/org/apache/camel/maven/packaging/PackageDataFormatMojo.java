@@ -200,6 +200,11 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
                                 // build json schema for the data format
                                 String properties = after(json, "  \"properties\": {");
+
+                                // special prepare for bindy/json properties
+                                properties = prepareBindyProperties(name, properties);
+                                properties = prepareJsonProperties(name, properties);
+
                                 String schema = createParameterJsonSchema(dataFormatModel, properties);
                                 log.debug("JSon schema\n" + schema);
 
@@ -273,6 +278,40 @@ public class PackageDataFormatMojo extends AbstractMojo {
         } else {
             log.debug("No META-INF/services/org/apache/camel/dataformat directory found. Are you sure you have created a Camel data format?");
         }
+    }
+
+    private static String prepareBindyProperties(String name, String properties) {
+        String bindy = "\"enum\": [ \"Csv\", \"Fixed\", \"KeyValue\" ], \"deprecated\": \"false\", \"secret\": \"false\"";
+        String bindyCsv = "\"enum\": [ \"Csv\", \"Fixed\", \"KeyValue\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"Csv\"";
+        String bindyFixed = "\"enum\": [ \"Csv\", \"Fixed\", \"KeyValue\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"Fixed\"";
+        String bindyKvp = "\"enum\": [ \"Csv\", \"Fixed\", \"KeyValue\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"KeyValue\"";
+
+        if ("bindy-csv".equals(name)) {
+            properties = properties.replace(bindy, bindyCsv);
+        } else if ("bindy-fixed".equals(name)) {
+            properties = properties.replace(bindy, bindyFixed);
+        } else if ("bindy-kvp".equals(name)) {
+            properties = properties.replace(bindy, bindyKvp);
+        }
+
+        return properties;
+    }
+
+    private static String prepareJsonProperties(String name, String properties) {
+        String json = "\"enum\": [ \"Gson\", \"Jackson\", \"Johnzon\", \"XStream\" ], \"deprecated\": \"false\", \"secret\": \"false\"";
+        String jsonGson = "\"enum\": [ \"Gson\", \"Jackson\", \"Johnzon\", \"XStream\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"Gson\"";
+        String jsonJackson = "\"enum\": [ \"Gson\", \"Jackson\", \"Johnzon\", \"XStream\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"Jackson\"";
+        String jsonXStream = "\"enum\": [ \"Gson\", \"Jackson\", \"Johnzon\", \"XStream\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"XStream\"";
+
+        if ("json-gson".equals(name)) {
+            properties = properties.replace(json, jsonGson);
+        } else if ("json-jackson".equals(name)) {
+            properties = properties.replace(json, jsonJackson);
+        } else if ("json-xstream".equals(name)) {
+            properties = properties.replace(json, jsonXStream);
+        }
+
+        return properties;
     }
 
     private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext) throws MojoExecutionException {
