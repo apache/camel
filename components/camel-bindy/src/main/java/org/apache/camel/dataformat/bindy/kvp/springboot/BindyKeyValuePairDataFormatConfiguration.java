@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.bindy.kvp.springboot;
 
+import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -30,7 +31,7 @@ public class BindyKeyValuePairDataFormatConfiguration {
     /**
      * Whether to use csv fixed or key value pairs mode.
      */
-    private BindyType type;
+    private BindyType type = BindyType.KeyValue;
     /**
      * Name of model class to use.
      */
