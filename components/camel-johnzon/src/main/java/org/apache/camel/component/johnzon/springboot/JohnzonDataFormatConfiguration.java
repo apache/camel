@@ -38,9 +38,9 @@ public class JohnzonDataFormatConfiguration {
      */
     private Boolean prettyPrint = false;
     /**
-     * Which json library to use such.
+     * Which json library to use.
      */
-    private JsonLibrary library = JsonLibrary.XStream;
+    private JsonLibrary library = JsonLibrary.Johnzon;
     /**
      * Class name of the java type to use when unarmshalling
      */
