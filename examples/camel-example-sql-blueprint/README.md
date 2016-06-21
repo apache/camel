@@ -33,23 +33,22 @@ You will need to compile this example first:
 
 To install Apache Camel in Karaf you type in the shell (we use version ${project.version}):
 
-	features:chooseurl camel ${project.version}
-	features:install camel
+	feature:repo-add camel ${project.version}
+	feature:install camel
 
 First you need to install the following features in Karaf/ServiceMix with:
 
-	features:install camel-blueprint
-	features:install camel-sql
+	feature:install camel-sql
 
 Then you need to install JDBC connection pool and the Derby Database:
 
-	osgi:install -s mvn:commons-pool/commons-pool/1.6
-	osgi:install -s mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.4_3
-	osgi:install -s mvn:org.apache.derby/derby/10.10.1.1
+	install -s mvn:commons-pool/commons-pool/1.6
+	install -s mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.4_3
+	install -s mvn:org.apache.derby/derby/10.10.1.1
 
 Then you can install the Camel example:
 
-	osgi:install -s mvn:org.apache.camel/camel-example-sql-blueprint/${project.version}
+	install -s mvn:org.apache.camel/camel-example-sql-blueprint/${project.version}
 
 And you can see the application running by tailing the logs
 
