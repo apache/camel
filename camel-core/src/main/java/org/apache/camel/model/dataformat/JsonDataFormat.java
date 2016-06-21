@@ -133,9 +133,7 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Which json library to use such.
-     * <p/>
-     * Is by default xstream
+     * Which json library to use.
      */
     public void setLibrary(JsonLibrary library) {
         this.library = library;
