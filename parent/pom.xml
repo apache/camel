@@ -466,7 +466,7 @@
     <quartz-version>1.8.6</quartz-version>
     <quartz-version-range>[1.8,2)</quartz-version-range>
     <quartz2-version>2.2.3</quartz2-version>
-    <quickfix-bundle-version>1.6.1_1</quickfix-bundle-version>
+    <quickfixj-version>1.6.2</quickfixj-version>
     <rabbitmq-amqp-client-version>3.6.2</rabbitmq-amqp-client-version>
     <reflections-bundle-version>0.9.10_3</reflections-bundle-version>
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
