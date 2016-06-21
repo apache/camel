@@ -41,9 +41,9 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.servicemix.bundles</groupId>
-      <artifactId>org.apache.servicemix.bundles.quickfix</artifactId>
-      <version>${quickfix-bundle-version}</version>
+      <groupId>org.quickfixj</groupId>
+      <artifactId>quickfixj-all</artifactId>
+      <version>${quickfixj-version}</version>
     </dependency>
 
     <!-- test dependencies -->
