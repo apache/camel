@@ -195,7 +195,16 @@ public final class CxfPayloadConverter {
                 if (type.isInstance(s)) {
                     return type.cast(s);
                 }
-                TypeConverter tc = registry.lookup(type, Source.class);
+                TypeConverter tc = registry.lookup(type, XMLStreamReader.class);
+                if (tc != null && (s instanceof StaxSource || s instanceof StAXSource)) {
+                    XMLStreamReader r = (s instanceof StAXSource)
+                            ? ((StAXSource)s).getXMLStreamReader() : ((StaxSource) s).getXMLStreamReader();
+                    if (payload.getNsMap() != null) {
+                        r = new DelegatingXMLStreamReader(r, payload.getNsMap());
+                    }
+                    return (T)tc.convertTo(type, r);
+                }
+                tc = registry.lookup(type, Source.class);
                 if (tc != null) {
                     XMLStreamReader r = null;
                     if (payload.getNsMap() != null) {
@@ -208,8 +217,7 @@ public final class CxfPayloadConverter {
                             s = new StAXSource(new DelegatingXMLStreamReader(r, payload.getNsMap()));
                         }
                     }
-                    T t = tc.convertTo(type, s);
-                    return t;
+                    return (T)tc.convertTo(type, s);
                 }
             }
             TypeConverter tc = registry.lookup(type, NodeList.class);

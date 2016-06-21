@@ -27,6 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stax.StAXSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -36,6 +37,7 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.test.junit4.ExchangeTestSupport;
+import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,6 +45,7 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
     private Document document;
     private CxfPayload<String[]> payload;
     private CxfPayload<String[]> emptyPayload;
+    private CxfPayload<String[]> staxpayload;
     private FileInputStream inputStream;
 
     @Override
@@ -62,8 +65,11 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         document.getDocumentElement().normalize();
         List<Source> body = new ArrayList<Source>();
         body.add(new DOMSource(document.getDocumentElement()));
+        List<Source> staxbody = new ArrayList<Source>();
+        staxbody.add(new StAXSource(StaxUtils.createXMLStreamReader(new FileInputStream(file), "utf-8")));
         payload = new CxfPayload<String[]>(new ArrayList<String[]>(), body, null);
         emptyPayload = new CxfPayload<String[]>(new ArrayList<String[]>(), new ArrayList<Source>(), null);
+        staxpayload = new CxfPayload<String[]>(new ArrayList<String[]>(), staxbody, null);
         inputStream = new FileInputStream(file);
     }
 
@@ -110,6 +116,13 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
     @Test
     public void testFromCxfPayload() {
         exchange.getIn().setBody(payload);
+        InputStream inputStream = exchange.getIn().getBody(InputStream.class);
+        assertTrue(inputStream instanceof InputStream);
+    }
+
+    @Test
+    public void testFromCxfStAXPayload() {
+        exchange.getIn().setBody(staxpayload);
         InputStream inputStream = exchange.getIn().getBody(InputStream.class);
         assertTrue(inputStream instanceof InputStream);
     }
