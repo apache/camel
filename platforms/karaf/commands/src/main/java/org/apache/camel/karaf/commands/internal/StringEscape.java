@@ -16,22 +16,20 @@
  */
 package org.apache.camel.karaf.commands.internal;
 
-import org.apache.karaf.util.StringEscapeUtils;
-
 public class StringEscape implements org.apache.camel.commands.StringEscape {
 
     @Override
     public String unescapeJava(String str) {
-        return StringEscapeUtils.unescapeJava(str);
+        return KarafStringEscapeUtils.unescapeJava(str);
     }
 
     @Override
     public String escapeJava(String str) {
-        return StringEscapeUtils.escapeJava(str);
+        return KarafStringEscapeUtils.escapeJava(str);
     }
 
     @Override
     public String hex(char ch) {
-        return StringEscapeUtils.hex(ch);
+        return KarafStringEscapeUtils.hex(ch);
     }
 }

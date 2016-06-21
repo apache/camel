@@ -53,11 +53,6 @@
       <version>${karaf4-version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.karaf</groupId>
-      <artifactId>org.apache.karaf.util</artifactId>
-      <version>${karaf-version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
       <scope>provided</scope>
@@ -81,7 +76,6 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Embed-Dependency>*;artifactId=org.apache.karaf.util;inline=true</Embed-Dependency>
             <Import-Package>
               !org.apache.felix.utils.properties,
               org.apache.felix.service.command;version="[0.16,1)",
@@ -92,8 +86,7 @@
               *
             </Import-Package>
             <Private-Package>
-              org.apache.camel.karaf.commands.internal,
-              org.apache.karaf.util
+              org.apache.camel.karaf.commands.internal
             </Private-Package>
           </instructions>
         </configuration>
