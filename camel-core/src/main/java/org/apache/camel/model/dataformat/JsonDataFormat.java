@@ -133,7 +133,7 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Which json library to use such.
+     * Which json library to use.
      */
     public void setLibrary(JsonLibrary library) {
         this.library = library;
