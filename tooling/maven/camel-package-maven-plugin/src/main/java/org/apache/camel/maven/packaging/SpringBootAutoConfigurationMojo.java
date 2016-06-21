@@ -227,8 +227,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     prop.getField().setLiteralInitializer(option.getDefaultValue());
                 } else if (!Strings.isBlank(option.getEnumValues())) {
                     String enumShortName = type.substring(type.lastIndexOf(".") + 1);
-                    String value = getDefaultValue(model.getScheme(), option.getName(), option.getDefaultValue());
-                    prop.getField().setLiteralInitializer(enumShortName + "." + value);
+                    prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
                     javaClass.addImport(model.getJavaType());
                 }
             }
@@ -311,8 +310,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     prop.getField().setLiteralInitializer(option.getDefaultValue());
                 } else if (!Strings.isBlank(option.getEnumValues())) {
                     String enumShortName = type.substring(type.lastIndexOf(".") + 1);
-                    String value = getDefaultValue(model.getName(), option.getName(), option.getDefaultValue());
-                    prop.getField().setLiteralInitializer(enumShortName + "." + value);
+                    prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
                     javaClass.addImport(model.getJavaType());
                 }
             }
@@ -345,19 +343,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         } catch (Exception e) {
             throw new MojoFailureException("IOError with file " + target, e);
         }
-    }
-
-    private String getDefaultValue(String modelName, String optionName, String defaultValue) {
-        // special for some data formats
-        if ("json-jackson".equals(modelName) && "library".equals(optionName)) {
-            return "Jackson";
-        } else if ("json-xstream".equals(modelName) && "library".equals(optionName)) {
-            return "XStream";
-        } else if ("json-gson".equals(modelName) && "library".equals(optionName)) {
-            return "Gson";
-        }
-
-        return defaultValue;
     }
 
     private void createComponentAutoConfigurationSource(String packageName, ComponentModel model) throws MojoFailureException {
