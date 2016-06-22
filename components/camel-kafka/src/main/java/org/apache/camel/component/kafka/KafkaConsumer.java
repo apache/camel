@@ -131,7 +131,7 @@ public class KafkaConsumer extends DefaultConsumer {
         private KafkaStream<byte[], byte[]> stream;
         private CyclicBarrier barrier;
 
-        public BatchingConsumerTask(KafkaStream<byte[], byte[]> stream, CyclicBarrier barrier) {
+        BatchingConsumerTask(KafkaStream<byte[], byte[]> stream, CyclicBarrier barrier) {
             this.stream = stream;
             this.barrier = barrier;
         }
@@ -185,7 +185,7 @@ public class KafkaConsumer extends DefaultConsumer {
 
         private final ConsumerConnector consumer;
 
-        public CommitOffsetTask(ConsumerConnector consumer) {
+        CommitOffsetTask(ConsumerConnector consumer) {
             this.consumer = consumer;
         }
 
@@ -201,7 +201,7 @@ public class KafkaConsumer extends DefaultConsumer {
         private final ConsumerConnector consumer;
         private KafkaStream<byte[], byte[]> stream;
 
-        public AutoCommitConsumerTask(ConsumerConnector consumer, KafkaStream<byte[], byte[]> stream) {
+        AutoCommitConsumerTask(ConsumerConnector consumer, KafkaStream<byte[], byte[]> stream) {
             this.consumer = consumer;
             this.stream = stream;
         }

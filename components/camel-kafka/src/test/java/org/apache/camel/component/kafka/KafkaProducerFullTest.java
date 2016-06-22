@@ -35,9 +35,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -192,7 +190,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         private final KafkaStream<byte[], byte[]> stream;
         private final CountDownLatch latch;
 
-        public KakfaTopicConsumer(KafkaStream<byte[], byte[]> stream, CountDownLatch latch) {
+        KakfaTopicConsumer(KafkaStream<byte[], byte[]> stream, CountDownLatch latch) {
             this.stream = stream;
             this.latch = latch;
         }

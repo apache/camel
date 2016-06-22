@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 import kafka.javaapi.producer.Producer;
@@ -25,6 +28,7 @@ import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.CastUtils;
 
 /**
  *
@@ -77,20 +81,42 @@ public class KafkaProducer<K, V> extends DefaultProducer {
         K messageKey = (K) exchange.getIn().getHeader(KafkaConstants.KEY);
         boolean hasMessageKey = messageKey != null;
 
-        V msg = (V) exchange.getIn().getBody();
-        KeyedMessage<K, V> data;
-
-        if (hasPartitionKey && hasMessageKey) {
-            data = new KeyedMessage<K, V>(topic, messageKey, partitionKey, msg);
-        } else if (hasPartitionKey) {
-            data = new KeyedMessage<K, V>(topic, partitionKey, msg);
-        } else if (hasMessageKey) {
-            data = new KeyedMessage<K, V>(topic, messageKey, msg);
-        } else {
-            log.warn("No message key or partition key set");
-            data = new KeyedMessage<K, V>(topic, messageKey, partitionKey, msg);
+        Object msg = exchange.getIn().getBody();
+        
+        if (msg instanceof Iterable) {
+            msg = ((Iterable<Object>)msg).iterator();
         }
-        producer.send(data);
+        if (msg instanceof java.util.Iterator) {
+            List<KeyedMessage<K, V>> data = new LinkedList<KeyedMessage<K, V>>();
+            Iterator<V> it = CastUtils.cast((Iterator<?>)msg);
+            while (it.hasNext()) {
+                V m = it.next();
+                if (hasPartitionKey && hasMessageKey) {
+                    data.add(new KeyedMessage<K, V>(topic, messageKey, partitionKey, m));
+                } else if (hasPartitionKey) {
+                    data.add(new KeyedMessage<K, V>(topic, partitionKey, m));
+                } else if (hasMessageKey) {
+                    data.add(new KeyedMessage<K, V>(topic, messageKey, m));
+                } else {
+                    data.add(new KeyedMessage<K, V>(topic, messageKey, partitionKey, m));
+                }
+            }
+            producer.send(data);
+        } else {
+        
+            KeyedMessage<K, V> data;
+            V m = (V)msg;
+            if (hasPartitionKey && hasMessageKey) {
+                data = new KeyedMessage<K, V>(topic, messageKey, partitionKey, m);
+            } else if (hasPartitionKey) {
+                data = new KeyedMessage<K, V>(topic, partitionKey, m);
+            } else if (hasMessageKey) {
+                data = new KeyedMessage<K, V>(topic, messageKey, m);
+            } else {
+                data = new KeyedMessage<K, V>(topic, messageKey, partitionKey, m);
+            }
+            producer.send(data);
+        }
     }
 
 }
