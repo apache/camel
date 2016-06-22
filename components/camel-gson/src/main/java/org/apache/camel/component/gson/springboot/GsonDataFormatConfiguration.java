@@ -38,7 +38,7 @@ public class GsonDataFormatConfiguration {
      */
     private Boolean prettyPrint = false;
     /**
-     * Which json library to use.
+     * Which json library to use such.
      */
     private JsonLibrary library = JsonLibrary.Gson;
     /**
