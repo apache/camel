@@ -24,10 +24,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SNIHostNames", propOrder = {"sniHostName"})
+@XmlType(name = "sniHostNames", propOrder = {"sniHostName"})
 public class SNIHostNamesDefinition {
 
-    @XmlElement(name = "SNIHostName")
+    @XmlElement(name = "sniHostName")
     private List<String> sniHostName;
 
     public List<String> getSniHostName() {
