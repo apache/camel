@@ -355,6 +355,19 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         LOG.debug("ExecuteQuery: {}", queryRecords);
     }
 
+    @Test
+    public void testQueryAll() throws Exception {
+        doTestQueryAll("");
+        doTestQueryAll("Xml");
+    }
+
+    private void doTestQueryAll(String suffix) throws Exception {
+        QueryRecordsLine_Item__c queryRecords = template().requestBody("direct:queryAll" + suffix, null,
+            QueryRecordsLine_Item__c.class);
+        assertNotNull(queryRecords);
+        LOG.debug("ExecuteQuery: {}", queryRecords);
+    }
+
 
     @Test
     public void testSearch() throws Exception {
@@ -688,6 +701,13 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
                 from("direct:queryXml")
                     .to("salesforce:query?format=XML&sObjectQuery=SELECT name from Line_Item__c&sObjectClass=" + QueryRecordsLine_Item__c.class.getName());
+
+                // testQueryAll
+                from("direct:queryAll")
+                    .to("salesforce:queryAll?sObjectQuery=SELECT name from Line_Item__c&sObjectClass=" + QueryRecordsLine_Item__c.class.getName());
+
+                from("direct:queryAllXml")
+                    .to("salesforce:queryAll?format=XML&sObjectQuery=SELECT name from Line_Item__c&sObjectClass=" + QueryRecordsLine_Item__c.class.getName());
 
                 // testSearch
                 from("direct:search")
