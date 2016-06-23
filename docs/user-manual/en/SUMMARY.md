@@ -97,6 +97,7 @@
     * [Timer](timer.adoc)
     * [Validator](validator.adoc)
     * [VM](vm.adoc)
+    * [Xslt](xslt.adoc)
 
 * Components
     * [Async Http Client (AHC)](ahc.adoc)
