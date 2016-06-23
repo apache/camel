@@ -96,6 +96,7 @@
     * [Test](test.adoc)
     * [Timer](timer.adoc)
     * [Validator](validator.adoc)
+    * [VM](vm.adoc)
 
 * Components
     * [Async Http Client (AHC)](ahc.adoc)
