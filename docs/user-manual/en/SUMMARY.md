@@ -90,6 +90,7 @@
     * [Properties](properties.adoc)
     * [Ref](ref.adoc)
     * [Rest](rest.adoc)
+    * [Rest API](rest-api.adoc)
     * [Scheduler](scheduler.adoc)
     * [Seda](seda.adoc)
     * [Stub](stub.adoc)
