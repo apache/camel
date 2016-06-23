@@ -95,6 +95,7 @@
     * [Stub](stub.adoc)
     * [Test](test.adoc)
     * [Timer](timer.adoc)
+    * [Validator](validator.adoc)
 
 * Components
     * [Async Http Client (AHC)](ahc.adoc)
