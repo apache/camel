@@ -94,6 +94,7 @@
     * [Seda](seda.adoc)
     * [Stub](stub.adoc)
     * [Test](test.adoc)
+    * [Timer](timer.adoc)
 
 * Components
     * [Async Http Client (AHC)](ahc.adoc)
