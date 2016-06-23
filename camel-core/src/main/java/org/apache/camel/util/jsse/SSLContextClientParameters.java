@@ -39,10 +39,14 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
 
     private List<SNIServerName> sniHostNames = new ArrayList<>();
 
-    public void setSniHostNames(List<String> sniHostNames) {
+    public void addAllSniHostNames(List<String> sniHostNames) {
         for (String sniHostName : sniHostNames) {
             this.sniHostNames.add(new SNIHostName(sniHostName));
         }
+    }
+
+    public void setSniHostName(String sniHostName) {
+        this.sniHostNames.add(new SNIHostName(sniHostName));
     }
 
     @Override

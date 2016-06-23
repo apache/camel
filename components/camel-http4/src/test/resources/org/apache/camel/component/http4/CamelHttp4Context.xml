@@ -28,9 +28,9 @@
 
   <camel:sslContextParameters id="correctSniSslContextParameters">
     <camel:clientParameters>
-      <camel:SNIHostNamesDefinition>
-        <camel:SNIHostName>www.mnot.net</camel:SNIHostName>
-      </camel:SNIHostNamesDefinition>
+      <camel:sniHostNames>
+        <camel:sniHostName>www.mnot.net</camel:sniHostName>
+      </camel:sniHostNames>
     </camel:clientParameters>
   </camel:sslContextParameters>
 
@@ -39,9 +39,9 @@
 
   <camel:sslContextParameters id="wrongSniSslContextParameters">
     <camel:clientParameters>
-      <camel:SNIHostNamesDefinition>
-        <camel:SNIHostName>blabla</camel:SNIHostName>
-      </camel:SNIHostNamesDefinition>
+      <camel:sniHostNames>
+        <camel:sniHostName>blabla</camel:sniHostName>
+      </camel:sniHostNames>
     </camel:clientParameters>
   </camel:sslContextParameters>
 

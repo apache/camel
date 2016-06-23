@@ -27,14 +27,14 @@ import org.apache.camel.util.jsse.SSLContextClientParameters;
 @XmlTransient
 public abstract class AbstractSSLContextClientParametersFactoryBean extends AbstractBaseSSLContextParametersFactoryBean<SSLContextClientParameters> {
 
-    @XmlElement(name = "SNIHostNamesDefinition")
+    @XmlElement(name = "sniHostNames")
     private SNIHostNamesDefinition sniHostNamesDefinition;
 
     @Override
     protected SSLContextClientParameters createInstance() {
         SSLContextClientParameters newInstance = new SSLContextClientParameters();
         newInstance.setCamelContext(getCamelContext());
-        newInstance.setSniHostNames(sniHostNamesDefinition.getSniHostName());
+        newInstance.addAllSniHostNames(sniHostNamesDefinition.getSniHostName());
         return newInstance;
     }
 
@@ -43,7 +43,7 @@ public abstract class AbstractSSLContextClientParametersFactoryBean extends Abst
         return SSLContextClientParameters.class;
     }
 
-    public org.apache.camel.core.xml.util.jsse.SNIHostNamesDefinition getSniHostNamesDefinition() {
+    public SNIHostNamesDefinition getSniHostNamesDefinition() {
         return sniHostNamesDefinition;
     }
 }
