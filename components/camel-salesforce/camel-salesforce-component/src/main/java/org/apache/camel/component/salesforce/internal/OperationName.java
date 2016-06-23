@@ -34,6 +34,7 @@ public enum OperationName {
     GET_BLOB_FIELD("getBlobField"),
     QUERY("query"),
     QUERY_MORE("queryMore"),
+    QUERY_ALL("queryAll"),
     SEARCH("search"),
     APEX_CALL("apexCall"),
 

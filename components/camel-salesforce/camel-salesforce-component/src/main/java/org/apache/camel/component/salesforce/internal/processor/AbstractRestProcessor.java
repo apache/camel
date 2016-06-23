@@ -143,6 +143,9 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
             case QUERY_MORE:
                 processQueryMore(exchange, callback);
                 break;
+            case QUERY_ALL:
+                processQueryAll(exchange, callback);
+                break;
             case SEARCH:
                 processSearch(exchange, callback);
                 break;
@@ -464,6 +467,20 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         setResponseClass(exchange, null);
 
         restClient.queryMore(nextRecordsUrl, new RestClient.ResponseCallback() {
+            @Override
+            public void onResponse(InputStream response, SalesforceException exception) {
+                processResponse(exchange, response, exception, callback);
+            }
+        });
+    }
+
+    private void processQueryAll(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
+        final String sObjectQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
+
+        // use custom response class property
+        setResponseClass(exchange, null);
+
+        restClient.queryAll(sObjectQuery, new RestClient.ResponseCallback() {
             @Override
             public void onResponse(InputStream response, SalesforceException exception) {
                 processResponse(exchange, response, exception, callback);
