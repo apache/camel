@@ -330,6 +330,24 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
+    public void queryAll(String soqlQuery, ResponseCallback callback) {
+        try {
+
+            String encodedQuery = urlEncode(soqlQuery);
+            final Request get = getRequest(HttpMethod.GET, versionUrl() + "queryAll/?q=" + encodedQuery);
+
+            // requires authorization token
+            setAccessToken(get);
+
+            doHttpRequest(get, new DelegatingClientCallback(callback));
+
+        } catch (UnsupportedEncodingException e) {
+            String msg = "Unexpected error: " + e.getMessage();
+            callback.onResponse(null, new SalesforceException(msg, e));
+        }
+    }
+
+    @Override
     public void search(String soslQuery, ResponseCallback callback) {
         try {
 
