@@ -522,9 +522,11 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             @Override
             public SSLSocket configure(SSLSocket socket) {
 
-                SSLParameters sslParameters = socket.getSSLParameters();
-                sslParameters.setServerNames(getSNIHostNames());
-                socket.setSSLParameters(sslParameters);
+                if (!getSNIHostNames().isEmpty()) {
+                    SSLParameters sslParameters = socket.getSSLParameters();
+                    sslParameters.setServerNames(getSNIHostNames());
+                    socket.setSSLParameters(sslParameters);
+                }
 
                 Collection<String> filteredCipherSuites = BaseSSLContextParameters.this
                     .filter(enabledCipherSuites, Arrays.asList(socket.getSSLParameters().getCipherSuites()),
