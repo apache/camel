@@ -19,12 +19,14 @@ package org.apache.camel.component.http4;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.hamcrest.core.Is.is;
 
+@Ignore("Ignored test because of external dependency.")
 public class HttpSNIHostNameTest extends CamelSpringTestSupport {
 
     @Test
@@ -32,6 +34,7 @@ public class HttpSNIHostNameTest extends CamelSpringTestSupport {
         String result = template.requestBody("direct:goodSNI", null, String.class);
         assertNotNull(result);
     }
+
     @Test
     public void testMnotDotNetNoSniDoesReturnStatusCode403() {
         try {
