@@ -136,6 +136,7 @@
     * [CDI](cdi.adoc)
     * [Chunk](chunk.adoc)
     * [Cmis](cmis.adoc)
+    * [CoAP](coap.adoc)
     * [Cometd](cometd.adoc)
     * [Couchdb](couchdb.adoc)
     * [Crypto](crypto.adoc)
