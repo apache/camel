@@ -75,7 +75,7 @@ public class CoAPConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         for (CoapResource r : resources) {
-            r.getParent().remove(r);
+            r.getParent().delete(r);
         }
         resources.clear();
         super.doStop();
