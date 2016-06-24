@@ -208,6 +208,7 @@
     * [Kura](kura.adoc)
     * [LDAP](ldap.adoc)
     * [LevelDB](leveldb.adoc)
+    * [Linkedin](linkedin.adoc)
     * [Lucene](lucene.adoc)
     * [Mail](mail.adoc)
         * [IMAP](imap.adoc)
