@@ -16,34 +16,21 @@
  */
 package org.apache.camel.core.xml.util.jsse;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
-
-import org.apache.camel.util.jsse.SSLContextClientParameters;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlTransient
-public abstract class AbstractSSLContextClientParametersFactoryBean extends AbstractBaseSSLContextParametersFactoryBean<SSLContextClientParameters> {
+@XmlType(name = "sniHostNames", propOrder = {"sniHostName"})
+public class SNIHostNamesDefinition {
 
-    @XmlElement(name = "sniHostNames")
-    private SNIHostNamesDefinition sniHostNamesDefinition;
+    @XmlElement(name = "sniHostName")
+    private List<String> sniHostName;
 
-    @Override
-    protected SSLContextClientParameters createInstance() {
-        SSLContextClientParameters newInstance = new SSLContextClientParameters();
-        newInstance.setCamelContext(getCamelContext());
-        newInstance.addAllSniHostNames(sniHostNamesDefinition.getSniHostName());
-        return newInstance;
-    }
-
-    @Override
-    public Class<SSLContextClientParameters> getObjectType() {
-        return SSLContextClientParameters.class;
-    }
-
-    public SNIHostNamesDefinition getSniHostNamesDefinition() {
-        return sniHostNamesDefinition;
+    public List<String> getSniHostName() {
+        return sniHostName;
     }
 }
