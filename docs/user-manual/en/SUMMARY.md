@@ -318,6 +318,7 @@
     * [BeanIO](beanio.adoc)
     * [Flatpack](flatpack-dataformat.adoc)
     * [Ical](ical.adoc)
+    * [Jackson XML](jackson-xml.adoc)
     * [Jaxb](jaxb.adoc)
     * [Jibx](jibx.adoc)
     * [Lzf](lzf.adoc)
