@@ -63,8 +63,9 @@ The SCP component supports 1 options which are listed below.
 
 
 
+
 // endpoint options: START
-The SCP component supports 21 endpoint options which are listed below:
+The SCP component supports 22 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -75,6 +76,7 @@ The SCP component supports 21 endpoint options which are listed below:
 | directoryName | producer |  | String | The starting directory
 | chmod | producer | 664 | String | Allows you to set chmod on the stored file. For example chmod=664.
 | disconnect | producer | false | boolean | Whether or not to disconnect from remote FTP server right after use. Disconnect will only disconnect the current connection to the FTP server. If you have a consumer which you want to stop then you need to stop the consumer/route instead.
+| disconnectOnBatchComplete | producer | false | boolean | Whether or not to disconnect from remote FTP server right after a Batch is complete. disconnectOnBatchComplete will only disconnect the current connection to the FTP server. If you have a consumer which you want to stop then you need to stop the consumer/route instead.
 | fileName | producer |  | String | Use Expression such as File Language to dynamically set the filename. For consumers it's used as a filename filter. For producers it's used to evaluate the filename to write. If an expression is set it take precedence over the CamelFileName header. (Note: The header itself can also be an Expression). The expression options support both String and Expression types. If the expression is a String type it is always evaluated using the File Language. If the expression is an Expression type the specified Expression type is used - this allows you for instance to use OGNL expressions. For the consumer you can use it to filter filenames so you can for instance consume today's file using the File Language syntax: mydata-$date:now:yyyyMMdd.txt. The producers support the CamelOverruleFileName header which takes precedence over any existing CamelFileName header; the CamelOverruleFileName is a header that is used only once and makes it easier as this avoids to temporary store CamelFileName and have to restore it afterwards.
 | flatten | producer | false | boolean | Flatten is used to flatten the file name path to strip any leading paths so it's just the file name. This allows you to consume recursively into sub-directories but when you eg write the files to another directory they will be written in a single directory. Setting this to true on the producer enforces that any file name in CamelFileName header will be stripped for any leading paths.
 | strictHostKeyChecking | producer | no | String | Sets whether to use strict host key checking. Possible values are: no yes
@@ -94,6 +96,7 @@ The SCP component supports 21 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
