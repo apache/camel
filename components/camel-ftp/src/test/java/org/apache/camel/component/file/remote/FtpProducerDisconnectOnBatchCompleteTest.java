@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.file.remote;
 
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.net.ftp.FTPClient;
 import org.junit.Test;
+
+import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 public class FtpProducerDisconnectOnBatchCompleteTest extends FtpServerTestSupport {
 
@@ -51,15 +51,14 @@ public class FtpProducerDisconnectOnBatchCompleteTest extends FtpServerTestSuppo
     
     @Override
     public void sendFile(String url, Object body, String fileName) {
-    	template.send(url, new Processor() {
-			
-			@Override
-			public void process(Exchange exchange) throws Exception {
-				exchange.getIn().setHeader(Exchange.FILE_NAME, simple(fileName));
-				exchange.setProperty(Exchange.BATCH_COMPLETE, true);
-				
-			}
-		});
+        template.send(url, new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.FILE_NAME, simple(fileName));
+                exchange.setProperty(Exchange.BATCH_COMPLETE, true);
+            }
+        });
     }
 
 }
