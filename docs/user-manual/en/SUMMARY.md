@@ -321,6 +321,7 @@
     * [Jackson XML](jackson-xml.adoc)
     * [Jaxb](jaxb.adoc)
     * [Jibx](jibx.adoc)
+    * [Johnzon](johnzon.adoc)
     * [Lzf](lzf.adoc)
     * [Syslog](syslog.adoc)
     * [SOAP](soap.adoc)
