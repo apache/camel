@@ -74,7 +74,9 @@ public class PushTopicHelper {
         try {
             // use SOQL to lookup Topic, since Name is not an external ID!!!
             restClient.query("SELECT Id, Name, Query, ApiVersion, IsActive, "
-                    + "NotifyForFields, NotifyForOperations, Description "
+                    + "NotifyForFields, NotifyForOperations, NotifyForOperationCreate, "
+                    + "NotifyForOperationDelete, NotifyForOperationUndelete, "
+                    + "NotifyForOperationUpdate, Description "
                     + "FROM PushTopic WHERE Name = '" + topicName + "'",
                     callback);
 
