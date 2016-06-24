@@ -40,6 +40,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     @UriParam
     private boolean disconnect;
     @UriParam
+    private boolean disconnectOnBatchComplete;   
+    @UriParam
     private boolean fastExistsCheck;
     @UriParam
     private boolean download = true;
@@ -217,6 +219,19 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
      */
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
+    }
+
+    public boolean isDisconnectOnBatchComplete() {
+        return disconnectOnBatchComplete;
+    }
+
+    /**
+     * Whether or not to disconnect from remote FTP server right after a Batch is complete.
+     * disconnectOnBatchComplete will only disconnect the current connection to the FTP server.
+     * If you have a consumer which you want to stop, then you need to stop the consumer/route instead.
+     */
+    public void setDisconnectOnBatchComplete(boolean disconnectOnBatchComplete) {
+        this.disconnectOnBatchComplete = disconnectOnBatchComplete;
     }
 
     public boolean isFastExistsCheck() {
