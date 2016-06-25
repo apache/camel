@@ -59,7 +59,7 @@ public class DozerProducer extends DefaultProducer {
         }
         
         // Load the target model class
-        Class<?> targetModel = endpoint.getCamelContext().getClassResolver().resolveClass(
+        Class<?> targetModel = endpoint.getCamelContext().getClassResolver().resolveMandatoryClass(
                 endpoint.getConfiguration().getTargetModel());
         
         // If an unmarshaller was used, the unmarshalled message is the OUT message.
