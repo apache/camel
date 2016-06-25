@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -31,19 +30,12 @@ import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.util.CastUtils;
 import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.serialization.Serializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class KafkaProducer extends DefaultAsyncProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaProducer.class);
     
     private org.apache.kafka.clients.producer.KafkaProducer kafkaProducer;
     private final KafkaEndpoint endpoint;
@@ -54,61 +46,14 @@ public class KafkaProducer extends DefaultAsyncProducer {
         super(endpoint);
         this.endpoint = endpoint;
     }
-
-    <T> Class<T> loadClass(Object o, ClassResolver resolver, Class<T> type) {
-        if (o == null || o instanceof Class) {
-            return CastUtils.cast((Class<?>)o);
-        }
-        String name = o.toString();
-        Class<T> c = resolver.resolveClass(name, type);
-        if (c == null) {
-            c = resolver.resolveClass(name, type, getClass().getClassLoader());
-        }
-        if (c == null) {
-            c = resolver.resolveClass(name, type, org.apache.kafka.clients.producer.KafkaProducer.class.getClassLoader());
-        }
-        return c;
-    }
-    void replaceWithClass(Properties props, String key,  ClassResolver resolver, Class<?> type) {
-        Class<?> c = loadClass(props.get(key), resolver, type);
-        if (c != null) {
-            props.put(key, c);
-        }
-    }
     
     Properties getProps() {
         Properties props = endpoint.getConfiguration().createProducerProperties();
-        try {
-            if (endpoint.getCamelContext() != null) {
-                ClassResolver resolver = endpoint.getCamelContext().getClassResolver();
-                replaceWithClass(props, "key.serializer", resolver, Serializer.class);
-                replaceWithClass(props, "value.serializer", resolver, Serializer.class);
-                
-                try {
-                    //doesn't exist in old version of Kafka client so detect and only call the method if
-                    //the field/config actually exists
-                    Field f = ProducerConfig.class.getDeclaredField("PARTITIONER_CLASS_CONFIG");
-                    if (f != null) {
-                        loadParitionerClass(resolver, props);
-                    }
-                } catch (NoSuchFieldException e) {
-                    //ignore
-                } catch (SecurityException e) {
-                    //ignore
-                }
-            }
-        } catch (Throwable t) {
-            //can ignore and Kafka itself might be able to handle it, if not, it will throw an exception
-            LOG.debug("Problem loading classes for Serializers", t);
-        }
+        endpoint.updateClassProperties(props);
         if (endpoint.getBrokers() != null) {
             props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, endpoint.getBrokers());
         }
         return props;
-    }
-
-    private void loadParitionerClass(ClassResolver resolver, Properties props) {
-        replaceWithClass(props, "partitioner.class", resolver, Partitioner.class);
     }
 
 
