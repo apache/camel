@@ -98,7 +98,12 @@ public class KafkaConsumer extends DefaultConsumer {
             this.topicName = topicName;
             this.threadId = topicName + "-" + "Thread " + id;
             this.kafkaProps = kafkaProps;
+
+            //Fix for KAFKA-3218
+            ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(null);
             this.consumer = new org.apache.kafka.clients.consumer.KafkaConsumer(kafkaProps);
+            Thread.currentThread().setContextClassLoader(threadClassLoader);
         }
 
         @Override
