@@ -153,7 +153,14 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public boolean loadVersion(String version) {
-        return versionManager.loadVersion(version);
+        if (version.equals(versionManager.getLoadedVersion())) {
+            return true;
+        } else if (versionManager.loadVersion(version)) {
+            // invalidate existing cache if we loaded a new version
+            cache.clear();
+            return true;
+        }
+        return false;
     }
 
     @Override

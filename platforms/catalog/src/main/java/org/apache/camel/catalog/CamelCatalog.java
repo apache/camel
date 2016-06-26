@@ -72,6 +72,8 @@ public interface CamelCatalog {
      * Loading the camel-catalog JAR of the given version of choice may require internet access
      * to download the JAR from Maven central. You can pre download the JAR and install in a local
      * Maven repository to avoid internet access for offline environments.
+     * <p/>
+     * When loading a new version the cache will be invalidated.
      *
      * @param version  the Camel version such as <tt>2.17.1</tt>
      * @return <tt>true</tt> if the version was loaded, <tt>false</tt> if not.
