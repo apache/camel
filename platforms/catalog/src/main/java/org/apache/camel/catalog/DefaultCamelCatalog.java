@@ -96,6 +96,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     private boolean caching;
     private SuggestionStrategy suggestionStrategy;
+    private VersionManager versionManager = new DefaultVersionManager(this);
 
     /**
      * Creates the {@link CamelCatalog} without caching enabled.
@@ -123,6 +124,11 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
+    public void setVersionManager(VersionManager versionManager) {
+        this.versionManager = versionManager;
+    }
+
+    @Override
     public void addComponent(String name, String className) {
         extraComponents.put(name, className);
         // invalidate the cache
@@ -146,6 +152,16 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
+    public boolean loadVersion(String version) {
+        return versionManager.loadVersion(version);
+    }
+
+    @Override
+    public String getLoadedVersion() {
+        return versionManager.getLoadedVersion();
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public List<String> findComponentNames() {
         List<String> names = null;
@@ -155,7 +171,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         if (names == null) {
             names = new ArrayList<String>();
-            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(COMPONENTS_CATALOG);
+            InputStream is = versionManager.getResourceAsStream(COMPONENTS_CATALOG);
             if (is != null) {
                 try {
                     CatalogHelper.loadLines(is, names);
@@ -188,7 +204,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         if (names == null) {
             names = new ArrayList<String>();
-            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(DATA_FORMATS_CATALOG);
+            InputStream is = versionManager.getResourceAsStream(DATA_FORMATS_CATALOG);
             if (is != null) {
                 try {
                     CatalogHelper.loadLines(is, names);
@@ -221,7 +237,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         if (names == null) {
             names = new ArrayList<String>();
-            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(LANGUAGE_CATALOG);
+            InputStream is = versionManager.getResourceAsStream(LANGUAGE_CATALOG);
             if (is != null) {
                 try {
                     CatalogHelper.loadLines(is, names);
@@ -246,7 +262,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         if (names == null) {
             names = new ArrayList<String>();
-            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(MODELS_CATALOG);
+            InputStream is = versionManager.getResourceAsStream(MODELS_CATALOG);
             if (is != null) {
                 try {
                     CatalogHelper.loadLines(is, names);
@@ -395,7 +411,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         if (answer == null) {
-            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+            InputStream is = versionManager.getResourceAsStream(file);
             if (is != null) {
                 try {
                     answer = CatalogHelper.loadText(is);
@@ -421,7 +437,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         if (answer == null) {
-            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+            InputStream is = versionManager.getResourceAsStream(file);
             if (is != null) {
                 try {
                     answer = CatalogHelper.loadText(is);
@@ -435,7 +451,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     String packageName = className.substring(0, className.lastIndexOf('.'));
                     packageName = packageName.replace('.', '/');
                     String path = packageName + "/" + name + ".json";
-                    is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(path);
+                    is = versionManager.getResourceAsStream(path);
                     if (is != null) {
                         try {
                             answer = CatalogHelper.loadText(is);
@@ -463,7 +479,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         if (answer == null) {
-            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+            InputStream is = versionManager.getResourceAsStream(file);
             if (is != null) {
                 try {
                     answer = CatalogHelper.loadText(is);
@@ -477,7 +493,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     String packageName = className.substring(0, className.lastIndexOf('.'));
                     packageName = packageName.replace('.', '/');
                     String path = packageName + "/" + name + ".json";
-                    is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(path);
+                    is = versionManager.getResourceAsStream(path);
                     if (is != null) {
                         try {
                             answer = CatalogHelper.loadText(is);
@@ -505,7 +521,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         if (answer == null) {
-            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+            InputStream is = versionManager.getResourceAsStream(file);
             if (is != null) {
                 try {
                     answer = CatalogHelper.loadText(is);
@@ -667,7 +683,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         if (answer == null) {
-            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+            InputStream is = versionManager.getResourceAsStream(file);
             if (is != null) {
                 try {
                     answer = CatalogHelper.loadText(is);
@@ -693,7 +709,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         if (answer == null) {
-            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+            InputStream is = versionManager.getResourceAsStream(file);
             if (is != null) {
                 try {
                     answer = CatalogHelper.loadText(is);
@@ -719,7 +735,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         if (answer == null) {
-            InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+            InputStream is = versionManager.getResourceAsStream(file);
             if (is != null) {
                 try {
                     answer = CatalogHelper.loadText(is);

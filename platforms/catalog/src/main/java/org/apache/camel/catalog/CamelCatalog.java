@@ -23,7 +23,7 @@ import java.util.Set;
 import javax.management.MXBean;
 
 /**
- * Catalog of components, data formats, models (EIPs), languages, and more  from this Apache Camel release.
+ * Catalog of components, data formats, models (EIPs), languages, and more from this Apache Camel release.
  */
 @MXBean
 public interface CamelCatalog {
@@ -39,6 +39,11 @@ public interface CamelCatalog {
      * To plugin a custom {@link SuggestionStrategy} to provide suggestion for unknown options
      */
     void setSuggestionStrategy(SuggestionStrategy suggestionStrategy);
+
+    /**
+     * To plugin a custom {@link VersionManager} to load other versions of Camel the catalog should use.
+     */
+    void setVersionManager(VersionManager versionManager);
 
     /**
      * Adds a 3rd party component to this catalog.
@@ -60,6 +65,23 @@ public interface CamelCatalog {
      * The version of this Camel Catalog
      */
     String getCatalogVersion();
+
+    /**
+     * Attempt to load the Camel version to be used by the catalog.
+     * <p/>
+     * Loading the camel-catalog JAR of the given version of choice may require internet access
+     * to download the JAR from Maven central. You can pre download the JAR and install in a local
+     * Maven repository to avoid internet access for offline environments.
+     *
+     * @param version  the Camel version such as <tt>2.17.1</tt>
+     * @return <tt>true</tt> if the version was loaded, <tt>false</tt> if not.
+     */
+    boolean loadVersion(String version);
+
+    /**
+     * Gets the current loaded Camel version used by the catalog.
+     */
+    String getLoadedVersion();
 
     /**
      * Find all the component names from the Camel catalog

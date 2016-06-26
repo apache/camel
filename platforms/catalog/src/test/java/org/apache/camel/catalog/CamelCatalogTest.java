@@ -48,6 +48,20 @@ public class CamelCatalogTest {
     public void testGetVersion() throws Exception {
         String version = catalog.getCatalogVersion();
         assertNotNull(version);
+
+        String loaded = catalog.getLoadedVersion();
+        assertNotNull(loaded);
+        assertEquals(version, loaded);
+    }
+
+    @Test
+    public void testLoadVersion() throws Exception {
+        boolean result = catalog.loadVersion("1.0");
+        assertFalse(result);
+
+        String version = catalog.getCatalogVersion();
+        result = catalog.loadVersion(version);
+        assertTrue(result);
     }
 
     @Test
