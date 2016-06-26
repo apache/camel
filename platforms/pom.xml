@@ -34,6 +34,7 @@
   <modules>
     <module>catalog</module>
     <module>catalog-lucene</module>
+    <module>catalog-maven</module>
     <module>commands</module>
     <module>karaf</module>
   </modules>
