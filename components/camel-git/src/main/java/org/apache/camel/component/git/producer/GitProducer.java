@@ -174,7 +174,9 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         } finally {
-            result.close();
+        	if (ObjectHelper.isNotEmpty(result)) {
+                result.close();
+        	}
         }
     }
 
@@ -189,7 +191,9 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         } finally {
-            result.close();
+        	if (ObjectHelper.isNotEmpty(result)) {
+                result.close();
+        	}
         }
     }
 
