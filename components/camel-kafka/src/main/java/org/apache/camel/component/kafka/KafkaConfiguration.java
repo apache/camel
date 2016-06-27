@@ -119,7 +119,7 @@ public class KafkaConfiguration {
     @UriParam(label = "producer")
     private String keySerializerClass;
 
-    @UriParam(label = "producer", enums = "0,1,all", defaultValue = "1")
+    @UriParam(label = "producer", enums = "-1,0,1,all", defaultValue = "1")
     private String requestRequiredAcks = "1";
     //buffer.memory
     @UriParam(label = "producer", defaultValue = "33554432")
