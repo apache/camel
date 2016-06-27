@@ -19,6 +19,7 @@ package org.apache.camel.component.git.producer;
 import java.io.File;
 import java.util.List;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -44,6 +45,14 @@ public class GitProducerTest extends GitTestSupport {
     @Test
     public void initTest() throws Exception {
         template.sendBody("direct:init", "");
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+    }
+    
+    @Test(expected = CamelExecutionException.class)
+    public void doubleCloneOperationTest() throws Exception {
+        template.sendBody("direct:clone", "");
+        template.sendBody("direct:clone", "");
         File gitDir = new File(gitLocalRepo, ".git");
         assertEquals(gitDir.exists(), true);
     }
