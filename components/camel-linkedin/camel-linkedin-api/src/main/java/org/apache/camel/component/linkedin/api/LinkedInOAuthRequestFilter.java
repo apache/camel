@@ -204,6 +204,9 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                 final String location = e.getResponse().getResponseHeaderValue("Location");
                 redirectQuery = new URL(location).getQuery();
             }
+            if (redirectQuery == null) {
+                throw new IllegalArgumentException("Redirect Query is null cannot use it as input");
+            }
             final Map<String, String> params = new HashMap<String, String>();
             final Matcher matcher = QUERY_PARAM_PATTERN.matcher(redirectQuery);
             while (matcher.find()) {
