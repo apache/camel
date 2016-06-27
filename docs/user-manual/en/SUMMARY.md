@@ -344,3 +344,4 @@
         * [Blueprint Testing](test-blueprint.adoc)
         * [CDI Testing](cdi-testing.adoc)
         * [Spring Testing](spring-testing.adoc)
+    * [JSSE Utility](camel-configuration-utilities.adoc)
