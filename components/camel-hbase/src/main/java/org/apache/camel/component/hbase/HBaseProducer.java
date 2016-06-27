@@ -31,6 +31,7 @@ import org.apache.camel.component.hbase.model.HBaseRow;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Put;
@@ -155,7 +156,7 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
         Result result = table.get(get);
 
         if (!result.isEmpty()) {
-            resultRow.setTimestamp(result.raw()[0].getTimestamp());
+            resultRow.setTimestamp(result.rawCells()[0].getTimestamp());
         }
 
         for (HBaseCell cellModel : cellModels) {
@@ -168,7 +169,7 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
             List<Cell> kvs = result.getColumnCells(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column));
             if (kvs != null && !kvs.isEmpty()) {
                 //Return the most recent entry.
-                resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(cellModel.getValueType(), kvs.get(0).getValue()));
+                resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(cellModel.getValueType(), CellUtil.cloneValue(kvs.get(0))));
                 resultCell.setTimestamp(kvs.get(0).getTimestamp());
             }
             resultCells.add(resultCell);
@@ -233,7 +234,7 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
             HBaseRow resultRow = new HBaseRow();
             resultRow.setId(endpoint.getCamelContext().getTypeConverter().convertTo(model.getRowType(), result.getRow()));
 
-            resultRow.setTimestamp(result.raw()[0].getTimestamp());
+            resultRow.setTimestamp(result.rawCells()[0].getTimestamp());
             cellModels = model.getCells();
             for (HBaseCell modelCell : cellModels) {
                 HBaseCell resultCell = new HBaseCell();
