@@ -520,6 +520,11 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public String languageJSonSchema(String name) {
+        // if we try to look method then its in the bean.json file
+        if ("method".equals(name)) {
+            name = "bean";
+        }
+
         String file = LANGUAGE_JSON + "/" + name + ".json";
 
         String answer = null;

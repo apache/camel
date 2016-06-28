@@ -72,6 +72,8 @@ public class CamelCatalogTest {
         assertTrue(names.contains("simple"));
         assertTrue(names.contains("spel"));
         assertTrue(names.contains("xpath"));
+        assertTrue(names.contains("bean"));
+        assertFalse(names.contains("method"));
     }
 
     @Test
@@ -118,6 +120,12 @@ public class CamelCatalogTest {
         assertNotNull(schema);
 
         schema = catalog.modelJSonSchema("aggregate");
+        assertNotNull(schema);
+
+        // lets make it possible to find bean/method using both names
+        schema = catalog.modelJSonSchema("method");
+        assertNotNull(schema);
+        schema = catalog.modelJSonSchema("bean");
         assertNotNull(schema);
     }
 
