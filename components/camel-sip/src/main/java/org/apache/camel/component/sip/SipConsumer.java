@@ -32,14 +32,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Camel consumer which subscribes to events from the given URI
+ * Camel consumer which subscribes to events from the given URI or handles incoming MESSAGE requests
  */
-public class SipSubscriber extends DefaultConsumer {
+public class SipConsumer extends DefaultConsumer {
 
     /**
      * The logger of this class
      */
-    private static final Logger LOG = LoggerFactory.getLogger(SipSubscriber.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SipConsumer.class);
 
     /**
      * The configuration set by the SIP URI. Constructor sets the "consumer" value of the configuration to "true".
@@ -47,7 +47,7 @@ public class SipSubscriber extends DefaultConsumer {
     private SipConfiguration configuration;
 
     /**
-     * TODO document it
+     * entity which listens for and processes any incoming sip request and responses
      */
     private SipSubscriptionListener sipSubscriptionListener;
 
@@ -73,7 +73,7 @@ public class SipSubscriber extends DefaultConsumer {
      * @param processor the processer in the camel route
      * @param configuration the SIP configuration holding the URI and additional information
      */
-    public SipSubscriber(SipEndpoint sipEndpoint, Processor processor, SipConfiguration configuration) {
+    public SipConsumer(SipEndpoint sipEndpoint, Processor processor, SipConfiguration configuration) {
         super(sipEndpoint, processor);
         this.configuration = configuration;
         this.configuration.setConsumer(true);
@@ -91,24 +91,23 @@ public class SipSubscriber extends DefaultConsumer {
         //set up the SipConfiguration for the consumer and create the SIP entities necessary for
         //sending and receiving SIP messages
         Properties properties = configuration.createInitialProperties();
-        LOG.debug("The keyset in the properties: {}", properties.keySet());
+        LOG.trace("The keyset in the properties: {}", properties.keySet());
 
         sipStack = configuration.getSipFactory().createSipStack(properties);
-
         configuration.parseURI();
-
         sipSubscriptionListener = new SipSubscriptionListener(this);
 
+        //listening point for SIP request and responses
         LOG.debug("Making listening point on host: {}, port: {} with transport {}",
                 configuration.getFromHost(),
-                Integer.valueOf(configuration.getFromPort()).intValue(),
+                configuration.getFromPort(),
                 configuration.getTransport());
-
         ListeningPoint listeningPoint = sipStack.createListeningPoint(
                 configuration.getFromHost(),
-                Integer.valueOf(configuration.getFromPort()).intValue(),
+                configuration.getFromPort(),
                 configuration.getTransport());
 
+        //set the listening points
         configuration.setListeningPoint(listeningPoint);
         provider = sipStack.createSipProvider(configuration.getListeningPoint());
         provider.addSipListener(sipSubscriptionListener);
@@ -117,19 +116,22 @@ public class SipSubscriber extends DefaultConsumer {
             configuration.setCallIdHeader(provider.getNewCallId());
         }
         
-        // Create the Subscription request to register with the presence agent and receive notifications.
-        configuration.setCallIdHeader(provider.getNewCallId());
-        Request request = configuration.createSipRequest(1, Request.SUBSCRIBE, configuration.getEventHeaderName());
-            
-        // Create the subscriber transaction from request.
-        ClientTransaction subscriberTransactionId = provider.getNewClientTransaction(request);
-            
-        // Add an Event header for the subscription.
-        request.addHeader(configuration.getEventHeader());
-        subscriberDialog = subscriberTransactionId.getDialog();
+        if(configuration.isSubscribing())
+        {
+            // Create the Subscription request to register with the presence agent and receive notifications.
+            configuration.setCallIdHeader(provider.getNewCallId());
+            Request request = configuration.createSipRequest(1, Request.SUBSCRIBE, configuration.getEventHeaderName());
 
-        // Send the outgoing subscription request.
-        subscriberTransactionId.sendRequest();
+            // Create the subscriber transaction from request.
+            ClientTransaction subscriberTransactionId = provider.getNewClientTransaction(request);
+
+            // Add an Event header for the subscription.
+            request.addHeader(configuration.getEventHeader());
+            subscriberDialog = subscriberTransactionId.getDialog();
+
+            // Send the outgoing subscription request.
+            subscriberTransactionId.sendRequest();
+        }
     }
 
     /**
@@ -169,7 +171,6 @@ public class SipSubscriber extends DefaultConsumer {
 
     /**
      * for getting and setting the SipStack
-     * @param sipStack
      */
     public void setSipStack(SipStack sipStack) {
         this.sipStack = sipStack;
@@ -181,7 +182,6 @@ public class SipSubscriber extends DefaultConsumer {
 
     /**
      * for getting and setting the SipProvider
-     * @return
      */
     public SipProvider getProvider() {
         return provider;

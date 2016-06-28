@@ -38,11 +38,11 @@ public class SipEndpoint extends DefaultEndpoint {
     private SipConfiguration configuration;
 
     /**
-     * Creates a sip
+     * Creates a sip endpoint
      *
-     * @param endpointUri
-     * @param component
-     * @param configuration
+     * @param endpointUri the URI
+     * @param component the SipComponent making this SipEndpoint
+     * @param configuration the SipConfiguring
      */
     public SipEndpoint(String endpointUri, Component component, SipConfiguration configuration) {
         super(endpointUri, component);
@@ -50,10 +50,11 @@ public class SipEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Creates a subscribing consumer based
+     * Creates a consumer which can subscribe to a SIP server and receive and process sip MESSAGE requests
+     * or an presenceAgent for testing purposes only
      *
      * @param processor  the given processor
-     * @return
+     * @return the created consumer
      * @throws Exception
      */
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -62,7 +63,7 @@ public class SipEndpoint extends DefaultEndpoint {
             super.configureConsumer(answer);
             return answer;
         } else {
-            SipSubscriber answer = new SipSubscriber(this, processor, configuration);
+            SipConsumer answer = new SipConsumer(this, processor, configuration);
             super.configureConsumer(answer);
             return answer;
         }

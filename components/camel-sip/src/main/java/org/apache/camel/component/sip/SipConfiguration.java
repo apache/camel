@@ -190,8 +190,15 @@ public class SipConfiguration {
     private boolean consumer;
 
     /**
+     * Whether the sip consumer will subscribe to the given address or only listen for incoming
+     * MESSAGE requests
+     */
+    @UriParam(label = "conusmer")
+    private boolean isSubscribing;
+
+    /**
      * The Consumer created by the SipEndpoint will be a SipPresenceAgent when true or
-     * SipSubscriber when false. A SipPrecenceAgent is only for testing purposes. If the endpoint
+     * SipConsumer when false. A SipPrecenceAgent is only for testing purposes. If the endpoint
      * is a consumer this should be false.
      */
     @UriParam(label = "consumer")
@@ -381,7 +388,7 @@ public class SipConfiguration {
             throw new IllegalArgumentException("Unrecognized SIP protocol: " + protocol + " for uri: " + uri);
         }
 
-        Map<String, Object> settings = URISupport.parseParameters(uri);        
+        Map<String, Object> settings = URISupport.parseParameters(uri);
 
         if (settings.containsKey("stackName")) {
             setStackName((String) settings.get("stackName"));
@@ -452,6 +459,10 @@ public class SipConfiguration {
             setFromUser(uri.getUserInfo());
             setFromHost(uri.getHost());
             setFromPort(uri.getPort());
+            if (settings.containsKey("isSubscribing"))
+            {
+                setSubscribing(Boolean.valueOf((String) settings.get("isSubscribing")));
+            }
             if (!presenceAgent) { //only true when a PresenceAgent and thus not a consumer
                 if (settings.containsKey("toUser")) {
                     setToUser((String) settings.get("toUser"));
@@ -1199,4 +1210,18 @@ public class SipConfiguration {
     public boolean isPresenceAgent() {
         return presenceAgent;
     }
+
+    /**
+     * setting for whether the consumer should subscribe
+     */
+    public void setSubscribing(boolean subscribing)
+    {
+        isSubscribing = subscribing;
+    }
+
+    public boolean isSubscribing()
+    {
+        return isSubscribing;
+    }
+
 }
