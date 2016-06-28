@@ -43,6 +43,7 @@ public class KafkaProducerTest {
 
     private Exchange exchange = Mockito.mock(Exchange.class);
     private Message in = new DefaultMessage();
+    private Message out = new DefaultMessage();
     private AsyncCallback callback = Mockito.mock(AsyncCallback.class);
 
     @SuppressWarnings({"unchecked"})
@@ -72,6 +73,8 @@ public class KafkaProducerTest {
     public void processSendsMessage() throws Exception {
         endpoint.setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
+
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
 
         producer.process(exchange);
@@ -95,6 +98,7 @@ public class KafkaProducerTest {
     public void processAsyncSendsMessage() throws Exception {
         endpoint.setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
 
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
 
@@ -108,6 +112,7 @@ public class KafkaProducerTest {
 
         endpoint.setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
 
         // setup the exception here
         org.apache.kafka.clients.producer.KafkaProducer kp = producer.getKafkaProducer();
@@ -127,6 +132,7 @@ public class KafkaProducerTest {
         endpoint.setTopic(null);
         Mockito.when(exchange.getIn()).thenReturn(in);
         in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
+        Mockito.when(exchange.getOut()).thenReturn(out);
 
         producer.process(exchange);
 
@@ -137,6 +143,8 @@ public class KafkaProducerTest {
     public void processSendsMessageWithTopicHeaderAndEndPoint() throws Exception {
         endpoint.setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
+
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
         in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
         in.setHeader(KafkaConstants.KEY, "someKey");
@@ -158,6 +166,8 @@ public class KafkaProducerTest {
     public void processDoesNotRequirePartitionHeader() throws Exception {
         endpoint.setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
+
         producer.process(exchange);
     }
 
@@ -165,6 +175,7 @@ public class KafkaProducerTest {
     public void processSendsMesssageWithPartitionKeyHeader() throws Exception {
         endpoint.setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
         in.setHeader(KafkaConstants.KEY, "someKey");
         producer.process(exchange);
@@ -175,6 +186,7 @@ public class KafkaProducerTest {
     public void processSendsMesssageWithMessageKeyHeader() throws Exception {
         endpoint.setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
         in.setHeader(KafkaConstants.KEY, "someKey");
 
         producer.process(exchange);
@@ -187,6 +199,7 @@ public class KafkaProducerTest {
         endpoint.setTopic("someTopic");
         endpoint.setBridgeEndpoint(true);
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
         in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
         in.setHeader(KafkaConstants.KEY, "someKey");
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
@@ -199,6 +212,7 @@ public class KafkaProducerTest {
     public void processSendsMesssageWithMessageTopicName() throws Exception {
         endpoint.setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
 
         producer.process(exchange);
 
