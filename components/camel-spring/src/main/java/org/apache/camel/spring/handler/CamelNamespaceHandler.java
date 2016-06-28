@@ -106,14 +106,18 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             for (int i = 0; i < map.getLength(); i++) {
                 Node att = map.item(i);
                 if (att.getNodeName().equals("uri") || att.getNodeName().endsWith("Uri")) {
+                    final String value = att.getNodeValue();
+                    String before = ObjectHelper.before(value, "?");
+                    String after = ObjectHelper.after(value, "?");
 
-                    String value = att.getNodeValue();
-                    // remove all double spaces
-                    String changed = value.replaceAll("\\s{2,}", "");
-
-                    if (!value.equals(changed)) {
-                        LOG.debug("Removed whitespace noise from attribute {} -> {}", value, changed);
-                        att.setNodeValue(changed);
+                    if (before != null && after != null) {
+                        // remove all double spaces in the uri parameters
+                        String changed = after.replaceAll("\\s{2,}", "");
+                        if (!after.equals(changed)) {
+                            String newAtr = before.trim() + "?" + changed.trim();
+                            LOG.debug("Removed whitespace noise from attribute {} -> {}", value, newAtr);
+                            att.setNodeValue(newAtr);
+                        }
                     }
                 }
             }
