@@ -34,6 +34,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -112,6 +113,7 @@ public abstract class WsProducerTestBase extends Assert {
         verifyMessage(testMessage, TestMessages.getInstance().getMessages().get(0));
     }
 
+    @Ignore
     @Test
     public void testWriteBytesToWebsocket() throws Exception {
         byte[] testMessageBytes = getByteTestMessage();
@@ -120,6 +122,7 @@ public abstract class WsProducerTestBase extends Assert {
         verifyMessage(testMessageBytes, TestMessages.getInstance().getMessages().get(0));
     }
 
+    @Ignore
     @Test
     public void testWriteStreamToWebsocket() throws Exception {
         byte[] testMessageBytes = createLongByteTestMessage();
