@@ -18,10 +18,10 @@ package org.apache.camel.component.ahc;
 
 import java.io.ByteArrayOutputStream;
 
-import com.ning.http.client.HttpResponseHeaders;
-import com.ning.http.client.HttpResponseStatus;
-import com.ning.http.client.Request;
 import org.apache.camel.Exchange;
+import org.asynchttpclient.HttpResponseHeaders;
+import org.asynchttpclient.HttpResponseStatus;
+import org.asynchttpclient.Request;
 
 /**
  * Binding from Camel to/from {@link com.ning.http.client.AsyncHttpClient}
