@@ -23,7 +23,7 @@ public class AhcClientConfigUriTest extends BaseAhcTest {
 
     @Test
     public void testAhcProduce() throws Exception {
-        Object out = template.requestBody(getAhcEndpointUri() + "?clientConfig.IOThreadMultiplier=4", null, String.class);
+        Object out = template.requestBody(getAhcEndpointUri() + "?clientConfig.maxRedirects=4", null, String.class);
         assertEquals("Bye World", out);
     }
 
