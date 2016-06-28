@@ -498,7 +498,7 @@
     <servicemix-specs-version>2.7.0</servicemix-specs-version>
     <servlet-api-3.0-version>1.0</servlet-api-3.0-version>
     <servlet-version-range>[3,4)</servlet-version-range>
-    <shiro-version>1.2.4</shiro-version>
+    <shiro-version>1.2.5</shiro-version>
     <shrinkwrap-descriptors-version>2.0.0-alpha-8</shrinkwrap-descriptors-version>
     <shrinkwrap-resolver-version>2.2.2</shrinkwrap-resolver-version>
     <shrinkwrap-version>1.2.3</shrinkwrap-version>
