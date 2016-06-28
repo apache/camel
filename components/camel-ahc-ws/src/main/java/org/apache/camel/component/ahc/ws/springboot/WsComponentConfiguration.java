@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.ahc.ws.springboot;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
+
 import org.apache.camel.component.ahc.AhcBinding;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClientConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -42,7 +43,7 @@ public class WsComponentConfiguration {
     private AhcBinding binding;
     /**
      * To configure the AsyncHttpClient to use a custom
-     * com.ning.http.client.AsyncHttpClientConfig instance.
+     * org.asynchttpclient.AsyncHttpClientConfig instance.
      */
     private AsyncHttpClientConfig clientConfig;
     /**

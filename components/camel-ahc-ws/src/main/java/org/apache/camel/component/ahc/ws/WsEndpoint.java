@@ -19,19 +19,19 @@ package org.apache.camel.component.ahc.ws;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.AsyncHttpProvider;
-import com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider;
-import com.ning.http.client.ws.DefaultWebSocketListener;
-import com.ning.http.client.ws.WebSocket;
-import com.ning.http.client.ws.WebSocketUpgradeHandler;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ahc.AhcEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClientConfig;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.asynchttpclient.ws.DefaultWebSocketListener;
+import org.asynchttpclient.ws.WebSocket;
+import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,10 +42,6 @@ import org.slf4j.LoggerFactory;
         syntax = "ahc-ws:httpUri", consumerClass = WsConsumer.class, label = "websocket")
 public class WsEndpoint extends AhcEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(WsEndpoint.class);
-
-    // for using websocket streaming/fragments
-    private static final boolean GRIZZLY_AVAILABLE =
-        probeClass("com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider");
 
     private final Set<WsConsumer> consumers = new HashSet<WsConsumer>();
     private final WsListener listener = new WsListener();
@@ -113,13 +109,10 @@ public class WsEndpoint extends AhcEndpoint {
     protected AsyncHttpClient createClient(AsyncHttpClientConfig config) {
         AsyncHttpClient client;
         if (config == null) {
-            config = new AsyncHttpClientConfig.Builder().build();
-        }
-        AsyncHttpProvider ahp = getAsyncHttpProvider(config);
-        if (ahp == null) {
-            client = new AsyncHttpClient(config);
+            config = new DefaultAsyncHttpClientConfig.Builder().build();
+            client = new DefaultAsyncHttpClient(config);
         } else {
-            client = new AsyncHttpClient(ahp, config);
+        	 client = new DefaultAsyncHttpClient();
         }
         return client;
     }
@@ -206,22 +199,6 @@ public class WsEndpoint extends AhcEndpoint {
             }
         }
 
-    }
-
-    protected AsyncHttpProvider getAsyncHttpProvider(AsyncHttpClientConfig config) {
-        if (GRIZZLY_AVAILABLE) {
-            return new GrizzlyAsyncHttpProvider(config);
-        }
-        return null;
-    }
-
-    private static boolean probeClass(String name) {
-        try {
-            Class.forName(name, true, WsEndpoint.class.getClassLoader());
-            return true;
-        } catch (Throwable t) {
-            return false;
-        }
     }
 
 }
