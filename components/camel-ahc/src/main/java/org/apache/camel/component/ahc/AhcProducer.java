@@ -115,9 +115,9 @@ public class AhcProducer extends DefaultAsyncProducer {
             return "AhcAsyncHandler for exchangeId: " + exchange.getExchangeId() + " -> " + url;
         }
 
-		@Override
-		public State onBodyPartReceived(HttpResponseBodyPart bodyPart)
-				throws Exception {
+        @Override
+        public State onBodyPartReceived(HttpResponseBodyPart bodyPart)
+            throws Exception {
             // write body parts to stream, which we will bind to the Camel Exchange in onComplete
             os.write(bodyPart.getBodyPartBytes());
             if (log.isTraceEnabled()) {
@@ -125,11 +125,11 @@ public class AhcProducer extends DefaultAsyncProducer {
             }
             contentLength += bodyPart.length();
             return State.CONTINUE;
-		}
+        }
 
-		@Override
-		public State onStatusReceived(HttpResponseStatus responseStatus)
-				throws Exception {
+        @Override
+        public State onStatusReceived(HttpResponseStatus responseStatus)
+            throws Exception {
             if (log.isTraceEnabled()) {
                 log.trace("{} onStatusReceived {}", exchange.getExchangeId(), responseStatus);
             }
@@ -141,10 +141,10 @@ public class AhcProducer extends DefaultAsyncProducer {
                 exchange.setException(e);
             }
             return State.CONTINUE;
-		}
+        }
 
-		@Override
-		public State onHeadersReceived(HttpResponseHeaders headers) throws Exception {
+        @Override
+        public State onHeadersReceived(HttpResponseHeaders headers) throws Exception {
             if (log.isTraceEnabled()) {
                 log.trace("{} onHeadersReceived {}", exchange.getExchangeId(), headers);
             }
@@ -154,7 +154,7 @@ public class AhcProducer extends DefaultAsyncProducer {
                 exchange.setException(e);
             }
             return State.CONTINUE;
-		}
+        }
     }
 
 }

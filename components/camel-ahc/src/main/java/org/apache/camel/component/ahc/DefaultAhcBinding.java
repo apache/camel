@@ -210,11 +210,11 @@ public class DefaultAhcBinding implements AhcBinding {
 
     @Override
     public void onHeadersReceived(AhcEndpoint endpoint, Exchange exchange, HttpResponseHeaders headers) throws Exception {
-    	List<Entry<String, String>> l = headers.getHeaders().entries();
+        List<Entry<String, String>> l = headers.getHeaders().entries();
         for (Entry<String, String> entry : headers.getHeaders().entries()) {
             String key = entry.getKey();
             String value = entry.getValue();
-                exchange.getOut().getHeaders().put(key, value);
+            exchange.getOut().getHeaders().put(key, value);
         }
     }
 
