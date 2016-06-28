@@ -81,8 +81,15 @@
 
   <feature name='camel-ahc' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:com.ning/async-http-client/${ahc-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty/${netty3-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.asynchttpclient/async-http-client/${ahc-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-epoll/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>    
+    <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ahc/${project.version}</bundle>
   </feature>
   <feature name='camel-ahc-ws' version='${project.version}' resolver='(obr)' start-level='50'>
