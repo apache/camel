@@ -55,7 +55,7 @@ public class JsonRestProcessorTest {
         exchange.getIn().setBody(doc);
         ByteArrayInputStream is = (ByteArrayInputStream) jsonRestProcessor.getRequestStream(exchange);
         String result = IOUtils.toString(is);
-        assertThat(result, result.length(), Is.is(48));
+        assertThat(result, result.length() <= 48, Is.is(true));
     }
 
     private static class TestObject extends AbstractDTOBase {
