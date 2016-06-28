@@ -34,7 +34,9 @@ public abstract class AbstractSSLContextClientParametersFactoryBean extends Abst
     protected SSLContextClientParameters createInstance() {
         SSLContextClientParameters newInstance = new SSLContextClientParameters();
         newInstance.setCamelContext(getCamelContext());
-        newInstance.addAllSniHostNames(sniHostNamesDefinition.getSniHostName());
+        if (sniHostNamesDefinition != null) {
+            newInstance.addAllSniHostNames(sniHostNamesDefinition.getSniHostName());
+        }
         return newInstance;
     }
 
