@@ -188,14 +188,14 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
     }
 
     /**
-     * Creates a new client configuration builder using {@code clientConfig} as a template for
+     * Creates a new client configuration builder using {@code DefaultAsyncHttpClientConfig} as a template for
      * the builder.
      *
      * @param clientConfig the instance to serve as a template for the builder
      * @return a builder configured with the same options as the supplied config
      */
     static DefaultAsyncHttpClientConfig.Builder cloneConfig(AsyncHttpClientConfig clientConfig) {
-    	DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder(clientConfig);
+        DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder(clientConfig);
         return builder;
     }
 }

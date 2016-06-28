@@ -20,6 +20,9 @@ import java.net.URI;
 import java.util.Map;
 import javax.net.ssl.SSLContext;
 
+import io.netty.handler.ssl.ClientAuth;
+import io.netty.handler.ssl.JdkSslContext;
+
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -37,9 +40,6 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
-
-import io.netty.handler.ssl.ClientAuth;
-import io.netty.handler.ssl.JdkSslContext;
 
 /**
  * To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
@@ -260,7 +260,7 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                 
                 if (sslContextParameters != null) {
                     SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
-                    JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.NONE);
+                    JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
                     builder.setSslContext(ssl);
                 }
                 
@@ -269,7 +269,7 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                 if (sslContextParameters != null) {
                     DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
                     SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
-                    JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.NONE);
+                    JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
                     builder.setSslContext(ssl);
                     config = builder.build();
                 }
