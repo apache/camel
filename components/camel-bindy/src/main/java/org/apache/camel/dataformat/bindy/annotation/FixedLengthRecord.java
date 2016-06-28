@@ -81,4 +81,8 @@ public @interface FixedLengthRecord {
      */
     boolean ignoreTrailingChars() default false;
 
+    /**
+     * Indicates whether too short lines will be ignored
+     */
+    boolean ignoreMissingChars() default false;
 }
