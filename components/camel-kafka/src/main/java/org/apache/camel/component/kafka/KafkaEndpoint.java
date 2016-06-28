@@ -32,12 +32,15 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CastUtils;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
@@ -129,8 +132,10 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         try {
             if (getCamelContext() != null) {
                 ClassResolver resolver = getCamelContext().getClassResolver();
-                replaceWithClass(props, "key.serializer", resolver, Serializer.class);
-                replaceWithClass(props, "value.serializer", resolver, Serializer.class);
+                replaceWithClass(props, ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, resolver, Serializer.class);
+                replaceWithClass(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, resolver, Serializer.class);
+                replaceWithClass(props, ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, resolver, Deserializer.class);
+                replaceWithClass(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, resolver, Deserializer.class);
                 
                 try {
                     //doesn't exist in old version of Kafka client so detect and only call the method if
