@@ -70,18 +70,40 @@ namespaces for Spring and Blueprint based configuration, respectively.
 SSLContextParameters
 ++++++++++++++++++++
 
+SSLContextParameters (sslContextParameters) contain the following elements:
 
-[cols="a,a",width="100%",options="header",grids="cols"]
-|====================
-|Property|Description
-|Field: +
-cipherSuites +
-Class: +
-CipherSuitesParameters +
-XML: +
-sslContextParameters +
-/ciphersuites
-|This optional property represents a collection of explicitly named
+* provider (attribute)
+* secureSocketProtocol (attribute)
+* certAlias (attribute)
+* sessionTimeout (attribute)
+* cipherSuites (element)
+* cipherSuitesFilter (element)
+* secureSocketProtocols (element)
+* secureSocketProtocolsFilter (element)
+* keyManagers (element)
+* trustManagers (element)
+* secureRandom (element)
+* clientParameters (element)
+* serverParameters (elment)
+
+provider::
+The optional provider identifier for the JSSE implementation to use when
+constructing the SSLContext.  If omitted, the standard provider look-up
+mechanism is used to resolve the provider.
+secureSocketProtocol::
+The optional secure socket protocol. See http://download.oracle.com/javase/6/docs/technotes/guides//security/jsse/JSSERefGuide.html#AppA[Appendix
+A] in the Java Secure Socket Extension Reference Guide for information
+about standard protocol names.  If omitted, TLS is used by default. 
+Note that this property is related to but distinctly different from the
+secureSocketProtocols and secureSocketProtocolsFilter properties.
+certAlias::
+*Camel 2.13:* An optional certificate alias to use. This is useful when
+the keystore has multiple certificates.
+sessionTimeout::
+This optional property defines the timeout period, in seconds, for
+sessions on both the client and server side as well as in the SSLEngine.
+cipherSuites::
+This optional property represents a collection of explicitly named
 cipher suites to enable on both the client and server side as well as in
 the SSLEngine.  These values take precedence over filters supplied in
 cipherSuitesFilter.  The utility attempts to enable the listed cipher
@@ -89,37 +111,17 @@ suites regardless of whether or not the JSSE provider actually supports
 them or not.  This behavior guarantees that listed cipher suites are
 always enabled when listed.  For a more lenient option, use
 cipherSuitesFilter.
-|Field: +
-cipherSuitesFilter +
-Class: +
-link:camel-configuration-utilities.html[FilterParameters] +
-XML: +
-sslContextParameters +
-/cipherSuitesFilter
-|This optional property represents a collection of include and exclude
+cipherSuitesFilter::
+This optional property represents a collection of include and exclude
 patterns for cipher suites to enable on both the client and server side
 as well as in the SSLEngine.  The patterns are applied over only the
 available cipher suites.  The exclude patterns have precedence over the
 include patterns.  If no cipherSuites and no cipherSuitesFilter are
 present, the default patterns applied are: +
-Includes
-
-* .*
-
-Excludes
-
-* .*_NULL_.*
-* .*_anon_.*
-* .*DES.* *Camel 2.15.4*
-* .*EXPORT.* *Camel 2.15.4*
-|Field: +
-secureSocketProtocols +
-Class: +
-SecureSocketProtocolsParameters +
-XML: +
-sslContextParameters +
-/secureSocketProtocols
-|This optional property represents a collection of explicitly named
+Includes .\*; Excludes .*_NULL_.*, .\*_anon_.*
+, .\*DES.* *Camel 2.15.4*, .\*EXPORT.* *Camel 2.15.4*.
+secureSocketProtocols::
+This optional property represents a collection of explicitly named
 secure socket protocols, such as SSLv3/TLS/etc., to enable on both the
 client and server side as well as in the SSLEngine.  These values take
 precedence over filters supplied in secureSocketProtocolsFilter.  The
@@ -127,219 +129,132 @@ utility attempts to enable the listed protocols regardless of whether or
 not the JSSE provider actually supports them or not.  This behavior
 guarantees that listed protocols are always enabled when listed.  For a
 more lenient option, use secureSocketProtocolsFilter.
-|====================
-
-secureSocketProtocolsFilter -
-link:camel-configuration-utilities.html[FilterParameters]
-
-sslContextParameters/secureSocketProtocolsFilter -
-link:camel-configuration-utilities.html[FilterParameters]
-
+secureSocketProtocolsFilter::
 This optional property represents a collection of include and exclude
 patterns for secure socket protocols to enable on both the client and
 server side as well as in the SSLEngine.  The patterns are applied over
 only the available protocols.  The exclude patterns have precedence over
 the include patterns.  If no secureSocketProtocols and no
 secureSocketProtocolsFilter are present, the default patterns applied
-are:  +
-  +
- Includes
+are: Includes .*
 
-* .*
-
-sessionTimeout - java.lang.String
-
-sslContextParameters/@sessionTimeout - xsd:string
-
-This optional property defines the timeout period, in seconds, for
-sessions on both the client and server side as well as in the SSLEngine.
-
-keyManagers -
-link:camel-configuration-utilities.html[KeyManagersParameters]
-
-sslContextParameters/keyManagers -
-link:camel-configuration-utilities.html[KeyManagersParameters]
-
-This optional property configures the source of key material for
+keyManagers::
+see <<CamelConfigurationUtilities-KeyManagersParameters>>.This optional property configures the source of key material for
 providing identity of client and server side connections as well as in
 the SSLEngine.  If omitted, no source of key material is provided and
 the SSLContext is suitable only for client-side usage when mutual
 authentication is not in use.  You typically configure this property
 with a key store containing a client or server private key.
-
-trustManagers -
-link:camel-configuration-utilities.html[TrustManagersParameters]
-
-sslContextParameters/trustManagers -
-link:camel-configuration-utilities.html[TrustManagersParameters]
-
-This optional property configures the source of material for verifying
+trustManagers::
+see <<CamelConfigurationUtilities-TrustManagersParameters>>. This optional property configures the source of material for verifying
 trust of key material used in the handshake process.  If omitted, the
 default trust manager is automatically used.  See the
 http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#CustomizingStores[JSSE
 documentation] for more information on how the default trust manager is
 configured.  You typically configure this property with a key store
 containing trusted CA certificates.
-
-secureRandom - SecureRandomParameters
-
-sslContextParameters/secureRandom - SecureRandomParameters
-
+secureRandom::
 This optional property configures the secure random number generator
 used by the client and server side as well as in the SSLEngine.  If
 omitted, the default secure random number generator is used.
-
-clientParameters -
-link:camel-configuration-utilities.html[SSLContextClientParameters]
-
-sslContextParameters/clientParameters -
-link:camel-configuration-utilities.html[SSLContextClientParameters]
-
-This optional property configures additional settings that apply only to
+clientParameters::
+see <<CamelConfigurationUtilities-SSLContextClientParameters>>. This optional property configures additional settings that apply only to
 the client side aspects of the SSLContext.  If present, these settings
 override the settings specified at the SSLContextParameters level.
-
-serverParameters -
-link:camel-configuration-utilities.html[SSLContextServerParameters]
-
-sslContextParameters/serverParameters -
-link:camel-configuration-utilities.html[SSLContextServerParameters]
-
-This optional property configures additional settings that apply only to
+serverParameters::
+see <<CamelConfigurationUtilities-SSLContextServerParameters>>. This optional property configures additional settings that apply only to
 the server side aspects of the SSLContext.  If present, these settings
 override the settings specified at the SSLContextParameters level.
 
-provider - java.lang.String
-
-sslContextParameters/@provider - xsd:string
-
-The optional provider identifier for the JSSE implementation to use when
-constructing the SSLContext.  If omitted, the standard provider look-up
-mechanism is used to resolve the provider.
-
-secureSocketProtocol - java.lang.String
-
-sslContextParameters/@secureSocketProtocol - xsd:string
-
-The optional secure socket protocol. See
-http://download.oracle.com/javase/6/docs/technotes/guides//security/jsse/JSSERefGuide.html#AppA[Appendix
-A] in the Java Secure Socket Extension Reference Guide for information
-about standard protocol names.  If omitted, TLS is used by default. 
-Note that this property is related to but distinctly different from the
-secureSocketProtocols and secureSocketProtocolsFilter properties.
-
-certAlias - java.lang.String
-
-sslContextParameters/@certAlias - xsd:string
-
-*Camel 2.13:* An optional certificate alias to use. This is useful when
-the keystore has multiple certificates.
 
 [[CamelConfigurationUtilities-KeyManagersParameters]]
 KeyManagersParameters
 +++++++++++++++++++++
 
-Java Field Name and Class
+KeyManagersParameters contain the following elements:
 
-XML Attribute/Element and Type
+* keyPassword (attribute)
+* provider (attribute)
+* algorithm (attribute)
+* keyStore (element)
 
-Description
-
-keyStore- link:camel-configuration-utilities.html[KeyStoreParameters]
-
-keyStore - link:camel-configuration-utilities.html[KeyStoreParameters]
-
-This optional property represents the key store that provides key
-material to the key manager.  This is typically configured with a key
-store containing a user or server private key.  In some cases, such as
-when using PKCS#11, the key store is omitted entirely.
-
-keyPassword - java.lang.String
-
-@keyPassword - xsd:string
-
+keyPassword::
 The optional password for recovering/accessing the private key in the
 key store.  This is typically the password for the private key in the
 configured key store; however, in some cases, such as when using
 PKCS#11, the key password may be provided through other means and is
 omitted entirely in this configuration.
-
-provider - java.lang.String
-
-@provider - xsd:string
-
+provider::
 The optional provider identifier for the KeyManagerFactory used to
 create the KeyManagers represented by this object's configuration.  If
 omitted, the default look-up behavior is used.
-
-algorithm - java.lang.String
-
-@algorithm - xsd:string
-
+algorithm::
 The optional algorithm name for the KeyManagerFactory used to create the
 KeyManager represented by this object's configuration.  See the
 http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html[Java
 Secure Socket Extension Reference Guide] for information about standard
 algorithm names.
-
-trustManager - java.lang.String
-
-@trustManager - xsd:string
-
-*Camel 2.17:*To use a existing configured trust manager instead of using
-TrustManagerFactory to get the TrustManager.
+keyStore::
+See <<CamelConfigurationUtilities-KeyStoreParameters>>. This optional property represents the key store that provides key
+material to the key manager.  This is typically configured with a key
+store containing a user or server private key.  In some cases, such as
+when using PKCS#11, the key store is omitted entirely.
 
 [[CamelConfigurationUtilities-TrustManagersParameters]]
 TrustManagersParameters
 +++++++++++++++++++++++
 
-Java Field Name and Class
+TrustManagersParameters contain the following elements:
 
-XML Attribute/Element and Type
+* provider (attribute)
+* algorithm (attribute)
+* trustManager (attribute)
+* keyStore (element)
 
-Description
-
-keyStore- link:camel-configuration-utilities.html[KeyStoreParameters]
-
-keyStore - link:camel-configuration-utilities.html[KeyStoreParameters]
-
-This optional property represents the key store that provides key
-material to the trust manager.  This is typically configured with a key
-store containing trusted CA certificates / public keys.  In some cases,
-such as when using PKCS#11, the key store is omitted entirely.
-
-provider - java.lang.String
-
-@provider - xsd:string
-
+provider::
 The optional provider identifier for the TrustManagerFactory used to
 create the TrustManagers represented by this object's configuration.  If
 omitted, the default look-up behavior is used.
-
-algorithm - java.lang.String
-
-@algorithm - xsd:string
-
+algorithm::
 The optional algorithm name for the TrustManagerFactory used to create
 the TrustManager represented by this object's configuration.  See the
 http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html[Java
 Secure Socket Extension Reference Guide] for information about standard
 algorithm names.
+trustManager::
+*Camel 2.17:* To use a existing configured trust manager instead of using
+TrustManagerFactory to get the TrustManager.
+keyStore::
+See <<CamelConfigurationUtilities-KeyStoreParameters>>. This optional property represents the key store that provides key
+material to the trust manager.  This is typically configured with a key
+store containing trusted CA certificates / public keys.  In some cases,
+such as when using PKCS#11, the key store is omitted entirely.
 
 [[CamelConfigurationUtilities-KeyStoreParameters]]
 KeyStoreParameters
 ++++++++++++++++++
 
-Java Field Name and Class
+KeyStoreParameters contain the following elements:
 
-XML Attribute/Element and Type
+* type (attribute)
+* password (attribute)
+* provider (attribute)
+* resource (attribute)
 
-Description
-
-resource- java.lang.String
-
-keyStore/@resource - xsd:string
-
+type::
+The optional type of the key store.  See Appendix A in the
+http://download.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html#KeyStore[Java
+Cryptography Architecture Standard Algorithm Name Documentation] for
+more information on standard names.  If omitted, defaults to the default
+lookup mechanism as defined by
+http://download.oracle.com/javase/6/docs/api/java/security/KeyStore.html#getDefaultType()[KeyStore.getDefaultType()].
+password::
+The optional password for reading/opening/verifying the key store.
+provider::
+The optional provider identifier for the provider used to create the
+KeyStores represented by this object's configuration.  If omitted, the
+default look-up behavior is used.
+resource::
 This optional property represents the location of the key store resource
 to load the key store from.  In some cases, the resource is omitted as
 the key store content is provided by other means.  The loading of the
@@ -348,69 +263,32 @@ path, a class path resource, and a URL in that order. An exception is
 thrown if the resource cannot be resolved to readable input stream using
 any of the above methods.
 
-[Note]
+.*OSGi Usage*
+[NOTE]
 ====
- *OSGi Usage*
-
 For programmatic and Spring based XML configuration in OSGi, a resource
 specified as a classpath resource path may be accessible in the bundle
 containing the XML configuration file or in a package that is imported
 by that bundle.  As Blueprint does not define the thread context
 classloader behavior, only classpath resources in the bundle containing
 the XML configuration file may be resolved from a Blueprint based XML
-configuration.  +
-  +
-  +
-
+configuration.
 ====
 
-password - java.lang.String
-
-keyStore/@password - xsd:string
-
-The optional password for reading/opening/verifying the key store.
-
-type - java.lang.String
-
-keyStore/@type - xsd:string
-
-The optional type of the key store.  See Appendix A in the
-http://download.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html#KeyStore[Java
-Cryptography Architecture Standard Algorithm Name Documentation] for
-more information on standard names.  If omitted, defaults to the default
-lookup mechanism as defined by
-http://download.oracle.com/javase/6/docs/api/java/security/KeyStore.html#getDefaultType()[KeyStore.getDefaultType()].
-
-provider - java.lang.String
-
-keyStore/@provider - xsd:string
-
-The optional provider identifier for the provider used to create the
-KeyStores represented by this object's configuration.  If omitted, the
-default look-up behavior is used.
 
 [[CamelConfigurationUtilities-FilterParameters]]
 FilterParameters
 ++++++++++++++++
 
-Java Field Name and Class
+FilterParameters contain the following elements:
 
-XML Attribute/Element and Type
-
-Description
-
-include - java.util.List<java.lang.String>
-
-include - xsd:string
-
+* include (element, multiple string)
+* exclude (element, multiple string)
+include::
 This optional property represents zero or more regular expression
 patterns for which matching values should be included.  The list of
 excludes takes precedence over the include patterns.
-
-exclude - java.util.List<java.lang.String>
-
-exclude - xsd:string
-
+exclude::
 This optional property represents zero or more regular expression
 patterns for which matching values should be included.  The list of
 excludes takes precedence over the include patterns.
@@ -418,28 +296,18 @@ excludes takes precedence over the include patterns.
 [[CamelConfigurationUtilities-SecureRandomParameters]]
 SecureRandomParameters
 ++++++++++++++++++++++
+SecureRandomParameters contain the following elements:
 
-Java Field Name and Class
-
-XML Attribute/Element and Type
-
-Description
-
-algorithm - java.lang.String
-
-@algorithm - xsd:string
-
-This optionap property represents the Random Number Generator (RNG)
+* algorithm (attribute)
+* provider (attribte)
+algorithm::
+This optional property represents the Random Number Generator (RNG)
 algorithm identifier for the SecureRandom factory method used to create
 the SecureRandom represented by this object's configuration. See
 http://download.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#AppA[Appendix
 A] in the Java Cryptography Architecture API Specification & Reference
 for information about standard RNG algorithm names.
-
-provider - java.lang.String
-
-@provider - xsd:string
-
+provider::
 The optional provider identifier for the SecureRandom factory method
 used to create the SecureRandom represented by this object's
 configuration.  If omitted, the default look-up behavior is used.
@@ -447,165 +315,68 @@ configuration.  If omitted, the default look-up behavior is used.
 [[CamelConfigurationUtilities-SSLContextServerParameters]]
 SSLContextServerParameters
 ++++++++++++++++++++++++++
+SSLContextServerParameters contain the following elements:
 
-Java Field Name and Class
+* clientAuthentication (attribute)
+* sessionTimeout (attribute)
+* cipherSuites (element)
+* cipherSuitesFilter (element)
+* secureSocketProtocols (element)
+* secureSocketProtocolsFilter (element)
 
-XML Attribute/Element and Type
-
-Description
-
-cipherSuites - CipherSuitesParameters
-
-sslContextClientParameters/ciphersuites - CipherSuitesParameters
-
-This optional property represents a collection of explicitly named
-cipher suites to enable on the server side only
-(SSLServerSocketFactory/SSLServerSocket) by overriding the value of this
-setting in the SSLContextParameters.  This option has no affect on the
-SSLEngine configuration.  These values take precedence over filters
-supplied in cipherSuitesFilter.  The utility attempts to enable the
-listed cipher suites regardless of whether or not the JSSE provider
-actually supports them or not.  This behavior guarantees that listed
-cipher suites are always enabled when listed.  For a more lenient
-option, use cipherSuitesFilter.
-
-cipherSuitesFilter -
-link:camel-configuration-utilities.html[FilterParameters]
-
-sslContextClientParameters/cipherSuitesFilter -
-link:camel-configuration-utilities.html[FilterParameters]
-
-This optional property represents a collection of include and exclude
-patterns for cipher suites to enable on the server side only
-(SSLServerSocketFactory/SSLServerSocket) by overriding the value of this
-setting in the SSLContextParameters.  This option has no affect on the
-SSLEngine configuration.  The patterns are applied over only the
-available cipher suites.  The exclude patterns have precedence over the
-include patterns.  See SSLContextParameters for details of the behavior
-if this option and cipherSuites is omitted at this level.
-
-secureSocketProtocols - SecureSocketProtocolsParameters
-
-sslContextClientParameters/secureSocketProtocols -
-SecureSocketProtocolsParameters
-
-This optional property represents a collection of explicitly named
-secure socket protocols, such as SSLv3/TLS/etc., to enable on the server
-side only (SSLServerSocketFactory/SSLServerSocket) by overriding the
-value of this setting in the SSLContextParameters.  This option has no
-affect on the SSLEngine configuration.  These values take precedence
-over filters supplied in secureSocketProtocolsFilter.  The utility
-attempts to enable the listed protocols regardless of whether or not the
-JSSE provider actually supports them or not.  This behavior guarantees
-that listed protocols aree always enabled when listed.  For a more
-lenient option, use secureSocketProtocolsFilter.
-
-secureSocketProtocolsFilter -
-link:camel-configuration-utilities.html[FilterParameters]
-
-sslContextClientParameters/secureSocketProtocolsFilter -
-link:camel-configuration-utilities.html[FilterParameters]
-
-This optional property represents a collection of include and exclude
-patterns for secure socket protocols to enable on theserver side only
-(SSLServerSocketFactory/SSLServerSocket) by overriding the value of this
-setting in the SSLContextParameters.  This option has no affect on the
-SSLEngine configuration.  The patterns are applied over only the
-available protocols.  The exclude patterns have precedence over the
-include patterns.  See SSLContextParameters for details of the behavior
-if this option and/or secureSocketProtocols is omitted at this level.
-
-sessionTimeout - java.lang.String
-
-sslContextServerParameters/@sessionTimeout - xsd:string
-
-This optional property defines the timeout period, in seconds, for
-sessions on the server side.  This setting affects both the
-SSLServerSocketFactory/SSLServerSocket as well as the server side of the
-SSLEngine.
-
-clientAuthentication - java.lang.String
-
-sslContextServerParameters/@clientAuthentication - xsd:string
-
+clientAuthentication::
 This optional property indicates if the server side does not request,
 requests, or requires clients to provide authentication credentials
 during the handshake process.  This is commonly referred to as mutual
 authentication, two direction SSL/TLS, or two-legged SSL/TLS.  +
  Valid values are: NONE, WANT, REQUIRE
+sessionTimeout::
+This optional property defines the timeout period, in seconds, for
+sessions on the server side.  This setting affects both the
+SSLServerSocketFactory/SSLServerSocket as well as the server side of the
+SSLEngine.
+cipherSuites::
+This optional property overrides the value of this
+setting in the SSLContextParameters. This option has no affect on the
+SSLEngine configuration.
+cipherSuitesFilter::
+This optional property overrides the value of this
+setting in the SSLContextParameters.  This option has no affect on the
+SSLEngine configuration.
+secureSocketProtocols::
+This optional property overrides the
+value of this setting in the SSLContextParameters.  This option has no
+affect on the SSLEngine configuration.
+secureSocketProtocolsFilter::
+This optional property overrides the value of this
+setting in the SSLContextParameters. This option has no affect on the
+SSLEngine configuration.
 
 [[CamelConfigurationUtilities-SSLContextClientParameters]]
 SSLContextClientParameters
 ++++++++++++++++++++++++++
+SSLContextClientParameters contains the following elements:
 
+* sniHostNames (elements)
+* sessionTimeout (attribute)
+* cipherSuites (element)
+* cipherSuitesFilter (element)
+* secureSocketProtocols (element)
+* secureSocketProtocolsFilter (element)
 
-[width="100%",options="header"]
-|====================
-|Java Field Name and Class|XML Attribute/Element and Type|Description 
-|cipherSuites - CipherSuitesParameters
-|sslContextClientParameters/ciphersuites - CipherSuitesParameters
-|This optional property represents a collection of explicitly named
-cipher suites to enable on theclient  side only
-(SSLSocketFactory/SSLSocket) by overriding the value of this setting in
-the SSLContextParameters.  This option has no affect on the SSLEngine
-configuration.  These values take precedence over filters supplied in
-cipherSuitesFilter.  The utility attempts to enable the listed cipher
-suites regardless of whether or not the JSSE provider actually supports
-them or not.  This behavior guarantees that listed cipher suites are
-always enabled when listed.  For a more lenient option, use
-cipherSuitesFilter.
-|cipherSuitesFilter -
-link:camel-configuration-utilities.html[FilterParameters]
-|sslContextClientParameters/cipherSuitesFilter -
-link:camel-configuration-utilities.html[FilterParameters]
-|This optional property represents a collection of include and exclude
-patterns for cipher suites to enable on the client side only
-(SSLSocketFactory/SSLSocket) by overriding the value of this setting in
-the SSLContextParameters.  This option has no affect on the SSLEngine
-configuration.  The patterns are applied over only the available cipher
-suites.  The exclude patterns have precedence over the include
-patterns.  See SSLContextParameters for details of the behavior if this
-option and cipherSuites is omitted at this level.
-|====================
-
-secureSocketProtocols - SecureSocketProtocolsParameters
-
-sslContextClientParameters/secureSocketProtocols -
-SecureSocketProtocolsParameters
-
-This optional property represents a collection of explicitly named
-secure socket protocols, such as SSLv3/TLS/etc., to enable on the client
-side only (SSLSocketFactory/SSLSocket) by overriding the value of this
-setting in the SSLContextParameters.  This option has no affect on the
-SSLEngine configuration.  These values take precedence over filters
-supplied in secureSocketProtocolsFilter.  The utility attempts to enable
-the listed protocols regardless of whether or not the JSSE provider
-actually supports them or not.  This behavior guarantees that listed
-protocols aree always enabled when listed.  For a more lenient option,
-use secureSocketProtocolsFilter.
-
-secureSocketProtocolsFilter -
-link:camel-configuration-utilities.html[FilterParameters]
-
-sslContextClientParameters/secureSocketProtocolsFilter -
-link:camel-configuration-utilities.html[FilterParameters]
-
-This optional property represents a collection of include and exclude
-patterns for secure socket protocols to enable on the client side only
-(SSLSocketFactory/SSLSocket) by overriding the value of this setting in
-the SSLContextParameters.  This option has no affect on the SSLEngine
-configuration.  The patterns are applied over only the available
-protocols.  The exclude patterns have precedence over the include
-patterns.  See SSLContextParameters for details of the behavior if this
-option and/or secureSocketProtocols is omitted at this level.
-
-sessionTimeout - java.lang.String
-
-sslContextServerParameters/@sessionTimeout - xsd:string
-
-This optional property defines the timeout period, in seconds, for
-sessions on the client side This setting affects both the
-SSLSocketFactory/SSLSocket as well as the client side of the SSLEngine.
+sniHostNames::
+Contains a list of sniHostName elements which provides a list
+of SNIHostNames to be used for SSL.
+sessionTimeout::
+See <<CamelConfigurationUtilities-SSLContextServerParameters>>.
+cipherSuites::
+See <<CamelConfigurationUtilities-SSLContextServerParameters>>.
+cipherSuitesFilter::
+See <<CamelConfigurationUtilities-SSLContextServerParameters>>.
+secureSocketProtocols::
+See <<CamelConfigurationUtilities-SSLContextServerParameters>>.
+secureSocketProtocolsFilter::
+See <<CamelConfigurationUtilities-SSLContextServerParameters>>.
 
 [[CamelConfigurationUtilities-Examples]]
 Examples
@@ -721,11 +492,8 @@ XML Configuration
 
 [NOTE]
 ====
-
-
 Note that XML configuration is supported in both Spring and Blueprint
 format.
-
 ====
 
 [[CamelConfigurationUtilities-SettingClientAuthenticationOntheServerSide.1]]
