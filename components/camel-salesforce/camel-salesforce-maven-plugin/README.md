@@ -89,4 +89,4 @@ The plugin should be configured for the rest of the properties, and can be execu
 
 	mvn camel-salesforce:generate -DcamelSalesforce.clientId=<clientid> -DcamelSalesforce.clientSecret=<clientsecret> -DcamelSalesforce.userName=<username> -DcamelSalesforce.password=<password>
 
-The generated DTOs use Jackson and XStream annotations. All Salesforce field types are supported. Date and time fields are mapped to Joda DateTime, and picklist fields are mapped to generated Java Enumerations. 
+The generated DTOs use Jackson and XStream annotations. All Salesforce field types are supported. Date and time fields are mapped to java.time.ZonedDateTime, and picklist fields are mapped to generated Java Enumerations.
