@@ -93,31 +93,33 @@ public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
                 throw new ParserInitializationException(parserClass.getName()
                     + " does not implement the interface "
                     + "org.apache.commons.net.ftp.FTPFileEntryParser.", e);
-            } catch (Exception e) {
-                throw new ParserInitializationException("Error initializing parser", e);
-            } catch (ExceptionInInitializerError e) {
+            } catch (Exception | ExceptionInInitializerError e) {
                 throw new ParserInitializationException("Error initializing parser", e);
             }
         }
         if (parser == null) {
             String ukey = key.toUpperCase(Locale.ENGLISH);
-            if (ukey.indexOf("UNIX") >= 0) {
+            if (ukey.contains("UNIX")) {
                 parser = new UnixFTPEntryParser(config);
-            } else if (ukey.indexOf("VMS") >= 0) {
+            } else if (ukey.contains("LINUX")) {
+                parser = new UnixFTPEntryParser(config);
+            } else if (ukey.contains("VMS")) {
                 parser = new VMSVersioningFTPEntryParser(config);
-            } else if (ukey.indexOf("WINDOWS") >= 0) {
+            } else if (ukey.contains("WINDOWS")) {
                 parser = createNTFTPEntryParser(config);
-            } else if (ukey.indexOf("OS/2") >= 0) {
+            } else if (ukey.contains("WIN32")) {
+                parser = createNTFTPEntryParser(config);
+            } else if (ukey.contains("OS/2")) {
                 parser = new OS2FTPEntryParser(config);
-            } else if ((ukey.indexOf("OS/400") >= 0) || (ukey.indexOf("AS/400") >= 0)) {
+            } else if ((ukey.contains("OS/400")) || (ukey.contains("AS/400"))) {
                 parser = createOS400FTPEntryParser(config);
-            } else if (ukey.indexOf("MVS") >= 0) {
+            } else if (ukey.contains("MVS")) {
                 parser = new MVSFTPEntryParser();
-            } else if (ukey.indexOf("NETWARE") >= 0) {
+            } else if (ukey.contains("NETWARE")) {
                 parser = new NetwareFTPEntryParser(config);
-            } else if (ukey.indexOf("MACOS PETER") >= 0) {
+            } else if (ukey.contains("MACOS PETER")) {
                 parser = new MacOsPeterFTPEntryParser(config);
-            } else if (ukey.indexOf("TYPE: L8") >= 0) {
+            } else if (ukey.contains("TYPE: L8")) {
                 parser = new UnixFTPEntryParser(config);
             } else {
                 throw new ParserInitializationException("Unknown parser type: " + key);
