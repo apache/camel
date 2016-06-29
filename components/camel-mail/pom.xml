@@ -102,6 +102,17 @@
           <artifactId>commons-io</artifactId>
           <scope>test</scope>
         </dependency>
+        <dependency>
+          <groupId>org.quartz-scheduler</groupId>
+          <artifactId>quartz</artifactId>
+          <version>${quartz2-version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-quartz2</artifactId>
+          <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
