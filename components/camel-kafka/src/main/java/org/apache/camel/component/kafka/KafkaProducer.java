@@ -38,7 +38,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
 public class KafkaProducer extends DefaultAsyncProducer {
-    
+
     private org.apache.kafka.clients.producer.KafkaProducer kafkaProducer;
     private final KafkaEndpoint endpoint;
     private ExecutorService workerPool;
@@ -48,7 +48,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         super(endpoint);
         this.endpoint = endpoint;
     }
-    
+
     Properties getProps() {
         Properties props = endpoint.getConfiguration().createProducerProperties();
         endpoint.updateClassProperties(props);
@@ -212,7 +212,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         private final Exchange exchange;
         private final AsyncCallback callback;
         private final AtomicInteger count = new AtomicInteger(1);
-        private final List<RecordMetadata> recordMetadatas = new Vector<>();
+        private final List<RecordMetadata> recordMetadatas = new ArrayList<>();
 
         KafkaProducerCallBack(Exchange exchange, AsyncCallback callback) {
             this.exchange = exchange;
@@ -231,7 +231,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
             }
             return false;
         }
-        
+
         @Override
         public void onCompletion(RecordMetadata recordMetadata, Exception e) {
             if (e != null) {
