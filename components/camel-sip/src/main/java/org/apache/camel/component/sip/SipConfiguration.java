@@ -193,7 +193,7 @@ public class SipConfiguration {
      * Whether the sip consumer will subscribe to the given address or only listen for incoming
      * MESSAGE requests
      */
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "false")
     private boolean isSubscribing = false;
 
     /**
