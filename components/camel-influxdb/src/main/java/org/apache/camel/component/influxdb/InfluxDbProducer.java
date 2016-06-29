@@ -35,7 +35,6 @@ public class InfluxDbProducer extends DefaultProducer {
 
     /**
      * Processes the message exchange
-     *
      * @param exchange the message exchange
      * @throws Exception if an internal processing error has occurred.
      */

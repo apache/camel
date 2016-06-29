@@ -31,7 +31,6 @@ public class MockedInfluxDbConfiguration {
     @Bean
     public InfluxDB influxDbBean() throws UnknownHostException {
         InfluxDB mockedDbConnection = mock(InfluxDB.class);
-
         return mockedDbConnection;
     }
 }

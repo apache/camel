@@ -35,12 +35,6 @@ public class CamelInfluxDbConverterTest {
     private static final Logger LOG = LoggerFactory.getLogger(CamelInfluxDbConverterTest.class);
 
     @Test
-    public void testRun() {
-        LOG.debug("Hello $chicken!");
-
-    }
-
-    @Test
     public void doesNotAddCamelHeaders() {
         Map<String, Object> pointInMapFormat = new HashMap<>();
         pointInMapFormat.put(InfluxDbConstants.MEASUREMENT_NAME, "testCPU");
