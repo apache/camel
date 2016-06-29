@@ -17,15 +17,15 @@
 package org.apache.camel.component.salesforce.internal.joda;
 
 
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import java.time.ZonedDateTime;
 
-import org.joda.time.DateTime;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 public class DateTimeModule extends SimpleModule {
 
     public DateTimeModule() {
         super();
-        addSerializer(DateTime.class, new DateTimeSerializer());
-        addDeserializer(DateTime.class, new DateTimeDeserializer());
+        addSerializer(ZonedDateTime.class, new DateTimeSerializer());
+        addDeserializer(ZonedDateTime.class, new DateTimeDeserializer());
     }
 }
