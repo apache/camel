@@ -49,14 +49,11 @@ public final class ApiConsumerHelper {
 
         ApiMethod result;
         // find one that takes the largest subset of endpoint parameters
-        final Set<String> argNames = new HashSet<String>();
-        argNames.addAll(endpoint.getEndpointPropertyNames());
-
+        final Set<String> argNames = new HashSet<>(endpoint.getEndpointPropertyNames());
         propertyNamesInterceptor.interceptPropertyNames(argNames);
 
-        final String[] argNamesArray = argNames.toArray(new String[argNames.size()]);
         List<ApiMethod> filteredMethods = endpoint.methodHelper.filterMethods(
-                endpoint.getCandidates(), ApiMethodHelper.MatchType.SUPER_SET, argNamesArray);
+                endpoint.getCandidates(), ApiMethodHelper.MatchType.SUPER_SET, argNames);
 
         if (filteredMethods.isEmpty()) {
             ApiMethodHelper<? extends ApiMethod> methodHelper = endpoint.getMethodHelper();

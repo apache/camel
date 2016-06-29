@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.box;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import com.box.boxjavalibv2.dao.BoxEventCollection;
-import com.box.boxjavalibv2.dao.BoxTypedObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.box.internal.BoxConstants;
@@ -109,12 +107,9 @@ public class BoxConsumer extends DefaultConsumer
 
     @Override
     public Object splitResult(Object result) {
-        if (result instanceof BoxEventCollection && splitResult) {
-            BoxEventCollection eventCollection = (BoxEventCollection) result;
-            final ArrayList<BoxTypedObject> entries = eventCollection.getEntries();
-            return entries.toArray(new BoxTypedObject[entries.size()]);
-        }
-        return result;
+        return (result instanceof BoxEventCollection && splitResult)
+            ? ((BoxEventCollection) result).getEntries()
+            : result;
     }
 
     @Override

@@ -19,7 +19,6 @@ package org.apache.camel.util.component;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
@@ -207,35 +207,58 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * Note that the args list is a required subset of arguments for returned methods.
      *
      * @param name case sensitive method name or alias to lookup
+     * @return non-null unmodifiable list of methods that take all of the given arguments, empty if there is no match
+     */
+    public List<ApiMethod> getCandidateMethods(String name) {
+        return getCandidateMethods(name, Collections.emptyList());
+    }
+
+    /**
+     * Gets methods that match the given name and arguments.<p/>
+     * Note that the args list is a required subset of arguments for returned methods.
+     *
+     * @param name case sensitive method name or alias to lookup
      * @param argNames unordered required argument names
      * @return non-null unmodifiable list of methods that take all of the given arguments, empty if there is no match
      */
-    public List<ApiMethod> getCandidateMethods(String name, String... argNames) {
+    public List<ApiMethod> getCandidateMethods(String name, Collection<String> argNames) {
         List<T> methods = methodMap.get(name);
         if (methods == null) {
             if (aliasesMap.containsKey(name)) {
-                methods = new ArrayList<T>();
-                for (String method : aliasesMap.get(name)) {
-                    methods.addAll(methodMap.get(method));
-                }
+                methods = aliasesMap.get(name)
+                    .stream()
+                    .map(method -> (T)methodMap.get(method))
+                    .collect(Collectors.toList());
             }
         }
         if (methods == null) {
             LOG.debug("No matching method for method {}", name);
             return Collections.emptyList();
         }
-        int nArgs = argNames != null ? argNames.length : 0;
+        int nArgs = argNames != null ? argNames.size() : 0;
         if (nArgs == 0) {
             LOG.debug("Found {} methods for method {}", methods.size(), name);
-            return Collections.<ApiMethod>unmodifiableList(methods);
+            return Collections.unmodifiableList(methods);
         } else {
             final List<ApiMethod> filteredSet = filterMethods(methods, MatchType.SUBSET, argNames);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Found {} filtered methods for {}",
-                    filteredSet.size(), name + Arrays.toString(argNames).replace('[', '(').replace(']', ')'));
+                    filteredSet.size(), name + argNames.toString().replace('[', '(').replace(']', ')'));
             }
             return filteredSet;
         }
+    }
+
+    /**
+     * Filters a list of methods to those that take the given set of arguments.
+     *
+     * @param methods list of methods to filter
+     * @param matchType whether the arguments are an exact match, a subset or a super set of method args
+     * @return methods with arguments that satisfy the match type.<p/>
+     * For SUPER_SET match, if methods with exact match are found, methods that take a subset are ignored
+     */
+    public List<ApiMethod> filterMethods(List<? extends ApiMethod> methods, MatchType matchType) {
+        return filterMethods(methods, matchType, Collections.emptyList());
     }
 
     /**
@@ -247,14 +270,12 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @return methods with arguments that satisfy the match type.<p/>
      * For SUPER_SET match, if methods with exact match are found, methods that take a subset are ignored
      */
-    public List<ApiMethod> filterMethods(List<? extends ApiMethod> methods, MatchType matchType,
-                                                          String... argNames) {
+    public List<ApiMethod> filterMethods(List<? extends ApiMethod> methods, MatchType matchType, Collection<String> argNames) {
         // original arguments
-        final List<String> argsList = Arrays.asList(argNames);
         // supplied arguments with missing nullable arguments
         final List<String> withNullableArgsList;
         if (!nullableArguments.isEmpty()) {
-            withNullableArgsList = new ArrayList<String>(argsList);
+            withNullableArgsList = new ArrayList<>(argNames);
             withNullableArgsList.addAll(nullableArguments);
         } else {
             withNullableArgsList = null;
@@ -270,21 +291,21 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
             switch (matchType) {
             case EXACT:
                 // method must take all args, and no more
-                if (methodArgs.containsAll(argsList) && argsList.containsAll(methodArgs)) {
+                if (methodArgs.containsAll(argNames) && argNames.containsAll(methodArgs)) {
                     result.add(method);
                 }
                 break;
             case SUBSET:
                 // all args are required, method may take more
-                if (methodArgs.containsAll(argsList)) {
+                if (methodArgs.containsAll(argNames)) {
                     result.add(method);
                 }
                 break;
             default:
             case SUPER_SET:
                 // all method args must be present
-                if (argsList.containsAll(methodArgs)) {
-                    if (methodArgs.containsAll(argsList)) {
+                if (argNames.containsAll(methodArgs)) {
+                    if (methodArgs.containsAll(argNames)) {
                         // prefer exact match to avoid unused args
                         result.add(method);
                     } else {
