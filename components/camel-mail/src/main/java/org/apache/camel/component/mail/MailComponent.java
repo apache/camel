@@ -65,6 +65,7 @@ public class MailComponent extends UriEndpointComponent {
         MailEndpoint endpoint = new MailEndpoint(uri, this, config);
         endpoint.setContentTypeResolver(contentTypeResolver);
         setProperties(endpoint.getConfiguration(), parameters);
+        setProperties(endpoint, parameters);
 
         Map<String, Object> sstParams = IntrospectionSupport.extractProperties(parameters, "searchTerm.");
         if (!sstParams.isEmpty()) {
