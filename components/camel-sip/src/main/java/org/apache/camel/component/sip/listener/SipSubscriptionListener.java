@@ -26,6 +26,7 @@ import javax.sip.SipListener;
 import javax.sip.SipProvider;
 import javax.sip.Transaction;
 import javax.sip.TransactionTerminatedEvent;
+import javax.sip.header.FromHeader;
 import javax.sip.header.SubscriptionStateHeader;
 import javax.sip.header.ViaHeader;
 import javax.sip.message.Request;
@@ -101,11 +102,13 @@ public class SipSubscriptionListener implements SipListener {
         ServerTransaction serverTransactionId = requestReceivedEvent
                 .getServerTransaction();
         String viaBranch = ((ViaHeader)(request.getHeaders(ViaHeader.NAME).next())).getParameter("branch");
+        String fromBranch = ((FromHeader)(request.getHeader(FromHeader.NAME))).toString();
 
         //log the retrieved request
         LOG.debug("Request: {}", request.getMethod());
         LOG.debug("Server Transaction Id: {}", serverTransactionId);
         LOG.debug("Received From Branch: {}", viaBranch);
+        LOG.debug("Received From: {}", fromBranch);
 
         //process NOTIFY and MESSAGE requests only
         if (Request.NOTIFY.equals(request.getMethod()))

@@ -57,7 +57,6 @@ public class SipComponent extends UriEndpointComponent {
             parametersString += String.format("%s=%s;",s, parameters.get(s).toString());
         }
         LOG.debug("Creating endpoint with uri: {} remaining: {} parameters: {}", uri, remaining, parametersString);
-
         SipConfiguration config = new SipConfiguration();
         config.initialize(new URI(uri), parameters, this);
         

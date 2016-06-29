@@ -81,8 +81,10 @@ The SIP component has no options.
 
 
 
+
+
 // endpoint options: START
-The SIP component supports 45 endpoint options which are listed below:
+The SIP component supports 46 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -106,7 +108,8 @@ The SIP component supports 45 endpoint options which are listed below:
 | transport | common | tcp | String | The transport method used to send and receive messages. Defaults to TCP. Has to be equal to TCP or UDP to be valid.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | consumer | consumer | false | boolean | Whether the SipEndpoint is a consuming or producing endpoint. Determines if From headers are used (and thus the Endpoint is consuming because it retrieves from the SIP URI or To headers are used (and thus the Endpoint is producing because it needs to send to the SIP URI.
-| presenceAgent | consumer | false | boolean | The Consumer created by the SipEndpoint will be a SipPresenceAgent when true or SipSubscriber when false. A SipPrecenceAgent is only for testing purposes. If the endpoint is a consumer this should be false.
+| isSubscribing | consumer | true | boolean | Whether the sip consumer will subscribe to the given address or only listen for incoming MESSAGE requests
+| presenceAgent | consumer | false | boolean | The Consumer created by the SipEndpoint will be a SipPresenceAgent when true or SipConsumer when false. A SipPresenceAgent is only for testing purposes. If the endpoint is a consumer this should be false.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | addressFactory | advanced |  | AddressFactory | Allows the creation of (SIP) uri's.
 | callIdHeader | advanced |  | CallIdHeader | Holds the header which stores the Call-ID. It is used to uniquely identify a message.
@@ -124,7 +127,7 @@ The SIP component supports 45 endpoint options which are listed below:
 | messageFactory | advanced |  | MessageFactory | Allows the creation of SIP request and response messages.
 | sipFactory | advanced |  | SipFactory | Singleton factory for obtaining for the AddressFactory HeaderFactory MessageFactory and SipStack.
 | sipStack | advanced |  | SipStack | Allows the creation of SipProviders and SipListeners.
-| sipUri | advanced |  | SipURI | The SIP URI the SipEndpoint needsto connect to. This object represents the SIP uri string given when the SipEndpoint is created. This object gets created through the normal URI object.
+| sipUri | advanced |  | SipURI | The SIP URI the SipEndpoint needs to connect to. This object represents the SIP uri string given when the SipEndpoint is created. This object gets created through the normal URI object.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | toHeader | advanced |  | ToHeader | Holds the to header which stores the original retriever of a message.
 | viaHeaders | advanced |  | List | Holds the Header which stores all proxies which forwarded a message from the sender to the receiver.
@@ -136,6 +139,8 @@ The SIP component supports 45 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
+
 
 
 [[Sip-SendingMessagestofromaSIPendpoint]]

@@ -93,7 +93,7 @@ public class SipConfiguration {
     private URI uri;
 
     /**
-     * The SIP URI the SipEndpoint needsto connect to. This object represents the SIP uri string given
+     * The SIP URI the SipEndpoint needs to connect to. This object represents the SIP uri string given
      * when the SipEndpoint is created. This object gets created through the normal URI object.
      */
     @UriParam(label = "advanced")
@@ -109,7 +109,7 @@ public class SipConfiguration {
      * The transport method used to send and receive messages. Defaults to TCP.
      * Has to be equal to TCP or UDP to be valid.
      */
-    @UriParam(label = "common", defaultValue = "tcp", enums = "tcp,udp")
+    @UriParam(label = "common", defaultValue = "tcp", enums = "tcp,udp,tls")
     private String transport = "tcp";
 
     /**
@@ -193,12 +193,12 @@ public class SipConfiguration {
      * Whether the sip consumer will subscribe to the given address or only listen for incoming
      * MESSAGE requests
      */
-    @UriParam(label = "conusmer")
-    private boolean isSubscribing;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean isSubscribing = false;
 
     /**
      * The Consumer created by the SipEndpoint will be a SipPresenceAgent when true or
-     * SipConsumer when false. A SipPrecenceAgent is only for testing purposes. If the endpoint
+     * SipConsumer when false. A SipPresenceAgent is only for testing purposes. If the endpoint
      * is a consumer this should be false.
      */
     @UriParam(label = "consumer")
@@ -394,7 +394,7 @@ public class SipConfiguration {
             setStackName((String) settings.get("stackName"));
         }
         if (settings.containsKey("transport")) {
-            setTransport((String) settings.get("transport"));
+            setTransport(((String) settings.get("transport")).toLowerCase());
         } 
         if (settings.containsKey("maxMessageSize")) {
             setMaxMessageSize(Integer.valueOf((String) settings.get("maxMessageSize")));
@@ -429,6 +429,10 @@ public class SipConfiguration {
         if (settings.containsKey("presenceAgent")) {
             setPresenceAgent(Boolean.valueOf((String) settings.get("presenceAgent")));
         }
+        if (settings.containsKey("isSubscribing"))
+        {
+            setSubscribing(Boolean.valueOf((String) settings.get("isSubscribing")));
+        }
 
         /*
          If the endpoint is a producer endpoint it will send information to the specified server at the SIP URI:
@@ -459,10 +463,6 @@ public class SipConfiguration {
             setFromUser(uri.getUserInfo());
             setFromHost(uri.getHost());
             setFromPort(uri.getPort());
-            if (settings.containsKey("isSubscribing"))
-            {
-                setSubscribing(Boolean.valueOf((String) settings.get("isSubscribing")));
-            }
             if (!presenceAgent) { //only true when a PresenceAgent and thus not a consumer
                 if (settings.containsKey("toUser")) {
                     setToUser((String) settings.get("toUser"));

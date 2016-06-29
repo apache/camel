@@ -70,7 +70,7 @@ public class SipConsumer extends DefaultConsumer {
      * Creates a consumer which subscribes to the given SIP uri in the configuration
      *
      * @param sipEndpoint the endpoint creating the consumer
-     * @param processor the processer in the camel route
+     * @param processor the processor in the camel route
      * @param configuration the SIP configuration holding the URI and additional information
      */
     public SipConsumer(SipEndpoint sipEndpoint, Processor processor, SipConfiguration configuration) {
@@ -80,7 +80,7 @@ public class SipConsumer extends DefaultConsumer {
     }
 
     /**
-     * Starts the consumer by sending a SIP subscribe request
+     * Starts the consumer by creating listening points and potentialy sending a SIP subscribe request
      *
      * @throws Exception when sending the subscription goes wrong
      */
@@ -98,7 +98,7 @@ public class SipConsumer extends DefaultConsumer {
         sipSubscriptionListener = new SipSubscriptionListener(this);
 
         //listening point for SIP request and responses
-        LOG.debug("Making listening point on host: {}, port: {} with transport {}",
+        LOG.debug("Making listening point on address: {}:{} with transport {}",
                 configuration.getFromHost(),
                 configuration.getFromPort(),
                 configuration.getTransport());
@@ -131,6 +131,7 @@ public class SipConsumer extends DefaultConsumer {
 
             // Send the outgoing subscription request.
             subscriberTransactionId.sendRequest();
+            LOG.debug("Sent subscription request to " + subscriberTransactionId.getDialog().getRemoteParty());
         }
     }
 
