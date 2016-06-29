@@ -17,6 +17,9 @@
 package org.apache.camel.component.salesforce.api;
 
 import java.lang.reflect.Constructor;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
@@ -25,10 +28,6 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
 
 /**
  * XStream converter for handling JodaTime fields.
@@ -36,26 +35,14 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 public class JodaTimeConverter implements Converter {
 
     private final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-            .appendYear(4, 4)
-            .appendLiteral('-')
-            .appendMonthOfYear(2)
-            .appendLiteral('-')
-            .appendDayOfMonth(2)
-            .appendLiteral('T')
-            .appendHourOfDay(2)
-            .appendLiteral(':')
-            .appendMinuteOfHour(2)
-            .appendLiteral(':')
-            .appendSecondOfMinute(2)
-            .appendLiteral('.')
-            .appendMillisOfSecond(3)
-            .appendTimeZoneOffset("Z", true, 2, 2)
+            .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+            .appendOffset("+HH:mm", "Z")
             .toFormatter();
 
     @Override
     public void marshal(Object o, HierarchicalStreamWriter writer, MarshallingContext context) {
-        DateTime dateTime = (DateTime) o;
-        writer.setValue(formatter.print(dateTime));
+        ZonedDateTime dateTime = (ZonedDateTime) o;
+        writer.setValue(formatter.format(dateTime));
     }
 
     @Override
@@ -63,12 +50,10 @@ public class JodaTimeConverter implements Converter {
         String dateTimeStr = reader.getValue();
         Class<?> requiredType = context.getRequiredType();
         try {
-            Constructor<?> constructor = requiredType.getConstructor(Object.class, DateTimeZone.class);
-            // normalize date time to UTC
-            return constructor.newInstance(dateTimeStr, DateTimeZone.UTC);
+            return formatter.parse(dateTimeStr, ZonedDateTime::from);
         } catch (Exception e) {
             throw new ConversionException(
-                    String.format("Error reading Joda DateTime from value %s: %s",
+                    String.format("Error reading ZonedDateTime from value %s: %s",
                             dateTimeStr, e.getMessage()),
                     e);
         }
@@ -76,7 +61,7 @@ public class JodaTimeConverter implements Converter {
 
     @Override
     public boolean canConvert(Class aClass) {
-        return DateTime.class.isAssignableFrom(aClass);
+        return ZonedDateTime.class.isAssignableFrom(aClass);
     }
 
 }

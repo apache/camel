@@ -19,33 +19,21 @@ package org.apache.camel.component.salesforce.internal.joda;
 
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
 
-public class DateTimeSerializer extends JsonSerializer<DateTime> {
+public class DateTimeSerializer extends JsonSerializer<ZonedDateTime> {
 
     private final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-            .appendYear(4, 4)
-            .appendLiteral('-')
-            .appendMonthOfYear(2)
-            .appendLiteral('-')
-            .appendDayOfMonth(2)
-            .appendLiteral('T')
-            .appendHourOfDay(2)
-            .appendLiteral(':')
-            .appendMinuteOfHour(2)
-            .appendLiteral(':')
-            .appendSecondOfMinute(2)
-            .appendLiteral('.')
-            .appendMillisOfSecond(3)
-            .appendTimeZoneOffset("Z", true, 2, 2)
+            .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+            .appendOffset("+HH:mm", "Z")
             .toFormatter();
 
     public DateTimeSerializer() {
@@ -53,8 +41,8 @@ public class DateTimeSerializer extends JsonSerializer<DateTime> {
     }
 
     @Override
-    public void serialize(DateTime dateTime, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
-        jsonGenerator.writeString(formatter.print(dateTime));
+    public void serialize(ZonedDateTime dateTime, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
+        jsonGenerator.writeString(formatter.format(dateTime));
     }
 
 }

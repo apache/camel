@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +55,6 @@ import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -233,7 +234,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    @Ignore("Depends on a Task object with a datetime field")
+    //@Ignore("Depends on a Task object with a datetime field")
     public void testCreateUpdateDeleteTasks() throws Exception {
         doTestCreateUpdateDeleteTasks("");
         doTestCreateUpdateDeleteTasks("Xml");
@@ -242,7 +243,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     private void doTestCreateUpdateDeleteTasks(String suffix) throws Exception {
         Tasks__c taken = new Tasks__c();
         taken.setName("Task1");
-        taken.setStart__c(new DateTime(1700, 1, 2, 3, 4, 5, 6));
+        taken.setStart__c(ZonedDateTime.of(1700, 1, 2, 3, 4, 5, 6, ZoneId.systemDefault()));
         CreateSObjectResult result = template().requestBody("direct:createSObject" + suffix,
                 taken, CreateSObjectResult.class);
         assertNotNull(result);
@@ -252,7 +253,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         // test JSON update
         // make the plane cheaper
         taken.setId(result.getId());
-        taken.setStart__c(new DateTime(1991, 1, 2, 3, 4, 5, 6));
+        taken.setStart__c(ZonedDateTime.of(1991, 1, 2, 3, 4, 5, 6, ZoneId.systemDefault()));
 
         assertNull(template().requestBodyAndHeader("direct:updateSObject" + suffix,
                 taken, SalesforceEndpointConfig.SOBJECT_ID, result.getId()));

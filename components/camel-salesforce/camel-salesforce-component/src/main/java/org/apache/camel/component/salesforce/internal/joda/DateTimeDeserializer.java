@@ -17,6 +17,10 @@
 package org.apache.camel.component.salesforce.internal.joda;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.TemporalQuery;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,27 +28,12 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
 
-public class DateTimeDeserializer extends JsonDeserializer<DateTime> {
+public class DateTimeDeserializer extends JsonDeserializer<ZonedDateTime> {
 
     private final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-            .appendYear(4, 4)
-            .appendLiteral('-')
-            .appendMonthOfYear(2)
-            .appendLiteral('-')
-            .appendDayOfMonth(2)
-            .appendLiteral('T')
-            .appendHourOfDay(2)
-            .appendLiteral(':')
-            .appendMinuteOfHour(2)
-            .appendLiteral(':')
-            .appendSecondOfMinute(2)
-            .appendLiteral('.')
-            .appendMillisOfSecond(3)
-            .appendTimeZoneOffset("Z", true, 2, 2)
+            .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+            .appendOffset("+HH:mm", "Z")
             .toFormatter();
 
     public DateTimeDeserializer() {
@@ -52,11 +41,11 @@ public class DateTimeDeserializer extends JsonDeserializer<DateTime> {
     }
 
     @Override
-    public DateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+    public ZonedDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
         JsonToken currentToken = jsonParser.getCurrentToken();
         if (currentToken == JsonToken.VALUE_STRING) {
             String dateTimeAsString = jsonParser.getText().trim();
-            return formatter.parseDateTime(dateTimeAsString);
+            return formatter.parse(dateTimeAsString, ZonedDateTime::from);
         }
         throw deserializationContext.mappingException(getClass());
     }

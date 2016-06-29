@@ -17,6 +17,8 @@
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.io.ByteArrayInputStream;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -33,7 +35,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.core.Is;
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -50,7 +51,7 @@ public class JsonRestProcessorTest {
         DefaultCamelContext context = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
         TestObject doc = new TestObject();
-        doc.setCreationDate(new DateTime(1717, 1, 2, 3, 4, 5, 6));
+        doc.setCreationDate(ZonedDateTime.of(1717, 1, 2, 3, 4, 5, 6, ZoneId.systemDefault()));
 
         exchange.getIn().setBody(doc);
         ByteArrayInputStream is = (ByteArrayInputStream) jsonRestProcessor.getRequestStream(exchange);
@@ -60,13 +61,13 @@ public class JsonRestProcessorTest {
 
     private static class TestObject extends AbstractDTOBase {
 
-        private DateTime creationDate;
+        private ZonedDateTime creationDate;
 
-        public DateTime getCreationDate() {
+        public ZonedDateTime getCreationDate() {
             return creationDate;
         }
 
-        public void setCreationDate(DateTime creationDate) {
+        public void setCreationDate(ZonedDateTime creationDate) {
             this.creationDate = creationDate;
         }
     }
