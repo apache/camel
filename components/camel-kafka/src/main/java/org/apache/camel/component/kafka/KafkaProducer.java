@@ -80,7 +80,13 @@ public class KafkaProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         Properties props = getProps();
         if (kafkaProducer == null) {
-            kafkaProducer = new org.apache.kafka.clients.producer.KafkaProducer(props);
+            ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
+            try {
+                Thread.currentThread().setContextClassLoader(null);
+                kafkaProducer = new org.apache.kafka.clients.producer.KafkaProducer(props);
+            } finally {
+                Thread.currentThread().setContextClassLoader(threadClassLoader);
+            }
         }
 
         // if we are in asynchronous mode we need a worker pool
