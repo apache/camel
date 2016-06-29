@@ -83,6 +83,7 @@ The SIP component has no options.
 
 
 
+
 // endpoint options: START
 The SIP component supports 46 endpoint options which are listed below:
 
@@ -108,8 +109,8 @@ The SIP component supports 46 endpoint options which are listed below:
 | transport | common | tcp | String | The transport method used to send and receive messages. Defaults to TCP. Has to be equal to TCP or UDP to be valid.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | consumer | consumer | false | boolean | Whether the SipEndpoint is a consuming or producing endpoint. Determines if From headers are used (and thus the Endpoint is consuming because it retrieves from the SIP URI or To headers are used (and thus the Endpoint is producing because it needs to send to the SIP URI.
-| isSubscribing | consumer | true | boolean | Whether the sip consumer will subscribe to the given address or only listen for incoming MESSAGE requests
 | presenceAgent | consumer | false | boolean | The Consumer created by the SipEndpoint will be a SipPresenceAgent when true or SipConsumer when false. A SipPresenceAgent is only for testing purposes. If the endpoint is a consumer this should be false.
+| subscribing | consumer | false | boolean | Whether the sip consumer will subscribe to the given address or only listen for incoming MESSAGE requests
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | addressFactory | advanced |  | AddressFactory | Allows the creation of (SIP) uri's.
 | callIdHeader | advanced |  | CallIdHeader | Holds the header which stores the Call-ID. It is used to uniquely identify a message.
@@ -139,6 +140,7 @@ The SIP component supports 46 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 

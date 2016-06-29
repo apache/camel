@@ -80,7 +80,7 @@ public class SipConsumer extends DefaultConsumer {
     }
 
     /**
-     * Starts the consumer by creating listening points and potentialy sending a SIP subscribe request
+     * Starts the consumer by creating listening points and potentially sending a SIP subscribe request
      *
      * @throws Exception when sending the subscription goes wrong
      */

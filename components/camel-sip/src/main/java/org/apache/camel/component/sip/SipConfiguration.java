@@ -194,7 +194,7 @@ public class SipConfiguration {
      * MESSAGE requests
      */
     @UriParam(label = "consumer", defaultValue = "false")
-    private boolean isSubscribing = false;
+    private boolean subscribing = false;
 
     /**
      * The Consumer created by the SipEndpoint will be a SipPresenceAgent when true or
@@ -429,9 +429,9 @@ public class SipConfiguration {
         if (settings.containsKey("presenceAgent")) {
             setPresenceAgent(Boolean.valueOf((String) settings.get("presenceAgent")));
         }
-        if (settings.containsKey("isSubscribing"))
+        if (settings.containsKey("subscribing"))
         {
-            setSubscribing(Boolean.valueOf((String) settings.get("isSubscribing")));
+            setSubscribing(Boolean.valueOf((String) settings.get("subscribing")));
         }
 
         /*
@@ -1216,12 +1216,12 @@ public class SipConfiguration {
      */
     public void setSubscribing(boolean subscribing)
     {
-        isSubscribing = subscribing;
+        this.subscribing = subscribing;
     }
 
     public boolean isSubscribing()
     {
-        return isSubscribing;
+        return subscribing;
     }
 
 }
