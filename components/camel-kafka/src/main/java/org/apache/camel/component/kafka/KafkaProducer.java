@@ -82,6 +82,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         if (kafkaProducer == null) {
             ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
             try {
+                //Fix for running camel-kafka in OSGI see KAFKA-3218
                 Thread.currentThread().setContextClassLoader(null);
                 kafkaProducer = new org.apache.kafka.clients.producer.KafkaProducer(props);
             } finally {
