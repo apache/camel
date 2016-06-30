@@ -1,0 +1,69 @@
+[[AsynchronousRoutingEngine-AsynchronousRoutingEngine]]
+Asynchronous Routing Engine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Available as of Camel 2.4*
+
+As of Camel 2.4 the asynchronous routing engine is back and kicking. +
+All the link:enterprise-integration-patterns.html[Enterprise
+Integration Patterns] are supported as well a selected number of
+link:components.html[Components]:
+
+* link:ahc.html[AHC] *Camel 2.8:* (only producer)
+* link:aws.html[AWS] *Camel 2.11:* (only consumer) for S3 and SNS.
+* link:avro.html[Avro] *Camel 2.10:* (only producer)
+* link:cxf.html[CXF] *Camel 2.5:* (both consumer and producer)
+* link:cxfrs.html[CXFRS] *Camel 2.5:* (only consumer)
+* link:direct-vm.html[Direct-VM] *Camel 2.10.5/2.11.0:* (both consumer
+and producer)
+* link:file.html[File] - (only consumer)
+* link:ftp.html[FTP] - (only consumer)
+* link:guava-eventbus.html[Guava EventBus] *Camel 2.10:* (only consumer)
+* link:jbi.html[JBI] (both consumer and producer)
+* link:jetty.html[Jetty] (both consumer and producer)
+* link:jgroups.html[JGroups] *Camel 2.10:* (only consumer)
+* link:jms.html[JMS] *Camel 2.5:* (only producer for
+link:request-reply.html[Request Reply] messaging over JMS). *Camel 2.9:*
+(consumer, if option `asyncConsumer=true` is used).
+* link:jms.html[JMS] *Camel 2.9:* (also consumer)
+* link:mqtt.html[MQTT] *Camel 2.10.2:* (only producer)
+* link:nmr.html[NMR] (both consumer and producer)
+* link:netty.html[Netty] only producer (*Camel 2.10:* also consumer)
+* link:restlet.html[Restlet] *Camel 2.8:* (only producer)
+* link:seda.html[SEDA] (both consumer and producer) SEDA was mistakenly
+in this list until November 3rd 2012. As of Camel 2.10.x, it still does
+not leverage the Async Routing Engine, but support is planned for
+http://camel.apache.org/camel-30-roadmap.html#Camel3.0-Roadmap-SEDA%2FVMcomponentstoleverageasyncroutingengine[Camel
+3.0].
+
+* link:timer.html[Timer] *Camel 2.12:* (only consumer)
+
+When we say a component is supported, that means, the component is
+leveraging the asynchronous model. For example link:jetty.html[Jetty]
+uses continuations and the async http client to be fully asynchronous
+and non blocked. That means no threads will ever be blocked while
+waiting for a reply.
+
+In the future additional link:components.html[Components] will be
+supported as well where it's applicable.
+
+[[AsynchronousRoutingEngine-Forcingtousesynchronousprocessing]]
+Forcing to use synchronous processing
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can configure the endpoints with the option `synchronous=true` to
+force using synchronous processing. For example when sending a web
+service request using link:cxf.html[CXF], the caller will wait for the
+reply if `synchronous=true` was configured. Currently this option is
+supported by the all the producers. If you don't want to let the
+link:cxf.html[CXF] consumer leverage the CXF continuation API to use the
+asynchronous processing, you can also use this option `synchronous=true`
+to disable it. The link:jbi.html[JBI] and link:nmr.html[NMR] component
+are always asynchronous and doesn't support this option.
+
+[[AsynchronousRoutingEngine-Backgroundinformation]]
+Background information
+~~~~~~~~~~~~~~~~~~~~~~
+
+See link:asynchronous-processing.html[Asynchronous Processing] for
+additional information and the concepts behind the asynchronous model.
