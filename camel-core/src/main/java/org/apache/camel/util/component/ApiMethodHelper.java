@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
@@ -42,16 +41,18 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
     private static final Logger LOG = LoggerFactory.getLogger(ApiMethodHelper.class);
 
     // maps method name to ApiMethod
-    private final Map<String, List<T>> methodMap = new HashMap<String, List<T>>();
+    private final Map<String, List<T>> methodMap;
 
     // maps method name to method arguments of the form Class type1, String name1, Class type2, String name2,...
-    private final Map<String, List<Object>> argumentsMap = new HashMap<String, List<Object>>();
+    private final Map<String, List<Object>> argumentsMap;
 
     // maps argument name to argument type
-    private final Map<String, Class<?>> validArguments = new HashMap<String, Class<?>>();
+    private final Map<String, Class<?>> validArguments;
 
     // maps aliases to actual method names
-    private final HashMap<String, Set<String>> aliasesMap = new HashMap<String, Set<String>>();
+    private final Map<String, Set<String>> aliasesMap;
+
+    // nullable args
     private final List<String> nullableArguments;
 
     /**
@@ -61,6 +62,11 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @param nullableArguments names of arguments that default to null value
      */
     public ApiMethodHelper(Class<T> apiMethodEnum, Map<String, String> aliases, List<String> nullableArguments) {
+
+        Map<String, List<T>> tmpMethodMap = new HashMap<>();
+        Map<String, List<Object>> tmpArgumentsMap = new HashMap<>();
+        Map<String, Class<?>> tmpValidArguments = new HashMap<>();
+        Map<String, Set<String>> tmpAliasesMap = new HashMap<>();
 
         // validate ApiMethod Enum
         if (apiMethodEnum == null) {
@@ -103,28 +109,28 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                         builder.append(Character.toLowerCase(firstChar)).append(alias.substring(1));
                         alias = builder.toString();
                     }
-                    Set<String> names = aliasesMap.get(alias);
+                    Set<String> names = tmpAliasesMap.get(alias);
                     if (names == null) {
                         names = new HashSet<String>();
-                        aliasesMap.put(alias, names);
+                        tmpAliasesMap.put(alias, names);
                     }
                     names.add(name);
                 }
             }
 
             // map method name to Enum
-            List<T> overloads = methodMap.get(name);
+            List<T> overloads = tmpMethodMap.get(name);
             if (overloads == null) {
                 overloads = new ArrayList<T>();
-                methodMap.put(method.getName(), overloads);
+                tmpMethodMap.put(method.getName(), overloads);
             }
             overloads.add(method);
 
             // add arguments for this method
-            List<Object> arguments = argumentsMap.get(name);
+            List<Object> arguments = tmpArgumentsMap.get(name);
             if (arguments == null) {
                 arguments = new ArrayList<Object>();
-                argumentsMap.put(name, arguments);
+                tmpArgumentsMap.put(name, arguments);
             }
 
             // process all arguments for this method
@@ -140,27 +146,27 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                 }
 
                 // also collect argument names for all methods, and detect clashes here
-                final Class<?> previousType = validArguments.get(argName);
+                final Class<?> previousType = tmpValidArguments.get(argName);
                 if (previousType != null && previousType != argType) {
                     throw new IllegalArgumentException(String.format(
                         "Argument %s has ambiguous types (%s, %s) across methods!",
                         name, previousType, argType));
                 } else if (previousType == null) {
-                    validArguments.put(argName, argType);
+                    tmpValidArguments.put(argName, argType);
                 }
             }
 
         }
 
         // validate nullableArguments
-        if (!validArguments.keySet().containsAll(this.nullableArguments)) {
+        if (!tmpValidArguments.keySet().containsAll(this.nullableArguments)) {
             List<String> unknowns = new ArrayList<String>(this.nullableArguments);
-            unknowns.removeAll(validArguments.keySet());
+            unknowns.removeAll(tmpValidArguments.keySet());
             throw new IllegalArgumentException("Unknown nullable arguments " + unknowns.toString());
         }
 
         // validate aliases
-        for (Map.Entry<String, Set<String>> entry : aliasesMap.entrySet()) {
+        for (Map.Entry<String, Set<String>> entry : tmpAliasesMap.entrySet()) {
 
             // look for aliases that match multiple methods
             final Set<String> methodNames = entry.getValue();
@@ -169,7 +175,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                 // get mapped methods
                 final List<T> aliasedMethods = new ArrayList<T>();
                 for (String methodName : methodNames) {
-                    List<T> mappedMethods = methodMap.get(methodName);
+                    List<T> mappedMethods = tmpMethodMap.get(methodName);
                     aliasedMethods.addAll(mappedMethods);
                 }
 
@@ -199,7 +205,12 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
             }
         }
 
-        LOG.debug("Found {} unique method names in {} methods", methodMap.size(), methods.length);
+        this.methodMap = Collections.unmodifiableMap(tmpMethodMap);
+        this.argumentsMap = Collections.unmodifiableMap(tmpArgumentsMap);
+        this.validArguments = Collections.unmodifiableMap(tmpValidArguments);
+        this.aliasesMap = Collections.unmodifiableMap(tmpAliasesMap);
+
+        LOG.debug("Found {} unique method names in {} methods", tmpMethodMap.size(), methods.length);
     }
 
     /**
@@ -225,10 +236,10 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         List<T> methods = methodMap.get(name);
         if (methods == null) {
             if (aliasesMap.containsKey(name)) {
-                methods = aliasesMap.get(name)
-                    .stream()
-                    .map(method -> (T)methodMap.get(method))
-                    .collect(Collectors.toList());
+                methods = new ArrayList<T>();
+                for (String method : aliasesMap.get(name)) {
+                    methods.addAll(methodMap.get(method));
+                }
             }
         }
         if (methods == null) {
@@ -282,9 +293,9 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         }
 
         // list of methods that have all args in the given names
-        final List<ApiMethod> result = new ArrayList<ApiMethod>();
-        final List<ApiMethod> extraArgs = new ArrayList<ApiMethod>();
-        final List<ApiMethod> nullArgs = new ArrayList<ApiMethod>();
+        List<ApiMethod> result = new ArrayList<>();
+        List<ApiMethod> extraArgs = null;
+        List<ApiMethod> nullArgs = null;
 
         for (ApiMethod method : methods) {
             final List<String> methodArgs = method.getArgNames();
@@ -308,13 +319,20 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                     if (methodArgs.containsAll(argNames)) {
                         // prefer exact match to avoid unused args
                         result.add(method);
-                    } else {
+                    } else if (result.isEmpty()) {
+                        // if result is empty, add method to extra args list
+                        if (extraArgs == null) {
+                            extraArgs = new ArrayList<>();
+                        }
                         // method takes a subset, unused args
                         extraArgs.add(method);
                     }
-                } else if (result.isEmpty() && extraArgs.isEmpty()) {
+                } else if (result.isEmpty() && extraArgs != null && extraArgs.isEmpty()) {
                     // avoid looking for nullable args by checking for empty result and extraArgs
                     if (withNullableArgsList != null && withNullableArgsList.containsAll(methodArgs)) {
+                        if (nullArgs == null) {
+                            nullArgs = new ArrayList<>();
+                        }
                         nullArgs.add(method);
                     }
                 }
@@ -322,8 +340,14 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
             }
         }
 
+        List<ApiMethod> methodList = result.isEmpty()
+            ? (extraArgs != null && extraArgs.isEmpty())
+                ? nullArgs
+                : extraArgs
+            : result;
+
         // preference order is exact match, matches with extra args, matches with null args
-        return Collections.unmodifiableList(result.isEmpty() ? (extraArgs.isEmpty() ? nullArgs : extraArgs) : result);
+        return methodList != null ? Collections.unmodifiableList(methodList) : Collections.emptyList();
     }
 
     /**
@@ -372,7 +396,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @return alias names mapped to method names.
      */
     public Map<String, Set<String>> getAliases() {
-        return Collections.unmodifiableMap(aliasesMap);
+        return aliasesMap;
     }
 
     /**
@@ -380,7 +404,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @return map with argument names as keys, and types as values
      */
     public Map<String, Class<?>> allArguments() {
-        return Collections.unmodifiableMap(validArguments);
+        return validArguments;
     }
 
     /**

@@ -65,13 +65,17 @@ public final class ApiMethodImpl implements ApiMethod {
             throw new IllegalArgumentException("Invalid parameter list, "
                 + "must be of the form 'Class arg1, String arg1Name, Class arg2, String arg2Name...");
         }
+
         int nArgs = args.length / 2;
-        this.argNames = new ArrayList<String>(nArgs);
-        this.argTypes = new ArrayList<Class<?>>(nArgs);
+        final List<String> tmpArgNames = new ArrayList<>(nArgs);
+        final List<Class<?>> tmpArgTypes = new ArrayList<>(nArgs);
         for (int i = 0; i < nArgs; i++) {
-            this.argTypes.add((Class<?>) args[i * 2]);
-            this.argNames.add((String) args[i * 2 + 1]);
+            tmpArgTypes.add((Class<?>) args[i * 2]);
+            tmpArgNames.add((String) args[i * 2 + 1]);
         }
+
+        this.argNames = Collections.unmodifiableList(tmpArgNames);
+        this.argTypes = Collections.unmodifiableList(tmpArgTypes);
 
         // find method in Proxy type
         try {
@@ -95,12 +99,12 @@ public final class ApiMethodImpl implements ApiMethod {
 
     @Override
     public List<String> getArgNames() {
-        return Collections.unmodifiableList(argNames);
+        return argNames;
     }
 
     @Override
     public List<Class<?>> getArgTypes() {
-        return Collections.unmodifiableList(argTypes);
+        return argTypes;
     }
 
     @Override
@@ -117,6 +121,7 @@ public final class ApiMethodImpl implements ApiMethod {
             .append(", argNames=").append(argNames)
             .append(", argTypes=").append(argTypes)
             .append("}");
+
         return builder.toString();
     }
 }
