@@ -151,6 +151,7 @@
     * [Dozer](dozer.adoc)
     * [Dropbox](dropbox.adoc)
     * [Eclipse](eclipse.adoc)
+    * [EJB](ejb.adoc)
     * [ElasticSearch](elasticsearch.adoc)
     * [Elsql](elsql.adoc)
     * [Eventadmin](eventadmin.adoc)
