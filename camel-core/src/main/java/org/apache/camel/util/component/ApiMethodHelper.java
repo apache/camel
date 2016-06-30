@@ -327,7 +327,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                         // method takes a subset, unused args
                         extraArgs.add(method);
                     }
-                } else if (result.isEmpty() && extraArgs != null && extraArgs.isEmpty()) {
+                } else if (result.isEmpty() && extraArgs == null) {
                     // avoid looking for nullable args by checking for empty result and extraArgs
                     if (withNullableArgsList != null && withNullableArgsList.containsAll(methodArgs)) {
                         if (nullArgs == null) {
@@ -341,7 +341,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         }
 
         List<ApiMethod> methodList = result.isEmpty()
-            ? (extraArgs != null && extraArgs.isEmpty())
+            ? extraArgs == null
                 ? nullArgs
                 : extraArgs
             : result;

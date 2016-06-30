@@ -138,6 +138,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         context.put("generatedDate", new Date().toString());
         // add output package
         context.put("packageName", outPackage);
+        context.put("newLine", "\n");
 
         // load velocity template
         final Template template = getEngine().getTemplate(templateName, "UTF-8");

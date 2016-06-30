@@ -123,7 +123,7 @@ public abstract class ApiMethodParser<T> {
             final String name = methodMatcher.group(3);
             final String argSignature = methodMatcher.group(4);
 
-            final List<Argument> arguments = new ArrayList<Argument>();
+            final List<ApiMethodArg> arguments = new ArrayList<ApiMethodArg>();
             final List<Class<?>> argTypes = new ArrayList<Class<?>>();
 
             final Matcher argsMatcher = ARGS_PATTERN.matcher(argSignature);
@@ -135,7 +135,7 @@ public abstract class ApiMethodParser<T> {
                 final String typeArgsGroup = argsMatcher.group(2);
                 final String typeArgs = typeArgsGroup != null
                     ? typeArgsGroup.substring(1, typeArgsGroup.length() - 1).replaceAll(" ", "") : null;
-                arguments.add(new Argument(argsMatcher.group(3), type, typeArgs));
+                arguments.add(new ApiMethodArg(argsMatcher.group(3), type, typeArgs));
             }
 
             Method method;
@@ -153,7 +153,7 @@ public abstract class ApiMethodParser<T> {
         // check that argument names have the same type across methods
         Map<String, Class<?>> allArguments = new HashMap<String, Class<?>>();
         for (ApiMethodModel model : result) {
-            for (Argument argument : model.getArguments()) {
+            for (ApiMethodArg argument : model.getArguments()) {
                 String name = argument.getName();
                 Class<?> argClass = allArguments.get(name);
                 Class<?> type = argument.getType();
@@ -185,7 +185,7 @@ public abstract class ApiMethodParser<T> {
                     } else {
                         // same number of args, compare arg names, kinda arbitrary to use alphabetized order
                         for (int i = 0; i < nArgs1; i++) {
-                            final int argCompare = model1.arguments.get(i).name.compareTo(model2.arguments.get(i).name);
+                            final int argCompare = model1.arguments.get(i).getName().compareTo(model2.arguments.get(i).getName());
                             if (argCompare != 0) {
                                 return argCompare;
                             }
@@ -283,19 +283,19 @@ public abstract class ApiMethodParser<T> {
     public static final class ApiMethodModel {
         private final String name;
         private final Class<?> resultType;
-        private final List<Argument> arguments;
+        private final List<ApiMethodArg> arguments;
         private final Method method;
 
         private String uniqueName;
 
-        protected ApiMethodModel(String name, Class<?> resultType, List<Argument> arguments, Method method) {
+        protected ApiMethodModel(String name, Class<?> resultType, List<ApiMethodArg> arguments, Method method) {
             this.name = name;
             this.resultType = resultType;
             this.arguments = arguments;
             this.method = method;
         }
 
-        protected ApiMethodModel(String uniqueName, String name, Class<?> resultType, List<Argument> arguments, Method method) {
+        protected ApiMethodModel(String uniqueName, String name, Class<?> resultType, List<ApiMethodArg> arguments, Method method) {
             this.name = name;
             this.uniqueName = uniqueName;
             this.resultType = resultType;
@@ -319,7 +319,7 @@ public abstract class ApiMethodParser<T> {
             return method;
         }
 
-        public List<Argument> getArguments() {
+        public List<ApiMethodArg> getArguments() {
             return arguments;
         }
 
@@ -328,7 +328,7 @@ public abstract class ApiMethodParser<T> {
             StringBuilder builder = new StringBuilder();
             builder.append(resultType.getName()).append(" ");
             builder.append(name).append("(");
-            for (Argument argument : arguments) {
+            for (ApiMethodArg argument : arguments) {
                 builder.append(argument.getType().getCanonicalName()).append(" ");
                 builder.append(argument.getName()).append(", ");
             }
@@ -336,41 +336,6 @@ public abstract class ApiMethodParser<T> {
                 builder.delete(builder.length() - 2, builder.length());
             }
             builder.append(");");
-            return builder.toString();
-        }
-    }
-
-    public static final class Argument {
-        private final String name;
-        private final Class<?> type;
-        private final String typeArgs;
-
-        public Argument(String name, Class<?> type, String typeArgs) {
-            this.name = name;
-            this.type = type;
-            this.typeArgs = typeArgs;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public Class<?> getType() {
-            return type;
-        }
-
-        public String getTypeArgs() {
-            return typeArgs;
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append(type.getCanonicalName());
-            if (typeArgs != null) {
-                builder.append("<").append(typeArgs).append(">");
-            }
-            builder.append(" ").append(name);
             return builder.toString();
         }
     }

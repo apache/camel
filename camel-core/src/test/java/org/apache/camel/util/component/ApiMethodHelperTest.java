@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import static org.apache.camel.util.component.ApiMethodArg.arg;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -183,18 +184,18 @@ public class ApiMethodHelperTest {
     enum TestMethod implements ApiMethod {
 
         SAYHI(String.class, "sayHi"),
-        SAYHI_1(String.class, "sayHi", String.class, "name"),
-        GREETME(String.class, "greetMe", String.class, "name"),
-        GREETUS(String.class, "greetUs", String.class, "name1", String.class, "name2"),
-        GREETALL(String.class, "greetAll", new String[0].getClass(), "names"),
-        GREETALL_1(String.class, "greetAll", List.class, "nameList"),
-        GREETALL_2(Map.class, "greetAll", Map.class, "nameMap"),
-        GREETTIMES(new String[0].getClass(), "greetTimes", String.class, "name", int.class, "times"),
-        GREETINNERCHILD(new String[0].getClass(), "greetInnerChild", TestProxy.InnerChild.class, "child");
+        SAYHI_1(String.class, "sayHi", arg("name", String.class)),
+        GREETME(String.class, "greetMe", arg("name", String.class)),
+        GREETUS(String.class, "greetUs", arg("name1", String.class), arg("name2", String.class)),
+        GREETALL(String.class, "greetAll", arg("names", new String[0].getClass())),
+        GREETALL_1(String.class, "greetAll", arg("nameList", List.class)),
+        GREETALL_2(Map.class, "greetAll", arg("nameMap", Map.class)),
+        GREETTIMES(new String[0].getClass(), "greetTimes", arg("name", String.class), arg("times", int.class)),
+        GREETINNERCHILD(new String[0].getClass(), "greetInnerChild", arg("child", TestProxy.InnerChild.class));
 
         private final ApiMethod apiMethod;
 
-        TestMethod(Class<?> resultType, String name, Object... args) {
+        TestMethod(Class<?> resultType, String name, ApiMethodArg... args) {
             this.apiMethod = new ApiMethodImpl(TestProxy.class, resultType, name, args);
         }
 
