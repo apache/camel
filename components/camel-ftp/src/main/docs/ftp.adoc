@@ -396,9 +396,9 @@ used as the filename instead.
 This header is set by Camel and its purpose is providing end-users the
 name of the file that was written.
 
-|`CamelFileBatchIndex` |Current index out of total number of files being consumed in this batch.
+|`CamelFileIndex` |Current index out of total number of files being consumed in this batch.
 
-|`CamelFileBatchSize` |Total number of files being consumed in this batch.
+|`CamelFileSize` |Total number of files being consumed in this batch.
 
 |`CamelFileHost` |The remote hostname.
 
