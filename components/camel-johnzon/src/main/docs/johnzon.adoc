@@ -14,7 +14,7 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
-[[JacksonXML-Dependencies]]
+[[Johnzon-Dependencies]]
 Dependencies
 ^^^^^^^^^^^^
 
