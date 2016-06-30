@@ -19,7 +19,7 @@ Dependencies
 ^^^^^^^^^^^^
 
 To use Gson in your camel routes you need to add the dependency
-on *camel-johnzon* which implements this data format.
+on *camel-gson* which implements this data format.
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
