@@ -106,6 +106,7 @@
     * [Amqp](amqp.adoc)
     * [Apns](apns.adoc)
     * [Atmosphere Websocket](atmosphere-websocket.adoc)
+    * [Atmos](atmos.adoc)
     * [Atom](atom.adoc)
     * [Avro](avro.adoc)
     * [AWS](aws.adoc)
