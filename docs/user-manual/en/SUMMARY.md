@@ -139,6 +139,7 @@
     * [Cmis](cmis.adoc)
     * [CoAP](coap.adoc)
     * [Cometd](cometd.adoc)
+    * [Context](context.adoc)
     * [Couchdb](couchdb.adoc)
     * [Crypto](crypto.adoc)
         * [Crypto Digital Signatures](crypto-digital-signatures.adoc)
