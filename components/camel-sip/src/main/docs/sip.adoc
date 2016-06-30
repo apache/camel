@@ -84,6 +84,7 @@ The SIP component has no options.
 
 
 
+
 // endpoint options: START
 The SIP component supports 46 endpoint options which are listed below:
 
@@ -103,9 +104,9 @@ The SIP component supports 46 endpoint options which are listed below:
 | msgExpiration | common | 3600 | int | The amount of time a message received at an endpoint is considered valid.
 | receiveTimeoutMillis | common | 10000 | long | The amount of time to wait for a Response and/or Acknowledgement message to be received from another SIP stack. Defaults to 10 seconds.
 | stackName | common | NAME_NOT_SET | String | The name of the SipStack. Defaults to NAME_NOT_SET.
-| toHost | common |  | String | Holds the host of the receiver of a message.
-| toPort | common |  | int | Holds the port of the receiver of a message.
-| toUser | common |  | String | Holds the username of the receiver of a message.
+| toHost | common |  | String | Holds the host of the receiver of a message. Mandatory when subscribing
+| toPort | common |  | int | Holds the port of the receiver of a message. Mandatory when subscribing
+| toUser | common |  | String | Holds the username of the receiver of a message. Mandatory when subscribing
 | transport | common | tcp | String | The transport method used to send and receive messages. Defaults to TCP. Has to be equal to TCP or UDP to be valid.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | consumer | consumer | false | boolean | Whether the SipEndpoint is a consuming or producing endpoint. Determines if From headers are used (and thus the Endpoint is consuming because it retrieves from the SIP URI or To headers are used (and thus the Endpoint is producing because it needs to send to the SIP URI.
@@ -140,6 +141,7 @@ The SIP component supports 46 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 

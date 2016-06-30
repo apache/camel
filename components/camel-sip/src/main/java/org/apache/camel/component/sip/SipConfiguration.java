@@ -272,19 +272,19 @@ public class SipConfiguration {
     private int fromPort;
 
     /**
-     * Holds the username of the receiver of a message.
+     * Holds the username of the receiver of a message. Mandatory when subscribing
      */
     @UriParam(label = "common")
     private String toUser;
 
     /**
-     * Holds the host of the receiver of a message.
+     * Holds the host of the receiver of a message. Mandatory when subscribing
      */
     @UriParam(label = "common")
     private String toHost;
 
     /**
-     * Holds the port of the receiver of a message.
+     * Holds the port of the receiver of a message. Mandatory when subscribing
      */
     @UriParam(label = "common")
     private int toPort;
@@ -463,7 +463,7 @@ public class SipConfiguration {
             setFromUser(uri.getUserInfo());
             setFromHost(uri.getHost());
             setFromPort(uri.getPort());
-            if (!presenceAgent) { //only true when a PresenceAgent and thus not a consumer
+            if (!presenceAgent || subscribing) { //only true when a PresenceAgent and thus not a consumer
                 if (settings.containsKey("toUser")) {
                     setToUser((String) settings.get("toUser"));
                 }
@@ -485,9 +485,8 @@ public class SipConfiguration {
          
         this.createFactoriesAndHeaders(parameters, component);
 
-        //// TODO: 18/06/16 figure out what sipUri does as a parameter
         sipUri = component.resolveAndRemoveReferenceParameter(parameters, "sipUri", SipURI.class, null);
-        if (sipUri == null) {
+        if (sipUri == null && (!consumer  || subscribing)) {
             sipUri = addressFactory.createSipURI(getToUser(), getToHost() + ":" + getToPort());
         }
 
@@ -517,7 +516,7 @@ public class SipConfiguration {
         if (fromHeader == null) { 
             createFromHeader();
         }
-        if (!presenceAgent) {
+        if(!consumer || subscribing) {
             toHeader = component.resolveAndRemoveReferenceParameter(parameters, "toHeader", ToHeader.class, null);
             if (toHeader == null) {
                 createToHeader();
