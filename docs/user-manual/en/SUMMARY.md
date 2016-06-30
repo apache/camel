@@ -171,6 +171,7 @@
     * [Grape](grape.adoc)
     * [Groovy](groovy.adoc)
         * [Groovy DSL](groovy-dsl.adoc)
+    * [Gson](gson.adoc)
     * [Guava Eventbus](guava-eventbus.adoc)
     * [Guice](guice.adoc)
     * [Hawtdb](hawtdb.adoc)
