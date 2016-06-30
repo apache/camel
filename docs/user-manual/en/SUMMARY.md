@@ -147,6 +147,7 @@
         * [Crypto Digital Signatures](crypto-digital-signatures.adoc)
     * [CSV](csv.adoc)
     * [CXF](cxf.adoc)
+        * [CXFRS](cxfrs.adoc)
         * [CXF Transport](cxf-transport.adoc)
     * [Disruptor](disruptor.adoc)
     * [DNS](dns.adoc)
