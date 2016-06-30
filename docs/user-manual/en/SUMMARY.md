@@ -188,6 +188,7 @@
     * [Infinispan](infinispan.adoc)
     * [IRC](irc.adoc)
     * [Ironmq](ironmq.adoc)
+    * [Jackson](jackson.adoc)
     * [Jasypt](jasypt.adoc)
     * [Javaspace](javaspace.adoc)
     * [JMS](jms.adoc)
