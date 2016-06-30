@@ -24,6 +24,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.util.component.ApiMethodArg;
 import org.apache.camel.util.component.ApiMethodParser;
 import org.apache.camel.util.component.ArgumentSubstitutionParser;
 import org.apache.commons.lang.ClassUtils;
@@ -151,9 +152,9 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         context.put("componentPackage", componentPackage);
 
         // generate parameter names and types for configuration, sorted by parameter name
-        Map<String, ApiMethodParser.Argument> parameters = new TreeMap<String, ApiMethodParser.Argument>();
+        Map<String, ApiMethodArg> parameters = new TreeMap<String, ApiMethodArg>();
         for (ApiMethodParser.ApiMethodModel model : models) {
-            for (ApiMethodParser.Argument argument : model.getArguments()) {
+            for (ApiMethodArg argument : model.getArguments()) {
 
                 final String name = argument.getName();
                 final Class<?> type = argument.getType();
@@ -185,7 +186,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                     throw new MojoExecutionException(String.format("Error loading extra option [%s %s] : %s",
                         argWithTypes, name, e.getMessage()), e);
                 }
-                parameters.put(name, new ApiMethodParser.Argument(name, argType, typeArgs));
+                parameters.put(name, new ApiMethodArg(name, argType, typeArgs));
             }
         }
 
@@ -298,7 +299,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return builder.toString();
     }
 
-    public String getCanonicalName(ApiMethodParser.Argument argument) throws MojoExecutionException {
+    public String getCanonicalName(ApiMethodArg argument) throws MojoExecutionException {
 
         // replace primitives with wrapper classes
         final Class<?> type = argument.getType();
