@@ -137,6 +137,7 @@
     * [CDI](cdi.adoc)
     * [Chunk](chunk.adoc)
     * [Cmis](cmis.adoc)
+    * [CM SMS](cm-sms.adoc)
     * [CoAP](coap.adoc)
     * [Cometd](cometd.adoc)
     * [Context](context.adoc)
