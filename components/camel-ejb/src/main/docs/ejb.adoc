@@ -132,7 +132,37 @@ this example is based on an unit test using Apache OpenEJB we have to
 set a `JndiContext` on the link:ejb.html[EJB] component with the OpenEJB
 settings.
 
+[source,java]
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+@Override
+protected CamelContext createCamelContext() throws Exception {
+    CamelContext answer = new DefaultCamelContext();
+ 
+    // enlist EJB component using the JndiContext
+    EjbComponent ejb = answer.getComponent("ejb", EjbComponent.class);
+    ejb.setContext(createEjbContext());
+ 
+    return answer;
+}
+ 
+private static Context createEjbContext() throws NamingException {
+    // here we need to define our context factory to use OpenEJB for our testing
+    Properties properties = new Properties();
+    properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+ 
+    return new InitialContext(properties);
+}
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 Then we are ready to use the EJB in the Camel route:
+
+[source,java]
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+from("direct:start")
+    // invoke the greeter EJB using the local interface and invoke the hello method
+    .to("ejb:GreaterImplLocal?method=hello")
+    .to("mock:result");
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *In a real application server*
 
@@ -140,8 +170,7 @@ In a real application server you most likely do not have to setup a
 `JndiContext` on the link:ejb.html[EJB] component as it will create a
 default `JndiContext` on the same JVM as the application server, which
 usually allows it to access the JNDI registry and lookup the
-link:ejb.html[EJB]s. +
- However if you need to access a application server on a remote JVM or
+link:ejb.html[EJB]s. However if you need to access a application server on a remote JVM or
 the likes, you have to prepare the properties beforehand.
 
 [[EJB-UsingSpringXML]]
@@ -153,7 +182,31 @@ And this is the same example using Spring XML instead:
 Again since this is based on an unit test we need to setup the
 link:ejb.html[EJB] component:
 
+[source,XML]
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+<!-- setup Camel EJB component -->
+<bean id="ejb" class="org.apache.camel.component.ejb.EjbComponent">
+    <property name="properties" ref="jndiProperties"/>
+</bean>
+ 
+<!-- use OpenEJB context factory -->
+<p:properties id="jndiProperties">
+    <prop key="java.naming.factory.initial">org.apache.openejb.client.LocalInitialContextFactory</prop>
+</p:properties>
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 Before we are ready to use link:ejb.html[EJB] in the Camel routes:
+
+[source,XML]
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:start"/>
+        <to uri="ejb:GreaterImplLocal?method=hello"/>
+        <to uri="mock:result"/>
+    </route>
+</camelContext>
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 [[EJB-SeeAlso]]
 See Also
