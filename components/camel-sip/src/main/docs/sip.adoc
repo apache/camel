@@ -205,7 +205,7 @@ contains the Event which is se to "Event_A"
             }
         };
     }
-----------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *The Camel SIP component also ships with a Presence Agent that is meant
 to be used for Testing and Demo purposes only.* An example of
@@ -223,7 +223,7 @@ Sending messages to a sip uri
 ++++++++++++++++++++++++++++++
 In the example below, a SIP producer is created to send messages from an activeMQ queue to a given SIP uri:
 [source,java]
--------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 String sendingSipURI =
                 "sip://listener@localhost:5156"+
@@ -245,7 +245,7 @@ Processor headerAdder = new Processor()
 
         from("activemq:sip-messages")
                 .process(headerAdder).to(sendingSipURI);  //send message to given SIP uri
--------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 The sip URI takes the address it needs to send the message to, along with the sip stackname, the address it uses to
 send the messages, and an eventHeader and ID.
@@ -260,8 +260,8 @@ In the sample below, a SIP consumer processes messages send to listener@localhos
 and puts them into a activeMQ queue as well as logging them.
 
 [source,java]
------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------
 from("sip://listener@localhost:5154?stackName=Listener&eventHeaderName=retrievedFromSIP&eventId=SIP")
         .to("log:ReceivedMessage")
         .to(""activemq:sip-messages"");
------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------
