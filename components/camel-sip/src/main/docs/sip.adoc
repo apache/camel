@@ -253,8 +253,8 @@ send the messages, and an eventHeader and ID.
 
 The processor is necessary to give the appropriate SIP method to the producer.
 
-[[Sip-SendingMessagesWithProducer]]
-retrieving SIP messages
+[[Sip-RetrievingMessagesWithConsumer]]
+Retrieving SIP messages
 +++++++++++++++++++++++
 
 In the sample below, a SIP consumer processes messages send to listener@localhost:5154
