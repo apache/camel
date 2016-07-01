@@ -202,7 +202,7 @@ public final class CxfPayloadConverter {
                     if (payload.getNsMap() != null) {
                         r = new DelegatingXMLStreamReader(r, payload.getNsMap());
                     }
-                    return (T)tc.convertTo(type, r);
+                    return (T)tc.convertTo(type, exchange, r);
                 }
                 tc = registry.lookup(type, Source.class);
                 if (tc != null) {
@@ -217,12 +217,12 @@ public final class CxfPayloadConverter {
                             s = new StAXSource(new DelegatingXMLStreamReader(r, payload.getNsMap()));
                         }
                     }
-                    return (T)tc.convertTo(type, s);
+                    return (T)tc.convertTo(type, exchange, s);
                 }
             }
             TypeConverter tc = registry.lookup(type, NodeList.class);
             if (tc != null) {
-                Object result = tc.convertTo(type, cxfPayloadToNodeList((CxfPayload<?>) value, exchange));
+                Object result = tc.convertTo(type, exchange, cxfPayloadToNodeList((CxfPayload<?>) value, exchange));
                 if (result == null) {
                     // no we could not do it currently, and we just abort the convert here
                     return (T) Void.TYPE;
@@ -237,7 +237,7 @@ public final class CxfPayloadConverter {
             if (tc != null) {
                 NodeList nodeList = cxfPayloadToNodeList((CxfPayload<?>) value, exchange);
                 if (nodeList.getLength() > 0) {
-                    return tc.convertTo(type, nodeList.item(0));
+                    return tc.convertTo(type, exchange, nodeList.item(0));
                 } else {
                     // no we could not do it currently
                     return (T) Void.TYPE;
