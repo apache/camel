@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
@@ -27,6 +28,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
 
@@ -237,6 +239,8 @@ public class KafkaConfiguration {
     //ssl.trustmanager.algorithm
     @UriParam(label = "producer", defaultValue = "PKIX")
     private String sslTrustmanagerAlgorithm = "PKIX";
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean recordMetadata = true;
 
     public KafkaConfiguration() {
     }
@@ -1201,5 +1205,19 @@ public class KafkaConfiguration {
      */
     public void setWorkerPoolMaxSize(Integer workerPoolMaxSize) {
         this.workerPoolMaxSize = workerPoolMaxSize;
+    }
+
+    public boolean isRecordMetadata() {
+        return recordMetadata;
+    }
+
+    /**
+     * Whether the producer should store the {@link RecordMetadata} results from sending to Kafka.
+     *
+     * The results are stored in a {@link List} containing the {@link RecordMetadata} metadata's.
+     * The list is stored on a header with the key {@link KafkaConstants#KAFKA_RECORDMETA}
+     */
+    public void setRecordMetadata(boolean recordMetadata) {
+        this.recordMetadata = recordMetadata;
     }
 }
