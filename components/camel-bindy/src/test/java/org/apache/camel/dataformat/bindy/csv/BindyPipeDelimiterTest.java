@@ -18,13 +18,10 @@ package org.apache.camel.dataformat.bindy.csv;
 
 import java.util.List;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.pipeline.MyData;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -58,11 +55,10 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBindyPipeDelimiterMarshal() throws Exception {
+    public void testBindyPipeDelimiterMarshalShouldHaveCorrectHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).body().startsWith("col1|col2|col3");
-        //mock.message(0).body().("HAPPY|NEW|YEAR");
+        mock.message(0).body().convertToString().startsWith("col1|col2|col3");
 
         MyData data = new MyData();
         data.setCol1("HAPPY");
@@ -71,7 +67,21 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
         template.sendBody("direct:marshal", data);
 
         assertMockEndpointsSatisfied();
-        System.out.println(mock.message(0).body().convertToString());
+    }
+
+    @Test
+    public void testBindyPipeDelimiterMarshalShouldContainMyData() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().convertToString().contains("HAPPY|NEW|YEAR");
+
+        MyData data = new MyData();
+        data.setCol1("HAPPY");
+        data.setCol2("NEW");
+        data.setCol3("YEAR");
+        template.sendBody("direct:marshal", data);
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
