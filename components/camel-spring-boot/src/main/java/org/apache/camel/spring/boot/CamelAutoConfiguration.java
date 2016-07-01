@@ -45,6 +45,7 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spring.CamelBeanPostProcessor;
@@ -104,7 +105,33 @@ public class CamelAutoConfiguration {
             camelContext.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "" + config.getLogDebugMaxChars());
         }
 
-        camelContext.setStreamCaching(config.isStreamCaching());
+        // stream caching
+        camelContext.setStreamCaching(config.isStreamCachingEnabled());
+        camelContext.getStreamCachingStrategy().setAnySpoolRules(config.isStreamCachingAnySpoolRules());
+        camelContext.getStreamCachingStrategy().setBufferSize(config.getStreamCachingBufferSize());
+        camelContext.getStreamCachingStrategy().setRemoveSpoolDirectoryWhenStopping(config.isStreamCachingRemoveSpoolDirectoryWhenStopping());
+        camelContext.getStreamCachingStrategy().setSpoolChiper(config.getStreamCachingSpoolChiper());
+        if (config.getStreamCachingSpoolDirectory() != null) {
+            camelContext.getStreamCachingStrategy().setSpoolDirectory(config.getStreamCachingSpoolDirectory());
+        }
+        if (config.getStreamCachingSpoolThreshold() != 0) {
+            camelContext.getStreamCachingStrategy().setSpoolThreshold(config.getStreamCachingSpoolThreshold());
+        }
+        if (config.getStreamCachingSpoolUsedHeapMemoryLimit() != null) {
+            StreamCachingStrategy.SpoolUsedHeapMemoryLimit limit;
+            if ("Committed".equalsIgnoreCase(config.getStreamCachingSpoolUsedHeapMemoryLimit())) {
+                limit = StreamCachingStrategy.SpoolUsedHeapMemoryLimit.Committed;
+            } else if ("Max".equalsIgnoreCase(config.getStreamCachingSpoolUsedHeapMemoryLimit())) {
+                limit = StreamCachingStrategy.SpoolUsedHeapMemoryLimit.Max;
+            } else {
+                throw new IllegalArgumentException("Invalid option " + config.getStreamCachingSpoolUsedHeapMemoryLimit() + " must either be Committed or Max");
+            }
+            camelContext.getStreamCachingStrategy().setSpoolUsedHeapMemoryLimit(limit);
+        }
+        if (config.getStreamCachingSpoolUsedHeapMemoryThreshold() != 0) {
+            camelContext.getStreamCachingStrategy().setSpoolUsedHeapMemoryThreshold(config.getStreamCachingSpoolUsedHeapMemoryThreshold());
+        }
+
         camelContext.setTracing(config.isTracing());
         camelContext.setMessageHistory(config.isMessageHistory());
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
