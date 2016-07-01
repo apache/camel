@@ -17,7 +17,7 @@ public class MessageTest extends CamelTestSupport
     protected ProducerTemplate producerTemplate;
 
     @Test
-    public void testPresenceAgentBasedPubSub() throws Exception {
+    public void testSendingMessage() throws Exception {
         resultEndpoint.expectedMinimumMessageCount(1);
 
         producerTemplate.sendBodyAndHeader(

@@ -204,7 +204,8 @@ contains the Event which is se to "Event_A"
                     .to("mock:notification");
             }
         };
-    }----------------------------------------------------------------------------------------------------------------------------------------------
+    }
+----------------------------------------------------------------------------------------------------------------------------------------------
 
 *The Camel SIP component also ships with a Presence Agent that is meant
 to be used for Testing and Demo purposes only.* An example of
@@ -220,11 +221,47 @@ actually send any messages along the route to the endpoint
 [[Sip-SendingMessagesWithProducer]]
 Sending messages to a sip uri
 ++++++++++++++++++++++++++++++
+In the example below, a SIP producer is created to send messages from an activeMQ queue to a given SIP uri:
+[source,java]
+-------------------------
 
+String sendingSipURI =
+                "sip://listener@localhost:5156"+
+                "?stackName=Retriever" +
+                "&fromUser=sending" +
+                "&fromHost=" + localhost +
+                "&fromPort=5155" +
+                "&eventHeaderName=sendingFromQueue" +
+                "&eventId=sourceJSMqueue";
 
+Processor headerAdder = new Processor()
+        {
+            @Override
+            public void process(Exchange exchange) throws Exception
+            {
+                exchange.getIn().setHeader("REQUEST_METHOD", Request.MESSAGE);
+            }
+        };
+
+        from("activemq:sip-messages")
+                .process(headerAdder).to(sendingSipURI);  //send message to given SIP uri
+-------------------------------------------------------------------
+
+The sip URI takes the address it needs to send the message to, along with the sip stackname, the address it uses to
+send the messages, and an eventHeader and ID.
+
+The processor is necessary to give the appropriate SIP method to the producer.
 
 [[Sip-RetrievingMessagesWithConsumer]]
 retrieving SIP messages
 ++++++++++++++++++++++++++++++
 
+In the sample below, a SIP consumer processes messages send to listener@localhost:5154
+and puts them into a activeMQ queue as well as logging them.
 
+[source,java]
+-----------------------------------
+from("sip://listener@localhost:5154?stackName=Listener&eventHeaderName=retrievedFromSIP&eventId=SIP")
+        .to("log:ReceivedMessage")
+        .to(""activemq:sip-messages"");
+-----------------------------------------------------------------
