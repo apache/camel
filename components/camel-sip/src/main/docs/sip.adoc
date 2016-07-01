@@ -230,7 +230,7 @@ String sendingSipURI =
                 "sip://listener@localhost:5156"+
                 "?stackName=Retriever" +
                 "&fromUser=sending" +
-                "&fromHost=" + localhost +
+                "&fromHost= localhost" +
                 "&fromPort=5155" +
                 "&eventHeaderName=sendingFromQueue" +
                 "&eventId=sourceJSMqueue";
@@ -259,10 +259,12 @@ retrieving SIP messages
 In the sample below, a SIP consumer processes messages send to listener@localhost:5154
 and puts them into a activeMQ queue as well as logging them.
 [source,java]
-----------------------------------------------------------------------------------------------------------------------------------------------------------
+---
 from("sip://listener@localhost:5154?stackName=Listener&eventHeaderName=retrievedFromSIP&eventId=SIP")
         .to("log:ReceivedMessage")
         .to(""activemq:sip-messages"");
-----------------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
-Note that there are no parameter "toUser", "toHost" and toPort in the sip uri.
+Note that there are no parameter "toUser", "toHost" and toPort in the SIP URI as is only consumer messages. If it was
+a subscribing consumer, it would need the parameter "subscribing=true" and the "to" parameters to know where to
+subscribe to.
