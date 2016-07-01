@@ -62,6 +62,18 @@ public class CamelConfigurationProperties {
     private String xmlRests = "classpath:camel-rest/*.xml";
 
     /**
+     * Directory to load additional configuration files that contains
+     * configuration values that takes precedence over any other configuration.
+     * This can be used to refer to files that may have secret configuration that
+     * has been mounted on the file system for containers.
+     * <p/>
+     * You must use either <tt>file:</tt> or <tt>classpath:</tt> as prefix to load
+     * from file system or classpath. Then you can specify a pattern to load
+     * from sub directories and a name pattern such as <tt>file:/var/app/secret/*.properties</tt>
+     */
+    private String fileConfigurations;
+
+    /**
      * Whether to use the main run controller to ensure the Spring-Boot application
      * keeps running until being stopped or the JVM terminated.
      * You typically only need this if you run Spring-Boot standalone.
@@ -321,5 +333,13 @@ public class CamelConfigurationProperties {
 
     public void setJmxCreateConnector(boolean jmxCreateConnector) {
         this.jmxCreateConnector = jmxCreateConnector;
+    }
+
+    public String getFileConfigurations() {
+        return fileConfigurations;
+    }
+
+    public void setFileConfigurations(String fileConfigurations) {
+        this.fileConfigurations = fileConfigurations;
     }
 }

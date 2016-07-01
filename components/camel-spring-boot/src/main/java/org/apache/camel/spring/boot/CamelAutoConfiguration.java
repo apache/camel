@@ -27,17 +27,25 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MutablePropertySources;
 
 @Configuration
 @EnableConfigurationProperties(CamelConfigurationProperties.class)
 @Import(TypeConversionConfiguration.class)
 public class CamelAutoConfiguration {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelAutoConfiguration.class);
 
     /**
      * Spring-aware Camel context for the application. Auto-detects and loads all routes available in the Spring context.
@@ -46,6 +54,18 @@ public class CamelAutoConfiguration {
     @ConditionalOnMissingBean(CamelContext.class)
     CamelContext camelContext(ApplicationContext applicationContext,
                               CamelConfigurationProperties config) {
+
+        if (ObjectHelper.isNotEmpty(config.getFileConfigurations())) {
+            Environment env = applicationContext.getEnvironment();
+            if (env instanceof ConfigurableEnvironment) {
+                MutablePropertySources sources = ((ConfigurableEnvironment) env).getPropertySources();
+                if (sources != null) {
+                    if (!sources.contains("camel-file-configuration")) {
+                        sources.addFirst(new FilePropertySource("camel-file-configuration", applicationContext, config.getFileConfigurations()));
+                    }
+                }
+            }
+        }
 
         CamelContext camelContext = new SpringCamelContext(applicationContext);
         SpringCamelContext.setNoStart(true);
