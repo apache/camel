@@ -45,7 +45,7 @@ class XMLStreamReaderInputStream extends InputStream {
         this.chunk = new TrimmableByteArrayOutputStream();
         this.charset = charset == null ? "utf-8" : charset;
         try {
-            this.writer = outfactory.createXMLStreamWriter(chunk, charset);
+            this.writer = outfactory.createXMLStreamWriter(chunk, this.charset);
         } catch (XMLStreamException e) {
             //ignore
         }
