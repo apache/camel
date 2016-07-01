@@ -199,7 +199,8 @@ contains the Event which is se to "Event_A"
                 from("sip://agent@localhost:5252?stackName=PresenceAgent&presenceAgent=true&eventHeaderName=evtHdrName&eventId=evtid")
                     .to("mock:neverland");
 
-                from("sip://johndoe@localhost:5254?stackName=Subscriber&subscribing=true&toUser=agent&toHost=localhost&toPort=5252&eventHeaderName=evtHdrName&eventId=evtid")
+                from("sip://johndoe@localhost:5254?stackName=Subscriber&subscribing=true" +
+                    "&toUser=agent&toHost=localhost&toPort=5252&eventHeaderName=evtHdrName&eventId=evtid")
                     .to("log:ReceivedEvent")
                     .to("mock:notification");
             }
@@ -243,8 +244,8 @@ Processor headerAdder = new Processor()
             }
         };
 
-        from("activemq:sip-messages")
-                .process(headerAdder).to(sendingSipURI);  //send message to given SIP uri
+from("activemq:sip-messages")
+        .process(headerAdder).to(sendingSipURI);  //send message to given SIP uri
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 The sip URI takes the address it needs to send the message to, along with the sip stackname, the address it uses to
@@ -258,7 +259,6 @@ retrieving SIP messages
 
 In the sample below, a SIP consumer processes messages send to listener@localhost:5154
 and puts them into a activeMQ queue as well as logging them.
-
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 from("sip://listener@localhost:5154?stackName=Listener&eventHeaderName=retrievedFromSIP&eventId=SIP")
