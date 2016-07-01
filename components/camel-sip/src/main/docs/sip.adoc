@@ -257,7 +257,8 @@ The processor is necessary to give the appropriate SIP method to the producer.
 retrieving SIP messages
 ++++++++++++++++++++++++++++++
 In the sample below, a SIP consumer processes messages send to listener@localhost:5154
-and puts them into a activeMQ queue as well as logging them.
+and puts them into a activeMQ queue as well as logging them:
+
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 String sendingSipURI =
