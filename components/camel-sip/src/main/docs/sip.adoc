@@ -92,52 +92,52 @@ The SIP component supports 46 endpoint options which are listed below:
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| uri | common |  | URI | *Required* The SIP URI the SipEndpoint needs to connect to. This object represents the SIP URI string given when the SipEndpoint is created.
-| cacheConnections | common | false | boolean | Whether connections should be cashed by the SipStack. This if useful for long running conversations as cashing reduces the cost of connection creations.
-| contentSubType | common | plain | String | The mime subtype used in the body of the SIP message. Defaults to plain.
-| contentType | common | text | String | The mime type of the body of the SIP message. Defaults to text.
-| eventHeaderName | common |  | String | The name of the events in notify/subscribe messages in String format. Mandatory setting unless a registry based FromHeader is specified.
-| eventId | common |  | String | An optional event ID which can be added the EventHeader
-| fromHost | common |  | String | Holds the host of the initiator/sender of a message.
-| fromPort | common |  | int | Holds the port of the initiator/sender of a message.
-| fromUser | common |  | String | Holds the username of the initiator/sender of a message.
-| msgExpiration | common | 3600 | int | The amount of time a message received at an endpoint is considered valid.
-| receiveTimeoutMillis | common | 10000 | long | The amount of time to wait for a Response and/or Acknowledgement message to be received from another SIP stack. Defaults to 10 seconds.
-| stackName | common | NAME_NOT_SET | String | The name of the SipStack. Defaults to NAME_NOT_SET.
-| toHost | common |  | String | Holds the host of the receiver of a message. Mandatory when subscribing
-| toPort | common |  | int | Holds the port of the receiver of a message. Mandatory when subscribing
-| toUser | common |  | String | Holds the username of the receiver of a message. Mandatory when subscribing
-| transport | common | tcp | String | The transport method used to send and receive messages. Defaults to TCP. Has to be equal to TCP or UDP to be valid.
+| uri | common |  | URI | *Required* URI of the SIP server to connect to (the username and password can be included such as: john:secretmyserver:9999)
+| cacheConnections | common | false | boolean | Should connections be cached by the SipStack to reduce cost of connection creation. This is useful if the connection is used for long running conversations.
+| contentSubType | common | plain | String | Setting for contentSubType can be set to any valid MimeSubType.
+| contentType | common | text | String | Setting for contentType can be set to any valid MimeType.
+| eventHeaderName | common |  | String | Setting for a String based event type.
+| eventId | common |  | String | Setting for a String based event Id. Mandatory setting unless a registry based FromHeader is specified
+| fromHost | common |  | String | Hostname of the message originator. Mandatory setting unless a registry based FromHeader is specified
+| fromPort | common |  | int | Port of the message originator. Mandatory setting unless a registry based FromHeader is specified
+| fromUser | common |  | String | Username of the message originator. Mandatory setting unless a registry based custom FromHeader is specified.
+| msgExpiration | common | 3600 | int | The amount of time a message received at an endpoint is considered valid
+| receiveTimeoutMillis | common | 10000 | long | Setting for specifying amount of time to wait for a Response and/or Acknowledgement can be received from another SIP stack
+| stackName | common | NAME_NOT_SET | String | Name of the SIP Stack instance associated with an SIP Endpoint.
+| toHost | common |  | String | Hostname of the message receiver. Mandatory setting unless a registry based ToHeader is specified
+| toPort | common |  | int | Portname of the message receiver. Mandatory setting unless a registry based ToHeader is specified
+| toUser | common |  | String | Username of the message receiver. Mandatory setting unless a registry based custom ToHeader is specified.
+| transport | common | tcp | String | Setting for choice of transport protocol. Valid choices are tcp or udp.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| consumer | consumer | false | boolean | Whether the SipEndpoint is a consuming or producing endpoint. Determines if From headers are used (and thus the Endpoint is consuming because it retrieves from the SIP URI or To headers are used (and thus the Endpoint is producing because it needs to send to the SIP URI.
-| presenceAgent | consumer | false | boolean | The Consumer created by the SipEndpoint will be a SipPresenceAgent when true or SipConsumer when false. A SipPresenceAgent is only for testing purposes. If the endpoint is a consumer this should be false.
+| consumer | consumer | false | boolean | This setting is used to determine whether the kind of header (FromHeaderToHeader etc) that needs to be created for this endpoint
 | subscribing | consumer | false | boolean | Whether the sip consumer will subscribe to the given address or only listen for incoming MESSAGE requests
+| presenceAgent | consumer | false | boolean | This setting is used to distinguish between a Presence Agent & a consumer. This is due to the fact that the SIP Camel component ships with a basic Presence Agent (for testing purposes only). Consumers have to set this flag to true.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| addressFactory | advanced |  | AddressFactory | Allows the creation of (SIP) uri's.
-| callIdHeader | advanced |  | CallIdHeader | Holds the header which stores the Call-ID. It is used to uniquely identify a message.
-| contactHeader | advanced |  | ContactHeader | Holds the header which stores the address of a request originator. The address can then be cashed by the receiver to bypass sip proxies.
-| contentTypeHeader | advanced |  | ContentTypeHeader | Holds the header which stores the content type of a message.
-| eventHeader | advanced |  | EventHeader | Holds the header which stores the event package a message would like to subscribe to or is being notified of. An event header requires to have an event name and can optionally hold an event id.
+| addressFactory | advanced |  | AddressFactory | To use a custom AddressFactory
+| callIdHeader | advanced |  | CallIdHeader | A custom Header object containing call details. Must implement the type javax.sip.header.CallIdHeader
+| contactHeader | advanced |  | ContactHeader | An optional custom Header object containing verbose contact details (email phone number etc). Must implement the type javax.sip.header.ContactHeader
+| contentTypeHeader | advanced |  | ContentTypeHeader | A custom Header object containing message content details. Must implement the type javax.sip.header.ContentTypeHeader
+| eventHeader | advanced |  | EventHeader | A custom Header object containing event details. Must implement the type javax.sip.header.EventHeader
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
-| expiresHeader | advanced |  | ExpiresHeader | Holds the header which stores the amount of time the request or message-content is valid.
-| extensionHeader | advanced |  | ExtensionHeader | Holds the header which stores user specific data.
-| fromHeader | advanced |  | FromHeader | Holds the from header which stores the original sender of a message.
-| headerFactory | advanced |  | HeaderFactory | Allows the creation of the headers which are placed in the header field at the top of a SIP packet.
-| listeningPoint | advanced |  | ListeningPoint | The socket that a SipProvider uses to send and receive SIP messages.
-| maxForwardsHeader | advanced |  | MaxForwardsHeader | Holds the header which stores how many times a message can (still) be forwarded.
-| maxMessageSize | advanced | 1048576 | int | The maximum size of a message in bytes. Defaults to 1048576 B roughly 1.05 MB.
-| messageFactory | advanced |  | MessageFactory | Allows the creation of SIP request and response messages.
-| sipFactory | advanced |  | SipFactory | Singleton factory for obtaining for the AddressFactory HeaderFactory MessageFactory and SipStack.
-| sipStack | advanced |  | SipStack | Allows the creation of SipProviders and SipListeners.
-| sipUri | advanced |  | SipURI | The SIP URI the SipEndpoint needs to connect to. This object represents the SIP uri string given when the SipEndpoint is created. This object gets created through the normal URI object.
+| expiresHeader | advanced |  | ExpiresHeader | A custom Header object containing message expiration details. Must implement the type javax.sip.header.ExpiresHeader
+| extensionHeader | advanced |  | ExtensionHeader | A custom Header object containing user/application specific details. Must implement the type javax.sip.header.ExtensionHeader
+| fromHeader | advanced |  | FromHeader | A custom Header object containing message originator settings. Must implement the type javax.sip.header.FromHeader
+| headerFactory | advanced |  | HeaderFactory | To use a custom HeaderFactory
+| listeningPoint | advanced |  | ListeningPoint | To use a custom ListeningPoint implementation
+| maxForwardsHeader | advanced |  | MaxForwardsHeader | A custom Header object containing details on maximum proxy forwards. This header places a limit on the viaHeaders possible. Must implement the type javax.sip.header.MaxForwardsHeader
+| maxMessageSize | advanced | 1048576 | int | Setting for maximum allowed Message size in bytes.
+| messageFactory | advanced |  | MessageFactory | To use a custom MessageFactory
+| sipFactory | advanced |  | SipFactory | To use a custom SipFactory to create the SipStack to be used
+| sipStack | advanced |  | SipStack | To use a custom SipStack
+| sipUri | advanced |  | SipURI | To use a custom SipURI. If none configured then the SipUri fallback to use the options toUser toHost:toPort
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| toHeader | advanced |  | ToHeader | Holds the to header which stores the original retriever of a message.
-| viaHeaders | advanced |  | List | Holds the Header which stores all proxies which forwarded a message from the sender to the receiver.
-| implementationDebugLogFile | logging |  | String | Name of client debug log file to use for logging.
-| implementationServerLogFile | logging |  | String | Name of server log file to use for logging.
-| implementationTraceLevel | logging | 0 | String | Logging level for tracing. Defaults to 0.
-| maxForwards | proxy | 70 | int | The amount of times a SIP message is allowed to be forwarded. Defaults to 70.
-| useRouterForAllUris | proxy | false | boolean | Determines whether requests are send via proxies.
+| toHeader | advanced |  | ToHeader | A custom Header object containing message receiver settings. Must implement the type javax.sip.header.ToHeader
+| viaHeaders | advanced |  | List | List of custom Header objects of the type javax.sip.header.ViaHeader. Each ViaHeader containing a proxy address for request forwarding. (Note this header is automatically updated by each proxy when the request arrives at its listener)
+| implementationDebugLogFile | logging |  | String | Name of client debug log file to use for logging
+| implementationServerLogFile | logging |  | String | Name of server log file to use for logging
+| implementationTraceLevel | logging | 0 | String | Logging level for tracing
+| maxForwards | proxy |  | int | Number of maximum proxy forwards
+| useRouterForAllUris | proxy | false | boolean | This setting is used when requests are sent to the Presence Agent via a proxy.
 |=======================================================================
 {% endraw %}
 // endpoint options: END
