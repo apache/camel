@@ -196,7 +196,8 @@ contains the Event which is se to "Event_A"
             @Override
             public void configure() throws Exception {
                 // Create PresenceAgent
-                from("sip://agent@localhost:5252?stackName=PresenceAgent&presenceAgent=true&eventHeaderName=evtHdrName&eventId=evtid")
+                from("sip://agent@localhost:5252?stackName=PresenceAgent&presenceAgent=true" +
+                     "&eventHeaderName=evtHdrName&eventId=evtid")
                     .to("mock:neverland");
 
                 from("sip://johndoe@localhost:5254?stackName=Subscriber&subscribing=true" +
@@ -225,7 +226,6 @@ Sending messages to a sip uri
 In the example below, a SIP producer is created to send messages from an activeMQ queue to a given SIP uri:
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
-
 String sendingSipURI =
                 "sip://listener@localhost:5156"+
                 "?stackName=Retriever" +
@@ -256,7 +256,6 @@ The processor is necessary to give the appropriate SIP method to the producer.
 [[Sip-RetrievingMessagesWithConsumer]]
 retrieving SIP messages
 ++++++++++++++++++++++++++++++
-
 In the sample below, a SIP consumer processes messages send to listener@localhost:5154
 and puts them into a activeMQ queue as well as logging them.
 [source,java]
@@ -265,3 +264,5 @@ from("sip://listener@localhost:5154?stackName=Listener&eventHeaderName=retrieved
         .to("log:ReceivedMessage")
         .to(""activemq:sip-messages"");
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Note that there are no parameter "toUser", "toHost" and toPort in the sip uri.
