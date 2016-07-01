@@ -114,7 +114,7 @@ public class KafkaProducerTest {
         ArgumentCaptor<Callback> callBackCaptor = ArgumentCaptor.forClass(Callback.class);
         Mockito.verify(producer.getKafkaProducer()).send(Matchers.any(ProducerRecord.class), callBackCaptor.capture());
         Callback kafkaCallback = callBackCaptor.getValue();
-        kafkaCallback.onCompletion(new RecordMetadata(null, 1, 1),null);
+        kafkaCallback.onCompletion(new RecordMetadata(null, 1, 1), null);
         assertRecordMetadataExists();
 
     }
@@ -138,7 +138,7 @@ public class KafkaProducerTest {
         Mockito.verify(exchange).setException(Matchers.isA(ApiException.class));
         Mockito.verify(callback).done(Matchers.eq(true));
         Callback kafkaCallback = callBackCaptor.getValue();
-        kafkaCallback.onCompletion(new RecordMetadata(null, 1, 1),null);
+        kafkaCallback.onCompletion(new RecordMetadata(null, 1, 1), null);
         assertRecordMetadataExists();
     }
 
@@ -273,9 +273,9 @@ public class KafkaProducerTest {
     }
 
     private void assertRecordMetadataExists() {
-        List<RecordMetadata> recordMetaData1 =  (List<RecordMetadata>)(in.getHeader(KafkaConstants.KAFKA_RECORDMETA));
+        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
         assertTrue(recordMetaData1 != null);
-        assertEquals("Expected one recordMetaData",recordMetaData1.size(),1);
+        assertEquals("Expected one recordMetaData", recordMetaData1.size(), 1);
         assertTrue(recordMetaData1.get(0) != null);
     }
 }
