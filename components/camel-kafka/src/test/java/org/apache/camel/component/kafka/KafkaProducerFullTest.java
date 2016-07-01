@@ -31,7 +31,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -130,18 +129,15 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
         assertTrue("Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount(), allMessagesReceived);
 
-        List<Exchange> exchangeList= mockEndpoint.getExchanges();
-        assertEquals("Fifteen Exchanges are expected",exchangeList.size(),15);
+        List<Exchange> exchangeList = mockEndpoint.getExchanges();
+        assertEquals("Fifteen Exchanges are expected", exchangeList.size(), 15);
         for (Exchange exchange : exchangeList) {
-            List<RecordMetadata> recordMetaData1 =  (List<RecordMetadata>)(exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
-            assertEquals("One RecordMetadata is expected.",recordMetaData1.size(),1);
-            assertTrue("Offset is positive",recordMetaData1.get(0).offset() >= 0);
-            assertTrue("Topic Name start with 'test'",recordMetaData1.get(0).topic().startsWith("test"));
-
+            List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
+            assertEquals("One RecordMetadata is expected.", recordMetaData1.size(), 1);
+            assertTrue("Offset is positive", recordMetaData1.get(0).offset() >= 0);
+            assertTrue("Topic Name start with 'test'", recordMetaData1.get(0).topic().startsWith("test"));
         }
-
     }
-
 
     @Test
     public void producedStringCollectionMessageIsReceivedByKafka() throws InterruptedException, IOException {
@@ -167,21 +163,21 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         boolean allMessagesReceived = messagesLatch.await(200, TimeUnit.MILLISECONDS);
 
         assertTrue("Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount(), allMessagesReceived);
-        List<Exchange> exchangeList= mockEndpoint.getExchanges();
-        assertEquals("Two Exchanges are expected",exchangeList.size(),2);
+        List<Exchange> exchangeList = mockEndpoint.getExchanges();
+        assertEquals("Two Exchanges are expected", exchangeList.size(), 2);
         Exchange e1 = exchangeList.get(0);
-        List<RecordMetadata> recordMetaData1 =  (List<RecordMetadata>)(e1.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
-        assertEquals("Ten RecordMetadata is expected.",recordMetaData1.size(),10);
+        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) (e1.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
+        assertEquals("Ten RecordMetadata is expected.", recordMetaData1.size(), 10);
         for (RecordMetadata recordMeta : recordMetaData1) {
-            assertTrue("Offset is positive",recordMeta.offset() >= 0);
-            assertTrue("Topic Name start with 'test'",recordMeta.topic().startsWith("test"));
+            assertTrue("Offset is positive", recordMeta.offset() >= 0);
+            assertTrue("Topic Name start with 'test'", recordMeta.topic().startsWith("test"));
         }
         Exchange e2 = exchangeList.get(1);
-        List<RecordMetadata> recordMetaData2 =  (List<RecordMetadata>)(e2.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
-        assertEquals("Five RecordMetadata is expected.",recordMetaData2.size(),5);
+        List<RecordMetadata> recordMetaData2 = (List<RecordMetadata>) (e2.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
+        assertEquals("Five RecordMetadata is expected.", recordMetaData2.size(), 5);
         for (RecordMetadata recordMeta : recordMetaData2) {
-            assertTrue("Offset is positive",recordMeta.offset() >= 0);
-            assertTrue("Topic Name start with 'test'",recordMeta.topic().startsWith("test"));
+            assertTrue("Offset is positive", recordMeta.offset() >= 0);
+            assertTrue("Topic Name start with 'test'", recordMeta.topic().startsWith("test"));
         }
     }
 
@@ -207,16 +203,14 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
         assertTrue("Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount(), allMessagesReceived);
 
-        List<Exchange> exchangeList= mockEndpoint.getExchanges();
-        assertEquals("Fifteen Exchanges are expected",exchangeList.size(),15);
+        List<Exchange> exchangeList = mockEndpoint.getExchanges();
+        assertEquals("Fifteen Exchanges are expected", exchangeList.size(), 15);
         for (Exchange exchange : exchangeList) {
-            List<RecordMetadata> recordMetaData1 =  (List<RecordMetadata>)(exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
-            assertEquals("One RecordMetadata is expected.",recordMetaData1.size(),1);
-            assertTrue("Offset is positive",recordMetaData1.get(0).offset() >= 0);
-            assertTrue("Topic Name start with 'test'",recordMetaData1.get(0).topic().startsWith("test"));
-
+            List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
+            assertEquals("One RecordMetadata is expected.", recordMetaData1.size(), 1);
+            assertTrue("Offset is positive", recordMetaData1.get(0).offset() >= 0);
+            assertTrue("Topic Name start with 'test'", recordMetaData1.get(0).topic().startsWith("test"));
         }
-
     }
 
     private void createKafkaMessageConsumer(KafkaConsumer<String, String> consumerConn,
