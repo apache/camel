@@ -2,27 +2,44 @@ package org.apache.camel.component.sip;
 
 import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public class MessageTest
+import javax.sip.message.Request;
+
+public class MessageTest extends CamelTestSupport
 {
+    @EndpointInject(uri = "mock:notification")
+    protected MockEndpoint resultEndpoint;
 
-    public static void main(String[] args) throws Exception
-    {
-        CamelContext context = new DefaultCamelContext();
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate producerTemplate;
 
-        context.addRoutes(new RouteBuilder()
-        {
+    @Test
+    public void testPresenceAgentBasedPubSub() throws Exception {
+        resultEndpoint.expectedMinimumMessageCount(1);
+
+        producerTemplate.sendBodyAndHeader(
+                "sip://listener@localhost:5154?stackName=sender&fromUser=sender&fromHost=localhost&fromPort=5252" +
+                        "&eventHeaderName=sendingToListener&eventId=message",
+                "Hello from the other side",
+                "REQUEST_METHOD", Request.MESSAGE);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
             @Override
-            public void configure() throws Exception
-            {
-                from("sip:localhost@127.0.1.1:5061").to("sip:localhost@127.0.1.1:5061");
+            public void configure() throws Exception {
+                //Consumer which listens for incoming messages
+                from("sip://listener@localhost:5154?stackName=Listener&eventHeaderName=retrievedFromSIP&eventId=SIP")
+                        .to("log:ReceivedMessage")
+                        .to("mock:notification");
             }
-        });
-
-        context.start();
-        ProducerTemplate template = context.createProducerTemplate();
-        template.sendBody("hello alice");
+        };
     }
 
 }

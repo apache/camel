@@ -143,6 +143,7 @@ public class SipConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        provider.removeSipListener(sipSubscriptionListener);
         sipStack.deleteListeningPoint(configuration.getListeningPoint());
         sipStack.deleteSipProvider(provider);
         sipStack.stop();
