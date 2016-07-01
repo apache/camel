@@ -39,7 +39,6 @@ import org.mockito.Mockito;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-
 public class KafkaProducerTest {
 
     private KafkaProducer producer;
@@ -85,8 +84,6 @@ public class KafkaProducerTest {
         producer.process(exchange);
         Mockito.verify(producer.getKafkaProducer()).send(Matchers.any(ProducerRecord.class));
         assertRecordMetadataExists();
-
-
     }
 
     @Test(expected = Exception.class)
@@ -103,7 +100,6 @@ public class KafkaProducerTest {
 
         assertRecordMetadataExists();
     }
-
 
     @Test
     public void processAsyncSendsMessage() throws Exception {
@@ -125,7 +121,6 @@ public class KafkaProducerTest {
 
     @Test
     public void processAsyncSendsMessageWithException() throws Exception {
-
         endpoint.setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
@@ -210,7 +205,6 @@ public class KafkaProducerTest {
 
         verifySendMessage("4", "someTopic", "someKey");
         assertRecordMetadataExists();
-
     }
 
     @Test
@@ -224,7 +218,6 @@ public class KafkaProducerTest {
 
         verifySendMessage("someTopic", "someKey");
         assertRecordMetadataExists();
-
     }
 
     @Test
@@ -241,7 +234,6 @@ public class KafkaProducerTest {
 
         verifySendMessage("4", "someTopic", "someKey");
         assertRecordMetadataExists();
-
     }
 
     @Test // Message and Topic Name alone
@@ -254,7 +246,6 @@ public class KafkaProducerTest {
 
         verifySendMessage("someTopic");
         assertRecordMetadataExists();
-
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -282,9 +273,9 @@ public class KafkaProducerTest {
     }
 
     private void assertRecordMetadataExists() {
-        List<RecordMetadata> recordMetaData1 =  (List<RecordMetadata>)(out.getHeader(KafkaConstants.KAFKA_RECORDMETA));
+        List<RecordMetadata> recordMetaData1 =  (List<RecordMetadata>)(in.getHeader(KafkaConstants.KAFKA_RECORDMETA));
         assertTrue(recordMetaData1 != null);
         assertEquals("Expected one recordMetaData",recordMetaData1.size(),1);
-        assertTrue(recordMetaData1.get(0) !=null);
+        assertTrue(recordMetaData1.get(0) != null);
     }
 }
