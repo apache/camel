@@ -75,7 +75,7 @@ public class CoAPProducer extends DefaultProducer {
             response = client.put(bodyPut, mediaType);
             break;
         case "PING":
-        	pingResponse = client.ping();
+            pingResponse = client.ping();
             break;
         default:
             break;
@@ -89,8 +89,8 @@ public class CoAPProducer extends DefaultProducer {
         }
         
         if (method.equalsIgnoreCase("PING")) {
-        	Message resp = exchange.getOut();
-        	resp.setBody(pingResponse);
+            Message resp = exchange.getOut();
+            resp.setBody(pingResponse);
         }
     }
 
