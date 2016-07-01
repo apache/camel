@@ -50,9 +50,9 @@ public class CoAPPingTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception { 
                 from("coap://localhost:" + PORT + "/TestResource?coapMethod=PING")
-                .to("log:exch")
-                .transform(body().convertTo(Boolean.class))
-                .to("log:exch");
+                    .to("log:exch")
+                    .transform(body().convertTo(Boolean.class))
+                    .to("log:exch");
                 
                 from("direct:start").to("coap://localhost:" + PORT + "/TestResource?coapMethod=PING").to("mock:result");
             }
