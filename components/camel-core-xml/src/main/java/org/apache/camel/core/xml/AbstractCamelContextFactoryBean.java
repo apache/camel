@@ -550,7 +550,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (anySpoolRules != null) {
             getContext().getStreamCachingStrategy().setAnySpoolRules(anySpoolRules);
         }
-        String spoolRules = CamelContextHelper.parseText(getContext(), streamCaching.getAnySpoolRules());
+        String spoolRules = CamelContextHelper.parseText(getContext(), streamCaching.getSpoolRules());
         if (spoolRules != null) {
             Iterator<Object> it = ObjectHelper.createIterator(spoolRules);
             while (it.hasNext()) {
