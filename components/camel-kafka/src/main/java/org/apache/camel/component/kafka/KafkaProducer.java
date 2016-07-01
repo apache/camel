@@ -177,7 +177,14 @@ public class KafkaProducer extends DefaultAsyncProducer {
         Iterator<ProducerRecord> c = createRecorder(exchange);
         List<Future<RecordMetadata>> futures = new LinkedList<Future<RecordMetadata>>();
         List<RecordMetadata> recordMetadatas = new ArrayList<RecordMetadata>();
-        exchange.getOut().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
+
+        if (endpoint.getConfiguration().isRecordMetadata()) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
+            } else {
+                exchange.getIn().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
+            }
+        }
 
         while (c.hasNext()) {
             futures.add(kafkaProducer.send(c.next()));
@@ -216,12 +223,19 @@ public class KafkaProducer extends DefaultAsyncProducer {
         KafkaProducerCallBack(Exchange exchange, AsyncCallback callback) {
             this.exchange = exchange;
             this.callback = callback;
-            exchange.getOut().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
+            if (endpoint.getConfiguration().isRecordMetadata()) {
+                if (exchange.hasOut()) {
+                    exchange.getOut().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
+                } else {
+                    exchange.getIn().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
+                }
+            }
         }
 
         void increment() {
             count.incrementAndGet();
         }
+
         boolean allSent() {
             if (count.decrementAndGet() == 0) {
                 //was able to get all the work done while queuing the requests
@@ -236,6 +250,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
             if (e != null) {
                 exchange.setException(e);
             }
+
             recordMetadatas.add(recordMetadata);
 
             if (count.decrementAndGet() == 0) {
