@@ -262,26 +262,9 @@ and puts them into a activeMQ queue as well as logging them:
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
-String sendingSipURI =
-                "sip://listener@localhost:5156"+
-                "?stackName=Retriever" +
-                "&fromUser=sending" +
-                "&fromHost= localhost" +
-                "&fromPort=5155" +
-                "&eventHeaderName=sendingFromQueue" +
-                "&eventId=sourceJSMqueue";
-
-Processor headerAdder = new Processor()
-        {
-            @Override
-            public void process(Exchange exchange) throws Exception
-            {
-                exchange.getIn().setHeader("REQUEST_METHOD", Request.MESSAGE);
-            }
-        };
-
-from("activemq:sip-messages")
-        .process(headerAdder).to(sendingSipURI);  //send message to given SIP uri
+from("sip://listener@localhost:5154?stackName=Listener&eventHeaderName=retrievedFromSIP&eventId=SIP")
+        .to("log:ReceivedMessage")
+        .to("activemq:sip-messages");
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 Note that there are no parameter "toUser", "toHost" and toPort in the SIP URI as is only consumer messages. If it was
 a subscribing consumer, it would need the parameter "subscribing=true" and the "to" parameters to know where to
