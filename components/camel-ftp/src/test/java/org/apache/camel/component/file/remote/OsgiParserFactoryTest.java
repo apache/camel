@@ -93,4 +93,12 @@ public class OsgiParserFactoryTest {
         assertThat(result, instanceOf(CompositeFileEntryParser.class));
     }
 
+    @Test
+    public void createFileEntryParserWin32()
+            throws Exception {
+        when(ftpClientConfig.getServerSystemKey()).thenReturn("WIN32");
+        FTPFileEntryParser result = OSGI_PARSER_FACTORY.createFileEntryParser(ftpClientConfig);
+        assertThat(result, instanceOf(CompositeFileEntryParser.class));
+    }
+
 }
