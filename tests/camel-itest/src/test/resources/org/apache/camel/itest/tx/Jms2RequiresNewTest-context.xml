@@ -23,6 +23,8 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
     <!-- use required TX -->
     <bean id="PROPAGATION_REQUIRES_NEW" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
         <property name="transactionManager" ref="jtaTransactionManager"/>
@@ -55,7 +57,7 @@
     <!-- Is the ConnectionFactory to connect to the JMS broker -->
     <!-- notice how we must use the XA connection factory -->
     <bean id="jmsXaConnectionFactory" class="org.apache.activemq.ActiveMQXAConnectionFactory" depends-on="my-broker">
-        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <property name="brokerURL" value="tcp://localhost:${ITestSupport.port3}"/>
     </bean>
 
     <!-- define the activemq Camel component so we can integrate with the AMQ broker below -->
@@ -69,7 +71,7 @@
     <!-- setup a local JMS Broker for testing purpose -->
     <broker id="my-broker" useJmx="false" persistent="false" brokerName="localhost" xmlns="http://activemq.apache.org/schema/core">
         <transportConnectors>
-            <transportConnector uri="tcp://localhost:61616"/>
+            <transportConnector uri="tcp://localhost:${ITestSupport.port3}"/>
         </transportConnectors>
     </broker>
 
