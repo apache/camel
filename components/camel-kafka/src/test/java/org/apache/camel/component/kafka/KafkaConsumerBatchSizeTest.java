@@ -36,9 +36,7 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
             + "&groupId=group1"
             + "&autoOffsetReset=earliest"
             + "&autoCommitEnable=false"
-            + "&batchSize=3"
             + "&consumerStreams=10"
-            + "&barrierAwaitTimeoutMs=1000"
     )
     private Endpoint from;
 
