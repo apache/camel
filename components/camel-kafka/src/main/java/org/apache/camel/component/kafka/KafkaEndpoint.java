@@ -374,10 +374,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return configuration.getSslTruststoreLocation();
     }
 
-    public void setBarrierAwaitTimeoutMs(int barrierAwaitTimeoutMs) {
-        configuration.setBarrierAwaitTimeoutMs(barrierAwaitTimeoutMs);
-    }
-
     public String getSslProvider() {
         return configuration.getSslProvider();
     }
@@ -396,10 +392,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     public String getTopic() {
         return configuration.getTopic();
-    }
-
-    public int getBarrierAwaitTimeoutMs() {
-        return configuration.getBarrierAwaitTimeoutMs();
     }
 
     public Integer getFetchMinBytes() {
@@ -460,10 +452,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     public void setConsumersCount(int consumersCount) {
         configuration.setConsumersCount(consumersCount);
-    }
-
-    public int getBatchSize() {
-        return configuration.getBatchSize();
     }
 
     public void setAutoCommitIntervalMs(Integer autoCommitIntervalMs) {
@@ -624,10 +612,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     public String getSaslKerberosServiceName() {
         return configuration.getSaslKerberosServiceName();
-    }
-
-    public void setBatchSize(int batchSize) {
-        configuration.setBatchSize(batchSize);
     }
 
     public Integer getLingerMs() {

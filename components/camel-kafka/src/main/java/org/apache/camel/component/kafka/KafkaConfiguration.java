@@ -48,10 +48,6 @@ public class KafkaConfiguration {
     private int consumerStreams = 10;
     @UriParam(label = "consumer", defaultValue = "1")
     private int consumersCount = 1;
-    @UriParam(label = "consumer", defaultValue = "100")
-    private int batchSize = 100;
-    @UriParam(label = "consumer", defaultValue = "10000")
-    private int barrierAwaitTimeoutMs = 10000;
 
     //Common configuration properties
     @UriParam
@@ -405,28 +401,6 @@ public class KafkaConfiguration {
      */
     public void setConsumerStreams(int consumerStreams) {
         this.consumerStreams = consumerStreams;
-    }
-
-    public int getBatchSize() {
-        return batchSize;
-    }
-
-    /**
-     * The batchSize that the BatchingConsumerTask processes once.
-     */
-    public void setBatchSize(int batchSize) {
-        this.batchSize = batchSize;
-    }
-
-    public int getBarrierAwaitTimeoutMs() {
-        return barrierAwaitTimeoutMs;
-    }
-
-    /**
-     * If the BatchingConsumerTask processes exchange exceed the batchSize, it will wait for barrierAwaitTimeoutMs.
-     */
-    public void setBarrierAwaitTimeoutMs(int barrierAwaitTimeoutMs) {
-        this.barrierAwaitTimeoutMs = barrierAwaitTimeoutMs;
     }
 
     public int getConsumersCount() {
