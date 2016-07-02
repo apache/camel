@@ -86,8 +86,9 @@ The Kafka component supports 1 options which are listed below.
 
 
 
+
 // endpoint options: START
-The Kafka component supports 75 endpoint options which are listed below:
+The Kafka component supports 73 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -102,8 +103,6 @@ The Kafka component supports 75 endpoint options which are listed below:
 | autoCommitEnable | consumer | true | Boolean | If true periodically commit to ZooKeeper the offset of messages already fetched by the consumer. This committed offset will be used when the process fails as the position from which the new consumer will begin.
 | autoCommitIntervalMs | consumer | 5000 | Integer | The frequency in ms that the consumer offsets are committed to zookeeper.
 | autoOffsetReset | consumer | latest | String | What to do when there is no initial offset in ZooKeeper or if an offset is out of range: smallest : automatically reset the offset to the smallest offset largest : automatically reset the offset to the largest offset fail: throw exception to the consumer
-| barrierAwaitTimeoutMs | consumer | 10000 | int | If the BatchingConsumerTask processes exchange exceed the batchSize it will wait for barrierAwaitTimeoutMs.
-| batchSize | consumer | 100 | int | The batchSize that the BatchingConsumerTask processes once.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | checkCrcs | consumer | true | Boolean | Automatically check the CRC32 of the records consumed. This ensures no on-the-wire or on-disk corruption to the messages occurred. This check adds some overhead so it may be disabled in cases seeking extreme performance.
 | consumerId | consumer |  | String | Generated automatically if not set.
@@ -171,6 +170,7 @@ The Kafka component supports 75 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
