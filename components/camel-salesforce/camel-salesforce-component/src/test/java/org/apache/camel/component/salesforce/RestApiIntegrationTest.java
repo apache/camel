@@ -234,7 +234,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    //@Ignore("Depends on a Task object with a datetime field")
+    @Ignore("Depends on a Task object with a datetime field")
     public void testCreateUpdateDeleteTasks() throws Exception {
         doTestCreateUpdateDeleteTasks("");
         doTestCreateUpdateDeleteTasks("Xml");
