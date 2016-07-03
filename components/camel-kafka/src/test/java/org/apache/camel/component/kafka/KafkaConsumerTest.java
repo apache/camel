@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class KafkaConsumerTest {
 
@@ -29,20 +30,23 @@ public class KafkaConsumerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void consumerRequiresBootstrapServers() throws Exception {
-        Mockito.when(endpoint.getGroupId()).thenReturn("groupOne");
+        when(endpoint.getGroupId()).thenReturn("groupOne");
+        when(endpoint.getConfiguration()).thenReturn(new KafkaConfiguration());
         new KafkaConsumer(endpoint, processor);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void consumerRequiresGroupId() throws Exception {
-        Mockito.when(endpoint.getBrokers()).thenReturn("localhost:1234");
+        when(endpoint.getBrokers()).thenReturn("localhost:1234");
+        when(endpoint.getConfiguration()).thenReturn(new KafkaConfiguration());
         new KafkaConsumer(endpoint, processor);
     }
 
     @Test
     public void consumerOnlyRequiresBootstrapServersAndGroupId() throws Exception {
-        Mockito.when(endpoint.getGroupId()).thenReturn("groupOne");
-        Mockito.when(endpoint.getBrokers()).thenReturn("localhost:2181");
+        when(endpoint.getGroupId()).thenReturn("groupOne");
+        when(endpoint.getBrokers()).thenReturn("localhost:2181");
+        when(endpoint.getConfiguration()).thenReturn(new KafkaConfiguration());
         new KafkaConsumer(endpoint, processor);
     }
 }
