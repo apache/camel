@@ -41,11 +41,13 @@ public class KafkaConsumer extends DefaultConsumer {
     protected ExecutorService executor;
     private final KafkaEndpoint endpoint;
     private final Processor processor;
+    private final Long pollTimeoutMs;
 
     public KafkaConsumer(KafkaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.processor = processor;
+        this.pollTimeoutMs = endpoint.getConfiguration().getPollTimeoutMs();
 
         if (endpoint.getBrokers() == null) {
             throw new IllegalArgumentException("BootStrap servers must be specified");
@@ -125,7 +127,7 @@ public class KafkaConsumer extends DefaultConsumer {
                     consumer.seekToBeginning(consumer.assignment());
                 }
                 while (isRunAllowed() && !isSuspendingOrSuspended()) {
-                    ConsumerRecords<Object, Object> allRecords = consumer.poll(Long.MAX_VALUE);
+                    ConsumerRecords<Object, Object> allRecords = consumer.poll(pollTimeoutMs);
                     for (TopicPartition partition : allRecords.partitions()) {
                         List<ConsumerRecord<Object, Object>> partitionRecords = allRecords
                             .records(partition);
