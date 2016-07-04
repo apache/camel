@@ -281,8 +281,14 @@ public final class ArquillianPackager {
 
     private static boolean validTestDependency(ITestConfig config, MavenCoordinate coordinate) {
 
-        Pattern[] patterns = new Pattern[]{Pattern.compile("^log4j$"), Pattern.compile("^slf4j-log4j12$"), Pattern.compile("^slf4j-simple$"), Pattern.compile("^slf4j-jdk14$"), Pattern.compile
-                ("^logback-classic$"), Pattern.compile("^logback-core$")};
+        Pattern[] patterns = new Pattern[]{
+                Pattern.compile("^log4j$"),
+                Pattern.compile("^slf4j-log4j12$"),
+                Pattern.compile("^slf4j-simple$"),
+                Pattern.compile("^slf4j-jdk14$"),
+                Pattern.compile("^logback-classic$"),
+                Pattern.compile("^logback-core$")
+        };
 
         boolean valid = true;
         for (Pattern p : patterns) {
