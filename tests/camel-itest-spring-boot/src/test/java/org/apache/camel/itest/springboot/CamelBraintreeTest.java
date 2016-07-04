@@ -35,6 +35,8 @@ public class CamelBraintreeTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelBraintreeTest.class))
+                .unitTestExclusionPattern(".*IntegrationTest$")
+                .unitTestExpectedNumber(0)
                 .build();
     }
 

@@ -35,6 +35,7 @@ public class CamelWebsocketTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelWebsocketTest.class))
+                .unitTestExclusionPattern(".*(WebsocketEndpointTest|WebsocketComponentTest)$")
                 .build();
     }
 

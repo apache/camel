@@ -16,11 +16,13 @@
  */
 package org.apache.camel.itest.springboot;
 
+import java.util.concurrent.Future;
+
 /**
  * Represents a generic command that can be executed in the spring-boot context.
  */
 public interface Command {
 
-    Object execute(Object[] parameters) throws Exception;
+    Future<Object> execute(Object[] parameters) throws Exception;
 
 }

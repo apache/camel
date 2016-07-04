@@ -16,17 +16,22 @@
  */
 package org.apache.camel.itest.springboot.command;
 
+import java.util.concurrent.Future;
+
 import org.apache.camel.itest.springboot.Command;
 import org.apache.camel.itest.springboot.ITestConfig;
 import org.junit.Assert;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 
 /**
  * An abstract class for commands that need standard test parameters.
  */
 public abstract class AbstractTestCommand implements Command {
 
+    @Async // needs to run on a spring background thread
     @Override
-    public Object execute(Object[] parameters) throws Exception {
+    public Future<Object> execute(Object[] parameters) throws Exception {
         Assert.assertNotNull("Parameters cannot be null", parameters);
         Assert.assertEquals("Parameters should contain two elements", 2, parameters.length);
         Object configObj = parameters[0];
@@ -40,8 +45,9 @@ public abstract class AbstractTestCommand implements Command {
         String compName = (String) compNameObj;
 
         ITestConfig config = (ITestConfig) configObj;
-        this.executeTest(config, compName);
-        return true;
+        Object result = this.executeTest(config, compName);
+
+        return new AsyncResult<>(result);
     }
 
     public abstract Object executeTest(ITestConfig config, String component) throws Exception;

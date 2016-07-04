@@ -17,6 +17,7 @@
 package org.apache.camel.itest.springboot;
 
 import org.apache.camel.itest.springboot.util.ArquillianPackager;
+import org.apache.camel.itest.springboot.util.DependencyResolver;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -35,6 +36,7 @@ public class CamelHbaseTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelHbaseTest.class))
+                .dependency(DependencyResolver.withVersion("org.apache.hadoop:hadoop-hdfs"))
                 .build();
     }
 

@@ -35,6 +35,7 @@ public class CamelElasticsearchTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelElasticsearchTest.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BaseTest$)")
                 .build();
     }
 

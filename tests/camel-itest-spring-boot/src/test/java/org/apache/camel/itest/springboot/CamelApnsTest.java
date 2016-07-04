@@ -35,6 +35,8 @@ public class CamelApnsTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelApnsTest.class))
+                .resource("components/apns-clientStore.p12", "clientStore.p12")
+                .resource("components/apns-serverStore.p12", "serverStore.p12")
                 .build();
     }
 

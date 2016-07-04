@@ -35,6 +35,7 @@ public class CamelQuartz2Test extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelQuartz2Test.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BaseQuartzTest$|QuartzTwoCamelContextSameNameClashTest$)") // unrelated test
                 .build();
     }
 
