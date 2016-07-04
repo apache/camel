@@ -103,9 +103,9 @@ class XMLStreamReaderInputStream extends InputStream {
                         QName qname = reader.getName();
                         writer.writeStartElement(qname.getPrefix(), qname.getLocalPart(), qname.getNamespaceURI());
                         for (int i = 0; i < reader.getAttributeCount(); i++) {
-                            writer.writeAttribute(
-                                    reader.getAttributePrefix(i), reader.getAttributeNamespace(i), reader.getAttributeLocalName(i),
-                                    reader.getAttributeValue(i));
+                            String namespaceUri = reader.getAttributeNamespace(i);
+                            writer.writeAttribute(reader.getAttributePrefix(i), namespaceUri == null ? "" : namespaceUri, reader.getAttributeLocalName(i),
+                                                  reader.getAttributeValue(i));
                         }
                         for (int i = 0; i < reader.getNamespaceCount(); i++) {
                             writer.writeNamespace(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
