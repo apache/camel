@@ -71,8 +71,8 @@ public class KafkaConfiguration {
     //session.timeout.ms
     @UriParam(label = "consumer", defaultValue = "30000")
     private Integer sessionTimeoutMs = 30000;
-    @UriParam(label = "consumer", defaultValue = "30000")
-    private Long pollTimeOutMs = 30000L;
+    @UriParam(label = "consumer", defaultValue = "5000")
+    private Long pollTimeoutMs = 5000L;
     //auto.offset.reset1
     @UriParam(label = "consumer", defaultValue = "latest", enums = "latest,earliest,none")
     private String autoOffsetReset = "latest";
@@ -1077,14 +1077,14 @@ public class KafkaConfiguration {
     }
 
     public Long getPollTimeoutMs() {
-        return pollTimeOutMs;
+        return pollTimeoutMs;
     }
 
     /**
      * The timeout used when polling the KafkaConsumer.
      */
-    public void setPollTimeOutMs(Long pollTimeOutMs) {
-        this.pollTimeOutMs = pollTimeOutMs;
+    public void setPollTimeoutMs(Long pollTimeoutMs) {
+        this.pollTimeoutMs = pollTimeoutMs;
     }
 
     public String getPartitionAssignor() {
