@@ -16,6 +16,14 @@
  */
 package org.apache.camel.itest.springboot;
 
+import java.net.URL;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
+
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -29,6 +37,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class ITestApplication {
 
     public static void main(String[] args) throws Exception {
+        overrideLoggingConfig();
+
         SpringApplication.run(ITestApplication.class, args);
     }
 
@@ -36,6 +46,28 @@ public class ITestApplication {
     public String toString() {
         // to tell source-check this is not a utility-class
         return "spring-boot-main";
+    }
+
+    private static void overrideLoggingConfig() {
+
+        URL logbackFile = ITestApplication.class.getResource("/spring-logback.xml");
+        if (logbackFile != null) {
+
+            LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+            try {
+                JoranConfigurator configurator = new JoranConfigurator();
+                configurator.setContext(context);
+                // Call context.reset() to clear any previous configuration, e.g. default
+                // configuration. For multi-step configuration, omit calling context.reset().
+                context.reset();
+                configurator.doConfigure(logbackFile);
+            } catch (JoranException je) {
+                // StatusPrinter will handle this
+            }
+            StatusPrinter.printInCaseOfErrorsOrWarnings(context);
+        }
+
     }
 
 }
