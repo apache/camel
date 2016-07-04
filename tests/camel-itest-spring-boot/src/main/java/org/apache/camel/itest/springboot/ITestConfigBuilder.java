@@ -16,11 +16,9 @@
  */
 package org.apache.camel.itest.springboot;
 
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.TreeSet;
 
 /**
@@ -28,9 +26,7 @@ import java.util.TreeSet;
  */
 public class ITestConfigBuilder {
 
-    private static final String PROPERTIES_FILE = "/spring-boot-itest.properties";
-
-    private Properties properties;
+    public static final String CONFIG_PREFIX = "itest.springboot.";
 
     private ITestConfig config;
 
@@ -150,7 +146,7 @@ public class ITestConfigBuilder {
 
         // Set the defaults
         if (config.getUnitTestEnabled() == null) {
-            config.setUnitTestEnabled(booleanPropertyOr("unitTestEnabled", false));
+            config.setUnitTestEnabled(booleanPropertyOr("unitTestEnabled", true));
         }
 
         if (config.getMavenGroup() == null) {
@@ -162,7 +158,7 @@ public class ITestConfigBuilder {
         }
 
         if (config.getMavenOfflineResolution() == null) {
-            config.setMavenOfflineResolution(booleanPropertyOr("mavenOfflineResolution", true));
+            config.setMavenOfflineResolution(booleanPropertyOr("mavenOfflineResolution", false));
         }
 
         if (config.getUnitTestInclusionPattern() == null) {
@@ -229,17 +225,7 @@ public class ITestConfigBuilder {
     }
 
     private String propertyOr(String name, String defaultVal) {
-        if (properties == null) {
-            properties = new Properties();
-            try {
-                InputStream in = getClass().getResourceAsStream(PROPERTIES_FILE);
-                properties.load(in);
-            } catch (Exception e) {
-                throw new IllegalStateException("Unable to load property file: " + PROPERTIES_FILE, e);
-            }
-        }
-
-        String res = properties.getProperty(name);
+        String res = System.getProperty(CONFIG_PREFIX + name);
         if (res == null) {
             res = defaultVal;
         }

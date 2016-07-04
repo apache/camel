@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.camel.itest.springboot.ITestConfig;
+import org.apache.camel.itest.springboot.ITestConfigBuilder;
 import org.apache.camel.itest.springboot.arquillian.SpringBootZipExporterImpl;
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.se.api.ClassPath;
@@ -85,7 +86,6 @@ public final class ArquillianPackager {
         JavaArchive ark = domain.getArchiveFactory().create(JavaArchive.class, "test.jar");
 
         ark = ark.addAsManifestResource("BOOT-MANIFEST.MF", "MANIFEST.MF");
-        ark = ark.addAsResource("spring-boot-itest.properties");
 
         if (config.getUseCustomLog()) {
             ark = ark.addAsResource("spring-logback.xml");
@@ -123,6 +123,8 @@ public final class ArquillianPackager {
         commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-simple"));
         commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-simple"));
         commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-jdk14"));
+        commonExclusions.add(MavenDependencies.createExclusion("ch.qos.logback", "logback-classic"));
+        commonExclusions.add(MavenDependencies.createExclusion("ch.qos.logback", "logback-core"));
 
         for (String ex : config.getMavenExclusions()) {
             commonExclusions.add(MavenDependencies.createExclusion(ex));
@@ -223,6 +225,16 @@ public final class ArquillianPackager {
             external.addSystemProperty("container.test.resources.dir", new File(config.getModuleBasePath()).getCanonicalPath() + "/target/test-classes");
         }
 
+        // Adding configuration properties
+        for (Map.Entry<Object, Object> e : System.getProperties().entrySet()) {
+            if(e.getKey() instanceof String && e.getValue() instanceof String) {
+                String key = (String) e.getKey();
+                if(key.startsWith(ITestConfigBuilder.CONFIG_PREFIX)) {
+                    external.addSystemProperty(key, (String) e.getValue());
+                }
+            }
+        }
+
         for (Map.Entry<String, String> e : config.getSystemProperties().entrySet()) {
             external.addSystemProperty(e.getKey(), e.getValue());
         }
@@ -269,7 +281,7 @@ public final class ArquillianPackager {
 
     private static boolean validTestDependency(MavenCoordinate coordinate) {
 
-        Pattern[] patterns = new Pattern[]{Pattern.compile("^log4j$"), Pattern.compile("^slf4j-log4j12$"), Pattern.compile("^slf4j-simple$"), Pattern.compile("^slf4j-jdk14$")};
+        Pattern[] patterns = new Pattern[]{Pattern.compile("^log4j$"), Pattern.compile("^slf4j-log4j12$"), Pattern.compile("^slf4j-simple$"), Pattern.compile("^slf4j-jdk14$"), Pattern.compile("^logback-classic$"), Pattern.compile("^logback-core$")};
 
         boolean valid = true;
         for (Pattern p : patterns) {
