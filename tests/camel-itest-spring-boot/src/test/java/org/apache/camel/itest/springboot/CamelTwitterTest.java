@@ -35,7 +35,7 @@ public class CamelTwitterTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelTwitterTest.class))
-                .unitTestExclusionPattern(".*(DirectMessageDirectTest|DirectMessagePollingTest)$")
+                .unitTestInclusionPattern(".*UriConfigurationTest$")
                 .build();
     }
 

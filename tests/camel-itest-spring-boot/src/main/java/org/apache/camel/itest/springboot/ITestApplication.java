@@ -18,12 +18,14 @@ package org.apache.camel.itest.springboot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * Contains the main class of the sample spring-boot application created for the module under test.
  *
  */
 @SpringBootApplication
+@EnableAsync
 public class ITestApplication {
 
     public static void main(String[] args) throws Exception {

@@ -35,6 +35,7 @@ public class CamelDisruptorTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelDisruptorTest.class))
+                // arquillian fails, but the tests are ok
                 .build();
     }
 

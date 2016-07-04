@@ -35,6 +35,7 @@ public class CamelRabbitmqTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelRabbitmqTest.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|IntTest$)") // different suffix
                 .build();
     }
 

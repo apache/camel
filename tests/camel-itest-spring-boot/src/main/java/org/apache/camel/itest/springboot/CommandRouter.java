@@ -16,6 +16,8 @@
  */
 package org.apache.camel.itest.springboot;
 
+import java.util.concurrent.Future;
+
 import org.springframework.context.ApplicationContext;
 
 import static org.apache.camel.itest.springboot.util.SerializationUtils.marshal;
@@ -42,7 +44,8 @@ public final class CommandRouter {
                 args = (Object[]) unmarshal(params);
             }
 
-            Object result = command.execute(args);
+            Future<Object> futResult = command.execute(args);
+            Object result = futResult.get();
 
             return marshal(result);
         } catch (Throwable t) {

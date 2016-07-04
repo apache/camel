@@ -55,9 +55,23 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
-            <artifactId>container-se-managed</artifactId>
+            <artifactId>arquillian-container-test-spi</artifactId>
+            <version>${arquillian-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-jmx</artifactId>
+            <version>${arquillian-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>container-se-api</artifactId>
             <version>${arquillian-container-se-managed-version}</version>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>container-se-server</artifactId>
+            <version>${arquillian-container-se-managed-version}</version>
         </dependency>
 
         <dependency>
@@ -118,21 +132,70 @@
                 <configuration>
                     <childDelegation>false</childDelegation>
                     <forkedProcessTimeoutInSeconds>15000</forkedProcessTimeoutInSeconds>
+                    <rerunFailingTestsCount>0</rerunFailingTestsCount>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
                     <systemProperties>
                         <property>
-                            <name>itestComponentVersion</name>
+                            <name>version_org.apache.camel:camel-core</name>
                             <value>${project.version}</value>
                         </property>
                         <property>
-                            <name>springDataRedisVersion</name>
+                            <name>version_org.apache.camel:camel-netty4</name>
+                            <value>${project.version}</value>
+                        </property>
+                        <property>
+                            <name>version_org.springframework.data:spring-data-redis</name>
                             <value>${spring-data-redis-version}</value>
                         </property>
                         <property>
-                            <name>hibernateValidatorVersion</name>
+                            <name>version_org.hibernate:hibernate-validator</name>
                             <value>${hibernate-validator-version}</value>
+                        </property>
+                        <property>
+                            <name>version_xom:xom</name>
+                            <value>${xom-version}</value>
+                        </property>
+                        <property>
+                            <name>version_org.springframework.boot:spring-boot-starter-web</name>
+                            <value>${spring-boot-version}</value>
+                        </property>
+                        <property>
+                            <name>version_2.10_org.scala-lang:scala-library</name>
+                            <value>${scala-2.10-version}</value>
+                        </property>
+                        <property>
+                            <name>version_org.springframework:spring-webmvc</name>
+                            <value>${spring-version}</value>
+                        </property>
+                        <property>
+                            <name>version_org.apache.lucene:lucene-core</name>
+                            <value>${lucene3-version}</value>
+                        </property>
+                        <property>
+                            <name>version_com.google.inject:guice</name>
+                            <value>${guice3-version}</value>
+                        </property>
+                        <property>
+                            <name>version_com.google.guava:guava</name>
+                            <value>${google-guava-version}</value>
+                        </property>
+                        <property>
+                            <name>version_org.apache.hadoop:hadoop-hdfs</name>
+                            <value>${hadoop2-version}</value>
+                        </property>
+                        <property>
+                            <name>version_io.netty:netty-all</name>
+                            <value>${netty-version}</value>
+                        </property>
+                        <property>
+                            <name>version_org.glassfish.grizzly:grizzly-websockets</name>
+                            <value>${grizzly-websockets-version}</value>
+                        </property>
+                        <property>
+                            <name>version_org.glassfish.grizzly:connection-pool</name>
+                            <value>${grizzly-websockets-version}</value>
                         </property>
                     </systemProperties>
                 </configuration>

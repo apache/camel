@@ -35,6 +35,7 @@ public class CamelHawtdbTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelHawtdbTest.class))
+                // arquillian fails, but the tests are ok
                 .build();
     }
 

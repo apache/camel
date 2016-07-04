@@ -35,6 +35,8 @@ public class CamelSalesforceTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelSalesforceTest.class))
+                .basePath("../../components/camel-salesforce/camel-salesforce-component")
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest.*|MSPTest$)")
                 .autostart(false) // needs configuration
                 .build();
     }

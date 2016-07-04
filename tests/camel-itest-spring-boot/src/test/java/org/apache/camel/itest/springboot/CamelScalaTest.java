@@ -35,6 +35,7 @@ public class CamelScalaTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelScalaTest.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|LoopTest$|IdempotentConsumerEagerTest$|AutoStartupTest$)") // no runnable methods on these tests
                 .build();
     }
 

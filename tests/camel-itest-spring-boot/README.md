@@ -14,11 +14,12 @@ checks that the camel context has been created, that the camel components can be
 Test options can be changed from the `src/test/resources/spring-boot-itest.properties` file.
 
 Some useful options include:
-- **includeTestDependencies (default=false)**: when this option is enabled,
+- **includeTestDependencies (default=true)**: when this option is enabled,
 the integration test will locate the module `pom.xml` file and include in the spring-boot jar also the test-scoped dependencies of the module.
   The inclusion of other libraries often activates some hidden behaviour of spring-boot.
-  *Note: logging libraries (eg. `log4j`) included in test scope are ignored, to prevent conflict with spring-boot logging system.*
 - **unitTestEnabled (default=false)**: when this option is enabled,
 the integration test will locate the test-classes of the module and run the unit tests after the execution of the usual checks.
   *Note: a full build of each component is required prior to running the unit tests. Test dependencies are implicitly included.*
 
+
+*Note: logging dependencies (eg. `log4j`) are fixed automatically, to prevent conflict with spring-boot logging system.*

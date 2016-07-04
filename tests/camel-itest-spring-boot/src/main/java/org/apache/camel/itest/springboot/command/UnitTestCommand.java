@@ -18,19 +18,31 @@ package org.apache.camel.itest.springboot.command;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.ObjectName;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.itest.springboot.Command;
 import org.apache.camel.itest.springboot.ITestConfig;
 import org.junit.Assert;
+import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +63,9 @@ public class UnitTestCommand extends AbstractTestCommand implements Command {
     private CamelContext context;
 
     @Override
-    public UnitTestResult executeTest(ITestConfig config, String component) throws Exception {
+    public UnitTestResult executeTest(final ITestConfig config, String component) throws Exception {
+
+        overrideLoggingConfig();
 
         logger.info("Spring-Boot test configuration {}", config);
 
@@ -79,7 +93,7 @@ public class UnitTestCommand extends AbstractTestCommand implements Command {
             }
         }
 
-        List<Class<?>> classes = new ArrayList<>();
+        final List<Class<?>> classes = new ArrayList<>();
         for (String cn : testClasses) {
             Class<?> clazz = Class.forName(cn);
             if (isAdmissible(clazz)) {
@@ -89,9 +103,20 @@ public class UnitTestCommand extends AbstractTestCommand implements Command {
         }
 
 
-        Result result = JUnitCore.runClasses(classes.toArray(new Class[]{}));
         logger.info("Run JUnit tests on {} test classes", classes.size());
-        logger.info("Success: " + result.wasSuccessful() + " - Test Run: " + result.getRunCount() + " - Failures: " + result.getFailureCount() + " - Ignored Tests: " + result.getIgnoreCount());
+
+        JUnitCore runner = new JUnitCore();
+        runner.addListener(new RunListener() {
+            @Override
+            public void testStarted(Description description) throws Exception {
+                disableJmx(config.getJmxDisabledNames());
+            }
+        });
+        Result result = runner.run(classes.toArray(new Class[]{}));
+
+        logger.info("Success: " + result.wasSuccessful() + " - Test Run: " + result.getRunCount() + " - Failures: " + result.getFailureCount() + " - Ignored Tests: " + result
+                .getIgnoreCount());
+
 
         for (Failure f : result.getFailures()) {
             logger.warn("Failed test description: {}", f.getDescription());
@@ -115,6 +140,52 @@ public class UnitTestCommand extends AbstractTestCommand implements Command {
         }
 
         return new UnitTestResult(result);
+    }
+
+    private void overrideLoggingConfig() {
+
+        URL logbackFile = getClass().getResource("/spring-logback.xml");
+        if (logbackFile != null) {
+
+            LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+            try {
+                JoranConfigurator configurator = new JoranConfigurator();
+                configurator.setContext(context);
+                // Call context.reset() to clear any previous configuration, e.g. default
+                // configuration. For multi-step configuration, omit calling context.reset().
+                context.reset();
+                configurator.doConfigure(logbackFile);
+            } catch (JoranException je) {
+                // StatusPrinter will handle this
+            }
+            StatusPrinter.printInCaseOfErrorsOrWarnings(context);
+        }
+
+    }
+
+    private void disableJmx(Set<String> disabledJmx) throws Exception {
+        logger.info("Disabling JMX names: {}", disabledJmx);
+        for (MBeanServer server : getMBeanServers()) {
+            for (String jmxName : disabledJmx) {
+                logger.info("Disabling JMX query {}", jmxName);
+
+                ObjectName oName = new ObjectName(jmxName);
+                Set<ObjectName> names = new HashSet<>(server.queryNames(oName, null));
+                for (ObjectName name : names) {
+                    logger.info("Disabled JMX name {}", name);
+                    server.unregisterMBean(name);
+                }
+            }
+        }
+    }
+
+    private List<MBeanServer> getMBeanServers() {
+        List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
+        if (servers == null) {
+            servers = Collections.emptyList();
+        }
+        return servers;
     }
 
     private boolean isAdmissible(Class<?> testClass) {

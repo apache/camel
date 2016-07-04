@@ -35,6 +35,7 @@ public class CamelKafkaTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelKafkaTest.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|BaseEmbeddedKafkaTest$)")
                 .build();
     }
 

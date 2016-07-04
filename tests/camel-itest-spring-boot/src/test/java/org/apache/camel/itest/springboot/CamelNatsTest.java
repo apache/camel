@@ -35,6 +35,7 @@ public class CamelNatsTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelNatsTest.class))
+                .unitTestExpectedNumber(0)
                 .build();
     }
 

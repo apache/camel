@@ -41,11 +41,13 @@ import org.jboss.shrinkwrap.api.Configuration;
 import org.jboss.shrinkwrap.api.ConfigurationBuilder;
 import org.jboss.shrinkwrap.api.Domain;
 import org.jboss.shrinkwrap.api.ExtensionLoader;
+import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader;
+import org.jboss.shrinkwrap.resolver.api.maven.ConfigurableMavenResolverSystem;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenResolvedArtifact;
 import org.jboss.shrinkwrap.resolver.api.maven.PackagingType;
@@ -85,19 +87,23 @@ public final class ArquillianPackager {
         ark = ark.addAsManifestResource("BOOT-MANIFEST.MF", "MANIFEST.MF");
         ark = ark.addAsResource("spring-boot-itest.properties");
 
+        if (config.getUseCustomLog()) {
+            ark = ark.addAsResource("spring-logback.xml");
+        }
+
         for (Map.Entry<String, String> res : config.getResources().entrySet()) {
             ark = ark.addAsResource(res.getKey(), res.getValue());
         }
 
         ark = ark.addAsDirectories("/lib");
 
-        String version = System.getProperty("itestComponentVersion");
+        String version = System.getProperty("version_org.apache.camel:camel-core");
         if (version == null) {
             config.getMavenVersion();
         }
         if (version == null) {
             // It is missing when launching from IDE
-            List<MavenResolvedArtifact> resolved = Arrays.asList(Maven.resolver().loadPomFromFile("pom.xml").importRuntimeDependencies().resolve().withTransitivity().asResolvedArtifact());
+            List<MavenResolvedArtifact> resolved = Arrays.asList(resolver(config).loadPomFromFile("pom.xml").importRuntimeDependencies().resolve().withoutTransitivity().asResolvedArtifact());
             for (MavenResolvedArtifact dep : resolved) {
                 if (dep.getCoordinate().getGroupId().equals("org.apache.camel")) {
                     version = dep.getCoordinate().getVersion();
@@ -111,14 +117,25 @@ public final class ArquillianPackager {
             throw new IllegalStateException("Cannot determine the current version of the camel component");
         }
 
-        MavenDependencyExclusion[] loggingHellExclusions = new MavenDependencyExclusion[]{MavenDependencies.createExclusion("org.slf4j", "slf4j-log4j12"), MavenDependencies.createExclusion("log4j",
-                "log4j"), MavenDependencies.createExclusion("org.slf4j", "slf4j-simple")};
+        List<MavenDependencyExclusion> commonExclusions = new LinkedList<>();
+        commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-log4j12"));
+        commonExclusions.add(MavenDependencies.createExclusion("log4j", "log4j"));
+        commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-simple"));
+        commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-simple"));
+        commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-jdk14"));
+
+        for (String ex : config.getMavenExclusions()) {
+            commonExclusions.add(MavenDependencies.createExclusion(ex));
+        }
+
+        MavenDependencyExclusion[] commonExclutionArray = commonExclusions.toArray(new MavenDependencyExclusion[]{});
+
 
         // Module dependencies
         List<MavenDependency> moduleDependencies = new LinkedList<>();
 
         MavenCoordinate mainJar = MavenCoordinates.createCoordinate(config.getMavenGroup(), config.getModuleName(), version, PackagingType.JAR, null);
-        MavenDependency mainDep = MavenDependencies.createDependency(mainJar, ScopeType.COMPILE, false, loggingHellExclusions);
+        MavenDependency mainDep = MavenDependencies.createDependency(mainJar, ScopeType.COMPILE, false, commonExclutionArray);
         moduleDependencies.add(mainDep);
 
         for (String canonicalForm : config.getAdditionalDependencies()) {
@@ -137,8 +154,8 @@ public final class ArquillianPackager {
                 scopes.add(ScopeType.PROVIDED);
             }
 
-            List<MavenResolvedArtifact> moduleArtifacts = Arrays.asList(Maven.resolver()
-                    .loadPomFromFile(config.getModulesPath() + config.getModuleName() + "/pom.xml")
+            List<MavenResolvedArtifact> moduleArtifacts = Arrays.asList(resolver(config)
+                    .loadPomFromFile(config.getModuleBasePath() + "/pom.xml")
                     .importDependencies(scopes.toArray(new ScopeType[]{}))
                     .resolve().withoutTransitivity().asResolvedArtifact());
 
@@ -148,13 +165,13 @@ public final class ArquillianPackager {
                 if (!validTestDependency(c)) {
                     continue;
                 }
-                MavenDependency dep = MavenDependencies.createDependency(c, ScopeType.RUNTIME, false, loggingHellExclusions);
+                MavenDependency dep = MavenDependencies.createDependency(c, ScopeType.RUNTIME, false, commonExclutionArray);
                 moduleDependencies.add(dep);
             }
         }
 
         List<File> dependencies = new LinkedList<>();
-        dependencies.addAll(Arrays.asList(Maven.resolver()
+        dependencies.addAll(Arrays.asList(resolver(config)
                 .loadPomFromFile("pom.xml")
                 .importRuntimeDependencies()
                 .addDependencies(moduleDependencies)
@@ -163,23 +180,58 @@ public final class ArquillianPackager {
                 .asFile()));
 
 
+        boolean needsSpringTest = excludeDependencyRegex(dependencies, "^camel-test-spring3-.*");
+        if (needsSpringTest) {
+            // Adding spring4 version of the test library
+            MavenDependency dep = MavenDependencies.createDependency("org.apache.camel:camel-test-spring:" + version, ScopeType.RUNTIME, false);
+
+            dependencies = new LinkedList<>();
+            dependencies.addAll(Arrays.asList(resolver(config)
+                    .loadPomFromFile("pom.xml")
+                    .importRuntimeDependencies()
+                    .addDependencies(moduleDependencies)
+                    .addDependencies(dep)
+                    .resolve()
+                    .withTransitivity()
+                    .asFile()));
+        }
+
         // The spring boot-loader dependency will be added to the main jar, so it should be excluded from the embedded ones
         excludeDependencyRegex(dependencies, "^spring-boot-loader-[0-9].*");
+        excludeDependencyRegex(dependencies, "^camel-test-spring3-.*");
+
 
         // Add all dependencies as spring-boot nested jars
         ark = addDependencies(ark, dependencies);
-
-        if (config.getUnitTestEnabled()) {
-            // Add unit test classes of the module under test
-            ark = addTestResources(ark, config);
-        }
 
         // Add common packages to main jar
         ark = ark.addPackages(true, "org.apache.camel.itest.springboot");
         ark = ark.addPackages(true, "org.springframework.boot.loader");
         ark = ark.addPackages(true, "org.jboss.shrinkwrap");
 
-        return ClassPath.builder().add(ark).build();
+        ark = ark.addPackages(true, "org.apache.camel.converter.myconverter"); // to overcome CAMEL-10060
+        ark = ark.addPackages(true, "org.apache.camel.osgi.test"); // to overcome CAMEL-10060
+
+        ClassPath.Builder external = ClassPath.builder().add(ark);
+
+        // overcome limitations of some JDKs
+        external.addSystemProperty("javax.xml.accessExternalDTD", "all");
+        external.addSystemProperty("javax.xml.accessExternalSchema", "all");
+
+        if (config.getUnitTestEnabled()) {
+            external.addSystemProperty("container.user.dir", new File(config.getModuleBasePath()).getCanonicalPath());
+            external.addSystemProperty("container.test.resources.dir", new File(config.getModuleBasePath()).getCanonicalPath() + "/target/test-classes");
+        }
+
+        for (Map.Entry<String, String> e : config.getSystemProperties().entrySet()) {
+            external.addSystemProperty(e.getKey(), e.getValue());
+        }
+
+        return external.build();
+    }
+
+    private static ConfigurableMavenResolverSystem resolver(ITestConfig config) {
+        return Maven.configureResolver().workOffline(config.getMavenOfflineResolution());
     }
 
     public static void copyResource(String folder, String fileNameRegex, String targetFolder) throws IOException {
@@ -217,7 +269,7 @@ public final class ArquillianPackager {
 
     private static boolean validTestDependency(MavenCoordinate coordinate) {
 
-        Pattern[] patterns = new Pattern[]{Pattern.compile("^log4j$"), Pattern.compile("^slf4j-log4j12$"), Pattern.compile("^slf4j-simple")};
+        Pattern[] patterns = new Pattern[]{Pattern.compile("^log4j$"), Pattern.compile("^slf4j-log4j12$"), Pattern.compile("^slf4j-simple$"), Pattern.compile("^slf4j-jdk14$")};
 
         boolean valid = true;
         for (Pattern p : patterns) {
@@ -234,15 +286,18 @@ public final class ArquillianPackager {
         return valid;
     }
 
-    private static void excludeDependencyRegex(List<File> dependencies, String regex) {
+    private static boolean excludeDependencyRegex(List<File> dependencies, String regex) {
         Pattern pattern = Pattern.compile(regex);
+        int count = 0;
         for (Iterator<File> it = dependencies.iterator(); it.hasNext();) {
             File f = it.next();
             if (pattern.matcher(f.getName()).matches()) {
                 it.remove();
+                count++;
                 break;
             }
         }
+        return count > 0;
     }
 
     private static JavaArchive addDependencies(JavaArchive ark, Collection<File> deps) {
@@ -255,8 +310,9 @@ public final class ArquillianPackager {
         return ark;
     }
 
-    private static JavaArchive addTestResources(JavaArchive ark, ITestConfig config) throws IOException {
-        File test = new File(config.getModulesPath() + config.getModuleName() + "/target/test-classes/");
+    private static JavaArchive addTestClasses(JavaArchive mainArk, Domain domain, ITestConfig config) throws IOException {
+
+        File test = new File(config.getModuleBasePath() + "/target/test-classes/");
         File[] fs = test.listFiles();
         if (fs == null) {
             fs = new File[]{};
@@ -266,14 +322,43 @@ public final class ArquillianPackager {
             File f = testFiles.pop();
             String relative = test.getCanonicalFile().toURI().relativize(f.getCanonicalFile().toURI()).getPath();
             if (f.isFile()) {
-                ark = ark.addAsResource(f, relative);
+                if (f.getName().endsWith(".class")) {
+                    mainArk = mainArk.addAsResource(f, relative);
+                }
+            } else {
+                mainArk = mainArk.addAsDirectory(relative);
+                File[] files = f.listFiles();
+                if (files == null) {
+                    files = new File[]{};
+                }
+                testFiles.addAll(Arrays.asList(files));
+            }
+        }
+
+        return mainArk;
+    }
+
+    private static GenericArchive addSources(GenericArchive ark, ITestConfig config) throws IOException {
+        File sources = new File(config.getModuleBasePath() + "/src/");
+        ark.addAsDirectory("src");
+
+        File[] fs = sources.listFiles();
+        if (fs == null) {
+            fs = new File[]{};
+        }
+        LinkedList<File> sourceFiles = new LinkedList<>(Arrays.asList(fs));
+        while (!sourceFiles.isEmpty()) {
+            File f = sourceFiles.pop();
+            String relative = sources.getParentFile().getCanonicalFile().toURI().relativize(f.getCanonicalFile().toURI()).getPath();
+            if (f.isFile()) {
+                ark.add(new FileAsset(f), relative);
             } else {
                 ark = ark.addAsDirectory(relative);
                 File[] files = f.listFiles();
                 if (files == null) {
                     files = new File[]{};
                 }
-                testFiles.addAll(Arrays.asList(files));
+                sourceFiles.addAll(Arrays.asList(files));
             }
         }
 
