@@ -29,11 +29,6 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.joran.spi.JoranException;
-import ch.qos.logback.core.util.StatusPrinter;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.itest.springboot.Command;
 import org.apache.camel.itest.springboot.ITestConfig;
@@ -64,8 +59,6 @@ public class UnitTestCommand extends AbstractTestCommand implements Command {
 
     @Override
     public UnitTestResult executeTest(final ITestConfig config, String component) throws Exception {
-
-        overrideLoggingConfig();
 
         logger.info("Spring-Boot test configuration {}", config);
 
@@ -140,28 +133,6 @@ public class UnitTestCommand extends AbstractTestCommand implements Command {
         }
 
         return new UnitTestResult(result);
-    }
-
-    private void overrideLoggingConfig() {
-
-        URL logbackFile = getClass().getResource("/spring-logback.xml");
-        if (logbackFile != null) {
-
-            LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-
-            try {
-                JoranConfigurator configurator = new JoranConfigurator();
-                configurator.setContext(context);
-                // Call context.reset() to clear any previous configuration, e.g. default
-                // configuration. For multi-step configuration, omit calling context.reset().
-                context.reset();
-                configurator.doConfigure(logbackFile);
-            } catch (JoranException je) {
-                // StatusPrinter will handle this
-            }
-            StatusPrinter.printInCaseOfErrorsOrWarnings(context);
-        }
-
     }
 
     private void disableJmx(Set<String> disabledJmx) throws Exception {
