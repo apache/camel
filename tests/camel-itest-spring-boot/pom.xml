@@ -133,10 +133,38 @@
                     <childDelegation>false</childDelegation>
                     <forkedProcessTimeoutInSeconds>15000</forkedProcessTimeoutInSeconds>
                     <rerunFailingTestsCount>0</rerunFailingTestsCount>
+                    <excludes>
+                        <!-- Xmlbeans cannot work with the current version of spring-boot -->
+                        <exclude>org.apache.camel.itest.springboot.CamelXmlbeansTest</exclude>
+                    </excludes>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
                     <systemProperties>
+
+                        <!-- Test configuration -->
+                        <!--
+                        It is better disabling unit testing in surefire, as some of them fail for various reasons
+                        (unrelated to spring-boot) when running in the arquillian jar.
+
+                        Tests are enabled when running from IDE. See org.apache.camel.itest.springboot.ITestConfigBuilder
+                        for property names and defaults values.
+                        -->
+                        <property>
+                            <name>itest.springboot.unitTestEnabled</name>
+                            <value>false</value>
+                        </property>
+                        <property>
+                            <name>itest.springboot.includeTestDependencies</name>
+                            <value>true</value>
+                        </property>
+                        <property>
+                            <name>itest.springboot.mavenOfflineResolution</name>
+                            <value>false</value>
+                        </property>
+
+
+                        <!-- Additional dependencies required by modules -->
                         <property>
                             <name>version_org.apache.camel:camel-core</name>
                             <value>${project.version}</value>
