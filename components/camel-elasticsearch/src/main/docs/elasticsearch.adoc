@@ -72,6 +72,31 @@ be any of ONE, QUORUM, ALL or DEFAULT) *Camel 2.16*
 |replicationType |the replication type to use with INDEX and BULK operations (can be any
 of SYNC, ASYNC or DEFAULT) *Camel 2.16* .*From version 2.17 replicationType option has been removed, since from
 elasticsearch 2.0.0 the async replication has been removed.*
+=======
+
+// endpoint options: START
+The Elasticsearch component supports 13 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| clusterName | producer |  | String | *Required* Name of cluster or use local for local mode
+| clientTransportSniff | producer | true | Boolean | Is the client allowed to sniff the rest of the cluster or not (default true). This setting map to the client.transport.sniff setting.
+| consistencyLevel | producer | DEFAULT | WriteConsistencyLevel | The write consistency level to use with INDEX and BULK operations (can be any of ONE QUORUM ALL or DEFAULT)
+| data | producer |  | Boolean | Is the node going to be allowed to allocate data (shards) to it or not. This setting map to the node.data setting.
+| indexName | producer |  | String | The name of the index to act against
+| indexType | producer |  | String | The type of the index to act against
+| ip | producer |  | String | The TransportClient remote host ip to use
+| operation | producer |  | String | What operation to perform
+| pathHome | producer | ${user.home}/.elasticsearch | String | The path.home property of ElasticSearch configuration. You need to provide a valid path otherwise the default $user.home/.elasticsearch will be used.
+| port | producer | 9300 | int | The TransportClient remote port to use (defaults to 9300)
+| transportAddresses | producer |  | String | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for transportAddresses to be considered instead.
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
+// endpoint options: END
 
 |parent |optionally used with INDEX operations for Elasticsearch
 https://www.elastic.co/guide/en/elasticsearch/guide/current/parent-child.html[Parent-Child
@@ -81,6 +106,7 @@ relationships] to specify the ID of the parent record *Camel 2.16.1 /
 |clientTransportSniff |*From Camel 2.17* Define if the client is allowed to sniff the rest of
 the cluster
 |=======================================================================
+
 
 [[ElasticSearch-MessageOperations]]
 Message Operations
