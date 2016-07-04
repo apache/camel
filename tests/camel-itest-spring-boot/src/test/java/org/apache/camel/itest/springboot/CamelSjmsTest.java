@@ -35,8 +35,11 @@ public class CamelSjmsTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelSjmsTest.class))
+                .exclusion("com.atomikos:transactions-jta")
+//                // to run unit tests
 //                .dependency("com.atomikos:transactions-jdbc:3.9.3")
 //                .dependency("com.atomikos:transactions-jms:3.9.3")
+//                .dependency("com.atomikos:transactions-api:3.9.3")
 //                .dependency("javax.transaction:javax.transaction-api:1.2")
 //                .disableJmx("org.apache.activemq:*")
                 .build();
@@ -45,8 +48,9 @@ public class CamelSjmsTest extends AbstractSpringBootTestSupport {
     @Test
     public void componentTests() throws Exception {
         //this.runComponentTest(config);
-        this.runModuleUnitTestsIfEnabled(config);
-    }
 
+        // Unit tests can be enabled if required
+        //this.runModuleUnitTestsIfEnabled(config);
+    }
 
 }

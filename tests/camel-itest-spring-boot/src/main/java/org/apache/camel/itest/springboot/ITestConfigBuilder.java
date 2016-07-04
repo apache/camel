@@ -105,6 +105,9 @@ public class ITestConfigBuilder {
     }
 
     public ITestConfigBuilder exclusion(String exclusionCanonicalForm) {
+        if (exclusionCanonicalForm.split(":").length != 2) {
+            throw new IllegalArgumentException("Expected exclusion in the form groupId:artifactId, got: " + exclusionCanonicalForm);
+        }
         if (config.getMavenExclusions() == null) {
             config.setMavenExclusions(new HashSet<String>());
         }
