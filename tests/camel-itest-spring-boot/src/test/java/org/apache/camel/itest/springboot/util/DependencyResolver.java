@@ -44,7 +44,6 @@ public final class DependencyResolver {
      *
      * @param groupArtifact the groupId and artifactId in the form "groupId:artifactId"
      * @return the maven canonical form of the artifact "groupId:artifactId:version"
-     * @throws RuntimeException if the version cannot be resolved
      */
     public static String withVersion(String groupArtifact) {
         return withVersion(DEFAULT_PREFIX, groupArtifact);
@@ -57,7 +56,6 @@ public final class DependencyResolver {
      * @param prefix the prefix to use to lookup the property from surefire
      * @param groupArtifact the groupId and artifactId in the form "groupId:artifactId"
      * @return the maven canonical form of the artifact "groupId:artifactId:version"
-     * @throws RuntimeException if the version cannot be resolved
      */
     public static String withVersion(String prefix, String groupArtifact) {
         String version = System.getProperty(prefix + groupArtifact);
@@ -68,13 +66,18 @@ public final class DependencyResolver {
                 version = resolveSurefireProperty(prefix + groupArtifact);
             }
         } catch (Exception e) {
-            throw new IllegalStateException("Error while retrieving version for artifact: " + groupArtifact, e);
+            // cannot use logging libs
+            System.out.println("RESOLVER ERROR>> Error while retrieving version for artifact: " + groupArtifact);
+            e.printStackTrace();
+            return groupArtifact;
         }
 
         if (version == null) {
-            throw new IllegalStateException("Cannot determine version for maven artifact: " + groupArtifact);
+            System.out.println("RESOLVER ERROR>> Cannot determine version for maven artifact: " + groupArtifact);
+            return groupArtifact;
         } else if (!isResolved(version)) {
-            throw new IllegalStateException("Cannot resolve version for maven artifact: " + groupArtifact + ". Missing property value: " + version);
+            System.out.println("RESOLVER ERROR>> Cannot resolve version for maven artifact: " + groupArtifact + ". Missing property value: " + version);
+            return groupArtifact;
         }
 
         return groupArtifact + ":" + version;
