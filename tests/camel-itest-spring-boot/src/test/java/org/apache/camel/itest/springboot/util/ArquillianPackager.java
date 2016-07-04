@@ -164,7 +164,7 @@ public final class ArquillianPackager {
 
             for (MavenResolvedArtifact art : moduleArtifacts) {
                 MavenCoordinate c = art.getCoordinate();
-                if (!validTestDependency(c)) {
+                if (!validTestDependency(config, c)) {
                     continue;
                 }
                 MavenDependency dep = MavenDependencies.createDependency(c, ScopeType.RUNTIME, false, commonExclutionArray);
@@ -227,9 +227,9 @@ public final class ArquillianPackager {
 
         // Adding configuration properties
         for (Map.Entry<Object, Object> e : System.getProperties().entrySet()) {
-            if(e.getKey() instanceof String && e.getValue() instanceof String) {
+            if (e.getKey() instanceof String && e.getValue() instanceof String) {
                 String key = (String) e.getKey();
-                if(key.startsWith(ITestConfigBuilder.CONFIG_PREFIX)) {
+                if (key.startsWith(ITestConfigBuilder.CONFIG_PREFIX)) {
                     external.addSystemProperty(key, (String) e.getValue());
                 }
             }
@@ -279,9 +279,10 @@ public final class ArquillianPackager {
         return cl;
     }
 
-    private static boolean validTestDependency(MavenCoordinate coordinate) {
+    private static boolean validTestDependency(ITestConfig config, MavenCoordinate coordinate) {
 
-        Pattern[] patterns = new Pattern[]{Pattern.compile("^log4j$"), Pattern.compile("^slf4j-log4j12$"), Pattern.compile("^slf4j-simple$"), Pattern.compile("^slf4j-jdk14$"), Pattern.compile("^logback-classic$"), Pattern.compile("^logback-core$")};
+        Pattern[] patterns = new Pattern[]{Pattern.compile("^log4j$"), Pattern.compile("^slf4j-log4j12$"), Pattern.compile("^slf4j-simple$"), Pattern.compile("^slf4j-jdk14$"), Pattern.compile
+                ("^logback-classic$"), Pattern.compile("^logback-core$")};
 
         boolean valid = true;
         for (Pattern p : patterns) {
@@ -289,6 +290,10 @@ public final class ArquillianPackager {
                 valid = false;
                 break;
             }
+        }
+
+        if (valid && config.getMavenExclusions().contains(coordinate.getGroupId() + ":" + coordinate.getArtifactId())) {
+            valid = false;
         }
 
         if (!valid) {
