@@ -276,7 +276,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
         javaClass.getJavaDoc().setFullText(doc);
 
-        String prefix = "camel.dataformat." + model.getModelName();
+        String prefix = "camel.dataformat." + model.getName();
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
         for (DataFormatOptionModel option : model.getDataFormatOptions()) {
