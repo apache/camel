@@ -74,10 +74,10 @@ of SYNC, ASYNC or DEFAULT) *Camel 2.16* .*From version 2.17 replicationType opti
 elasticsearch 2.0.0 the async replication has been removed.*
 =======
 
+
 // endpoint options: START
 The Elasticsearch component supports 13 endpoint options which are listed below:
 
-{% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -95,8 +95,8 @@ The Elasticsearch component supports 13 endpoint options which are listed below:
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
+
 
 |parent |optionally used with INDEX operations for Elasticsearch
 https://www.elastic.co/guide/en/elasticsearch/guide/current/parent-child.html[Parent-Child
