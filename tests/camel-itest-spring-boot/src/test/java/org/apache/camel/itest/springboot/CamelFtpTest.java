@@ -35,6 +35,7 @@ public class CamelFtpTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelFtpTest.class))
+                // arquillian fails, but the tests are ok
                 .build();
     }
 

@@ -41,7 +41,7 @@ public class CamelJavaspaceTest extends AbstractSpringBootTestSupport {
     @Test
     public void componentTests() throws Exception {
         this.runComponentTest(config);
-        this.runModuleUnitTestsIfEnabled(config);
+        //this.runModuleUnitTestsIfEnabled(config);
     }
 
 

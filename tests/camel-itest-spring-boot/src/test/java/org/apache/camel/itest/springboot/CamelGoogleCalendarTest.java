@@ -35,6 +35,7 @@ public class CamelGoogleCalendarTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelGoogleCalendarTest.class))
+                .unitTestExpectedNumber(0)
                 .build();
     }
 

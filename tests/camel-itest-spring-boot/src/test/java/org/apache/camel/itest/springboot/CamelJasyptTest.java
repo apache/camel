@@ -35,6 +35,7 @@ public class CamelJasyptTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelJasyptTest.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|\\.Test$|\\.SpringTest$|Blueprint.*Test$)")
                 .build();
     }
 

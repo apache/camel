@@ -17,6 +17,7 @@
 package org.apache.camel.itest.springboot;
 
 import org.apache.camel.itest.springboot.util.ArquillianPackager;
+import org.apache.camel.itest.springboot.util.DependencyResolver;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -27,6 +28,7 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class CamelAhcWsTest extends AbstractSpringBootTestSupport {
 
+
     @Deployment
     public static Archive<?> createSpringBootPackage() throws Exception {
         return ArquillianPackager.springBootPackage(createTestConfig());
@@ -35,6 +37,8 @@ public class CamelAhcWsTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelAhcWsTest.class))
+                .dependency(DependencyResolver.withVersion("org.glassfish.grizzly:grizzly-websockets"))
+                .dependency(DependencyResolver.withVersion("org.glassfish.grizzly:connection-pool"))
                 .build();
     }
 

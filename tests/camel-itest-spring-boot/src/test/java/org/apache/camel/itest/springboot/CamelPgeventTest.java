@@ -35,6 +35,7 @@ public class CamelPgeventTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelPgeventTest.class))
+                .unitTestExpectedNumber(0)
                 .build();
     }
 

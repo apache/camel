@@ -36,6 +36,7 @@ public class CamelMailTest extends AbstractSpringBootTestSupport {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelMailTest.class))
                 .build();
+        // sometimes the arquillian test fails, but the unit tests don't.
     }
 
     @Test
