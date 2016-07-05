@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -744,7 +745,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         public MessageHistory before(Exchange exchange) throws Exception {
             List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
             if (list == null) {
-                list = new ArrayList<MessageHistory>();
+                list = new LinkedList<>();
                 exchange.setProperty(Exchange.MESSAGE_HISTORY, list);
             }
             MessageHistory history = factory.newMessageHistory(routeId, definition, new Date());
