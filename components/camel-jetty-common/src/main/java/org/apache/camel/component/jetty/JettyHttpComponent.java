@@ -1241,7 +1241,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                     super.writeErrorPage(request, writer, code, message, false);
                 }
             };
-            s.addBean(eh);
+            s.addBean(eh, false);
         }
         return s;
     }
