@@ -340,7 +340,10 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public CopyObjectResult copyObject(CopyObjectRequest copyObjectRequest) throws AmazonClientException, AmazonServiceException {
-        throw new UnsupportedOperationException();
+        CopyObjectResult copyObjectResult = new CopyObjectResult();
+        copyObjectResult.setETag("3a5c8b1ad448bca04584ecb55b836264");
+        copyObjectResult.setVersionId("11192828ahsh2723");
+        return copyObjectResult;
     }
 
     @Override
