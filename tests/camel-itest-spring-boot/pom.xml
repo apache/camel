@@ -133,11 +133,6 @@
                     <childDelegation>false</childDelegation>
                     <forkedProcessTimeoutInSeconds>15000</forkedProcessTimeoutInSeconds>
                     <rerunFailingTestsCount>0</rerunFailingTestsCount>
-                    <excludes>
-                        <!-- For Mongodb and MongodbGridfs, spring-boot 1.3.5.RELEASE asks for an unnecessary additional library -->
-                        <exclude>org.apache.camel.itest.springboot.CamelMongodbTest</exclude>
-                        <exclude>org.apache.camel.itest.springboot.CamelMongodbGridfsTest</exclude>
-                    </excludes>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
