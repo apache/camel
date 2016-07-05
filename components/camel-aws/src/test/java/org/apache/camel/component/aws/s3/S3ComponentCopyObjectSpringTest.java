@@ -43,9 +43,9 @@ public class S3ComponentCopyObjectSpringTest extends CamelSpringTestSupport {
         
         template.send("direct:copyObject", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
-				exchange.getIn().setHeader(S3Constants.BUCKET_DESTINATION_NAME, "camelDestinationBucket");
-				exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
-				exchange.getIn().setHeader(S3Constants.DESTINATION_KEY, "camelDestinationKey");
+                exchange.getIn().setHeader(S3Constants.BUCKET_DESTINATION_NAME, "camelDestinationBucket");
+                exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
+                exchange.getIn().setHeader(S3Constants.DESTINATION_KEY, "camelDestinationKey");
             }
         });
         

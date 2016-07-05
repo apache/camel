@@ -74,14 +74,14 @@ public class S3Producer extends DefaultProducer {
 
     @Override
     public void process(final Exchange exchange) throws Exception {
-    	S3Operations operation = determineOperation(exchange);
-    	if (ObjectHelper.isEmpty(operation)) {
+        S3Operations operation = determineOperation(exchange);
+        if (ObjectHelper.isEmpty(operation)) {
             if (getConfiguration().isMultiPartUpload()) {
                 processMultiPart(exchange);
             } else {
                 processSingleOp(exchange);
             }
-    	} else {
+        } else {
             switch (operation) {
             case copyObject:
                 copyObject(getEndpoint().getS3Client(), exchange);
@@ -89,7 +89,7 @@ public class S3Producer extends DefaultProducer {
             default:
                 throw new IllegalArgumentException("Unsupported operation");
             }
-    	}
+        }
     }
 
     public void processMultiPart(final Exchange exchange) throws Exception {
@@ -251,7 +251,7 @@ public class S3Producer extends DefaultProducer {
         
         bucketName = exchange.getIn().getHeader(S3Constants.BUCKET_NAME, String.class);
         if (ObjectHelper.isEmpty(bucketName)) {
-        	bucketName = getConfiguration().getBucketName();
+            bucketName = getConfiguration().getBucketName();
         }
         sourceKey = exchange.getIn().getHeader(S3Constants.KEY, String.class);
         destinationKey = exchange.getIn().getHeader(S3Constants.DESTINATION_KEY, String.class);
@@ -259,22 +259,22 @@ public class S3Producer extends DefaultProducer {
         versionId = exchange.getIn().getHeader(S3Constants.VERSION_ID, String.class);
         
         if (ObjectHelper.isEmpty(bucketName)) {
-        	throw new IllegalArgumentException("Bucket Name must be specified for copyObject Operation");
+            throw new IllegalArgumentException("Bucket Name must be specified for copyObject Operation");
         }
         if (ObjectHelper.isEmpty(bucketNameDestination)) {
-        	throw new IllegalArgumentException("Bucket Name Destination must be specified for copyObject Operation");
+            throw new IllegalArgumentException("Bucket Name Destination must be specified for copyObject Operation");
         }
         if (ObjectHelper.isEmpty(sourceKey)) {
-        	throw new IllegalArgumentException("Source Key must be specified for copyObject Operation");
+            throw new IllegalArgumentException("Source Key must be specified for copyObject Operation");
         }
         if (ObjectHelper.isEmpty(destinationKey)) {
-        	throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
+            throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
         }
         CopyObjectRequest copyObjectRequest;
         if (ObjectHelper.isEmpty(versionId)) {
             copyObjectRequest = new CopyObjectRequest(bucketName, sourceKey, bucketNameDestination, destinationKey);
         } else {
-        	copyObjectRequest = new CopyObjectRequest(bucketName, sourceKey, versionId, bucketNameDestination, destinationKey);
+            copyObjectRequest = new CopyObjectRequest(bucketName, sourceKey, versionId, bucketNameDestination, destinationKey);
         }
         CopyObjectResult copyObjectResult = s3Client.copyObject(copyObjectRequest);
         

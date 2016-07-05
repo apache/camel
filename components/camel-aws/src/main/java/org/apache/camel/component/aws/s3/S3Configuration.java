@@ -284,18 +284,17 @@ public class S3Configuration implements Cloneable {
     }
 
     public S3Operations getOperation() {
-		return operation;
-	}
+        return operation;
+    }
 
     /**
      * *Camel 2.18*: The operation to do in case the user don't want to do only an upload
      */
-	public void setOperation(S3Operations operation) {
-		this.operation = operation;
-	}
+    public void setOperation(S3Operations operation) {
+        this.operation = operation;
+    }
 
-	boolean hasProxyConfiguration() {
+    boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
-
     }
 }
