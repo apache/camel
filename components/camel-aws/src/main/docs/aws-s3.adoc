@@ -44,6 +44,7 @@ The AWS S3 Storage Service component has no options.
 
 
 
+
 // endpoint options: START
 The AWS S3 Storage Service component supports 40 endpoint options which are listed below:
 
@@ -55,7 +56,6 @@ The AWS S3 Storage Service component supports 40 endpoint options which are list
 | accessKey | common |  | String | Amazon AWS Access Key
 | amazonS3Client | common |  | AmazonS3 | Reference to a com.amazonaws.services.sqs.AmazonS3 in the link:registry.htmlRegistry.
 | amazonS3Endpoint | common |  | String | The region with which the AWS-S3 client wants to work with.
-| operation | common |  | S3Operations | Camel 2.18: The operation to do in case the user don't want to do only an upload
 | pathStyleAccess | common | false | boolean | Whether or not the S3 client should use path style access
 | policy | common |  | String | Camel 2.8.4: The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3setBucketPolicy() method.
 | proxyHost | common |  | String | Camel 2.16: To define a proxy host when instantiating the SQS client
@@ -72,6 +72,7 @@ The AWS S3 Storage Service component supports 40 endpoint options which are list
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | deleteAfterWrite | producer | false | boolean | Camel 2.11.0: Delete file object after the S3 file has been uploaded
 | multiPartUpload | producer | false | boolean | Camel 2.15.0: If it is true camel will upload the file with multi part format the part size is decided by the option of partSize
+| operation | producer |  | S3Operations | Camel 2.18: The operation to do in case the user don't want to do only an upload
 | partSize | producer | 26214400 | long | Camel 2.15.0: Setup the partSize which is used in multi part upload the default size is 25M.
 | region | producer |  | String | The region where the bucket is located. This option is used in the com.amazonaws.services.s3.model.CreateBucketRequest.
 | serverSideEncryption | producer |  | String | Camel 2.16: Sets the server-side encryption algorithm when encrypting the object using AWS-managed keys. For example use AES256.
@@ -94,6 +95,7 @@ The AWS S3 Storage Service component supports 40 endpoint options which are list
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
