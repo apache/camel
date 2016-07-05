@@ -20,21 +20,37 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.influxdb.InfluxDB;
 import org.influxdb.dto.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Created by jose on 18/06/16.
+ * Producer for the InfluxDB components
+ *
  */
 public class InfluxDbProducer extends DefaultProducer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(InfluxDbProducer.class);
+
     InfluxDbEndpoint endpoint;
+    InfluxDB connection;
 
     public InfluxDbProducer(InfluxDbEndpoint endpoint) {
         super(endpoint);
+        if (endpoint == null) {
+            throw new IllegalArgumentException("Can't create a producer when the endpoint is null");
+        }
+
+        if (endpoint.getInfluxDB() == null) {
+            throw new IllegalArgumentException("Can't create a producer when the database connection is null");
+        }
+
+        this.connection = endpoint.getInfluxDB();
         this.endpoint = endpoint;
     }
 
     /**
      * Processes the message exchange
+     *
      * @param exchange the message exchange
      * @throws Exception if an internal processing error has occurred.
      */
@@ -45,10 +61,14 @@ public class InfluxDbProducer extends DefaultProducer {
         String retentionPolicy = calculateRetentionPolicy(exchange);
         Point p = exchange.getIn().getMandatoryBody(Point.class);
 
-        InfluxDB conn = endpoint.getInfluxDB();
+
 
         try {
-            conn.write(dataBaseName, retentionPolicy, p);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Writing point {}", p.lineProtocol());
+            }
+
+            connection.write(dataBaseName, retentionPolicy, p);
         } catch (Exception ex) {
             exchange.setException(new CamelInfluxDbException(ex));
         }

@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
 import org.junit.Test;
 
 public class InfluxDbProducerTest extends AbstractInfluxDbTest {
@@ -39,63 +40,76 @@ public class InfluxDbProducerTest extends AbstractInfluxDbTest {
             public void configure() {
 
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(0));
-                
+
                 //test route
                 from("direct:test")
-                    .to("influxdb:influxDbBean?databaseName={{influxdb.testDb}}")
-                    .to("mock:test");
+                        .to("influxdb:influxDbBean?databaseName={{influxdb.testDb}}")
+                        .to("mock:test");
             }
         };
     }
-    
-    @Test
-    public void writePointFromMapAndStaticHeader() throws InterruptedException {
-        
-        errorEndpoint.expectedMessageCount(0);
-        successEndpoint.expectedMessageCount(1);
-        
-        Map<String, Object> pointMap = new HashMap<String, Object>();       
-        sendBody("direct:test", pointMap);        
-       
-        
-        errorEndpoint.assertIsSatisfied();
-        successEndpoint.assertIsSatisfied();
 
+    @Before
+    public void resetEndpoints() {
+        errorEndpoint.reset();
+        successEndpoint.reset();
     }
-    
+
     @Test
-    public void writePointFromMapAndDynamicHeader() throws InterruptedException {
-       
+    public void writePointFromMapAndStaticDbName() throws InterruptedException {
+
         errorEndpoint.expectedMessageCount(0);
         successEndpoint.expectedMessageCount(1);
 
         Map<String, Object> pointMap = createMapPoint();
         sendBody("direct:test", pointMap);
-        
-        errorEndpoint.assertIsSatisfied();
-        successEndpoint.assertIsSatisfied();
-        
-    }
-    
-    @Test
-    public void missingMeassurementNameFails() throws InterruptedException {
-        
-        errorEndpoint.expectedMessageCount(1);
-        successEndpoint.expectedMessageCount(0);
-        
-        Map<String, Object> pointMap = new HashMap<String, Object>();   
-        pointMap.remove(InfluxDbConstants.MEASUREMENT_NAME);
-        sendBody("direct:test", pointMap);        
-        
+
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
 
+    }
+
+    @Test
+    public void writePointFromMapAndDynamicDbName() throws InterruptedException {
+
+        errorEndpoint.expectedMessageCount(0);
+        successEndpoint.expectedMessageCount(1);
+
+        Map<String, Object> pointMap = createMapPoint();
+        Map<String, Object> header = createHeader();
+        sendBody("direct:test", pointMap, header);
+
+        errorEndpoint.assertIsSatisfied();
+        successEndpoint.assertIsSatisfied();
+
+    }
+
+    @Test
+    public void missingMeassurementNameFails() throws InterruptedException {
+
+        errorEndpoint.expectedMessageCount(1);
+        successEndpoint.expectedMessageCount(0);
+
+        Map<String, Object> pointMap = new HashMap<>();
+        pointMap.remove(InfluxDbConstants.MEASUREMENT_NAME);
+        sendBody("direct:test", pointMap);
+
+
+        errorEndpoint.assertIsSatisfied();
+        successEndpoint.assertIsSatisfied();
+
+    }
+
+    private Map<String, Object> createHeader() {
+        Map<String, Object> header = new HashMap<>();
+        header.put(InfluxDbConstants.DBNAME_HEADER, 1234);
+        return header;
     }
 
     private Map<String, Object> createMapPoint() {
-        Map<String, Object> pointMap = new HashMap<String, Object>();
-        pointMap.put(InfluxDbConstants.DBNAME_HEADER, 1234);
+        Map<String, Object> pointMap = new HashMap<>();
         pointMap.put(InfluxDbConstants.MEASUREMENT_NAME, "MyTestMeasurement");
+        pointMap.put("CPU", 1);
         return pointMap;
     }
 

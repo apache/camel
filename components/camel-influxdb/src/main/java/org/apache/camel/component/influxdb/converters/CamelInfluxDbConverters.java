@@ -38,7 +38,8 @@ public final class CamelInfluxDbConverters {
         Object measurenmentName = map.get(InfluxDbConstants.MEASUREMENT_NAME);
 
         if (measurenmentName == null) {
-            throw new CamelInfluxDbException("Unable to find the header for the meassurenment");
+            String format = String.format("Unable to find the header for the measurement " + map.size() + " to:" + map.keySet().toString());
+            throw new CamelInfluxDbException(format);
         }
 
         
@@ -49,23 +50,36 @@ public final class CamelInfluxDbConverters {
       
         pointBuilder.fields(map);
         map.put(InfluxDbConstants.MEASUREMENT_NAME, measurenmentName);
-        
-        
-        // for (Object entry : map.keySet()) {
-        // String key = entry.toString();
-        // Object value = map.get(entry);
-        //
-        // if (value instanceof Number) {
-        // Number numberValue = (Number)value;
-        //
-        // pointBuilder.addField(key, numberValue);
-        //
-        // }
-        //
-        //
-        // }
+
 
         return pointBuilder.build();
 
     }
+
+//    @Converter
+//    public static Point fromStringToPoint(String pointStingFormat) {
+//
+//        String [] parts = pointStingFormat.split(" ");
+//
+//        String measurenmentName
+//        if (measurenmentName == null) {
+//            String format = String.format("Unable to find the header for the measurement " + map.size() + " to:" + map.keySet().toString());
+//            throw new CamelInfluxDbException(format);
+//        }
+//
+//
+//        String measurenmentNameString = measurenmentName.toString();
+//        Point.Builder pointBuilder = Point.measurement(measurenmentNameString);
+//
+//        map.remove(InfluxDbConstants.MEASUREMENT_NAME);
+//
+//        pointBuilder.fields(map);
+//        map.put(InfluxDbConstants.MEASUREMENT_NAME, measurenmentName);
+//
+//
+//        return pointBuilder.build();
+//
+//    }
+
+
 }

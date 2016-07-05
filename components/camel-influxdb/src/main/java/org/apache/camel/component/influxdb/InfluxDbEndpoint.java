@@ -24,6 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CamelContextHelper;
 import org.influxdb.InfluxDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,16 +50,31 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
      * @param uri
      * @param influxDbComponent
      */
-    public InfluxDbEndpoint(String uri, InfluxDbComponent influxDbComponent) {
+    public InfluxDbEndpoint(String uri, InfluxDbComponent influxDbComponent, InfluxDB dbConn) {
         super(uri, influxDbComponent);
+
+        if (dbConn == null) {
+            throw new IllegalArgumentException("dbConn is null");
+        }
+
+        this.influxDB = dbConn;
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Prepairing influxdb enpoint with uri {}", uri);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating influx db producer connectionBean:{}, databaseName:{}, retentionPolicy:{}", connectionBean, databaseName, retentionPolicy);
+        }
+
     }
 
     @Override
     public Producer createProducer() throws Exception {
+
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating influx db producer connectionBean:{}, databaseName:{}, retentionPolicy:{}", connectionBean, databaseName, retentionPolicy);
+            LOG.debug("Creating influx db producer");
         }
-        
         return new InfluxDbProducer(this);
     }
 
@@ -75,30 +91,7 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
         return false;
     }
 
-    @Override
-    public void start() throws Exception {
-        super.start();
-    }
 
-    @Override
-    public void stop() throws Exception {
-        super.stop();
-    }
-
-    @Override
-    public void suspend() throws Exception {
-        super.suspend();
-    }
-
-    @Override
-    public void resume() throws Exception {
-        super.resume();
-    }
-
-    @Override
-    public void shutdown() throws Exception {
-        super.shutdown();
-    }
 
     public InfluxDB getInfluxDB() {
         return influxDB;

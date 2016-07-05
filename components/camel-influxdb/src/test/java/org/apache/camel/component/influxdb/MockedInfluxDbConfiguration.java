@@ -19,18 +19,30 @@ package org.apache.camel.component.influxdb;
 
 import java.net.UnknownHostException;
 
+import static junit.framework.TestCase.assertNotNull;
+
 import org.influxdb.InfluxDB;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 
 import static org.mockito.Mockito.*;
 
 @Configuration
 public class MockedInfluxDbConfiguration {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MockedInfluxDbConfiguration.class);
+
     @Bean
     public InfluxDB influxDbBean() throws UnknownHostException {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating new instance of a mocked influx db connection");
+        }
         InfluxDB mockedDbConnection = mock(InfluxDB.class);
+        assertNotNull(mockedDbConnection);
         return mockedDbConnection;
     }
 }
