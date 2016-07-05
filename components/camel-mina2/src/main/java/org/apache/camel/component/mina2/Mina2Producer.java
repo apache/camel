@@ -508,8 +508,6 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
 
         @Override
         public void exceptionCaught(IoSession ioSession, Throwable cause) {
-            LOG.error("Exception on receiving message from address: " + address
-                      + " using connector: " + connector, cause);
             this.message = null;
             this.messageReceived = false;
             this.cause = cause;
