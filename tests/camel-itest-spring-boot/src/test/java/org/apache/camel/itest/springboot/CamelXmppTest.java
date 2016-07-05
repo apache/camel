@@ -43,7 +43,6 @@ public class CamelXmppTest extends AbstractSpringBootTestSupport {
     }
 
     @Test
-//    @Ignore
     public void componentTests() throws Exception {
         this.runComponentTest(config);
         this.runModuleUnitTestsIfEnabled(config);
