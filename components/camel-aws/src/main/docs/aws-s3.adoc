@@ -154,7 +154,7 @@ Message headers evaluated by the S3 producer
 
 |`CamelAwsS3LastModified` |`java.util.Date` |*Camel 2.8.2:* The last modified timestamp of this object.
 
-|`CamelAwsS3Operation` |`java.util.Date` |*Camel 2.18*: The operation to perform
+|`CamelAwsS3Operation` |`String` |*Camel 2.18*: The operation to perform
 
 |`CamelAwsS3StorageClass` |`String` |*Camel 2.8.4:* The storage class of this object.
 
