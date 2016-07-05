@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -188,6 +189,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.getJavaDoc().setFullText(doc);
 
         String prefix = "camel.component." + model.getScheme();
+        // make sure prefix is in lower case
+        prefix = prefix.toLowerCase(Locale.US);
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
         for (ComponentOptionModel option : model.getComponentOptions()) {
@@ -267,6 +270,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.getJavaDoc().setFullText(doc);
 
         String prefix = "camel.dataformat." + model.getName();
+        // make sure prefix is in lower case
+        prefix = prefix.toLowerCase(Locale.US);
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
         for (DataFormatOptionModel option : model.getDataFormatOptions()) {
