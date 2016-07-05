@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
+
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
@@ -61,6 +62,8 @@ public class S3Configuration implements Cloneable {
     private boolean includeBody = true;
     @UriParam
     private boolean pathStyleAccess;
+    @UriParam
+    private S3Operations operation;
 
     public long getPartSize() {
         return partSize;
@@ -280,7 +283,18 @@ public class S3Configuration implements Cloneable {
         return pathStyleAccess;
     }
 
-    boolean hasProxyConfiguration() {
+    public S3Operations getOperation() {
+		return operation;
+	}
+
+    /**
+     * *Camel 2.18*: The operation to do in case the user don't want to do only an upload
+     */
+	public void setOperation(S3Operations operation) {
+		this.operation = operation;
+	}
+
+	boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
 
     }
