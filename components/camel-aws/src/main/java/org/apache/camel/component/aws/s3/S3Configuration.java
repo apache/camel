@@ -62,7 +62,7 @@ public class S3Configuration implements Cloneable {
     private boolean includeBody = true;
     @UriParam
     private boolean pathStyleAccess;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", enums = "copyObject")
     private S3Operations operation;
 
     public long getPartSize() {
