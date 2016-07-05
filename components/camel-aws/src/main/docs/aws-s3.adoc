@@ -132,7 +132,9 @@ Message headers evaluated by the S3 producer
 |=======================================================================
 |Header |Type |Description
 
-|`CamelAwsS3Key` |`String` |The key under which this object will be stored.
+|`CamelAwsS3BucketName` |`String` |The bucket Name which this object will be stored or which will be used for the current operation
+
+|`CamelAwsS3BucketDestinationName` |`String` |*Camel 2.18*: The bucket Destination Name which will be used for the current operation
 
 |`CamelAwsS3ContentLength` |`Long` |The content length of this object.
 
@@ -146,7 +148,13 @@ Message headers evaluated by the S3 producer
 
 |`CamelAwsS3ContentMD5` |`String` |*Camel 2.8.2:* The md5 checksum of this object.
 
+|`CamelAwsS3DestinationKey` |`String` |*Camel 2.18*:The Destination key which will be used for the current operation
+
+|`CamelAwsS3Key` |`String` |The key under which this object will be stored or which will be used for the current operation
+
 |`CamelAwsS3LastModified` |`java.util.Date` |*Camel 2.8.2:* The last modified timestamp of this object.
+
+|`CamelAwsS3Operation` |`java.util.Date` |*Camel 2.18*: The operation to perform
 
 |`CamelAwsS3StorageClass` |`String` |*Camel 2.8.4:* The storage class of this object.
 
@@ -161,6 +169,8 @@ see `com.amazonaws.services.s3.model.AccessControlList` for more details
 
 |`CamelAwsS3ServerSideEncryption` |String |*Camel 2.16:* Sets the server-side encryption algorithm when encrypting
 the object using AWS-managed keys. For example use AES256.
+
+|`CamelAwsS3VersionId` |`String` |The version Id of the object to be stored or returned from the current operation
 |=======================================================================
 
 [[AWS-S3-MessageheaderssetbytheS3producer]]
