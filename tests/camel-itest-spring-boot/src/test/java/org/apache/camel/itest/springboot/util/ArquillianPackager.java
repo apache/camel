@@ -120,6 +120,7 @@ public final class ArquillianPackager {
         List<MavenDependencyExclusion> commonExclusions = new LinkedList<>();
         commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-log4j12"));
         commonExclusions.add(MavenDependencies.createExclusion("log4j", "log4j"));
+        commonExclusions.add(MavenDependencies.createExclusion("log4j", "apache-log4j-extras"));
         commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-simple"));
         commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-simple"));
         commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-jdk14"));
@@ -167,7 +168,22 @@ public final class ArquillianPackager {
                 if (!validTestDependency(config, c)) {
                     continue;
                 }
-                MavenDependency dep = MavenDependencies.createDependency(c, ScopeType.RUNTIME, false, commonExclutionArray);
+
+                // Re-adding exclusions, as Arquillian resolver ignores them
+                Set<String> pomExclusions = DependencyResolver.getExclusions(config.getModuleBasePath() + "/pom.xml", c.getGroupId(), c.getArtifactId());
+                MavenDependencyExclusion[] artExclusions;
+                if(pomExclusions.isEmpty()) {
+                    artExclusions = commonExclutionArray;
+                } else {
+                    List<MavenDependencyExclusion> specificExclusions = new LinkedList<>(Arrays.asList(commonExclutionArray));
+                    for(String spEx : pomExclusions) {
+                        specificExclusions.add(MavenDependencies.createExclusion(spEx));
+                    }
+                    artExclusions = specificExclusions.toArray(new MavenDependencyExclusion[]{});
+                }
+
+
+                MavenDependency dep = MavenDependencies.createDependency(c, ScopeType.RUNTIME, false, artExclusions);
                 moduleDependencies.add(dep);
             }
         }
