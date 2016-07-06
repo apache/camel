@@ -172,11 +172,11 @@ public final class ArquillianPackager {
                 // Re-adding exclusions, as Arquillian resolver ignores them
                 Set<String> pomExclusions = DependencyResolver.getExclusions(config.getModuleBasePath() + "/pom.xml", c.getGroupId(), c.getArtifactId());
                 MavenDependencyExclusion[] artExclusions;
-                if(pomExclusions.isEmpty()) {
+                if (pomExclusions.isEmpty()) {
                     artExclusions = commonExclutionArray;
                 } else {
                     List<MavenDependencyExclusion> specificExclusions = new LinkedList<>(Arrays.asList(commonExclutionArray));
-                    for(String spEx : pomExclusions) {
+                    for (String spEx : pomExclusions) {
                         specificExclusions.add(MavenDependencies.createExclusion(spEx));
                     }
                     artExclusions = specificExclusions.toArray(new MavenDependencyExclusion[]{});
