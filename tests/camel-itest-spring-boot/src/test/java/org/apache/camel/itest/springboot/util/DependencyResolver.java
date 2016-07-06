@@ -16,13 +16,20 @@
  */
 package org.apache.camel.itest.springboot.util;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Resolves the currently used version of a library. Useful to run unit tests directly from the IDE, without passing additional parameters.
@@ -36,6 +43,49 @@ public final class DependencyResolver {
     private static XPathFactory xPathfactory = XPathFactory.newInstance();
 
     private DependencyResolver() {
+    }
+
+    /**
+     * Retrieves a list of transitive exclusions included in the pom, given the coordinate of a maven dependency.
+     * Useful to overcome limitations of Arquillian maven resolver.
+     *
+     * @param pom the pom where dependencies should be looked up
+     * @param groupId the group id of the dependency
+     * @param artifactId the artifact id of the dependency
+     * @return the set of exclusions in the form groupId:artifactId
+     * @throws Exception if anything goes wrong
+     */
+    public static Set<String> getExclusions(String pom, String groupId, String artifactId) throws Exception {
+        String expression = "/project/dependencies/dependency[groupId='" + groupId + "' and artifactId='" + artifactId + "']/exclusions";
+
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(pom);
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile(expression);
+
+        NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        if (nodes == null || nodes.getLength() < 1) {
+            return Collections.emptySet();
+        }
+
+        Set<String> exclusionSet = new HashSet<>();
+
+        NodeList exclusions = nodes.item(0).getChildNodes();
+        for (int i = 0; i < exclusions.getLength(); i++) {
+            Node exclusionNode = exclusions.item(i);
+            if (exclusionNode instanceof Element) {
+                Element exclusion = (Element) exclusionNode;
+                NodeList exclGroupIds = exclusion.getElementsByTagName("groupId");
+                String exclGroupIdVal = exclGroupIds.getLength() == 0 ? null : exclGroupIds.item(0).getTextContent();
+                NodeList exclArtifactIds = exclusion.getElementsByTagName("artifactId");
+                String exclArtifactIdVal = exclGroupIds.getLength() == 0 ? null : exclArtifactIds.item(0).getTextContent();
+                if (exclGroupIdVal != null && exclArtifactIdVal != null) {
+                    exclusionSet.add(exclGroupIdVal + ":" + exclArtifactIdVal);
+                }
+            }
+        }
+
+        return exclusionSet;
     }
 
     /**
