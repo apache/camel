@@ -88,7 +88,9 @@ public class Jt400Endpoint extends DefaultPollingEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (Jt400Type.DTAQ == configuration.getType()) {
-            return new Jt400DataQueueConsumer(this);
+            Consumer consumer = new Jt400DataQueueConsumer(this);
+            configureConsumer(consumer);
+            return consumer;
         } else {
             throw new OperationNotSupportedException();
         }
