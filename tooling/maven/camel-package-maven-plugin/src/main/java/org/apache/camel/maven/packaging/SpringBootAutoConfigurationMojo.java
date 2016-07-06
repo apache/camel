@@ -64,6 +64,9 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  */
 public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
+    private static final String[] SKIP_COMPONENTS = new String[]{"ahc-wss", "cometds", "https", "http4s", "smpps", "solrs", "solrCloud"};
+    private static final String[] MAIL_COMPONENTS = new String[]{"imap", "imaps", "pop3", "pop3s", "smtp", "smtps"};
+
     /**
      * The maven project.
      *
@@ -120,6 +123,27 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         if (!componentNames.isEmpty()) {
             getLog().debug("Found " + componentNames.size() + " components");
             for (String componentName : componentNames) {
+
+                // skip some components which is duplicates
+                boolean skip = false;
+                for (String name : SKIP_COMPONENTS) {
+                    if (name.equals(componentName)) {
+                        skip = true;
+                    }
+                }
+                if (skip) {
+                    continue;
+                }
+
+                // mail component should just be mail
+                String overrideComponentName = null;
+                for (String name : MAIL_COMPONENTS) {
+                    if (name.equals(componentName)) {
+                        overrideComponentName = "mail";
+                        break;
+                    }
+                }
+
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
                     ComponentModel model = generateComponentModel(componentName, json);
@@ -132,7 +156,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                         int pos = model.getJavaType().lastIndexOf(".");
                         String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
-                        createComponentConfigurationSource(pkg, model);
+                        createComponentConfigurationSource(pkg, model, overrideComponentName);
                         createComponentAutoConfigurationSource(pkg, model);
                         createComponentSpringFactorySource(pkg, model);
                     }
@@ -174,7 +198,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
-    private void createComponentConfigurationSource(String packageName, ComponentModel model) throws MojoFailureException {
+    private void createComponentConfigurationSource(String packageName, ComponentModel model, String overrideComponentName) throws MojoFailureException {
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
         int pos = model.getJavaType().lastIndexOf(".");
@@ -188,7 +212,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
         javaClass.getJavaDoc().setFullText(doc);
 
-        String prefix = "camel.component." + model.getScheme();
+        String prefix = "camel.component." + (overrideComponentName != null ? overrideComponentName : model.getScheme());
         // make sure prefix is in lower case
         prefix = prefix.toLowerCase(Locale.US);
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
