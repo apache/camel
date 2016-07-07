@@ -8,6 +8,7 @@
 * [Architecture](architecture.adoc)
     * [Async](async.adoc)
     * [Asynchronous Routing Engine](asynchronous-routing-engine.adoc)
+    * [BacklogDebugger](backlogdebugger.adoc)
     * [Dozer Type Conversion](dozer-type-conversion.adoc)
     * [Endpoint](endpoint.adoc)
     * [Exchange](exchange.adoc)
