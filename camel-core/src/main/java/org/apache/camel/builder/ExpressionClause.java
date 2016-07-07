@@ -656,43 +656,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
-     * Evaluates an <a href="http://camel.apache.org/vtdxml.html">XPath
-     * expression using the VTD-XML library</a>
-     *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    public T vtdxml(String text) {
-        return delegate.vtdxml(text);
-    }
-
-    /**
-     * Evaluates an <a href="http://camel.apache.org/vtdxml.html">XPath
-     * expression using the VTD-XML library</a>
-     * with the specified set of namespace prefixes and URIs
-     *
-     * @param text the expression to be evaluated
-     * @param namespaces the namespace prefix and URIs to use
-     * @return the builder to continue processing the DSL
-     */
-    public T vtdxml(String text, Namespaces namespaces) {
-        return delegate.vtdxml(text, namespaces);
-    }
-
-    /**
-     * Evaluates an <a href="http://camel.apache.org/vtdxml.html">XPath
-     * expression using the VTD-XML library</a>
-     * with the specified set of namespace prefixes and URIs
-     *
-     * @param text the expression to be evaluated
-     * @param namespaces the namespace prefix and URIs to use
-     * @return the builder to continue processing the DSL
-     */
-    public T vtdxml(String text, Map<String, String> namespaces) {
-        return delegate.vtdxml(text, namespaces);
-    }
-
-    /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a>
      * 
