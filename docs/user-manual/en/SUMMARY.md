@@ -10,6 +10,7 @@
     * [Asynchronous Routing Engine](asynchronous-routing-engine.adoc)
     * [BacklogDebugger](backlogdebugger.adoc)
     * [BAM](bam.adoc)
+    * [Batch Consumer](batch-consumer.adoc)
     * [Dozer Type Conversion](dozer-type-conversion.adoc)
     * [Endpoint](endpoint.adoc)
     * [Exchange](exchange.adoc)
