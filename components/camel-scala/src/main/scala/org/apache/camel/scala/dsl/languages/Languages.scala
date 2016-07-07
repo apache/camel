@@ -48,12 +48,10 @@ trait Languages {
     def spel(expression: String) =       Languages.this.spel(expression)(exchange)
     def sql(expression: String) =        Languages.this.sql(expression)(exchange)
     def tokenize(expression: String) =   Languages.this.tokenize(expression)(exchange)
-    def vtdxml(expression: String) =     Languages.this.vtdxml(expression)(exchange)
     def xpath(expression: String) =      Languages.this.xpath(expression)(exchange)
     def xquery(expression: String) =     Languages.this.xquery(expression)(exchange)
     def jsonpath(expression: String) =   Languages.this.jsonpath(expression)(exchange)
     def language(language: String, expression: String) = Languages.this.language(language)(expression)(exchange)
-
     def tokenizeXML(tagName: String, inheritNamespaceTagName : String = null) = Languages.this.tokenizeXML(tagName, inheritNamespaceTagName)(exchange)
   }
   
@@ -79,7 +77,6 @@ trait Languages {
   def spel(expression: String)(exchange: Exchange) =       Languages.evaluate(expression)(exchange)("spel")
   def sql(expression: String)(exchange: Exchange) =        Languages.evaluate(expression)(exchange)("sql")
   def tokenize(expression: String)(exchange: Exchange) =   Languages.evaluate(expression)(exchange)("tokenize")
-  def vtdxml(expression: String)(exchange: Exchange) =     Languages.evaluate(expression)(exchange)("vtdxml")
   def xpath(expression: String)(exchange: Exchange) =      Languages.evaluate(expression)(exchange)("xpath")
   def xquery(expression: String)(exchange: Exchange) =     Languages.evaluate(expression)(exchange)("xquery")
   def jsonpath(expression:String)(exchange:Exchange) =     Languages.evaluate(expression)(exchange)("jsonpath")

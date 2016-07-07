@@ -43,7 +43,6 @@ import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.SqlExpression;
 import org.apache.camel.model.language.TerserExpression;
 import org.apache.camel.model.language.TokenizerExpression;
-import org.apache.camel.model.language.VtdXmlExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -722,46 +721,6 @@ public class ExpressionClauseSupport<T> {
         if (group > 0) {
             expression.setGroup(group);
         }
-        setExpressionType(expression);
-        return result;
-    }
-
-    /**
-     * Evaluates an <a href="http://camel.apache.org/vtdxml.html">XPath
-     * expression using the VTD-XML library</a>
-     *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    public T vtdxml(String text) {
-        return expression(new VtdXmlExpression(text));
-    }
-
-    /**
-     * Evaluates an <a href="http://camel.apache.org/vtdxml.html">XPath
-     * expression using the VTD-XML library</a>
-     * with the specified set of namespace prefixes and URIs
-     *
-     * @param text the expression to be evaluated
-     * @param namespaces the namespace prefix and URIs to use
-     * @return the builder to continue processing the DSL
-     */
-    public T vtdxml(String text, Namespaces namespaces) {
-        return vtdxml(text, namespaces.getNamespaces());
-    }
-
-    /**
-     * Evaluates an <a href="http://camel.apache.org/vtdxml.html">XPath
-     * expression using the VTD-XML library</a>
-     * with the specified set of namespace prefixes and URIs
-     *
-     * @param text the expression to be evaluated
-     * @param namespaces the namespace prefix and URIs to use
-     * @return the builder to continue processing the DSL
-     */
-    public T vtdxml(String text, Map<String, String> namespaces) {
-        VtdXmlExpression expression = new VtdXmlExpression(text);
-        expression.setNamespaces(namespaces);
         setExpressionType(expression);
         return result;
     }
