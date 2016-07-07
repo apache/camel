@@ -9,6 +9,7 @@
     * [Async](async.adoc)
     * [Asynchronous Routing Engine](asynchronous-routing-engine.adoc)
     * [BacklogDebugger](backlogdebugger.adoc)
+    * [BAM](bam.adoc)
     * [Dozer Type Conversion](dozer-type-conversion.adoc)
     * [Endpoint](endpoint.adoc)
     * [Exchange](exchange.adoc)
@@ -20,7 +21,6 @@
 
 <!--
     * [AOP](aop.adoc)
-    * [BAM](bam.adoc)
     * [Batch Consumer](batch-consumer.adoc)
     * [BrowsableEndpoint](browsable-endpoint.adoc)
     * [CamelContext](camelcontext.adoc)
@@ -346,6 +346,9 @@
     * [XStream](xstream.adoc)
     * [YAML](yaml.adoc)
     * [Zipfile](zipfile.adoc)
+
+* Example
+    * [BAM Example](bam-example.adoc)
 
 * User Guide
     * [Karaf](karaf.adoc)
