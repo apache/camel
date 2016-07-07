@@ -484,7 +484,7 @@ option mappingStrategy as part of the uri, for example:
 
 [source,java]
 ----------------------------------
-hbase:mytable?mappingStrategy=body
+hbase:mytable?mappingStrategyName=body
 ----------------------------------
 
 To use the body mapping strategy the body needs to contain an instance
