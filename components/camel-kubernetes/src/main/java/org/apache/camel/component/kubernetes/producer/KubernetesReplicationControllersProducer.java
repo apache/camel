@@ -85,7 +85,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
             break;
             
         case KubernetesOperations.SCALE_REPLICATION_CONTROLLER_OPERATION:
-        	doScaleReplicationController(exchange, operation);
+            doScaleReplicationController(exchange, operation);
             break;
 
         default:
