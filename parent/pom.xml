@@ -1294,11 +1294,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-lucene</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-ldap</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1315,6 +1310,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-linkedin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-lucene</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-lumberjack</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
