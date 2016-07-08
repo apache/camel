@@ -27,6 +27,7 @@ public interface KubernetesConstants {
     String KUBERNETES_REPLICATION_CONTROLLERS_LABELS = "CamelKubernetesReplicationControllersLabels";
     String KUBERNETES_REPLICATION_CONTROLLER_NAME = "CamelKubernetesReplicationControllerName";
     String KUBERNETES_REPLICATION_CONTROLLER_SPEC = "CamelKubernetesReplicationControllerSpec";
+    String KUBERNETES_REPLICATION_CONTROLLER_REPLICAS = "CamelKubernetesReplicationControllerReplicas";
     String KUBERNETES_PODS_LABELS = "CamelKubernetesPodsLabels";
     String KUBERNETES_POD_NAME = "CamelKubernetesPodName";
     String KUBERNETES_POD_SPEC = "CamelKubernetesPodSpec";
