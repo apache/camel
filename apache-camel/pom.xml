@@ -528,10 +528,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-lucene</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-ldap</artifactId>
     </dependency>
     <dependency>
@@ -545,6 +541,14 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-linkedin</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-lucene</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-lumberjack</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
