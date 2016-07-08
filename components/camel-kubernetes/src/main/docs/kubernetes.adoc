@@ -112,6 +112,8 @@ Headers
 
 |CamelKubernetesReplicationControllerSpec |io.fabric8.kubernetes.api.model.ReplicationControllerSpec |The Spec for a Replication Controller
 
+|CamelKubernetesReplicationControllerReplicas |Integer |The number of replicas for a Replication Controller during the Scale operation
+
 |CamelKubernetesPodsLabels |Map |Pod labels
 
 |CamelKubernetesPodName |String |Pod name
