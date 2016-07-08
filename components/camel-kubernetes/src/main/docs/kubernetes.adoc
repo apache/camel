@@ -46,8 +46,10 @@ The Kubernetes component has no options.
 
 
 
+
+
 // endpoint options: START
-The Kubernetes component supports 25 endpoint options which are listed below:
+The Kubernetes component supports 28 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -60,8 +62,11 @@ The Kubernetes component supports 25 endpoint options which are listed below:
 | kubernetesClient | common |  | DefaultKubernetesClient | Default KubernetesClient to use if provided
 | portName | common |  | String | The port name used for ServiceCall EIP
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| labelKey | consumer |  | String | The Consumer Label key when watching at some resources
+| labelValue | consumer |  | String | The Consumer Label value when watching at some resources
 | namespace | consumer |  | String | The namespace
 | poolSize | consumer | 1 | int | The Consumer pool size
+| resourceName | consumer |  | String | The Consumer Resource Name we would like to watch
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | operation | producer |  | String | Producer operation to do on Kubernetes
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
@@ -81,6 +86,8 @@ The Kubernetes component supports 25 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
+
 
 
 
