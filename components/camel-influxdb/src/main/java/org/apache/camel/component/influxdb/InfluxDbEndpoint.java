@@ -29,7 +29,7 @@ import org.influxdb.InfluxDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "influxdb", title = "InfluxDB", syntax = "influxdb:connectionBean", label = "database,ticks")
+@UriEndpoint(scheme = "influxdb", title = "InfluxDB", syntax = "influxdb:connectionBean", label = "database,ticks", producerOnly = true)
 public class InfluxDbEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDbEndpoint.class);
@@ -83,7 +83,7 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating influx db consumer");
         }
-        return null;
+        throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
     }
 
     @Override

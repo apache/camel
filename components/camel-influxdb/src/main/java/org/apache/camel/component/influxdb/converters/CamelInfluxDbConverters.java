@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.influxdb.converters;
 
-import java.math.BigInteger;
 import java.util.Map;
 
-import org.apache.camel.CamelException;
 import org.apache.camel.Converter;
 import org.apache.camel.component.influxdb.CamelInfluxDbException;
 import org.apache.camel.component.influxdb.InfluxDbConstants;
 import org.influxdb.dto.Point;
+
 
 @Converter
 public final class CamelInfluxDbConverters {
@@ -42,12 +41,12 @@ public final class CamelInfluxDbConverters {
             throw new CamelInfluxDbException(format);
         }
 
-        
+
         String measurenmentNameString = measurenmentName.toString();
         Point.Builder pointBuilder = Point.measurement(measurenmentNameString);
-        
+
         map.remove(InfluxDbConstants.MEASUREMENT_NAME);
-      
+
         pointBuilder.fields(map);
         map.put(InfluxDbConstants.MEASUREMENT_NAME, measurenmentName);
 
@@ -55,31 +54,6 @@ public final class CamelInfluxDbConverters {
         return pointBuilder.build();
 
     }
-
-//    @Converter
-//    public static Point fromStringToPoint(String pointStingFormat) {
-//
-//        String [] parts = pointStingFormat.split(" ");
-//
-//        String measurenmentName
-//        if (measurenmentName == null) {
-//            String format = String.format("Unable to find the header for the measurement " + map.size() + " to:" + map.keySet().toString());
-//            throw new CamelInfluxDbException(format);
-//        }
-//
-//
-//        String measurenmentNameString = measurenmentName.toString();
-//        Point.Builder pointBuilder = Point.measurement(measurenmentNameString);
-//
-//        map.remove(InfluxDbConstants.MEASUREMENT_NAME);
-//
-//        pointBuilder.fields(map);
-//        map.put(InfluxDbConstants.MEASUREMENT_NAME, measurenmentName);
-//
-//
-//        return pointBuilder.build();
-//
-//    }
 
 
 }
