@@ -42,7 +42,10 @@ public class MockedInfluxDbConfiguration {
             LOG.debug("Creating new instance of a mocked influx db connection");
         }
         InfluxDB mockedDbConnection = mock(InfluxDB.class);
+        //InfluxDB mockedDbConnection = InfluxDBFactory.connect("http://127.0.0.1:8086", "root", "root");
         assertNotNull(mockedDbConnection);
         return mockedDbConnection;
     }
+
+
 }

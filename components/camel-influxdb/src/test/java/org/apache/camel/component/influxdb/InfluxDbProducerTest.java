@@ -102,7 +102,7 @@ public class InfluxDbProducerTest extends AbstractInfluxDbTest {
 
     private Map<String, Object> createHeader() {
         Map<String, Object> header = new HashMap<>();
-        header.put(InfluxDbConstants.DBNAME_HEADER, 1234);
+        header.put(InfluxDbConstants.DBNAME_HEADER, "myOtherDatabase");
         return header;
     }
 
