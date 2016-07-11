@@ -17,7 +17,6 @@
 package org.apache.camel.component.kubernetes.consumer;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.PodTemplateSpec;
@@ -115,7 +114,7 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
                 from("direct:deleteReplicationController").toF(
                         "kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=deleteReplicationController",
                         host, authToken);
-                fromF("kubernetes://%s?oauthToken=%s&category=replicationControllers", host, authToken)
+                fromF("kubernetes://%s?oauthToken=%s&category=replicationControllers&resourceName=wildfly", host, authToken)
                         .process(new KubernertesProcessor()).to(mockResultEndpoint);
             }
         };
