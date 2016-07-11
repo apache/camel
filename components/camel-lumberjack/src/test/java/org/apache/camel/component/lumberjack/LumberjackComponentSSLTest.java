@@ -33,7 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 @SuppressWarnings("unchecked")
-public class LumberjacksComponentTest extends CamelTestSupport {
+public class LumberjackComponentSSLTest extends CamelTestSupport {
     private static int port;
 
     @BeforeClass
@@ -53,7 +53,7 @@ public class LumberjacksComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // Lumberjack configured with SSL
-                from("lumberjacks:0.0.0.0:" + port + "?sslContextParameters=#ssl").to("mock:output");
+                from("lumberjack:0.0.0.0:" + port + "?sslContextParameters=#ssl").to("mock:output");
             }
         };
     }
@@ -72,7 +72,7 @@ public class LumberjacksComponentTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // And we should have replied with 2 acknowledgments for each window frame
-        assertEquals(responses, Arrays.asList(10, 15));
+        assertEquals(Arrays.asList(10, 15), responses);
     }
 
     /**
