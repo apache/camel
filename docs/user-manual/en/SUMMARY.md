@@ -12,6 +12,7 @@
     * [BAM](bam.adoc)
     * [Batch Consumer](batch-consumer.adoc)
     * [BrowsableEndpoint](browsable-endpoint.adoc)
+    * [CamelContext](camelcontext.adoc)
     * [Dozer Type Conversion](dozer-type-conversion.adoc)
     * [Endpoint](endpoint.adoc)
     * [Exchange](exchange.adoc)
@@ -23,7 +24,6 @@
 
 <!--
     * [AOP](aop.adoc)
-    * [CamelContext](camelcontext.adoc)
     * [Camel-Core](camel-core.adoc)
     * [Debugger](debugger.adoc)
     * [Delay Interceptor](delay-interceptor.adoc)
