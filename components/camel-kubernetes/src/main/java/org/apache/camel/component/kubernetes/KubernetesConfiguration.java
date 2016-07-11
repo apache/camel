@@ -43,12 +43,20 @@ public class KubernetesConfiguration {
     @UriParam(label = "security", secret = true)
     private String password;
 
-    @UriParam(label = "producer", enums = "listNamespaces,listNamespacesByLabels,getNamespace,createNamespace,deleteNamespace,listServices,listServicesByLabels,getService,createService,"
-            + "deleteService,listReplicationControllers,listReplicationControllersByLabels,getReplicationController,createReplicationController,deleteReplicationController,listPods,"
-            + "listPodsByLabels,getPod,createPod,deletePod,listPersistentVolumes,listPersistentVolumesByLabels,getPersistentVolume,listPersistentVolumesClaims,listPersistentVolumesClaimsByLabels,"
-            + "getPersistentVolumeClaim,createPersistentVolumeClaim,deletePersistentVolumeClaim,listSecrets,listSecretsByLabels,getSecret,createSecret,deleteSecret,listResourcesQuota,"
-            + "listResourcesQuotaByLabels,getResourceQuota,createResourceQuota,deleteResourceQuota,listServiceAccounts,listServiceAccountsByLabels,getServiceAccount,createServiceAccount,"
-            + "deleteServiceAccount,listNodes,listNodesByLabels,getNode,listConfigMaps,listConfigMapsByLabels,getConfigMap,createConfigMap,deleteConfigMap,listBuilds,listBuildsByLabels," 
+    @UriParam(label = "producer", enums = "listNamespaces,listNamespacesByLabels,getNamespace,createNamespace,deleteNamespace,"
+            + "listServices,listServicesByLabels,getService,createService,"
+            + "deleteService,listReplicationControllers,listReplicationControllersByLabels,getReplicationController,"
+            + "createReplicationController,deleteReplicationController,scaleReplicationController,"
+            + "listPods,listPodsByLabels,getPod,createPod,deletePod,listPersistentVolumes,"
+            + "listPersistentVolumesByLabels,getPersistentVolume,listPersistentVolumesClaims,"
+            + "listPersistentVolumesClaimsByLabels,"
+            + "getPersistentVolumeClaim,createPersistentVolumeClaim,deletePersistentVolumeClaim,listSecrets,"
+            + "listSecretsByLabels,getSecret,createSecret,deleteSecret,"
+            + "listResourcesQuota,listResourcesQuotaByLabels,getResourceQuota,"
+            + "createResourceQuota,deleteResourceQuota,listServiceAccounts,listServiceAccountsByLabels,"
+            + "getServiceAccount,createServiceAccount,"
+            + "deleteServiceAccount,listNodes,listNodesByLabels,getNode,listConfigMaps,"
+            + "listConfigMapsByLabels,getConfigMap,createConfigMap,deleteConfigMap,listBuilds,listBuildsByLabels," 
             + "getBuild,listBuildConfigs,listBuildConfigsByLabels,getBuildConfig")
     private String operation;
 
@@ -87,6 +95,15 @@ public class KubernetesConfiguration {
 
     @UriParam(label = "consumer")
     private String namespace;
+    
+    @UriParam(label = "consumer")
+    private String labelKey;
+    
+    @UriParam(label = "consumer")
+    private String labelValue;
+    
+    @UriParam(label = "consumer")
+    private String resourceName;
 
     @UriParam
     private String portName;
@@ -343,6 +360,40 @@ public class KubernetesConfiguration {
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
     }
+   
+    /**
+     * The Consumer Label key when watching at some resources
+     */
+    public String getLabelKey() {
+        return labelKey;
+    }
+
+    public void setLabelKey(String labelKey) {
+        this.labelKey = labelKey;
+    }
+
+    /**
+     * The Consumer Label value when watching at some resources
+     */
+    public String getLabelValue() {
+        return labelValue;
+    }
+
+    public void setLabelValue(String labelValue) {
+        this.labelValue = labelValue;
+    }
+    
+
+    /**
+     * The Consumer Resource Name we would like to watch
+     */
+    public String getResourceName() {
+        return resourceName;
+    }
+
+    public void setResourceName(String resourceName) {
+        this.resourceName = resourceName;
+    }
 
     @Override
     public String toString() {
@@ -352,6 +403,9 @@ public class KubernetesConfiguration {
                 + ", clientCertData=" + clientCertData + ", clientCertFile=" + clientCertFile + ", clientKeyAlgo="
                 + clientKeyAlgo + ", clientKeyData=" + clientKeyData + ", clientKeyFile=" + clientKeyFile
                 + ", clientKeyPassphrase=" + clientKeyPassphrase + ", oauthToken=" + oauthToken + ", trustCerts="
-                + trustCerts + ", namespaceName=" + namespace + "]";
+                + trustCerts + ", namespace=" + namespace + ", labelKey=" + labelKey + ", labelValue=" + labelValue
+                + ", resourceName=" + resourceName + ", portName=" + portName + ", dnsDomain=" + dnsDomain
+                + ", poolSize=" + poolSize + "]";
     }
+
 }

@@ -227,7 +227,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             handleFailedWrite(exchange, e);
         }
 
-        postWriteCheck();
+        postWriteCheck(exchange);
     }
 
     /**
@@ -248,7 +248,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
     /**
      * Perform any actions that need to occur after we are done such as disconnecting.
      */
-    public void postWriteCheck() {
+    public void postWriteCheck(Exchange exchange) {
         // nothing needed to check
     }
 

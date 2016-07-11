@@ -88,7 +88,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
     protected static final int DEFAULT_TIMEOUT = 60000;
 
     private static final String JAVA_EXT = ".java";
-    private static final String PACKAGE_NAME_PATTERN = "^[a-z]+(\\.[a-z][a-z0-9]*)*$";
+    private static final String PACKAGE_NAME_PATTERN = "(\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*\\.)+\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
     private static final String SOBJECT_POJO_VM = "/sobject-pojo.vm";
     private static final String SOBJECT_POJO_OPTIONAL_VM = "/sobject-pojo-optional.vm";
@@ -690,8 +690,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 {"byte", "Byte"},
 //                {"QName", "javax.xml.namespace.QName"},
 
-//                {"dateTime", "javax.xml.datatype.XMLGregorianCalendar"},
-                {"dateTime", "org.joda.time.DateTime"},
+                {"dateTime", "java.time.ZonedDateTime"},
 
                     // the blob base64Binary type is mapped to String URL for retrieving the blob
                 {"base64Binary", "String"},
@@ -702,11 +701,11 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 {"unsignedByte", "Short"},
 
 //                {"time", "javax.xml.datatype.XMLGregorianCalendar"},
-                {"time", "org.joda.time.DateTime"},
+                {"time", "java.time.ZonedDateTime"},
 //                {"date", "javax.xml.datatype.XMLGregorianCalendar"},
-                {"date", "org.joda.time.DateTime"},
+                {"date", "java.time.ZonedDateTime"},
 //                {"g", "javax.xml.datatype.XMLGregorianCalendar"},
-                {"g", "org.joda.time.DateTime"},
+                {"g", "java.time.ZonedDateTime"},
 
                     // Salesforce maps any types like string, picklist, reference, etc. to string
                 {"anyType", "String"},

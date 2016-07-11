@@ -113,7 +113,7 @@ public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
                         "kubernetes://%s?oauthToken=%s&category=services&operation=createService", host, authToken);
                 from("direct:deleteService").toF(
                         "kubernetes://%s?oauthToken=%s&category=services&operation=deleteService", host, authToken);
-                fromF("kubernetes://%s?oauthToken=%s&category=services", host, authToken)
+                fromF("kubernetes://%s?oauthToken=%s&category=services&labelKey=this&labelValue=rocks", host, authToken)
                         .process(new KubernertesProcessor()).to(mockResultEndpoint);
             }
         };

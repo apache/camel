@@ -44,6 +44,9 @@ public final class ElasticsearchActionRequestConverter {
 
     // Update requests
     private static UpdateRequest createUpdateRequest(Object document, Exchange exchange) {
+        if (document instanceof UpdateRequest) {
+            return (UpdateRequest)document;
+        }
         UpdateRequest updateRequest = new UpdateRequest();
         if (document instanceof byte[]) {
             updateRequest.doc((byte[]) document);
@@ -74,6 +77,9 @@ public final class ElasticsearchActionRequestConverter {
 
     // Index requests
     private static IndexRequest createIndexRequest(Object document, Exchange exchange) {
+        if (document instanceof IndexRequest) {
+            return (IndexRequest)document;
+        }
         IndexRequest indexRequest = new IndexRequest();
         if (document instanceof byte[]) {
             indexRequest.source((byte[]) document);

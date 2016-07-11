@@ -35,6 +35,8 @@ public class CamelSapNetweaverTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelSapNetweaverTest.class))
+                .unitTestInclusionPattern("^$") // no pure unit-tests
+                .unitTestExpectedNumber(0)
                 .build();
     }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
@@ -27,6 +28,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
 
@@ -46,10 +48,6 @@ public class KafkaConfiguration {
     private int consumerStreams = 10;
     @UriParam(label = "consumer", defaultValue = "1")
     private int consumersCount = 1;
-    @UriParam(label = "consumer", defaultValue = "100")
-    private int batchSize = 100;
-    @UriParam(label = "consumer", defaultValue = "10000")
-    private int barrierAwaitTimeoutMs = 10000;
 
     //Common configuration properties
     @UriParam
@@ -73,7 +71,9 @@ public class KafkaConfiguration {
     //session.timeout.ms
     @UriParam(label = "consumer", defaultValue = "30000")
     private Integer sessionTimeoutMs = 30000;
-    //auto.offset.reset
+    @UriParam(label = "consumer", defaultValue = "5000")
+    private Long pollTimeoutMs = 5000L;
+    //auto.offset.reset1
     @UriParam(label = "consumer", defaultValue = "latest", enums = "latest,earliest,none")
     private String autoOffsetReset = "latest";
     //partition.assignment.strategy
@@ -119,7 +119,7 @@ public class KafkaConfiguration {
     @UriParam(label = "producer")
     private String keySerializerClass;
 
-    @UriParam(label = "producer", enums = "0,1,all", defaultValue = "1")
+    @UriParam(label = "producer", enums = "-1,0,1,all", defaultValue = "1")
     private String requestRequiredAcks = "1";
     //buffer.memory
     @UriParam(label = "producer", defaultValue = "33554432")
@@ -237,6 +237,8 @@ public class KafkaConfiguration {
     //ssl.trustmanager.algorithm
     @UriParam(label = "producer", defaultValue = "PKIX")
     private String sslTrustmanagerAlgorithm = "PKIX";
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean recordMetadata = true;
 
     public KafkaConfiguration() {
     }
@@ -401,28 +403,6 @@ public class KafkaConfiguration {
      */
     public void setConsumerStreams(int consumerStreams) {
         this.consumerStreams = consumerStreams;
-    }
-
-    public int getBatchSize() {
-        return batchSize;
-    }
-
-    /**
-     * The batchSize that the BatchingConsumerTask processes once.
-     */
-    public void setBatchSize(int batchSize) {
-        this.batchSize = batchSize;
-    }
-
-    public int getBarrierAwaitTimeoutMs() {
-        return barrierAwaitTimeoutMs;
-    }
-
-    /**
-     * If the BatchingConsumerTask processes exchange exceed the batchSize, it will wait for barrierAwaitTimeoutMs.
-     */
-    public void setBarrierAwaitTimeoutMs(int barrierAwaitTimeoutMs) {
-        this.barrierAwaitTimeoutMs = barrierAwaitTimeoutMs;
     }
 
     public int getConsumersCount() {
@@ -1096,6 +1076,17 @@ public class KafkaConfiguration {
         this.sessionTimeoutMs = sessionTimeoutMs;
     }
 
+    public Long getPollTimeoutMs() {
+        return pollTimeoutMs;
+    }
+
+    /**
+     * The timeout used when polling the KafkaConsumer.
+     */
+    public void setPollTimeoutMs(Long pollTimeoutMs) {
+        this.pollTimeoutMs = pollTimeoutMs;
+    }
+
     public String getPartitionAssignor() {
         return partitionAssignor;
     }
@@ -1201,5 +1192,19 @@ public class KafkaConfiguration {
      */
     public void setWorkerPoolMaxSize(Integer workerPoolMaxSize) {
         this.workerPoolMaxSize = workerPoolMaxSize;
+    }
+
+    public boolean isRecordMetadata() {
+        return recordMetadata;
+    }
+
+    /**
+     * Whether the producer should store the {@link RecordMetadata} results from sending to Kafka.
+     *
+     * The results are stored in a {@link List} containing the {@link RecordMetadata} metadata's.
+     * The list is stored on a header with the key {@link KafkaConstants#KAFKA_RECORDMETA}
+     */
+    public void setRecordMetadata(boolean recordMetadata) {
+        this.recordMetadata = recordMetadata;
     }
 }

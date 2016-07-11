@@ -91,7 +91,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.ning</groupId>
+            <groupId>org.asynchttpclient</groupId>
             <artifactId>async-http-client</artifactId>
             <version>${ahc-version}</version>
             <scope>test</scope>

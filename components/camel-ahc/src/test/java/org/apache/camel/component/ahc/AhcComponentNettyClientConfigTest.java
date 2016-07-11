@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.ahc;
 
-import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.providers.netty.NettyAsyncHttpProviderConfig;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.junit.Test;
 
 public class AhcComponentNettyClientConfigTest extends BaseAhcTest {
@@ -30,12 +29,7 @@ public class AhcComponentNettyClientConfigTest extends BaseAhcTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        // use netty provider to reuse address
-        NettyAsyncHttpProviderConfig provider = new NettyAsyncHttpProviderConfig();
-        provider.addProperty("reuseAddress", Boolean.TRUE);
-
-        AsyncHttpClientConfig config = new AsyncHttpClientConfig.Builder()
-                .setAsyncHttpClientProviderConfig(provider)
+        DefaultAsyncHttpClientConfig config = new DefaultAsyncHttpClientConfig.Builder()
                 .setFollowRedirect(true)
                 .setMaxRequestRetry(3)
                 .build();

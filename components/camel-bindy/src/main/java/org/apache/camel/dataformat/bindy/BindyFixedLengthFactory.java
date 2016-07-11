@@ -64,6 +64,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     private char paddingChar;
     private int recordLength;
     private boolean ignoreTrailingChars;
+    private boolean ignoreMissingChars;
 
     private Class<?> header;
     private Class<?> footer;
@@ -201,7 +202,15 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             }
 
             if (length > 0) {
-                token = record.substring(offset - 1, offset + length - 1);
+                if (record.length() < offset) {
+                    token = "";
+                } else {
+                    int endIndex = offset + length - 1;
+                    if (endIndex > record.length()) {
+                        endIndex = record.length();
+                    }
+                    token = record.substring(offset - 1, endIndex);
+                }
                 offset += length;
             } else if (!delimiter.equals("")) {
                 String tempToken = record.substring(offset - 1, record.length());
@@ -214,7 +223,8 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             }
 
             if (dataField.trim()) {
-                token = token.trim();
+                token = trim(token, dataField, paddingChar);
+                //token = token.trim();
             }
 
             // Check mandatory field
@@ -252,7 +262,10 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             // format the data received
             Object value = null;
 
-            if (!token.equals("")) {
+            if ("".equals(token)) {
+                token = dataField.defaultValue();
+            }
+            if (!"".equals(token)) {
                 try {
                     value = format.parse(token);
                 } catch (FormatException ie) {
@@ -285,6 +298,38 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             throw new IllegalArgumentException("Some mandatory fields are missing, line: " + line);
         }
 
+    }
+
+    private String trim(String token, DataField dataField, char paddingChar) {
+        char myPaddingChar = dataField.paddingChar();
+        if (dataField.paddingChar() == 0) {
+            myPaddingChar = paddingChar;
+        }
+        if ("R".equals(dataField.align())) {
+            return leftTrim(token, myPaddingChar);
+        } else {
+            return rightTrim(token, myPaddingChar);
+        }
+    }
+
+    private String rightTrim(String token, char myPaddingChar) {
+        StringBuilder sb = new StringBuilder(token);
+
+        while (sb.length() > 0 && myPaddingChar == sb.charAt(sb.length() - 1)) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+
+        return sb.toString();
+    }
+
+    private String leftTrim(String token, char myPaddingChar) {
+        StringBuilder sb = new StringBuilder(token);
+
+        while (sb.length() > 0 && myPaddingChar == (sb.charAt(0))) {
+            sb.deleteCharAt(0);
+        }
+
+        return sb.toString();
     }
 
     @Override
@@ -516,6 +561,9 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 // Get flag for ignore trailing characters
                 ignoreTrailingChars = record.ignoreTrailingChars();
                 LOG.debug("Ignore trailing chars: {}", ignoreTrailingChars);
+
+                ignoreMissingChars = record.ignoreMissingChars();
+                LOG.debug("Enable ignore missing chars: {}", ignoreMissingChars);
             }
         }
 
@@ -611,6 +659,13 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
      */
     public boolean isIgnoreTrailingChars() {
         return this.ignoreTrailingChars;
+    }
+
+    /**
+     * Flag indicating whether too short lines are ignored
+     */
+    public boolean isIgnoreMissingChars() {
+        return ignoreMissingChars;
     }
 
 }

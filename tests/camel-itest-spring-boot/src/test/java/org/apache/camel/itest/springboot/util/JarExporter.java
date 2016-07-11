@@ -32,9 +32,8 @@ public class JarExporter {
     public void exportJar() throws Exception {
 
         Archive<?> archive = ArquillianPackager.springBootPackage(new ITestConfigBuilder()
-                .module("camel-box")
+                .module("camel-ahc-ws")
                 .build());
-
 
         new ZipExporterImpl(archive).exportTo(new File("target/export.zip"), true);
 

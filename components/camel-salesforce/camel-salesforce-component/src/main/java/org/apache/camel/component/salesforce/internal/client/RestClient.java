@@ -167,6 +167,14 @@ public interface RestClient {
     void queryMore(String nextRecordsUrl, ResponseCallback callback);
 
     /**
+     * Executes the specified SOQL query including deleted records.
+     *
+     * @param soqlQuery SOQL query
+     * @param callback  {@link ResponseCallback} to handle response or exception
+     */
+    void queryAll(String soqlQuery, ResponseCallback callback);
+
+    /**
      * Executes the specified SOSL search.
      *
      * @param soslQuery SOSL query
@@ -185,5 +193,4 @@ public interface RestClient {
      */
     void apexCall(String httpMethod, String apexUrl, Map<String, Object> queryParams, InputStream requestDto,
                   ResponseCallback callback);
-
 }

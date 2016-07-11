@@ -65,4 +65,20 @@ public class TestProxy {
         }
         return result.toArray(new String[result.size()]);
     }
+
+    public final String greetInnerChild(InnerChild child) {
+        return sayHi(child.getName());
+    }
+
+    public static class InnerChild {
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 }

@@ -133,7 +133,7 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Which json library to use such.
+     * Which json library to use.
      */
     public void setLibrary(JsonLibrary library) {
         this.library = library;
@@ -315,10 +315,10 @@ public class JsonDataFormat extends DataFormatDefinition {
             setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-xstream");
         } else if (library == JsonLibrary.Jackson) {
             setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-jackson");
-        } else if (library == JsonLibrary.Gson){
+        } else if (library == JsonLibrary.Gson) {
             setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-gson");
         } else {
-        	setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-johnzon");
+            setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-johnzon");
         }
 
         if (unmarshalType == null && unmarshalTypeName != null) {

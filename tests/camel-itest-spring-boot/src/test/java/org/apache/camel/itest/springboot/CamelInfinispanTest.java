@@ -35,6 +35,8 @@ public class CamelInfinispanTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelInfinispanTest.class))
+                .disableJmx("org.infinispan:*")
+                // arquillian fails, bu the tests pass
                 .build();
     }
 

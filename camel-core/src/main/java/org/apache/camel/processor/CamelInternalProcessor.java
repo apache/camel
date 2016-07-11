@@ -17,7 +17,9 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -25,6 +27,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
+import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
@@ -44,6 +47,7 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.MessageHelper;
+import org.apache.camel.util.OrderedComparator;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.UnitOfWorkHelper;
 import org.slf4j.Logger;
@@ -72,6 +76,8 @@ import org.slf4j.LoggerFactory;
  * <b>Debugging tips:</b> Camel end users whom want to debug their Camel applications with the Camel source code, then make sure to
  * read the source code of this class about the debugging tips, which you can find in the
  * {@link #process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method.
+ * <p/>
+ * The added advices can implement {@link Ordered} to control in which order the advices are executed.
  */
 public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
@@ -92,6 +98,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     public void addAdvice(CamelInternalProcessorAdvice advice) {
         advices.add(advice);
+        // ensure advices are sorted so they are in the order we want
+        Collections.sort(advices, new OrderedComparator());
     }
 
     /**
@@ -124,7 +132,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         //   CAMEL END USER - DEBUG ME HERE +++ END +++
         // you can see in the code below.
         // ----------------------------------------------------------
-
 
         if (processor == null || !continueProcessing(exchange)) {
             // no processor or we should not continue then we are done
@@ -522,7 +529,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     /**
      * Advice to execute the {@link BacklogTracer} if enabled.
      */
-    public static final class BacklogTracerAdvice implements CamelInternalProcessorAdvice {
+    public static final class BacklogTracerAdvice implements CamelInternalProcessorAdvice, Ordered {
 
         private final BacklogTracer backlogTracer;
         private final ProcessorDefinition<?> processorDefinition;
@@ -564,12 +571,19 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         public void after(Exchange exchange, Object data) throws Exception {
             // noop
         }
+
+        @Override
+        public int getOrder() {
+            // we want tracer just before calling the processor
+            return Ordered.LOWEST - 1;
+        }
+
     }
 
     /**
      * Advice to execute the {@link org.apache.camel.processor.interceptor.BacklogDebugger} if enabled.
      */
-    public static final class BacklogDebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch> {
+    public static final class BacklogDebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch>, Ordered {
 
         private final BacklogDebugger backlogDebugger;
         private final Processor target;
@@ -599,6 +613,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             if (stopWatch != null) {
                 backlogDebugger.afterProcess(exchange, target, definition, stopWatch.stop());
             }
+        }
+
+        @Override
+        public int getOrder() {
+            // we want debugger just before calling the processor
+            return Ordered.LOWEST;
         }
     }
 
@@ -725,7 +745,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         public MessageHistory before(Exchange exchange) throws Exception {
             List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
             if (list == null) {
-                list = new ArrayList<MessageHistory>();
+                list = new LinkedList<>();
                 exchange.setProperty(Exchange.MESSAGE_HISTORY, list);
             }
             MessageHistory history = factory.newMessageHistory(routeId, definition, new Date());
@@ -744,7 +764,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     /**
      * Advice for {@link org.apache.camel.spi.StreamCachingStrategy}
      */
-    public static class StreamCachingAdvice implements CamelInternalProcessorAdvice<StreamCache> {
+    public static class StreamCachingAdvice implements CamelInternalProcessorAdvice<StreamCache>, Ordered {
 
         private final StreamCachingStrategy strategy;
 
@@ -784,6 +804,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 // reset so the cache is ready to be reused after processing
                 ((StreamCache) body).reset();
             }
+        }
+
+        @Override
+        public int getOrder() {
+            // we want stream caching first
+            return Ordered.HIGHEST;
         }
     }
 

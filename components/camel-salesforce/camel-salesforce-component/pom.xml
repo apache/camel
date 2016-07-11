@@ -31,9 +31,6 @@
   <description>Camel Salesforce support</description>
 
   <properties>
-    <camel.osgi.import.before.defaults>
-        org.joda.time.*;version="[1.6,3)"
-    </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>
       org.apache.camel.component.salesforce,
       org.apache.camel.component.salesforce.api.*
@@ -43,6 +40,11 @@
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -97,11 +99,6 @@
           <artifactId>slf4j-api</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>${jodatime2-bundle-version}</version>
     </dependency>
 
     <!-- logging -->

@@ -1,0 +1,71 @@
+[[BatchConsumer-BatchConsumer]]
+Batch Consumer
+~~~~~~~~~~~~~~
+
+*Available as of Camel 2.0*
+
+Batch Consumer is basically a link:polling-consumer.html[Polling
+Consumer] that is capable of polling multiple
+link:exchange.html[Exchange]s in a pool. What we have done in Camel 2.0
+is to standardize this into a `org.apache.camel.BatchConsumer` interface
+that a consumer can implement to indicate it support batching as well.
+
+The following components supports link:batch-consumer.html[Batch
+Consumer] by its consumer:
+
+* link:atom.html[Atom]
+* link:file2.html[File]
+* link:ftp2.html[FTP]
+* link:hbase.html[hbase]
+* link:ibatis.html[iBatis]
+* link:jpa.html[JPA]
+* link:jclouds.html[JCLOUDS]
+* link:mail.html[Mail]
+* link:mybatis.html[MyBatis]
+* link:snmp.html[SNMP]
+* link:sql-component.html[SQL]
+* link:aws-sqs.html[SQS]
+* link:aws-s3.html[S3]
+
+[[BatchConsumer-ConsumerOptions]]
+Consumer Options
+^^^^^^^^^^^^^^^^
+
+The Batch Consumer supports the following options:
+
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|Option |Description
+
+|maxMessagesPerPoll |An integer to define a maximum messages to gather per poll. By default
+no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when
+starting up the server that there are thousands of files. Set a value of
+0 or negative to disabled it.
+|=======================================================================
+
+[[BatchConsumer-ExchangeProperties]]
+Exchange Properties
+^^^^^^^^^^^^^^^^^^^
+
+The following properties is set on the link:exchange.html[Exchange] for
+each link:exchange.html[Exchange] polled in the same batch.
+
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|Property |Description
+
+|CamelBatchSize |The total number of link:exchange.html[Exchange]s that was polled in
+this batch.
+
+|CamelBatchIndex |The current index of the batch. Starts from 0.
+
+|CamelBatchComplete |A boolean indicating the last link:exchange.html[Exchange] in the batch.
+Is only `true` for the last entry.
+|=======================================================================
+
+[[BatchConsumer-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:polling-consumer.html[Polling Consumer]
+

@@ -74,6 +74,7 @@ public final class HazelcastConstants {
     public static final int VALUE_COUNT_OPERATION = 14;
     public static final int CONTAINS_KEY_OPERATION = 15;
     public static final int CONTAINS_VALUE_OPERATION = 16;
+    public static final int GET_KEYS_OPERATION = 41;
     
     // multimap
     public static final int REMOVEVALUE_OPERATION = 17;

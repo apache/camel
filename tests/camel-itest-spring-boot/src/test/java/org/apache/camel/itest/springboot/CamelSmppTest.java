@@ -35,6 +35,9 @@ public class CamelSmppTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelSmppTest.class))
+                .unitTestInclusionPattern("^$")
+                .unitTestExpectedNumber(0)
+                // The only unit test that can be run has a log-level dependent outcome...
                 .build();
     }
 

@@ -35,6 +35,7 @@ public class CamelNetty4Test extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelNetty4Test.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BaseNettyTest$)")
                 .build();
     }
 

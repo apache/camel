@@ -60,6 +60,9 @@ public class ApiMethodHelperTest {
 
         methods = apiMethodHelper.getCandidateMethods("greetAll", "nameMap");
         assertEquals("Can't find greetAll(nameMap)", 1, methods.size());
+
+        methods = apiMethodHelper.getCandidateMethods("greetInnerChild", "child");
+        assertEquals("Can't find greetInnerChild(child)", 1, methods.size());
     }
 
     @Test
@@ -95,6 +98,7 @@ public class ApiMethodHelperTest {
         assertEquals("GetArguments failed for greetMe", 2, apiMethodHelper.getArguments("greetMe").size());
         assertEquals("GetArguments failed for greetUs", 4, apiMethodHelper.getArguments("greetUs").size());
         assertEquals("GetArguments failed for greetAll", 6, apiMethodHelper.getArguments("greetAll").size());
+        assertEquals("GetArguments failed for greetInnerChild", 2, apiMethodHelper.getArguments("greetInnerChild").size());
     }
 
     @Test
@@ -115,7 +119,7 @@ public class ApiMethodHelperTest {
 
     @Test
     public void testAllArguments() throws Exception {
-        assertEquals("Get all arguments", 7, apiMethodHelper.allArguments().size());
+        assertEquals("Get all arguments", 8, apiMethodHelper.allArguments().size());
     }
 
     @Test
@@ -124,6 +128,7 @@ public class ApiMethodHelperTest {
         assertEquals("Get type name1", String.class, apiMethodHelper.getType("name1"));
         assertEquals("Get type name2", String.class, apiMethodHelper.getType("name2"));
         assertEquals("Get type nameMap", Map.class, apiMethodHelper.getType("nameMap"));
+        assertEquals("Get type child", TestProxy.InnerChild.class, apiMethodHelper.getType("child"));
     }
 
     @Test
@@ -184,7 +189,8 @@ public class ApiMethodHelperTest {
         GREETALL(String.class, "greetAll", new String[0].getClass(), "names"),
         GREETALL_1(String.class, "greetAll", List.class, "nameList"),
         GREETALL_2(Map.class, "greetAll", Map.class, "nameMap"),
-        GREETTIMES(new String[0].getClass(), "greetTimes", String.class, "name", int.class, "times");
+        GREETTIMES(new String[0].getClass(), "greetTimes", String.class, "name", int.class, "times"),
+        GREETINNERCHILD(new String[0].getClass(), "greetInnerChild", TestProxy.InnerChild.class, "child");
 
         private final ApiMethod apiMethod;
 

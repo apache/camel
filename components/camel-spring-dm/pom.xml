@@ -40,6 +40,7 @@
       !org.apache.camel.core.osgi*,
       !org.apache.camel.core.xml*,
       !org.apache.camel.osgi.*,
+      !org.springframework.boot.*,
       org.apache.camel.*;${camel.osgi.import.strict.version},
       org.springframework.osgi.*;version="[1.2,2)",
       org.springframework*;version="${spring-dm-version-range}",

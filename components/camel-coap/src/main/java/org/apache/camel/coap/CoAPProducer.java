@@ -58,6 +58,7 @@ public class CoAPProducer extends DefaultProducer {
         }
         int mediaType = MediaTypeRegistry.parse(ct);
         CoapResponse response = null;
+        boolean pingResponse = false;
         switch (method) {
         case "GET":
             response = client.get();
@@ -73,6 +74,9 @@ public class CoAPProducer extends DefaultProducer {
             byte[] bodyPut = exchange.getIn().getBody(byte[].class);
             response = client.put(bodyPut, mediaType);
             break;
+        case "PING":
+            pingResponse = client.ping();
+            break;
         default:
             break;
         }
@@ -82,6 +86,11 @@ public class CoAPProducer extends DefaultProducer {
             String mt = MediaTypeRegistry.toString(response.getOptions().getContentFormat());
             resp.setHeader(org.apache.camel.Exchange.CONTENT_TYPE, mt);
             resp.setBody(response.getPayload());
+        }
+        
+        if (method.equalsIgnoreCase("PING")) {
+            Message resp = exchange.getOut();
+            resp.setBody(pingResponse);
         }
     }
 

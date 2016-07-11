@@ -28,7 +28,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesNamespacesConsumer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesPodsConsumer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesReplicationControllersConsumer;
-import org.apache.camel.component.kubernetes.consumer.KubernetesSecretsConsumer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesServicesConsumer;
 import org.apache.camel.component.kubernetes.producer.KubernetesBuildConfigsProducer;
 import org.apache.camel.component.kubernetes.producer.KubernetesBuildsProducer;
@@ -139,9 +138,6 @@ public class KubernetesEndpoint extends DefaultEndpoint {
 
             case KubernetesCategory.REPLICATION_CONTROLLERS:
                 return new KubernetesReplicationControllersConsumer(this, processor);
-
-            case KubernetesCategory.SECRETS:
-                return new KubernetesSecretsConsumer(this, processor);
                 
             case KubernetesCategory.NAMESPACES:
                 return new KubernetesNamespacesConsumer(this, processor);

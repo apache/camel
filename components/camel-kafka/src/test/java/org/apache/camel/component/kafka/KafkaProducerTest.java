@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.camel.AsyncCallback;
@@ -35,6 +37,7 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class KafkaProducerTest {
 
@@ -43,6 +46,7 @@ public class KafkaProducerTest {
 
     private Exchange exchange = Mockito.mock(Exchange.class);
     private Message in = new DefaultMessage();
+    private Message out = new DefaultMessage();
     private AsyncCallback callback = Mockito.mock(AsyncCallback.class);
 
     @SuppressWarnings({"unchecked"})
@@ -59,6 +63,7 @@ public class KafkaProducerTest {
         Mockito.when(kp.send(Mockito.any(ProducerRecord.class))).thenReturn(future);
 
         producer.setKafkaProducer(kp);
+        producer.setWorkerPool(Executors.newFixedThreadPool(1));
     }
 
     @Test
@@ -72,10 +77,13 @@ public class KafkaProducerTest {
     public void processSendsMessage() throws Exception {
         endpoint.setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
+
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
 
         producer.process(exchange);
         Mockito.verify(producer.getKafkaProducer()).send(Matchers.any(ProducerRecord.class));
+        assertRecordMetadataExists();
     }
 
     @Test(expected = Exception.class)
@@ -89,25 +97,33 @@ public class KafkaProducerTest {
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
 
         producer.process(exchange);
+
+        assertRecordMetadataExists();
     }
 
     @Test
     public void processAsyncSendsMessage() throws Exception {
         endpoint.setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
 
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
 
         producer.process(exchange, callback);
 
-        Mockito.verify(producer.getKafkaProducer()).send(Matchers.any(ProducerRecord.class), Matchers.any(Callback.class));
+        ArgumentCaptor<Callback> callBackCaptor = ArgumentCaptor.forClass(Callback.class);
+        Mockito.verify(producer.getKafkaProducer()).send(Matchers.any(ProducerRecord.class), callBackCaptor.capture());
+        Callback kafkaCallback = callBackCaptor.getValue();
+        kafkaCallback.onCompletion(new RecordMetadata(null, 1, 1), null);
+        assertRecordMetadataExists();
+
     }
 
     @Test
     public void processAsyncSendsMessageWithException() throws Exception {
-
         endpoint.setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
 
         // setup the exception here
         org.apache.kafka.clients.producer.KafkaProducer kp = producer.getKafkaProducer();
@@ -117,9 +133,13 @@ public class KafkaProducerTest {
 
         producer.process(exchange, callback);
 
-        Mockito.verify(producer.getKafkaProducer()).send(Matchers.any(ProducerRecord.class), Matchers.any(Callback.class));
+        ArgumentCaptor<Callback> callBackCaptor = ArgumentCaptor.forClass(Callback.class);
+        Mockito.verify(producer.getKafkaProducer()).send(Matchers.any(ProducerRecord.class), callBackCaptor.capture());
         Mockito.verify(exchange).setException(Matchers.isA(ApiException.class));
         Mockito.verify(callback).done(Matchers.eq(true));
+        Callback kafkaCallback = callBackCaptor.getValue();
+        kafkaCallback.onCompletion(new RecordMetadata(null, 1, 1), null);
+        assertRecordMetadataExists();
     }
 
     @Test
@@ -127,16 +147,20 @@ public class KafkaProducerTest {
         endpoint.setTopic(null);
         Mockito.when(exchange.getIn()).thenReturn(in);
         in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
+        Mockito.when(exchange.getOut()).thenReturn(out);
 
         producer.process(exchange);
 
         verifySendMessage("anotherTopic");
+        assertRecordMetadataExists();
     }
 
     @Test
     public void processSendsMessageWithTopicHeaderAndEndPoint() throws Exception {
         endpoint.setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
+
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
         in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
         in.setHeader(KafkaConstants.KEY, "someKey");
@@ -144,6 +168,7 @@ public class KafkaProducerTest {
         producer.process(exchange);
 
         verifySendMessage("4", "anotherTopic", "someKey");
+        assertRecordMetadataExists();
     }
 
     @Test(expected = CamelException.class)
@@ -151,35 +176,48 @@ public class KafkaProducerTest {
         endpoint.setTopic(null);
         Mockito.when(exchange.getIn()).thenReturn(in);
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
+
         producer.process(exchange);
+
+        assertRecordMetadataExists();
     }
 
     @Test
     public void processDoesNotRequirePartitionHeader() throws Exception {
         endpoint.setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
+
         producer.process(exchange);
+
+        assertRecordMetadataExists();
     }
 
     @Test
     public void processSendsMesssageWithPartitionKeyHeader() throws Exception {
         endpoint.setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
         in.setHeader(KafkaConstants.KEY, "someKey");
+
         producer.process(exchange);
+
         verifySendMessage("4", "someTopic", "someKey");
+        assertRecordMetadataExists();
     }
 
     @Test
     public void processSendsMesssageWithMessageKeyHeader() throws Exception {
         endpoint.setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
         in.setHeader(KafkaConstants.KEY, "someKey");
 
         producer.process(exchange);
 
         verifySendMessage("someTopic", "someKey");
+        assertRecordMetadataExists();
     }
 
     @Test
@@ -187,22 +225,27 @@ public class KafkaProducerTest {
         endpoint.setTopic("someTopic");
         endpoint.setBridgeEndpoint(true);
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
         in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
         in.setHeader(KafkaConstants.KEY, "someKey");
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
+
         producer.process(exchange);
 
         verifySendMessage("4", "someTopic", "someKey");
+        assertRecordMetadataExists();
     }
 
     @Test // Message and Topic Name alone
     public void processSendsMesssageWithMessageTopicName() throws Exception {
         endpoint.setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
 
         producer.process(exchange);
 
         verifySendMessage("someTopic");
+        assertRecordMetadataExists();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -229,4 +272,10 @@ public class KafkaProducerTest {
         assertEquals(topic, captor.getValue().topic());
     }
 
+    private void assertRecordMetadataExists() {
+        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
+        assertTrue(recordMetaData1 != null);
+        assertEquals("Expected one recordMetaData", recordMetaData1.size(), 1);
+        assertTrue(recordMetaData1.get(0) != null);
+    }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import java.io.File;
 import java.util.List;
 
 import org.apache.camel.spi.Metadata;
@@ -51,8 +52,8 @@ public class ElasticsearchConfiguration {
     private int port = ElasticsearchConstants.DEFAULT_PORT;
     @UriParam(defaultValue = "true")
     private Boolean clientTransportSniff = true;
-    @UriParam(defaultValue = "/usr/share/elasticsearch")
-    private String pathHome = "/usr/share/elasticsearch";
+    @UriParam(defaultValue = "${user.home}/.elasticsearch")
+    private String pathHome = System.getProperty("user.home") + File.separator + ".elasticsearch";
 
     /**
      * Name of cluster or use local for local mode
@@ -182,7 +183,7 @@ public class ElasticsearchConfiguration {
     }
 
     /**
-     * The path.home property of ElasticSearch configuration. You need to provide a valid path, otherwise the default, /usr/share/elasticsearch, will be used.
+     * The path.home property of ElasticSearch configuration. You need to provide a valid path, otherwise the default, ${user.home}/.elasticsearch, will be used.
      */
     public String getPathHome() {
         return pathHome;

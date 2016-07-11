@@ -33,7 +33,11 @@ public class ITestConfig implements Serializable {
 
     private String mavenVersion;
 
+    private Boolean mavenOfflineResolution;
+
     private String modulesPath;
+
+    private String moduleBasePath;
 
     private Boolean includeTestDependencies;
 
@@ -53,7 +57,15 @@ public class ITestConfig implements Serializable {
 
     private Set<String> additionalDependencies;
 
+    private Set<String> mavenExclusions;
+
     private Boolean autoStartComponent;
+
+    private Set<String> jmxDisabledNames;
+
+    private Map<String, String> systemProperties;
+
+    private Boolean useCustomLog;
 
     public ITestConfig() {
     }
@@ -82,12 +94,28 @@ public class ITestConfig implements Serializable {
         this.mavenVersion = mavenVersion;
     }
 
+    public Boolean getMavenOfflineResolution() {
+        return mavenOfflineResolution;
+    }
+
+    public void setMavenOfflineResolution(Boolean mavenOfflineResolution) {
+        this.mavenOfflineResolution = mavenOfflineResolution;
+    }
+
     public String getModulesPath() {
         return modulesPath;
     }
 
     public void setModulesPath(String modulesPath) {
         this.modulesPath = modulesPath;
+    }
+
+    public String getModuleBasePath() {
+        return moduleBasePath;
+    }
+
+    public void setModuleBasePath(String moduleBasePath) {
+        this.moduleBasePath = moduleBasePath;
     }
 
     public Boolean getIncludeTestDependencies() {
@@ -158,6 +186,14 @@ public class ITestConfig implements Serializable {
         this.additionalDependencies = additionalDependencies;
     }
 
+    public Set<String> getMavenExclusions() {
+        return mavenExclusions;
+    }
+
+    public void setMavenExclusions(Set<String> mavenExclusions) {
+        this.mavenExclusions = mavenExclusions;
+    }
+
     public void setResources(Map<String, String> resources) {
         this.resources = resources;
     }
@@ -170,13 +206,39 @@ public class ITestConfig implements Serializable {
         this.autoStartComponent = autoStartComponent;
     }
 
+    public Set<String> getJmxDisabledNames() {
+        return jmxDisabledNames;
+    }
+
+    public void setJmxDisabledNames(Set<String> jmxDisabledNames) {
+        this.jmxDisabledNames = jmxDisabledNames;
+    }
+
+    public Map<String, String> getSystemProperties() {
+        return systemProperties;
+    }
+
+    public void setSystemProperties(Map<String, String> systemProperties) {
+        this.systemProperties = systemProperties;
+    }
+
+    public Boolean getUseCustomLog() {
+        return useCustomLog;
+    }
+
+    public void setUseCustomLog(Boolean useCustomLog) {
+        this.useCustomLog = useCustomLog;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ITestConfig{");
         sb.append("moduleName='").append(moduleName).append('\'');
         sb.append(", mavenGroup='").append(mavenGroup).append('\'');
         sb.append(", mavenVersion='").append(mavenVersion).append('\'');
+        sb.append(", mavenOfflineResolution=").append(mavenOfflineResolution);
         sb.append(", modulesPath='").append(modulesPath).append('\'');
+        sb.append(", moduleBasePath='").append(moduleBasePath).append('\'');
         sb.append(", includeTestDependencies=").append(includeTestDependencies);
         sb.append(", includeProvidedDependencies=").append(includeProvidedDependencies);
         sb.append(", unitTestEnabled=").append(unitTestEnabled);
@@ -186,7 +248,11 @@ public class ITestConfig implements Serializable {
         sb.append(", unitTestsExpectedNumber=").append(unitTestsExpectedNumber);
         sb.append(", resources=").append(resources);
         sb.append(", additionalDependencies=").append(additionalDependencies);
+        sb.append(", mavenExclusions=").append(mavenExclusions);
         sb.append(", autoStartComponent=").append(autoStartComponent);
+        sb.append(", jmxDisabledNames=").append(jmxDisabledNames);
+        sb.append(", systemProperties=").append(systemProperties);
+        sb.append(", useCustomLog=").append(useCustomLog);
         sb.append('}');
         return sb.toString();
     }

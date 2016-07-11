@@ -250,7 +250,7 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
         } else {
             try {
                 EtcdKeysResponse response = promise.get();
-                setIndex(response);
+                EtcdHelper.setIndex(index, response);
 
                 if (response.node.value == null) {
                     setLeader(tryTakeLeadership());
@@ -267,20 +267,20 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
         }
 
         if (throwable == null) {
-            try {
-                watch();
-            } catch (Exception e) {
-                throw new RuntimeCamelException(e);
-            }
+            watch();
         } else {
             throw new RuntimeCamelException(throwable);
         }
     }
 
-    private void watch() throws Exception {
-        if (isRunAllowed()) {
+    private void watch() {
+        if (!isRunAllowed()) {
+            return;
+        }
+
+        try {
             if (leader.get()) {
-                setIndex(client.refresh(servicePath, ttl)
+                EtcdHelper.setIndex(index, client.refresh(servicePath, ttl)
                     .send()
                     .get()
                 );
@@ -293,6 +293,8 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
                 .timeout(ttl / 3, TimeUnit.SECONDS)
                 .send()
                 .addListener(this);
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
         }
     }
 
@@ -308,7 +310,7 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
                 .get();
 
             result = ObjectHelper.equal(serviceName, response.node.value);
-            setIndex(response);
+            EtcdHelper.setIndex(index, response);
         } catch (EtcdException e) {
             if (!e.isErrorCode(EtcdErrorCode.NodeExist)) {
                 throw e;
@@ -316,15 +318,5 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
         }
 
         return result;
-    }
-
-    private void setIndex(EtcdKeysResponse response) {
-        if (response != null && response.node != null) {
-            index.set(response.node.modifiedIndex + 1);
-            LOGGER.debug("Index received={}, next={}", response.node.modifiedIndex, index.get());
-        } else {
-            index.set(response.etcdIndex + 1);
-            LOGGER.debug("Index received={}, next={}", response.node.modifiedIndex, index.get());
-        }
     }
 }

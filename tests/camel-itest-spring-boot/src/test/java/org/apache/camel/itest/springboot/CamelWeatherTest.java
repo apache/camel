@@ -35,13 +35,14 @@ public class CamelWeatherTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelWeatherTest.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BaseUndertowTest$)")
                 .build();
     }
 
     @Test
     public void componentTests() throws Exception {
         this.runComponentTest(config);
-        this.runModuleUnitTestsIfEnabled(config);
+        // skip tests
     }
 
 }

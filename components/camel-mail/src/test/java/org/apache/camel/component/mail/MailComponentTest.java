@@ -19,6 +19,7 @@ package org.apache.camel.component.mail;
 import javax.mail.Message;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.pollconsumer.quartz2.QuartzScheduledPollConsumerScheduler;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -317,6 +318,27 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("james", endpoint.getConfiguration().getUsername());
         assertEquals("secret", endpoint.getConfiguration().getPassword());
         assertEquals("myhost", endpoint.getConfiguration().getHost());
+    }
+
+    @Test
+    public void testMailComponentWithQuartzScheduler() throws Exception {
+        MailConfiguration config = new MailConfiguration();
+        config.setUsername("james");
+        config.setPassword("secret");
+
+        MailComponent comp = new MailComponent(config);
+        comp.setCamelContext(context);
+
+        assertSame(config, comp.getConfiguration());
+        assertNull(comp.getContentTypeResolver());
+
+        MailEndpoint endpoint = (MailEndpoint)comp.createEndpoint("imap://myhost?scheduler=quartz2&scheduler.cron=0%2F5+*+0-23+%3F+*+*+*&scheduler.timeZone=Europe%2FBerlin");
+        assertEquals("james", endpoint.getConfiguration().getUsername());
+        assertEquals("secret", endpoint.getConfiguration().getPassword());
+        assertEquals("myhost", endpoint.getConfiguration().getHost());
+
+        assertNotNull("Scheduler not set", endpoint.getScheduler());
+        assertTrue("Wrong scheduler class", endpoint.getScheduler() instanceof QuartzScheduledPollConsumerScheduler);
     }
 }
 

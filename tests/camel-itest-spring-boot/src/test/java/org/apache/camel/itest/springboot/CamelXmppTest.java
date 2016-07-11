@@ -16,6 +16,9 @@
  */
 package org.apache.camel.itest.springboot;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.camel.itest.springboot.util.ArquillianPackager;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -32,9 +35,10 @@ public class CamelXmppTest extends AbstractSpringBootTestSupport {
         return ArquillianPackager.springBootPackage(createTestConfig());
     }
 
-    public static ITestConfig createTestConfig() {
+    public static ITestConfig createTestConfig() throws IOException {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelXmppTest.class))
+                .systemProperty("javax.net.ssl.trustStore", new File("../../components/camel-xmpp/src/test/resources/xmppServer.jks").getCanonicalPath())
                 .build();
     }
 

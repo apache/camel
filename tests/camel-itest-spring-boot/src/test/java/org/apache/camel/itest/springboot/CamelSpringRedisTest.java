@@ -17,6 +17,7 @@
 package org.apache.camel.itest.springboot;
 
 import org.apache.camel.itest.springboot.util.ArquillianPackager;
+import org.apache.camel.itest.springboot.util.DependencyResolver;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -27,8 +28,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class CamelSpringRedisTest extends AbstractSpringBootTestSupport {
 
-    private static final String SPRING_DATA_REDIS_VERSION = System.getProperty("springDataRedisVersion", "1.6.4.RELEASE");
-
     @Deployment
     public static Archive<?> createSpringBootPackage() throws Exception {
         return ArquillianPackager.springBootPackage(createTestConfig());
@@ -37,7 +36,7 @@ public class CamelSpringRedisTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelSpringRedisTest.class))
-                .dependency("org.springframework.data:spring-data-redis:" + SPRING_DATA_REDIS_VERSION)
+                .dependency(DependencyResolver.withVersion("org.springframework.data:spring-data-redis"))
                 .build();
     }
 

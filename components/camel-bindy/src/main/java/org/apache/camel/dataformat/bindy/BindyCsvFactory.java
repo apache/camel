@@ -515,7 +515,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             }
 
             if (it.hasNext()) {
-                builderHeader.append(separator);
+                builderHeader.append(ConverterUtils.getCharDelimiter(separator));
             }
 
         }

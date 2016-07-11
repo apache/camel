@@ -35,6 +35,9 @@ public class CamelStreamTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelStreamTest.class))
+                .customLog(false)
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|StreamToUrlTest$)")
+                // Spring provides its own URL handlers for schema "mock:"
                 .build();
     }
 

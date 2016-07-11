@@ -16,20 +16,17 @@
  */
 package org.apache.camel.itest.springboot;
 
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Properties;
+import java.util.TreeSet;
 
 /**
  * Builder for the {@code ITestConfig} that enforces defaults values.
  */
 public class ITestConfigBuilder {
 
-    private static final String PROPERTIES_FILE = "/spring-boot-itest.properties";
-
-    private Properties properties;
+    public static final String CONFIG_PREFIX = "itest.springboot.";
 
     private ITestConfig config;
 
@@ -61,6 +58,11 @@ public class ITestConfigBuilder {
         return this;
     }
 
+    public ITestConfigBuilder basePath(String basePath) {
+        config.setModuleBasePath(basePath);
+        return this;
+    }
+
     public ITestConfigBuilder unitTestExpectedNumber(int number) {
         config.setUnitTestsExpectedNumber(number);
         return this;
@@ -88,7 +90,7 @@ public class ITestConfigBuilder {
 
     public ITestConfigBuilder resource(String file, String dest) {
         if (config.getResources() == null) {
-            config.setResources(new HashMap<>());
+            config.setResources(new HashMap<String, String>());
         }
         config.getResources().put(file, dest);
         return this;
@@ -96,14 +98,46 @@ public class ITestConfigBuilder {
 
     public ITestConfigBuilder dependency(String dependencyCanonicalForm) {
         if (config.getAdditionalDependencies() == null) {
-            config.setAdditionalDependencies(new HashSet<>());
+            config.setAdditionalDependencies(new HashSet<String>());
         }
         config.getAdditionalDependencies().add(dependencyCanonicalForm);
         return this;
     }
 
+    public ITestConfigBuilder exclusion(String exclusionCanonicalForm) {
+        if (exclusionCanonicalForm.split(":").length != 2) {
+            throw new IllegalArgumentException("Expected exclusion in the form groupId:artifactId, got: " + exclusionCanonicalForm);
+        }
+        if (config.getMavenExclusions() == null) {
+            config.setMavenExclusions(new HashSet<String>());
+        }
+        config.getMavenExclusions().add(exclusionCanonicalForm);
+        return this;
+    }
+
     public ITestConfigBuilder resource(String file) {
         return resource(file, file);
+    }
+
+    public ITestConfigBuilder disableJmx(String name) {
+        if (config.getJmxDisabledNames() == null) {
+            config.setJmxDisabledNames(new TreeSet<String>());
+        }
+        config.getJmxDisabledNames().add(name);
+        return this;
+    }
+
+    public ITestConfigBuilder systemProperty(String name, String value) {
+        if (config.getSystemProperties() == null) {
+            config.setSystemProperties(new HashMap<String, String>());
+        }
+        config.getSystemProperties().put(name, value);
+        return this;
+    }
+
+    public ITestConfigBuilder customLog(Boolean value) {
+        config.setUseCustomLog(value);
+        return this;
     }
 
     public ITestConfig build() {
@@ -115,7 +149,7 @@ public class ITestConfigBuilder {
 
         // Set the defaults
         if (config.getUnitTestEnabled() == null) {
-            config.setUnitTestEnabled(booleanPropertyOr("unitTestEnabled", false));
+            config.setUnitTestEnabled(booleanPropertyOr("unitTestEnabled", true));
         }
 
         if (config.getMavenGroup() == null) {
@@ -126,12 +160,16 @@ public class ITestConfigBuilder {
             config.setMavenVersion(propertyOr("mavenVersion", null));
         }
 
+        if (config.getMavenOfflineResolution() == null) {
+            config.setMavenOfflineResolution(booleanPropertyOr("mavenOfflineResolution", false));
+        }
+
         if (config.getUnitTestInclusionPattern() == null) {
             config.setUnitTestInclusionPattern(propertyOr("unitTestInclusionPattern", "^.*Test$")); // All tests
         }
 
         if (config.getUnitTestExclusionPattern() == null) {
-            config.setUnitTestExclusionPattern(propertyOr("unitTestExclusionPattern", ".*(\\.integration\\..*|XXXTest$)")); // Integration test
+            config.setUnitTestExclusionPattern(propertyOr("unitTestExclusionPattern", ".*(\\.integration\\..*|IntegrationTest$)")); // Integration test
         }
 
         if (config.getIncludeTestDependencies() == null) {
@@ -146,6 +184,10 @@ public class ITestConfigBuilder {
             config.setModulesPath(propertyOr("modulesPath", "../../components/"));
         }
 
+        if (config.getModuleBasePath() == null) {
+            config.setModuleBasePath(config.getModulesPath() + config.getModuleName());
+        }
+
         if (config.getUnitTestBasePackage() == null) {
             config.setUnitTestBasePackage(propertyOr("unitTestBasePackage", "org.apache.camel"));
         }
@@ -155,11 +197,27 @@ public class ITestConfigBuilder {
         }
 
         if (config.getResources() == null) {
-            config.setResources(Collections.emptyMap());
+            config.setResources(Collections.<String, String>emptyMap());
         }
 
         if (config.getAdditionalDependencies() == null) {
-            config.setAdditionalDependencies(Collections.emptySet());
+            config.setAdditionalDependencies(Collections.<String>emptySet());
+        }
+
+        if (config.getMavenExclusions() == null) {
+            config.setMavenExclusions(Collections.<String>emptySet());
+        }
+
+        if (config.getJmxDisabledNames() == null) {
+            config.setJmxDisabledNames(Collections.<String>emptySet());
+        }
+
+        if (config.getSystemProperties() == null) {
+            config.setSystemProperties(Collections.<String, String>emptyMap());
+        }
+
+        if (config.getUseCustomLog() == null) {
+            config.setUseCustomLog(booleanPropertyOr("useCustomLog", true));
         }
 
         return config;
@@ -170,17 +228,7 @@ public class ITestConfigBuilder {
     }
 
     private String propertyOr(String name, String defaultVal) {
-        if (properties == null) {
-            properties = new Properties();
-            try {
-                InputStream in = getClass().getResourceAsStream(PROPERTIES_FILE);
-                properties.load(in);
-            } catch (Exception e) {
-                throw new IllegalStateException("Unable to load property file: " + PROPERTIES_FILE, e);
-            }
-        }
-
-        String res = properties.getProperty(name);
+        String res = System.getProperty(CONFIG_PREFIX + name);
         if (res == null) {
             res = defaultVal;
         }

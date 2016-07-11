@@ -27,9 +27,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.mina.transport.socket.SocketConnector;
 import org.junit.Test;
 
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
 
 /**
  * Unit testing for using a MinaProducer that it can shutdown properly (CAMEL-395)

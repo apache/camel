@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.zipkin.starter.ZipkinAutoConfiguration
+org.apache.camel.zipkin.starter.ZipkinConditionalAutoConfiguration

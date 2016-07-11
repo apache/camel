@@ -237,7 +237,7 @@ public abstract class ApiMethodParser<T> {
     }
 
     public static Class<?> forName(String className, ClassLoader classLoader) throws ClassNotFoundException {
-        Class<?> result;
+        Class<?> result = null;
         try {
             // lookup primitive types first
             result = PRIMITIVE_TYPES.get(className);
@@ -249,10 +249,32 @@ public abstract class ApiMethodParser<T> {
             if (className.endsWith("[]")) {
                 final int firstDim = className.indexOf('[');
                 final int nDimensions = (className.length() - firstDim) / 2;
-                return Array.newInstance(forName(className.substring(0, firstDim), classLoader), new int[nDimensions]).getClass();
+                result = Array.newInstance(forName(className.substring(0, firstDim), classLoader), new int[nDimensions]).getClass();
+            } else if (className.indexOf('.') != -1) {
+                // try replacing last '.' with $ to look for inner classes
+                String innerClass = className;
+                while (result == null && innerClass.indexOf('.') != -1) {
+                    int endIndex = innerClass.lastIndexOf('.');
+                    innerClass = innerClass.substring(0, endIndex) + "$" + innerClass.substring(endIndex + 1);
+                    try {
+                        result = Class.forName(innerClass, true, classLoader);
+                    } catch (ClassNotFoundException ignore) {
+                        // ignore
+                    }
+                }
             }
-            // try loading from default Java package java.lang
-            result = Class.forName(JAVA_LANG + className, true, classLoader);
+            if (result == null && !className.startsWith(JAVA_LANG)) {
+                // try loading from default Java package java.lang
+                try {
+                    result = forName(JAVA_LANG + className, classLoader);
+                } catch (ClassNotFoundException ignore) {
+                    // ignore
+                }
+            }
+        }
+
+        if (result == null) {
+            throw new ClassNotFoundException(className);
         }
 
         return result;

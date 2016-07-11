@@ -30,6 +30,7 @@ import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.hamcrest.core.Is;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
@@ -40,8 +41,11 @@ public class BindyConverterTest extends CamelTestSupport {
 
     public static final String URI_DIRECT_MARSHALL         = "direct:marshall";
     public static final String URI_DIRECT_UNMARSHALL       = "direct:unmarshall";
+    public static final String URI_DIRECT_THROUGH = "direct:through";
+
     public static final String URI_MOCK_MARSHALL_RESULT    = "mock:marshall-result";
     public static final String URI_MOCK_UNMARSHALL_RESULT  = "mock:unmarshall-result";
+    public static final String URI_MOCK_THROUGH  = "mock:through-result";
 
     // *************************************************************************
     //
@@ -58,6 +62,12 @@ public class BindyConverterTest extends CamelTestSupport {
 
     @EndpointInject(uri = URI_MOCK_UNMARSHALL_RESULT)
     private MockEndpoint uresult;
+
+    @Produce(uri = URI_DIRECT_THROUGH)
+    private ProducerTemplate ttemplate;
+
+    @EndpointInject(uri = URI_MOCK_THROUGH)
+    private MockEndpoint tresult;
 
     // *************************************************************************
     // TEST
@@ -89,6 +99,89 @@ public class BindyConverterTest extends CamelTestSupport {
         Assert.assertEquals("0123456789", data.field1);
     }
 
+    @Test
+    @DirtiesContext
+    public void testRightAlignedNotTrimmed() throws Exception {
+        AllCombinations data = sendAndRecieveAllCombinations();
+
+        assertThat("Right aligned, padding not trimmed", data.field1, Is.is("!!!f1"));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testLeftAlignedNotTrimmed() throws Exception {
+        AllCombinations data = sendAndRecieveAllCombinations();
+
+        assertThat("Left aligned, padding not trimmed", data.field2, Is.is("f2!!!"));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testRightAlignedTrimmed() throws Exception {
+        AllCombinations data = sendAndRecieveAllCombinations();
+
+        assertThat("Right aligned, padding trimmed", data.field3, Is.is("f3"));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testLeftAlignedTrimmed() throws Exception {
+        AllCombinations data = sendAndRecieveAllCombinations();
+
+        assertThat("Left aligned, padding trimmed", data.field4, Is.is("f4"));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testRightAlignedRecordPaddingNotTrimmed() throws Exception {
+        AllCombinations data = sendAndRecieveAllCombinations();
+
+        assertThat("Right aligned, padding not trimmed", data.field5, Is.is("###f5"));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testLeftAlignedRecordPaddingNotTrimmed() throws Exception {
+        AllCombinations data = sendAndRecieveAllCombinations();
+
+        assertThat("Left aligned, padding not trimmed", data.field6, Is.is("f6###"));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testRightAlignedRecordPaddingTrimmed() throws Exception {
+        AllCombinations data = sendAndRecieveAllCombinations();
+
+        assertThat("Right aligned, padding trimmed", data.field7, Is.is("f7"));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testLeftAlignedRecordPaddingTrimmed() throws Exception {
+        AllCombinations data = sendAndRecieveAllCombinations();
+
+        assertThat("Left aligned, padding trimmed", data.field8, Is.is("f8"));
+    }
+
+    private AllCombinations sendAndRecieveAllCombinations() throws InterruptedException {
+        AllCombinations all = new AllCombinations();
+        all.field1 = "f1";
+        all.field2 = "f2";
+        all.field3 = "f3";
+        all.field4 = "f4";
+        all.field5 = "f5";
+        all.field6 = "f6";
+        all.field7 = "f7";
+        all.field8 = "f8";
+        ttemplate.sendBody(all);
+
+        tresult.expectedMessageCount(1);
+        tresult.assertIsSatisfied();
+
+        Exchange exc  = tresult.getReceivedExchanges().get(0);
+        return exc.getIn().getBody(AllCombinations.class);
+    }
+
     // *************************************************************************
     // ROUTES
     // *************************************************************************
@@ -108,6 +201,14 @@ public class BindyConverterTest extends CamelTestSupport {
                 from(URI_DIRECT_UNMARSHALL)
                     .unmarshal().bindy(BindyType.Fixed, DataModel.class)
                     .to(URI_MOCK_UNMARSHALL_RESULT);
+
+                BindyDataFormat bindy2 = new BindyDataFormat();
+                bindy2.setClassType(AllCombinations.class);
+                bindy2.setType(BindyType.Fixed);
+                from(URI_DIRECT_THROUGH)
+                        .marshal(bindy2)
+                        .unmarshal().bindy(BindyType.Fixed, AllCombinations.class)
+                        .to(URI_MOCK_THROUGH);
             }
         };
 
@@ -135,5 +236,32 @@ public class BindyConverterTest extends CamelTestSupport {
         public String parse(String string) throws Exception {
             return (new StringBuilder(string)).reverse().toString();
         }
+    }
+
+    @FixedLengthRecord(length = 60, paddingChar = '#', ignoreMissingChars = true)
+    public static class AllCombinations {
+        @DataField(pos = 1, length = 5, paddingChar = '!')
+        public String field1;
+
+        @DataField(pos = 2, length = 5, paddingChar = '!', align = "L")
+        public String field2;
+
+        @DataField(pos = 3, length = 5, paddingChar = '#', trim = true)
+        public String field3;
+
+        @DataField(pos = 4, length = 5, paddingChar = '#', align = "L", trim = true)
+        public String field4;
+
+        @DataField(pos = 5, length = 5, paddingChar = 0)
+        public String field5;
+
+        @DataField(pos = 6, length = 5, paddingChar = 0, align = "L")
+        public String field6;
+
+        @DataField(pos = 7, length = 5, paddingChar = 0, trim = true)
+        public String field7;
+
+        @DataField(pos = 8, length = 5, paddingChar = 0, align = "L", trim = true)
+        public String field8;
     }
 }

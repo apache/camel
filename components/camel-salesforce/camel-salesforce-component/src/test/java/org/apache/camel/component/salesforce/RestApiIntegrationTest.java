@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +47,7 @@ import org.apache.camel.component.salesforce.dto.generated.Document;
 import org.apache.camel.component.salesforce.dto.generated.Line_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
+import org.apache.camel.component.salesforce.dto.generated.Tasks__c;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -52,6 +55,7 @@ import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,8 +82,8 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
         String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
         Request logoutGet = httpClient.newRequest(uri)
-            .method(HttpMethod.GET)
-            .timeout(1, TimeUnit.MINUTES);
+                .method(HttpMethod.GET)
+                .timeout(1, TimeUnit.MINUTES);
 
         ContentResponse response = logoutGet.send();
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -100,8 +104,8 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
         String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
         Request logoutGet = httpClient.newRequest(uri)
-            .method(HttpMethod.GET)
-            .timeout(1, TimeUnit.MINUTES);
+                .method(HttpMethod.GET)
+                .timeout(1, TimeUnit.MINUTES);
 
         ContentResponse response = logoutGet.send();
         assertEquals(HttpStatus.OK_200, response.getStatus());
@@ -230,6 +234,37 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
+    @Ignore("Depends on a Task object with a datetime field")
+    public void testCreateUpdateDeleteTasks() throws Exception {
+        doTestCreateUpdateDeleteTasks("");
+        doTestCreateUpdateDeleteTasks("Xml");
+    }
+
+    private void doTestCreateUpdateDeleteTasks(String suffix) throws Exception {
+        Tasks__c taken = new Tasks__c();
+        taken.setName("Task1");
+        taken.setStart__c(ZonedDateTime.of(1700, 1, 2, 3, 4, 5, 6, ZoneId.systemDefault()));
+        CreateSObjectResult result = template().requestBody("direct:createSObject" + suffix,
+                taken, CreateSObjectResult.class);
+        assertNotNull(result);
+        assertTrue("Create success", result.getSuccess());
+        LOG.debug("Create: " + result);
+
+        // test JSON update
+        // make the plane cheaper
+        taken.setId(result.getId());
+        taken.setStart__c(ZonedDateTime.of(1991, 1, 2, 3, 4, 5, 6, ZoneId.systemDefault()));
+
+        assertNull(template().requestBodyAndHeader("direct:updateSObject" + suffix,
+                taken, SalesforceEndpointConfig.SOBJECT_ID, result.getId()));
+        LOG.debug("Update successful");
+
+        // delete the newly created SObject
+        assertNull(template().requestBody("direct:deleteSObjectTaken" + suffix, result.getId()));
+        LOG.debug("Delete successful");
+    }
+
+    @Test
     public void testCreateUpdateDelete() throws Exception {
         doTestCreateUpdateDelete("");
         doTestCreateUpdateDelete("Xml");
@@ -242,7 +277,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         merchandise.setPrice__c(2000.0);
         merchandise.setTotal_Inventory__c(50.0);
         CreateSObjectResult result = template().requestBody("direct:createSObject" + suffix,
-            merchandise, CreateSObjectResult.class);
+                merchandise, CreateSObjectResult.class);
         assertNotNull(result);
         assertTrue("Create success", result.getSuccess());
         LOG.debug("Create: " + result);
@@ -256,7 +291,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         merchandise.setId(result.getId());
 
         assertNull(template().requestBodyAndHeader("direct:updateSObject" + suffix,
-            merchandise, SalesforceEndpointConfig.SOBJECT_ID, result.getId()));
+                merchandise, SalesforceEndpointConfig.SOBJECT_ID, result.getId()));
         LOG.debug("Update successful");
 
         // delete the newly created SObject
@@ -273,7 +308,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     private void doTestCreateUpdateDeleteWithId(String suffix) throws Exception {
         // get line item with Name 1
         Line_Item__c lineItem = template().requestBody("direct:getSObjectWithId" + suffix, TEST_LINE_ITEM_ID,
-            Line_Item__c.class);
+                Line_Item__c.class);
         assertNotNull(lineItem);
         LOG.debug("GetWithId: {}", lineItem);
 
@@ -285,8 +320,8 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         lineItem.setName(NEW_LINE_ITEM_ID);
 
         CreateSObjectResult result = template().requestBodyAndHeader("direct:upsertSObject" + suffix,
-            lineItem, SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE, NEW_LINE_ITEM_ID,
-            CreateSObjectResult.class);
+                lineItem, SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE, NEW_LINE_ITEM_ID,
+                CreateSObjectResult.class);
         assertNotNull(result);
         assertTrue(result.getSuccess());
         LOG.debug("CreateWithId: {}", result);
@@ -299,8 +334,8 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
         // update line item with Name NEW_LINE_ITEM_ID
         result = template().requestBodyAndHeader("direct:upsertSObject" + suffix,
-            lineItem, SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE, NEW_LINE_ITEM_ID,
-            CreateSObjectResult.class);
+                lineItem, SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE, NEW_LINE_ITEM_ID,
+                CreateSObjectResult.class);
         assertNull(result);
         LOG.debug("UpdateWithId: {}", result);
 
@@ -326,7 +361,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         headers.put(SalesforceEndpointConfig.SOBJECT_NAME, "Document");
         headers.put(SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME, "Name");
         Document document = template().requestBodyAndHeaders("direct:getSObjectWithId" + suffix, TEST_DOCUMENT_ID,
-            headers, Document.class);
+                headers, Document.class);
         assertNotNull(document);
         LOG.debug("GetWithId: {}", document);
 
@@ -350,6 +385,19 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
     private void doTestQuery(String suffix) throws Exception {
         QueryRecordsLine_Item__c queryRecords = template().requestBody("direct:query" + suffix, null,
+                QueryRecordsLine_Item__c.class);
+        assertNotNull(queryRecords);
+        LOG.debug("ExecuteQuery: {}", queryRecords);
+    }
+
+    @Test
+    public void testQueryAll() throws Exception {
+        doTestQueryAll("");
+        doTestQueryAll("Xml");
+    }
+
+    private void doTestQueryAll(String suffix) throws Exception {
+        QueryRecordsLine_Item__c queryRecords = template().requestBody("direct:queryAll" + suffix, null,
             QueryRecordsLine_Item__c.class);
         assertNotNull(queryRecords);
         LOG.debug("ExecuteQuery: {}", queryRecords);
@@ -387,7 +435,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                 SalesforceException cause = (SalesforceException) e.getCause();
                 if (cause.getStatusCode() == HttpStatus.NOT_FOUND_404) {
                     LOG.error("Make sure test REST resource MerchandiseRestResource.apxc has been loaded: "
-                        + e.getMessage());
+                            + e.getMessage());
                 }
             }
             throw e;
@@ -403,13 +451,13 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
         // request merchandise with id in URI template
         Merchandise__c merchandise = template().requestBodyAndHeader("direct:apexCallGet" + suffix, null,
-            "id", testId, Merchandise__c.class);
+                "id", testId, Merchandise__c.class);
         assertNotNull(merchandise);
         LOG.debug("ApexCallGet: {}", merchandise);
 
         // request merchandise with id as query param
         merchandise = template().requestBodyAndHeader("direct:apexCallGetWithId" + suffix, null,
-            SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX + "id", testId, Merchandise__c.class);
+                SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX + "id", testId, Merchandise__c.class);
         assertNotNull(merchandise);
         LOG.debug("ApexCallGetWithId: {}", merchandise);
 
@@ -421,7 +469,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         merchandise.setTotal_Inventory__c(null);
 
         merchandise = template().requestBody("direct:apexCallPatch" + suffix,
-            new MerchandiseRequest(merchandise), Merchandise__c.class);
+                new MerchandiseRequest(merchandise), Merchandise__c.class);
         assertNotNull(merchandise);
         LOG.debug("ApexCallPatch: {}", merchandise);
     }
@@ -481,7 +529,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         // get test merchandise
         // note that the header value overrides sObjectFields in endpoint
         Merchandise__c merchandise = template().requestBodyAndHeader("direct:getSObject" + suffix, testId,
-            "sObjectFields", "Name,Description__c,Price__c,Total_Inventory__c", Merchandise__c.class);
+                "sObjectFields", "Name,Description__c,Price__c,Total_Inventory__c", Merchandise__c.class);
         assertNotNull(merchandise);
         assertNotNull(merchandise.getName());
         assertNotNull(merchandise.getPrice__c());
@@ -491,7 +539,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         try {
             merchandise.clearBaseFields();
             result = template().requestBody("direct:createSObject" + suffix,
-                merchandise, CreateSObjectResult.class);
+                    merchandise, CreateSObjectResult.class);
             assertNotNull(result);
             assertNotNull(result.getId());
             LOG.debug("Clone SObject: {}", result);
@@ -535,7 +583,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         // get test merchandise
         // note that the header value overrides sObjectFields in endpoint
         Merchandise__c merchandise = template().requestBodyAndHeader("direct:getSObject" + suffix, testId,
-            "sObjectFields", "Description__c,Price__c", Merchandise__c.class);
+                "sObjectFields", "Description__c,Price__c", Merchandise__c.class);
         assertNotNull(merchandise);
         assertNotNull(merchandise.getPrice__c());
         assertNull(merchandise.getTotal_Inventory__c());
@@ -545,7 +593,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         CreateSObjectResult result = null;
         try {
             result = template().requestBody("direct:createSObject" + suffix,
-                merchandise, CreateSObjectResult.class);
+                    merchandise, CreateSObjectResult.class);
             fail("Expected SalesforceException with statusCode 400");
         } catch (CamelExecutionException e) {
             assertTrue(e.getCause() instanceof SalesforceException);
@@ -592,128 +640,140 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
                 // testGetVersion
                 from("direct:getVersions")
-                    .to("salesforce:getVersions");
+                        .to("salesforce:getVersions");
 
                 // allow overriding format per endpoint
                 from("direct:getVersionsXml")
-                    .to("salesforce:getVersions?format=XML");
+                        .to("salesforce:getVersions?format=XML");
 
                 // testGetResources
                 from("direct:getResources")
-                    .to("salesforce:getResources");
+                        .to("salesforce:getResources");
 
                 from("direct:getResourcesXml")
-                    .to("salesforce:getResources?format=XML");
+                        .to("salesforce:getResources?format=XML");
 
                 // testGetGlobalObjects
                 from("direct:getGlobalObjects")
-                    .to("salesforce:getGlobalObjects");
+                        .to("salesforce:getGlobalObjects");
 
                 from("direct:getGlobalObjectsXml")
-                    .to("salesforce:getGlobalObjects?format=XML");
+                        .to("salesforce:getGlobalObjects?format=XML");
 
                 // testGetBasicInfo
                 from("direct:getBasicInfo")
-                    .to("salesforce:getBasicInfo?sObjectName=Merchandise__c");
+                        .to("salesforce:getBasicInfo?sObjectName=Merchandise__c");
 
                 from("direct:getBasicInfoXml")
-                    .to("salesforce:getBasicInfo?format=XML&sObjectName=Merchandise__c");
+                        .to("salesforce:getBasicInfo?format=XML&sObjectName=Merchandise__c");
 
                 // testGetDescription
                 from("direct:getDescription")
-                    .to("salesforce:getDescription?sObjectName=Merchandise__c");
+                        .to("salesforce:getDescription?sObjectName=Merchandise__c");
 
                 from("direct:getDescriptionXml")
-                    .to("salesforce:getDescription?format=XML&sObjectName=Merchandise__c");
+                        .to("salesforce:getDescription?format=XML&sObjectName=Merchandise__c");
 
                 // testGetSObject
                 from("direct:getSObject")
-                    .to("salesforce:getSObject?sObjectName=Merchandise__c&sObjectFields=Description__c,Price__c");
+                        .to("salesforce:getSObject?sObjectName=Merchandise__c&sObjectFields=Description__c,Price__c");
 
                 from("direct:getSObjectXml")
-                    .to("salesforce:getSObject?format=XML&sObjectName=Merchandise__c&sObjectFields=Description__c,Total_Inventory__c");
+                        .to("salesforce:getSObject?format=XML&sObjectName=Merchandise__c&sObjectFields=Description__c,Total_Inventory__c");
 
                 // testCreateSObject
                 from("direct:createSObject")
-                    .to("salesforce:createSObject?sObjectName=Merchandise__c");
+                        .to("salesforce:createSObject?sObjectName=Merchandise__c");
 
                 from("direct:createSObjectXml")
-                    .to("salesforce:createSObject?format=XML&sObjectName=Merchandise__c");
+                        .to("salesforce:createSObject?format=XML&sObjectName=Merchandise__c");
 
                 // testUpdateSObject
                 from("direct:updateSObject")
-                    .to("salesforce:updateSObject?sObjectName=Merchandise__c");
+                        .to("salesforce:updateSObject?sObjectName=Merchandise__c");
 
                 from("direct:updateSObjectXml")
-                    .to("salesforce:updateSObject?format=XML&sObjectName=Merchandise__c");
+                        .to("salesforce:updateSObject?format=XML&sObjectName=Merchandise__c");
 
                 // testDeleteSObject
                 from("direct:deleteSObject")
-                    .to("salesforce:deleteSObject?sObjectName=Merchandise__c");
+                        .to("salesforce:deleteSObject?sObjectName=Merchandise__c");
 
                 from("direct:deleteSObjectXml")
-                    .to("salesforce:deleteSObject?format=XML&sObjectName=Merchandise__c");
+                        .to("salesforce:deleteSObject?format=XML&sObjectName=Merchandise__c");
+
+                from("direct:deleteSObjectTaken")
+                        .to("salesforce:deleteSObject?sObjectName=Tasks__c");
+                from("direct:deleteSObjectTakenXml")
+                        .to("salesforce:deleteSObject?format=XML&sObjectName=Tasks__c");
 
                 // testGetSObjectWithId
                 from("direct:getSObjectWithId")
-                    .to("salesforce:getSObjectWithId?sObjectName=Line_Item__c&sObjectIdName=Name");
+                        .to("salesforce:getSObjectWithId?sObjectName=Line_Item__c&sObjectIdName=Name");
 
                 from("direct:getSObjectWithIdXml")
-                    .to("salesforce:getSObjectWithId?format=XML&sObjectName=Line_Item__c&sObjectIdName=Name");
+                        .to("salesforce:getSObjectWithId?format=XML&sObjectName=Line_Item__c&sObjectIdName=Name");
 
                 // testUpsertSObject
                 from("direct:upsertSObject")
-                    .to("salesforce:upsertSObject?sObjectName=Line_Item__c&sObjectIdName=Name");
+                        .to("salesforce:upsertSObject?sObjectName=Line_Item__c&sObjectIdName=Name");
 
                 from("direct:upsertSObjectXml")
-                    .to("salesforce:upsertSObject?format=XML&sObjectName=Line_Item__c&sObjectIdName=Name");
+                        .to("salesforce:upsertSObject?format=XML&sObjectName=Line_Item__c&sObjectIdName=Name");
 
                 // testDeleteSObjectWithId
                 from("direct:deleteSObjectWithId")
-                    .to("salesforce:deleteSObjectWithId?sObjectName=Line_Item__c&sObjectIdName=Name");
+                        .to("salesforce:deleteSObjectWithId?sObjectName=Line_Item__c&sObjectIdName=Name");
 
                 from("direct:deleteSObjectWithIdXml")
-                    .to("salesforce:deleteSObjectWithId?format=XML&sObjectName=Line_Item__c&sObjectIdName=Name");
+                        .to("salesforce:deleteSObjectWithId?format=XML&sObjectName=Line_Item__c&sObjectIdName=Name");
 
                 // testGetBlobField
                 from("direct:getBlobField")
-                    .to("salesforce:getBlobField?sObjectName=Document&sObjectBlobFieldName=Body");
+                        .to("salesforce:getBlobField?sObjectName=Document&sObjectBlobFieldName=Body");
 
                 from("direct:getBlobFieldXml")
-                    .to("salesforce:getBlobField?format=XML&sObjectName=Document&sObjectBlobFieldName=Body");
+                        .to("salesforce:getBlobField?format=XML&sObjectName=Document&sObjectBlobFieldName=Body");
 
                 // testQuery
                 from("direct:query")
-                    .to("salesforce:query?sObjectQuery=SELECT name from Line_Item__c&sObjectClass=" + QueryRecordsLine_Item__c.class.getName());
+                        .to("salesforce:query?sObjectQuery=SELECT name from Line_Item__c&sObjectClass=" + QueryRecordsLine_Item__c.class.getName());
 
                 from("direct:queryXml")
-                    .to("salesforce:query?format=XML&sObjectQuery=SELECT name from Line_Item__c&sObjectClass=" + QueryRecordsLine_Item__c.class.getName());
+                        .to("salesforce:query?format=XML&sObjectQuery=SELECT name from Line_Item__c&sObjectClass=" + QueryRecordsLine_Item__c.class.getName());
+
+                // testQueryAll
+                from("direct:queryAll")
+                    .to("salesforce:queryAll?sObjectQuery=SELECT name from Line_Item__c&sObjectClass=" + QueryRecordsLine_Item__c.class.getName());
+
+                from("direct:queryAllXml")
+                    .to("salesforce:queryAll?format=XML&sObjectQuery=SELECT name from Line_Item__c&sObjectClass=" + QueryRecordsLine_Item__c.class.getName());
 
                 // testSearch
                 from("direct:search")
-                    .to("salesforce:search?sObjectSearch=FIND {Wee}");
+                        .to("salesforce:search?sObjectSearch=FIND {Wee}");
 
                 from("direct:searchXml")
-                    .to("salesforce:search?format=XML&sObjectSearch=FIND {Wee}");
+                        .to("salesforce:search?format=XML&sObjectSearch=FIND {Wee}");
 
                 // testApexCall
                 from("direct:apexCallGet")
-                    .to("salesforce:apexCall?apexMethod=GET&apexUrl=Merchandise/{id}&sObjectName=Merchandise__c");
+                        .to("salesforce:apexCall?apexMethod=GET&apexUrl=Merchandise/{id}&sObjectName=Merchandise__c");
 
                 from("direct:apexCallGetXml")
-                    .to("salesforce:apexCall/Merchandise/{id}?format=XML&apexMethod=GET&sObjectClass=" + MerchandiseXmlResponse.class.getName());
+                        .to("salesforce:apexCall/Merchandise/{id}?format=XML&apexMethod=GET&sObjectClass=" + MerchandiseXmlResponse.class.getName());
 
                 from("direct:apexCallGetWithId")
-                    .to("salesforce:apexCall/Merchandise/?apexMethod=GET&id=dummyId&sObjectClass=" + Merchandise__c.class.getName());
+                        .to("salesforce:apexCall/Merchandise/?apexMethod=GET&id=dummyId&sObjectClass=" + Merchandise__c.class.getName());
 
                 from("direct:apexCallGetWithIdXml")
-                    .to("salesforce:apexCall?format=XML&apexMethod=GET&apexUrl=Merchandise/&id=dummyId&sObjectClass=" + MerchandiseXmlResponse.class.getName());
+                        .to("salesforce:apexCall?format=XML&apexMethod=GET&apexUrl=Merchandise/&id=dummyId&sObjectClass=" + MerchandiseXmlResponse.class.getName());
 
                 from("direct:apexCallPatch")
-                    .to("salesforce:apexCall?apexMethod=PATCH&apexUrl=Merchandise/&sObjectName=Merchandise__c");
+                        .to("salesforce:apexCall?apexMethod=PATCH&apexUrl=Merchandise/&sObjectName=Merchandise__c");
 
                 from("direct:apexCallPatchXml")
-                    .to("salesforce:apexCall/Merchandise/?format=XML&apexMethod=PATCH&sObjectClass=" + MerchandiseXmlResponse.class.getName());
+                        .to("salesforce:apexCall/Merchandise/?format=XML&apexMethod=PATCH&sObjectClass=" + MerchandiseXmlResponse.class.getName());
             }
         };
     }

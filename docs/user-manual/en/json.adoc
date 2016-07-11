@@ -12,6 +12,7 @@ popular JSON libraries:
 http://jettison.codehaus.org/[Jettsion]
 * The https://github.com/FasterXML/jackson[Jackson library]
 * *Camel 2.10:* The http://code.google.com/p/google-gson/[GSon library]
+* *Camel 2.18:* The http://johnzon.apache.org/[Johnzon library]
 
 Every library requires adding the special camel component (see
 "Dependency..." paragraphs further down). By default Camel uses the
@@ -57,6 +58,18 @@ Using JSON data format with the GSON library
 // lets turn Object messages into json then send to MQSeries
 from("activemq:My.Queue").
   marshal().json(JsonLibrary.Gson).
+  to("mqseries:Another.Queue");
+------------------------------------------------------------
+
+[[JSON-UsingJSONdataformatwiththeJohnzonlibrary]]
+Using JSON data format with the Johnzon library
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[source,java]
+------------------------------------------------------------
+// lets turn Object messages into json then send to MQSeries
+from("activemq:My.Queue").
+  marshal().json(JsonLibrary.Johnzon).
   to("mqseries:Another.Queue");
 ------------------------------------------------------------
 
@@ -598,6 +611,26 @@ link:download.html[the download page for the latest versions]).
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-gson</artifactId>
+  <version>x.x.x</version>
+</dependency>
+-------------------------------------
+
+[[JSON-DependenciesforJohnzon]]
+Dependencies for Johnzon
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+To use JSON in your camel routes you need to add the a dependency on
+*camel-johnzon* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+link:download.html[the download page for the latest versions]).
+
+[source,xml]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-johnzon</artifactId>
   <version>x.x.x</version>
 </dependency>
 -------------------------------------

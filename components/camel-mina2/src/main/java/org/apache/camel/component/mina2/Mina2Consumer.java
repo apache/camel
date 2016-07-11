@@ -115,7 +115,7 @@ public class Mina2Consumer extends DefaultConsumer {
         if (configuration.isClientMode() && configuration.getProtocol().equals("tcp")) {
             LOG.info("Disconnect from server address: {} using connector: {}", address, connector);
             if (session != null) {
-                CloseFuture closeFuture = session.close(true);
+                CloseFuture closeFuture = session.closeNow();
                 closeFuture.awaitUninterruptibly();
             }
             connector.dispose(true);
@@ -382,7 +382,7 @@ public class Mina2Consumer extends DefaultConsumer {
             // close invalid session
             if (session != null) {
                 LOG.warn("Closing session as an exception was thrown from MINA");
-                session.close(true);
+                session.closeNow();
             }
 
             // must wrap and rethrow since cause can be of Throwable and we must only throw Exception
@@ -456,7 +456,7 @@ public class Mina2Consumer extends DefaultConsumer {
             }
             if (disconnect) {
                 LOG.debug("Closing session when complete at address: {}", address);
-                session.close(true);
+                session.closeNow();
             }
         }
     }
