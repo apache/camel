@@ -18,9 +18,13 @@ package org.apache.camel.component.kubernetes.consumer;
 
 import java.util.concurrent.ExecutorService;
 
+import io.fabric8.kubernetes.api.model.DoneableNamespace;
 import io.fabric8.kubernetes.api.model.Namespace;
+import io.fabric8.kubernetes.api.model.NamespaceList;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.kubernetes.client.Watcher;
+import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.ClientResource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -76,63 +80,35 @@ public class KubernetesNamespacesConsumer extends DefaultConsumer {
         
         @Override
         public void run() {
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getOauthToken())) {
-                if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
-                    getEndpoint().getKubernetesClient().namespaces()
-                            .withName(getEndpoint().getKubernetesConfiguration().getNamespace())
-                            .watch(new Watcher<Namespace>() {
-
-                                @Override
-                                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
-                                        Namespace resource) {
-                                    NamespaceEvent ne = new NamespaceEvent(action, resource);
-                                    Exchange exchange = getEndpoint().createExchange();
-                                    exchange.getIn().setBody(ne.getNamespace());
-                                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, ne.getAction());
-                                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
-                                    try {
-                                        processor.process(exchange);
-                                    } catch (Exception e) {
-                                        getExceptionHandler().handleException("Error during processing", exchange, e);
-                                    }                                   
-                                }
-
-                                @Override
-                                public void onClose(KubernetesClientException cause) {
-                                    if (cause != null) {
-                                        LOG.error(cause.getMessage(), cause);
-                                    }                            
-                                }
-                            });
-                } else {
-                    getEndpoint().getKubernetesClient().namespaces().watch(new Watcher<Namespace>() {
-
-                        @Override
-                        public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
-                                Namespace resource) {
-                            NamespaceEvent ne = new NamespaceEvent(action, resource);
-                            Exchange exchange = getEndpoint().createExchange();
-                            exchange.getIn().setBody(ne.getNamespace());
-                            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, ne.getAction());
-                            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
-                            try {
-                                processor.process(exchange);
-                            } catch (Exception e) {
-                                getExceptionHandler().handleException("Error during processing", exchange, e);
-                            }      
-                            
-                        }
-
-                        @Override
-                        public void onClose(KubernetesClientException cause) {
-                            if (cause != null) {
-                                LOG.error(cause.getMessage(), cause);
-                            }                            
-                        }
-                    });
-                }
+            ClientNonNamespaceOperation<Namespace, NamespaceList, DoneableNamespace, ClientResource<Namespace, DoneableNamespace>> w = getEndpoint().getKubernetesClient().namespaces();
+            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
+                w.withName(getEndpoint().getKubernetesConfiguration().getNamespace());
             }
-        }
-    }
+            w.watch(new Watcher<Namespace>() {
 
+                @Override
+                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
+                    Namespace resource) {
+                    NamespaceEvent ne = new NamespaceEvent(action, resource);
+                    Exchange exchange = getEndpoint().createExchange();
+                    exchange.getIn().setBody(ne.getNamespace());
+                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, ne.getAction());
+                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
+                    try {
+                        processor.process(exchange);
+                    } catch (Exception e) {
+                        getExceptionHandler().handleException("Error during processing", exchange, e);
+                    }                                   
+                }
+
+                @Override
+                public void onClose(KubernetesClientException cause) {
+                    if (cause != null) {
+                        LOG.error(cause.getMessage(), cause);
+                    }                            
+                }
+            });
+        } 
+    }
 }
+
