@@ -64,6 +64,6 @@ public class LumberjackComponentTest extends CamelTestSupport {
         assertEquals("/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log", first.get("source"));
 
         // And we should have replied with 2 acknowledgments for each window frame
-        assertEquals(responses, Arrays.asList(10, 15));
+        assertEquals(Arrays.asList(10, 15), responses);
     }
 }

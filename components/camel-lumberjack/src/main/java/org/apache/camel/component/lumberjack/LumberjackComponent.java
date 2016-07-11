@@ -24,7 +24,7 @@ import org.apache.camel.impl.UriEndpointComponent;
 /**
  * The class is the Camel component for the Lumberjack server
  */
-public class LumberjackComponent extends UriEndpointComponent {
+public final class LumberjackComponent extends UriEndpointComponent {
     static final int DEFAULT_PORT = 5044;
 
     public LumberjackComponent() {
@@ -49,12 +49,9 @@ public class LumberjackComponent extends UriEndpointComponent {
             port = DEFAULT_PORT;
         }
 
-        Endpoint answer = createEndpoint(uri, host, port);
+        // Create the endpoint
+        Endpoint answer = new LumberjackEndpoint(uri, this, host, port);
         setProperties(answer, parameters);
         return answer;
-    }
-
-    protected LumberjackEndpoint createEndpoint(String uri, String host, int port) {
-        return new LumberjackEndpoint(uri, this, host, port);
     }
 }

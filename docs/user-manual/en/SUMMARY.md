@@ -222,6 +222,7 @@
     * [LevelDB](leveldb.adoc)
     * [Linkedin](linkedin.adoc)
     * [Lucene](lucene.adoc)
+    * [Lumberjack](lumberjack.adoc)
     * [Mail](mail.adoc)
         * [IMAP](imap.adoc)
         * [IMAPs](imaps.adoc)
