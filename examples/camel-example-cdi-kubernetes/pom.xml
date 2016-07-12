@@ -76,19 +76,6 @@
       <artifactId>slf4j-log4j12</artifactId>
       <scope>runtime</scope>
     </dependency>
-
-    <!-- test -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-cdi</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>java-hamcrest</artifactId>
-      <version>${hamcrest-version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>

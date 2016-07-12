@@ -43,7 +43,7 @@ class Application {
         @Override
         public void configure() {
 
-            from("timer:stream?repeatCount=1")
+            from("timer:stream?repeatCount=3")
                 .to("kubernetes://{{kubernetes-master-url}}?oauthToken={{kubernetes-oauth-token}}&category=pods&operation=listPods")
                 .process(new Processor() {
 					
