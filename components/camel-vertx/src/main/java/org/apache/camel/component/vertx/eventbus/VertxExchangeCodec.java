@@ -25,12 +25,10 @@ public class VertxExchangeCodec implements MessageCodec<Exchange, Exchange> {
     @Override
     public void encodeToWire(Buffer buffer, Exchange exchange) {
         // noop
-        System.out.println("xxx");
     }
 
     @Override
     public Exchange decodeFromWire(int pos, Buffer buffer) {
-        System.out.println("yyy");
         return null;
     }
 
