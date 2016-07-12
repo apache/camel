@@ -1,4 +1,4 @@
-# Metrics Example - CDI
+# Kubernetes Example - CDI
 
 ### Introduction
 
