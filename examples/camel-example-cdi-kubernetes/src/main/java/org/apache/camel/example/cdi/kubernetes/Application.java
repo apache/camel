@@ -24,6 +24,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 
+import io.fabric8.kubernetes.api.model.Pod;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,8 +34,6 @@ import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.deltaspike.core.api.config.ConfigResolver;
-
-import io.fabric8.kubernetes.api.model.Pod;
 
 class Application {
 
@@ -46,19 +46,18 @@ class Application {
             from("timer:stream?repeatCount=3")
                 .to("kubernetes://{{kubernetes-master-url}}?oauthToken={{kubernetes-oauth-token}}&category=pods&operation=listPods")
                 .process(new Processor() {
-					
-					@Override
-					public void process(Exchange exchange) throws Exception {
-						List<Pod> list = exchange.getIn().getBody(List.class);
-						System.out.println("We currently have " + list.size() + " pods");
-						Iterator<Pod> it = list.iterator();
+            
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        List<Pod> list = exchange.getIn().getBody(List.class);
+                        System.out.println("We currently have " + list.size() + " pods");
+                        Iterator<Pod> it = list.iterator();
                         while (it.hasNext()) {
-							Pod pod = it.next();
-							System.out.println("Pod name " + pod.getMetadata().getName() + " with status " + pod.getStatus().getPhase());
-						}
-						
-					}
-				});
+                            Pod pod = it.next();
+                            System.out.println("Pod name " + pod.getMetadata().getName() + " with status " + pod.getStatus().getPhase());
+                        }
+                    }
+                });
         }
     }
     
