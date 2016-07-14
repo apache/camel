@@ -70,6 +70,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                     }
 
                 });
+                result.ignoreUnknownElements();
                 XStreamUtils.addDefaultPermissions(result);
                 result.registerConverter(new JodaTimeConverter());
                 return result;
