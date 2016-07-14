@@ -52,6 +52,7 @@ import org.apache.camel.component.salesforce.api.dto.SObjectField;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
+import org.apache.camel.component.salesforce.internal.client.JsonUtils;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.SyncResponseCallback;
 import org.apache.camel.util.IntrospectionSupport;
@@ -309,7 +310,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
 
         try {
             // use Jackson json
-            final ObjectMapper mapper = new ObjectMapper();
+            final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
             // call getGlobalObjects to get all SObjects
             final Set<String> objectNames = new TreeSet<String>();

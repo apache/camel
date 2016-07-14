@@ -18,12 +18,15 @@ package org.apache.camel.component.salesforce.internal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.camel.component.salesforce.internal.client.JsonUtils;
 import org.apache.camel.component.salesforce.internal.dto.LoginToken;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class LoginTokenTest {
 
@@ -42,7 +45,7 @@ public class LoginTokenTest {
             + "    \"issued_at\": \"1442798068621\",\n"
             + "    \"an_unrecognised_field\": \"foo\"\n"
             + "}";
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonUtils.createObjectMapper();
         Exception e = null;
         LoginToken token = null;
         try {

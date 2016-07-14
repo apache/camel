@@ -33,6 +33,7 @@ import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
+import org.apache.camel.component.salesforce.internal.client.JsonUtils;
 import org.apache.camel.component.salesforce.internal.dto.LoginError;
 import org.apache.camel.component.salesforce.internal.dto.LoginToken;
 import org.apache.camel.util.ObjectHelper;
@@ -82,7 +83,7 @@ public class SalesforceSession implements Service {
         String loginUrl = config.getLoginUrl();
         config.setLoginUrl(loginUrl.endsWith("/") ? loginUrl.substring(0, loginUrl.length() - 1) : loginUrl);
 
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = JsonUtils.createObjectMapper();
         this.listeners = new CopyOnWriteArraySet<SalesforceSessionListener>();
     }
 

@@ -56,7 +56,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
                                      SalesforceHttpClient httpClient) throws SalesforceException {
         super(version, session, httpClient);
 
-        objectMapper = new ObjectMapper();
+        objectMapper = JsonUtils.createObjectMapper();
     }
 
     @Override
