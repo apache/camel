@@ -18,6 +18,7 @@ package org.apache.camel.component.salesforce.api.dto;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.joda.time.DateTime;
+
 //CHECKSTYLE:OFF
 public class AbstractSObjectBase extends AbstractDTOBase {
 
@@ -34,7 +35,7 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     private DateTime LastModifiedDate;
     private String LastModifiedById;
     private DateTime SystemModstamp;
-    private String LastActivityDate;
+    private DateTime LastActivityDate;
     private DateTime LastViewedDate;
     private DateTime LastReferencedDate;
 
@@ -155,12 +156,12 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     }
 
     @JsonProperty("LastActivityDate")
-    public String getLastActivityDate() {
+    public DateTime getLastActivityDate() {
         return LastActivityDate;
     }
 
     @JsonProperty("LastActivityDate")
-    public void setLastActivityDate(String lastActivityDate) {
+    public void setLastActivityDate(DateTime lastActivityDate) {
         this.LastActivityDate = lastActivityDate;
     }
 
