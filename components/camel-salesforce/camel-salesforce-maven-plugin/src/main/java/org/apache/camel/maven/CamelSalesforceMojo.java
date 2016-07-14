@@ -691,10 +691,10 @@ public class CamelSalesforceMojo extends AbstractMojo {
         private static final String BASE64BINARY = "base64Binary";
         private static final String MULTIPICKLIST = "multipicklist";
         private static final String PICKLIST = "picklist";
-        private Boolean useStringsForPicklists;
+        private boolean useStringsForPicklists;
 
         public GeneratorUtility(Boolean useStringsForPicklists) {
-            this.useStringsForPicklists = useStringsForPicklists;
+            this.useStringsForPicklists = Boolean.TRUE.equals(useStringsForPicklists);
         }
 
         public boolean isBlobField(SObjectField field) {
