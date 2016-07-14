@@ -36,7 +36,7 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     private ZonedDateTime LastModifiedDate;
     private String LastModifiedById;
     private ZonedDateTime SystemModstamp;
-    private String LastActivityDate;
+    private ZonedDateTime LastActivityDate;
     private ZonedDateTime LastViewedDate;
     private ZonedDateTime LastReferencedDate;
 
@@ -157,12 +157,12 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     }
 
     @JsonProperty("LastActivityDate")
-    public String getLastActivityDate() {
+    public ZonedDateTime getLastActivityDate() {
         return LastActivityDate;
     }
 
     @JsonProperty("LastActivityDate")
-    public void setLastActivityDate(String lastActivityDate) {
+    public void setLastActivityDate(ZonedDateTime lastActivityDate) {
         this.LastActivityDate = lastActivityDate;
     }
 
