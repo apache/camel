@@ -68,6 +68,11 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
         super.setConfiguration(configuration);
     }
 
+    @Override
+    public GoogleMailConfiguration getConfiguration() {
+        return super.getConfiguration();
+    }
+
     /**
      * To use the GoogleCalendarClientFactory as factory for creating the client.
      * Will by default use {@link BatchGoogleMailClientFactory}
