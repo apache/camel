@@ -69,6 +69,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         xStream.processAnnotations(RestErrors.class);
         xStream.processAnnotations(RestChoices.class);
 
+        xStream.ignoreUnknownElements();
         XStreamUtils.addDefaultPermissions(xStream);
     }
 
