@@ -18,6 +18,8 @@ package org.apache.camel.component.vertx;
 
 import java.util.List;
 
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -35,6 +37,8 @@ public class VertxRouteTest extends VertxBaseTestSupport {
     protected MockEndpoint resultEndpoint;
     protected String body1 = "{\"id\":1,\"description\":\"Message One\"}";
     protected String body2 = "{\"id\":2,\"description\":\"Message Two\"}";
+    protected JsonArray body;
+    protected String result = "[{\"foo\":\"bar\"}]";
 
     @Test
     public void testVertxMessages() throws Exception {
@@ -43,6 +47,25 @@ public class VertxRouteTest extends VertxBaseTestSupport {
 
         template.sendBody(startUri, body1);
         template.sendBody(startUri, body2);
+
+        resultEndpoint.assertIsSatisfied();
+
+        List<Exchange> list = resultEndpoint.getReceivedExchanges();
+        for (Exchange exchange : list) {
+            log.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
+        }
+    }
+
+    @Test
+    public void testVertxWithJSonArray() throws Exception {
+        resultEndpoint = context.getEndpoint(resultUri, MockEndpoint.class);
+        resultEndpoint.expectedBodiesReceived(result);
+
+        body = new JsonArray();
+        JsonObject obj = new JsonObject().put("foo", "bar");
+        body.add(obj);
+
+        template.sendBody(startUri, body);
 
         resultEndpoint.assertIsSatisfied();
 
