@@ -37,7 +37,7 @@ public final class CamelInfluxDbConverters {
         Object measurenmentName = map.get(InfluxDbConstants.MEASUREMENT_NAME);
 
         if (measurenmentName == null) {
-            String format = String.format("Unable to find the header for the measurement " + map.size() + " to:" + map.keySet().toString());
+            String format = String.format("Unable to find the header for the measurement in:" + map.keySet().toString());
             throw new CamelInfluxDbException(format);
         }
 
