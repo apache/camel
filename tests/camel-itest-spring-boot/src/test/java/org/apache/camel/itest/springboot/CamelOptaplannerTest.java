@@ -35,6 +35,7 @@ public class CamelOptaplannerTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelOptaplannerTest.class))
+                .customLog(true)
                 .build();
     }
 

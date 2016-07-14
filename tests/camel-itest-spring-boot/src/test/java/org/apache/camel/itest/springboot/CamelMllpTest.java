@@ -35,6 +35,7 @@ public class CamelMllpTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelMllpTest.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BlueprintTest$)")
                 .build();
     }
 

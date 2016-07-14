@@ -35,6 +35,7 @@ public class CamelIgniteTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelIgniteTest.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|AbstractIgniteTest$)")
                 .build();
     }
 

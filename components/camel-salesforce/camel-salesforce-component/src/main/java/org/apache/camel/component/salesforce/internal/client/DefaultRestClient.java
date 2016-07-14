@@ -64,11 +64,12 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         this.format = format;
 
         // initialize error parsers for JSON and XML
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = JsonUtils.createObjectMapper();
         this.xStream = new XStream();
         xStream.processAnnotations(RestErrors.class);
         xStream.processAnnotations(RestChoices.class);
 
+        xStream.ignoreUnknownElements();
         XStreamUtils.addDefaultPermissions(xStream);
     }
 
@@ -327,6 +328,24 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         setAccessToken(get);
 
         doHttpRequest(get, new DelegatingClientCallback(callback));
+    }
+
+    @Override
+    public void queryAll(String soqlQuery, ResponseCallback callback) {
+        try {
+
+            String encodedQuery = urlEncode(soqlQuery);
+            final Request get = getRequest(HttpMethod.GET, versionUrl() + "queryAll/?q=" + encodedQuery);
+
+            // requires authorization token
+            setAccessToken(get);
+
+            doHttpRequest(get, new DelegatingClientCallback(callback));
+
+        } catch (UnsupportedEncodingException e) {
+            String msg = "Unexpected error: " + e.getMessage();
+            callback.onResponse(null, new SalesforceException(msg, e));
+        }
     }
 
     @Override

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +29,6 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
-import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.InterruptException;
 import org.slf4j.Logger;
@@ -43,11 +41,13 @@ public class KafkaConsumer extends DefaultConsumer {
     protected ExecutorService executor;
     private final KafkaEndpoint endpoint;
     private final Processor processor;
+    private final Long pollTimeoutMs;
 
     public KafkaConsumer(KafkaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.processor = processor;
+        this.pollTimeoutMs = endpoint.getConfiguration().getPollTimeoutMs();
 
         if (endpoint.getBrokers() == null) {
             throw new IllegalArgumentException("BootStrap servers must be specified");
@@ -59,6 +59,7 @@ public class KafkaConsumer extends DefaultConsumer {
 
     Properties getProps() {
         Properties props = endpoint.getConfiguration().createConsumerProperties();
+        endpoint.updateClassProperties(props);
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, endpoint.getBrokers());
         props.put(ConsumerConfig.GROUP_ID_CONFIG, endpoint.getGroupId());
         return props;
@@ -100,7 +101,15 @@ public class KafkaConsumer extends DefaultConsumer {
             this.topicName = topicName;
             this.threadId = topicName + "-" + "Thread " + id;
             this.kafkaProps = kafkaProps;
-            this.consumer = new org.apache.kafka.clients.consumer.KafkaConsumer(kafkaProps);
+            
+            ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
+            try {
+                //Fix for running camel-kafka in OSGI see KAFKA-3218
+                Thread.currentThread().setContextClassLoader(null);
+                this.consumer = new org.apache.kafka.clients.consumer.KafkaConsumer(kafkaProps);
+            } finally {
+                Thread.currentThread().setContextClassLoader(threadClassLoader);
+            }
         }
 
         @Override
@@ -118,7 +127,7 @@ public class KafkaConsumer extends DefaultConsumer {
                     consumer.seekToBeginning(consumer.assignment());
                 }
                 while (isRunAllowed() && !isSuspendingOrSuspended()) {
-                    ConsumerRecords<Object, Object> allRecords = consumer.poll(Long.MAX_VALUE);
+                    ConsumerRecords<Object, Object> allRecords = consumer.poll(pollTimeoutMs);
                     for (TopicPartition partition : allRecords.partitions()) {
                         List<ConsumerRecord<Object, Object>> partitionRecords = allRecords
                             .records(partition);

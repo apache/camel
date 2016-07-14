@@ -19,16 +19,19 @@ package org.apache.camel.component.salesforce.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.component.salesforce.dto.generated.MSPTest;
+import org.apache.camel.component.salesforce.internal.client.JsonUtils;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class MultiSelectPicklistJsonTest {
 
     private static final String TEST_JSON = "{\"MspField\":\"Value1;Value2;Value3\"}";
     private static final String TEST_NULL_JSON = "{\"MspField\":null}";
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectMapper objectMapper = JsonUtils.createObjectMapper();
 
     @Test
     public void testMarshal() throws Exception {

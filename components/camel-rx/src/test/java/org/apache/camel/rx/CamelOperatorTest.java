@@ -24,8 +24,9 @@ import org.junit.Test;
 import rx.Subscription;
 import rx.observables.ConnectableObservable;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
+
 
 public class CamelOperatorTest extends RxTestSupport {
 

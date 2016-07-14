@@ -35,6 +35,7 @@ public class CamelGoogleMailTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelGoogleMailTest.class))
+                .unitTestExpectedNumber(0)
                 .build();
     }
 

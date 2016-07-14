@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -49,11 +50,13 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
     Properties getProps() {
         Properties props = endpoint.getConfiguration().createProducerProperties();
+        endpoint.updateClassProperties(props);
         if (endpoint.getBrokers() != null) {
             props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, endpoint.getBrokers());
         }
         return props;
     }
+
 
     public org.apache.kafka.clients.producer.KafkaProducer getKafkaProducer() {
         return kafkaProducer;
@@ -78,7 +81,14 @@ public class KafkaProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         Properties props = getProps();
         if (kafkaProducer == null) {
-            kafkaProducer = new org.apache.kafka.clients.producer.KafkaProducer(props);
+            ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
+            try {
+                //Fix for running camel-kafka in OSGI see KAFKA-3218
+                Thread.currentThread().setContextClassLoader(null);
+                kafkaProducer = new org.apache.kafka.clients.producer.KafkaProducer(props);
+            } finally {
+                Thread.currentThread().setContextClassLoader(threadClassLoader);
+            }
         }
 
         // if we are in asynchronous mode we need a worker pool
@@ -141,6 +151,11 @@ public class KafkaProducer extends DefaultAsyncProducer {
                     }
                     return new ProducerRecord(msgTopic, msgList.next());
                 }
+
+                @Override
+                public void remove() {
+                    msgList.remove();
+                }
             };
         }
         ProducerRecord record;
@@ -160,13 +175,23 @@ public class KafkaProducer extends DefaultAsyncProducer {
     // Camel calls this method if the endpoint isSynchronous(), as the KafkaEndpoint creates a SynchronousDelegateProducer for it
     public void process(Exchange exchange) throws Exception {
         Iterator<ProducerRecord> c = createRecorder(exchange);
-        List<Future<ProducerRecord>> futures = new LinkedList<Future<ProducerRecord>>();
+        List<Future<RecordMetadata>> futures = new LinkedList<Future<RecordMetadata>>();
+        List<RecordMetadata> recordMetadatas = new ArrayList<RecordMetadata>();
+
+        if (endpoint.getConfiguration().isRecordMetadata()) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
+            } else {
+                exchange.getIn().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
+            }
+        }
+
         while (c.hasNext()) {
             futures.add(kafkaProducer.send(c.next()));
         }
-        for (Future<ProducerRecord> f : futures) {
+        for (Future<RecordMetadata> f : futures) {
             //wait for them all to be sent
-            f.get();
+            recordMetadatas.add(f.get());
         }
     }
 
@@ -193,15 +218,24 @@ public class KafkaProducer extends DefaultAsyncProducer {
         private final Exchange exchange;
         private final AsyncCallback callback;
         private final AtomicInteger count = new AtomicInteger(1);
+        private final List<RecordMetadata> recordMetadatas = new ArrayList<>();
 
         KafkaProducerCallBack(Exchange exchange, AsyncCallback callback) {
             this.exchange = exchange;
             this.callback = callback;
+            if (endpoint.getConfiguration().isRecordMetadata()) {
+                if (exchange.hasOut()) {
+                    exchange.getOut().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
+                } else {
+                    exchange.getIn().setHeader(KafkaConstants.KAFKA_RECORDMETA, recordMetadatas);
+                }
+            }
         }
 
         void increment() {
             count.incrementAndGet();
         }
+
         boolean allSent() {
             if (count.decrementAndGet() == 0) {
                 //was able to get all the work done while queuing the requests
@@ -210,12 +244,15 @@ public class KafkaProducer extends DefaultAsyncProducer {
             }
             return false;
         }
-        
+
         @Override
         public void onCompletion(RecordMetadata recordMetadata, Exception e) {
             if (e != null) {
                 exchange.setException(e);
             }
+
+            recordMetadatas.add(recordMetadata);
+
             if (count.decrementAndGet() == 0) {
                 // use worker pool to continue routing the exchange
                 // as this thread is from Kafka Callback and should not be used by Camel routing

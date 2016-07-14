@@ -17,34 +17,34 @@
 -->
 
 <!DOCTYPE configuration
-    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
-    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
 
 <configuration>
 
-  <settings>
-    <setting name="useGeneratedKeys" value="false"/>
-  </settings>
+    <settings>
+        <setting name="useGeneratedKeys" value="false"/>
+    </settings>
 
-  <!-- Use type aliases to avoid typing the full classname every time. -->
-  <!--<typeAliases>-->
+    <!-- Use type aliases to avoid typing the full classname every time. -->
+    <!--<typeAliases>-->
     <!--<typeAlias alias="Order" type="org.apache.camel.example.mybatis.Order"/>-->
-  <!--</typeAliases>-->
+    <!--</typeAliases>-->
 
-  <!-- setup environment with JDBC data source -->
-  <environments default="development">
-    <environment id="development">
-      <transactionManager type="JDBC"/>
-      <dataSource type="POOLED">
-        <property name="driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
-        <property name="url" value="jdbc:derby:memory:mybatis;create=true"/>
-      </dataSource>
-    </environment>
-  </environments>
+    <!-- setup environment with JDBC data source -->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+                <property name="url" value="jdbc:derby:memory:mybatis;create=true"/>
+            </dataSource>
+        </environment>
+    </environments>
 
-  <!-- mapping files -->
-  <!--<mappers>-->
+    <!-- mapping files -->
+    <!--<mappers>-->
     <!--<mapper resource="org/apache/camel/example/mybatis/Order.xml"/>-->
-  <!--</mappers>-->
+    <!--</mappers>-->
 
 </configuration>

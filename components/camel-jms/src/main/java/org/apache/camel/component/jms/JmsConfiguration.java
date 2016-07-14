@@ -233,10 +233,14 @@ public class JmsConfiguration implements Cloneable {
             description = "Specifies whether Camel should auto map the received JMS message to a suited payload type, such as javax.jms.TextMessage to a String etc.")
     private boolean mapJmsMessage = true;
     @UriParam(defaultValue = "true", label = "advanced",
-            description = "When sending, specifies whether message IDs should be added.")
+            description = "When sending, specifies whether message IDs should be added. This is just an hint to the JMS broker." 
+                    + "If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, " 
+                    + "the message ID must be set to its normal unique value")
     private boolean messageIdEnabled = true;
     @UriParam(defaultValue = "true", label = "advanced",
-            description = "Specifies whether timestamps should be enabled by default on sending messages.")
+            description = "Specifies whether timestamps should be enabled by default on sending messages. This is just an hint to the JMS broker."
+                    + "If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint " 
+                    + "the timestamp must be set to its normal value")
     private boolean messageTimestampEnabled = true;
     @UriParam(defaultValue = "" + Message.DEFAULT_PRIORITY, enums = "1,2,3,4,5,6,7,8,9", label = "producer",
             description = "Values greater than 1 specify the message priority when sending (where 0 is the lowest priority and 9 is the highest)."
@@ -1251,7 +1255,8 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * When sending, specifies whether message IDs should be added.
+     * When sending, specifies whether message IDs should be added. This is just an hint to the JMS Broker.
+     * If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, the message ID must be set to its normal unique value
      */
     public void setMessageIdEnabled(boolean messageIdEnabled) {
         this.messageIdEnabled = messageIdEnabled;
@@ -1262,7 +1267,8 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies whether timestamps should be enabled by default on sending messages.
+     * Specifies whether timestamps should be enabled by default on sending messages. This is just an hint to the JMS Broker.
+     * If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint, the timestamp must be set to its normal value
      */
     public void setMessageTimestampEnabled(boolean messageTimestampEnabled) {
         this.messageTimestampEnabled = messageTimestampEnabled;

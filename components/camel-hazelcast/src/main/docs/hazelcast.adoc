@@ -128,7 +128,7 @@ Header Variables for the request message:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Name |Type |Description
-|`CamelHazelcastOperationType` |`String` |valid values are: put, delete, get, update, query, getAll, putIfAbsent, clear. 
+|`CamelHazelcastOperationType` |`String` |valid values are: put, delete, get, update, query, getAll, putIfAbsent, clear, keySet. 
 
 |`CamelHazelcastObjectId` |`String` |the object id to store / find your object inside the cache (not needed for the query operation)
 |=======================================================================

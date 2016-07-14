@@ -35,6 +35,7 @@ public class CamelZipkinStarterTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelZipkinStarterTest.class))
+                .unitTestExpectedNumber(0)
                 .build();
     }
 

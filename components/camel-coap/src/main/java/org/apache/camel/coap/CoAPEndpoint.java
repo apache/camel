@@ -54,7 +54,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
     /**
      * The CoAP method this endpoint binds to. Default is to bind to all ("*") but can
-     * be restricted to GET, POST, PUT, DELETE 
+     * be restricted to GET, POST, PUT, DELETE, PING 
      * @return
      */
     public String getCoapMethod() {

@@ -316,6 +316,7 @@ Endpoint options
 
 
 
+
 // endpoint options: START
 The JMS component supports 83 endpoint options which are listed below:
 
@@ -385,9 +386,9 @@ The JMS component supports 83 endpoint options which are listed below:
 | maxMessagesPerTask | advanced | -1 | int | The number of messages per task. -1 is unlimited. If you use a range for concurrent consumers (eg min max) then this option can be used to set a value to eg 100 to control how fast the consumers will shrink when less work is required.
 | messageConverter | advanced |  | MessageConverter | To use a custom Spring org.springframework.jms.support.converter.MessageConverter so you can be in control how to map to/from a javax.jms.Message.
 | messageCreatedStrategy | advanced |  | MessageCreatedStrategy | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.
-| messageIdEnabled | advanced | true | boolean | When sending specifies whether message IDs should be added.
+| messageIdEnabled | advanced | true | boolean | When sending specifies whether message IDs should be added. This is just an hint to the JMS Broker. If the JMS provider accepts this hint these messages must have the message ID set to null; if the provider ignores the hint the message ID must be set to its normal unique value
 | messageListenerContainerFactory | advanced |  | MessageListenerContainerFactory | Registry ID of the MessageListenerContainerFactory used to determine what org.springframework.jms.listener.AbstractMessageListenerContainer to use to consume messages. Setting this will automatically set consumerType to Custom.
-| messageTimestampEnabled | advanced | true | boolean | Specifies whether timestamps should be enabled by default on sending messages.
+| messageTimestampEnabled | advanced | true | boolean | Specifies whether timestamps should be enabled by default on sending messages. This is just an hint to the JMS Broker. If the JMS provider accepts this hint these messages must have the timestamp set to zero; if the provider ignores the hint the timestamp must be set to its normal value
 | pubSubNoLocal | advanced | false | boolean | Specifies whether to inhibit the delivery of messages published by its own connection.
 | receiveTimeout | advanced | 1000 | long | The timeout for receiving messages (in milliseconds).
 | recoveryInterval | advanced | 5000 | long | Specifies the interval between recovery attempts i.e. when a connection is being refreshed in milliseconds. The default is 5000 ms that is 5 seconds.
@@ -409,6 +410,7 @@ The JMS component supports 83 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 

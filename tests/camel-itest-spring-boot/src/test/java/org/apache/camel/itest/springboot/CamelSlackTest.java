@@ -35,6 +35,8 @@ public class CamelSlackTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelSlackTest.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|SlackProducerTest$)") // excluding blueprint tests
+                .unitTestExpectedNumber(0)
                 .build();
     }
 

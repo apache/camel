@@ -35,6 +35,8 @@ public class CamelExecTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelExecTest.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|ExecJavaProcessRecipientListTest$|ExecJavaProcessTest$)")
+                // these tests are not written to work wit a fat jar, we just skip them
                 .build();
     }
 

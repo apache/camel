@@ -70,28 +70,7 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-
-    <!-- xmlbeans-maven-plugin do not work with spring-boot so we need
-         to change the dependencies from provided to test so they are not in use -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot</artifactId>
-      <version>${spring-boot-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-autoconfigure</artifactId>
-      <version>${spring-boot-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-configuration-processor</artifactId>
-      <version>${spring-boot-version}</version>
-      <scope>test</scope>
-    </dependency>
-
+ 
   </dependencies>
 
   <build>

@@ -81,8 +81,15 @@
 
   <feature name='camel-ahc' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:com.ning/async-http-client/${ahc-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty/${netty3-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.asynchttpclient/async-http-client/${ahc-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-epoll/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>    
+    <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ahc/${project.version}</bundle>
   </feature>
   <feature name='camel-ahc-ws' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -429,6 +436,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-smile/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-yaml/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.ning/compress-lzf/${compress-lzf-version}</bundle>
+    <bundle dependency='true'>mvn:org.yaml/snakeyaml/${snakeyaml-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jakarta-regexp/${regexp-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.lucene/${lucene-bundle-version}</bundle>
@@ -1048,6 +1056,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-yaml/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.yaml/snakeyaml/${snakeyaml-version}</bundle>
+    <bundle dependency='true'>mvn:io.fabric8/zjsonpatch/${zjsonpatch-version}</bundle>
     <bundle dependency='true'>mvn:io.fabric8/kubernetes-model/${kubernetes-model-version}</bundle>
     <bundle dependency='true'>mvn:io.fabric8/kubernetes-client/${kubernetes-client-version}/jar/bundle</bundle>
     <bundle dependency='true'>mvn:io.fabric8/openshift-client/${openshift-client-version}/jar/bundle</bundle>
@@ -1228,7 +1237,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <feature>http</feature>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-olingo2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpasyncclient-osgi/${httpasyncclient-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
@@ -1329,8 +1338,8 @@
   </feature>
   <feature name='camel-quickfix' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/${mina-bundle-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quickfix/${quickfix-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
+    <bundle>mvn:org.quickfixj/quickfixj-all/${quickfixj-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-quickfix/${project.version}</bundle>
   </feature>
   <feature name='camel-rabbitmq' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -1693,6 +1702,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:org.yaml/snakeyaml/${snakeyaml-version}</bundle>
     <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-api-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${swagger-java-guava-version}</bundle>
@@ -1781,9 +1791,14 @@
     <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler-proxy/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-http2/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-dns/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-socks/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-resolver-dns/${netty-version}</bundle>
     <bundle dependency='true'>mvn:com.hazelcast/hazelcast/${hazelcast-version}</bundle>
     <bundle dependency='true'>mvn:com.eclipsesource.minimal-json/minimal-json/${minimal-json-version}</bundle>
     <bundle dependency='true'>wrap:mvn:io.vertx/vertx-core/${vertx-version}</bundle>

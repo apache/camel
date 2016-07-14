@@ -28,13 +28,15 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -58,7 +60,8 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     @EndpointInject(uri = "kafka:localhost:{{karfkaPort}}?topic=" + TOPIC_STRINGS
             + "&requestRequiredAcks=-1")
     private Endpoint toStrings;
-
+    @EndpointInject(uri = "mock:kafkaAck")
+    private MockEndpoint mockEndpoint;
     @EndpointInject(uri = "kafka:localhost:{{karfkaPort}}?topic=" + TOPIC_BYTES + "&requestRequiredAcks=-1"
             + "&serializerClass=org.apache.kafka.common.serialization.ByteArraySerializer&"
             + "keySerializerClass=org.apache.kafka.common.serialization.ByteArraySerializer")
@@ -99,13 +102,13 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:startStrings").to(toStrings);
+                from("direct:startStrings").to(toStrings).to(mockEndpoint);
 
-                from("direct:startBytes").to(toBytes);
+                from("direct:startBytes").to(toBytes).to(mockEndpoint);
             }
         };
     }
@@ -125,9 +128,17 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         boolean allMessagesReceived = messagesLatch.await(200, TimeUnit.MILLISECONDS);
 
         assertTrue("Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount(), allMessagesReceived);
+
+        List<Exchange> exchangeList = mockEndpoint.getExchanges();
+        assertEquals("Fifteen Exchanges are expected", exchangeList.size(), 15);
+        for (Exchange exchange : exchangeList) {
+            List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
+            assertEquals("One RecordMetadata is expected.", recordMetaData1.size(), 1);
+            assertTrue("Offset is positive", recordMetaData1.get(0).offset() >= 0);
+            assertTrue("Topic Name start with 'test'", recordMetaData1.get(0).topic().startsWith("test"));
+        }
     }
 
-    
     @Test
     public void producedStringCollectionMessageIsReceivedByKafka() throws InterruptedException, IOException {
         int messageInTopic = 10;
@@ -139,7 +150,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         for (int x = 0; x < messageInTopic; x++) {
             msgs.add("Message " + x);
         }
-        
+
         sendMessagesInRoute(1, stringsTemplate, msgs, KafkaConstants.PARTITION_KEY, "1");
         msgs = new ArrayList<String>();
         for (int x = 0; x < messageInOtherTopic; x++) {
@@ -152,8 +163,24 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         boolean allMessagesReceived = messagesLatch.await(200, TimeUnit.MILLISECONDS);
 
         assertTrue("Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount(), allMessagesReceived);
+        List<Exchange> exchangeList = mockEndpoint.getExchanges();
+        assertEquals("Two Exchanges are expected", exchangeList.size(), 2);
+        Exchange e1 = exchangeList.get(0);
+        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) (e1.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
+        assertEquals("Ten RecordMetadata is expected.", recordMetaData1.size(), 10);
+        for (RecordMetadata recordMeta : recordMetaData1) {
+            assertTrue("Offset is positive", recordMeta.offset() >= 0);
+            assertTrue("Topic Name start with 'test'", recordMeta.topic().startsWith("test"));
+        }
+        Exchange e2 = exchangeList.get(1);
+        List<RecordMetadata> recordMetaData2 = (List<RecordMetadata>) (e2.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
+        assertEquals("Five RecordMetadata is expected.", recordMetaData2.size(), 5);
+        for (RecordMetadata recordMeta : recordMetaData2) {
+            assertTrue("Offset is positive", recordMeta.offset() >= 0);
+            assertTrue("Topic Name start with 'test'", recordMeta.topic().startsWith("test"));
+        }
     }
-    
+
     @Test
     public void producedBytesMessageIsReceivedByKafka() throws InterruptedException, IOException {
         int messageInTopic = 10;
@@ -175,6 +202,15 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         boolean allMessagesReceived = messagesLatch.await(200, TimeUnit.MILLISECONDS);
 
         assertTrue("Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount(), allMessagesReceived);
+
+        List<Exchange> exchangeList = mockEndpoint.getExchanges();
+        assertEquals("Fifteen Exchanges are expected", exchangeList.size(), 15);
+        for (Exchange exchange : exchangeList) {
+            List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
+            assertEquals("One RecordMetadata is expected.", recordMetaData1.size(), 1);
+            assertTrue("Offset is positive", recordMetaData1.get(0).offset() >= 0);
+            assertTrue("Topic Name start with 'test'", recordMetaData1.get(0).topic().startsWith("test"));
+        }
     }
 
     private void createKafkaMessageConsumer(KafkaConsumer<String, String> consumerConn,

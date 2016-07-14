@@ -107,7 +107,7 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
+            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there were " + total + " messages in this poll.");
             total = maxMessagesPerPoll;
         }
 

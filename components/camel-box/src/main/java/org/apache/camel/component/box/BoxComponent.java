@@ -64,6 +64,14 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
         super.setConfiguration(configuration);
     }
 
+    /**
+     * To use the shared configuration
+     */
+    @Override
+    public BoxConfiguration getConfiguration() {
+        return super.getConfiguration();
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();

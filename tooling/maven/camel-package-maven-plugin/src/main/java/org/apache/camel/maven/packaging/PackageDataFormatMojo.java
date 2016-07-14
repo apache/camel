@@ -199,6 +199,11 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
                             // build json schema for the data format
                             String properties = after(json, "  \"properties\": {");
+
+                            // special prepare for bindy/json properties
+                            properties = prepareBindyProperties(name, properties);
+                            properties = prepareJsonProperties(name, properties);
+
                             String schema = createParameterJsonSchema(dataFormatModel, properties);
                             log.debug("JSon schema\n" + schema);
 
@@ -270,6 +275,43 @@ public class PackageDataFormatMojo extends AbstractMojo {
         }
     }
 
+    private static String prepareBindyProperties(String name, String properties) {
+        String bindy = "\"enum\": [ \"Csv\", \"Fixed\", \"KeyValue\" ], \"deprecated\": \"false\", \"secret\": \"false\"";
+        String bindyCsv = "\"enum\": [ \"Csv\", \"Fixed\", \"KeyValue\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"Csv\"";
+        String bindyFixed = "\"enum\": [ \"Csv\", \"Fixed\", \"KeyValue\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"Fixed\"";
+        String bindyKvp = "\"enum\": [ \"Csv\", \"Fixed\", \"KeyValue\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"KeyValue\"";
+
+        if ("bindy-csv".equals(name)) {
+            properties = properties.replace(bindy, bindyCsv);
+        } else if ("bindy-fixed".equals(name)) {
+            properties = properties.replace(bindy, bindyFixed);
+        } else if ("bindy-kvp".equals(name)) {
+            properties = properties.replace(bindy, bindyKvp);
+        }
+
+        return properties;
+    }
+
+    private static String prepareJsonProperties(String name, String properties) {
+        String json = "\"enum\": [ \"Gson\", \"Jackson\", \"Johnzon\", \"XStream\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"XStream\"";
+        String jsonGson = "\"enum\": [ \"Gson\", \"Jackson\", \"Johnzon\", \"XStream\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"Gson\"";
+        String jsonJackson = "\"enum\": [ \"Gson\", \"Jackson\", \"Johnzon\", \"XStream\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"Jackson\"";
+        String jsonJohnzon = "\"enum\": [ \"Gson\", \"Jackson\", \"Johnzon\", \"XStream\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"Johnzon\"";
+        String jsonXStream = "\"enum\": [ \"Gson\", \"Jackson\", \"Johnzon\", \"XStream\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"XStream\"";
+
+        if ("json-gson".equals(name)) {
+            properties = properties.replace(json, jsonGson);
+        } else if ("json-jackson".equals(name)) {
+            properties = properties.replace(json, jsonJackson);
+        } else if ("json-johnzon".equals(name)) {
+            properties = properties.replace(json, jsonJohnzon);
+        } else if ("json-xstream".equals(name)) {
+            properties = properties.replace(json, jsonXStream);
+        }
+
+        return properties;
+    }
+
     private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext) throws MojoExecutionException {
         // skip directories as there may be a sub .resolver directory
         if (file.isDirectory()) {
@@ -303,7 +345,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
     private static String asModelName(String name) {
         // special for some data formats
-        if ("json-gson".equals(name) || "json-jackson".equals(name) || "json-xstream".equals(name) || "json-johnzon".equals(name)) {
+        if ("json-gson".equals(name) || "json-jackson".equals(name) || "json-johnzon".equals(name) || "json-xstream".equals(name)) {
             return "json";
         } else if ("bindy-csv".equals(name) || "bindy-fixed".equals(name) || "bindy-kvp".equals(name)) {
             return "bindy";
@@ -322,10 +364,10 @@ public class PackageDataFormatMojo extends AbstractMojo {
             return "JSon GSon";
         } else if ("json-jackson".equals(name)) {
             return "JSon Jackson";
-        } else if ("json-xstream".equals(name)) {
-            return "JSon XStream";
         } else if ("json-johnzon".equals(name)) {
             return "JSon Johnzon";
+        } else if ("json-xstream".equals(name)) {
+            return "JSon XStream";
         } else if ("bindy-csv".equals(name)) {
             return "Bindy CSV";
         } else if ("bindy-fixed".equals(name)) {

@@ -35,6 +35,8 @@ public class CamelLinkedinTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelLinkedinTest.class))
+                .basePath("../../components/camel-linkedin/camel-linkedin-component")
+                .unitTestExpectedNumber(0)
                 .build();
     }
 

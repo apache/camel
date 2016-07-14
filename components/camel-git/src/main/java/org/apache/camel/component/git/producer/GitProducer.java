@@ -174,7 +174,9 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         } finally {
-            result.close();
+            if (ObjectHelper.isNotEmpty(result)) {
+                result.close();
+            }
         }
     }
 
@@ -189,7 +191,9 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         } finally {
-            result.close();
+            if (ObjectHelper.isNotEmpty(result)) {
+                result.close();
+            }
         }
     }
 
@@ -342,17 +346,17 @@ public class GitProducer extends DefaultProducer {
     protected void doPush(Exchange exchange, String operation) throws Exception {
         Iterable<PushResult> result = null;
         try {
-            if (ObjectHelper.isEmpty(endpoint.getRemotePath())) {
-                throw new IllegalArgumentException("Remote path must be specified to execute " + operation);
+            if (ObjectHelper.isEmpty(endpoint.getRemoteName())) {
+                throw new IllegalArgumentException("Remote name must be specified to execute " + operation);
             }
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
                 UsernamePasswordCredentialsProvider credentials = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
-                result = git.push().setCredentialsProvider(credentials).setRemote(endpoint.getRemotePath()).call();
+                result = git.push().setCredentialsProvider(credentials).setRemote(endpoint.getRemoteName()).call();
             } else {
-                result = git.push().setRemote(endpoint.getRemotePath()).call();
+                result = git.push().setRemote(endpoint.getRemoteName()).call();
             }
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
@@ -364,17 +368,17 @@ public class GitProducer extends DefaultProducer {
     protected void doPull(Exchange exchange, String operation) throws Exception {
         PullResult result = null;
         try {
-            if (ObjectHelper.isEmpty(endpoint.getRemotePath())) {
-                throw new IllegalArgumentException("Remote path must be specified to execute " + operation);
+            if (ObjectHelper.isEmpty(endpoint.getRemoteName())) {
+                throw new IllegalArgumentException("Remote name must be specified to execute " + operation);
             }
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
                 UsernamePasswordCredentialsProvider credentials = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
-                result = git.pull().setCredentialsProvider(credentials).setRemote(endpoint.getRemotePath()).call();
+                result = git.pull().setCredentialsProvider(credentials).setRemote(endpoint.getRemoteName()).call();
             } else {
-                result = git.pull().setRemote(endpoint.getRemotePath()).call();
+                result = git.pull().setRemote(endpoint.getRemoteName()).call();
             }
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");

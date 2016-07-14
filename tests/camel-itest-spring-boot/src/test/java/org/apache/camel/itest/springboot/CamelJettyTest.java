@@ -35,6 +35,7 @@ public class CamelJettyTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelJettyTest.class))
+                .unitTestExpectedNumber(0)
                 .build();
     }
 

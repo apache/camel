@@ -35,6 +35,7 @@ public class CamelCryptoTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelCryptoTest.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|PGPKeyAccessDataFormatTest$)")
                 .build();
     }
 

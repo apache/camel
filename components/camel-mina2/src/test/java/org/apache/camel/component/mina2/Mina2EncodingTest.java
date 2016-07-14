@@ -171,7 +171,7 @@ public class Mina2EncodingTest extends BaseMina2Test {
 
         Endpoint endpoint = context.getEndpoint(uri);
         Producer producer = endpoint.createProducer();
-        Exchange exchange = producer.createExchange();
+        Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(hello);
 
         producer.start();

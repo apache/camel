@@ -144,8 +144,13 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     }
 
     @Override
-    public void postWriteCheck() {
+    public void postWriteCheck(Exchange exchange) {
         try {
+            boolean isLast = exchange.getProperty(Exchange.BATCH_COMPLETE, false, Boolean.class);
+            if (isLast && getEndpoint().isDisconnectOnBatchComplete()) {
+                log.trace("postWriteCheck disconnect on batch complete from: {}", getEndpoint());
+                disconnect();
+            }
             if (getEndpoint().isDisconnect()) {
                 log.trace("postWriteCheck disconnect from: {}", getEndpoint());
                 disconnect();

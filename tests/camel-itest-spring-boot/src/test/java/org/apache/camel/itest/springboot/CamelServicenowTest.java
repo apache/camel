@@ -35,6 +35,8 @@ public class CamelServicenowTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelServicenowTest.class))
+                .unitTestInclusionPattern("^$") // no tests
+                .unitTestExpectedNumber(0)
                 .build();
     }
 

@@ -17,6 +17,7 @@
 package org.apache.camel.itest.springboot;
 
 import org.apache.camel.itest.springboot.util.ArquillianPackager;
+import org.apache.camel.itest.springboot.util.DependencyResolver;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -35,6 +36,11 @@ public class CamelCassandraqlTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelCassandraqlTest.class))
+                .dependency(DependencyResolver.withVersion("io.netty:netty-all"))
+//                .dependency(DependencyResolver.withVersion("io.dropwizard.metrics:metrics-core"))
+//                .exclusion("com.codahale.metrics:*")
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|CassandraComponentProducerTest$|CassandraComponentBeanRefTest$|CassandraComponentConsumerTest$)")
+                // excluded tests have been checked manually (they need to run on their own JDK)
                 .build();
     }
 

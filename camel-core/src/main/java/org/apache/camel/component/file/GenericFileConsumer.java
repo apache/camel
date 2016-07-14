@@ -145,7 +145,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         // log if we hit the limit
         if (limitHit) {
-            log.debug("Limiting maximum messages to poll at {} files as there was more messages in this poll.", maxMessagesPerPoll);
+            log.debug("Limiting maximum messages to poll at {} files as there were more messages in this poll.", maxMessagesPerPoll);
         }
 
         // sort files using file comparator if provided
@@ -176,7 +176,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // we are not eager limiting, but we have configured a limit, so cut the list of files
         if (!eagerLimitMaxMessagesPerPoll && maxMessagesPerPoll > 0) {
             if (files.size() > maxMessagesPerPoll) {
-                log.debug("Limiting maximum messages to poll at {} files as there was more messages in this poll.", maxMessagesPerPoll);
+                log.debug("Limiting maximum messages to poll at {} files as there were more messages in this poll.", maxMessagesPerPoll);
                 // must first remove excessive files from the in progress repository
                 removeExcessiveInProgressFiles(q, maxMessagesPerPoll);
             }
@@ -201,7 +201,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            log.debug("Limiting to maximum messages to poll {} as there was {} messages in this poll.", maxMessagesPerPoll, total);
+            log.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.", maxMessagesPerPoll, total);
             total = maxMessagesPerPoll;
         }
 

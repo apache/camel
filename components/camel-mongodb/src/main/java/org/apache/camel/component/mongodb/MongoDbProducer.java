@@ -271,7 +271,7 @@ public class MongoDbProducer extends DefaultProducer {
                 }
                 
                 if (sortBy == null) {
-                	sortBy = new BasicDBObject();
+                    sortBy = new BasicDBObject();
                 }
                 
                 BasicDBObject ret = dbCol.find(o).projection(fieldFilter).sort(sortBy).first();

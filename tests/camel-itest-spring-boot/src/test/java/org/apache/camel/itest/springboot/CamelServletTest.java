@@ -35,6 +35,9 @@ public class CamelServletTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelServletTest.class))
+//                .dependency(DependencyResolver.withVersion("org.springframework.boot:spring-boot-starter-web"))
+//                .dependency(DependencyResolver.withVersion("org.springframework:spring-webmvc"))
+                .unitTestExclusionPattern(".*ExposedServletEndpointURIToJMXTest")
                 .build();
     }
 

@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.camel.CamelContext;
@@ -36,7 +35,6 @@ import org.osgi.framework.ServiceReference;
  */
 public class OsgiServiceRegistry extends LifecycleStrategySupport implements Registry {
     private final BundleContext bundleContext;
-    private final Map<String, Object> serviceCacheMap = new ConcurrentHashMap<String, Object>();
     private final Queue<ServiceReference<?>> serviceReferenceQueue = new ConcurrentLinkedQueue<ServiceReference<?>>();
     
     public OsgiServiceRegistry(BundleContext bc) {
@@ -47,23 +45,18 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
      * Support to lookup the Object with filter with the (name=NAME) and class type
      */
     public <T> T lookupByNameAndType(String name, Class<T> type) {
-        Object service = serviceCacheMap.get(name);
-        if (service == null) {
-            ServiceReference<?> sr  = null;
-            try {
-                ServiceReference<?>[] refs = bundleContext.getServiceReferences(type.getName(), "(name=" + name + ")");            
-                if (refs != null && refs.length > 0) {
-                    // just return the first one
-                    sr = refs[0];
-                    serviceReferenceQueue.add(sr);
-                    service = bundleContext.getService(sr);
-                    if (service != null) {
-                        serviceCacheMap.put(name, service);
-                    }
-                }
-            } catch (Exception ex) {
-                throw ObjectHelper.wrapRuntimeCamelException(ex);
+        Object service = null;
+        ServiceReference<?> sr  = null;
+        try {
+            ServiceReference<?>[] refs = bundleContext.getServiceReferences(type.getName(), "(name=" + name + ")");            
+            if (refs != null && refs.length > 0) {
+                // just return the first one
+                sr = refs[0];
+                serviceReferenceQueue.add(sr);
+                service = bundleContext.getService(sr);
             }
+        } catch (Exception ex) {
+            throw ObjectHelper.wrapRuntimeCamelException(ex);
         }
         return type.cast(service);
     }
@@ -72,7 +65,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
      * It's only support to look up the ServiceReference with Class name
      */
     public Object lookupByName(String name) {
-        Object service = serviceCacheMap.get(name);
+        Object service = null;
         if (service == null) {
             ServiceReference<?> sr = bundleContext.getServiceReference(name);            
             if (sr != null) {
@@ -80,9 +73,6 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
                 // and call ungetService when the camel context is closed 
                 serviceReferenceQueue.add(sr);
                 service = bundleContext.getService(sr);
-                if (service != null) {
-                    serviceCacheMap.put(name, service);
-                }
             } 
         }
         return service;
@@ -144,7 +134,6 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
         }
         // Clean up the OSGi Service Cache
         serviceReferenceQueue.clear();
-        serviceCacheMap.clear();
     }
 
 }

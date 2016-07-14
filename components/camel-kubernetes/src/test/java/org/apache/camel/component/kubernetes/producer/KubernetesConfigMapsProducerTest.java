@@ -16,17 +16,12 @@
  */
 package org.apache.camel.component.kubernetes.producer;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
-import io.fabric8.kubernetes.api.model.Container;
-import io.fabric8.kubernetes.api.model.ContainerPort;
-import io.fabric8.kubernetes.api.model.Pod;
-import io.fabric8.kubernetes.api.model.PodSpec;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -44,8 +39,7 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
             return;
         }
         List<ConfigMap> result = template.requestBody("direct:list", "", List.class);
-
-        assertEquals(0, result.size());
+        assertEquals(1, result.size());
     }
 
     @Test

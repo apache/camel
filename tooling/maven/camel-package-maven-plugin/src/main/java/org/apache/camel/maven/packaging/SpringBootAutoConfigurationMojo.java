@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -63,8 +64,8 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  */
 public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
-    // xml beans does not work with Spring Boot APT compiler plugin
-    private static final String[] EXCLUDE_DATAFORMATS = {"xmlBeans"};
+    private static final String[] SKIP_COMPONENTS = new String[]{"ahc-wss", "cometds", "https", "http4s", "smpps", "solrs", "solrCloud"};
+    private static final String[] MAIL_COMPONENTS = new String[]{"imap", "imaps", "pop3", "pop3s", "smtp", "smtps"};
 
     /**
      * The maven project.
@@ -122,6 +123,27 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         if (!componentNames.isEmpty()) {
             getLog().debug("Found " + componentNames.size() + " components");
             for (String componentName : componentNames) {
+
+                // skip some components which is duplicates
+                boolean skip = false;
+                for (String name : SKIP_COMPONENTS) {
+                    if (name.equals(componentName)) {
+                        skip = true;
+                    }
+                }
+                if (skip) {
+                    continue;
+                }
+
+                // mail component should just be mail
+                String overrideComponentName = null;
+                for (String name : MAIL_COMPONENTS) {
+                    if (name.equals(componentName)) {
+                        overrideComponentName = "mail";
+                        break;
+                    }
+                }
+
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
                     ComponentModel model = generateComponentModel(componentName, json);
@@ -134,7 +156,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                         int pos = model.getJavaType().lastIndexOf(".");
                         String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
-                        createComponentConfigurationSource(pkg, model);
+                        createComponentConfigurationSource(pkg, model, overrideComponentName);
                         createComponentAutoConfigurationSource(pkg, model);
                         createComponentSpringFactorySource(pkg, model);
                     }
@@ -159,13 +181,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 if (json != null) {
                     DataFormatModel model = generateDataFormatModel(dataFormatName, json);
 
-                    // should we skip the data format?
-                    for (String exclude : EXCLUDE_DATAFORMATS) {
-                        if (exclude.equals(model.getName())) {
-                            return;
-                        }
-                    }
-
                     // only create source code if the component has options that can be used in auto configuration
                     if (!model.getDataFormatOptions().isEmpty()) {
 
@@ -183,7 +198,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
-    private void createComponentConfigurationSource(String packageName, ComponentModel model) throws MojoFailureException {
+    private void createComponentConfigurationSource(String packageName, ComponentModel model, String overrideComponentName) throws MojoFailureException {
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
         int pos = model.getJavaType().lastIndexOf(".");
@@ -197,7 +212,9 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
         javaClass.getJavaDoc().setFullText(doc);
 
-        String prefix = "camel.component." + model.getScheme();
+        String prefix = "camel.component." + (overrideComponentName != null ? overrideComponentName : model.getScheme());
+        // make sure prefix is in lower case
+        prefix = prefix.toLowerCase(Locale.US);
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
         for (ComponentOptionModel option : model.getComponentOptions()) {
@@ -227,8 +244,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     prop.getField().setLiteralInitializer(option.getDefaultValue());
                 } else if (!Strings.isBlank(option.getEnumValues())) {
                     String enumShortName = type.substring(type.lastIndexOf(".") + 1);
-                    String value = getDefaultValue(model.getScheme(), option.getName(), option.getDefaultValue());
-                    prop.getField().setLiteralInitializer(enumShortName + "." + value);
+                    prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
                     javaClass.addImport(model.getJavaType());
                 }
             }
@@ -277,7 +293,9 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
         javaClass.getJavaDoc().setFullText(doc);
 
-        String prefix = "camel.dataformat." + model.getModelName();
+        String prefix = "camel.dataformat." + model.getName();
+        // make sure prefix is in lower case
+        prefix = prefix.toLowerCase(Locale.US);
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
         for (DataFormatOptionModel option : model.getDataFormatOptions()) {
@@ -311,8 +329,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     prop.getField().setLiteralInitializer(option.getDefaultValue());
                 } else if (!Strings.isBlank(option.getEnumValues())) {
                     String enumShortName = type.substring(type.lastIndexOf(".") + 1);
-                    String value = getDefaultValue(model.getName(), option.getName(), option.getDefaultValue());
-                    prop.getField().setLiteralInitializer(enumShortName + "." + value);
+                    prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
                     javaClass.addImport(model.getJavaType());
                 }
             }
@@ -345,19 +362,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         } catch (Exception e) {
             throw new MojoFailureException("IOError with file " + target, e);
         }
-    }
-
-    private String getDefaultValue(String modelName, String optionName, String defaultValue) {
-        // special for some data formats
-        if ("json-jackson".equals(modelName) && "library".equals(optionName)) {
-            return "Jackson";
-        } else if ("json-xstream".equals(modelName) && "library".equals(optionName)) {
-            return "XStream";
-        } else if ("json-gson".equals(modelName) && "library".equals(optionName)) {
-            return "Gson";
-        }
-
-        return defaultValue;
     }
 
     private void createComponentAutoConfigurationSource(String packageName, ComponentModel model) throws MojoFailureException {

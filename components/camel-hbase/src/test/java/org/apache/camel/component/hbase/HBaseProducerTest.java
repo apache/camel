@@ -30,7 +30,6 @@ import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Table;
 import org.junit.Test;
@@ -126,7 +125,8 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             template.sendBodyAndHeaders("direct:start", null, headers);
 
             Configuration configuration = hbaseUtil.getHBaseAdmin().getConfiguration();
-            HTable bar = new HTable(configuration, PERSON_TABLE.getBytes());
+            Connection conn = ConnectionFactory.createConnection(configuration);
+            Table bar = conn.getTable(TableName.valueOf(PERSON_TABLE));
 
             //Check row 1
             for (int row = 0; row < key.length; row++) {
@@ -316,7 +316,10 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             template.sendBodyAndHeaders("direct:start", null, headers);
 
             Configuration configuration = hbaseUtil.getHBaseAdmin().getConfiguration();
-            HTable bar = new HTable(configuration, PERSON_TABLE.getBytes());
+            
+            Connection conn = ConnectionFactory.createConnection(configuration);
+            Table bar = conn.getTable(TableName.valueOf(PERSON_TABLE));
+            
             Get get = new Get("1".getBytes());
             get.addColumn("info".getBytes(), "id".getBytes());
             Result result = bar.get(get);

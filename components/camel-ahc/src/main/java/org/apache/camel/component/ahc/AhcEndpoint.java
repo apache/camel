@@ -20,8 +20,9 @@ import java.net.URI;
 import java.util.Map;
 import javax.net.ssl.SSLContext;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
+import io.netty.handler.ssl.ClientAuth;
+import io.netty.handler.ssl.JdkSslContext;
+
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -35,6 +36,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClientConfig;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
 /**
  * To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
@@ -61,7 +66,7 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "advanced")
     private AsyncHttpClientConfig clientConfig;
-    @UriParam(label = "advanced", prefix = "clientConfig.", multiValue = true)
+    @UriParam(label = "advanced", prefix = "asyncHttpClientConfig.", multiValue = true)
     private Map<String, Object> clientConfigOptions;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean connectionClose;
@@ -251,19 +256,21 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             AsyncHttpClientConfig config = null;
             
             if (clientConfig != null) {
-                AsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
+                DefaultAsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
                 
                 if (sslContextParameters != null) {
-                    SSLContext ssl = sslContextParameters.createSSLContext(getCamelContext());
-                    builder.setSSLContext(ssl);
+                    SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
+                    JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
+                    builder.setSslContext(ssl);
                 }
                 
                 config = builder.build();
             } else {
                 if (sslContextParameters != null) {
-                    AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
-                    SSLContext ssl = sslContextParameters.createSSLContext(getCamelContext());
-                    builder.setSSLContext(ssl);
+                    DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
+                    SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
+                    JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
+                    builder.setSslContext(ssl);
                     config = builder.build();
                 }
             }
@@ -273,9 +280,9 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
     protected AsyncHttpClient createClient(AsyncHttpClientConfig config) {
         if (config == null) {
-            return new AsyncHttpClient();
+            return new DefaultAsyncHttpClient();
         } else {
-            return new AsyncHttpClient(config);
+            return new DefaultAsyncHttpClient(config);
         }
     }
 

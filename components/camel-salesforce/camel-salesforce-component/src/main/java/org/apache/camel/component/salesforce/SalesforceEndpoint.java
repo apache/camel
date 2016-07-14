@@ -75,7 +75,7 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         }
 
         final SalesforceConsumer consumer = new SalesforceConsumer(this, processor,
-            getComponent().getSubscriptionHelper());
+            getComponent().getSubscriptionHelper(topicName));
         configureConsumer(consumer);
         return consumer;
     }

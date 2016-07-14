@@ -62,6 +62,18 @@ public class CamelConfigurationProperties {
     private String xmlRests = "classpath:camel-rest/*.xml";
 
     /**
+     * Directory to load additional configuration files that contains
+     * configuration values that takes precedence over any other configuration.
+     * This can be used to refer to files that may have secret configuration that
+     * has been mounted on the file system for containers.
+     * <p/>
+     * You must use either <tt>file:</tt> or <tt>classpath:</tt> as prefix to load
+     * from file system or classpath. Then you can specify a pattern to load
+     * from sub directories and a name pattern such as <tt>file:/var/app/secret/*.properties</tt>
+     */
+    private String fileConfigurations;
+
+    /**
      * Whether to use the main run controller to ensure the Spring-Boot application
      * keeps running until being stopped or the JVM terminated.
      * You typically only need this if you run Spring-Boot standalone.
@@ -80,8 +92,80 @@ public class CamelConfigurationProperties {
      * Sets whether stream caching is enabled or not.
      *
      * Default is false.
+     *
+     * @deprecated use {@link #streamCachingEnabled}
      */
+    @Deprecated
     private boolean streamCaching;
+
+    /**
+     * Sets whether stream caching is enabled or not.
+     *
+     * Default is false.
+     */
+    private boolean streamCachingEnabled;
+
+    /**
+     * Sets the stream caching spool (temporary) directory to use for overflow and spooling to disk.
+     * <p/>
+     * If no spool directory has been explicit configured, then a temporary directory
+     * is created in the <tt>java.io.tmpdir</tt> directory.
+     */
+    private String streamCachingSpoolDirectory;
+
+    /**
+     * Sets a stream caching chiper name to use when spooling to disk to write with encryption.
+     * <p/>
+     * By default the data is not encrypted.
+     */
+    private String streamCachingSpoolChiper;
+
+    /**
+     * Stream caching threshold in bytes when overflow to disk is activated.
+     * <p/>
+     * The default threshold is {@link org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes (eg 128kb).
+     * Use <tt>-1</tt> to disable overflow to disk.
+     */
+    private long streamCachingSpoolThreshold;
+
+    /**
+     * Sets a percentage (1-99) of used heap memory threshold to activate stream caching spooling to disk.
+     */
+    private int streamCachingSpoolUsedHeapMemoryThreshold;
+
+    /**
+     * Sets what the upper bounds should be when streamCachingSpoolUsedHeapMemoryThreshold is in use.
+     */
+    private String streamCachingSpoolUsedHeapMemoryLimit;
+
+    /**
+     * Sets whether if just any of the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rules
+     * returns <tt>true</tt> then shouldSpoolCache(long) returns <tt>true</tt>.
+     * If this option is <tt>false</tt>, then <b>all</b> the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} must
+     * return <tt>true</tt>.
+     * <p/>
+     * The default value is <tt>false</tt> which means that all the rules must return <tt>true</tt>.
+     */
+    private boolean streamCachingAnySpoolRules;
+
+    /**
+     * Sets the stream caching buffer size to use when allocating in-memory buffers used for in-memory stream caches.
+     * <p/>
+     * The default size is {@link org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE}
+     */
+    private int streamCachingBufferSize;
+
+    /**
+     * Whether to remove stream caching temporary directory when stopping.
+     * <p/>
+     * This option is default <tt>true</tt>
+     */
+    private boolean streamCachingRemoveSpoolDirectoryWhenStopping = true;
+
+    /**
+     * Sets whether stream caching statistics is enabled.
+     */
+    private boolean streamCachingStatisticsEnabled;
 
     /**
      * Sets whether tracing is enabled or not.
@@ -235,12 +319,94 @@ public class CamelConfigurationProperties {
         this.logDebugMaxChars = logDebugMaxChars;
     }
 
+    @Deprecated
     public boolean isStreamCaching() {
-        return streamCaching;
+        return streamCachingEnabled;
     }
 
+    @Deprecated
     public void setStreamCaching(boolean streamCaching) {
-        this.streamCaching = streamCaching;
+        this.streamCachingEnabled = streamCaching;
+    }
+
+    public boolean isStreamCachingEnabled() {
+        return streamCachingEnabled;
+    }
+
+    public void setStreamCachingEnabled(boolean streamCachingEnabled) {
+        this.streamCachingEnabled = streamCachingEnabled;
+    }
+
+    public String getStreamCachingSpoolDirectory() {
+        return streamCachingSpoolDirectory;
+    }
+
+    public void setStreamCachingSpoolDirectory(String streamCachingSpoolDirectory) {
+        this.streamCachingSpoolDirectory = streamCachingSpoolDirectory;
+    }
+
+    public String getStreamCachingSpoolChiper() {
+        return streamCachingSpoolChiper;
+    }
+
+    public void setStreamCachingSpoolChiper(String streamCachingSpoolChiper) {
+        this.streamCachingSpoolChiper = streamCachingSpoolChiper;
+    }
+
+    public long getStreamCachingSpoolThreshold() {
+        return streamCachingSpoolThreshold;
+    }
+
+    public void setStreamCachingSpoolThreshold(long streamCachingSpoolThreshold) {
+        this.streamCachingSpoolThreshold = streamCachingSpoolThreshold;
+    }
+
+    public int getStreamCachingSpoolUsedHeapMemoryThreshold() {
+        return streamCachingSpoolUsedHeapMemoryThreshold;
+    }
+
+    public void setStreamCachingSpoolUsedHeapMemoryThreshold(int streamCachingSpoolUsedHeapMemoryThreshold) {
+        this.streamCachingSpoolUsedHeapMemoryThreshold = streamCachingSpoolUsedHeapMemoryThreshold;
+    }
+
+    public String getStreamCachingSpoolUsedHeapMemoryLimit() {
+        return streamCachingSpoolUsedHeapMemoryLimit;
+    }
+
+    public void setStreamCachingSpoolUsedHeapMemoryLimit(String streamCachingSpoolUsedHeapMemoryLimit) {
+        this.streamCachingSpoolUsedHeapMemoryLimit = streamCachingSpoolUsedHeapMemoryLimit;
+    }
+
+    public boolean isStreamCachingAnySpoolRules() {
+        return streamCachingAnySpoolRules;
+    }
+
+    public void setStreamCachingAnySpoolRules(boolean streamCachingAnySpoolRules) {
+        this.streamCachingAnySpoolRules = streamCachingAnySpoolRules;
+    }
+
+    public int getStreamCachingBufferSize() {
+        return streamCachingBufferSize;
+    }
+
+    public void setStreamCachingBufferSize(int streamCachingBufferSize) {
+        this.streamCachingBufferSize = streamCachingBufferSize;
+    }
+
+    public boolean isStreamCachingRemoveSpoolDirectoryWhenStopping() {
+        return streamCachingRemoveSpoolDirectoryWhenStopping;
+    }
+
+    public void setStreamCachingRemoveSpoolDirectoryWhenStopping(boolean streamCachingRemoveSpoolDirectoryWhenStopping) {
+        this.streamCachingRemoveSpoolDirectoryWhenStopping = streamCachingRemoveSpoolDirectoryWhenStopping;
+    }
+
+    public boolean isStreamCachingStatisticsEnabled() {
+        return streamCachingStatisticsEnabled;
+    }
+
+    public void setStreamCachingStatisticsEnabled(boolean streamCachingStatisticsEnabled) {
+        this.streamCachingStatisticsEnabled = streamCachingStatisticsEnabled;
     }
 
     public boolean isTracing() {
@@ -321,5 +487,13 @@ public class CamelConfigurationProperties {
 
     public void setJmxCreateConnector(boolean jmxCreateConnector) {
         this.jmxCreateConnector = jmxCreateConnector;
+    }
+
+    public String getFileConfigurations() {
+        return fileConfigurations;
+    }
+
+    public void setFileConfigurations(String fileConfigurations) {
+        this.fileConfigurations = fileConfigurations;
     }
 }

@@ -57,6 +57,9 @@ public class GitEndpoint extends DefaultEndpoint {
 
     @UriParam
     private String remotePath;
+    
+    @UriParam
+    private String remoteName;
 
     @UriParam(enums = "clone,init,add,remove,commit,commitAll,createBranch,deleteBranch,createTag,deleteTag,status,log,push,pull,showBranches,cherryPick", label = "producer")
     private String operation;
@@ -174,6 +177,17 @@ public class GitEndpoint extends DefaultEndpoint {
 
     public void setTagName(String tagName) {
         this.tagName = tagName;
+    }
+    
+    /**
+     * The remote repository name to use in particular operation like pull
+     */
+    public String getRemoteName() {
+        return remoteName;
+    }
+
+    public void setRemoteName(String remoteName) {
+        this.remoteName = remoteName;
     }
 
 }

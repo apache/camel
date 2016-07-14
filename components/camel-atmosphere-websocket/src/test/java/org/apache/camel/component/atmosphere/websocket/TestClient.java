@@ -24,12 +24,13 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.ws.WebSocket;
-import com.ning.http.client.ws.WebSocketByteListener;
-import com.ning.http.client.ws.WebSocketTextListener;
-import com.ning.http.client.ws.WebSocketUpgradeHandler;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClientConfig;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.ws.WebSocket;
+import org.asynchttpclient.ws.WebSocketByteListener;
+import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,7 @@ public class TestClient {
     public TestClient(String url, AsyncHttpClientConfig conf, int count) {
         this.received = new ArrayList<Object>();
         this.latch = new CountDownLatch(count);
-        this.client = conf == null ? new AsyncHttpClient() : new AsyncHttpClient(conf);
+        this.client = conf == null ? new DefaultAsyncHttpClient() : new DefaultAsyncHttpClient(conf);
         this.url = url;
     }
     
@@ -114,7 +115,7 @@ public class TestClient {
         return null;
     }
     
-    public void close() {
+    public void close() throws IOException {
         websocket.close();
         client.close();
     }

@@ -183,9 +183,10 @@ public class EtcdConfiguration {
 
         URI[] etcdUriList = new URI[uris.length];
 
-        int i = 0;
-        for (String uri : uris) {
-            etcdUriList[i++] = URI.create(camelContext.resolvePropertyPlaceholders(uri));
+        for (int i = 0; i < uris.length; i++) {
+            etcdUriList[i] = camelContext != null
+                ? URI.create(camelContext.resolvePropertyPlaceholders(uris[i]))
+                : URI.create(uris[i]);
         }
 
         return new EtcdClient(

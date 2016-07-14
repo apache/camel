@@ -19,6 +19,7 @@ package org.apache.camel.component.git.producer;
 import java.io.File;
 import java.util.List;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +27,7 @@ import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitTestSupport;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
@@ -46,6 +48,23 @@ public class GitProducerTest extends GitTestSupport {
         template.sendBody("direct:init", "");
         File gitDir = new File(gitLocalRepo, ".git");
         assertEquals(gitDir.exists(), true);
+    }
+    
+    @Test(expected = CamelExecutionException.class)
+    public void doubleCloneOperationTest() throws Exception {
+        template.sendBody("direct:clone", "");
+        template.sendBody("direct:clone", "");
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+    }
+    
+    @Test
+    public void pullTest() throws Exception {
+        template.sendBody("direct:clone", "");
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        PullResult pr = template.requestBody("direct:pull", "", PullResult.class);
+        assertTrue(pr.isSuccessful());
     }
     
     @Test
@@ -1087,6 +1106,8 @@ public class GitProducerTest extends GitTestSupport {
                         .to("git://" + gitLocalRepo + "?operation=cherryPick&branchName=" + branchTest);
                 from("direct:cherrypick-master")
                         .to("git://" + gitLocalRepo + "?operation=cherryPick&branchName=refs/heads/master");
+                from("direct:pull")
+                        .to("git://" + gitLocalRepo + "?remoteName=origin&operation=pull");
             } 
         };
     }

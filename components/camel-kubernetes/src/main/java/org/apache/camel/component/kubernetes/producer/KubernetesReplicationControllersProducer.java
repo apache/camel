@@ -83,6 +83,10 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         case KubernetesOperations.DELETE_REPLICATION_CONTROLLER_OPERATION:
             doDeleteReplicationController(exchange, operation);
             break;
+            
+        case KubernetesOperations.SCALE_REPLICATION_CONTROLLER_OPERATION:
+            doScaleReplicationController(exchange, operation);
+            break;
 
         default:
             throw new IllegalArgumentException("Unsupported operation "
@@ -135,6 +139,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
             rcList = replicationControllers.list();
         }
         exchange.getOut().setBody(rcList.getItems());
+        
     }
 
     protected void doGetReplicationController(Exchange exchange,
@@ -218,5 +223,36 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
                 .replicationControllers().inNamespace(namespaceName)
                 .withName(rcName).delete();
         exchange.getOut().setBody(rcDeleted);
+    }
+    
+    protected void doScaleReplicationController(Exchange exchange,
+            String operation) throws Exception {
+        String rcName = exchange.getIn().getHeader(
+                KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME,
+                String.class);
+        String namespaceName = exchange.getIn().getHeader(
+                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        Integer replicasNumber = exchange.getIn().getHeader(
+                KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_REPLICAS, Integer.class);
+        if (ObjectHelper.isEmpty(rcName)) {
+            LOG.error("Scale a specific replication controller require specify a replication controller name");
+            throw new IllegalArgumentException(
+                    "Scale a specific replication controller require specify a replication controller name");
+        }
+        if (ObjectHelper.isEmpty(namespaceName)) {
+            LOG.error("Scale a specific replication controller require specify a namespace name");
+            throw new IllegalArgumentException(
+                    "Scale a specific replication controller require specify a namespace name");
+        }
+        if (ObjectHelper.isEmpty(replicasNumber)) {
+            LOG.error("Scale a specific replication controller require specify a replicas number");
+            throw new IllegalArgumentException(
+                    "Scale a specific replication controller require specify a replicas number");
+        }
+        ReplicationController rcScaled = getEndpoint().getKubernetesClient()
+                .replicationControllers().inNamespace(namespaceName)
+                .withName(rcName).scale(replicasNumber, true);
+        
+        exchange.getOut().setBody(rcScaled.getStatus().getReplicas());
     }
 }

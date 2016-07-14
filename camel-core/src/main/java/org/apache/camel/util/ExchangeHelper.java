@@ -16,8 +16,8 @@
  */
 package org.apache.camel.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -915,7 +915,7 @@ public final class ExchangeHelper {
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
         if (history != null) {
-            answer.put(Exchange.MESSAGE_HISTORY, new ArrayList<MessageHistory>(history));
+            answer.put(Exchange.MESSAGE_HISTORY, new LinkedList<>(history));
         }
 
         return answer;
