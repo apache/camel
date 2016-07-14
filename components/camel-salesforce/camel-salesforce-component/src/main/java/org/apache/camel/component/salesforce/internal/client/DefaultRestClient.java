@@ -64,7 +64,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         this.format = format;
 
         // initialize error parsers for JSON and XML
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = JsonUtils.createObjectMapper();
         this.xStream = new XStream();
         xStream.processAnnotations(RestErrors.class);
         xStream.processAnnotations(RestChoices.class);

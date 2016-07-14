@@ -24,7 +24,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -39,7 +38,7 @@ import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SearchResult;
 import org.apache.camel.component.salesforce.api.dto.Version;
-import org.apache.camel.component.salesforce.internal.joda.DateTimeModule;
+import org.apache.camel.component.salesforce.internal.client.JsonUtils;
 import org.eclipse.jetty.util.StringUtil;
 
 public class JsonRestProcessor extends AbstractRestProcessor {
@@ -55,10 +54,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         if (endpoint.getConfiguration().getObjectMapper() != null) {
             this.objectMapper = endpoint.getConfiguration().getObjectMapper();
         } else {
-            this.objectMapper = new ObjectMapper();
-            // enable date time support including Joda DateTime
-            this.objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-            this.objectMapper.registerModule(new DateTimeModule());
+            this.objectMapper = JsonUtils.createObjectMapper();
         }
     }
 

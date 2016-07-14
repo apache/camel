@@ -14,40 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce.internal.joda;
+package org.apache.camel.component.salesforce.internal.datetime;
+
+
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.TemporalQuery;
 
-import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 
 
-public class DateTimeDeserializer extends JsonDeserializer<ZonedDateTime> {
+public class DateTimeSerializer extends JsonSerializer<ZonedDateTime> {
 
     private final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
             .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
             .appendOffset("+HH:mm", "Z")
             .toFormatter();
 
-    public DateTimeDeserializer() {
+    public DateTimeSerializer() {
         super();
     }
 
     @Override
-    public ZonedDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-        JsonToken currentToken = jsonParser.getCurrentToken();
-        if (currentToken == JsonToken.VALUE_STRING) {
-            String dateTimeAsString = jsonParser.getText().trim();
-            return formatter.parse(dateTimeAsString, ZonedDateTime::from);
-        }
-        throw deserializationContext.mappingException(getClass());
+    public void serialize(ZonedDateTime dateTime, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
+        jsonGenerator.writeString(formatter.format(dateTime));
     }
 
 }

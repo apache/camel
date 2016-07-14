@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce.internal.joda;
+package org.apache.camel.component.salesforce.internal.datetime;
 
 
 import java.time.ZonedDateTime;
