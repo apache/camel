@@ -60,6 +60,7 @@ import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.transformer.TransformersDefinition;
 import org.apache.camel.spi.PackageScanFilter;
 
 @XmlRootElement(name = "camelContext")
@@ -188,6 +189,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlElement(name = "dataFormats")
     private DataFormatsDefinition dataFormats;
+
+    @XmlElement(name = "transformers")
+    private TransformersDefinition transformers;
 
     @XmlElement(name = "redeliveryPolicyProfile")
     private List<RedeliveryPolicyFactoryBean> redeliveryPolicies;
@@ -637,6 +641,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setDataFormats(DataFormatsDefinition dataFormats) {
         this.dataFormats = dataFormats;
+    }
+
+    public TransformersDefinition getTransformers() {
+        return transformers;
+    }
+
+    public void setTransformers(TransformersDefinition transformers) {
+        this.transformers = transformers;
     }
 
     public List<OnExceptionDefinition> getOnExceptions() {
