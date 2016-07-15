@@ -570,7 +570,10 @@ public final class MessageHelper {
             routeId = history.getRouteId() != null ? history.getRouteId() : "";
             id = history.getNode().getId();
             // we need to avoid leak the sensible information here
-            label =  URISupport.sanitizeUri(history.getNode().getLabel());
+            // the sanitizeUri takes a very long time for very long string and the format cuts this to
+            // 78 characters, anyway. Cut this to 100 characters. This will give enough space for removing
+            // characters in the sanitizeUri method and will be reasonably fast
+            label =  URISupport.sanitizeUri(StringHelper.limitLenght(history.getNode().getLabel(), 100));            
             elapsed = history.getElapsed();
 
             sb.append(String.format(MESSAGE_HISTORY_OUTPUT, routeId, id, label, elapsed));

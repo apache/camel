@@ -808,6 +808,12 @@
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-infinispan/${project.version}</bundle>
   </feature>
+  <feature name='camel-influxdb' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>The camel-influxdb feature requires Java 8</details>
+    <bundle dependency='true'>wrap:mvn:org.influxdb/influxdb-java/${influx-java-driver-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-influxdb/${project.version}</bundle>
+  </feature>
   <feature name='camel-irc' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.irclib/${irclib-bundle-version}</bundle>
@@ -1104,6 +1110,17 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.lucene-sandbox/${lucene-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jakarta-regexp/${regexp-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-lucene/${project.version}</bundle>
+  </feature>
+  <feature name='camel-lumberjack' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-lumberjack/${project.version}</bundle>
   </feature>
   <feature name='camel-lzf' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>

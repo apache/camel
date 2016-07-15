@@ -344,5 +344,4 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         this.sslContextParameters = sslContextParameters;
     }
 
-
 }

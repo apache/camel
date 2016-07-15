@@ -14,18 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce.internal.joda;
+package org.apache.camel.component.influxdb;
 
+public final class InfluxDbConstants {
 
-import java.time.ZonedDateTime;
+    public static final String MEASUREMENT_NAME = "camelInfluxDB.MeasurementName";
+    public static final String RETENTION_POLICY_HEADER = "camelInfluxDB.RetentionPolicy";
+    public static final String DBNAME_HEADER = "camelInfluxDB.databaseName";
+    
+    private InfluxDbConstants() {
 
-import com.fasterxml.jackson.databind.module.SimpleModule;
-
-public class DateTimeModule extends SimpleModule {
-
-    public DateTimeModule() {
-        super();
-        addSerializer(ZonedDateTime.class, new DateTimeSerializer());
-        addDeserializer(ZonedDateTime.class, new DateTimeDeserializer());
     }
+
+   
 }

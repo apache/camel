@@ -86,7 +86,7 @@
     <caffeine-version>2.3.1</caffeine-version>
     <californium-version>1.0.4</californium-version>
     <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
-    <cassandra-driver-version>3.0.2</cassandra-driver-version>
+    <cassandra-driver-version>3.0.3</cassandra-driver-version>
     <cassandra-driver-guava-version>18.0</cassandra-driver-guava-version>
     <cassandra-version>3.7</cassandra-version>
     <cassandra-unit-version>3.0.0.1</cassandra-unit-version>
@@ -255,6 +255,7 @@
     <ignite-version>1.5.0.final</ignite-version>
     <ignite-version-range>[1.5.0-b1,1.6)</ignite-version-range>
     <infinispan-version>8.2.3.Final</infinispan-version>
+    <influx-java-driver-version>2.2</influx-java-driver-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <ironmq-version>3.0.4</ironmq-version>
@@ -426,7 +427,7 @@
     <mybatis-version>3.4.1</mybatis-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <netty3-version>3.10.6.Final</netty3-version>
-    <netty-version>4.1.2.Final</netty-version>
+    <netty-version>4.1.3.Final</netty-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
@@ -469,7 +470,7 @@
     <rabbitmq-amqp-client-version>3.6.3</rabbitmq-amqp-client-version>
     <reflections-bundle-version>0.9.10_3</reflections-bundle-version>
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
-    <rest-assured-version>2.9.0</rest-assured-version>
+    <rest-assured-version>3.0.0</rest-assured-version>
     <restlet-version>2.3.6</restlet-version>
     <restlet-jackson-version>2.4.4</restlet-jackson-version>
     <restlet-woodstox-version>4.3.0</restlet-woodstox-version>
@@ -479,7 +480,7 @@
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
     <rhino-version>1.7R2</rhino-version>
     <ribbon-version>2.2.0</ribbon-version>
-    <roaster-version>2.18.3.Final</roaster-version>
+    <roaster-version>2.19.0.Final</roaster-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
     <rxjava-version>1.1.7</rxjava-version>
@@ -1114,6 +1115,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-influxdb</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-ignite</artifactId>
         <version>${project.version}</version>
       </dependency>      
@@ -1294,11 +1300,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-lucene</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-ldap</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1315,6 +1316,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-linkedin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-lucene</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-lumberjack</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

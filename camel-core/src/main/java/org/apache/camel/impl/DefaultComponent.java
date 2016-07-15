@@ -114,17 +114,15 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             return null;
         }
 
-        if (!parameters.isEmpty()) {
-            endpoint.configureProperties(parameters);
-            if (useIntrospectionOnEndpoint()) {
-                setProperties(endpoint, parameters);
-            }
+        endpoint.configureProperties(parameters);
+        if (useIntrospectionOnEndpoint()) {
+            setProperties(endpoint, parameters);
+        }
 
-            // if endpoint is strict (not lenient) and we have unknown parameters configured then
-            // fail if there are parameters that could not be set, then they are probably misspell or not supported at all
-            if (!endpoint.isLenientProperties()) {
-                validateParameters(uri, parameters, null);
-            }
+        // if endpoint is strict (not lenient) and we have unknown parameters configured then
+        // fail if there are parameters that could not be set, then they are probably misspell or not supported at all
+        if (!endpoint.isLenientProperties()) {
+            validateParameters(uri, parameters, null);
         }
 
         afterConfiguration(uri, path, endpoint, parameters);
@@ -172,6 +170,10 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
      */
     protected void validateParameters(String uri, Map<String, Object> parameters, String optionPrefix) {
+        if (parameters == null || parameters.isEmpty()) {
+            return;
+        }
+
         Map<String, Object> param = parameters;
         if (optionPrefix != null) {
             param = IntrospectionSupport.extractProperties(parameters, optionPrefix);

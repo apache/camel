@@ -26,6 +26,7 @@ import org.apache.camel.CamelException;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
+import org.apache.camel.component.salesforce.internal.client.JsonUtils;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.SyncResponseCallback;
 import org.apache.camel.component.salesforce.internal.dto.PushTopic;
@@ -36,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 public class PushTopicHelper {
     private static final Logger LOG = LoggerFactory.getLogger(PushTopicHelper.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonUtils.createObjectMapper();
     private static final String PUSH_TOPIC_OBJECT_NAME = "PushTopic";
     private static final long API_TIMEOUT = 60; // Rest API call timeout
     private final SalesforceEndpointConfig config;
