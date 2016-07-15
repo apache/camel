@@ -36,11 +36,13 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.remote.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
@@ -69,6 +71,7 @@ import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
@@ -1215,6 +1218,37 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param dataFormatResolver the resolver
      */
     void setDataFormatResolver(DataFormatResolver dataFormatResolver);
+
+    /**
+     * Sets the transformers that can be referenced in the routes.
+     *
+     * @param transformers the transformers
+     */
+    void setTransformers(List<TransformerDefinition> transformers);
+
+    /**
+     * Gets the transformers that can be referenced in the routes.
+     *
+     * @return the transformers available
+     */
+    List<TransformerDefinition> getTransformers();
+
+    /**
+     * Resolve a transformer given a scheme
+     *
+     * @param model data model name.
+     * @return the resolved transformer, or <tt>null</tt> if not found
+     */
+    Transformer resolveTransformer(String model);
+
+    /**
+     * Resolve a transformer given from/to data type.
+     *
+     * @param from from data type
+     * @param to to data type
+     * @return the resolved data format, or <tt>null</tt> if not found
+     */
+    Transformer resolveTransformer(DataType from, DataType to);
 
     /**
      * Sets the properties that can be referenced in the camel context
