@@ -192,4 +192,9 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
      */
     int getAndIncrement(ProcessorDefinition<?> node);
 
+    /**
+     * 
+     * @param contract
+     */
+    void setContract(Contract contract);
 }

@@ -231,6 +231,9 @@ public interface Exchange {
     String XSLT_FATAL_ERROR = "CamelXsltFatalError";
     String XSLT_WARNING     = "CamelXsltWarning";
 
+    String INPUT_TYPE  = "CamelInputType";
+    String OUTPUT_TYPE = "CamelOutputType";
+
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
      *
