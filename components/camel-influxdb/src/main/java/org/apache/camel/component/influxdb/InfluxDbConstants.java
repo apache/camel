@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.influxdb;
 
-/**
- * Created by jose on 18/06/16.
- */
 public final class InfluxDbConstants {
 
     public static final String MEASUREMENT_NAME = "camelInfluxDB.MeasurementName";
