@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.lumberjack;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.Processor;
@@ -45,14 +47,18 @@ public class LumberjackEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public LumberjackComponent getComponent() {
+        return (LumberjackComponent) super.getComponent();
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("The Lumberjack component cannot be used as a producer");
     }
 
     @Override
     public LumberjackConsumer createConsumer(Processor processor) throws Exception {
-        SSLContext sslContext = sslContextParameters != null ? sslContextParameters.createSSLContext(getCamelContext()) : null;
-        return new LumberjackConsumer(this, processor, host, port, sslContext);
+        return new LumberjackConsumer(this, processor, host, port, provideSSLContext());
     }
 
     @Override
@@ -60,7 +66,21 @@ public class LumberjackEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    private SSLContext provideSSLContext() throws GeneralSecurityException, IOException {
+        if (sslContextParameters != null) {
+            return sslContextParameters.createSSLContext(getCamelContext());
+        } else if (getComponent().getSslContextParameters() != null) {
+            return getComponent().getSslContextParameters().createSSLContext(getCamelContext());
+        } else {
+            return null;
+        }
     }
 }
