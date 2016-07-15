@@ -19,16 +19,13 @@ package org.apache.camel.component.influxdb;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.influxdb.InfluxDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by jose on 18/06/16.
- */
+
 public class InfluxDbComponent extends UriEndpointComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDbComponent.class);

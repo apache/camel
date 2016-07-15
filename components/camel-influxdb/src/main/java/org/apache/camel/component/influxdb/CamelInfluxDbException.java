@@ -18,7 +18,9 @@ package org.apache.camel.component.influxdb;
 
 public class CamelInfluxDbException extends RuntimeException {
 
-    public CamelInfluxDbException(String message, Throwable cause) {
+	private static final long serialVersionUID = 1L;
+
+	public CamelInfluxDbException(String message, Throwable cause) {
         super(message, cause);
     }
 
