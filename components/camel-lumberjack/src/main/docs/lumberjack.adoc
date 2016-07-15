@@ -6,7 +6,7 @@ Lumberjack Component
 
 The *Lumberjack* component retrieves logs sent over the network using the Lumberjack protocol,
 from https://www.elastic.co/fr/products/beats/filebeat[Filebeat] for instance.
-The network communication can be secured with SSL using the `lumberjacks` component.
+The network communication can be secured with SSL.
 
 This component only supports consumer endpoints.
 
