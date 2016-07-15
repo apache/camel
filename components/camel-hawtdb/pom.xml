@@ -26,7 +26,7 @@
 
     <artifactId>camel-hawtdb</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: HawtDB</name>
+    <name>Camel :: HawtDB (deprecated)</name>
     <description>Camel HawtDB Support</description>
 
     <properties>
