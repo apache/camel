@@ -28,7 +28,7 @@
 
     <artifactId>camel-hdfs</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: HDFS</name>
+    <name>Camel :: HDFS (deprecated)</name>
     <description>Camel HDFS support</description>
 
     <properties>
