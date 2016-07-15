@@ -26,10 +26,10 @@ import org.apache.camel.component.lumberjack.io.LumberjackServer;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 
-final class LumberjackConsumer extends DefaultConsumer {
+public class LumberjackConsumer extends DefaultConsumer {
     private final LumberjackServer lumberjackServer;
 
-    LumberjackConsumer(LumberjackEndpoint endpoint, Processor processor, String host, int port, SSLContext sslContext) {
+    public LumberjackConsumer(LumberjackEndpoint endpoint, Processor processor, String host, int port, SSLContext sslContext) {
         super(endpoint, processor);
         lumberjackServer = new LumberjackServer(host, port, sslContext, getThreadFactory(), this::onMessageReceived);
     }

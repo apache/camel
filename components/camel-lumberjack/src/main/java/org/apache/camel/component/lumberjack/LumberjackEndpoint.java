@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,8 +27,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
-@UriEndpoint(scheme = "lumberjack", title = "Lumberjack", syntax = "lumberjack:host:port", consumerClass = LumberjackConsumer.class, label = "log")
-final class LumberjackEndpoint extends DefaultEndpoint {
+@UriEndpoint(scheme = "lumberjack", title = "Lumberjack", syntax = "lumberjack:host:port",
+        consumerOnly = true, consumerClass = LumberjackConsumer.class, label = "log")
+public class LumberjackEndpoint extends DefaultEndpoint {
     @UriPath(description = "Network interface on which to listen for Lumberjack")
     @Metadata(required = "true")
     private final String host;
