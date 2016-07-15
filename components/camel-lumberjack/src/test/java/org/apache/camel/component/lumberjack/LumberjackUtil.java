@@ -82,6 +82,7 @@ final class LumberjackUtil {
                     .connect("127.0.0.1", port).sync().channel(); //
 
             // Send the 2 window frames
+            TimeUnit.MILLISECONDS.sleep(100);
             channel.writeAndFlush(readSample("io/window10"));
             TimeUnit.MILLISECONDS.sleep(100);
             channel.writeAndFlush(readSample("io/window15"));
