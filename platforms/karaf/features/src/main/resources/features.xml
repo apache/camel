@@ -810,8 +810,8 @@
   </feature>
   <feature name='camel-influxdb' version='${project.version}' resolver='(obr)' start-level='50'>
     <details>The camel-influxdb feature requires Java 8</details>
-    <bundle dependency='true'>mvn:org.influxdb/influxdb-java/${influx-java-driver-version}</bundle>
-    <feature version='${project.influxdb}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:org.influxdb/influxdb-java/${influx-java-driver-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-influxdb/${project.version}</bundle>
   </feature>
   <feature name='camel-irc' version='${project.version}' resolver='(obr)' start-level='50'>
