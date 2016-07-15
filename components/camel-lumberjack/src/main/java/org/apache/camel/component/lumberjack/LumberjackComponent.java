@@ -20,12 +20,15 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
  * The class is the Camel component for the Lumberjack server
  */
 public class LumberjackComponent extends UriEndpointComponent {
     static final int DEFAULT_PORT = 5044;
+
+    private SSLContextParameters sslContextParameters;
 
     public LumberjackComponent() {
         this(LumberjackEndpoint.class);
@@ -53,5 +56,17 @@ public class LumberjackComponent extends UriEndpointComponent {
         Endpoint answer = new LumberjackEndpoint(uri, this, host, port);
         setProperties(answer, parameters);
         return answer;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at
+     * the endpoint level.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 }
