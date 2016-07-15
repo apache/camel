@@ -1017,7 +1017,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     public synchronized boolean sendNoop() throws GenericFileOperationFailedException {
         if (isConnected()) {
             try {
-                session.sendIgnore();
+                session.sendKeepAliveMsg();
                 return true;
             } catch (Exception e) {
                 LOG.debug("SFTP session was closed. Ignoring this exception.", e);
