@@ -47,6 +47,7 @@ The Lumberjack component has no options.
 
 
 
+
 // endpoint options: START
 The Lumberjack component supports 7 endpoint options which are listed below:
 
@@ -54,16 +55,17 @@ The Lumberjack component supports 7 endpoint options which are listed below:
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | common |  | String | *Required* Network interface on which to listen for Lumberjack
-| port | common | 5044 | int | Network port on which to listen for Lumberjack
-| sslContextParameters | common |  | SSLContextParameters | SSL configuration
+| host | consumer |  | String | *Required* Network interface on which to listen for Lumberjack
+| port | consumer | 5044 | int | Network port on which to listen for Lumberjack
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| sslContextParameters | consumer |  | SSLContextParameters | SSL configuration
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
