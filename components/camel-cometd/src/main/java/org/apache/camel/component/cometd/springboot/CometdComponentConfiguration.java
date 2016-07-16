@@ -51,7 +51,7 @@ public class CometdComponentConfiguration {
      * To use a list of custom BayeuxServer.Extension that allows modifying
      * incoming and outgoing requests.
      */
-    private List<org.cometd.bayeux.server.BayeuxServer.Extension> extensions;
+    private List<Extension> extensions;
     /**
      * To configure security using SSLContextParameters
      */

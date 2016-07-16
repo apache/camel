@@ -91,7 +91,7 @@ public class WebsocketComponentConfiguration {
      * protocols. The key in the map is the sub protocol. The default key is
      * reserved for the default implementation.
      */
-    private Map<java.lang.String, org.apache.camel.component.websocket.WebSocketFactory> socketFactory;
+    private Map<String, WebSocketFactory> socketFactory;
 
     public String getStaticResources() {
         return staticResources;

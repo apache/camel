@@ -61,12 +61,12 @@ public class JettyHttpComponentConfiguration9 {
     /**
      * A map which contains per port number specific SSL connectors.
      */
-    private Map<java.lang.Integer, org.eclipse.jetty.server.Connector> sslSocketConnectors;
+    private Map<Integer, Connector> sslSocketConnectors;
     /**
      * A map which contains per port number specific HTTP connectors. Uses the
      * same principle as sslSocketConnectors.
      */
-    private Map<java.lang.Integer, org.eclipse.jetty.server.Connector> socketConnectors;
+    private Map<Integer, Connector> socketConnectors;
     /**
      * To set a value for minimum number of threads in HttpClient thread pool.
      * Notice that both a min and max size must be configured.
@@ -118,12 +118,12 @@ public class JettyHttpComponentConfiguration9 {
     /**
      * A map which contains general SSL connector properties.
      */
-    private Map<java.lang.String, java.lang.Object> sslSocketConnectorProperties;
+    private Map<String, Object> sslSocketConnectorProperties;
     /**
      * A map which contains general HTTP connector properties. Uses the same
      * principle as sslSocketConnectorProperties.
      */
-    private Map<java.lang.String, java.lang.Object> socketConnectorProperties;
+    private Map<String, Object> socketConnectorProperties;
     /**
      * Allows to set a timeout in millis when using Jetty as consumer (server).
      * By default Jetty uses 30000. You can use a value of = 0 to never expire.

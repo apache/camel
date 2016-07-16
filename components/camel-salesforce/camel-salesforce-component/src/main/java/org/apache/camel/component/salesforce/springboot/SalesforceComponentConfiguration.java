@@ -43,7 +43,7 @@ public class SalesforceComponentConfiguration {
     /**
      * Used for configuring HTTP client properties as key/value pairs
      */
-    private Map<java.lang.String, java.lang.Object> httpClientProperties;
+    private Map<String, Object> httpClientProperties;
     /**
      * To configure security using SSLContextParameters
      */
@@ -75,11 +75,11 @@ public class SalesforceComponentConfiguration {
     /**
      * HTTP proxy included addresses
      */
-    private Set<java.lang.String> httpProxyIncludedAddresses;
+    private Set<String> httpProxyIncludedAddresses;
     /**
      * HTTP proxy excluded addresses
      */
-    private Set<java.lang.String> httpProxyExcludedAddresses;
+    private Set<String> httpProxyExcludedAddresses;
     /**
      * HTTP proxy authentication URI
      */

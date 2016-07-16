@@ -96,7 +96,7 @@ public class XmlJsonDataFormatConfiguration {
      * is set as an expandable property Used for unmarshalling (JSON to XML
      * conversion).
      */
-    private List<java.lang.String> expandableProperties;
+    private List<String> expandableProperties;
     /**
      * Adds type hints to the resulting XML to aid conversion back to JSON. Used
      * for unmarshalling (JSON to XML conversion).

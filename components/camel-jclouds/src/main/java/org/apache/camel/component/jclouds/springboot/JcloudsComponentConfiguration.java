@@ -32,12 +32,12 @@ public class JcloudsComponentConfiguration {
     /**
      * To use the given BlobStore which must be configured when using blobstore.
      */
-    private List<org.jclouds.blobstore.BlobStore> blobStores;
+    private List<BlobStore> blobStores;
     /**
      * To use the given ComputeService which must be configured when use
      * compute.
      */
-    private List<org.jclouds.compute.ComputeService> computeServices;
+    private List<ComputeService> computeServices;
 
     public List<BlobStore> getBlobStores() {
         return blobStores;
