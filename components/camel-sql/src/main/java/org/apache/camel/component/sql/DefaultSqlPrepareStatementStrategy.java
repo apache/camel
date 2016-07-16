@@ -46,8 +46,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSqlPrepareStatementStrategy.class);
     private static final Pattern REPLACE_IN_PATTERN = Pattern.compile("\\:\\?in\\:(\\w+|\\$\\{[^\\}]+\\})", Pattern.MULTILINE);
     private static final Pattern REPLACE_PATTERN = Pattern.compile("\\:\\?\\w+|\\:\\?\\$\\{[^\\}]+\\}", Pattern.MULTILINE);
-    private static final Pattern NAME_IN_PATTERN = Pattern.compile("\\:\\?(in\\:(\\w+|\\$\\{[^\\}]+\\}))", Pattern.MULTILINE);
-    private static final Pattern NAME_PATTERN = Pattern.compile("\\:\\?(\\w+|\\$\\{[^\\}]+\\})", Pattern.MULTILINE);
+    private static final Pattern NAME_PATTERN = Pattern.compile("\\:\\?((in\\:(\\w+|\\$\\{[^\\}]+\\}))|(\\w+|\\$\\{[^\\}]+\\}))", Pattern.MULTILINE);
     private final char separator;
 
     public DefaultSqlPrepareStatementStrategy() {
@@ -165,25 +164,14 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
     private static final class NamedQueryParser {
 
-        private final Matcher inMatcher;
         private final Matcher matcher;
-        // which mode are we in
-        private boolean in;
-        private boolean name;
 
         private NamedQueryParser(String query) {
-            this.inMatcher = NAME_IN_PATTERN.matcher(query);
             this.matcher = NAME_PATTERN.matcher(query);
         }
 
         public String next() {
-            if (!name && inMatcher.find()) {
-                // turn on in mode, so we only match using in matcher next time
-                in = true;
-                return inMatcher.group(1);
-            } else if (!in && matcher.find()) {
-                // turn on name mode, so we only match using name matcher next time
-                name = true;
+            if (matcher.find()) {
                 return matcher.group(1);
             }
 
