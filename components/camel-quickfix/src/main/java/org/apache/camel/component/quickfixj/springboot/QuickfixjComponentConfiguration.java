@@ -48,7 +48,7 @@ public class QuickfixjComponentConfiguration {
      * To use the given map of pre configured QuickFix configurations mapped to
      * the key
      */
-    private Map<java.lang.String, org.apache.camel.component.quickfixj.QuickfixjConfiguration> configurations;
+    private Map<String, QuickfixjConfiguration> configurations;
     /**
      * If set to true the engines will be created and started when needed (when
      * first message is send)

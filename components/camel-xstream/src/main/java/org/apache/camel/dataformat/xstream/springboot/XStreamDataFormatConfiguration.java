@@ -68,22 +68,22 @@ public class XStreamDataFormatConfiguration {
      * List of class names for using custom XStream converters. The classes must
      * be of type com.thoughtworks.xstream.converters.Converter
      */
-    private List<java.lang.String> converters;
+    private List<String> converters;
     /**
      * Alias a Class to a shorter name to be used in XML elements.
      */
-    private Map<java.lang.String, java.lang.String> aliases;
+    private Map<String, String> aliases;
     /**
      * Prevents a field from being serialized. To omit a field you must always
      * provide the declaring type and not necessarily the type that is
      * converted.
      */
-    private Map<java.lang.String, java.lang.String[]> omitFields;
+    private Map<String, String[]> omitFields;
     /**
      * Adds a default implicit collection which is used for any unmapped XML
      * tag.
      */
-    private Map<java.lang.String, java.lang.String[]> implicitCollections;
+    private Map<String, String[]> implicitCollections;
 
     public String getPermissions() {
         return permissions;

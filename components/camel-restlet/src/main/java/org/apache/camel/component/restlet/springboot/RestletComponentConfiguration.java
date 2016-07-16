@@ -126,7 +126,7 @@ public class RestletComponentConfiguration {
      * A list of converters to enable as full class name or simple class name.
      * All the converters automatically registered are enabled if empty or null
      */
-    private List<java.lang.String> enabledConverters;
+    private List<String> enabledConverters;
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.

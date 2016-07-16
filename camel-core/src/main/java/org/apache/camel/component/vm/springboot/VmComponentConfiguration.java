@@ -41,7 +41,7 @@ public class VmComponentConfiguration {
     /**
      * Sets the default queue factory.
      */
-    private BlockingQueueFactory<org.apache.camel.Exchange> defaultQueueFactory;
+    private BlockingQueueFactory<Exchange> defaultQueueFactory;
 
     public int getQueueSize() {
         return queueSize;
