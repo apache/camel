@@ -71,11 +71,13 @@ public class CamelSWFWorkflowClient {
         workflowType.setName(eventName);
         workflowType.setVersion(version);
         dynamicWorkflowClientExternal.setWorkflowType(workflowType);
-        dynamicWorkflowClientExternal.startWorkflowExecution(toArray(arguments));
+        
         StartWorkflowOptions startWorkflowOptions = new StartWorkflowOptions();
         startWorkflowOptions.setTaskStartToCloseTimeoutSeconds(FlowHelpers.durationToSeconds(configuration.getTaskStartToCloseTimeout()));
         startWorkflowOptions.setExecutionStartToCloseTimeoutSeconds(FlowHelpers.durationToSeconds(configuration.getExecutionStartToCloseTimeout()));
         dynamicWorkflowClientExternal.setSchedulingOptions(startWorkflowOptions);
+        
+        dynamicWorkflowClientExternal.startWorkflowExecution(toArray(arguments));
 
         String newWorkflowId = dynamicWorkflowClientExternal.getWorkflowExecution().getWorkflowId();
         String newRunId = dynamicWorkflowClientExternal.getWorkflowExecution().getRunId();
