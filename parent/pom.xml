@@ -3642,7 +3642,7 @@
           <plugin>
             <groupId>org.ekstazi</groupId>
             <artifactId>ekstazi-maven-plugin</artifactId>
-            <version>4.3.0</version>
+            <version>4.6.1</version>
             <configuration>
               <!-- always run tests that failed in prevoius run -->
               <forcefailing>true</forcefailing>
