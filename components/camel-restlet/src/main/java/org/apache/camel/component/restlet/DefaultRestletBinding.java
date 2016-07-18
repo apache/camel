@@ -195,11 +195,24 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             }
         }
 
-        //Get outgoing custom http headers
-        Series<Header> restletHeaders = (Series)request.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+        //Get outgoing custom http headers from the exchange if they exists
+        Series<Header> restletHeaders = exchange.getIn().getHeader(HeaderConstants.ATTRIBUTE_HEADERS,Series.class);
         if (restletHeaders == null) {
             restletHeaders = new Series<>(Header.class);
             request.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, restletHeaders);
+        } else {
+            
+            //If the restlet headers already exists on the exchange, we need to filter them
+            for(String name : restletHeaders.getNames()){
+                if(headerFilterStrategy.applyFilterToCamelHeaders(name, restletHeaders.getValues(name), exchange)) {
+                    restletHeaders.removeAll(name);
+                }
+            }
+            request.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, restletHeaders);
+            
+            //Since the restlet headers already exists remove them from the exchange so they don't get added again below
+            //We will get a new set of restlet headers on the response
+            exchange.getIn().removeHeader(HeaderConstants.ATTRIBUTE_HEADERS);
         }
 
         // login and password are filtered by header filter strategy
