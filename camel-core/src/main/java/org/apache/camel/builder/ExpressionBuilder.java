@@ -80,6 +80,42 @@ public final class ExpressionBuilder {
     private ExpressionBuilder() {
     }
     
+     /**
+     * Returns an expression for the inbound message attachments
+     *
+     * @return an expression object which will return the inbound message attachments
+     */
+    public static Expression attachmentObjectsExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getAttachmentObjects();
+            }
+
+            @Override
+            public String toString() {
+                return "attachmentObjects";
+            }
+        };
+    }
+
+    /**
+     * Returns an expression for the inbound message attachments
+     *
+     * @return an expression object which will return the inbound message attachments
+     */
+    public static Expression attachmentObjectValuesExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getAttachmentObjects().values();
+            }
+
+            @Override
+            public String toString() {
+                return "attachmentObjects";
+            }
+        };
+    }
+
     /**
      * Returns an expression for the inbound message attachments
      *

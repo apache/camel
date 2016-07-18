@@ -16,6 +16,8 @@ Content-ID: <950120.aaCC@XIson.com>
 --example-1
 Content-Type: Application/octet-stream
 Content-Description: The fixed length records
+X-Additional-Header: header value1
+X-Additional-Header: header value2
 Content-Transfer-Encoding: base64
 Content-ID: <950120.aaCB@XIson.com>
 

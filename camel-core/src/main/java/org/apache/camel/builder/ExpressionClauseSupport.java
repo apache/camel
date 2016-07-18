@@ -171,7 +171,7 @@ public class ExpressionClauseSupport<T> {
      * An expression of the inbound message attachments
      */
     public T attachments() {
-        return expression(ExpressionBuilder.attachmentValuesExpression());
+        return expression(ExpressionBuilder.attachmentObjectValuesExpression());
     }
 
     /**

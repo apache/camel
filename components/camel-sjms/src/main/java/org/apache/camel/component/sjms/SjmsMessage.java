@@ -99,7 +99,7 @@ public class SjmsMessage extends DefaultMessage {
 
         getAttachments().clear();
         if (that.hasAttachments()) {
-            getAttachments().putAll(that.getAttachments());
+            getAttachmentObjects().putAll(that.getAttachmentObjects());
         }
     }
 

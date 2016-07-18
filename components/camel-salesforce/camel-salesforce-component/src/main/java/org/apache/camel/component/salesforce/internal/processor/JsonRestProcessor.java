@@ -169,7 +169,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             }
             // copy headers and attachments
             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-            exchange.getOut().getAttachments().putAll(exchange.getIn().getAttachments());
+            exchange.getOut().getAttachmentObjects().putAll(exchange.getIn().getAttachmentObjects());
         } catch (IOException e) {
             String msg = "Error parsing JSON response: " + e.getMessage();
             exchange.setException(new SalesforceException(msg, e));
