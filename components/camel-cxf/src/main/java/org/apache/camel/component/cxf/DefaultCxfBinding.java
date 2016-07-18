@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.activation.DataHandler;
 import javax.security.auth.Subject;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -47,6 +46,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.component.cxf.util.ReaderInputStream;
+import org.apache.camel.impl.DefaultAttachment;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ExchangeHelper;
@@ -129,11 +129,16 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // we should avoid adding the attachments if the data format is CXFMESSAGE, as the message stream 
         // already has the attachment information
         if (!DataFormat.CXF_MESSAGE.equals(dataFormat)) {
-            for (Map.Entry<String, DataHandler> entry : camelExchange.getIn().getAttachments().entrySet()) {
+            for (Map.Entry<String, org.apache.camel.Attachment> entry : camelExchange.getIn().getAttachmentObjects().entrySet()) {
                 if (attachments == null) {
                     attachments = new HashSet<Attachment>();
                 }
-                AttachmentImpl attachment = new AttachmentImpl(entry.getKey(), entry.getValue());
+                AttachmentImpl attachment = new AttachmentImpl(entry.getKey());
+                org.apache.camel.Attachment camelAttachment = entry.getValue();
+                attachment.setDataHandler(camelAttachment.getDataHandler());
+                for (String name : camelAttachment.getHeaderNames()) {
+                    attachment.setHeader(name, camelAttachment.getHeader(name));
+                }
                 attachment.setXOP(isXop);
                 attachments.add(attachment);
             }
@@ -187,9 +192,19 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (cxfMessage.getAttachments() != null) {
             // propagate attachments
             for (Attachment attachment : cxfMessage.getAttachments()) {
-                camelExchange.getOut().addAttachment(attachment.getId(), attachment.getDataHandler());
+                camelExchange.getOut().addAttachmentObject(attachment.getId(), createCamelAttachment(attachment));
             }        
         }
+    }
+
+    private DefaultAttachment createCamelAttachment(Attachment attachment) {
+        DefaultAttachment camelAttachment = new DefaultAttachment(attachment.getDataHandler());
+        Iterator<String> headers = attachment.getHeaderNames();
+        while (headers.hasNext()) {
+            String name = headers.next();
+            camelAttachment.addHeader(name, attachment.getHeader(name));
+        }
+        return camelAttachment;
     }
     
     /**
@@ -289,7 +304,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (cxfMessage.getAttachments() != null 
             && !camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class).equals(DataFormat.POJO)) {
             for (Attachment attachment : cxfMessage.getAttachments()) {
-                camelExchange.getIn().addAttachment(attachment.getId(), attachment.getDataHandler());
+                camelExchange.getIn().addAttachmentObject(attachment.getId(), createCamelAttachment(attachment));
             }
         }
     }
@@ -387,11 +402,16 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
         Set<Attachment> attachments = null;
         boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
-        for (Map.Entry<String, DataHandler> entry : camelExchange.getOut().getAttachments().entrySet()) {
+        for (Map.Entry<String, org.apache.camel.Attachment> entry : camelExchange.getOut().getAttachmentObjects().entrySet()) {
             if (attachments == null) {
                 attachments = new HashSet<Attachment>();
             }
-            AttachmentImpl attachment = new AttachmentImpl(entry.getKey(), entry.getValue());
+            AttachmentImpl attachment = new AttachmentImpl(entry.getKey());
+            org.apache.camel.Attachment camelAttachment = entry.getValue();
+            attachment.setDataHandler(camelAttachment.getDataHandler());
+            for (String name : camelAttachment.getHeaderNames()) {
+                attachment.setHeader(name, camelAttachment.getHeader(name));
+            }
             attachment.setXOP(isXop);
             attachments.add(attachment);
         }

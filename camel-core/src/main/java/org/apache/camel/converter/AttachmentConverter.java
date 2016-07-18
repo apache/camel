@@ -14,22 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.converter;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.activation.DataHandler;
+
+import org.apache.camel.Attachment;
+import org.apache.camel.Converter;
 
 /**
- * Marks a parameter as being Map of attachments as
- * {@link javax.activation.DataHandler} objects of an inbound {@link Message}
- * 
- * @version
+ * Some useful converters for {@link Attachment}
+ * to a {@link DataHandler}
+ *
+ * @version 
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Target({ElementType.PARAMETER })
-public @interface Attachments {
+@Converter
+public final class AttachmentConverter {
+
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private AttachmentConverter() {
+    }
+
+    @Converter
+    public static DataHandler toDataHandler(final Attachment attachment) {
+        return attachment.getDataHandler();
+    }
 }

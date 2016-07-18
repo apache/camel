@@ -62,6 +62,7 @@ public class MultiPartFormOkHttpTest extends BaseJettyTest {
 
                         InputStream is = exchange.getIn().getAttachment("test").getInputStream();
                         assertNotNull(is);
+                        assertEquals("form-data; name=\"test\"", exchange.getIn().getAttachmentObject("test").getHeader("content-disposition"));
                         String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, is);
                         assertNotNull("Should have data", data);
                         assertEquals("some data here", data);

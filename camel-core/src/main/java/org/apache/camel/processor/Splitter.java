@@ -284,7 +284,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     private static Exchange copyExchangeNoAttachments(Exchange exchange, boolean preserveExchangeId) {
         Exchange answer = ExchangeHelper.createCopy(exchange, preserveExchangeId);
         // we do not want attachments for the splitted sub-messages
-        answer.getIn().setAttachments(null);
+        answer.getIn().setAttachmentObjects(null);
         // we do not want to copy the message history for splitted sub-messages
         answer.getProperties().remove(Exchange.MESSAGE_HISTORY);
         return answer;

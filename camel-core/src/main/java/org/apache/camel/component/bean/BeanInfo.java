@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.AttachmentObjects;
 import org.apache.camel.Attachments;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
@@ -946,7 +947,9 @@ public class BeanInfo {
 
     private Expression createParameterUnmarshalExpressionForAnnotation(Class<?> clazz, Method method, 
             Class<?> parameterType, Annotation annotation) {
-        if (annotation instanceof Attachments) {
+        if (annotation instanceof AttachmentObjects) {
+            return ExpressionBuilder.attachmentObjectsExpression();
+        } else if (annotation instanceof Attachments) {
             return ExpressionBuilder.attachmentsExpression();
         } else if (annotation instanceof Property) {
             Property propertyAnnotation = (Property)annotation;
