@@ -811,14 +811,14 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         Map<String, String> answer = new HashMap<String, String>();
         String[] lines = data.split("\n");
         for (String line : lines) {
-        	if (!line.isEmpty()) {
+            if (!line.isEmpty()) {
                 int idx = line.indexOf('=');
                 String key = line.substring(0, idx);
                 String value = line.substring(idx + 1);
                 // remove ending line break for the values
                 value = value.trim().replaceAll("\n", "");
                 answer.put(key.trim(), value);
-        	}
+            }
         }
         return answer;
     }
