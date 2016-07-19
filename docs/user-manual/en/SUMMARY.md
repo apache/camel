@@ -17,6 +17,8 @@
     * [Delay Interceptor](delay-interceptor.adoc)
     * [Dependency Injection](dependency-injection.adoc)
     * [Dozer Type Conversion](dozer-type-conversion.adoc)
+    * [DSL](dsl.adoc)
+        * [Groovy DSL](groovy-dsl.adoc)
     * [Endpoint](endpoint.adoc)
     * [Exchange](exchange.adoc)
     * [Exchange Pattern](exchange-pattern.adoc)
@@ -28,7 +30,6 @@
 <!--
     * [AOP](aop.adoc)
     * [Camel-Core](camel-core.adoc)
-    * [DSL](dsl.adoc)
     * [Error Handler](.adoc)
     * [Expression](.adoc)
     * [Injector](.adoc)
