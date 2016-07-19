@@ -31,7 +31,7 @@ public class ConfigAdminNoDefaultValuesBlueprintCreationTest extends CamelBluepr
             super.setUp();
             fail("Should fail, because Blueprint XML uses property placeholders, but we didn't define any property sources");
         } catch (Exception e) {
-            assertThat(e.getCause().getCause().getMessage(), equalTo("Property placeholder key: destination not found"));
+            assertThat(e.getCause().getCause().getMessage(), equalTo("Property with key [destination] not found in properties from text: {{destination}}"));
         }
     }
 
