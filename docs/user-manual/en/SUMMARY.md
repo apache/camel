@@ -20,6 +20,7 @@
     * [DSL](dsl.adoc)
         * [Java DSL](java-dsl.adoc)
         * [Groovy DSL](groovy-dsl.adoc)
+        * [Scala DSL](scala-dsl.adoc)
     * [Endpoint](endpoint.adoc)
     * [Exchange](exchange.adoc)
     * [Exchange Pattern](exchange-pattern.adoc)
