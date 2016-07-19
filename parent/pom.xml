@@ -59,7 +59,7 @@
     <atmos-client-version>2.2.2</atmos-client-version>
     <atmosphere-version>2.4.5</atmosphere-version>
     <atmosphere-version-range>[2.4,3.0)</atmosphere-version-range>
-    <atomikos-transactions-version>4.0.2</atomikos-transactions-version>
+    <atomikos-transactions-version>4.0.4</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
     <avalon-version>4.3.1</avalon-version>
     <avro-version>1.8.1</avro-version>
@@ -158,6 +158,7 @@
     <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
     <ehcache-version>2.10.1</ehcache-version>
     <ehcache3-version>3.1.0</ehcache3-version>
+    <ekstazi-maven-plugin-version>4.6.1</ekstazi-maven-plugin-version>
     <elasticsearch-bundle-version>2.3.1_1</elasticsearch-bundle-version>
     <elasticsearch-guava-version>18.0</elasticsearch-guava-version>
     <elasticsearch-version>2.3.1</elasticsearch-version>
@@ -269,7 +270,7 @@
     <jackson-spark-version>2.4.5</jackson-spark-version>
     <jackson2-scala-version>2.6.1</jackson2-scala-version>
     <jackson2-version>2.8.0</jackson2-version>
-    <jackrabbit-version>2.13.0</jackrabbit-version>
+    <jackrabbit-version>2.13.1</jackrabbit-version>
     <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasper-bundle-version>6.0.44_1</jasper-bundle-version>
@@ -313,7 +314,7 @@
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jettison-version>1.3.7</jettison-version>
-    <jgit-version>4.4.0.201606070830-r</jgit-version>
+    <jgit-version>4.4.1.201607150455-r</jgit-version>
     <jgroups-version>3.6.10.Final</jgroups-version>
     <libthrift-version>0.9.3</libthrift-version>
     <jibx-version>1.2.6</jibx-version>
@@ -3642,7 +3643,7 @@
           <plugin>
             <groupId>org.ekstazi</groupId>
             <artifactId>ekstazi-maven-plugin</artifactId>
-            <version>4.3.0</version>
+            <version>${ekstazi-maven-plugin-version}</version>
             <configuration>
               <!-- always run tests that failed in prevoius run -->
               <forcefailing>true</forcefailing>

@@ -42,9 +42,11 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
+import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.impl.DefaultAttachment;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CollectionHelper;
@@ -283,7 +285,7 @@ public class MailBinding {
      * @param message the mail message with attachments
      * @param map     the map to add found attachments (attachmentFilename is the key)
      */
-    public void extractAttachmentsFromMail(Message message, Map<String, DataHandler> map)
+    public void extractAttachmentsFromMail(Message message, Map<String, Attachment> map)
         throws MessagingException, IOException {
 
         LOG.trace("Extracting attachments +++ start +++");
@@ -298,7 +300,7 @@ public class MailBinding {
         LOG.trace("Extracting attachments +++ done +++");
     }
 
-    protected void extractAttachmentsFromMultipart(Multipart mp, Map<String, DataHandler> map)
+    protected void extractAttachmentsFromMultipart(Multipart mp, Map<String, Attachment> map)
         throws MessagingException, IOException {
 
         for (int i = 0; i < mp.getCount(); i++) {
@@ -326,7 +328,14 @@ public class MailBinding {
                     LOG.debug("Mail contains file attachment: {}", fileName);
                     if (!map.containsKey(fileName)) {
                         // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
-                        map.put(fileName, part.getDataHandler());
+                        DefaultAttachment camelAttachment = new DefaultAttachment(part.getDataHandler());
+                        @SuppressWarnings("unchecked")
+                        Enumeration<Header> headers = part.getAllHeaders();
+                        while (headers.hasMoreElements()) {
+                            Header header = headers.nextElement();
+                            camelAttachment.addHeader(header.getName(), header.getValue());
+                        }
+                        map.put(fileName, camelAttachment);
                     } else {
                         LOG.warn("Cannot extract duplicate file attachment: {}.", fileName);
                     }
@@ -457,21 +466,29 @@ public class MailBinding {
                                              AttachmentsContentTransferEncodingResolver encodingResolver, Exchange exchange) throws MessagingException {
         LOG.trace("Adding attachments +++ start +++");
         int i = 0;
-        for (Map.Entry<String, DataHandler> entry : exchange.getIn().getAttachments().entrySet()) {
+        for (Map.Entry<String, Attachment> entry : exchange.getIn().getAttachmentObjects().entrySet()) {
             String attachmentFilename = entry.getKey();
-            DataHandler handler = entry.getValue();
+            Attachment attachment = entry.getValue();
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Attachment #{}: Disposition: {}", i, partDisposition);
-                LOG.trace("Attachment #{}: DataHandler: {}", i, handler);
+                LOG.trace("Attachment #{}: DataHandler: {}", i, attachment.getDataHandler());
                 LOG.trace("Attachment #{}: FileName: {}", i, attachmentFilename);
             }
-            if (handler != null) {
-                if (shouldAddAttachment(exchange, attachmentFilename, handler)) {
+            if (attachment != null) {
+                if (shouldAddAttachment(exchange, attachmentFilename, attachment.getDataHandler())) {
                     // Create another body part
                     BodyPart messageBodyPart = new MimeBodyPart();
                     // Set the data handler to the attachment
-                    messageBodyPart.setDataHandler(handler);
+                    messageBodyPart.setDataHandler(attachment.getDataHandler());
+
+                    // Set headers to the attachment
+                    for (String headerName : attachment.getHeaderNames()) {
+                        List<String> values = attachment.getHeaderAsList(headerName);
+                        for (String value : values) {
+                            messageBodyPart.setHeader(headerName, value);
+                        }
+                    }
 
                     if (attachmentFilename.toLowerCase().startsWith("cid:")) {
                         // add a Content-ID header to the attachment

@@ -63,7 +63,7 @@ public class CsvDataFormatConfiguration {
     /**
      * To configure the CSV headers
      */
-    private List<java.lang.String> header;
+    private List<String> header;
     /**
      * Whether to allow missing column names.
      */

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.scala
 
+import org.apache.camel.Attachment
 import org.apache.camel.Message
 import javax.activation.DataHandler
 import java.util
@@ -26,6 +27,8 @@ class RichMessage(val message: Message) extends Message {
   //-------------------------------------------------------------------------
 
   def addAttachment(id: String, content: DataHandler) = message.addAttachment(id, content)
+
+  def addAttachmentObject(id: String, content: Attachment) = message.addAttachmentObject(id, content)
 
   def copy = new RichMessage(message.copy)
 
@@ -38,9 +41,13 @@ class RichMessage(val message: Message) extends Message {
 
   def getAttachment(id: String) = message.getAttachment(id)
 
+  def getAttachmentObject(id: String) = message.getAttachmentObject(id)
+
   def getAttachmentNames = message.getAttachmentNames
 
   def getAttachments = message.getAttachments
+
+  def getAttachmentObjects = message.getAttachmentObjects
 
   def getBody = message.getBody
 
@@ -79,6 +86,8 @@ class RichMessage(val message: Message) extends Message {
   def removeHeaders(pattern: String, excludePatterns: String*) = message.removeHeaders(pattern, excludePatterns: _*)
 
   def setAttachments(attachments: util.Map[String, DataHandler]) = message.setAttachments(attachments)
+
+  def setAttachmentObjects(attachments: util.Map[String, Attachment]) = message.setAttachmentObjects(attachments)
 
   def setBody(body: Any) = message.setBody(body)
 
