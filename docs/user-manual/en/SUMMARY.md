@@ -14,6 +14,7 @@
     * [BrowsableEndpoint](browsable-endpoint.adoc)
     * [CamelContext](camelcontext.adoc)
     * [Debugger](debugger.adoc)
+    * [Delay Interceptor](delay-interceptor.adoc)
     * [Dozer Type Conversion](dozer-type-conversion.adoc)
     * [Endpoint](endpoint.adoc)
     * [Exchange](exchange.adoc)
@@ -26,7 +27,6 @@
 <!--
     * [AOP](aop.adoc)
     * [Camel-Core](camel-core.adoc)
-    * [Delay Interceptor](delay-interceptor.adoc)
     * [Dependency Injection](dependency-injections.adoc)
     * [DSL](dsl.adoc)
     * [Error Handler](.adoc)
