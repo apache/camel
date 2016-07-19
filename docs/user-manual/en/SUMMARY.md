@@ -26,6 +26,7 @@
             * [Scala DSL Getting Started](scala-dsl-getting-started.adoc)
             * [Scala DSL EIP](scala-dsl-eip.adoc)
             * [Scala DSL Supported Languages](scala-dsl-supported-languages.adoc)
+        * [Annotation DSL](bean-integration.adoc)
     * [Endpoint](endpoint.adoc)
     * [Exchange](exchange.adoc)
     * [Exchange Pattern](exchange-pattern.adoc)
