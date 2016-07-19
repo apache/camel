@@ -1,0 +1,44 @@
+[[DSL-DSL]]
+DSL
+~~~
+
+Camel uses a Java _Domain Specific Language_ or DSL for creating
+link:enterprise-integration-patterns.html[Enterprise Integration
+Patterns] or link:routes.html[Routes] in a variety of domain-specific
+languages (DSL) as listed below.
+
+* link:java-dsl.html[Java DSL] - A Java based DSL using the fluent
+builder style.
+* link:spring.html[Spring XML] - A XML based DSL in Spring XML files
+* link:using-osgi-blueprint-with-camel.html[Blueprint XML] - A XML based
+DSL in OSGi Blueprint XML files
+* link:rest-dsl.html[Rest DSL] - A DSL to define REST services using a
+REST style in either Java or XML.
+* link:groovy-dsl.html[Groovy DSL] - A Groovy based DSL using Groovy
+programming language
+* link:scala-dsl.html[Scala DSL] - A Scala based DSL using Scala
+programming language
+* link:bean-integration.html[Annotation DSL] - Use annotations in Java
+beans.
+* https://github.com/koolio/kool/tree/master/kool-camel[Kotlin DSL] -
+*Work in progress* - Currently developed outside ASF, but will we
+included later in Camel when Kotlin and the DSL is ready.
+
+The main entry points for the DSL are
+
+* link:camelcontext.html[CamelContext] for creating a Camel routing
+rulebase
+* link:routebuilder.html[RouteBuilder] for creating a collection of
+routes using the routing DSL
+
+[[DSL-SeeAlso]]
+See Also
+^^^^^^^^
+
+For more examples of the DSL in action see
+
+* link:enterprise-integration-patterns.html[Enterprise Integration
+Patterns]
+* link:examples.html[Examples]
+* link:routes.html[Routes]
+
