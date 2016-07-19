@@ -19,6 +19,8 @@
     * [Dozer Type Conversion](dozer-type-conversion.adoc)
     * [DSL](dsl.adoc)
         * [Java DSL](java-dsl.adoc)
+        * [Spring DSL](spring.adoc)
+        * [Blueprint DSL](using-osgi-blueprint-with-camel.adoc)
         * [Groovy DSL](groovy-dsl.adoc)
         * [Scala DSL](scala-dsl.adoc)
             * [Scala DSL Getting Started](scala-dsl-getting-started.adoc)
