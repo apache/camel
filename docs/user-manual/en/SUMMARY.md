@@ -18,6 +18,7 @@
     * [Dependency Injection](dependency-injection.adoc)
     * [Dozer Type Conversion](dozer-type-conversion.adoc)
     * [DSL](dsl.adoc)
+        * [Java DSL](java-dsl.adoc)
         * [Groovy DSL](groovy-dsl.adoc)
     * [Endpoint](endpoint.adoc)
     * [Exchange](exchange.adoc)
