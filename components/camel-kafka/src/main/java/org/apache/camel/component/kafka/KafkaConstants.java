@@ -19,8 +19,8 @@ package org.apache.camel.component.kafka;
 public final class KafkaConstants {
 
     public static final String PARTITION_KEY = "kafka.PARTITION_KEY";
-    public static final String PARTITION = "kafka.EXCHANGE_NAME";
-    public static final String KEY = "kafka.CONTENT_TYPE";
+    public static final String PARTITION = "kafka.PARTITION";
+    public static final String KEY = "kafka.KEY";
     public static final String TOPIC = "kafka.TOPIC";
     public static final String OFFSET = "kafka.OFFSET";
 

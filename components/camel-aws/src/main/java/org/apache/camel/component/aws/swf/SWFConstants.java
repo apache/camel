@@ -23,6 +23,7 @@ public interface SWFConstants {
     String STATE_RESULT_TYPE = "CamelSWFStateResultType";
     String EVENT_NAME = "CamelSWFEventName";
     String VERSION = "CamelSWFVersion";
+    String TAGS = "CamelSWFTags";
     String SIGNAL_NAME = "CamelSWFSignalName";
     String CHILD_POLICY = "CamelSWFChildPolicy";
     String DETAILS = "CamelSWFDetails";
