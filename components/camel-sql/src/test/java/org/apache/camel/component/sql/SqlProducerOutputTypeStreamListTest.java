@@ -51,6 +51,17 @@ public class SqlProducerOutputTypeStreamListTest extends CamelTestSupport {
     }
 
     @Test
+    public void testPreserveHeaders() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("testHeader", "testValue");
+
+        template.sendBodyAndHeader("direct:start", "testmsg", "testHeader", "testValue");
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
     public void testReturnAnIterator() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
