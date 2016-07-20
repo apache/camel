@@ -148,6 +148,7 @@ URI options
 
 
 
+
 // endpoint options: START
 The Twitter component supports 43 endpoint options which are listed below:
 
@@ -174,6 +175,13 @@ The Twitter component supports 43 endpoint options which are listed below:
 | twitterStream | consumer (advanced) |  | TwitterStream | To use a custom instance of TwitterStream
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| count | filter |  | Integer | Limiting number of results per page.
+| filterOld | filter | true | boolean | Filter out old tweets that has previously been polled. This state is stored in memory only and based on last tweet id.
+| keywords | filter |  | String | Can be used for search and streaming/filter. Multiple values can be separated with comma.
+| lang | filter |  | String | The lang string ISO_639-1 which will be used for searching
+| numberOfPages | filter | 1 | Integer | The number of pages result which you want camel-twitter to consume.
+| sinceId | filter | 1 | long | The last tweet id which will be used for pulling the tweets. It is useful when the camel route is restarted after a long running.
+| userIds | filter |  | String | To filter by user ids for streaming/filter. Multiple values can be separated by comma.
 | backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
 | backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
 | backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
@@ -187,13 +195,6 @@ The Twitter component supports 43 endpoint options which are listed below:
 | startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
-| count | filter |  | Integer | Limiting number of results per page.
-| filterOld | filter | true | boolean | Filter out old tweets that has previously been polled. This state is stored in memory only and based on last tweet id.
-| keywords | filter |  | String | Can be used for search and streaming/filter. Multiple values can be separated with comma.
-| lang | filter |  | String | The lang string ISO_639-1 which will be used for searching
-| numberOfPages | filter | 1 | Integer | The number of pages result which you want camel-twitter to consume.
-| sinceId | filter | 1 | long | The last tweet id which will be used for pulling the tweets. It is useful when the camel route is restarted after a long running.
-| userIds | filter |  | String | To filter by user ids for streaming/filter. Multiple values can be separated by comma.
 | httpProxyHost | proxy |  | String | The http proxy host which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
 | httpProxyPassword | proxy |  | String | The http proxy password which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
 | httpProxyPort | proxy |  | Integer | The http proxy port which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
@@ -201,6 +202,7 @@ The Twitter component supports 43 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
