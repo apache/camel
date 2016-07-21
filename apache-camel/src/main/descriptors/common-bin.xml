@@ -209,6 +209,7 @@
         <include>org.apache.camel:camel-snmp</include>
         <include>org.apache.camel:camel-soap</include>
         <include>org.apache.camel:camel-solr</include>
+        <include>org.apache.camel:camel-spark</include>
         <include>org.apache.camel:camel-spark-rest</include>
         <include>org.apache.camel:camel-splunk</include>
         <include>org.apache.camel:camel-spring</include>
