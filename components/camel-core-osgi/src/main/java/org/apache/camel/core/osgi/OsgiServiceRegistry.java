@@ -28,12 +28,17 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The OsgiServiceRegistry support to get the service object from the bundle context
  */
 public class OsgiServiceRegistry extends LifecycleStrategySupport implements Registry {
+    private static final Logger LOG = LoggerFactory.getLogger(OsgiCamelContextHelper.class);
     private final BundleContext bundleContext;
     private final Queue<ServiceReference<?>> serviceReferenceQueue = new ConcurrentLinkedQueue<ServiceReference<?>>();
     
@@ -62,18 +67,29 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
     }
 
     /**
-     * It's only support to look up the ServiceReference with Class name
+     * It's only support to look up the ServiceReference with Class name or service PID
      */
     public Object lookupByName(String name) {
         Object service = null;
-        if (service == null) {
-            ServiceReference<?> sr = bundleContext.getServiceReference(name);            
-            if (sr != null) {
-                // Need to keep the track of Service
-                // and call ungetService when the camel context is closed 
-                serviceReferenceQueue.add(sr);
-                service = bundleContext.getService(sr);
-            } 
+        ServiceReference<?> sr = bundleContext.getServiceReference(name);
+        if (sr != null) {
+            // Need to keep the track of Service
+            // and call ungetService when the camel context is closed 
+            serviceReferenceQueue.add(sr);
+            service = bundleContext.getService(sr);
+        } else {
+            // trying to lookup service by PID if not found by name
+            try {
+                ServiceReference<?>[] refs = bundleContext.getServiceReferences((String)null, "(" + Constants.SERVICE_PID + "=" + name + ")");
+                if (refs != null && refs.length > 0) {
+                    // just return the first one
+                    sr = refs[0];
+                    serviceReferenceQueue.add(sr);
+                    service = bundleContext.getService(sr);
+                }
+            } catch (InvalidSyntaxException ex) {
+                LOG.error("Invalid filter to lookup bean", ex);
+            }
         }
         return service;
     }
