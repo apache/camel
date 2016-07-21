@@ -117,4 +117,6 @@ comment on the pull request diff. If left off, a general comment on the
 pull request discussion is assumed.
 
 |closePullRequest |none | - GitHubPullRequest (integer) (REQUIRED): Pull request number.
+
+|createIssue (From Camel 2.18) |String (issue body text) | - GitHubIssueTitle (String) (REQUIRED): Issue Title.
 |=======================================================================
