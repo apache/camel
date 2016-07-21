@@ -293,6 +293,26 @@
     <bundle>mvn:org.apache.camel/camel-core-osgi/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cdi/${project.version}</bundle>
   </feature>
+  <feature name='camel-chronicle' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>Now working well in OSGi atm, requires the runtime to provide sun.nio.ch, sun.misc, sun.reflect, com.sun.jdi.connect.spi</details>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.xerial.snappy/snappy-java/${snappy-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/${xstream-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:net.java.dev.jna/jna/${jna-version}</bundle>
+    <bundle dependency='true'>mvn:net.java.dev.jna/jna-platform/${jna-version}</bundle>
+    <bundle dependency='true'>mvn:net.openhft/affinity/${openhft-affinity-version}</bundle>
+    <bundle dependency='true'>mvn:net.openhft/compiler/${openhft-compiler-version}</bundle>
+    <bundle dependency='true'>mvn:net.openhft/lang/${openhft-lang-version}</bundle>
+    <bundle dependency='true'>mvn:net.openhft/chronicle-core/${chronicle-core-version}</bundle>
+    <bundle dependency='true'>mvn:net.openhft/chronicle-bytes/${chronicle-bytes-version}</bundle>
+    <bundle dependency='true'>mvn:net.openhft/chronicle-wire/${chronicle-wire-version}</bundle>
+    <bundle dependency='true'>mvn:net.openhft/chronicle-threads/${chronicle-threads-version}</bundle>
+    <bundle dependency='true'>mvn:net.openhft/chronicle-network/${chronicle-network-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:net.openhft/chronicle-map/${chronicle-map-version}</bundle>
+    <bundle dependency='true'>mvn:net.openhft/chronicle-queue/${chronicle-queue-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:net.openhft/chronicle-engine/${chronicle-engine-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-chronicle/${project.version}</bundle>
+  </feature>
   <feature name='camel-chunk' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
