@@ -17,6 +17,7 @@
 package org.apache.camel.component.github.producer;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
@@ -35,7 +36,7 @@ public class CreateIssueProducer extends AbstractGitHubProducer {
         super(endpoint);
         
         Registry registry = endpoint.getCamelContext().getRegistry();
-        Object service = registry.lookupByName("githubIssuesService");
+        Object service = registry.lookupByName(GitHubConstants.GITHUB_ISSUE_SERVICE);
         if (service != null) {
             issueService = (IssueService) service;
         } else {
@@ -46,7 +47,7 @@ public class CreateIssueProducer extends AbstractGitHubProducer {
 
     public void process(Exchange exchange) throws Exception {
         Issue issue = new Issue();
-        String issueTitle = exchange.getIn().getHeader("GitHubIssueTitle", String.class);
+        String issueTitle = exchange.getIn().getHeader(GitHubConstants.GITHUB_ISSUE_TITLE, String.class);
         if (ObjectHelper.isEmpty(issueTitle)) {
             throw new IllegalArgumentException("Issue Title must be specified to create an issue");
         }

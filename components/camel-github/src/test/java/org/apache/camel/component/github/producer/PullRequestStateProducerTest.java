@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
+import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.CommitStatus;
 import org.junit.Test;
 
@@ -82,7 +83,7 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Map<String, Object> headers = in.getHeaders();
-            headers.put("GitHubPullRequestHeadCommitSHA", commitsha);
+            headers.put(GitHubConstants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA, commitsha);
         }
     }
 
