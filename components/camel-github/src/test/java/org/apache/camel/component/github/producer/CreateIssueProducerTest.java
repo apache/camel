@@ -49,7 +49,7 @@ public class CreateIssueProducerTest extends GitHubComponentTestBase {
 
     @Test
     public void testCreateIssue() throws Exception {
-    	Repository repository = new Repository();
+        Repository repository = new Repository();
 
         Endpoint issueProducerEndpoint = getMandatoryEndpoint("direct:createIssue");
         Exchange exchange = issueProducerEndpoint.createExchange();

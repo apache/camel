@@ -37,15 +37,15 @@ public class CreateIssueProducer extends AbstractGitHubProducer {
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName("githubIssuesService");
         if (service != null) {
-        	issueService = (IssueService) service;
+            issueService = (IssueService) service;
         } else {
-        	issueService = new IssueService();
+            issueService = new IssueService();
         }
         initService(issueService);
     }
 
     public void process(Exchange exchange) throws Exception {
-    	Issue issue = new Issue();
+        Issue issue = new Issue();
         String issueTitle = exchange.getIn().getHeader("GitHubIssueTitle", String.class);
         if (ObjectHelper.isEmpty(issueTitle)) {
             throw new IllegalArgumentException("Issue Title must be specified to create an issue");

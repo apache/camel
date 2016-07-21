@@ -57,7 +57,7 @@ public class MockIssueService extends IssueService {
     
     @Override
     public Issue getIssue(IRepositoryIdProvider repository, String issueNumber) {
-    	Issue issue = new Issue();
+        Issue issue = new Issue();
         issue.setBody("There's an error");
         issue.setTitle("Error");
         issue.setId(1L);
