@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
+import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.Repository;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class CreateIssueProducerTest extends GitHubComponentTestBase {
             public void configure() throws Exception {
                 context.addComponent("github", new GitHubComponent());
                 from("direct:createIssue")
-                        .process(new MockPullRequestStateProducerProcessor())
+                        .process(new MockIssueCreateProducerProcessor())
                         .to("github://createissue?state=success&username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
 
@@ -66,12 +67,12 @@ public class CreateIssueProducerTest extends GitHubComponentTestBase {
     }
 
 
-    public class MockPullRequestStateProducerProcessor implements Processor {
+    public class MockIssueCreateProducerProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Map<String, Object> headers = in.getHeaders();
-            headers.put("GitHubIssueTitle", "Error");
+            headers.put(GitHubConstants.GITHUB_ISSUE_TITLE, "Error");
         }
     }
 
