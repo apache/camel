@@ -24,6 +24,7 @@ import org.apache.camel.component.github.consumer.PullRequestCommentConsumer;
 import org.apache.camel.component.github.consumer.PullRequestConsumer;
 import org.apache.camel.component.github.consumer.TagConsumer;
 import org.apache.camel.component.github.producer.ClosePullRequestProducer;
+import org.apache.camel.component.github.producer.CreateIssueProducer;
 import org.apache.camel.component.github.producer.GetCommitFileProducer;
 import org.apache.camel.component.github.producer.PullRequestCommentProducer;
 import org.apache.camel.component.github.producer.PullRequestFilesProducer;
@@ -97,6 +98,8 @@ public class GitHubEndpoint extends DefaultEndpoint {
             return new PullRequestFilesProducer(this);
         } else if (type == GitHubType.GETCOMMITFILE) {
             return new GetCommitFileProducer(this);
+        } else if (type == GitHubType.CREATEISSUE) {
+            return new CreateIssueProducer(this);
         }
         throw new IllegalArgumentException("Cannot create producer with type " + type);
     }
