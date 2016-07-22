@@ -38,7 +38,7 @@ public class ChronicleEngineConsumer extends DefaultConsumer {
     private final String path;
     private AssetTree client;
 
-    public ChronicleEngineConsumer(ChronicleEngineEnpoint endpoint, Processor processor) {
+    public ChronicleEngineConsumer(ChronicleEngineEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
 
         this.path = endpoint.getPath();
@@ -50,7 +50,7 @@ public class ChronicleEngineConsumer extends DefaultConsumer {
             throw new IllegalStateException("AssetTree already configured");
         }
 
-        ChronicleEngineEnpoint endpoint = (ChronicleEngineEnpoint)getEndpoint();
+        ChronicleEngineEndpoint endpoint = (ChronicleEngineEndpoint)getEndpoint();
         ChronicleEngineConfiguration conf = endpoint.getConfiguration();
         client = endpoint.createRemoteAssetTree();
 

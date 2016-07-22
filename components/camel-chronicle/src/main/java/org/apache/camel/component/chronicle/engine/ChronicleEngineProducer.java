@@ -40,7 +40,7 @@ public class ChronicleEngineProducer extends HeaderSelectorProducer {
     private WeakRef<QueueView<Object, Object>> queueView;
     private AssetTree client;
 
-    public ChronicleEngineProducer(ChronicleEngineEnpoint endpoint) {
+    public ChronicleEngineProducer(ChronicleEngineEndpoint endpoint) {
         super(endpoint, ChronicleEngineConstants.ACTION, endpoint.getConfiguration().getAction());
 
         this.uri = endpoint.getUri();
@@ -62,7 +62,7 @@ public class ChronicleEngineProducer extends HeaderSelectorProducer {
             throw new IllegalStateException("AssetTree already configured");
         }
 
-        client = ((ChronicleEngineEnpoint)getEndpoint()).createRemoteAssetTree();
+        client = ((ChronicleEngineEndpoint)getEndpoint()).createRemoteAssetTree();
     }
 
     @Override

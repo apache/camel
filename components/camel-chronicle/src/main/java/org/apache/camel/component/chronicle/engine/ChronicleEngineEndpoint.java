@@ -29,14 +29,14 @@ import org.apache.camel.util.ObjectHelper;
 
 
 @UriEndpoint(scheme = "chronicle-engine", title = "Chronicle Engine", syntax = "chronicle-engine:addresses/path", consumerClass = ChronicleEngineConsumer.class, label = "Chronicle")
-public class ChronicleEngineEnpoint extends DefaultEndpoint {
+public class ChronicleEngineEndpoint extends DefaultEndpoint {
     private final ChronicleEngineConfiguration configuration;
 
     @UriPath(description = "engine path")
     @Metadata(required = "true")
     private final String path;
 
-    public ChronicleEngineEnpoint(String uri, ChronicleEngineComponent component, ChronicleEngineConfiguration configuration) throws Exception {
+    public ChronicleEngineEndpoint(String uri, ChronicleEngineComponent component, ChronicleEngineConfiguration configuration) throws Exception {
         super(uri, component);
 
         ObjectHelper.notNull(configuration.getCamelContext(), "camelContext");
