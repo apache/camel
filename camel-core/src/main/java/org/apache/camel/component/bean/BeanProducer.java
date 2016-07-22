@@ -38,13 +38,7 @@ public class BeanProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        try {
-            processor.process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
-        }
-        callback.done(true);
-        return true;
+        return processor.process(exchange, callback);
     }
 
     @Override
