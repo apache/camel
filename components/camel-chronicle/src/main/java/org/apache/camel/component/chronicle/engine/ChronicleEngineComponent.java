@@ -24,16 +24,16 @@ import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents the component that manages {@link ChronicleEngineEnpoint}.
+ * Represents the component that manages {@link ChronicleEngineEndpoint}.
  */
 public class ChronicleEngineComponent extends UriEndpointComponent {
     
     public ChronicleEngineComponent() {
-        super(ChronicleEngineEnpoint.class);
+        super(ChronicleEngineEndpoint.class);
     }
 
     public ChronicleEngineComponent(CamelContext context) {
-        super(context, ChronicleEngineEnpoint.class);
+        super(context, ChronicleEngineEndpoint.class);
     }
 
     @Override
@@ -45,6 +45,6 @@ public class ChronicleEngineComponent extends UriEndpointComponent {
 
         setProperties(configuration, parameters);
 
-        return new ChronicleEngineEnpoint(uri, this, configuration);
+        return new ChronicleEngineEndpoint(uri, this, configuration);
     }
 }
