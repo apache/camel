@@ -29,7 +29,7 @@ import org.apache.camel.Attachment;
 import org.apache.camel.util.CollectionHelper;
 
 public class DefaultAttachment implements Attachment {
-    private Map<String, Object> headers = null;
+    private Map<String, Object> headers;
     private DataHandler dataHandler;
 
     public DefaultAttachment(DataHandler dh) {
@@ -120,6 +120,6 @@ public class DefaultAttachment implements Attachment {
     }
 
     public int hashCode() {
-        return (dataHandler.hashCode());
+        return dataHandler.hashCode();
     }
 }
