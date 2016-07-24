@@ -16,15 +16,24 @@
  */
 package org.apache.camel.processor.async;
 
-import org.apache.camel.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.RoutingSlip;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.junit.Assert;
-
-import java.util.concurrent.*;
 
 /**
  * @version 
@@ -106,6 +115,7 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
     }
 
     private class MyAsyncProcessor implements AsyncProcessor {
+
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
             innerCallback = callback;
