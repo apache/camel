@@ -60,7 +60,7 @@ public class AttachmentMap extends AbstractMap<String, DataHandler> {
     private static class AttachmentEntrySet extends AbstractSet<Map.Entry<String, DataHandler>> {
         private Set<Map.Entry<String, Attachment>> set;
 
-        public AttachmentEntrySet(Set<Map.Entry<String, Attachment>> set) {
+        AttachmentEntrySet(Set<Map.Entry<String, Attachment>> set) {
             this.set = set;
         }
 
@@ -78,7 +78,7 @@ public class AttachmentMap extends AbstractMap<String, DataHandler> {
     private static class AttachmentEntrySetIterator implements Iterator<Map.Entry<String, DataHandler>> {
         private Iterator<Map.Entry<String, Attachment>> iter;
 
-        public AttachmentEntrySetIterator(Iterator<Map.Entry<String, Attachment>> origIterator) {
+        AttachmentEntrySetIterator(Iterator<Map.Entry<String, Attachment>> origIterator) {
             iter = origIterator;
         }
 
@@ -100,7 +100,7 @@ public class AttachmentMap extends AbstractMap<String, DataHandler> {
     private static class AttachmentEntry implements Map.Entry<String, DataHandler> {
         private Map.Entry<String, Attachment> entry;
 
-        public AttachmentEntry(Map.Entry<String, Attachment> backingEntry) {
+        AttachmentEntry(Map.Entry<String, Attachment> backingEntry) {
             this.entry = backingEntry;
         }
 
@@ -112,24 +112,26 @@ public class AttachmentMap extends AbstractMap<String, DataHandler> {
         @Override
         public DataHandler getValue() {
             Attachment value = entry.getValue();
-            if (value != null)
+            if (value != null) {
                 return value.getDataHandler();
+            }
             return null;
         }
 
         @Override
         public DataHandler setValue(DataHandler value) {
             Attachment oldValue = entry.setValue(new DefaultAttachment(value));
-            if (oldValue != null)
+            if (oldValue != null) {
                 return oldValue.getDataHandler();
+            }
             return null;
         }
 
-        // two AttachmentEntry objects are equal if the backing entries are
-        // equal
+        // two AttachmentEntry objects are equal if the backing entries are equal
         public boolean equals(Object o) {
-            if (o instanceof AttachmentEntry && entry.equals(((AttachmentEntry)o).entry))
+            if (o instanceof AttachmentEntry && entry.equals(((AttachmentEntry)o).entry)) {
                 return true;
+            }
             return false;
         }
 
