@@ -96,7 +96,7 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
         private final Endpoint startEndpoint;
         private final SendProcessor asyncSender;
 
-        public ExchangeSubmitter(Endpoint startEndpoint, SendProcessor asyncSender) {
+        ExchangeSubmitter(Endpoint startEndpoint, SendProcessor asyncSender) {
             this.startEndpoint = startEndpoint;
             this.asyncSender = asyncSender;
         }
