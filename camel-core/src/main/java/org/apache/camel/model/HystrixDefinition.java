@@ -173,10 +173,10 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
      * Use <tt>end</tt> when configuration is complete, to return back to the Hystrix EIP.
      */
     public HystrixConfigurationDefinition hystrixConfiguration() {
-        hystrixConfiguration = new HystrixConfigurationDefinition(this);
+        hystrixConfiguration = hystrixConfiguration == null ? new HystrixConfigurationDefinition(this) : hystrixConfiguration;
         return hystrixConfiguration;
     }
-
+    
     /**
      * Configures the Hystrix EIP using the given configuration
      */
