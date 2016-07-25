@@ -60,7 +60,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     @UriParam(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;
     @UriParam(label = "advanced")
-    private HeaderFilterStrategy headerFilterStrategy;
+    private HeaderFilterStrategy headerFilterStrategy = new UndertowHeaderFilterStrategy();
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "consumer")
@@ -178,7 +178,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
      */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
-        undertowHttpBinding.setHeaderFilterStrategy(headerFilterStrategy);
     }
 
     public SSLContextParameters getSslContextParameters() {
@@ -217,6 +216,11 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     }
 
     public UndertowHttpBinding getUndertowHttpBinding() {
+        if (undertowHttpBinding == null) {
+            // create a new binding and use the options from this endpoint
+        	undertowHttpBinding = new DefaultUndertowHttpBinding();
+        	undertowHttpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
         return undertowHttpBinding;
     }
 
