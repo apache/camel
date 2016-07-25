@@ -81,7 +81,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         // Prefer endpoint configured over component configured
         if (undertowHttpBinding == null) {
             // fallback to component configured
-        	undertowHttpBinding = getUndertowHttpBinding();
+            undertowHttpBinding = getUndertowHttpBinding();
         }
         if (undertowHttpBinding != null) {
             endpoint.setUndertowHttpBinding(undertowHttpBinding);
