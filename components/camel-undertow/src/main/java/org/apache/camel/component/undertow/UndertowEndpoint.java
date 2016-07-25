@@ -218,8 +218,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     public UndertowHttpBinding getUndertowHttpBinding() {
         if (undertowHttpBinding == null) {
             // create a new binding and use the options from this endpoint
-        	undertowHttpBinding = new DefaultUndertowHttpBinding();
-        	undertowHttpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            undertowHttpBinding = new DefaultUndertowHttpBinding();
+            undertowHttpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
         return undertowHttpBinding;
     }
