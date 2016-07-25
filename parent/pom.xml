@@ -99,11 +99,11 @@
     <cglib-version>3.2.2</cglib-version>
     <chronicle-bytes-version>1.7.2</chronicle-bytes-version>
     <chronicle-core-version>1.7.2</chronicle-core-version>
-    <chronicle-engine-version>1.13.3</chronicle-engine-version>
+    <chronicle-engine-version>1.13.4</chronicle-engine-version>
     <chronicle-map-version>2.4.15</chronicle-map-version>
     <chronicle-network-version>1.7.1</chronicle-network-version>
     <chronicle-queue-version>4.5.2</chronicle-queue-version>
-    <chronicle-threads-version>1.7.0</chronicle-threads-version>
+    <chronicle-threads-version>1.7.1</chronicle-threads-version>
     <chronicle-wire-version>1.7.4</chronicle-wire-version>
     <chunk-templates-version>3.2.0</chunk-templates-version>
     <chunk-templates-bundle-version>3.2.0_1</chunk-templates-bundle-version>
