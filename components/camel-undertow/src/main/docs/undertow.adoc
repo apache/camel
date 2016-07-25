@@ -40,6 +40,8 @@ Options
 ^^^^^^^
 
 
+
+
 // component options: START
 The Undertow component supports 2 options which are listed below.
 
@@ -54,6 +56,8 @@ The Undertow component supports 2 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
+
 
 
 
