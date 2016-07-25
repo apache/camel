@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 public class UndertowComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
-    private UndertowHttpBinding undertowHttpBinding = new DefaultUndertowHttpBinding();
+    private UndertowHttpBinding undertowHttpBinding;
     private final Map<Integer, UndertowRegistry> serversRegistry = new HashMap<Integer, UndertowRegistry>();
     private SSLContextParameters sslContextParameters;
 
@@ -78,7 +78,14 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         UndertowEndpoint endpoint = createEndpointInstance(endpointUri, this);
         // set options from component
         endpoint.setSslContextParameters(sslContextParameters);
-        endpoint.setUndertowHttpBinding(undertowHttpBinding);
+        // Prefer endpoint configured over component configured
+        if (undertowHttpBinding == null) {
+            // fallback to component configured
+        	undertowHttpBinding = getUndertowHttpBinding();
+        }
+        if (undertowHttpBinding != null) {
+            endpoint.setUndertowHttpBinding(undertowHttpBinding);
+        }
         // set options from parameters
         setProperties(endpoint, parameters);
         if (options != null) {
