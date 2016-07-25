@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -143,7 +144,7 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        List<ProcessorDefinition<?>> outputs = getParentOutputs(output.getParent());
+                        List<ProcessorDefinition<?>> outputs = getOutputs(output);
                         if (outputs != null) {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
@@ -192,7 +193,7 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        List<ProcessorDefinition<?>> outputs = getParentOutputs(output.getParent());
+                        List<ProcessorDefinition<?>> outputs = getOutputs(output);
                         if (outputs != null) {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
@@ -240,7 +241,7 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        List<ProcessorDefinition<?>> outputs = getParentOutputs(output.getParent());
+                        List<ProcessorDefinition<?>> outputs = getOutputs(output);
                         if (outputs != null) {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
@@ -289,7 +290,7 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        List<ProcessorDefinition<?>> outputs = getParentOutputs(output.getParent());
+                        List<ProcessorDefinition<?>> outputs = getOutputs(output);
                         if (outputs != null) {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
@@ -310,16 +311,25 @@ public final class AdviceWithTasks {
     }
 
     /**
-     * Gets the outputs from the given parent.
+     * Gets the outputs to use with advice with from the given child/parent
      * <p/>
      * This implementation deals with that outputs can be abstract and retrieves the <i>correct</i> parent output.
      *
-     * @param parent the parent
-     * @return <tt>null</tt> if no parent
+     * @param node the node
+     * @return <tt>null</tt> if not outputs to be used
      */
-    private static List<ProcessorDefinition<?>> getParentOutputs(ProcessorDefinition<?> parent) {
+    private static List<ProcessorDefinition<?>> getOutputs(ProcessorDefinition<?> node) {
+        if (node == null) {
+            return null;
+        }
+        ProcessorDefinition<?> parent = node.getParent();
         if (parent == null) {
             return null;
+        }
+        // for CBR then use the outputs from the node itself
+        // so we work on the right branch in the CBR (when/otherwise)
+        if (parent instanceof ChoiceDefinition) {
+            return node.getOutputs();
         }
         List<ProcessorDefinition<?>> outputs = parent.getOutputs();
         if (outputs.size() == 1 && outputs.get(0).isAbstract()) {
