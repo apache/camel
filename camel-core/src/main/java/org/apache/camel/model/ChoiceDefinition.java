@@ -125,8 +125,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     
     @Override
     public String toString() {
-        // when and otherwise has detailed output in their toString so keep this toString short
-        return "Choice";
+        return "Choice[" + getWhenClauses() + (getOtherwise() != null ? " " + getOtherwise() : "") + "]";
     }
 
     @Override
