@@ -80,6 +80,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         "org.apache.camel.model.SendDefinition",
         "org.apache.camel.model.InterceptDefinition",
         "org.apache.camel.model.WhenDefinition",
+        "org.apache.camel.model.ToDynamicDefinition"
     };
     // special for verbs (these classes have sub classes, so we use this to find all classes)
     private static final String[] ONE_OF_VERBS = new String[]{
