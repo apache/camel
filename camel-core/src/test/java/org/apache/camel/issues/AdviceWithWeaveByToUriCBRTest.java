@@ -21,17 +21,14 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 
-/**
- * @version 
- */
-public class AdviceWithWeaveByToStringCBRTest extends ContextTestSupport {
+public class AdviceWithWeaveByToUriCBRTest extends ContextTestSupport {
 
     public void testAdviceCBR() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                weaveByToString("direct:branch.*").replace().to("mock:foo");
+                weaveByToUri("direct:branch*").replace().to("mock:foo");
                 mockEndpointsAndSkip("direct:branch*");
             }
         });
