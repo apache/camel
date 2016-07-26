@@ -22,8 +22,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.StringQuoteHelper;
 
 /**
  * A <a href="http://camel.apache.org/bean-language.html">bean language</a>

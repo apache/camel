@@ -35,7 +35,6 @@ import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.StringQuoteHelper;
 
 /**
  * Evaluates an expression using a bean method invocation
