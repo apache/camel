@@ -81,6 +81,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam(label = "common")
     private boolean skipQueueDeclare;
     @UriParam(label = "common")
+    private boolean skipQueueBind;
+    @UriParam(label = "common")
     private boolean skipExchangeDeclare;
     @UriParam(label = "advanced")
     private Address[] addresses;
@@ -406,7 +408,19 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     public boolean isSkipQueueDeclare() {
         return skipQueueDeclare;
     }
-    
+
+    /**
+     * If true the queue will not be bound to the exchange after declaring it
+     * @return 
+     */
+    public boolean isSkipQueueBind() {
+        return skipQueueBind;
+    }
+
+    public void setSkipQueueBind(boolean skipQueueBind) {
+        this.skipQueueBind = skipQueueBind;
+    }
+     
     /**
      * This can be used if we need to declare the queue but not the exchange
      */
