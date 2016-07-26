@@ -166,7 +166,12 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public List<Bucket> listBuckets() throws AmazonClientException, AmazonServiceException {
-        return new ArrayList<Bucket>();
+        ArrayList<Bucket> list = new ArrayList<Bucket>();
+        Bucket bucket = new Bucket("camel-bucket");
+        bucket.setOwner(new Owner("Camel", "camel"));
+        bucket.setCreationDate(new Date());
+        list.add(bucket);
+        return list;
     }
 
     @Override

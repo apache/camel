@@ -28,6 +28,7 @@ import com.amazonaws.services.cloudfront.model.InvalidArgumentException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AbortMultipartUploadRequest;
 import com.amazonaws.services.s3.model.AccessControlList;
+import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.CompleteMultipartUploadRequest;
 import com.amazonaws.services.s3.model.CompleteMultipartUploadResult;
@@ -85,6 +86,9 @@ public class S3Producer extends DefaultProducer {
             switch (operation) {
             case copyObject:
                 copyObject(getEndpoint().getS3Client(), exchange);
+                break;
+            case listBuckets:
+                listBuckets(getEndpoint().getS3Client(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -283,6 +287,13 @@ public class S3Producer extends DefaultProducer {
         if (copyObjectResult.getVersionId() != null) {
             message.setHeader(S3Constants.VERSION_ID, copyObjectResult.getVersionId());
         }
+    }
+    
+    private void listBuckets(AmazonS3 s3Client, Exchange exchange) {
+        List<Bucket> bucketsList = s3Client.listBuckets();
+        
+        Message message = getMessageForResponse(exchange);
+        message.setBody(bucketsList);
     }
     
     private S3Operations determineOperation(Exchange exchange) {
