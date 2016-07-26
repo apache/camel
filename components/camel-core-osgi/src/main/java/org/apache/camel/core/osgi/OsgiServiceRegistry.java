@@ -72,24 +72,26 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
     public Object lookupByName(String name) {
         Object service = null;
         ServiceReference<?> sr = bundleContext.getServiceReference(name);
+        if (sr == null) {
+            // trying to lookup service by PID if not found by name
+            String filterExpression = "(" + Constants.SERVICE_PID + "=" + name + ")";
+            try {
+                ServiceReference<?>[] refs = bundleContext.getServiceReferences((String)null, filterExpression);
+                if (refs != null && refs.length > 0) {
+                    // just return the first one
+                    sr = refs[0];
+                }
+            } catch (InvalidSyntaxException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Invalid OSGi service reference filter, skipped lookup by service.pid. Filter expression: " + filterExpression, ex);
+                }
+            }
+        }
         if (sr != null) {
             // Need to keep the track of Service
             // and call ungetService when the camel context is closed 
             serviceReferenceQueue.add(sr);
             service = bundleContext.getService(sr);
-        } else {
-            // trying to lookup service by PID if not found by name
-            try {
-                ServiceReference<?>[] refs = bundleContext.getServiceReferences((String)null, "(" + Constants.SERVICE_PID + "=" + name + ")");
-                if (refs != null && refs.length > 0) {
-                    // just return the first one
-                    sr = refs[0];
-                    serviceReferenceQueue.add(sr);
-                    service = bundleContext.getService(sr);
-                }
-            } catch (InvalidSyntaxException ex) {
-                LOG.error("Invalid filter to lookup bean", ex);
-            }
         }
         return service;
     }
