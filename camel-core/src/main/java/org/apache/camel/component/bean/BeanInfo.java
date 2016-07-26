@@ -214,6 +214,11 @@ public class BeanInfo {
                 if (!methodName.endsWith(")")) {
                     throw new IllegalArgumentException("Method should end with parenthesis, was " + methodName);
                 }
+                // and there must be an even number of parenthesis in the syntax
+                // (we can use betweenOuterPair as it return null if the syntax is invalid)
+                if (ObjectHelper.betweenOuterPair(methodName, '(', ')') == null) {
+                    throw new IllegalArgumentException("Method should have even pair of parenthesis, was " + methodName);
+                }
             }
             boolean emptyParameters = methodName.endsWith("()");
 
