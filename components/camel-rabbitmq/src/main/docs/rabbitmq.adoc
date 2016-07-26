@@ -48,8 +48,9 @@ The RabbitMQ component has no options.
 
 
 
+
 // endpoint options: START
-The RabbitMQ component supports 53 endpoint options which are listed below:
+The RabbitMQ component supports 54 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -70,6 +71,7 @@ The RabbitMQ component supports 53 endpoint options which are listed below:
 | queue | common |  | String | The queue to receive messages from
 | routingKey | common |  | String | The routing key to use when binding a consumer queue to the exchange. For producer routing keys you set the header rabbitmq.ROUTING_KEY.
 | skipExchangeDeclare | common | false | boolean | This can be used if we need to declare the queue but not the exchange
+| skipQueueBind | common | false | boolean | If true the queue will not be bound to the exchange after declaring it
 | skipQueueDeclare | common | false | boolean | If true the producer will not declare and bind a queue. This can be used for directing messages via an existing routing key.
 | vhost | common | / | String | The vhost for the channel
 | autoAck | consumer | true | boolean | If messages should be auto acknowledged
@@ -111,6 +113,7 @@ The RabbitMQ component supports 53 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 See
