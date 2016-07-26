@@ -14,12 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce.api;
+package org.apache.camel.component.salesforce.api.utils;
 
-import java.lang.reflect.Constructor;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
@@ -28,33 +25,25 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-
 /**
- * XStream converter for handling JodaTime fields.
+ * XStream converter for handling {@link ZonedDateTime} fields.
  */
-public class JodaTimeConverter implements Converter {
-
-    private final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-            .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
-            .appendOffset("+HH:mm", "Z")
-            .toFormatter();
+public class DateTimeConverter implements Converter {
 
     @Override
     public void marshal(Object o, HierarchicalStreamWriter writer, MarshallingContext context) {
         ZonedDateTime dateTime = (ZonedDateTime) o;
-        writer.setValue(formatter.format(dateTime));
+        writer.setValue(DateTimeUtils.formatDateTime(dateTime));
     }
 
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-        String dateTimeStr = reader.getValue();
-        Class<?> requiredType = context.getRequiredType();
         try {
-            return formatter.parse(dateTimeStr, ZonedDateTime::from);
+            return DateTimeUtils.parseDateTime(reader.getValue());
         } catch (Exception e) {
             throw new ConversionException(
                     String.format("Error reading ZonedDateTime from value %s: %s",
-                            dateTimeStr, e.getMessage()),
+                        reader.getValue(), e.getMessage()),
                     e);
         }
     }

@@ -36,7 +36,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
-import org.apache.camel.component.salesforce.api.JodaTimeConverter;
+import org.apache.camel.component.salesforce.api.utils.DateTimeConverter;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
@@ -72,7 +72,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                 });
                 result.ignoreUnknownElements();
                 XStreamUtils.addDefaultPermissions(result);
-                result.registerConverter(new JodaTimeConverter());
+                result.registerConverter(new DateTimeConverter());
                 return result;
             }
         };
