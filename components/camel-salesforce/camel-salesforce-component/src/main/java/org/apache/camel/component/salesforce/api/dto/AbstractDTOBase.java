@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.camel.component.salesforce.internal.client.JsonUtils;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 
 // disable null values in json output
 @JsonInclude(JsonInclude.Include.NON_NULL)

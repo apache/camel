@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce.internal.client;
+package org.apache.camel.component.salesforce.api.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
-import org.apache.camel.component.salesforce.internal.datetime.DateTimeModule;
 
 /**
  * Factory class for creating {@linkplain com.fasterxml.jackson.databind.ObjectMapper}
@@ -32,4 +30,5 @@ public abstract class JsonUtils {
         objectMapper.registerModule(new DateTimeModule());
         return objectMapper;
     }
+
 }
