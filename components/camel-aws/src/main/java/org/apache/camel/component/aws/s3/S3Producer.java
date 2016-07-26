@@ -93,7 +93,7 @@ public class S3Producer extends DefaultProducer {
                 listBuckets(getEndpoint().getS3Client(), exchange);
                 break;
             case deleteBucket:
-            	deleteBucket(getEndpoint().getS3Client(), exchange);
+                deleteBucket(getEndpoint().getS3Client(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");

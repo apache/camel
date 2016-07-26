@@ -32,7 +32,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class S3ComponentListBucketsSpringTest extends CamelSpringTestSupport {
     
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject(uri = "direct:listBuckets")
     private ProducerTemplate template;
     
     @EndpointInject(uri = "mock:result")
@@ -44,7 +44,7 @@ public class S3ComponentListBucketsSpringTest extends CamelSpringTestSupport {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
         
-        template.sendBody("direct:start", ExchangePattern.InOnly, "");
+        template.sendBody("direct:listBuckets", ExchangePattern.InOnly, "");
         assertMockEndpointsSatisfied();
         
         assertResultExchange(result.getExchanges().get(0));
