@@ -24,15 +24,15 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class S3ComponentListBucketsTest extends CamelTestSupport {
+public class S3ComponentListBucketsSpringTest extends CamelSpringTestSupport {
     
-    @EndpointInject(uri = "direct:listBuckets")
+    @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
     
     @EndpointInject(uri = "mock:result")
@@ -44,7 +44,7 @@ public class S3ComponentListBucketsTest extends CamelTestSupport {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
         
-        template.sendBody("direct:listBuckets", ExchangePattern.InOnly, "");
+        template.sendBody("direct:start", ExchangePattern.InOnly, "");
         assertMockEndpointsSatisfied();
         
         assertResultExchange(result.getExchanges().get(0));
@@ -69,17 +69,7 @@ public class S3ComponentListBucketsTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1&operation=listBuckets";
-                
-                from("direct:listBuckets")
-                    .to(awsEndpoint)
-                    .to("mock:result");
-                
-            }
-        };
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws/s3/S3ComponentSpringTest-context.xml");
     }
 }
