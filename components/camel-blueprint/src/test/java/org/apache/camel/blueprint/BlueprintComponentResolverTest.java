@@ -60,7 +60,7 @@ public class BlueprintComponentResolverTest extends TestSupport {
 
         private boolean fallback;
 
-        public SampleComponent(boolean fallback) {
+        SampleComponent(boolean fallback) {
             this.fallback = fallback;
         }
 
