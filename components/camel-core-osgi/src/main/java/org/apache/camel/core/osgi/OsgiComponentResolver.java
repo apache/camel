@@ -19,8 +19,8 @@ package org.apache.camel.core.osgi;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.spi.ComponentResolver;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResolverHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -35,29 +35,11 @@ public class OsgiComponentResolver implements ComponentResolver {
     public OsgiComponentResolver(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
-    
-    public Component resolveComponent(String name, CamelContext context) throws Exception {
-        Object bean = null;
-        try {
-            bean = context.getRegistry().lookupByName(name);
-            if (bean != null) {
-                LOG.debug("Found component: {} in registry: {}", name, bean);
-            }
-        } catch (Exception e) {
-            LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
-        }
 
-        if (bean != null) {
-            if (bean instanceof Component) {
-                return (Component)bean;
-            } else {
-                // lets use Camel's type conversion mechanism to convert things like CamelContext
-                // and other types into a valid Component
-                Component component = CamelContextHelper.convertTo(context, Component.class, bean);
-                if (component != null) {
-                    return component;
-                }
-            }
+    public Component resolveComponent(String name, CamelContext context) throws Exception {
+        Component componentReg = ResolverHelper.lookupComponentInRegistryWithFallback(context, name);
+        if (componentReg != null) {
+            return componentReg;
         }
 
         // Check in OSGi bundles
