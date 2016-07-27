@@ -25,18 +25,16 @@ import org.apache.camel.spi.FactoryFinder;
 /**
  * Default data format resolver
  *
- * @version 
+ * @version
  */
 public class DefaultDataFormatResolver implements DataFormatResolver {
 
     public static final String DATAFORMAT_RESOURCE_PATH = "META-INF/services/org/apache/camel/dataformat/";
 
-    private static final String FALLBACK_DATA_FORMAT_BEAN_SUFFIX = "-dataformat";
-
     protected FactoryFinder dataformatFactory;
 
     public DataFormat resolveDataFormat(String name, CamelContext context) {
-        DataFormat dataFormat = lookup(context, DataFormat.class, name, name + FALLBACK_DATA_FORMAT_BEAN_SUFFIX);
+        DataFormat dataFormat = lookup(context, DataFormat.class, name, name + "-dataformat");
         if (dataFormat == null) {
             Class<?> type = null;
             try {
@@ -67,10 +65,10 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
     }
 
     private static <T> T lookup(CamelContext context, Class<T> type, String... names) {
-        for(String name : names) {
+        for (String name : names) {
             try {
                 T bean = context.getRegistry().lookupByNameAndType(name, type);
-                if(bean!=null) {
+                if (bean != null) {
                     return bean;
                 }
             } catch (Exception e) {
