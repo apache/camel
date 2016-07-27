@@ -61,7 +61,7 @@ public class OsgiDataFormatResolverTest extends CamelOsgiTestSupport {
 
         private boolean fallback;
 
-        public SampleDataFormat(boolean fallback) {
+        SampleDataFormat(boolean fallback) {
             this.fallback = fallback;
         }
 

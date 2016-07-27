@@ -67,7 +67,7 @@ public class OsgiLanguageResolverTest extends CamelOsgiTestSupport {
 
         private boolean fallback;
 
-        public SampleLanguage(boolean fallback) {
+        SampleLanguage(boolean fallback) {
             this.fallback = fallback;
         }
 

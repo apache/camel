@@ -150,7 +150,7 @@ public class DefaultCamelContextResolverTest {
 
         private boolean fallback;
 
-        public SampleComponent(boolean fallback) {
+        SampleComponent(boolean fallback) {
             this.fallback = fallback;
         }
 
@@ -172,7 +172,7 @@ public class DefaultCamelContextResolverTest {
 
         private boolean fallback;
 
-        public SampleDataFormat(boolean fallback) {
+        SampleDataFormat(boolean fallback) {
             this.fallback = fallback;
         }
 
@@ -199,7 +199,7 @@ public class DefaultCamelContextResolverTest {
 
         private boolean fallback;
 
-        public SampleLanguage(boolean fallback) {
+        SampleLanguage(boolean fallback) {
             this.fallback = fallback;
         }
 
