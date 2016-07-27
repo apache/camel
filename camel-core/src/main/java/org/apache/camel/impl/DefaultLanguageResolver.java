@@ -69,23 +69,6 @@ public class DefaultLanguageResolver implements LanguageResolver {
         }
     }
 
-    private Object lookupInRegistry(CamelContext context, String... names) {
-        for (String name : names) {
-            try {
-                Object bean = context.getRegistry().lookupByName(name);
-                if (bean != null) {
-                    getLog().debug("Found language: {} in registry: {}", name, bean);
-                    return bean;
-                }
-            } catch (Exception e) {
-                if (getLog().isDebugEnabled()) {
-                    getLog().debug("Ignored error looking up bean: " + name + ". Error: " + e);
-                }
-            }
-        }
-
-        return null;
-    }
 
     protected Language noSpecificLanguageFound(String name, CamelContext context) {
         Class<?> type = null;
