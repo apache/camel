@@ -38,18 +38,17 @@ import org.slf4j.LoggerFactory;
 public class DefaultComponentResolver implements ComponentResolver {
 
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/component/";
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultComponentResolver.class);
+
+    private static final String FALLBACK_COMPONENT_BEAN_SUFFIX = "-component";
+
     private FactoryFinder factoryFinder;
 
     public Component resolveComponent(String name, CamelContext context) {
         // lookup in registry first
-        Object bean = null;
-        try {
-            bean = context.getRegistry().lookupByName(name);
-            getLog().debug("Found component: {} in registry: {}", name, bean);
-        } catch (Exception e) {
-            getLog().debug("Ignored error looking up bean: " + name, e);
-        }
+        Object bean = lookupInRegistry(context, name, name + FALLBACK_COMPONENT_BEAN_SUFFIX);
+
         if (bean != null) {
             if (bean instanceof Component) {
                 return (Component) bean;
@@ -88,6 +87,24 @@ public class DefaultComponentResolver implements ComponentResolver {
         } else {
             throw new IllegalArgumentException("Type is not a Component implementation. Found: " + type.getName());
         }
+    }
+
+    private Object lookupInRegistry(CamelContext context, String... names) {
+        Object bean = null;
+        for(String name : names) {
+            try {
+                bean = context.getRegistry().lookupByName(name);
+                getLog().debug("Lookup component with name {} in registry. Found: {}", name, bean);
+            } catch (Exception e) {
+                getLog().debug("Ignored error looking up bean: " + name, e);
+            }
+
+            if(bean!=null) {
+                break;
+            }
+        }
+
+        return bean;
     }
 
     private Class<?> findComponent(String name, CamelContext context) throws ClassNotFoundException, IOException {
