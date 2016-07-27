@@ -98,11 +98,11 @@ public class DefaultComponentResolver implements ComponentResolver {
             }
 
             if (bean != null) {
-                break;
+                return bean;
             }
         }
 
-        return bean;
+        return null;
     }
 
     private Class<?> findComponent(String name, CamelContext context) throws ClassNotFoundException, IOException {

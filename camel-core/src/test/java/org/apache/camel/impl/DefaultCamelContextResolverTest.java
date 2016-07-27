@@ -24,9 +24,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.NoSuchLanguageException;
+import org.apache.camel.Predicate;
 import org.apache.camel.spi.DataFormat;
-import org.junit.After;
-import org.junit.Before;
+import org.apache.camel.spi.Language;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -40,10 +44,10 @@ import static org.junit.Assert.assertTrue;
  */
 public class DefaultCamelContextResolverTest {
 
-    private CamelContext context;
+    private static CamelContext context;
 
-    @Before
-    public void createContext() throws Exception {
+    @BeforeClass
+    public static void createContext() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         context = new DefaultCamelContext(registry);
 
@@ -53,6 +57,9 @@ public class DefaultCamelContextResolverTest {
         // Add a data format using its fallback name
         registry.put("green-dataformat", new SampleDataFormat(true));
 
+        // Add a language using its fallback name
+        registry.put("green-language", new SampleLanguage(true));
+
         // Add a component using both names
         registry.put("yellow", new SampleComponent(false));
         registry.put("yellow-component", new SampleComponent(true));
@@ -61,11 +68,15 @@ public class DefaultCamelContextResolverTest {
         registry.put("red", new SampleDataFormat(false));
         registry.put("red-dataformat", new SampleDataFormat(true));
 
+        // Add a language using both names
+        registry.put("blue", new SampleLanguage(false));
+        registry.put("blue-language", new SampleLanguage(true));
+
         context.start();
     }
 
-    @After
-    public void destroyContext() throws Exception {
+    @AfterClass
+    public static void destroyContext() throws Exception {
         context.stop();
         context = null;
     }
@@ -103,6 +114,22 @@ public class DefaultCamelContextResolverTest {
     }
 
     @Test
+    public void testLanguageWithFallbackNames() throws Exception {
+        Language language = context.resolveLanguage("green");
+        assertNotNull("Language not found in registry", language);
+        assertTrue("Wrong instance type of the Language", language instanceof SampleLanguage);
+        assertTrue("Here we should have the fallback Language", ((SampleLanguage) language).isFallback());
+    }
+
+    @Test
+    public void testLanguageWithBothNames() throws Exception {
+        Language language = context.resolveLanguage("blue");
+        assertNotNull("Language not found in registry", language);
+        assertTrue("Wrong instance type of the Language", language instanceof SampleLanguage);
+        assertFalse("Here we should NOT have the fallback Language", ((SampleLanguage) language).isFallback());
+    }
+
+    @Test
     public void testNullLookupComponent() throws Exception {
         Component component = context.getComponent("xxxxxxxxx");
         assertNull("Non-existent Component should be null", component);
@@ -112,6 +139,11 @@ public class DefaultCamelContextResolverTest {
     public void testNullLookupDataFormat() throws Exception {
         DataFormat dataFormat = context.resolveDataFormat("xxxxxxxxx");
         assertNull("Non-existent DataFormat should be null", dataFormat);
+    }
+
+    @Test(expected = NoSuchLanguageException.class)
+    public void testNullLookupLanguage() throws Exception {
+        context.resolveLanguage("xxxxxxxxx");
     }
 
     public static class SampleComponent extends DefaultComponent {
@@ -162,5 +194,33 @@ public class DefaultCamelContextResolverTest {
             this.fallback = fallback;
         }
     }
+
+    public static class SampleLanguage implements Language {
+
+        private boolean fallback;
+
+        public SampleLanguage(boolean fallback) {
+            this.fallback = fallback;
+        }
+
+        @Override
+        public Predicate createPredicate(String expression) {
+            throw new UnsupportedOperationException("Should not be called");
+        }
+
+        @Override
+        public Expression createExpression(String expression) {
+            throw new UnsupportedOperationException("Should not be called");
+        }
+
+        public boolean isFallback() {
+            return fallback;
+        }
+
+        public void setFallback(boolean fallback) {
+            this.fallback = fallback;
+        }
+    }
+
 
 }
