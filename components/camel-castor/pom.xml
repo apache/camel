@@ -26,7 +26,7 @@
 
     <artifactId>camel-castor</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Castor</name>
+    <name>Camel :: Castor (deprecated)</name>
     <description>Camel Castor data format support</description>
 
     <properties>
