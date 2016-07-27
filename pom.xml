@@ -634,11 +634,11 @@
                 <goals>
                   <goal>jar</goal>
                 </goals>
-                <configuration>
-                    <additionalparam>${javadoc.opts}</additionalparam>
-                </configuration>
               </execution>
             </executions>
+            <configuration>
+              <additionalparam>${javadoc.opts}</additionalparam>
+            </configuration>
           </plugin>
           <!-- We want to sign the artifact, the POM, and all attached artifacts -->
           <plugin>
