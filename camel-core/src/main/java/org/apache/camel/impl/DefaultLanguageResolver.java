@@ -22,6 +22,7 @@ import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.util.ResolverHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,13 +43,9 @@ public class DefaultLanguageResolver implements LanguageResolver {
 
     public Language resolveLanguage(String name, CamelContext context) {
         // lookup in registry first
-        Object bean = lookupInRegistry(context, name, name + "-language");
-
-        if (bean != null) {
-            if (bean instanceof Language) {
-                return (Language) bean;
-            }
-            // we do not throw the exception here and try to auto create a Language from META-INF
+        Language languageReg = ResolverHelper.lookupLanguageInRegistryWithFallback(context, name);
+        if (languageReg != null) {
+            return languageReg;
         }
 
         Class<?> type = null;
@@ -73,21 +70,17 @@ public class DefaultLanguageResolver implements LanguageResolver {
     }
 
     private Object lookupInRegistry(CamelContext context, String... names) {
-        Object bean = null;
         for (String name : names) {
             try {
-                bean = context.getRegistry().lookupByName(name);
+                Object bean = context.getRegistry().lookupByName(name);
                 if (bean != null) {
                     getLog().debug("Found language: {} in registry: {}", name, bean);
+                    return bean;
                 }
             } catch (Exception e) {
                 if (getLog().isDebugEnabled()) {
                     getLog().debug("Ignored error looking up bean: " + name + ". Error: " + e);
                 }
-            }
-
-            if (bean != null) {
-                return bean;
             }
         }
 
