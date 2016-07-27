@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResolverHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -37,20 +38,11 @@ public class OsgiDataFormatResolver implements DataFormatResolver {
 
     public DataFormat resolveDataFormat(String name, CamelContext context) {
         // lookup in registry first
-        Object bean = null;
-        try {
-            bean = context.getRegistry().lookupByName(name);
-            if (bean != null) {
-                LOG.debug("Found language: {} in registry: {}", name, bean);
-            }
-        } catch (Exception e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
-            }
+        DataFormat dataFormatReg = ResolverHelper.lookupDataFormatInRegistryWithFallback(context, name);
+        if (dataFormatReg != null) {
+            return dataFormatReg;
         }
-        if (bean instanceof DataFormat) {
-            return (DataFormat) bean;
-        }
+
         return getDataFormat(name, context);
     }
 
