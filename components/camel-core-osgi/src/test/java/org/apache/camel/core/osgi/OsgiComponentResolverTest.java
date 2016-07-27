@@ -69,7 +69,7 @@ public class OsgiComponentResolverTest extends CamelOsgiTestSupport {
 
         private boolean fallback;
 
-        public SampleComponent(boolean fallback) {
+        SampleComponent(boolean fallback) {
             this.fallback = fallback;
         }
 
