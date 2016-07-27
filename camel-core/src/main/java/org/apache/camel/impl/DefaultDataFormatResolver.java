@@ -21,6 +21,7 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.util.ResolverHelper;
 
 /**
  * Default data format resolver
@@ -34,7 +35,9 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
     protected FactoryFinder dataformatFactory;
 
     public DataFormat resolveDataFormat(String name, CamelContext context) {
-        DataFormat dataFormat = lookup(context, DataFormat.class, name, name + "-dataformat");
+        // lookup in registry first
+        DataFormat dataFormat = ResolverHelper.lookupDataFormatInRegistryWithFallback(context, name);
+
         if (dataFormat == null) {
             Class<?> type = null;
             try {
@@ -64,18 +67,4 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
         return dataFormat;
     }
 
-    private static <T> T lookup(CamelContext context, Class<T> type, String... names) {
-        for (String name : names) {
-            try {
-                T bean = context.getRegistry().lookupByNameAndType(name, type);
-                if (bean != null) {
-                    return bean;
-                }
-            } catch (Exception e) {
-                // need to ignore not same type
-            }
-        }
-        // return null if anything goes wrong
-        return null;
-    }
 }

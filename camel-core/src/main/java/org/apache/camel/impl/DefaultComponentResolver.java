@@ -23,7 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ResolverHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,20 +45,9 @@ public class DefaultComponentResolver implements ComponentResolver {
 
     public Component resolveComponent(String name, CamelContext context) {
         // lookup in registry first
-        Object bean = lookupInRegistry(context, name, name + "-component");
-
-        if (bean != null) {
-            if (bean instanceof Component) {
-                return (Component) bean;
-            } else {
-                // lets use Camel's type conversion mechanism to convert things like CamelContext
-                // and other types into a valid Component
-                Component component = CamelContextHelper.convertTo(context, Component.class, bean);
-                if (component != null) {
-                    return component;
-                }
-            }
-            // we do not throw the exception here and try to auto create a component
+        Component componentReg = ResolverHelper.lookupComponentInRegistryWithFallback(context, name);
+        if (componentReg != null) {
+            return componentReg;
         }
 
         // not in registry then use component factory
@@ -85,24 +74,6 @@ public class DefaultComponentResolver implements ComponentResolver {
         } else {
             throw new IllegalArgumentException("Type is not a Component implementation. Found: " + type.getName());
         }
-    }
-
-    private Object lookupInRegistry(CamelContext context, String... names) {
-        Object bean = null;
-        for (String name : names) {
-            try {
-                bean = context.getRegistry().lookupByName(name);
-                getLog().debug("Lookup component with name {} in registry. Found: {}", name, bean);
-            } catch (Exception e) {
-                getLog().debug("Ignored error looking up bean: " + name, e);
-            }
-
-            if (bean != null) {
-                return bean;
-            }
-        }
-
-        return null;
     }
 
     private Class<?> findComponent(String name, CamelContext context) throws ClassNotFoundException, IOException {
