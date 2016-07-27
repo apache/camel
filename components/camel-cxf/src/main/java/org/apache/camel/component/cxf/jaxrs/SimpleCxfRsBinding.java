@@ -298,7 +298,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
     private DefaultAttachment createCamelAttachment(Attachment attachment) {
         DefaultAttachment camelAttachment = new DefaultAttachment(attachment.getDataHandler());
         for (String name : attachment.getHeaders().keySet()) {
-            for(String value : attachment.getHeaderAsList(name)) {
+            for (String value : attachment.getHeaderAsList(name)) {
                 camelAttachment.addHeader(name, value);
             }
         }
