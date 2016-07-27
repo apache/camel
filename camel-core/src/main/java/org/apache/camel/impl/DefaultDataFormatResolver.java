@@ -31,10 +31,12 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
 
     public static final String DATAFORMAT_RESOURCE_PATH = "META-INF/services/org/apache/camel/dataformat/";
 
+    private static final String FALLBACK_DATA_FORMAT_BEAN_SUFFIX = "-dataformat";
+
     protected FactoryFinder dataformatFactory;
 
     public DataFormat resolveDataFormat(String name, CamelContext context) {
-        DataFormat dataFormat = lookup(context, name, DataFormat.class);
+        DataFormat dataFormat = lookup(context, DataFormat.class, name, name + FALLBACK_DATA_FORMAT_BEAN_SUFFIX);
         if (dataFormat == null) {
             Class<?> type = null;
             try {
@@ -64,12 +66,18 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
         return dataFormat;
     }
 
-    private static <T> T lookup(CamelContext context, String ref, Class<T> type) {
-        try {
-            return context.getRegistry().lookupByNameAndType(ref, type);
-        } catch (Exception e) {
-            // need to ignore not same type and return it as null
-            return null;
+    private static <T> T lookup(CamelContext context, Class<T> type, String... names) {
+        for(String name : names) {
+            try {
+                T bean = context.getRegistry().lookupByNameAndType(name, type);
+                if(bean!=null) {
+                    return bean;
+                }
+            } catch (Exception e) {
+                // need to ignore not same type
+            }
         }
+        // return null if anything goes wrong
+        return null;
     }
 }
