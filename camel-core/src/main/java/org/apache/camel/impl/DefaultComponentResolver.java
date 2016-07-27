@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * scheme name in the <b>META-INF/services/org/apache/camel/component/</b>
  * directory on the classpath.
  *
- * @version 
+ * @version
  */
 public class DefaultComponentResolver implements ComponentResolver {
 
@@ -41,13 +41,11 @@ public class DefaultComponentResolver implements ComponentResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultComponentResolver.class);
 
-    private static final String FALLBACK_COMPONENT_BEAN_SUFFIX = "-component";
-
     private FactoryFinder factoryFinder;
 
     public Component resolveComponent(String name, CamelContext context) {
         // lookup in registry first
-        Object bean = lookupInRegistry(context, name, name + FALLBACK_COMPONENT_BEAN_SUFFIX);
+        Object bean = lookupInRegistry(context, name, name + "-component");
 
         if (bean != null) {
             if (bean instanceof Component) {
@@ -91,7 +89,7 @@ public class DefaultComponentResolver implements ComponentResolver {
 
     private Object lookupInRegistry(CamelContext context, String... names) {
         Object bean = null;
-        for(String name : names) {
+        for (String name : names) {
             try {
                 bean = context.getRegistry().lookupByName(name);
                 getLog().debug("Lookup component with name {} in registry. Found: {}", name, bean);
@@ -99,7 +97,7 @@ public class DefaultComponentResolver implements ComponentResolver {
                 getLog().debug("Ignored error looking up bean: " + name, e);
             }
 
-            if(bean!=null) {
+            if (bean != null) {
                 break;
             }
         }
