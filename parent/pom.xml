@@ -98,7 +98,7 @@
     <cglib-bundle-version>3.2.2_1</cglib-bundle-version>
     <cglib-version>3.2.2</cglib-version>
     <chronicle-bytes-version>1.7.4</chronicle-bytes-version>
-    <chronicle-core-version>1.7.2</chronicle-core-version>
+    <chronicle-core-version>1.7.3</chronicle-core-version>
     <chronicle-engine-version>1.13.5</chronicle-engine-version>
     <chronicle-map-version>2.4.15</chronicle-map-version>
     <chronicle-network-version>1.7.1</chronicle-network-version>
