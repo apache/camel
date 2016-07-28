@@ -90,6 +90,7 @@ The Kafka component supports 1 options which are listed below.
 
 
 
+
 // endpoint options: START
 The Kafka component supports 75 endpoint options which are listed below:
 
@@ -106,7 +107,7 @@ The Kafka component supports 75 endpoint options which are listed below:
 | kerberosRenewJitter | common | 0.05 | Double | Percentage of random jitter added to the renewal time.
 | kerberosRenewWindowFactor | common | 0.8 | Double | Login thread will sleep until the specified window factor of time from last refresh to ticket's expiry has been reached at which time it will try to renew the ticket.
 | partitioner | common | org.apache.kafka.clients.producer.internals.DefaultPartitioner | String | The partitioner class for partitioning messages amongst sub-topics. The default partitioner is based on the hash of the key.
-| saslMechanism | common | GSSAPI | String | The The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml
+| saslMechanism | common | GSSAPI | String | The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml
 | topic | common |  | String | *Required* Name of the topic to use.
 | autoCommitEnable | consumer | true | Boolean | If true periodically commit to ZooKeeper the offset of messages already fetched by the consumer. This committed offset will be used when the process fails as the position from which the new consumer will begin.
 | autoCommitIntervalMs | consumer | 5000 | Integer | The frequency in ms that the consumer offsets are committed to zookeeper.
@@ -175,6 +176,7 @@ The Kafka component supports 75 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
