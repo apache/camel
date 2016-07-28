@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CometdComponentConfiguration.class)
 public class CometdComponentAutoConfiguration {
 
-    @Bean(name = {"cometds-component", "cometd-component"})
+    @Bean(name = {"cometd-component", "cometds-component"})
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(CometdComponent.class)
     public CometdComponent configureCometdComponent(CamelContext camelContext,
