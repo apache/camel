@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Address;
@@ -593,8 +595,8 @@ public class MailBinding {
         return true;
     }
 
-    protected Map<String, Object> extractHeadersFromMail(Message mailMessage, Exchange exchange) throws MessagingException {
-        Map<String, Object> answer = new HashMap<String, Object>();
+    protected Map<String, Object> extractHeadersFromMail(Message mailMessage, Exchange exchange) throws MessagingException, IOException {
+        Map<String, Object> answer = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         Enumeration<?> names = mailMessage.getAllHeaders();
 
         while (names.hasMoreElements()) {
@@ -602,6 +604,20 @@ public class MailBinding {
             String value = header.getValue();
             if (headerFilterStrategy != null && !headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), value, exchange)) {
                 CollectionHelper.appendValue(answer, header.getName(), value);
+            }
+        }
+        // if the message is a multipart message, do not set the content type to multipart/*
+        if (((MailEndpoint)exchange.getFromEndpoint()).getConfiguration().isMapMailMessage()) {
+            Object content = mailMessage.getContent();
+            if (content instanceof MimeMultipart) {
+                MimeMultipart multipart = (MimeMultipart)content;
+                int size = multipart.getCount();
+                for (int i = 0; i < size; i++) {
+                    BodyPart part = multipart.getBodyPart(i);
+                    if (part.getContentType().toLowerCase().startsWith("text")) {
+                        answer.put(Exchange.CONTENT_TYPE, part.getContentType());
+                    }
+                }
             }
         }
 
