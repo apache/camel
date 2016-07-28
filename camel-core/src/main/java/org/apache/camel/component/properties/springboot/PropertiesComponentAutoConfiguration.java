@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(PropertiesComponentConfiguration.class)
 public class PropertiesComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "properties-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(PropertiesComponent.class)
     public PropertiesComponent configurePropertiesComponent(

@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(DirectComponentConfiguration.class)
 public class DirectComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "direct-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(DirectComponent.class)
     public DirectComponent configureDirectComponent(CamelContext camelContext,

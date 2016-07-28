@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(StubComponentConfiguration.class)
 public class StubComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "stub-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(StubComponent.class)
     public StubComponent configureStubComponent(CamelContext camelContext,

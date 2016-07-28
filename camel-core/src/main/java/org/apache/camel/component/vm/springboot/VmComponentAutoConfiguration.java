@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(VmComponentConfiguration.class)
 public class VmComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "vm-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(VmComponent.class)
     public VmComponent configureVmComponent(CamelContext camelContext,

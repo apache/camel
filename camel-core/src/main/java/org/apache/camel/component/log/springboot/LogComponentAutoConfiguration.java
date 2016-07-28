@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(LogComponentConfiguration.class)
 public class LogComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "log-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(LogComponent.class)
     public LogComponent configureLogComponent(CamelContext camelContext,
