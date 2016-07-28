@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(GzipDataFormatConfiguration.class)
 public class GzipDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "gzip-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(GzipDataFormat.class)
     public GzipDataFormat configureGzipDataFormat(CamelContext camelContext,

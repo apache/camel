@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SchedulerComponentConfiguration.class)
 public class SchedulerComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "scheduler-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SchedulerComponent.class)
     public SchedulerComponent configureSchedulerComponent(
