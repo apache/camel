@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(YammerComponentConfiguration.class)
 public class YammerComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "yammer-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(YammerComponent.class)
     public YammerComponent configureYammerComponent(CamelContext camelContext,

@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(EjbComponentConfiguration.class)
 public class EjbComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "ejb-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(EjbComponent.class)
     public EjbComponent configureEjbComponent(CamelContext camelContext,

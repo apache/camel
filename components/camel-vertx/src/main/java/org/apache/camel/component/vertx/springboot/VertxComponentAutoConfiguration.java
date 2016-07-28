@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(VertxComponentConfiguration.class)
 public class VertxComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "vertx-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(VertxComponent.class)
     public VertxComponent configureVertxComponent(CamelContext camelContext,

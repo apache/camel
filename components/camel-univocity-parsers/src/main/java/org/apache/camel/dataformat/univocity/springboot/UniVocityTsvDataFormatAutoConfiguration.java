@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(UniVocityTsvDataFormatConfiguration.class)
 public class UniVocityTsvDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "univocity-tsv-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(UniVocityTsvDataFormat.class)
     public UniVocityTsvDataFormat configureUniVocityTsvDataFormat(

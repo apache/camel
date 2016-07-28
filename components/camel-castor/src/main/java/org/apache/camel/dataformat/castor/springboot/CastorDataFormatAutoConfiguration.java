@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CastorDataFormatConfiguration.class)
 public class CastorDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "castor-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(CastorDataFormat.class)
     public CastorDataFormat configureCastorDataFormat(

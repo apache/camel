@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(MimeMultipartDataFormatConfiguration.class)
 public class MimeMultipartDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "mime-multipart-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MimeMultipartDataFormat.class)
     public MimeMultipartDataFormat configureMimeMultipartDataFormat(

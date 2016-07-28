@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(XmlRpcDataFormatConfiguration.class)
 public class XmlRpcDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "xmlrpc-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(XmlRpcDataFormat.class)
     public XmlRpcDataFormat configureXmlRpcDataFormat(

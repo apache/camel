@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(GoogleDriveComponentConfiguration.class)
 public class GoogleDriveComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "google-drive-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(GoogleDriveComponent.class)
     public GoogleDriveComponent configureGoogleDriveComponent(

@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(KestrelComponentConfiguration.class)
 public class KestrelComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "kestrel-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(KestrelComponent.class)
     public KestrelComponent configureKestrelComponent(

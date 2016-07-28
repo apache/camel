@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SmppComponentConfiguration.class)
 public class SmppComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "smpp-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SmppComponent.class)
     public SmppComponent configureSmppComponent(CamelContext camelContext,

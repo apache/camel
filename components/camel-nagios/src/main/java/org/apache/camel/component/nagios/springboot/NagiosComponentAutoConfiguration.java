@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(NagiosComponentConfiguration.class)
 public class NagiosComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "nagios-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(NagiosComponent.class)
     public NagiosComponent configureNagiosComponent(CamelContext camelContext,

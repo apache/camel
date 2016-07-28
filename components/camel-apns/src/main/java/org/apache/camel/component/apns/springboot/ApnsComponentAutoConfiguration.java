@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(ApnsComponentConfiguration.class)
 public class ApnsComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "apns-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ApnsComponent.class)
     public ApnsComponent configureApnsComponent(CamelContext camelContext,

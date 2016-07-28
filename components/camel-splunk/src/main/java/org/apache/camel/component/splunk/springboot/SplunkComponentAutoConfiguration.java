@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SplunkComponentConfiguration.class)
 public class SplunkComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "splunk-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SplunkComponent.class)
     public SplunkComponent configureSplunkComponent(CamelContext camelContext,

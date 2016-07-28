@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(MQTTComponentConfiguration.class)
 public class MQTTComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "mqtt-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MQTTComponent.class)
     public MQTTComponent configureMQTTComponent(CamelContext camelContext,

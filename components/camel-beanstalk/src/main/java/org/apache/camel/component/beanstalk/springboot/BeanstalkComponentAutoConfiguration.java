@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(BeanstalkComponentConfiguration.class)
 public class BeanstalkComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "beanstalk-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(BeanstalkComponent.class)
     public BeanstalkComponent configureBeanstalkComponent(

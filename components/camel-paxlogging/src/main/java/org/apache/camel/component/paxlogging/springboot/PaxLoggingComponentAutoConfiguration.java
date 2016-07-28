@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(PaxLoggingComponentConfiguration.class)
 public class PaxLoggingComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "paxlogging-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(PaxLoggingComponent.class)
     public PaxLoggingComponent configurePaxLoggingComponent(

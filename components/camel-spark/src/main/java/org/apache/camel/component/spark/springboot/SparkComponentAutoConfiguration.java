@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SparkComponentConfiguration.class)
 public class SparkComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "spark-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SparkComponent.class)
     public SparkComponent configureSparkComponent(CamelContext camelContext,

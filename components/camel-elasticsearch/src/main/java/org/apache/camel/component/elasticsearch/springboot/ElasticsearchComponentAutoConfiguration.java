@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(ElasticsearchComponentConfiguration.class)
 public class ElasticsearchComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "elasticsearch-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ElasticsearchComponent.class)
     public ElasticsearchComponent configureElasticsearchComponent(

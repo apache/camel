@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(GangliaComponentConfiguration.class)
 public class GangliaComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "ganglia-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(GangliaComponent.class)
     public GangliaComponent configureGangliaComponent(

@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CacheComponentConfiguration.class)
 public class CacheComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "cache-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(CacheComponent.class)
     public CacheComponent configureCacheComponent(CamelContext camelContext,

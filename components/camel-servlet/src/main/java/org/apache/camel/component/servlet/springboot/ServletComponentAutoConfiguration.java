@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(ServletComponentConfiguration.class)
 public class ServletComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "servlet-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ServletComponent.class)
     public ServletComponent configureServletComponent(

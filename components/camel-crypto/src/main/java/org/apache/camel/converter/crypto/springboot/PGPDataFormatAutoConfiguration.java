@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(PGPDataFormatConfiguration.class)
 public class PGPDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "pgp-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(PGPDataFormat.class)
     public PGPDataFormat configurePGPDataFormat(CamelContext camelContext,

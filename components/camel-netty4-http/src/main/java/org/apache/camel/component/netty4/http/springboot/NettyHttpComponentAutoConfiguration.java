@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(NettyHttpComponentConfiguration.class)
 public class NettyHttpComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "netty4-http-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(NettyHttpComponent.class)
     public NettyHttpComponent configureNettyHttpComponent(

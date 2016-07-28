@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(LuceneComponentConfiguration.class)
 public class LuceneComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "lucene-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(LuceneComponent.class)
     public LuceneComponent configureLuceneComponent(CamelContext camelContext,

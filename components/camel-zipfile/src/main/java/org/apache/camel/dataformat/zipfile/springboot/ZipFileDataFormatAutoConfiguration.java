@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(ZipFileDataFormatConfiguration.class)
 public class ZipFileDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "zipFile-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ZipFileDataFormat.class)
     public ZipFileDataFormat configureZipFileDataFormat(

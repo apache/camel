@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(LZFDataFormatConfiguration.class)
 public class LZFDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "lzf-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(LZFDataFormat.class)
     public LZFDataFormat configureLZFDataFormat(CamelContext camelContext,

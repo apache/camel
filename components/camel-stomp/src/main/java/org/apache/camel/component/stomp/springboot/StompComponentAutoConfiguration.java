@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(StompComponentConfiguration.class)
 public class StompComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "stomp-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(StompComponent.class)
     public StompComponent configureStompComponent(CamelContext camelContext,

@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SyslogDataFormatConfiguration.class)
 public class SyslogDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "syslog-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SyslogDataFormat.class)
     public SyslogDataFormat configureSyslogDataFormat(

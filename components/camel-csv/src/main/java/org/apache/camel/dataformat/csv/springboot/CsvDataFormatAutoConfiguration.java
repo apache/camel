@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CsvDataFormatConfiguration.class)
 public class CsvDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "csv-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(CsvDataFormat.class)
     public CsvDataFormat configureCsvDataFormat(CamelContext camelContext,

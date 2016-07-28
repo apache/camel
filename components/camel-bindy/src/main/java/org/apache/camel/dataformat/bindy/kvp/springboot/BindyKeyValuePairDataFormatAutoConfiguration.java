@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(BindyKeyValuePairDataFormatConfiguration.class)
 public class BindyKeyValuePairDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "bindy-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(BindyKeyValuePairDataFormat.class)
     public BindyKeyValuePairDataFormat configureBindyKeyValuePairDataFormat(

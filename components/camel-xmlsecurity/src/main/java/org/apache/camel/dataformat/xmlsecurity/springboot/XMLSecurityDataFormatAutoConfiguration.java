@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(XMLSecurityDataFormatConfiguration.class)
 public class XMLSecurityDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "secureXML-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(XMLSecurityDataFormat.class)
     public XMLSecurityDataFormat configureXMLSecurityDataFormat(

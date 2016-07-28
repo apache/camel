@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SnakeYAMLDataFormatConfiguration.class)
 public class SnakeYAMLDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "yaml-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SnakeYAMLDataFormat.class)
     public SnakeYAMLDataFormat configureSnakeYAMLDataFormat(

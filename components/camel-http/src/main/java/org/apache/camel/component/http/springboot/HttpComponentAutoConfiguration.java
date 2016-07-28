@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(HttpComponentConfiguration.class)
 public class HttpComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "http-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(HttpComponent.class)
     public HttpComponent configureHttpComponent(CamelContext camelContext,

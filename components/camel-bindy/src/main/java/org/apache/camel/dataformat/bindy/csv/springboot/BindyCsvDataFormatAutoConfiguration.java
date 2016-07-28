@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(BindyCsvDataFormatConfiguration.class)
 public class BindyCsvDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "bindy-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(BindyCsvDataFormat.class)
     public BindyCsvDataFormat configureBindyCsvDataFormat(

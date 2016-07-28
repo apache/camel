@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(RssDataFormatConfiguration.class)
 public class RssDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "rss-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(RssDataFormat.class)
     public RssDataFormat configureRssDataFormat(CamelContext camelContext,
