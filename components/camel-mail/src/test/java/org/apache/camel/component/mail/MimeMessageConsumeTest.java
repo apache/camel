@@ -135,7 +135,8 @@ public class MimeMessageConsumeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://james3@localhost?consumer.delay=1000").convertBodyTo(String.class).to("mock:result");
+                from("pop3://james3@localhost?consumer.delay=1000").removeHeader("to").to("smtp://james4@localhost");
+                from("pop3://james4@localhost?consumer.delay=2000").convertBodyTo(String.class).to("mock:result");
             }
         };
     }
