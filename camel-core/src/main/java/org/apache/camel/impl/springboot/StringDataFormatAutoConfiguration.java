@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(StringDataFormatConfiguration.class)
 public class StringDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "string-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(StringDataFormat.class)
     public StringDataFormat configureStringDataFormat(

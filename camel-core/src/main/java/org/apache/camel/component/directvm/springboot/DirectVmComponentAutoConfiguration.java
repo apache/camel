@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(DirectVmComponentConfiguration.class)
 public class DirectVmComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "direct-vm-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(DirectVmComponent.class)
     public DirectVmComponent configureDirectVmComponent(

@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SerializationDataFormatConfiguration.class)
 public class SerializationDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "serialization-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SerializationDataFormat.class)
     public SerializationDataFormat configureSerializationDataFormat(

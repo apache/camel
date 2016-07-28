@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(XsltComponentConfiguration.class)
 public class XsltComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "xslt-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(XsltComponent.class)
     public XsltComponent configureXsltComponent(CamelContext camelContext,

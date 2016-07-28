@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SedaComponentConfiguration.class)
 public class SedaComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "seda-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SedaComponent.class)
     public SedaComponent configureSedaComponent(CamelContext camelContext,

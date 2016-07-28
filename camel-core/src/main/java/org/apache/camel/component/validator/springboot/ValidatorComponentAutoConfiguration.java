@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(ValidatorComponentConfiguration.class)
 public class ValidatorComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "validator-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ValidatorComponent.class)
     public ValidatorComponent configureValidatorComponent(
