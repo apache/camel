@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(LinkedInComponentConfiguration.class)
 public class LinkedInComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "linkedin-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(LinkedInComponent.class)
     public LinkedInComponent configureLinkedInComponent(

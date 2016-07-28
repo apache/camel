@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(FlatpackDataFormatConfiguration.class)
 public class FlatpackDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "flatpack-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(FlatpackDataFormat.class)
     public FlatpackDataFormat configureFlatpackDataFormat(

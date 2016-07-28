@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(TwitterComponentConfiguration.class)
 public class TwitterComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "twitter-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(TwitterComponent.class)
     public TwitterComponent configureTwitterComponent(

@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(Base64DataFormatConfiguration.class)
 public class Base64DataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "base64-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(Base64DataFormat.class)
     public Base64DataFormat configureBase64DataFormat(

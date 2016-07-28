@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SalesforceComponentConfiguration.class)
 public class SalesforceComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "salesforce-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SalesforceComponent.class)
     public SalesforceComponent configureSalesforceComponent(

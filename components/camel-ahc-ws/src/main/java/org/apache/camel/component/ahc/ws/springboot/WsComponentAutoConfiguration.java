@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(WsComponentConfiguration.class)
 public class WsComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "ahc-ws-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(WsComponent.class)
     public WsComponent configureWsComponent(CamelContext camelContext,

@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(HazelcastComponentConfiguration.class)
 public class HazelcastComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "hazelcast-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(HazelcastComponent.class)
     public HazelcastComponent configureHazelcastComponent(

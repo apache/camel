@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(MsvComponentConfiguration.class)
 public class MsvComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "msv-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MsvComponent.class)
     public MsvComponent configureMsvComponent(CamelContext camelContext,

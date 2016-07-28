@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(GuavaEventBusComponentConfiguration.class)
 public class GuavaEventBusComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "guava-eventbus-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(GuavaEventBusComponent.class)
     public GuavaEventBusComponent configureGuavaEventBusComponent(

@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(VelocityComponentConfiguration.class)
 public class VelocityComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "velocity-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(VelocityComponent.class)
     public VelocityComponent configureVelocityComponent(

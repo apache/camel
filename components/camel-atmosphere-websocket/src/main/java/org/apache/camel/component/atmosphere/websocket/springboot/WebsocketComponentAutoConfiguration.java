@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(WebsocketComponentConfiguration.class)
 public class WebsocketComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "atmosphere-websocket-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(WebsocketComponent.class)
     public WebsocketComponent configureWebsocketComponent(

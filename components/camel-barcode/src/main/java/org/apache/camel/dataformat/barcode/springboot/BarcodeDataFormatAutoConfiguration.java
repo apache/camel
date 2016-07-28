@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(BarcodeDataFormatConfiguration.class)
 public class BarcodeDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "barcode-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(BarcodeDataFormat.class)
     public BarcodeDataFormat configureBarcodeDataFormat(

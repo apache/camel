@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(BoonDataFormatConfiguration.class)
 public class BoonDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "boon-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(BoonDataFormat.class)
     public BoonDataFormat configureBoonDataFormat(CamelContext camelContext,

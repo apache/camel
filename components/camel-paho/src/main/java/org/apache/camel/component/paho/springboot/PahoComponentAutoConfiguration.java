@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(PahoComponentConfiguration.class)
 public class PahoComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "paho-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(PahoComponent.class)
     public PahoComponent configurePahoComponent(CamelContext camelContext,

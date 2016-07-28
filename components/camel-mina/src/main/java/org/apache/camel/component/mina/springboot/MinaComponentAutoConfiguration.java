@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(MinaComponentConfiguration.class)
 public class MinaComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "mina-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MinaComponent.class)
     public MinaComponent configureMinaComponent(CamelContext camelContext,

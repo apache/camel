@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SshComponentConfiguration.class)
 public class SshComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "ssh-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SshComponent.class)
     public SshComponent configureSshComponent(CamelContext camelContext,

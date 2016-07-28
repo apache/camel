@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(UniVocityFixedWidthDataFormatConfiguration.class)
 public class UniVocityFixedWidthDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "univocity-fixed-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(UniVocityFixedWidthDataFormat.class)
     public UniVocityFixedWidthDataFormat configureUniVocityFixedWidthDataFormat(

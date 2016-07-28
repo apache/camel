@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(JcloudsComponentConfiguration.class)
 public class JcloudsComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "jclouds-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JcloudsComponent.class)
     public JcloudsComponent configureJcloudsComponent(

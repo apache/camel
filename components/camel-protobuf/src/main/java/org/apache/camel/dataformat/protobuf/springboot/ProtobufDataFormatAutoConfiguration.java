@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(ProtobufDataFormatConfiguration.class)
 public class ProtobufDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "protobuf-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ProtobufDataFormat.class)
     public ProtobufDataFormat configureProtobufDataFormat(

@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(ZooKeeperComponentConfiguration.class)
 public class ZooKeeperComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "zookeeper-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ZooKeeperComponent.class)
     public ZooKeeperComponent configureZooKeeperComponent(

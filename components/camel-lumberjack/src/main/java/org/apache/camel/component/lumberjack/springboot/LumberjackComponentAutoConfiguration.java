@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(LumberjackComponentConfiguration.class)
 public class LumberjackComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "lumberjack-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(LumberjackComponent.class)
     public LumberjackComponent configureLumberjackComponent(

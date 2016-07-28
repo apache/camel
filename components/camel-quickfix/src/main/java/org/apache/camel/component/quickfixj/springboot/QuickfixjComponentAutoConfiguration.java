@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(QuickfixjComponentConfiguration.class)
 public class QuickfixjComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "quickfix-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(QuickfixjComponent.class)
     public QuickfixjComponent configureQuickfixjComponent(

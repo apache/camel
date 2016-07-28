@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(Jt400ComponentConfiguration.class)
 public class Jt400ComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "jt400-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(Jt400Component.class)
     public Jt400Component configureJt400Component(CamelContext camelContext,

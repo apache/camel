@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(FacebookComponentConfiguration.class)
 public class FacebookComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "facebook-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(FacebookComponent.class)
     public FacebookComponent configureFacebookComponent(

@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(HBaseComponentConfiguration.class)
 public class HBaseComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "hbase-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(HBaseComponent.class)
     public HBaseComponent configureHBaseComponent(CamelContext camelContext,

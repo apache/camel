@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(HL7DataFormatConfiguration.class)
 public class HL7DataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "hl7-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(HL7DataFormat.class)
     public HL7DataFormat configureHL7DataFormat(CamelContext camelContext,

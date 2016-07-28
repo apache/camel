@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(AhcComponentConfiguration.class)
 public class AhcComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "ahc-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(AhcComponent.class)
     public AhcComponent configureAhcComponent(CamelContext camelContext,

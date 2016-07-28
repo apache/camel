@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CryptoDataFormatConfiguration.class)
 public class CryptoDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "crypto-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(CryptoDataFormat.class)
     public CryptoDataFormat configureCryptoDataFormat(

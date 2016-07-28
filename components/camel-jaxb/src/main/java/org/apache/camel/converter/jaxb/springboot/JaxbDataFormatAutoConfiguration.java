@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(JaxbDataFormatConfiguration.class)
 public class JaxbDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "jaxb-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JaxbDataFormat.class)
     public JaxbDataFormat configureJaxbDataFormat(CamelContext camelContext,

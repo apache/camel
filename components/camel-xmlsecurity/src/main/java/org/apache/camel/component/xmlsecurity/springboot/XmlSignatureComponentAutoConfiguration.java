@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(XmlSignatureComponentConfiguration.class)
 public class XmlSignatureComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "xmlsecurity-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(XmlSignatureComponent.class)
     public XmlSignatureComponent configureXmlSignatureComponent(

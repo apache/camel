@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(FlinkComponentConfiguration.class)
 public class FlinkComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "flink-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(FlinkComponent.class)
     public FlinkComponent configureFlinkComponent(CamelContext camelContext,

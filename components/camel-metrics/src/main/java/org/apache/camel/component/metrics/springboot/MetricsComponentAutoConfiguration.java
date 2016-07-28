@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(MetricsComponentConfiguration.class)
 public class MetricsComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "metrics-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MetricsComponent.class)
     public MetricsComponent configureMetricsComponent(

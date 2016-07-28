@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(NettyComponentConfiguration.class)
 public class NettyComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "netty-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(NettyComponent.class)
     public NettyComponent configureNettyComponent(CamelContext camelContext,
