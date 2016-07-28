@@ -213,16 +213,19 @@ public class KafkaConfiguration {
     private Integer reconnectBackoffMs = 50;
     //SASL
     //sasl.kerberos.kinit.cmd
-    @UriParam(label = "producer", defaultValue = SaslConfigs.DEFAULT_KERBEROS_KINIT_CMD)
+    @UriParam(label = "common", defaultValue = SaslConfigs.DEFAULT_SASL_MECHANISM)
+    private String saslMechanism = SaslConfigs.DEFAULT_SASL_MECHANISM;
+    //sasl.kerberos.kinit.cmd
+    @UriParam(label = "common", defaultValue = SaslConfigs.DEFAULT_KERBEROS_KINIT_CMD)
     private String kerberosInitCmd = SaslConfigs.DEFAULT_KERBEROS_KINIT_CMD;
     //sasl.kerberos.min.time.before.relogin
-    @UriParam(label = "producer", defaultValue = "60000")
+    @UriParam(label = "common", defaultValue = "60000")
     private Integer kerberosBeforeReloginMinTime = 60000;
     //sasl.kerberos.ticket.renew.jitter
-    @UriParam(label = "producer", defaultValue = "0.05")
+    @UriParam(label = "common", defaultValue = "0.05")
     private Double kerberosRenewJitter = SaslConfigs.DEFAULT_KERBEROS_TICKET_RENEW_JITTER;
     //sasl.kerberos.ticket.renew.window.factor
-    @UriParam(label = "producer", defaultValue = "0.8")
+    @UriParam(label = "common", defaultValue = "0.8")
     private Double kerberosRenewWindowFactor = SaslConfigs.DEFAULT_KERBEROS_TICKET_RENEW_WINDOW_FACTOR;
     //SSL
     //ssl.cipher.suites
@@ -267,8 +270,6 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, ProducerConfig.PARTITIONER_CLASS_CONFIG, getPartitioner());
         addPropertyIfNotNull(props, ProducerConfig.RECEIVE_BUFFER_CONFIG, getReceiveBufferBytes());
         addPropertyIfNotNull(props, ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, getRequestTimeoutMs());
-        //SASL
-        addPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_SERVICE_NAME, getSaslKerberosServiceName());
         // Security protocol
         addPropertyIfNotNull(props, CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, getSecurityProtocol());
         addPropertyIfNotNull(props, ProducerConfig.SEND_BUFFER_CONFIG, getSendBufferBytes());
@@ -286,10 +287,12 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, ProducerConfig.RECONNECT_BACKOFF_MS_CONFIG, getReconnectBackoffMs());
         addPropertyIfNotNull(props, ProducerConfig.RETRY_BACKOFF_MS_CONFIG, getRetryBackoffMs());
         //SASL
+        addPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_SERVICE_NAME, getSaslKerberosServiceName());
         addPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_KINIT_CMD, getKerberosInitCmd());
         addPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_MIN_TIME_BEFORE_RELOGIN, getKerberosBeforeReloginMinTime());
         addPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_TICKET_RENEW_JITTER, getKerberosRenewJitter());
         addPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_TICKET_RENEW_WINDOW_FACTOR, getKerberosRenewWindowFactor());
+        addPropertyIfNotNull(props, SaslConfigs.SASL_MECHANISM, getSaslMechanism());
         //SSL
         addPropertyIfNotNull(props, SslConfigs.SSL_CIPHER_SUITES_CONFIG, getSslCipherSuites());
         addPropertyIfNotNull(props, SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, getSslEndpointAlgorithm());
@@ -319,8 +322,6 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, getPartitionAssignor());
         addPropertyIfNotNull(props, ConsumerConfig.RECEIVE_BUFFER_CONFIG, getReceiveBufferBytes());
         addPropertyIfNotNull(props, ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, getConsumerRequestTimeoutMs());
-        //SASL
-        addPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_SERVICE_NAME, getSaslKerberosServiceName());
         // Security protocol
         addPropertyIfNotNull(props, CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, getSecurityProtocol());
         addPropertyIfNotNull(props, ProducerConfig.SEND_BUFFER_CONFIG, getSendBufferBytes());
@@ -341,10 +342,12 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, ConsumerConfig.RECONNECT_BACKOFF_MS_CONFIG, getReconnectBackoffMs());
         addPropertyIfNotNull(props, ConsumerConfig.RETRY_BACKOFF_MS_CONFIG, getRetryBackoffMs());
         //SASL
+        addPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_SERVICE_NAME, getSaslKerberosServiceName());
         addPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_KINIT_CMD, getKerberosInitCmd());
         addPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_MIN_TIME_BEFORE_RELOGIN, getKerberosBeforeReloginMinTime());
         addPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_TICKET_RENEW_JITTER, getKerberosRenewJitter());
         addPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_TICKET_RENEW_WINDOW_FACTOR, getKerberosRenewWindowFactor());
+        addPropertyIfNotNull(props, SaslConfigs.SASL_MECHANISM, getSaslMechanism());
         //SSL
         addPropertyIfNotNull(props, SslConfigs.SSL_CIPHER_SUITES_CONFIG, getSslCipherSuites());
         addPropertyIfNotNull(props, SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, getSslEndpointAlgorithm());
@@ -762,7 +765,19 @@ public class KafkaConfiguration {
         this.saslKerberosServiceName = saslKerberosServiceName;
     }
 
-    public String getSecurityProtocol() {
+    public String getSaslMechanism() {
+		return saslMechanism;
+	}
+
+    /**
+     * The Simple Authentication and Security Layer (SASL) Mechanism used. 
+     * For the valid values see <a href="http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml">http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml</a>
+     */
+	public void setSaslMechanism(String saslMechanism) {
+		this.saslMechanism = saslMechanism;
+	}
+
+	public String getSecurityProtocol() {
         return securityProtocol;
     }
 
