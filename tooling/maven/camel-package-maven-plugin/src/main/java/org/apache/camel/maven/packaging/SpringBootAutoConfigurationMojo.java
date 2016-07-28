@@ -136,7 +136,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             for (String componentClass : grModels.keySet()) {
                 List<ComponentModel> compModels = grModels.get(componentClass);
                 ComponentModel model = compModels.get(0); // They should be equivalent
-                List<String> aliases = compModels.stream().map(m -> m.getScheme()).collect(Collectors.toList());
+                List<String> aliases = compModels.stream().map(m -> m.getScheme()).sorted().collect(Collectors.toList());
 
                 // only create source code if the component has options that can be used in auto configuration
                 if (!model.getComponentOptions().isEmpty()) {
