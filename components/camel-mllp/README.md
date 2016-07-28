@@ -32,10 +32,10 @@ exception is raised during the processing of the exchange.  The HL7 acknowledgem
 CamelMllpAcknowledgement property on the exchange - if present, the value of this property will be used for the HL7
 acknowledgment.  The automatic generation of an HL7 acknowledgment can be completely disabled by setting the autoAck
 URI parameter to false.  If autoAck=false and the CamelMllpAcknowledgment property is not set on the exchange, and 
-exception will be raised.  
+exception will be raised.
 
 The component also provides a Camel Processor that is capable of generating HL7 Acknowledgements.  Therefore, the HAPI 
-is not required to generate HL7 Acknowledgements - however, it can be used if desired.  
+is not required to generate HL7 Acknowledgements - however, it can be used if desired.
 By default, the processor will generate a HL7 Application Accept Acknowledgement if there is not an exception on the 
 Camel Exchange - otherwise it will generate a HL7 Application Error Acknowledgement.  The generated acknowledgement 
 is placed in the CamelMllpAcknowledgment property on the Exchange.
@@ -63,7 +63,7 @@ timeouts after the first messages is received.
 Also, neither the Mina2 codec nor the Netty4 decoder interrogate HL7 Acknowledgments.  Therefore, it is much more
 difficult to use the redelivery and error handling features Camel provides.
 
-The above issues may be addressable by updating/patching the existing components, but there is one more that is not.  
+The above issues may be addressable by updating/patching the existing components, but there is one more that is not.
 Both camel-netty4 and camel-mina2 are designed to handle a large number of concurrent connections, rapid connect/disconnect
 rates, and asynchronous communication.  Forcing, these components to deal with the small number of stateful connections
 inherent to the MLLP protocol seems inappropriate.
@@ -72,7 +72,7 @@ An attempt was made to update the camel-netty4 decoder provided by the camel-hl7
 the MLLP protocol, but it quickly became very complicated.  The decoder was updated to correctly deal with the MLLP 
 frame.  The current implementation is based on the Netty DelimiterBasedFrameDecoder, but this decoder only looks for a 
 single byte terminator and MLLP uses two bytes to terminate it's frame.  Additionally, the second terminating byte of the
-MLLP frame can't be used alone because that byte is also contained in HL7 messages (it is the HL7 Segment Delimiter).  
+MLLP frame can't be used alone because that byte is also contained in HL7 messages (it is the HL7 Segment Delimiter).
 An implementation resembling the Netty LineBasedFrameDecoder was written at it correctly handled the MLLP framing issues,
 but the timout issues were never addressed.
 
@@ -83,7 +83,7 @@ partial/incomplete acknowledgement.
 
 # MLLP Background
 The MLLP protocol is inherently synchronous because external systems almost always require the order of messages to be
-maintained (i.e. FIFO delivery).  
+maintained (i.e. FIFO delivery).
 
 When a MLLP-Producer sends a message to an external system, it is required to wait for 
 an HL7 Acknowledgement before sending the next message.  Additionally, the content of the acknowlegement must be examined
@@ -112,7 +112,7 @@ instead of sending HL7 Application Error Acknowledgements, and route the message
 to an alternate durable store before sending the the HL7 Application Reject acknowledgement.
 
 Systems using the MLLP protocol normally use stateful TCP connections - the connections are established and left open 
-for extended periods of time.  
+for extended periods of time.
 
 A MLLP-Consumer endpoint may have more than one TCP connection at a given time, but this is not the typical case.  Normally
 there is a single active TCP connection to a MLLP-Consumer.
@@ -121,13 +121,3 @@ A MLLP-Producer endpoint should only have a single TCP connection at any given t
 than one connection to an external system, it oftentimes causes issues with the external system.  Additionally, since FIFO
 must be maintained, only 
 
-# CamelPatches
-
-To help simplify bringing Camel-MLLP into Apache Camel, we have take care to build a set of patches that help integrate the component
-into Camel.
-
-features.xml is a diff file that will add Camel-MLLP to the camel features list when on Apache Karaf.
-
-parent-pom.xml is a diff file that contains an update to Camel's Parent pom.
-
-common-bin.xml is a diff file that contains an update to the common distribution's include statements.
