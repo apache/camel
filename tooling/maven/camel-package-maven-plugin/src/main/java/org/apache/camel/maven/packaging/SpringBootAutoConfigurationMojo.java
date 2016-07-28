@@ -21,9 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -67,8 +65,6 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  * @goal prepare-spring-boot-auto-configuration
  */
 public class SpringBootAutoConfigurationMojo extends AbstractMojo {
-
-    private static final String[] SKIP_COMPONENTS = new String[]{"ahc-wss", "cometds", "https", "http4s", "smpps", "solrs", "solrCloud"};
 
     /**
      * The maven project.
@@ -128,13 +124,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
             List<ComponentModel> allModels = new LinkedList<>();
             for (String componentName : componentNames) {
-
-                // skip some components which is duplicates
-                boolean skip = Arrays.asList(SKIP_COMPONENTS).contains(componentName);
-                if (skip) {
-                    continue;
-                }
-
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
                     ComponentModel model = generateComponentModel(componentName, json);
@@ -144,7 +133,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
             // Group the models by implementing classes
             Map<String, List<ComponentModel>> grModels = allModels.stream().collect(Collectors.groupingBy(m -> m.getJavaType()));
-            for(String componentClass : grModels.keySet()) {
+            for (String componentClass : grModels.keySet()) {
                 List<ComponentModel> compModels = grModels.get(componentClass);
                 ComponentModel model = compModels.get(0); // They should be equivalent
                 List<String> aliases = compModels.stream().map(m -> m.getScheme()).collect(Collectors.toList());
@@ -158,7 +147,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
                     String overrideComponentName = null;
-                    if(aliases.size()>1) {
+                    if (aliases.size() > 1) {
                         // determine component name when there are multiple ones
                         overrideComponentName = model.getArtifactId().replace("camel-", "");
                     }
@@ -502,7 +491,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         method.addParameter(configurationName, "configuration");
 
         // adding the '-dataformat' suffix to prevent collision with component names
-        method.addAnnotation(Bean.class).setStringValue("name", model.getModelName() + "-dataformat");;
+        method.addAnnotation(Bean.class).setStringValue("name", model.getModelName() + "-dataformat");
+        ;
         method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
         method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
 
