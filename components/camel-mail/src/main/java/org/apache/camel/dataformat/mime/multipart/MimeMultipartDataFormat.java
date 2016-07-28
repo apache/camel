@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
-
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.BodyPart;
@@ -254,7 +253,7 @@ public class MimeMultipartDataFormat implements DataFormat {
                     Header header = headers.nextElement();
                     camelAttachment.addHeader(header.getName(), header.getValue());
                 }
-               camelMessage.addAttachmentObject(getAttachmentKey(bp), camelAttachment);
+                camelMessage.addAttachmentObject(getAttachmentKey(bp), camelAttachment);
             }
         }
         if (content instanceof BodyPart) {
@@ -289,7 +288,7 @@ public class MimeMultipartDataFormat implements DataFormat {
         String key = bp.getFileName();
         // if there is no file name we use the Content-ID header
         if (key == null && bp instanceof MimeBodyPart) {
-            key = ((MimeBodyPart)bp).getContentID();
+            key = ((MimeBodyPart) bp).getContentID();
             if (key != null && key.startsWith("<") && key.length() > 2) {
                 // strip <>
                 key = key.substring(1, key.length() - 1);

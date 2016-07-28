@@ -29,10 +29,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
-import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.SalesforceMultipleChoicesException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.dto.RestChoices;
@@ -59,7 +59,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     private XStream xStream;
 
     public DefaultRestClient(SalesforceHttpClient httpClient, String version, PayloadFormat format, SalesforceSession session)
-        throws SalesforceException {
+            throws SalesforceException {
         super(version, session, httpClient);
 
         this.format = format;
@@ -100,7 +100,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                 // return list of choices as error message for 300
                 if (statusCode == HttpStatus.MULTIPLE_CHOICES_300) {
                     if (PayloadFormat.JSON.equals(format)) {
-                        choices = objectMapper.readValue(responseContent, new TypeReference<List<String>>() { });
+                        choices = objectMapper.readValue(responseContent, new TypeReference<List<String>>() {
+                        });
                     } else {
                         RestChoices restChoices = new RestChoices();
                         xStream.fromXML(responseContent, restChoices);
@@ -111,8 +112,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                     final List<RestError> restErrors;
                     if (PayloadFormat.JSON.equals(format)) {
                         restErrors = objectMapper.readValue(
-                            responseContent, new TypeReference<List<RestError>>() {
-                            }
+                                responseContent, new TypeReference<List<RestError>>() {
+                                }
                         );
                     } else {
                         RestErrors errors = new RestErrors();
@@ -378,7 +379,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             if (requestDto != null) {
                 request.content(new InputStreamContentProvider(requestDto));
                 request.header(HttpHeader.CONTENT_TYPE,
-                    PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+                        PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
             }
 
             // requires authorization token
@@ -395,7 +396,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     private String apexCallUrl(String apexUrl, Map<String, Object> queryParams)
-        throws UnsupportedEncodingException, URISyntaxException {
+            throws UnsupportedEncodingException, URISyntaxException {
 
         if (queryParams != null && !queryParams.isEmpty()) {
             apexUrl = URISupport.appendParametersToURI(apexUrl, queryParams);
