@@ -69,7 +69,7 @@
         </dependency>
     </dependencies>
     
-    <!--build>
+    <build>
        <plugins>
           <plugin>
              <artifactId>maven-surefire-plugin</artifactId>
@@ -77,8 +77,9 @@
                 <systemPropertyVariables>
                     <jgroups.bind_addr>127.0.0.1</jgroups.bind_addr>
                 </systemPropertyVariables>
+                <argLine>-Djava.net.preferIPv4Stack=true</argLine>
              </configuration>
           </plugin>
        </plugins>
-    </build-->
+    </build>
 </project>
