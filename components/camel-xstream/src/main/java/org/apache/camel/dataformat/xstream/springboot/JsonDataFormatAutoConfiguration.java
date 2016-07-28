@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(JsonDataFormatConfiguration.class)
 public class JsonDataFormatAutoConfiguration {
 
-    @Bean(name = "json-dataformat")
+    @Bean(name = "json-xstream-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JsonDataFormat.class)
     public JsonDataFormat configureJsonDataFormat(CamelContext camelContext,
