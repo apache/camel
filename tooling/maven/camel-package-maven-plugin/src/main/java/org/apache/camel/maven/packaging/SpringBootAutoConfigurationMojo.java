@@ -21,12 +21,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
@@ -65,7 +69,6 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     private static final String[] SKIP_COMPONENTS = new String[]{"ahc-wss", "cometds", "https", "http4s", "smpps", "solrs", "solrCloud"};
-    private static final String[] MAIL_COMPONENTS = new String[]{"imap", "imaps", "pop3", "pop3s", "smtp", "smtps"};
 
     /**
      * The maven project.
@@ -122,46 +125,67 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         // create auto configuration for the components
         if (!componentNames.isEmpty()) {
             getLog().debug("Found " + componentNames.size() + " components");
+
+            List<ComponentModel> allModels = new LinkedList<>();
             for (String componentName : componentNames) {
 
                 // skip some components which is duplicates
-                boolean skip = false;
-                for (String name : SKIP_COMPONENTS) {
-                    if (name.equals(componentName)) {
-                        skip = true;
-                    }
-                }
+                boolean skip = Arrays.asList(SKIP_COMPONENTS).contains(componentName);
                 if (skip) {
                     continue;
-                }
-
-                // mail component should just be mail
-                String overrideComponentName = null;
-                for (String name : MAIL_COMPONENTS) {
-                    if (name.equals(componentName)) {
-                        overrideComponentName = "mail";
-                        break;
-                    }
                 }
 
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
                     ComponentModel model = generateComponentModel(componentName, json);
-
-                    // only create source code if the component has options that can be used in auto configuration
-                    if (!model.getComponentOptions().isEmpty()) {
-
-                        // use springboot as sub package name so the code is not in normal
-                        // package so the Spring Boot JARs can be optional at runtime
-                        int pos = model.getJavaType().lastIndexOf(".");
-                        String pkg = model.getJavaType().substring(0, pos) + ".springboot";
-
-                        createComponentConfigurationSource(pkg, model, overrideComponentName);
-                        createComponentAutoConfigurationSource(pkg, model);
-                        createComponentSpringFactorySource(pkg, model);
-                    }
+                    allModels.add(model);
                 }
             }
+
+            // Group the models by implementing classes
+            Map<String, List<ComponentModel>> grModels = allModels.stream().collect(Collectors.groupingBy(m -> m.getJavaType()));
+            for(String componentClass : grModels.keySet()) {
+                List<ComponentModel> compModels = grModels.get(componentClass);
+                ComponentModel model = compModels.get(0); // They should be equivalent
+                List<String> aliases = compModels.stream().map(m -> m.getScheme()).collect(Collectors.toList());
+
+                // only create source code if the component has options that can be used in auto configuration
+                if (!model.getComponentOptions().isEmpty()) {
+
+                    // use springboot as sub package name so the code is not in normal
+                    // package so the Spring Boot JARs can be optional at runtime
+                    int pos = model.getJavaType().lastIndexOf(".");
+                    String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+                    String overrideComponentName = null;
+                    if(aliases.size()>0) {
+                        // determine component name when there are multiple ones
+                        overrideComponentName = model.getArtifactId().replace("camel-", "");
+                    }
+
+                    createComponentConfigurationSource(pkg, model, overrideComponentName);
+                    createComponentAutoConfigurationSource(pkg, model, aliases);
+                    createComponentSpringFactorySource(pkg, model);
+                }
+
+
+            }
+
+            /*
+            // only create source code if the component has options that can be used in auto configuration
+            if (!model.getComponentOptions().isEmpty()) {
+
+                // use springboot as sub package name so the code is not in normal
+                // package so the Spring Boot JARs can be optional at runtime
+                int pos = model.getJavaType().lastIndexOf(".");
+                String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+                createComponentConfigurationSource(pkg, model, overrideComponentName);
+                createComponentAutoConfigurationSource(pkg, model, Collections.singletonList(componentName));
+                createComponentSpringFactorySource(pkg, model);
+            }
+            */
+
         }
     }
 
@@ -364,7 +388,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
-    private void createComponentAutoConfigurationSource(String packageName, ComponentModel model) throws MojoFailureException {
+    private void createComponentAutoConfigurationSource(String packageName, ComponentModel model, List<String> componentAliases) throws MojoFailureException {
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
         int pos = model.getJavaType().lastIndexOf(".");
@@ -402,7 +426,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         method.addParameter("CamelContext", "camelContext");
         method.addParameter(configurationName, "configuration");
 
-        method.addAnnotation(Bean.class);
+        // Determine all the aliases
+        String[] springBeanAliases = componentAliases.stream().map(alias -> alias + "-component").toArray(size -> new String[size]);
+
+        method.addAnnotation(Bean.class).setStringArrayValue("name", springBeanAliases);
         method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
         method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
 
@@ -474,7 +501,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         method.addParameter("CamelContext", "camelContext");
         method.addParameter(configurationName, "configuration");
 
-        method.addAnnotation(Bean.class);
+        // adding the '-dataformat' suffix to prevent collision with component names
+        method.addAnnotation(Bean.class).setStringValue("name", model.getModelName() + "-dataformat");;
         method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
         method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
 
