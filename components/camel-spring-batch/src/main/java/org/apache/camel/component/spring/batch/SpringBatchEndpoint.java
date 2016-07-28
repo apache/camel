@@ -43,7 +43,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
     private String jobName;
 
     @UriParam
-    private Boolean jobFromHeader;
+    private boolean jobFromHeader;
 
     /**
      * @deprecated will be removed in Camel 3.0
@@ -89,7 +89,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         if (jobLauncher == null) {
             jobLauncher = resolveJobLauncher();
         }
-        if (job == null && jobName != null && jobFromHeader == null) {
+        if (job == null && jobName != null && jobFromHeader == false) {
             job = CamelContextHelper.mandatoryLookup(getCamelContext(), jobName, Job.class);
         }
     }
@@ -154,11 +154,11 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
     /**
      * Explicitly defines if the jobName shouls be taken from the headers instead of the URI.
      */
-    public void setJobFromHeader(Boolean jobFromHeader) {
+    public void setJobFromHeader(boolean jobFromHeader) {
         this.jobFromHeader = jobFromHeader;
     }
 
-    public Boolean getJobFromHeader() {
+    public boolean getJobFromHeader() {
         return jobFromHeader;
     }
 
