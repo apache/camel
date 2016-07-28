@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(BindyFixedLengthDataFormatConfiguration.class)
 public class BindyFixedLengthDataFormatAutoConfiguration {
 
-    @Bean(name = "bindy-dataformat")
+    @Bean(name = "bindy-fixed-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(BindyFixedLengthDataFormat.class)
     public BindyFixedLengthDataFormat configureBindyFixedLengthDataFormat(

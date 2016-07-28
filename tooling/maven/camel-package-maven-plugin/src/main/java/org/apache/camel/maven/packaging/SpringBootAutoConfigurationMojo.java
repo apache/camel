@@ -160,21 +160,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
             }
 
-            /*
-            // only create source code if the component has options that can be used in auto configuration
-            if (!model.getComponentOptions().isEmpty()) {
-
-                // use springboot as sub package name so the code is not in normal
-                // package so the Spring Boot JARs can be optional at runtime
-                int pos = model.getJavaType().lastIndexOf(".");
-                String pkg = model.getJavaType().substring(0, pos) + ".springboot";
-
-                createComponentConfigurationSource(pkg, model, overrideComponentName);
-                createComponentAutoConfigurationSource(pkg, model, Collections.singletonList(componentName));
-                createComponentSpringFactorySource(pkg, model);
-            }
-            */
-
         }
     }
 
@@ -189,25 +174,44 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         // create auto configuration for the components
         if (!dataFormatNames.isEmpty()) {
             getLog().debug("Found " + dataFormatNames.size() + " dataformats");
+
+            List<DataFormatModel> allModels = new LinkedList<>();
             for (String dataFormatName : dataFormatNames) {
                 String json = loadDataFormaatJson(jsonFiles, dataFormatName);
                 if (json != null) {
                     DataFormatModel model = generateDataFormatModel(dataFormatName, json);
-
-                    // only create source code if the component has options that can be used in auto configuration
-                    if (!model.getDataFormatOptions().isEmpty()) {
-
-                        // use springboot as sub package name so the code is not in normal
-                        // package so the Spring Boot JARs can be optional at runtime
-                        int pos = model.getJavaType().lastIndexOf(".");
-                        String pkg = model.getJavaType().substring(0, pos) + ".springboot";
-
-                        createDataFormatConfigurationSource(pkg, model);
-                        createDataFormatAutoConfigurationSource(pkg, model);
-                        createDataFormatSpringFactorySource(pkg, model);
-                    }
+                    allModels.add(model);
                 }
             }
+
+            // Group the models by implementing classes
+            Map<String, List<DataFormatModel>> grModels = allModels.stream().collect(Collectors.groupingBy(m -> m.getJavaType()));
+            for (String dataFormatClass : grModels.keySet()) {
+                List<DataFormatModel> dfModels = grModels.get(dataFormatClass);
+                DataFormatModel model = dfModels.get(0); // They should be equivalent
+                List<String> aliases = dfModels.stream().map(m -> m.getName()).sorted().collect(Collectors.toList());
+
+                // only create source code if the data format has options that can be used in auto configuration
+                if (!model.getDataFormatOptions().isEmpty()) {
+
+                    // use springboot as sub package name so the code is not in normal
+                    // package so the Spring Boot JARs can be optional at runtime
+                    int pos = model.getJavaType().lastIndexOf(".");
+                    String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+                    String overrideDataformatName = null;
+                    if (aliases.size() > 1) {
+                        // determine component name when there are multiple ones
+                        overrideDataformatName = model.getArtifactId().replace("camel-", "");
+                    }
+
+                    createDataFormatConfigurationSource(pkg, model, overrideDataformatName);
+                    createDataFormatAutoConfigurationSource(pkg, model, aliases);
+                    createDataFormatSpringFactorySource(pkg, model);
+                }
+
+            }
+
         }
     }
 
@@ -292,7 +296,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
-    private void createDataFormatConfigurationSource(String packageName, DataFormatModel model) throws MojoFailureException {
+    private void createDataFormatConfigurationSource(String packageName, DataFormatModel model, String overrideDataFormatName) throws MojoFailureException {
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
         int pos = model.getJavaType().lastIndexOf(".");
@@ -306,7 +310,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
         javaClass.getJavaDoc().setFullText(doc);
 
-        String prefix = "camel.dataformat." + model.getName();
+        String prefix = "camel.dataformat." + (overrideDataFormatName != null ? overrideDataFormatName : model.getName());
         // make sure prefix is in lower case
         prefix = prefix.toLowerCase(Locale.US);
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
@@ -451,7 +455,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
-    private void createDataFormatAutoConfigurationSource(String packageName, DataFormatModel model) throws MojoFailureException {
+    private void createDataFormatAutoConfigurationSource(String packageName, DataFormatModel model, List<String> dataFormatAliases) throws MojoFailureException {
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
         int pos = model.getJavaType().lastIndexOf(".");
@@ -490,9 +494,13 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         method.addParameter("CamelContext", "camelContext");
         method.addParameter(configurationName, "configuration");
 
+
+        // Determine all the aliases
         // adding the '-dataformat' suffix to prevent collision with component names
-        method.addAnnotation(Bean.class).setStringValue("name", model.getModelName() + "-dataformat");
-        ;
+        String[] springBeanAliases = dataFormatAliases.stream().map(alias -> alias + "-dataformat").toArray(size -> new String[size]);
+
+        method.addAnnotation(Bean.class).setStringArrayValue("name", springBeanAliases);
+
         method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
         method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
 
