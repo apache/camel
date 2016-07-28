@@ -34,8 +34,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(MailComponentConfiguration.class)
 public class MailComponentAutoConfiguration {
 
-    @Bean(name = {"imaps-component", "imap-component", "pop3-component",
-            "smtps-component", "pop3s-component", "smtp-component"})
+    @Bean(name = {"imap-component", "imaps-component", "pop3-component",
+            "pop3s-component", "smtp-component", "smtps-component"})
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MailComponent.class)
     public MailComponent configureMailComponent(CamelContext camelContext,
