@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(EventComponentConfiguration.class)
 public class EventComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "spring-event-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(EventComponent.class)
     public EventComponent configureEventComponent(CamelContext camelContext,

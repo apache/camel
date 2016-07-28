@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(DisruptorComponentConfiguration.class)
 public class DisruptorComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "disruptor-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(DisruptorComponent.class)
     public DisruptorComponent configureDisruptorComponent(

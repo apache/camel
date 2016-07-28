@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SjmsComponentConfiguration.class)
 public class SjmsComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "sjms-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SjmsComponent.class)
     public SjmsComponent configureSjmsComponent(CamelContext camelContext,

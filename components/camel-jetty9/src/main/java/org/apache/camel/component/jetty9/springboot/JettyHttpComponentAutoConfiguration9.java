@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(JettyHttpComponentConfiguration9.class)
 public class JettyHttpComponentAutoConfiguration9 {
 
-    @Bean
+    @Bean(name = "jetty-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JettyHttpComponent9.class)
     public JettyHttpComponent9 configureJettyHttpComponent9(
