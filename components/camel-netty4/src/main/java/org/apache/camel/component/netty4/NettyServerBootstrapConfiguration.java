@@ -99,7 +99,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected EventLoopGroup bossGroup;
     @UriParam(label = "consumer,advanced")
     protected EventLoopGroup workerGroup;
-    @UriParam(label = "consumer,advanced")
+    @UriParam(label = "advanced")
     protected ChannelGroup channelGroup;
     @UriParam(label = "consumer,advanced")
     protected String networkInterface;
