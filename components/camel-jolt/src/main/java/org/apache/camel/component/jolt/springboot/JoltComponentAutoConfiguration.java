@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(JoltComponentConfiguration.class)
 public class JoltComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "jolt-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JoltComponent.class)
     public JoltComponent configureJoltComponent(CamelContext camelContext,

@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(Olingo2ComponentConfiguration.class)
 public class Olingo2ComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "olingo2-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(Olingo2Component.class)
     public Olingo2Component configureOlingo2Component(

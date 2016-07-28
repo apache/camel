@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(GoogleCalendarComponentConfiguration.class)
 public class GoogleCalendarComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "google-calendar-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(GoogleCalendarComponent.class)
     public GoogleCalendarComponent configureGoogleCalendarComponent(

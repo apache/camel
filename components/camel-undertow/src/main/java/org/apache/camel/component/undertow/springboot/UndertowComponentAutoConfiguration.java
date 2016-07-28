@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(UndertowComponentConfiguration.class)
 public class UndertowComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "undertow-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(UndertowComponent.class)
     public UndertowComponent configureUndertowComponent(

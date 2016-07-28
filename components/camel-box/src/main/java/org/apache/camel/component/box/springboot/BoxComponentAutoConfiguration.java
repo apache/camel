@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(BoxComponentConfiguration.class)
 public class BoxComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "box-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(BoxComponent.class)
     public BoxComponent configureBoxComponent(CamelContext camelContext,

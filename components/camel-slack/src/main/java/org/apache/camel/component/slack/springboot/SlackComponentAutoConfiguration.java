@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SlackComponentConfiguration.class)
 public class SlackComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "slack-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SlackComponent.class)
     public SlackComponent configureSlackComponent(CamelContext camelContext,

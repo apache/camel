@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(RestletComponentConfiguration.class)
 public class RestletComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "restlet-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(RestletComponent.class)
     public RestletComponent configureRestletComponent(

@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(TidyMarkupDataFormatConfiguration.class)
 public class TidyMarkupDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "tidyMarkup-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(TidyMarkupDataFormat.class)
     public TidyMarkupDataFormat configureTidyMarkupDataFormat(

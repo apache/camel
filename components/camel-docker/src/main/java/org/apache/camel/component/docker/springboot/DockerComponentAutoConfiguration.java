@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(DockerComponentConfiguration.class)
 public class DockerComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "docker-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(DockerComponent.class)
     public DockerComponent configureDockerComponent(CamelContext camelContext,

@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(DigitalSignatureComponentConfiguration.class)
 public class DigitalSignatureComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "crypto-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(DigitalSignatureComponent.class)
     public DigitalSignatureComponent configureDigitalSignatureComponent(

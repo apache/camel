@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(QuartzComponentConfiguration.class)
 public class QuartzComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "quartz-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(QuartzComponent.class)
     public QuartzComponent configureQuartzComponent(CamelContext camelContext,

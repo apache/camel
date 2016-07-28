@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(GoogleMailComponentConfiguration.class)
 public class GoogleMailComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "google-mail-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(GoogleMailComponent.class)
     public GoogleMailComponent configureGoogleMailComponent(

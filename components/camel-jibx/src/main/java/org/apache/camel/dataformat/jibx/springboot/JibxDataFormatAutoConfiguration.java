@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(JibxDataFormatConfiguration.class)
 public class JibxDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "jibx-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JibxDataFormat.class)
     public JibxDataFormat configureJibxDataFormat(CamelContext camelContext,

@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(AvroComponentConfiguration.class)
 public class AvroComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "avro-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(AvroComponent.class)
     public AvroComponent configureAvroComponent(CamelContext camelContext,

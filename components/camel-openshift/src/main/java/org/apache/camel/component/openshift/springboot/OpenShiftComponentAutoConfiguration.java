@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(OpenShiftComponentConfiguration.class)
 public class OpenShiftComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "openshift-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(OpenShiftComponent.class)
     public OpenShiftComponent configureOpenShiftComponent(

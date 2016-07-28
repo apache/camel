@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(ElsqlComponentConfiguration.class)
 public class ElsqlComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "elsql-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ElsqlComponent.class)
     public ElsqlComponent configureElsqlComponent(CamelContext camelContext,

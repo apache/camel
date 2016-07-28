@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(AMQPComponentConfiguration.class)
 public class AMQPComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "amqp-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(AMQPComponent.class)
     public AMQPComponent configureAMQPComponent(CamelContext camelContext,

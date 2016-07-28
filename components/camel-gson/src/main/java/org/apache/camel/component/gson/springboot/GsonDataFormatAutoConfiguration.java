@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(GsonDataFormatConfiguration.class)
 public class GsonDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "json-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(GsonDataFormat.class)
     public GsonDataFormat configureGsonDataFormat(CamelContext camelContext,

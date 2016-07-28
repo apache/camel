@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(HdfsComponentConfiguration.class)
 public class HdfsComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "hdfs2-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(HdfsComponent.class)
     public HdfsComponent configureHdfsComponent(CamelContext camelContext,

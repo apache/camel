@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(ICalDataFormatConfiguration.class)
 public class ICalDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "ical-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ICalDataFormat.class)
     public ICalDataFormat configureICalDataFormat(CamelContext camelContext,

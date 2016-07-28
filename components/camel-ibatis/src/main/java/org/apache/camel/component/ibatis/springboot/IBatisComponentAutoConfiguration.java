@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(IBatisComponentConfiguration.class)
 public class IBatisComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "ibatis-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(IBatisComponent.class)
     public IBatisComponent configureIBatisComponent(CamelContext camelContext,

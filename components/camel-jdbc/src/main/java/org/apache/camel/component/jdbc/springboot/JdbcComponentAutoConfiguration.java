@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(JdbcComponentConfiguration.class)
 public class JdbcComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "jdbc-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JdbcComponent.class)
     public JdbcComponent configureJdbcComponent(CamelContext camelContext,

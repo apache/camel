@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(FreemarkerComponentConfiguration.class)
 public class FreemarkerComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "freemarker-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(FreemarkerComponent.class)
     public FreemarkerComponent configureFreemarkerComponent(

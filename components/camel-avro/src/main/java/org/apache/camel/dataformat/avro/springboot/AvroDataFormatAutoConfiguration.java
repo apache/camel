@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(AvroDataFormatConfiguration.class)
 public class AvroDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "avro-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(AvroDataFormat.class)
     public AvroDataFormat configureAvroDataFormat(CamelContext camelContext,

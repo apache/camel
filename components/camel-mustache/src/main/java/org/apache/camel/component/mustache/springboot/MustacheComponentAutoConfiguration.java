@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(MustacheComponentConfiguration.class)
 public class MustacheComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "mustache-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MustacheComponent.class)
     public MustacheComponent configureMustacheComponent(

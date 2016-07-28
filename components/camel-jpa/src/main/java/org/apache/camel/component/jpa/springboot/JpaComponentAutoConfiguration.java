@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(JpaComponentConfiguration.class)
 public class JpaComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "jpa-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JpaComponent.class)
     public JpaComponent configureJpaComponent(CamelContext camelContext,

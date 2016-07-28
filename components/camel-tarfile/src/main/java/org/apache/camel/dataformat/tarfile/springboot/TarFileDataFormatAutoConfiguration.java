@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(TarFileDataFormatConfiguration.class)
 public class TarFileDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "tarfile-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(TarFileDataFormat.class)
     public TarFileDataFormat configureTarFileDataFormat(

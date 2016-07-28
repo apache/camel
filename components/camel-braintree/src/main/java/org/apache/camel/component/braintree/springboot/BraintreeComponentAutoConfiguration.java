@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(BraintreeComponentConfiguration.class)
 public class BraintreeComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "braintree-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(BraintreeComponent.class)
     public BraintreeComponent configureBraintreeComponent(

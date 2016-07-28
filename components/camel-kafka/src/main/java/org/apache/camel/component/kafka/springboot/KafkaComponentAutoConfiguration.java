@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(KafkaComponentConfiguration.class)
 public class KafkaComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "kafka-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(KafkaComponent.class)
     public KafkaComponent configureKafkaComponent(CamelContext camelContext,

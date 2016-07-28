@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(XmlBeansDataFormatConfiguration.class)
 public class XmlBeansDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "xmlBeans-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(XmlBeansDataFormat.class)
     public XmlBeansDataFormat configureXmlBeansDataFormat(

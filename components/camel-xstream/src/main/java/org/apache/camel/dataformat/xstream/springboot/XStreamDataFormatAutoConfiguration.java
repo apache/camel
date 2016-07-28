@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(XStreamDataFormatConfiguration.class)
 public class XStreamDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "xstream-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(XStreamDataFormat.class)
     public XStreamDataFormat configureXStreamDataFormat(

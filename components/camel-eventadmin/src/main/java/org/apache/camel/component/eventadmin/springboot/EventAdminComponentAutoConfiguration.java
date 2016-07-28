@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(EventAdminComponentConfiguration.class)
 public class EventAdminComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "eventadmin-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(EventAdminComponent.class)
     public EventAdminComponent configureEventAdminComponent(

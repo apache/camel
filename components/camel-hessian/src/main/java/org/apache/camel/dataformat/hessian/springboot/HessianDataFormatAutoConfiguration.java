@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(HessianDataFormatConfiguration.class)
 public class HessianDataFormatAutoConfiguration {
 
-    @Bean
+    @Bean(name = "hessian-dataformat")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(HessianDataFormat.class)
     public HessianDataFormat configureHessianDataFormat(

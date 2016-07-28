@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(MyBatisComponentConfiguration.class)
 public class MyBatisComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "mybatis-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MyBatisComponent.class)
     public MyBatisComponent configureMyBatisComponent(
