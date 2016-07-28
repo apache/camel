@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SqlStoredComponentConfiguration.class)
 public class SqlStoredComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "sql-stored-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SqlStoredComponent.class)
     public SqlStoredComponent configureSqlStoredComponent(

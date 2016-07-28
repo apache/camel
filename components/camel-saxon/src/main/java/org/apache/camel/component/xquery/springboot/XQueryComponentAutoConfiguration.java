@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(XQueryComponentConfiguration.class)
 public class XQueryComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "xquery-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(XQueryComponent.class)
     public XQueryComponent configureXQueryComponent(CamelContext camelContext,
