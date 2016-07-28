@@ -766,18 +766,18 @@ public class KafkaConfiguration {
     }
 
     public String getSaslMechanism() {
-		return saslMechanism;
-	}
+        return saslMechanism;
+    }
 
     /**
      * The Simple Authentication and Security Layer (SASL) Mechanism used. 
      * For the valid values see <a href="http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml">http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml</a>
      */
-	public void setSaslMechanism(String saslMechanism) {
-		this.saslMechanism = saslMechanism;
-	}
+    public void setSaslMechanism(String saslMechanism) {
+        this.saslMechanism = saslMechanism;
+    }
 
-	public String getSecurityProtocol() {
+    public String getSecurityProtocol() {
         return securityProtocol;
     }
 
