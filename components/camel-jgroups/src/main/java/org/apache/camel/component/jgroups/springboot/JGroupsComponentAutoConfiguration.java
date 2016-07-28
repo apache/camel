@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(JGroupsComponentConfiguration.class)
 public class JGroupsComponentAutoConfiguration {
 
-    @Bean(name = "jgroups-component")
+    @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JGroupsComponent.class)
     public JGroupsComponent configureJGroupsComponent(
