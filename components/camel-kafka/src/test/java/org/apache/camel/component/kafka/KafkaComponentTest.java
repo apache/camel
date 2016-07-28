@@ -148,6 +148,7 @@ public class KafkaComponentTest {
         props.put(SaslConfigs.SASL_KERBEROS_MIN_TIME_BEFORE_RELOGIN, "60000");
         props.put(SaslConfigs.SASL_KERBEROS_TICKET_RENEW_JITTER, "0.05");
         props.put(SaslConfigs.SASL_KERBEROS_TICKET_RENEW_WINDOW_FACTOR, "0.8");
+        props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
         props.put(SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, "SunX509");
         props.put(SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, "PKIX");
 
@@ -184,6 +185,7 @@ public class KafkaComponentTest {
         params.put("sslTruststoreLocation", "/abc");
         params.put("sslTruststorePassword", "testing");
         params.put("saslKerberosServiceName", "test");
+        params.put("saslMechanism", "PLAIN");
         params.put("securityProtocol", "PLAINTEXT");
         params.put("sslEnabledProtocols", "TLSv1.2");
         params.put("sslKeystoreType", "JKS");
