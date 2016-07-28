@@ -158,7 +158,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
                     String overrideComponentName = null;
-                    if(aliases.size()>0) {
+                    if(aliases.size()>1) {
                         // determine component name when there are multiple ones
                         overrideComponentName = model.getArtifactId().replace("camel-", "");
                     }

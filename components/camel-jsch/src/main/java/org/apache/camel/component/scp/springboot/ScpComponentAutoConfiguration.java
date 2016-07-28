@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(ScpComponentConfiguration.class)
 public class ScpComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "scp-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ScpComponent.class)
     public ScpComponent configureScpComponent(CamelContext camelContext,

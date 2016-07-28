@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CxfComponentConfiguration.class)
 public class CxfComponentAutoConfiguration {
 
-    @Bean
+    @Bean(name = "cxf-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(CxfComponent.class)
     public CxfComponent configureCxfComponent(CamelContext camelContext,
