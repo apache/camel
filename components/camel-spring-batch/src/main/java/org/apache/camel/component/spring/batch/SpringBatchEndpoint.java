@@ -89,7 +89,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         if (jobLauncher == null) {
             jobLauncher = resolveJobLauncher();
         }
-        if (job == null && jobName != null && jobFromHeader == false) {
+        if (job == null && jobName != null && !jobFromHeader) {
             job = CamelContextHelper.mandatoryLookup(getCamelContext(), jobName, Job.class);
         }
     }
