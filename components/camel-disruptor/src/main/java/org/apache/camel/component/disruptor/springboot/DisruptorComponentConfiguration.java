@@ -33,7 +33,7 @@ public class DisruptorComponentConfiguration {
     /**
      * To configure the default number of concurrent consumers
      */
-    private Integer defaultConcurrentConsumers;
+    private int defaultConcurrentConsumers;
     /**
      * To configure the default value for multiple consumers
      */
@@ -57,17 +57,17 @@ public class DisruptorComponentConfiguration {
      * To configure the ring buffer size
      */
     @Deprecated
-    private Integer queueSize;
+    private int queueSize;
     /**
      * To configure the ring buffer size
      */
-    private Integer bufferSize;
+    private int bufferSize;
 
-    public Integer getDefaultConcurrentConsumers() {
+    public int getDefaultConcurrentConsumers() {
         return defaultConcurrentConsumers;
     }
 
-    public void setDefaultConcurrentConsumers(Integer defaultConcurrentConsumers) {
+    public void setDefaultConcurrentConsumers(int defaultConcurrentConsumers) {
         this.defaultConcurrentConsumers = defaultConcurrentConsumers;
     }
 
@@ -105,20 +105,20 @@ public class DisruptorComponentConfiguration {
 
     @Deprecated
     @DeprecatedConfigurationProperty
-    public Integer getQueueSize() {
+    public int getQueueSize() {
         return queueSize;
     }
 
     @Deprecated
-    public void setQueueSize(Integer queueSize) {
+    public void setQueueSize(int queueSize) {
         this.queueSize = queueSize;
     }
 
-    public Integer getBufferSize() {
+    public int getBufferSize() {
         return bufferSize;
     }
 
-    public void setBufferSize(Integer bufferSize) {
+    public void setBufferSize(int bufferSize) {
         this.bufferSize = bufferSize;
     }
 }
