@@ -17,6 +17,7 @@
 package org.apache.camel.itest.springboot.arquillian;
 
 import org.springframework.boot.loader.JarLauncher;
+import org.springframework.boot.loader.MainMethodRunner;
 
 /**
  * A Spring-boot jar launcher that uses the current thread instead of creating a new thread for spring-boot.
@@ -28,17 +29,15 @@ public class ArquillianSyncBootJarLauncher extends JarLauncher {
     public ArquillianSyncBootJarLauncher() {
     }
 
-    public void run(String[] args) {
+    public void run(String[] args) throws Exception {
         this.launch(args);
     }
 
     @Override
-    protected void launch(String[] args, String mainClass, ClassLoader classLoader)
-            throws Exception {
-
+    protected void launch(String[] args, String mainClass, ClassLoader classLoader) throws Exception {
         this.classLoader = classLoader;
 
-        Runnable runner = createMainMethodRunner(mainClass, args, classLoader);
+        MainMethodRunner runner = createMainMethodRunner(mainClass, args, classLoader);
 
         Thread.currentThread().setContextClassLoader(classLoader);
         runner.run();
