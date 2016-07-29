@@ -68,7 +68,7 @@ The Spring Batch component supports 5 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | jobName | producer |  | String | *Required* The name of the Spring Batch job located in the registry.
-| jobFromHeader | producer |  | Boolean | Explicitly defines if the jobName shouls be taken from the headers instead of the URI.
+| jobFromHeader | producer | false | boolean | Explicitly defines if the jobName should be taken from the headers instead of the URI.
 | jobLauncher | producer |  | JobLauncher | Explicitly specifies a JobLauncher to be used.
 | jobRegistry | producer |  | JobRegistry | Explicitly specifies a JobRegistry to be used. If set it it will be used to locate jobs.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
