@@ -37,7 +37,7 @@ public class StandaloneFatJarRouterTest extends Assert {
     @Test
     public void shouldStartCamelRoute() throws InterruptedException, IOException {
         // Given
-        final int port = SocketUtils.findAvailableTcpPort();
+        final int port = SocketUtils.findAvailableTcpPort(20000);
         final URL httpEndpoint = new URL("http://localhost:" + port);
         new Thread() {
             @Override

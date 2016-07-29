@@ -362,7 +362,7 @@
     <juel-version>2.1.3</juel-version>
     <!-- camel-itest-karaf doesn't work with JUnit 4.12 at present -->
     <junit-bundle-version>4.11_1</junit-bundle-version>
-    <junit-version>4.11</junit-version>
+    <junit-version>4.12</junit-version>
     <jython-version>2.5.3</jython-version>
     <jzlib-version>1.1.3</jzlib-version>
     <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
@@ -425,7 +425,7 @@
     <mina2-version>2.0.13</mina2-version>
     <minimal-json-version>0.9.4</minimal-json-version>
     <mock-javamail-version>1.9</mock-javamail-version>
-    <mockito-version>1.9.5</mockito-version>
+    <mockito-version>1.10.19</mockito-version>
     <mongo-java-driver-version>3.3.0</mongo-java-driver-version>
     <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
     <mqtt-client-version>1.14</mqtt-client-version>
@@ -532,11 +532,11 @@
     <splunk-version>1.5.0.0_1</splunk-version>
     <spring-batch-version>3.0.7.RELEASE</spring-batch-version>
     <spring-batch-bundle-version>3.0.7.RELEASE_1</spring-batch-bundle-version>
-    <spring-boot-version>1.3.7.RELEASE</spring-boot-version>
+    <spring-boot-version>1.4.0.RELEASE</spring-boot-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-data-commons-version>1.6.5.RELEASE</spring-data-commons-version>
     <spring-data-redis-version>1.6.4.RELEASE</spring-data-redis-version>
-    <spring-integration-version>4.2.3.RELEASE</spring-integration-version>
+    <spring-integration-version>4.3.1.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-ldap-version>2.0.4.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>2.0.3.RELEASE_1</spring-ldap-bundle-version>
@@ -554,8 +554,8 @@
     <spring-version>${spring4-version}</spring-version>
     <spring40-version>4.0.9.RELEASE</spring40-version>
     <spring41-version>4.1.9.RELEASE</spring41-version>
-    <spring42-version>4.2.7.RELEASE</spring42-version>
-    <spring4-version>4.2.7.RELEASE</spring4-version>
+    <spring42-version>4.3.2.RELEASE</spring42-version>
+    <spring4-version>4.3.2.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>4.0.4.RELEASE</spring-security-version>
     <spring-security-bundle-version>4.0.4.RELEASE_1</spring-security-bundle-version>
@@ -2588,8 +2588,6 @@
           <artifactId>pax-exam-invoker-junit</artifactId>
           <version>${pax-exam-version}</version>
       </dependency>
-
-
 
       <!-- optional Saxon support -->
       <dependency>
