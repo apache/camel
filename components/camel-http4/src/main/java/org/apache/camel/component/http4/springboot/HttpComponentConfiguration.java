@@ -82,11 +82,11 @@ public class HttpComponentConfiguration {
     /**
      * The maximum number of connections.
      */
-    private int maxTotalConnections;
+    private Integer maxTotalConnections;
     /**
      * The maximum number of connections per route.
      */
-    private int connectionsPerRoute;
+    private Integer connectionsPerRoute;
     /**
      * The time for connection to live the time unit is millisecond the default
      * value is always keep alive.
@@ -174,19 +174,19 @@ public class HttpComponentConfiguration {
         this.x509HostnameVerifier = x509HostnameVerifier;
     }
 
-    public int getMaxTotalConnections() {
+    public Integer getMaxTotalConnections() {
         return maxTotalConnections;
     }
 
-    public void setMaxTotalConnections(int maxTotalConnections) {
+    public void setMaxTotalConnections(Integer maxTotalConnections) {
         this.maxTotalConnections = maxTotalConnections;
     }
 
-    public int getConnectionsPerRoute() {
+    public Integer getConnectionsPerRoute() {
         return connectionsPerRoute;
     }
 
-    public void setConnectionsPerRoute(int connectionsPerRoute) {
+    public void setConnectionsPerRoute(Integer connectionsPerRoute) {
         this.connectionsPerRoute = connectionsPerRoute;
     }
 

@@ -115,7 +115,7 @@ public class RestletComponentConfiguration {
      * To configure the port number for the restlet consumer routes. This allows
      * to configure this once to reuse the same port for these consumers.
      */
-    private int port;
+    private Integer port;
     /**
      * Whether to use synchronous Restlet Client for the producer. Setting this
      * option to true can yield faster performance as it seems the Restlet
@@ -261,11 +261,11 @@ public class RestletComponentConfiguration {
         this.disableStreamCache = disableStreamCache;
     }
 
-    public int getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 

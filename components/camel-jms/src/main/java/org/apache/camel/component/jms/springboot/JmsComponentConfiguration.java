@@ -75,7 +75,7 @@ public class JmsComponentConfiguration {
      * vendor-specific extensions to the acknowledgment mode. For the regular
      * modes it is preferable to use the acknowledgementModeName instead.
      */
-    private int acknowledgementMode;
+    private Integer acknowledgementMode;
     /**
      * Enables eager loading of JMS properties as soon as a message is loaded
      * which generally is inefficient as the JMS properties may not be required
@@ -96,7 +96,7 @@ public class JmsComponentConfiguration {
      * Sets the cache level by ID for the underlying JMS resources. See
      * cacheLevelName option for more details.
      */
-    private int cacheLevel;
+    private Integer cacheLevel;
     /**
      * Sets the cache level by name for the underlying JMS resources. Possible
      * values are: CACHE_AUTO CACHE_CONNECTION CACHE_CONSUMER CACHE_NONE and
@@ -129,13 +129,13 @@ public class JmsComponentConfiguration {
      * request/reply over JMS then the option replyToConcurrentConsumers is used
      * to control number of concurrent consumers on the reply message listener.
      */
-    private int concurrentConsumers;
+    private Integer concurrentConsumers;
     /**
      * Specifies the default number of concurrent consumers when doing
      * request/reply over JMS. See also the maxMessagesPerTask option to control
      * dynamic scaling up/down of threads.
      */
-    private int replyToConcurrentConsumers;
+    private Integer replyToConcurrentConsumers;
     /**
      * Sets the default connection factory to be use
      */
@@ -211,12 +211,12 @@ public class JmsComponentConfiguration {
      * case of dynamic scheduling; see the maxConcurrentConsumers setting).
      * There is additional doc available from Spring.
      */
-    private int idleTaskExecutionLimit;
+    private Integer idleTaskExecutionLimit;
     /**
      * Specify the limit for the number of consumers that are allowed to be idle
      * at any given time.
      */
-    private int idleConsumerLimit;
+    private Integer idleConsumerLimit;
     /**
      * Specifies the maximum number of concurrent consumers when consuming from
      * JMS (not for request/reply over JMS). See also the maxMessagesPerTask
@@ -225,25 +225,25 @@ public class JmsComponentConfiguration {
      * used to control number of concurrent consumers on the reply message
      * listener.
      */
-    private int maxConcurrentConsumers;
+    private Integer maxConcurrentConsumers;
     /**
      * Specifies the maximum number of concurrent consumers when using
      * request/reply over JMS. See also the maxMessagesPerTask option to control
      * dynamic scaling up/down of threads.
      */
-    private int replyToMaxConcurrentConsumers;
+    private Integer replyToMaxConcurrentConsumers;
     /**
      * Specifies the maximum number of concurrent consumers for continue routing
      * when timeout occurred when using request/reply over JMS.
      */
-    private int replyOnTimeoutToMaxConcurrentConsumers;
+    private Integer replyOnTimeoutToMaxConcurrentConsumers;
     /**
      * The number of messages per task. -1 is unlimited. If you use a range for
      * concurrent consumers (eg min max) then this option can be used to set a
      * value to eg 100 to control how fast the consumers will shrink when less
      * work is required.
      */
-    private int maxMessagesPerTask;
+    private Integer maxMessagesPerTask;
     /**
      * To use a custom Spring
      * org.springframework.jms.support.converter.MessageConverter so you can be
@@ -283,7 +283,7 @@ public class JmsComponentConfiguration {
      * is the lowest priority and 9 is the highest). The explicitQosEnabled
      * option must also be enabled in order for this option to have any effect.
      */
-    private int priority;
+    private Integer priority;
     /**
      * Specifies whether to inhibit the delivery of messages published by its
      * own connection.
@@ -335,7 +335,7 @@ public class JmsComponentConfiguration {
      * The timeout value of the transaction (in seconds) if using transacted
      * mode.
      */
-    private int transactionTimeout;
+    private Integer transactionTimeout;
     /**
      * Specifies whether to test the connection on startup. This ensures that
      * when Camel starts that all the JMS consumers have a valid connection to
@@ -535,7 +535,7 @@ public class JmsComponentConfiguration {
      * the actual correlation id when doing request/reply over JMS and when the
      * option useMessageIDAsCorrelationID is enabled.
      */
-    private int waitForProvisionCorrelationToBeUpdatedCounter;
+    private Integer waitForProvisionCorrelationToBeUpdatedCounter;
     /**
      * Interval in millis to sleep each time while waiting for provisional
      * correlation id to be updated.
@@ -567,11 +567,11 @@ public class JmsComponentConfiguration {
         this.allowReplyManagerQuickStop = allowReplyManagerQuickStop;
     }
 
-    public int getAcknowledgementMode() {
+    public Integer getAcknowledgementMode() {
         return acknowledgementMode;
     }
 
-    public void setAcknowledgementMode(int acknowledgementMode) {
+    public void setAcknowledgementMode(Integer acknowledgementMode) {
         this.acknowledgementMode = acknowledgementMode;
     }
 
@@ -599,11 +599,11 @@ public class JmsComponentConfiguration {
         this.autoStartup = autoStartup;
     }
 
-    public int getCacheLevel() {
+    public Integer getCacheLevel() {
         return cacheLevel;
     }
 
-    public void setCacheLevel(int cacheLevel) {
+    public void setCacheLevel(Integer cacheLevel) {
         this.cacheLevel = cacheLevel;
     }
 
@@ -631,19 +631,19 @@ public class JmsComponentConfiguration {
         this.clientId = clientId;
     }
 
-    public int getConcurrentConsumers() {
+    public Integer getConcurrentConsumers() {
         return concurrentConsumers;
     }
 
-    public void setConcurrentConsumers(int concurrentConsumers) {
+    public void setConcurrentConsumers(Integer concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
     }
 
-    public int getReplyToConcurrentConsumers() {
+    public Integer getReplyToConcurrentConsumers() {
         return replyToConcurrentConsumers;
     }
 
-    public void setReplyToConcurrentConsumers(int replyToConcurrentConsumers) {
+    public void setReplyToConcurrentConsumers(Integer replyToConcurrentConsumers) {
         this.replyToConcurrentConsumers = replyToConcurrentConsumers;
     }
 
@@ -744,53 +744,53 @@ public class JmsComponentConfiguration {
         this.exposeListenerSession = exposeListenerSession;
     }
 
-    public int getIdleTaskExecutionLimit() {
+    public Integer getIdleTaskExecutionLimit() {
         return idleTaskExecutionLimit;
     }
 
-    public void setIdleTaskExecutionLimit(int idleTaskExecutionLimit) {
+    public void setIdleTaskExecutionLimit(Integer idleTaskExecutionLimit) {
         this.idleTaskExecutionLimit = idleTaskExecutionLimit;
     }
 
-    public int getIdleConsumerLimit() {
+    public Integer getIdleConsumerLimit() {
         return idleConsumerLimit;
     }
 
-    public void setIdleConsumerLimit(int idleConsumerLimit) {
+    public void setIdleConsumerLimit(Integer idleConsumerLimit) {
         this.idleConsumerLimit = idleConsumerLimit;
     }
 
-    public int getMaxConcurrentConsumers() {
+    public Integer getMaxConcurrentConsumers() {
         return maxConcurrentConsumers;
     }
 
-    public void setMaxConcurrentConsumers(int maxConcurrentConsumers) {
+    public void setMaxConcurrentConsumers(Integer maxConcurrentConsumers) {
         this.maxConcurrentConsumers = maxConcurrentConsumers;
     }
 
-    public int getReplyToMaxConcurrentConsumers() {
+    public Integer getReplyToMaxConcurrentConsumers() {
         return replyToMaxConcurrentConsumers;
     }
 
     public void setReplyToMaxConcurrentConsumers(
-            int replyToMaxConcurrentConsumers) {
+            Integer replyToMaxConcurrentConsumers) {
         this.replyToMaxConcurrentConsumers = replyToMaxConcurrentConsumers;
     }
 
-    public int getReplyOnTimeoutToMaxConcurrentConsumers() {
+    public Integer getReplyOnTimeoutToMaxConcurrentConsumers() {
         return replyOnTimeoutToMaxConcurrentConsumers;
     }
 
     public void setReplyOnTimeoutToMaxConcurrentConsumers(
-            int replyOnTimeoutToMaxConcurrentConsumers) {
+            Integer replyOnTimeoutToMaxConcurrentConsumers) {
         this.replyOnTimeoutToMaxConcurrentConsumers = replyOnTimeoutToMaxConcurrentConsumers;
     }
 
-    public int getMaxMessagesPerTask() {
+    public Integer getMaxMessagesPerTask() {
         return maxMessagesPerTask;
     }
 
-    public void setMaxMessagesPerTask(int maxMessagesPerTask) {
+    public void setMaxMessagesPerTask(Integer maxMessagesPerTask) {
         this.maxMessagesPerTask = maxMessagesPerTask;
     }
 
@@ -843,11 +843,11 @@ public class JmsComponentConfiguration {
         this.useMessageIDAsCorrelationID = useMessageIDAsCorrelationID;
     }
 
-    public int getPriority() {
+    public Integer getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(Integer priority) {
         this.priority = priority;
     }
 
@@ -936,11 +936,11 @@ public class JmsComponentConfiguration {
         this.transactionName = transactionName;
     }
 
-    public int getTransactionTimeout() {
+    public Integer getTransactionTimeout() {
         return transactionTimeout;
     }
 
-    public void setTransactionTimeout(int transactionTimeout) {
+    public void setTransactionTimeout(Integer transactionTimeout) {
         this.transactionTimeout = transactionTimeout;
     }
 
@@ -1133,12 +1133,12 @@ public class JmsComponentConfiguration {
         this.messageCreatedStrategy = messageCreatedStrategy;
     }
 
-    public int getWaitForProvisionCorrelationToBeUpdatedCounter() {
+    public Integer getWaitForProvisionCorrelationToBeUpdatedCounter() {
         return waitForProvisionCorrelationToBeUpdatedCounter;
     }
 
     public void setWaitForProvisionCorrelationToBeUpdatedCounter(
-            int waitForProvisionCorrelationToBeUpdatedCounter) {
+            Integer waitForProvisionCorrelationToBeUpdatedCounter) {
         this.waitForProvisionCorrelationToBeUpdatedCounter = waitForProvisionCorrelationToBeUpdatedCounter;
     }
 

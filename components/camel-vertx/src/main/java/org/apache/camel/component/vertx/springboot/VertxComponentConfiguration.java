@@ -41,7 +41,7 @@ public class VertxComponentConfiguration {
     /**
      * Port for creating an embedded clustered EventBus
      */
-    private int port;
+    private Integer port;
     /**
      * Options to use for creating vertx
      */
@@ -55,7 +55,7 @@ public class VertxComponentConfiguration {
      * Timeout in seconds to wait for clustered Vertx EventBus to be ready. The
      * default value is 60.
      */
-    private int timeout;
+    private Integer timeout;
 
     public VertxFactory getVertxFactory() {
         return vertxFactory;
@@ -73,11 +73,11 @@ public class VertxComponentConfiguration {
         this.host = host;
     }
 
-    public int getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 
@@ -97,11 +97,11 @@ public class VertxComponentConfiguration {
         this.vertx = vertx;
     }
 
-    public int getTimeout() {
+    public Integer getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(int timeout) {
+    public void setTimeout(Integer timeout) {
         this.timeout = timeout;
     }
 }
