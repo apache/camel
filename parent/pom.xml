@@ -99,7 +99,7 @@
     <cglib-version>3.2.2</cglib-version>
     <chronicle-bytes-version>1.7.4</chronicle-bytes-version>
     <chronicle-core-version>1.7.3</chronicle-core-version>
-    <chronicle-engine-version>1.13.5</chronicle-engine-version>
+    <chronicle-engine-version>1.13.6</chronicle-engine-version>
     <chronicle-map-version>2.4.15</chronicle-map-version>
     <chronicle-network-version>1.7.1</chronicle-network-version>
     <chronicle-queue-version>4.5.4</chronicle-queue-version>
