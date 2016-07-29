@@ -38,16 +38,21 @@ import org.apache.camel.itest.springboot.arquillian.SpringBootZipExporterImpl;
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.se.api.ClassPath;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Configuration;
 import org.jboss.shrinkwrap.api.ConfigurationBuilder;
 import org.jboss.shrinkwrap.api.Domain;
 import org.jboss.shrinkwrap.api.ExtensionLoader;
-import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.Asset;
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader;
+import org.jboss.shrinkwrap.impl.base.URLPackageScanner;
+import org.jboss.shrinkwrap.impl.base.asset.AssetUtil;
+import org.jboss.shrinkwrap.impl.base.path.BasicPath;
 import org.jboss.shrinkwrap.resolver.api.maven.ConfigurableMavenResolverSystem;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenResolvedArtifact;
@@ -71,6 +76,9 @@ public final class ArquillianPackager {
      */
     private static final boolean DEBUG_ENABLED = false;
 
+    private static final String LIB_FOLDER = "/BOOT-INF/lib";
+    private static final String CLASSES_FOLDER = "BOOT-INF/classes";
+
     private ArquillianPackager() {
     }
 
@@ -85,17 +93,21 @@ public final class ArquillianPackager {
 
         JavaArchive ark = domain.getArchiveFactory().create(JavaArchive.class, "test.jar");
 
+
         ark = ark.addAsManifestResource("BOOT-MANIFEST.MF", "MANIFEST.MF");
 
+        ark = ark.addAsDirectories(LIB_FOLDER);
+        if (!CLASSES_FOLDER.equals("")) {
+            ark = ark.addAsDirectories(CLASSES_FOLDER);
+        }
+
         if (config.getUseCustomLog()) {
-            ark = ark.addAsResource("spring-logback.xml");
+            ark = ark.addAsResource("spring-logback.xml", CLASSES_FOLDER + "/spring-logback.xml");
         }
 
         for (Map.Entry<String, String> res : config.getResources().entrySet()) {
-            ark = ark.addAsResource(res.getKey(), res.getValue());
+            ark = ark.addAsResource(res.getKey(), CLASSES_FOLDER + "/" + res.getValue());
         }
-
-        ark = ark.addAsDirectories("/lib");
 
         String version = System.getProperty("version_org.apache.camel:camel-core");
         if (version == null) {
@@ -223,12 +235,17 @@ public final class ArquillianPackager {
         ark = addDependencies(ark, dependencies);
 
         // Add common packages to main jar
-        ark = ark.addPackages(true, "org.apache.camel.itest.springboot");
-        ark = ark.addPackages(true, "org.springframework.boot.loader");
         ark = ark.addPackages(true, "org.jboss.shrinkwrap");
 
-        ark = ark.addPackages(true, "org.apache.camel.converter.myconverter"); // to overcome CAMEL-10060
-        ark = ark.addPackages(true, "org.apache.camel.osgi.test"); // to overcome CAMEL-10060
+        // Add current classes to both location to be used by different classloaders
+        ark = ark.addPackages(true, "org.apache.camel.itest.springboot");
+        ark = addSpringbootPackage(ark, "org.apache.camel.itest.springboot");
+
+        // CAMEL-10060 is resolved since 2.18 but probably the package scanner should be adapted to Spring-boot 1.4.0.RELEASE new packaging structure
+//        ark = addSpringbootPackage(ark, "org.apache.camel.converter.myconverter"); // to overcome CAMEL-10060
+//        ark = addSpringbootPackage(ark, "org.apache.camel.osgi.test"); // to overcome CAMEL-10060
+
+        ark = ark.addPackages(true, "org.springframework.boot.loader");
 
         ClassPath.Builder external = ClassPath.builder().add(ark);
 
@@ -343,7 +360,7 @@ public final class ArquillianPackager {
         Set<File> dependencySet = new HashSet<>(deps);
         for (File d : dependencySet) {
             debug("Adding spring-boot dependency: " + d.getName());
-            ark = ark.add(new FileAsset(d), "/lib/" + d.getName());
+            ark = ark.add(new FileAsset(d), LIB_FOLDER + "/" + d.getName());
         }
 
         return ark;
@@ -362,10 +379,10 @@ public final class ArquillianPackager {
             String relative = test.getCanonicalFile().toURI().relativize(f.getCanonicalFile().toURI()).getPath();
             if (f.isFile()) {
                 if (f.getName().endsWith(".class")) {
-                    mainArk = mainArk.addAsResource(f, relative);
+                    mainArk = mainArk.addAsResource(f, CLASSES_FOLDER + "/" + relative);
                 }
             } else {
-                mainArk = mainArk.addAsDirectory(relative);
+                mainArk = mainArk.addAsDirectory(CLASSES_FOLDER + "/" + relative);
                 File[] files = f.listFiles();
                 if (files == null) {
                     files = new File[]{};
@@ -377,32 +394,31 @@ public final class ArquillianPackager {
         return mainArk;
     }
 
-    private static GenericArchive addSources(GenericArchive ark, ITestConfig config) throws IOException {
-        File sources = new File(config.getModuleBasePath() + "/src/");
-        ark.addAsDirectory("src");
+    private static JavaArchive addSpringbootPackage(JavaArchive ark, String... packageNames) throws Exception {
 
-        File[] fs = sources.listFiles();
-        if (fs == null) {
-            fs = new File[]{};
-        }
-        LinkedList<File> sourceFiles = new LinkedList<>(Arrays.asList(fs));
-        while (!sourceFiles.isEmpty()) {
-            File f = sourceFiles.pop();
-            String relative = sources.getParentFile().getCanonicalFile().toURI().relativize(f.getCanonicalFile().toURI()).getPath();
-            if (f.isFile()) {
-                ark.add(new FileAsset(f), relative);
-            } else {
-                ark = ark.addAsDirectory(relative);
-                File[] files = f.listFiles();
-                if (files == null) {
-                    files = new File[]{};
-                }
-                sourceFiles.addAll(Arrays.asList(files));
+        Iterable<ClassLoader> classLoaders = Collections.singleton(Thread.currentThread().getContextClassLoader());
+
+        for (String packageName : packageNames) {
+            for (final ClassLoader classLoader : classLoaders) {
+
+                final URLPackageScanner.Callback callback = new URLPackageScanner.Callback() {
+                    @Override
+                    public void classFound(String className) {
+                        ArchivePath classNamePath = AssetUtil.getFullPathForClassResource(className);
+
+                        Asset asset = new ClassLoaderAsset(classNamePath.get().substring(1), classLoader);
+                        ArchivePath location = new BasicPath(CLASSES_FOLDER + "/", classNamePath);
+                        ark.add(asset, location);
+                    }
+                };
+                final URLPackageScanner scanner = URLPackageScanner.newInstance(true, classLoader, callback, packageName);
+                scanner.scanPackage();
             }
         }
 
         return ark;
     }
+
 
     private static void debug(String str) {
         if (DEBUG_ENABLED) {
