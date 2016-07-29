@@ -29,7 +29,8 @@ spring-batch:jobName[?options]
 ------------------------------
 
 Where *jobName* represents the name of the Spring Batch job located in
-the Camel registry.
+the Camel registry. Alternatively if a JobRegistry is provided it will be used 
+to locate the job instead.
 
 WARNING:This component can only be used to define producer endpoints, which
 means that you cannot use the Spring Batch component in a `from()`
@@ -50,9 +51,11 @@ The Spring Batch component supports 1 options which are listed below.
 |=======================================================================
 | Name | Java Type | Description
 | jobLauncher | JobLauncher | Explicitly specifies a JobLauncher to be used.
+| jobRegistry | JobRegistry | Explicitly specifies a JobRegistry to be used.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 
@@ -65,13 +68,15 @@ The Spring Batch component supports 5 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | jobName | producer |  | String | *Required* The name of the Spring Batch job located in the registry.
-| jobFromHeader | producer | false | boolean | Explicitly defines if the jobName shouls be taken from the headers instead of the URI.
+| jobFromHeader | producer |  | Boolean | Explicitly defines if the jobName shouls be taken from the headers instead of the URI.
 | jobLauncher | producer |  | JobLauncher | Explicitly specifies a JobLauncher to be used.
+| jobRegistry | producer |  | JobRegistry | Explicitly specifies a JobRegistry to be used. If set it it will be used to locate jobs.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 

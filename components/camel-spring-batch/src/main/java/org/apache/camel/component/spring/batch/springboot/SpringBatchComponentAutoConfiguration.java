@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SpringBatchComponentConfiguration.class)
 public class SpringBatchComponentAutoConfiguration {
 
-    @Bean(name = "spring-batch-component")
+    @Bean
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SpringBatchComponent.class)
     public SpringBatchComponent configureSpringBatchComponent(
