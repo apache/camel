@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
 
 public class NettyProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(NettyProducer.class);
-    private final ChannelGroup allChannels = new DefaultChannelGroup("NettyProducer", ImmediateEventExecutor.INSTANCE);
+    private ChannelGroup allChannels;
     private CamelContext context;
     private NettyConfiguration configuration;
     private ClientInitializerFactory pipelineFactory;
@@ -100,7 +100,7 @@ public class NettyProducer extends DefaultAsyncProducer {
                 .withWorkerCount(configuration.getWorkerCount())
                 .withName("NettyClientTCPWorker").build();
         }
-        
+               
         if (configuration.isProducerPoolEnabled()) {
             // setup pool where we want an unbounded pool, which allows the pool to shrink on no demand
             GenericObjectPool.Config config = new GenericObjectPool.Config();
@@ -136,6 +136,14 @@ public class NettyProducer extends DefaultAsyncProducer {
             pipelineFactory = new DefaultClientInitializerFactory(this);
         }
 
+        // setup channel group
+        if(configuration.getChannelGroup() == null) {
+            allChannels = new DefaultChannelGroup("NettyProducer", ImmediateEventExecutor.INSTANCE);
+        }
+        else {
+            allChannels = configuration.getChannelGroup();
+        }
+        
         if (!configuration.isLazyChannelCreation()) {
             // ensure the connection can be established when we start up
             Channel channel = pool.borrowObject();
