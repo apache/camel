@@ -49,7 +49,7 @@ public class QuartzComponentConfiguration {
     /**
      * Seconds to wait before starting the quartz scheduler.
      */
-    private int startDelayedSeconds;
+    private Integer startDelayedSeconds;
     /**
      * Whether or not the scheduler should be auto started. This options is
      * default true
@@ -93,11 +93,11 @@ public class QuartzComponentConfiguration {
         this.propertiesFile = propertiesFile;
     }
 
-    public int getStartDelayedSeconds() {
+    public Integer getStartDelayedSeconds() {
         return startDelayedSeconds;
     }
 
-    public void setStartDelayedSeconds(int startDelayedSeconds) {
+    public void setStartDelayedSeconds(Integer startDelayedSeconds) {
         this.startDelayedSeconds = startDelayedSeconds;
     }
 

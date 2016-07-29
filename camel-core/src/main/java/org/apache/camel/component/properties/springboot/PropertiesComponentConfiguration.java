@@ -105,7 +105,7 @@ public class PropertiesComponentConfiguration {
     /**
      * Sets the system property mode.
      */
-    private int systemPropertiesMode;
+    private Integer systemPropertiesMode;
 
     public String[] getLocations() {
         return locations;
@@ -220,11 +220,11 @@ public class PropertiesComponentConfiguration {
         this.overrideProperties = overrideProperties;
     }
 
-    public int getSystemPropertiesMode() {
+    public Integer getSystemPropertiesMode() {
         return systemPropertiesMode;
     }
 
-    public void setSystemPropertiesMode(int systemPropertiesMode) {
+    public void setSystemPropertiesMode(Integer systemPropertiesMode) {
         this.systemPropertiesMode = systemPropertiesMode;
     }
 }

@@ -32,7 +32,7 @@ public class SparkComponentConfiguration {
     /**
      * Port number. Will by default use 4567
      */
-    private int port;
+    private Integer port;
     /**
      * Set the IP address that Spark should listen on. If not called the default
      * address is '0.0.0.0'.
@@ -41,16 +41,16 @@ public class SparkComponentConfiguration {
     /**
      * Minimum number of threads in Spark thread-pool (shared globally)
      */
-    private int minThreads;
+    private Integer minThreads;
     /**
      * Maximum number of threads in Spark thread-pool (shared globally)
      */
-    private int maxThreads;
+    private Integer maxThreads;
     /**
      * Thread idle timeout in millis where threads that has been idle for a
      * longer period will be terminated from the thread pool
      */
-    private int timeOutMillis;
+    private Integer timeOutMillis;
     /**
      * Configures connection to be secure to use the keystore file
      */
@@ -76,11 +76,11 @@ public class SparkComponentConfiguration {
      */
     private SparkBinding sparkBinding;
 
-    public int getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 
@@ -92,27 +92,27 @@ public class SparkComponentConfiguration {
         this.ipAddress = ipAddress;
     }
 
-    public int getMinThreads() {
+    public Integer getMinThreads() {
         return minThreads;
     }
 
-    public void setMinThreads(int minThreads) {
+    public void setMinThreads(Integer minThreads) {
         this.minThreads = minThreads;
     }
 
-    public int getMaxThreads() {
+    public Integer getMaxThreads() {
         return maxThreads;
     }
 
-    public void setMaxThreads(int maxThreads) {
+    public void setMaxThreads(Integer maxThreads) {
         this.maxThreads = maxThreads;
     }
 
-    public int getTimeOutMillis() {
+    public Integer getTimeOutMillis() {
         return timeOutMillis;
     }
 
-    public void setTimeOutMillis(int timeOutMillis) {
+    public void setTimeOutMillis(Integer timeOutMillis) {
         this.timeOutMillis = timeOutMillis;
     }
 

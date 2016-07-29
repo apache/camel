@@ -37,7 +37,7 @@ public class QuartzComponentConfiguration {
     /**
      * Seconds to wait before starting the quartz scheduler.
      */
-    private int startDelayedSeconds;
+    private Integer startDelayedSeconds;
     /**
      * Whether to prefix the quartz job with the endpoint id. This option is
      * default false.
@@ -82,11 +82,11 @@ public class QuartzComponentConfiguration {
         this.autoStartScheduler = autoStartScheduler;
     }
 
-    public int getStartDelayedSeconds() {
+    public Integer getStartDelayedSeconds() {
         return startDelayedSeconds;
     }
 
-    public void setStartDelayedSeconds(int startDelayedSeconds) {
+    public void setStartDelayedSeconds(Integer startDelayedSeconds) {
         this.startDelayedSeconds = startDelayedSeconds;
     }
 

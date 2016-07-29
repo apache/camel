@@ -33,29 +33,29 @@ public class StubComponentConfiguration {
      * Sets the default maximum capacity of the SEDA queue (i.e. the number of
      * messages it can hold).
      */
-    private int queueSize;
+    private Integer queueSize;
     /**
      * Sets the default number of concurrent threads processing exchanges.
      */
-    private int concurrentConsumers;
+    private Integer concurrentConsumers;
     /**
      * Sets the default queue factory.
      */
     private BlockingQueueFactory<Exchange> defaultQueueFactory;
 
-    public int getQueueSize() {
+    public Integer getQueueSize() {
         return queueSize;
     }
 
-    public void setQueueSize(int queueSize) {
+    public void setQueueSize(Integer queueSize) {
         this.queueSize = queueSize;
     }
 
-    public int getConcurrentConsumers() {
+    public Integer getConcurrentConsumers() {
         return concurrentConsumers;
     }
 
-    public void setConcurrentConsumers(int concurrentConsumers) {
+    public void setConcurrentConsumers(Integer concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
     }
 

@@ -41,7 +41,7 @@ public class SshComponentConfiguration {
     /**
      * Sets the port number for the remote SSH server.
      */
-    private int port;
+    private Integer port;
     /**
      * Sets the username to use in logging into the remote SSH server.
      */
@@ -102,11 +102,11 @@ public class SshComponentConfiguration {
         this.host = host;
     }
 
-    public int getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 

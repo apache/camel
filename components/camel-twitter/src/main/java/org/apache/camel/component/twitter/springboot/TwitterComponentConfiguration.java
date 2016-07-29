@@ -58,7 +58,7 @@ public class TwitterComponentConfiguration {
     /**
      * The http proxy port which can be used for the camel-twitter.
      */
-    private int httpProxyPort;
+    private Integer httpProxyPort;
 
     public String getAccessToken() {
         return accessToken;
@@ -116,11 +116,11 @@ public class TwitterComponentConfiguration {
         this.httpProxyPassword = httpProxyPassword;
     }
 
-    public int getHttpProxyPort() {
+    public Integer getHttpProxyPort() {
         return httpProxyPort;
     }
 
-    public void setHttpProxyPort(int httpProxyPort) {
+    public void setHttpProxyPort(Integer httpProxyPort) {
         this.httpProxyPort = httpProxyPort;
     }
 }

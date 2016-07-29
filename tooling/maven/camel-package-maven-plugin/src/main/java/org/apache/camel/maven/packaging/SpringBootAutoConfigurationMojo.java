@@ -156,10 +156,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     createComponentAutoConfigurationSource(pkg, model, aliases);
                     createComponentSpringFactorySource(pkg, model);
                 }
-
-
             }
-
         }
     }
 
@@ -209,9 +206,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     createDataFormatAutoConfigurationSource(pkg, model, aliases);
                     createDataFormatSpringFactorySource(pkg, model);
                 }
-
             }
-
         }
     }
 
@@ -238,9 +233,19 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
             String type = option.getJavaType();
             type = type.replaceAll("\\<\\?\\>", "");
-            // favor using Boolean types over boolean with Spring Boot
+            // use wrapper types for primitive types so a null mean that the option has not been configured
             if ("boolean".equals(type)) {
                 type = "java.lang.Boolean";
+            } else if ("int".equals(type) || "integer".equals(type)) {
+                type = "java.lang.Integer";
+            } else if ("byte".equals(type)) {
+                type = "java.lang.Byte";
+            } else if ("short".equals(type)) {
+                type = "java.lang.Short";
+            } else if ("double".equals(type)) {
+                type = "java.lang.Double";
+            } else if ("float".equals(type)) {
+                type = "java.lang.Float";
             }
 
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
@@ -323,9 +328,19 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
             String type = option.getJavaType();
             type = type.replaceAll("\\<\\?\\>", "");
-            // favor using Boolean types over boolean with Spring Boot
+            // use wrapper types for primitive types so a null mean that the option has not been configured
             if ("boolean".equals(type)) {
                 type = "java.lang.Boolean";
+            } else if ("int".equals(type) || "integer".equals(type)) {
+                type = "java.lang.Integer";
+            } else if ("byte".equals(type)) {
+                type = "java.lang.Byte";
+            } else if ("short".equals(type)) {
+                type = "java.lang.Short";
+            } else if ("double".equals(type)) {
+                type = "java.lang.Double";
+            } else if ("float".equals(type)) {
+                type = "java.lang.Float";
             }
 
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());

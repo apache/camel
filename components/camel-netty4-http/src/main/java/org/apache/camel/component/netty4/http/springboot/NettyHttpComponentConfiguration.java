@@ -51,7 +51,7 @@ public class NettyHttpComponentConfiguration {
      * The thread pool size for the EventExecutorGroup if its in use. The
      * default value is 16.
      */
-    private int maximumPoolSize;
+    private Integer maximumPoolSize;
     /**
      * To use the NettyConfiguration as configuration when creating endpoints.
      */
@@ -87,11 +87,11 @@ public class NettyHttpComponentConfiguration {
         this.securityConfiguration = securityConfiguration;
     }
 
-    public int getMaximumPoolSize() {
+    public Integer getMaximumPoolSize() {
         return maximumPoolSize;
     }
 
-    public void setMaximumPoolSize(int maximumPoolSize) {
+    public void setMaximumPoolSize(Integer maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
     }
 

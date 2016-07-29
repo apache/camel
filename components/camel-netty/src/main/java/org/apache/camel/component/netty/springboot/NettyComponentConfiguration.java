@@ -35,7 +35,7 @@ public class NettyComponentConfiguration {
      * The core pool size for the ordered thread pool if its in use. The default
      * value is 16.
      */
-    private int maximumPoolSize;
+    private Integer maximumPoolSize;
 
     public NettyConfiguration getConfiguration() {
         return configuration;
@@ -45,11 +45,11 @@ public class NettyComponentConfiguration {
         this.configuration = configuration;
     }
 
-    public int getMaximumPoolSize() {
+    public Integer getMaximumPoolSize() {
         return maximumPoolSize;
     }
 
-    public void setMaximumPoolSize(int maximumPoolSize) {
+    public void setMaximumPoolSize(Integer maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
     }
 }
