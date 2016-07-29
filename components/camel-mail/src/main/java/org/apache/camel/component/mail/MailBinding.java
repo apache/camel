@@ -471,7 +471,8 @@ public class MailBinding {
                     // Create another body part
                     BodyPart messageBodyPart = new MimeBodyPart();
                     // Set the data handler to the attachment
-                    messageBodyPart.setDataHandler(handler);
+                    // workaround for javamail 1.4.7 bug: don't reuse the DataHandler
+                    messageBodyPart.setDataHandler(new DataHandler(handler.getDataSource()));
 
                     if (attachmentFilename.toLowerCase().startsWith("cid:")) {
                         // add a Content-ID header to the attachment
