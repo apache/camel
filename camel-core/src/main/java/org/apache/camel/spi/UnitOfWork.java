@@ -53,7 +53,6 @@ public interface UnitOfWork extends Service {
     boolean containsSynchronization(Synchronization synchronization);
 
     /**
-    /**
      * Handover all the registered synchronizations to the target {@link org.apache.camel.Exchange}.
      * <p/>
      * This is used when a route turns into asynchronous and the {@link org.apache.camel.Exchange} that
