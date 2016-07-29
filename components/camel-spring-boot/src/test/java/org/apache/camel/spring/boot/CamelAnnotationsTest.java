@@ -26,16 +26,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringApplicationConfiguration(classes = {CamelAnnotationsTest.class, CamelAnnotationsTestConfig.class})
-@IntegrationTest
+@SpringBootTest(classes = {CamelAnnotationsTest.class, CamelAnnotationsTestConfig.class})
 public class CamelAnnotationsTest extends Assert {
 
     @Autowired

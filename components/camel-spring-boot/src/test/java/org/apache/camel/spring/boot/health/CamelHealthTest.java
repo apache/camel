@@ -25,13 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @EnableAutoConfiguration
 @SpringBootApplication
-@SpringApplicationConfiguration(classes = {CamelAutoConfiguration.class, CamelHealthAutoConfiguration.class, MyCamelRoute.class})
+@SpringBootTest(classes = {CamelAutoConfiguration.class, CamelHealthAutoConfiguration.class, MyCamelRoute.class})
 public class CamelHealthTest extends Assert {
 
     @Autowired

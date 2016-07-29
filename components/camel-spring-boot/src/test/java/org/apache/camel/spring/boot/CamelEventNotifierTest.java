@@ -30,30 +30,41 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringApplicationConfiguration(classes = CamelEventNotifierTest.class)
+@SpringBootTest(classes = CamelEventNotifierTest.class)
 public class CamelEventNotifierTest extends Assert {
+
+    @Configuration
+    static class Config {
+
+        @Bean
+        RouteBuilder routeBuilder() {
+            return new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start").to("mock:result");
+                }
+            };
+        }
+
+        @Bean
+        public EventNotifier myEventNotifier() {
+            return new MyEventNotifier();
+        }
+
+    }
 
     @Autowired
     CamelContext camelContext;
 
     @Autowired
     ProducerTemplate producerTemplate;
-
-    @Bean
-    RouteBuilder routeBuilder() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("mock:result");
-            }
-        };
-    }
 
     @Test
     public void testEventNotifier() throws InterruptedException {
@@ -69,12 +80,7 @@ public class CamelEventNotifierTest extends Assert {
         assertTrue(notifier.getCount() > 0);
     }
 
-    @Bean
-    public EventNotifier myEventNotifier() {
-        return new MyEventNotifier();
-    }
-
-    private class MyEventNotifier extends EventNotifierSupport {
+    public static class MyEventNotifier extends EventNotifierSupport {
 
         private final AtomicInteger counter = new AtomicInteger();
 

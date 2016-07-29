@@ -103,6 +103,7 @@ The Netty4 HTTP component supports 6 options which are listed below.
 
 
 
+
 // endpoint options: START
 The Netty4 HTTP component supports 81 endpoint options which are listed below:
 
@@ -126,7 +127,6 @@ The Netty4 HTTP component supports 81 endpoint options which are listed below:
 | backlog | consumer (advanced) |  | int | Allows to configure a backlog for netty consumer (server). Note the backlog is just a best effort depending on the OS. Setting this option to a value such as 200 500 or 1000 tells the TCP stack how long the accept queue can be If this option is not configured then the backlog depends on OS setting.
 | bossCount | consumer (advanced) | 1 | int | When netty works on nio mode it uses default bossCount parameter from Netty which is 1. User can use this operation to override the default bossCount from Netty
 | bossGroup | consumer (advanced) |  | EventLoopGroup | Set the BossGroup which could be used for handling the new connection of the server side across the NettyEndpoint
-| channelGroup | consumer (advanced) |  | ChannelGroup | To use a explicit ChannelGroup.
 | chunkedMaxContentLength | consumer (advanced) | 1048576 | int | Value in bytes the max content length per chunked frame received on the Netty HTTP server.
 | compression | consumer (advanced) | false | boolean | Allow using gzip/deflate for compression on the Netty HTTP server if the client supports it from the HTTP headers.
 | disconnectOnNoReply | consumer (advanced) | true | boolean | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back.
@@ -159,6 +159,7 @@ The Netty4 HTTP component supports 81 endpoint options which are listed below:
 | producerPoolMinIdle | producer (advanced) |  | int | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects.
 | useRelativePath | producer (advanced) | false | boolean | Sets whether to use a relative path in HTTP requests.
 | bootstrapConfiguration | advanced |  | NettyServerBootstrapConfiguration | To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint.
+| channelGroup | advanced |  | ChannelGroup | To use a explicit ChannelGroup.
 | configuration | advanced |  | NettyHttpConfiguration | To use a custom configured NettyHttpConfiguration for configuring this endpoint.
 | disableStreamCache | advanced | false | boolean | Determines whether or not the raw input stream from Netty HttpRequestgetContent() or HttpResponsetgetContent() is cached or not (Camel will read the stream into a in light-weight memory based Stream caching) cache. By default Camel will cache the Netty input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. Mind that if you enable this option then you cannot read the Netty stream multiple times out of the box and you would need manually to reset the reader index on the Netty raw stream. Also Netty will auto-close the Netty stream when the Netty HTTP server/HTTP client is done processing which means that if the asynchronous routing engine is in use then any asynchronous thread that may continue routing the org.apache.camel.Exchange may not be able to read the Netty stream because Netty has closed it.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
@@ -194,6 +195,7 @@ The Netty4 HTTP component supports 81 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 

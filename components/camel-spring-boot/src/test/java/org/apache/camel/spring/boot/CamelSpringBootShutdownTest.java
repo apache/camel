@@ -28,13 +28,13 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Test class illustrating the invalid shutdown sequence when using the autoconfiguration
@@ -49,11 +49,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * As a consequence, any inflight message that should be processed during the graceful
  * shutdown period of Camel won't have access to any type conversion support.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 // Let the CamelAutoConfiguration do all the configuration for us
 // including the TypeConverter registration into the ApplicationContext
-@SpringApplicationConfiguration({CamelAutoConfiguration.class, CamelSpringBootShutdownTest.TestRouteConfiguration.class})
+@SpringBootTest(classes = {CamelAutoConfiguration.class, CamelSpringBootShutdownTest.TestRouteConfiguration.class})
 public class CamelSpringBootShutdownTest {
 
     @Autowired

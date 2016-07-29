@@ -25,12 +25,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 
 @RunWith(CamelSpringBootRunner.class)
 @MockEndpoints
 @SpringBootApplication
-@SpringApplicationConfiguration({MockEndpointsTest.class})
+@SpringBootTest(classes = MockEndpointsTest.class)
 public class MockEndpointsTest {
 
     @Autowired
