@@ -23,7 +23,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -73,7 +72,6 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         this.allResolvedJobLaunchers = allResolvedJobLaunchers;
         this.jobName = jobName;
         this.jobRegistry = jobRegistry;
-
     }
 
     @Override
@@ -97,7 +95,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
             jobLauncher = resolveJobLauncher();
         } 
         if (job == null && jobName != null && !jobFromHeader) {
-            if(jobRegistry != null) {
+            if (jobRegistry != null) {
                 job = jobRegistry.getJob(jobName);
             } else {
                 job = CamelContextHelper.mandatoryLookup(getCamelContext(), jobName, Job.class);

@@ -41,8 +41,9 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
-The Spring Batch component supports 1 options which are listed below.
+The Spring Batch component supports 2 options which are listed below.
 
 
 
@@ -60,8 +61,10 @@ The Spring Batch component supports 1 options which are listed below.
 
 
 
+
+
 // endpoint options: START
-The Spring Batch component supports 5 endpoint options which are listed below:
+The Spring Batch component supports 6 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -70,12 +73,13 @@ The Spring Batch component supports 5 endpoint options which are listed below:
 | jobName | producer |  | String | *Required* The name of the Spring Batch job located in the registry.
 | jobFromHeader | producer | false | boolean | Explicitly defines if the jobName should be taken from the headers instead of the URI.
 | jobLauncher | producer |  | JobLauncher | Explicitly specifies a JobLauncher to be used.
-| jobRegistry | producer |  | JobRegistry | Explicitly specifies a JobRegistry to be used. If set it it will be used to locate jobs.
+| jobRegistry | producer |  | JobRegistry | Explicitly specifies a JobRegistry to be used.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
