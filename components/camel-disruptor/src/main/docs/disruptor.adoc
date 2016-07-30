@@ -97,80 +97,53 @@ Options
 All the following options are valid for both the **disruptor:** and
 **disruptor-vm:** components.
 
-[width="100%",cols="10%,10%,80%",options="header",]
+
+// component options: START
+The Disruptor component supports 7 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
-|Name | Default | Description
-
-|size |1024 |The maximum capacity of the Disruptors ringbuffer. Will be effectively
-increased to the nearest power of two. *Notice:* Mind if you use this
-option, then its the first endpoint being created with the queue name,
-that determines the size. To make sure all endpoints use same size, then
-configure the size option on all of them, or the first endpoint being
-created.
-
-|bufferSize |  | *Component only:* The maximum default size (capacity of the number of
-messages it can hold) of the Disruptors ringbuffer. This option is used
-if size is not in use.
-
-|queueSize |  | *Component only:* Additional option to specify the <em>bufferSize</em>
-to maintain maximum compatibility with the link:seda.html[SEDA]
-Component.
-
-|concurrentConsumers |1 |Number of concurrent threads processing exchanges.
-
-|waitForTaskToComplete |IfReplyExpected |Option to specify whether the caller should wait for the async task to
-complete or not before continuing. The following three options are
-supported: _Always_, _Never_ or _IfReplyExpected_. The first two values
-are self-explanatory. The last value, _IfReplyExpected_, will only wait
-if the message is link:request-reply.html[Request Reply] based. See more
-information about link:async.html[Async] messaging.
-
-|timeout |30000 |Timeout (in milliseconds) before a producer will stop waiting for an
-asynchronous task to complete. See _waitForTaskToComplete_ and
-link:async.html[Async] for more details. You can disable timeout by
-using 0 or a negative value.
-
-|defaultMultipleConsumers |  | *Component only:* Allows to set the default allowance of multiple
-consumers for endpoints created by this component used when
-_multipleConsumers_ is not provided.
-
-|multipleConsumers |false |Specifies whether multiple consumers are allowed. If enabled, you can
-use Disruptor for http://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern[Publish-Subscribe] messaging.
-That is, you can send a message to the SEDA queue and have each consumer
-receive a copy of the message. When enabled, this option should be
-specified on every consumer endpoint.
-
-|limitConcurrentConsumers |true |Whether to limit the number of concurrentConsumers to the maximum of
-500. By default, an exception will be thrown if a Disruptor endpoint is
-configured with a greater number. You can disable that check by turning
-this option off.
-
-|blockWhenFull |true |Whether a thread that sends messages to a full Disruptor will block
-until the ringbuffer's capacity is no longer exhausted. By default, the
-calling thread will block and wait until the message can be accepted. By
-disabling this option, an exception will be thrown stating that the
-queue is full.
-
-|defaultBlockWhenFull | | *Component only:* Allows to set the default producer behaviour when the
-ringbuffer is full for endpoints created by this comonent used when
-_blockWhenFull_ is not provided.
-
-|waitStrategy |Blocking |Defines the strategy used by consumer threads to wait on new exchanges
-to be published. The options allowed are:_Blocking_, _Sleeping_,
-_BusySpin_ and _Yielding_. Refer to the section below for more
-information on this subject
-
-|defaultWaitStrategy |   | *Component only:* Allows to set the default wait strategy for endpoints
-created by this comonent used when _waitStrategy_ is not provided.
-
-|producerType |Multi | Defines the producers allowed on the Disruptor. The options allowed are:
-_Multi_ to allow multiple producers and _Single_ to enable certain
-optimizations only allowed when one concurrent producer (on one thread
-or otherwise synchronized) is active.
-
-|defaultProducerType |  | *Component only:* Allows to set the default producer type for endpoints
-created by this comonent used when _producerType_ is not provided.
+| Name | Java Type | Description
+| defaultConcurrentConsumers | int | To configure the default number of concurrent consumers
+| defaultMultipleConsumers | boolean | To configure the default value for multiple consumers
+| defaultProducerType | DisruptorProducerType | To configure the default value for DisruptorProducerType The default value is Multi.
+| defaultWaitStrategy | DisruptorWaitStrategy | To configure the default value for DisruptorWaitStrategy The default value is Blocking.
+| defaultBlockWhenFull | boolean | To configure the default value for block when full The default value is true.
+| queueSize | int | To configure the ring buffer size
+| bufferSize | int | To configure the ring buffer size
 |=======================================================================
+{% endraw %}
+// component options: END
+
+
+
+// endpoint options: START
+The Disruptor component supports 13 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| name | common |  | String | *Required* Name of queue
+| size | common | 1024 | int | The maximum capacity of the Disruptors ringbuffer Will be effectively increased to the nearest power of two. Notice: Mind if you use this option then its the first endpoint being created with the queue name that determines the size. To make sure all endpoints use same size then configure the size option on all of them or the first endpoint being created.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| concurrentConsumers | consumer | 1 | int | Number of concurrent threads processing exchanges.
+| multipleConsumers | consumer | false | boolean | Specifies whether multiple consumers are allowed. If enabled you can use Disruptor for Publish-Subscribe messaging. That is you can send a message to the queue and have each consumer receive a copy of the message. When enabled this option should be specified on every consumer endpoint.
+| waitStrategy | consumer | Blocking | DisruptorWaitStrategy | Defines the strategy used by consumer threads to wait on new exchanges to be published. The options allowed are:Blocking Sleeping BusySpin and Yielding.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| blockWhenFull | producer | false | boolean | Whether a thread that sends messages to a full Disruptor will block until the ringbuffer's capacity is no longer exhausted. By default the calling thread will block and wait until the message can be accepted. By disabling this option an exception will be thrown stating that the queue is full.
+| producerType | producer | Multi | DisruptorProducerType | Defines the producers allowed on the Disruptor. The options allowed are: Multi to allow multiple producers and Single to enable certain optimizations only allowed when one concurrent producer (on one thread or otherwise synchronized) is active.
+| timeout | producer | 30000 | long | Timeout (in milliseconds) before a producer will stop waiting for an asynchronous task to complete. You can disable timeout by using 0 or a negative value.
+| waitForTaskToComplete | producer | IfReplyExpected | WaitForTaskToComplete | Option to specify whether the caller should wait for the async task to complete or not before continuing. The following three options are supported: Always Never or IfReplyExpected. The first two values are self-explanatory. The last value IfReplyExpected will only wait if the message is Request Reply based.
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
+// endpoint options: END
+
 
 [[Disruptor-Waitstrategies]]
 Wait strategies
