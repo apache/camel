@@ -31,7 +31,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.lang.reflect.FieldUtils;
-import static org.junit.Assert.assertSame;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -40,11 +39,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 
-
-import static org.mockito.BDDMockito.*;
-import org.springframework.batch.core.configuration.JobRegistry;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.eq;
+import static org.mockito.BDDMockito.mock;
+import static org.mockito.BDDMockito.verify;
+import static org.mockito.BDDMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SpringBatchEndpointTest extends CamelTestSupport {

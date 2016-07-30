@@ -57,7 +57,7 @@ public class SpringBatchProducer extends DefaultProducer {
         Job job2run = this.job;
 
         if (messageJobName != null) {
-            if(jobRegistry != null) {
+            if (jobRegistry != null) {
                 job2run = jobRegistry.getJob(messageJobName);
             } else {
                 job2run = CamelContextHelper.mandatoryLookup(getEndpoint().getCamelContext(), messageJobName, Job.class);

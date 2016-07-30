@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.spring.batch.springboot;
 
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -32,6 +33,10 @@ public class SpringBatchComponentConfiguration {
      * Explicitly specifies a JobLauncher to be used.
      */
     private JobLauncher jobLauncher;
+    /**
+     * Explicitly specifies a JobRegistry to be used.
+     */
+    private JobRegistry jobRegistry;
 
     public JobLauncher getJobLauncher() {
         return jobLauncher;
@@ -39,5 +44,13 @@ public class SpringBatchComponentConfiguration {
 
     public void setJobLauncher(JobLauncher jobLauncher) {
         this.jobLauncher = jobLauncher;
+    }
+
+    public JobRegistry getJobRegistry() {
+        return jobRegistry;
+    }
+
+    public void setJobRegistry(JobRegistry jobRegistry) {
+        this.jobRegistry = jobRegistry;
     }
 }

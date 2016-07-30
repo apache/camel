@@ -61,24 +61,23 @@ public class SpringBatchJobRegistryTest extends AbstractJUnit4SpringContextTests
 
     @EndpointInject(uri = "mock:jobExecutionEventsQueue")
     MockEndpoint jobExecutionEventsQueueEndpoint;
-    
+
     @Autowired
-    protected ProducerTemplate template;
-    
+    ProducerTemplate template;
+
     @Autowired
-    protected ConsumerTemplate consumer;
+    ConsumerTemplate consumer;
 
     String[] inputMessages = new String[]{"foo", "bar", "baz", null};
 
     @Before
     public void setUp() throws Exception {
- 
+
         for (String message : inputMessages) {
             template.sendBody("seda:inputQueue", message);
         }
     }
 
-    
     @DirtiesContext
     @Test
     public void testJobRegistry() throws InterruptedException {
@@ -88,14 +87,12 @@ public class SpringBatchJobRegistryTest extends AbstractJUnit4SpringContextTests
 
         outputEndpoint.assertIsSatisfied();
     }
-    
 
     @Configuration
     @Import(value = BatchConfig.class)
     public static class ContextConfig extends SingleRouteCamelConfiguration {
         @Override
-        public RouteBuilder route()
-        {
+        public RouteBuilder route() {
             return new RouteBuilder() {
                 @Override
                 public void configure() {
@@ -103,68 +100,68 @@ public class SpringBatchJobRegistryTest extends AbstractJUnit4SpringContextTests
                     from("direct:processor").setExchangePattern(ExchangePattern.InOut).setBody(simple("Echo ${body}"));
                 }
             };
-        } 
+        }
     }
-    
+
     @EnableAutoConfiguration
     @EnableBatchProcessing(modular = true)
     public static class BatchConfig {
-        
+
         @Bean
-        public ApplicationContextFactory testJobs () {
+        public ApplicationContextFactory testJobs() {
             return new GenericApplicationContextFactory(ChildBatchConfig.class);
         }
     }
-    
+
     @Configuration
     public static class ChildBatchConfig {
-        
-        @Autowired
-	private JobBuilderFactory jobs;
 
-	@Autowired
-        private StepBuilderFactory steps;
-        
+        @Autowired
+        JobBuilderFactory jobs;
+
+        @Autowired
+        StepBuilderFactory steps;
+
         @Autowired
         ConsumerTemplate consumerTemplate;
-        
+
         @Autowired
         ProducerTemplate producerTemplate;
-        
-        @Bean
-	protected ItemReader reader() throws Exception {
-            return new CamelItemReader(consumerTemplate, "seda:inputQueue");
-	}
 
-	@Bean
-	protected ItemWriter writer() throws Exception {
+        @Bean
+        protected ItemReader reader() throws Exception {
+            return new CamelItemReader(consumerTemplate, "seda:inputQueue");
+        }
+
+        @Bean
+        protected ItemWriter writer() throws Exception {
             return new CamelItemWriter(producerTemplate, "mock:output");
         }
-        
+
         @Bean
         protected ItemProcessor processor() throws Exception {
             return new CamelItemProcessor(producerTemplate, "direct:processor");
         }
-        
+
         @Bean
         protected JobExecutionListener jobExecutionListener() throws Exception {
             return new CamelJobExecutionListener(producerTemplate, "mock:jobExecutionEventsQueue");
         }
-        
-        @Bean
-	public Job echoJob() throws Exception {
-            return this.jobs.get("echoJob").start(echoStep()).build();
-	}
 
-	@Bean
-	protected Step echoStep() throws Exception {
-		return this.steps.get("echoStep")
-                        .chunk(3)
-                        .reader(reader())
-                        .processor(processor())
-                        .writer(writer())
-                        .build();
-	}        
-        
+        @Bean
+        public Job echoJob() throws Exception {
+            return this.jobs.get("echoJob").start(echoStep()).build();
+        }
+
+        @Bean
+        protected Step echoStep() throws Exception {
+            return this.steps.get("echoStep")
+                    .chunk(3)
+                    .reader(reader())
+                    .processor(processor())
+                    .writer(writer())
+                    .build();
+        }
     }
+
 }
