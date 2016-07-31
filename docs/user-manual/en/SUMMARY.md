@@ -12,6 +12,7 @@
     * [BAM](bam.adoc)
     * [Batch Consumer](batch-consumer.adoc)
     * [BrowsableEndpoint](browsable-endpoint.adoc)
+    * [Camel Core](camel-core.adoc)
     * [CamelContext](camelcontext.adoc)
     * [CEP](cep.adoc)
     * [Debugger](debugger.adoc)
@@ -37,7 +38,6 @@
     * [Scala DSL](scala-dsl.adoc)
 
 <!--
-    * [AOP](aop.adoc)
     * [Camel-Core](camel-core.adoc)
     * [Error Handler](.adoc)
     * [Expression](.adoc)
