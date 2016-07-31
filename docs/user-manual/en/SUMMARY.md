@@ -36,12 +36,12 @@
     * [Expression](expression.adoc)
     * [Injector](injector.adoc)
     * [Intercept](intercept.adoc)
+    * [Inversion Of Control With Smart Defaults](inversion-of-control-with-smart-defaults.adoc)
     * [Registry](registry.adoc)
     * [RX](rx.adoc)
     * [Scala DSL](scala-dsl.adoc)
 
 <!--
-    * [Inversion Of Control With Smart Defaults](.adoc)
     * [Languages](.adoc)
     * [Lifecycle](.adoc)
     * [OnCompletion](.adoc)
