@@ -31,6 +31,7 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
 
     private Class<?> resultType;
     private boolean suppressExceptions;
+    private boolean allowSimple = true;
     private Option[] options;
 
     public JsonPathExpression(String expression) {
@@ -57,6 +58,17 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
      */
     public void setSuppressExceptions(boolean suppressExceptions) {
         this.suppressExceptions = suppressExceptions;
+    }
+
+    public boolean isAllowSimple() {
+        return allowSimple;
+    }
+
+    /**
+     * Whether to allow in inlined simple exceptions in the json path expression
+     */
+    public void setAllowSimple(boolean allowSimple) {
+        this.allowSimple = allowSimple;
     }
 
     public Option[] getOptions() {
@@ -91,7 +103,7 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
 
     public void init() {
         try {
-            engine = new JsonPathEngine(expression, suppressExceptions, options);
+            engine = new JsonPathEngine(expression, suppressExceptions, allowSimple, options);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(expression, e);
         }
