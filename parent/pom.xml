@@ -129,7 +129,7 @@
     <compress-lzf-version>1.0.3</compress-lzf-version>
     <concurrentlinkedhashmap.version>1.4.2</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
-    <cxf-version>3.1.5</cxf-version>
+    <cxf-version>3.1.7</cxf-version>
     <cxf-version-range>[3.0,4.0)</cxf-version-range>
     <cxf-xjc-plugin-version>3.0.5</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.0.5</cxf-xjc-utils-version>
@@ -514,8 +514,8 @@
     <spring-retry-version>1.0.3.RELEASE</spring-retry-version>
     <!-- spring-dm only supports spring 3.x -->
     <spring-dm-version-range>[3.2,4)</spring-dm-version-range>
-    <!-- karaf 2.x/3.x/4.x supports spring 4.1 onwards -->
-    <spring-version-range>[4.1,5)</spring-version-range>
+    <!-- karaf 2.x/3.x/4.x supports spring 3.2 onwards -->
+    <spring-version-range>[3.2,5)</spring-version-range>
     <!-- and special for only spring 4.0.x -->
     <spring40-version-range>[4.0,4.1)</spring40-version-range>
     <!-- and for spring 4.2.x onwards-->
