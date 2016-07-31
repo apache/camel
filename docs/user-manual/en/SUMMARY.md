@@ -34,13 +34,13 @@
     * [Exchange](exchange.adoc)
     * [Exchange Pattern](exchange-pattern.adoc)
     * [Expression](expression.adoc)
+    * [Injector](injector.adoc)
     * [Intercept](intercept.adoc)
     * [Registry](registry.adoc)
     * [RX](rx.adoc)
     * [Scala DSL](scala-dsl.adoc)
 
 <!--
-    * [Injector](.adoc)
     * [Inversion Of Control With Smart Defaults](.adoc)
     * [Languages](.adoc)
     * [Lifecycle](.adoc)
@@ -64,7 +64,6 @@
     * [Security](.adoc)
     * [UuidGenerator](.adoc)
     * [Binding](.adoc)
-    * [CEP](.adoc)
     * [BacklogTracer](.adoc)
     * [Endpoint Annotations](.adoc)
     * [ComponentConfiguration](.adoc)
