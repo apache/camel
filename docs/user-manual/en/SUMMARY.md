@@ -33,13 +33,13 @@
     * [Error Handler](error-handler.adoc)
     * [Exchange](exchange.adoc)
     * [Exchange Pattern](exchange-pattern.adoc)
+    * [Expression](expression.adoc)
     * [Intercept](intercept.adoc)
     * [Registry](registry.adoc)
     * [RX](rx.adoc)
     * [Scala DSL](scala-dsl.adoc)
 
 <!--
-    * [Expression](.adoc)
     * [Injector](.adoc)
     * [Inversion Of Control With Smart Defaults](.adoc)
     * [Languages](.adoc)
