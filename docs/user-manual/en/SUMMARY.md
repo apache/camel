@@ -13,6 +13,7 @@
     * [Batch Consumer](batch-consumer.adoc)
     * [BrowsableEndpoint](browsable-endpoint.adoc)
     * [CamelContext](camelcontext.adoc)
+    * [CEP](cep.adoc)
     * [Debugger](debugger.adoc)
     * [Delay Interceptor](delay-interceptor.adoc)
     * [Dependency Injection](dependency-injection.adoc)
