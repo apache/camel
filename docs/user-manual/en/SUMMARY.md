@@ -30,6 +30,7 @@
             * [Scala DSL Supported Languages](scala-dsl-supported-languages.adoc)
         * [Annotation DSL](bean-integration.adoc)
     * [Endpoint](endpoint.adoc)
+    * [Error Handler](error-handler.adoc)
     * [Exchange](exchange.adoc)
     * [Exchange Pattern](exchange-pattern.adoc)
     * [Intercept](intercept.adoc)
@@ -38,8 +39,6 @@
     * [Scala DSL](scala-dsl.adoc)
 
 <!--
-    * [Camel-Core](camel-core.adoc)
-    * [Error Handler](.adoc)
     * [Expression](.adoc)
     * [Injector](.adoc)
     * [Inversion Of Control With Smart Defaults](.adoc)
