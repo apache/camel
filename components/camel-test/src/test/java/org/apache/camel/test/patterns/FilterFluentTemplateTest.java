@@ -17,8 +17,8 @@
 package org.apache.camel.test.patterns;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -36,6 +36,9 @@ public class FilterFluentTemplateTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
 
+    @Produce(uri = "direct:start")
+    protected FluentProducerTemplate fluentTemplate;
+
     @Override
     public boolean isDumpRouteCoverage() {
         return true;
@@ -47,7 +50,7 @@ public class FilterFluentTemplateTest extends CamelTestSupport {
 
         resultEndpoint.expectedBodiesReceived(expectedBody);
 
-        fluentTemplate.withBody(expectedBody).withHeader("foo", "bar").to("direct:start").send();
+        fluentTemplate.withBody(expectedBody).withHeader("foo", "bar").send();
 
         resultEndpoint.assertIsSatisfied();
     }
@@ -56,7 +59,7 @@ public class FilterFluentTemplateTest extends CamelTestSupport {
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 
-        fluentTemplate.withBody("<notMatched/>").withHeader("foo", "notMatchedHeaderValue").to("direct:start").send();;
+        fluentTemplate.withBody("<notMatched/>").withHeader("foo", "notMatchedHeaderValue").send();
 
         resultEndpoint.assertIsSatisfied();
     }

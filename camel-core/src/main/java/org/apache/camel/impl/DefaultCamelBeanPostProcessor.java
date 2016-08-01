@@ -157,7 +157,6 @@ public class DefaultCamelBeanPostProcessor {
         return true;
     }
 
-
     /**
      * A strategy method to allow implementations to perform some custom JBI
      * based injection of the POJO
