@@ -17,7 +17,6 @@
 package org.apache.camel.language.bean.springboot;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
 /**
  * For expressions and predicates using a java bean (aka method call)
@@ -28,62 +27,10 @@ import org.springframework.boot.context.properties.DeprecatedConfigurationProper
 public class BeanLanguageConfiguration {
 
     /**
-     * Either a reference or a class name of the bean to use
-     */
-    @Deprecated
-    private String bean;
-    /**
-     * Reference to bean to lookup in the registry
-     */
-    private String ref;
-    /**
-     * Name of method to call
-     */
-    private String method;
-    /**
-     * Class name of the bean to use
-     */
-    private String beanType;
-    /**
      * Whether to trim the value to remove leading and trailing whitespaces and
      * line breaks
      */
     private Boolean trim = true;
-
-    @Deprecated
-    @DeprecatedConfigurationProperty
-    public String getBean() {
-        return bean;
-    }
-
-    @Deprecated
-    public void setBean(String bean) {
-        this.bean = bean;
-    }
-
-    public String getRef() {
-        return ref;
-    }
-
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
-    public String getBeanType() {
-        return beanType;
-    }
-
-    public void setBeanType(String beanType) {
-        this.beanType = beanType;
-    }
 
     public Boolean getTrim() {
         return trim;
