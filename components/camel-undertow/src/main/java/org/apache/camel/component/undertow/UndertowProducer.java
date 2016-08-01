@@ -210,7 +210,6 @@ public class UndertowProducer extends DefaultAsyncProducer {
         @Override
         public void failed(IOException e) {
             LOG.trace("failed: {}", e);
-            System.out.println("Failed!");
             if (getEndpoint().getThrowExceptionOnFailure()) {
                 camelExchange.setException(e);
             }
