@@ -32,6 +32,10 @@ import org.apache.camel.util.IOHelper;
  */
 public class FatJarPackageScanClassResolver extends DefaultPackageScanClassResolver {
 
+    private static final String SPRINGBOOT_CLASSIC_LIB_ROOT = "lib/";
+    private static final String SPRINGBOOT_BOOT_INF_LIB_ROOT = "BOOT-INF/lib/";
+    private static final String SPRINGBOOT_BOOT_INF_CLASSES_ROOT = "BOOT-INF/classes/";
+
     /**
      * Loads all the class entries from the main JAR and all nested jars.
      *
@@ -58,8 +62,8 @@ public class FatJarPackageScanClassResolver extends DefaultPackageScanClassResol
                 if (name != null) {
                     name = name.trim();
                     if (!entry.isDirectory() && name.endsWith(".class")) {
-                        entries.add(name);
-                    } else if (inspectNestedJars && !entry.isDirectory() && name.startsWith("lib/") && name.endsWith(".jar")) {
+                        entries.add(cleanupSpringbootClassName(name));
+                    } else if (inspectNestedJars && !entry.isDirectory() && isSpringbootNestedJar(name)) {
                         String nestedUrl = urlPath + "!/" + name;
                         log.trace("Inspecting nested jar: {}", nestedUrl);
 
@@ -78,6 +82,19 @@ public class FatJarPackageScanClassResolver extends DefaultPackageScanClassResol
         }
 
         return entries;
+    }
+
+    private boolean isSpringbootNestedJar(String name) {
+        // Supporting both versions of the packaging model
+        return name.endsWith(".jar") && (name.startsWith(SPRINGBOOT_CLASSIC_LIB_ROOT) || name.startsWith(SPRINGBOOT_BOOT_INF_LIB_ROOT));
+    }
+
+    private String cleanupSpringbootClassName(String name) {
+        // Classes inside BOOT-INF/classes will be loaded by the new classloader as if they were in the root
+        if (name.startsWith(SPRINGBOOT_BOOT_INF_CLASSES_ROOT)) {
+            name = name.substring(SPRINGBOOT_BOOT_INF_CLASSES_ROOT.length());
+        }
+        return name;
     }
 
 }
