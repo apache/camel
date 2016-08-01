@@ -67,7 +67,6 @@ public class FluentProducerTemplate {
      *
      * @param key the key of the header
      * @param value the value of the header
-     * @return this FluentProducerTemplate instance
      */
     public FluentProducerTemplate withHeader(String key, Object value) {
         if (headers == null) {
@@ -81,8 +80,6 @@ public class FluentProducerTemplate {
 
     /**
      * Remove the headers.
-     *
-     * @return this FluentProducerTemplate instance
      */
     public FluentProducerTemplate clearHeaders() {
         if (headers != null) {
@@ -96,7 +93,6 @@ public class FluentProducerTemplate {
      * Set the message body
      *
      * @param body the body
-     * @return this FluentProducerTemplate instance
      */
     public FluentProducerTemplate withBody(Object body) {
         this.body = body;
@@ -109,7 +105,6 @@ public class FluentProducerTemplate {
      *
      * @param body the body
      * @param type the type which the body should be converted to
-     * @return this FluentProducerTemplate instance
      */
     public FluentProducerTemplate withBodyAs(Object body, Class<?> type) {
         this.body = type != null
@@ -121,8 +116,6 @@ public class FluentProducerTemplate {
 
     /**
      * Remove the body.
-     *
-     * @return this FluentProducerTemplate instance
      */
     public FluentProducerTemplate clearBody() {
         this.body = null;
@@ -150,8 +143,7 @@ public class FluentProducerTemplate {
      *
      * Note that it is invoked only once.
      *
-     * @param templateCustomizer
-     * @return
+     * @param templateCustomizer the customizer
      */
     public FluentProducerTemplate withTemplateCustomizer(final Consumer<ProducerTemplate> templateCustomizer) {
         this.templateCustomizer = templateCustomizer;
@@ -161,8 +153,7 @@ public class FluentProducerTemplate {
     /**
      * Set the exchange to use for send.
      *
-     * @param exchange
-     * @return
+     * @param exchange the exchange
      */
     public FluentProducerTemplate withExchange(final Exchange exchange) {
         return withExchange(() -> exchange);
@@ -172,8 +163,7 @@ public class FluentProducerTemplate {
      * Set the exchangeSupplier which will be invoke to get the exchange to be
      * used for send.
      *
-     * @param exchangeSupplier
-     * @return
+     * @param exchangeSupplier the supplier
      */
     public FluentProducerTemplate withExchange(final Supplier<Exchange> exchangeSupplier) {
         this.exchangeSupplier = exchangeSupplier;
@@ -208,8 +198,7 @@ public class FluentProducerTemplate {
      * Set the processorSupplier which will be invoke to get the processor to be
      * used for send/request.
      *
-     * @param processorSupplier
-     * @return
+     * @param processorSupplier the supplier
      */
     public FluentProducerTemplate withProcessor(final Supplier<Processor> processorSupplier) {
         this.processorSupplier = processorSupplier;
@@ -220,7 +209,6 @@ public class FluentProducerTemplate {
      * Set the message body
      *
      * @param endpointUri the endpoint URI to send to
-     * @return this FluentProducerTemplate instance
      */
     public FluentProducerTemplate to(String endpointUri) {
         return to(context.getEndpoint(endpointUri));
@@ -230,7 +218,6 @@ public class FluentProducerTemplate {
      * Set the message body
      *
      * @param endpoint the endpoint to send to
-     * @return this FluentProducerTemplate instance
      */
     public FluentProducerTemplate to(Endpoint endpoint) {
         this.endpoint = endpoint;
@@ -245,7 +232,7 @@ public class FluentProducerTemplate {
      * Send to an endpoint returning any result output body.
      *
      * @return the result
-     * @throws CamelExecutionException
+     * @throws CamelExecutionException is thrown if error occurred
      */
     public Object request() throws CamelExecutionException {
         return request(Object.class);
@@ -256,7 +243,7 @@ public class FluentProducerTemplate {
      *
      * @param type the expected response type
      * @return the result
-     * @throws CamelExecutionException
+     * @throws CamelExecutionException is thrown if error occurred
      */
     @SuppressWarnings("unchecked")
     public <T> T request(Class<T> type) throws CamelExecutionException {
@@ -316,7 +303,7 @@ public class FluentProducerTemplate {
     /**
      * Send to an endpoint
      *
-     * @throws CamelExecutionException
+     * @throws CamelExecutionException is thrown if error occurred
      */
     public Exchange send() throws CamelExecutionException {
         return exchangeSupplier != null
@@ -343,7 +330,6 @@ public class FluentProducerTemplate {
      * Create the FluentProducerTemplate by setting the camel context
      *
      * @param context the camel context
-     * @return this FluentProducerTemplate instance
      */
     public static FluentProducerTemplate on(CamelContext context) {
         return new FluentProducerTemplate(context);
@@ -371,4 +357,5 @@ public class FluentProducerTemplate {
             exchange.getIn().setBody(body);
         }
     }
+
 }
