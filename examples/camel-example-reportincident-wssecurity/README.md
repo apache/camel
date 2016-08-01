@@ -41,22 +41,22 @@ To run the example on Apache ServiceMix 4.x or Apache Karaf 2.x
 
 #### Step 2: Add features required
 
-	features:addUrl mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
-	features:install http
-	features:install camel
-	features:install camel-cxf
-	features:install camel-mail
-	features:install camel-velocity
-        features:install cxf-bindings-corba
-        features:install cxf-transports-jms
-        features:install cxf-ws-security
+	feature:repo-add mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
+	feature:install http
+	feature:install camel
+	feature:install camel-cxf
+	feature:install camel-mail
+	feature:install camel-velocity
+        feature:install cxf-bindings-corba
+        feature:install cxf-transports-jms
+        feature:install cxf-ws-security
 
   remark: As the camel route sends email to a SMTP server, you must configure a user/password in your favorite
           SMTP Server (James by example). User = someone and password = secret
 
 #### Step 3: Deploy our example
 
-	osgi:install -s mvn:org.apache.camel/camel-example-reportincident-wssecurity/${project.version}
+	install -s mvn:org.apache.camel/camel-example-reportincident-wssecurity/${project.version}
 
 #### Step 4: Verify that your service is available using in the browser the following url
 

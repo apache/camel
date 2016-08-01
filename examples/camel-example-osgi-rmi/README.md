@@ -41,7 +41,7 @@ First the camel-rmi feature must be installed
 
 Then install the example
 
-	osgi:install -s mvn:org.apache.camel/camel-example-osgi-rmi/${version}
+	install -s mvn:org.apache.camel/camel-example-osgi-rmi/${version}
 
 ### Forum, Help, etc
 
