@@ -19,13 +19,13 @@ package org.apache.camel.component.ganglia;
 import java.net.URI;
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.ObjectHelper;
-
 import info.ganglia.gmetric4j.gmetric.GMetric;
 import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.ObjectHelper;
 
 public class GangliaComponent extends UriEndpointComponent {
 

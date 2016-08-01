@@ -19,6 +19,8 @@ package org.apache.camel.component.cache;
 import java.io.InputStream;
 import java.util.Map;
 
+import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
@@ -26,13 +28,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.camel.util.ServiceHelper;
 
-import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
-
 public class CacheComponent extends UriEndpointComponent {
     private CacheConfiguration configuration;
     private CacheManagerFactory cacheManagerFactory;
     private String configurationFile;
-    
+
     public CacheComponent() {
         super(CacheEndpoint.class);
         configuration = new CacheConfiguration();
@@ -44,7 +44,7 @@ public class CacheComponent extends UriEndpointComponent {
     }
 
     @Override
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         // must use copy as each endpoint can have different options
         ObjectHelper.notNull(configuration, "configuration");
