@@ -92,6 +92,9 @@ public class ZooKeeperConfiguration implements Cloneable {
         return null;
     }
 
+    /**
+     * The zookeeper server hosts
+     */
     public void setServers(List<String> servers) {
         this.servers = servers;
     }

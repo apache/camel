@@ -54,8 +54,9 @@ Insert Options
 
 
 
+
 // component options: START
-The Lucene component supports 1 options which are listed below.
+The Lucene component supports 7 options which are listed below.
 
 
 
@@ -63,10 +64,17 @@ The Lucene component supports 1 options which are listed below.
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
-| config | LuceneConfiguration | To use a shared lucene configuration
+| config | LuceneConfiguration | To use a shared lucene configuration. Properties of the shared configuration can also be set individually.
+| host | String | The URL to the lucene server
+| operation | LuceneOperation | Operation to do such as insert or query.
+| sourceDirectory | File | An optional directory containing files to be used to be analyzed and added to the index at producer startup.
+| indexDirectory | File | A file system directory in which index files are created upon analysis of the document by the specified analyzer
+| analyzer | Analyzer | An Analyzer builds TokenStreams which analyze text. It thus represents a policy for extracting index terms from text. The value for analyzer can be any class that extends the abstract class org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of analyzers out of the box
+| maxHits | int | An integer value that limits the result set of the search operation
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

@@ -62,8 +62,9 @@ GoogleMailComponent
 
 
 
+
 // component options: START
-The Google Mail component supports 2 options which are listed below.
+The Google Mail component supports 10 options which are listed below.
 
 
 
@@ -71,11 +72,20 @@ The Google Mail component supports 2 options which are listed below.
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
-| configuration | GoogleMailConfiguration | To use the shared configuration
+| configuration | GoogleMailConfiguration | To use the shared configuration. Properties of the shared configuration can also be set individually.
 | clientFactory | GoogleMailClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleMailClientFactory
+| apiName | GoogleMailApiName | What kind of operation to perform
+| methodName | String | What sub operation to use for the selected operation
+| clientId | String | Client ID of the mail application
+| clientSecret | String | Client secret of the mail application
+| accessToken | String | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
+| refreshToken | String | OAuth 2 refresh token. Using this the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
+| applicationName | String | Google mail application name. Example would be camel-google-mail/1.0
+| scopes | List | Specifies the level of permissions you want a mail application to have to a user account. See https://developers.google.com/gmail/api/auth/scopes for more info.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

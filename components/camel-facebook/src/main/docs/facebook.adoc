@@ -55,8 +55,9 @@ component using the bean property *configuration* of type
 to application APIs.
 
 
+
 // component options: START
-The Facebook component supports 1 options which are listed below.
+The Facebook component supports 28 options which are listed below.
 
 
 
@@ -64,10 +65,38 @@ The Facebook component supports 1 options which are listed below.
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
-| configuration | FacebookConfiguration | To use the shared configuration
+| configuration | FacebookConfiguration | To use the shared configuration. Properties of the shared configuration can also be set individually.
+| oAuthAccessToken | String | The user access token
+| oAuthAccessTokenURL | String | OAuth access token URL
+| oAuthAppId | String | The application Id
+| oAuthAppSecret | String | The application Secret
+| oAuthAuthorizationURL | String | OAuth authorization URL
+| clientURL | String | Facebook4J API client URL
+| clientVersion | String | Facebook4J client API version
+| debugEnabled | Boolean | Enables deubg output. Effective only with the embedded logger
+| gzipEnabled | Boolean | Use Facebook GZIP encoding
+| httpConnectionTimeout | Integer | Http connection timeout in milliseconds
+| httpDefaultMaxPerRoute | Integer | HTTP maximum connections per route
+| httpMaxTotalConnections | Integer | HTTP maximum total connections
+| httpProxyHost | String | HTTP proxy server host name
+| httpProxyPassword | String | HTTP proxy server password
+| httpProxyPort | Integer | HTTP proxy server port
+| httpProxyUser | String | HTTP proxy server user name
+| httpReadTimeout | Integer | Http read timeout in milliseconds
+| httpRetryCount | Integer | Number of HTTP retries
+| httpRetryIntervalSeconds | Integer | HTTP retry interval in seconds
+| httpStreamingReadTimeout | Integer | HTTP streaming read timeout in milliseconds
+| jsonStoreEnabled | Boolean | If set to true raw JSON forms will be stored in DataObjectFactory
+| mbeanEnabled | Boolean | If set to true Facebook4J mbean will be registerd
+| oAuthPermissions | String | Default OAuth permissions. Comma separated permission names. See https://developers.facebook.com/docs/reference/login/permissions for the detail
+| prettyDebugEnabled | Boolean | Prettify JSON debug output if set to true
+| restBaseURL | String | API base URL
+| useSSL | Boolean | Use SSL
+| videoBaseURL | String | Video API base URL
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

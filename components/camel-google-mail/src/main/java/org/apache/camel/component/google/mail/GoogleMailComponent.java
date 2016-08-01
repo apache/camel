@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.mail;
 
+import java.util.List;
+
 import com.google.api.services.gmail.Gmail;
 
 import org.apache.camel.CamelContext;
@@ -61,7 +63,7 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
     }
 
     /**
-     * To use the shared configuration
+     * To use the shared configuration. Properties of the shared configuration can also be set individually.
      */
     @Override
     public void setConfiguration(GoogleMailConfiguration configuration) {
@@ -86,5 +88,109 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new GoogleMailEndpoint(uri, this, apiName, methodName, endpointConfiguration);
+    }
+
+
+    private GoogleMailConfiguration getConfigurationOrCreate() {
+        if (this.getConfiguration() == null) {
+            this.setConfiguration(new GoogleMailConfiguration());
+        }
+        return this.getConfiguration();
+    }
+
+    public GoogleMailApiName getApiName() {
+        return getConfigurationOrCreate().getApiName();
+    }
+
+    /**
+     * What kind of operation to perform
+     * @param apiName
+     */
+    public void setApiName(GoogleMailApiName apiName) {
+        getConfigurationOrCreate().setApiName(apiName);
+    }
+
+    public String getMethodName() {
+        return getConfigurationOrCreate().getMethodName();
+    }
+
+    /**
+     * What sub operation to use for the selected operation
+     * @param methodName
+     */
+    public void setMethodName(String methodName) {
+        getConfigurationOrCreate().setMethodName(methodName);
+    }
+
+    public String getClientId() {
+        return getConfigurationOrCreate().getClientId();
+    }
+
+    /**
+     * Client ID of the mail application
+     * @param clientId
+     */
+    public void setClientId(String clientId) {
+        getConfigurationOrCreate().setClientId(clientId);
+    }
+
+    public String getClientSecret() {
+        return getConfigurationOrCreate().getClientSecret();
+    }
+
+    /**
+     * Client secret of the mail application
+     * @param clientSecret
+     */
+    public void setClientSecret(String clientSecret) {
+        getConfigurationOrCreate().setClientSecret(clientSecret);
+    }
+
+    public String getAccessToken() {
+        return getConfigurationOrCreate().getAccessToken();
+    }
+
+    /**
+     * OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
+     * @param accessToken
+     */
+    public void setAccessToken(String accessToken) {
+        getConfigurationOrCreate().setAccessToken(accessToken);
+    }
+
+    public String getRefreshToken() {
+        return getConfigurationOrCreate().getRefreshToken();
+    }
+
+    /**
+     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
+     * @param refreshToken
+     */
+    public void setRefreshToken(String refreshToken) {
+        getConfigurationOrCreate().setRefreshToken(refreshToken);
+    }
+
+    public String getApplicationName() {
+        return getConfigurationOrCreate().getApplicationName();
+    }
+
+    /**
+     * Google mail application name. Example would be "camel-google-mail/1.0"
+     * @param applicationName
+     */
+    public void setApplicationName(String applicationName) {
+        getConfigurationOrCreate().setApplicationName(applicationName);
+    }
+
+    public List<String> getScopes() {
+        return getConfigurationOrCreate().getScopes();
+    }
+
+    /**
+     * Specifies the level of permissions you want a mail application to have to a user account. See https://developers.google.com/gmail/api/auth/scopes for more info.
+     * @param scopes
+     */
+    public void setScopes(List<String> scopes) {
+        getConfigurationOrCreate().setScopes(scopes);
     }
 }

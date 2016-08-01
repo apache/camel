@@ -33,6 +33,18 @@ public class KestrelComponentConfiguration {
      * endpoints.
      */
     private KestrelConfiguration configuration;
+    /**
+     * The addresses
+     */
+    private String[] addresses;
+    /**
+     * The wait time in milliseconds
+     */
+    private Integer waitTimeMs;
+    /**
+     * The number of concurrent consumers
+     */
+    private Integer concurrentConsumers;
 
     public KestrelConfiguration getConfiguration() {
         return configuration;
@@ -40,5 +52,29 @@ public class KestrelComponentConfiguration {
 
     public void setConfiguration(KestrelConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public String[] getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(String[] addresses) {
+        this.addresses = addresses;
+    }
+
+    public Integer getWaitTimeMs() {
+        return waitTimeMs;
+    }
+
+    public void setWaitTimeMs(Integer waitTimeMs) {
+        this.waitTimeMs = waitTimeMs;
+    }
+
+    public Integer getConcurrentConsumers() {
+        return concurrentConsumers;
+    }
+
+    public void setConcurrentConsumers(Integer concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
     }
 }

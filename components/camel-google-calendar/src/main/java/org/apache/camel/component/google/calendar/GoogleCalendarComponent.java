@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.calendar;
 
+import java.util.List;
+
 import com.google.api.services.calendar.Calendar;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -68,7 +70,7 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
     }
 
     /**
-     * To use the shared configuration
+     * To use the shared configuration. Properties of the shared configuration can also be set individually.
      */
     @Override
     public void setConfiguration(GoogleCalendarConfiguration configuration) {
@@ -89,5 +91,145 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new GoogleCalendarEndpoint(uri, this, apiName, methodName, endpointConfiguration);
+    }
+
+
+    private GoogleCalendarConfiguration getConfigurationOrCreate() {
+        if (this.getConfiguration() == null) {
+            this.setConfiguration(new GoogleCalendarConfiguration());
+        }
+        return this.getConfiguration();
+    }
+
+    public GoogleCalendarApiName getApiName() {
+        return getConfigurationOrCreate().getApiName();
+    }
+
+    /**
+     * What kind of operation to perform
+     * @param apiName
+     */
+    public void setApiName(GoogleCalendarApiName apiName) {
+        getConfigurationOrCreate().setApiName(apiName);
+    }
+
+    public String getMethodName() {
+        return getConfigurationOrCreate().getMethodName();
+    }
+
+    /**
+     * What sub operation to use for the selected operation
+     * @param methodName
+     */
+    public void setMethodName(String methodName) {
+        getConfigurationOrCreate().setMethodName(methodName);
+    }
+
+    public String getClientId() {
+        return getConfigurationOrCreate().getClientId();
+    }
+
+    /**
+     * Client ID of the calendar application
+     * @param clientId
+     */
+    public void setClientId(String clientId) {
+        getConfigurationOrCreate().setClientId(clientId);
+    }
+
+    public String getEmailAddress() {
+        return getConfigurationOrCreate().getEmailAddress();
+    }
+
+    /**
+     * The emailAddress of the Google Service Account.
+     * @param emailAddress
+     */
+    public void setEmailAddress(String emailAddress) {
+        getConfigurationOrCreate().setEmailAddress(emailAddress);
+    }
+
+    public String getClientSecret() {
+        return getConfigurationOrCreate().getClientSecret();
+    }
+
+    /**
+     * Client secret of the calendar application
+     * @param clientSecret
+     */
+    public void setClientSecret(String clientSecret) {
+        getConfigurationOrCreate().setClientSecret(clientSecret);
+    }
+
+    public String getAccessToken() {
+        return getConfigurationOrCreate().getAccessToken();
+    }
+
+    /**
+     * OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
+     * @param accessToken
+     */
+    public void setAccessToken(String accessToken) {
+        getConfigurationOrCreate().setAccessToken(accessToken);
+    }
+
+    public String getRefreshToken() {
+        return getConfigurationOrCreate().getRefreshToken();
+    }
+
+    /**
+     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
+     * @param refreshToken
+     */
+    public void setRefreshToken(String refreshToken) {
+        getConfigurationOrCreate().setRefreshToken(refreshToken);
+    }
+
+    public String getApplicationName() {
+        return getConfigurationOrCreate().getApplicationName();
+    }
+
+    /**
+     * Google calendar application name. Example would be "camel-google-calendar/1.0"
+     * @param applicationName
+     */
+    public void setApplicationName(String applicationName) {
+        getConfigurationOrCreate().setApplicationName(applicationName);
+    }
+
+    public List<String> getScopes() {
+        return getConfigurationOrCreate().getScopes();
+    }
+
+    /**
+     * Specifies the level of permissions you want a calendar application to have to a user account. See https://developers.google.com/google-apps/calendar/auth for more info.
+     * @param scopes
+     */
+    public void setScopes(List<String> scopes) {
+        getConfigurationOrCreate().setScopes(scopes);
+    }
+
+    public String getP12FileName() {
+        return getConfigurationOrCreate().getP12FileName();
+    }
+
+    /**
+     * The name of the p12 file which has the private key to use with the Google Service Account.
+     * @param p12FileName
+     */
+    public void setP12FileName(String p12FileName) {
+        getConfigurationOrCreate().setP12FileName(p12FileName);
+    }
+
+    public String getUser() {
+        return getConfigurationOrCreate().getUser();
+    }
+
+    /**
+     * The email address of the user the application is trying to impersonate in the service account flow
+     * @param user
+     */
+    public void setUser(String user) {
+        getConfigurationOrCreate().setUser(user);
     }
 }

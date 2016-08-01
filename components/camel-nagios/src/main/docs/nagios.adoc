@@ -41,8 +41,9 @@ Options
 
 
 
+
 // component options: START
-The Nagios component supports 1 options which are listed below.
+The Nagios component supports 7 options which are listed below.
 
 
 
@@ -50,10 +51,17 @@ The Nagios component supports 1 options which are listed below.
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
-| configuration | NagiosConfiguration | To use a shared NagiosConfiguration
+| configuration | NagiosConfiguration | To use a shared configuraiton. Properties of the shared configuration can also be set individually.
+| host | String | This is the address of the Nagios host where checks should be send.
+| port | int | The port number of the host.
+| connectionTimeout | int | Connection timeout in millis.
+| timeout | int | Sending timeout in millis.
+| password | String | Password to be authenticated when sending checks to Nagios.
+| encryptionMethod | NagiosEncryptionMethod | To specify an encryption method.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 
