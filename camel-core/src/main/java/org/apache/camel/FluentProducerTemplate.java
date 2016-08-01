@@ -19,6 +19,41 @@ package org.apache.camel;
 import java.util.concurrent.Future;
 import java.util.function.*;
 
+/**
+ * Template for working with Camel and sending {@link Message} instances in an
+ * {@link Exchange} to an {@link Endpoint} using a <i>fluent</i> build style.
+ * <br/>
+ * <p/><b>Important:</b> Read the javadoc of each method carefully to ensure the behavior of the method is understood.
+ * Some methods is for <tt>InOnly</tt>, others for <tt>InOut</tt> MEP. And some methods throws
+ * {@link org.apache.camel.CamelExecutionException} while others stores any thrown exception on the returned
+ * {@link Exchange}.
+ * <br/>
+ * <p/>The {@link FluentProducerTemplate} is <b>thread safe</b>.
+ * <br/>
+ * <p/>All the methods which sends a message may throw {@link FailedToCreateProducerException} in
+ * case the {@link Producer} could not be created. Or a {@link NoSuchEndpointException} if the endpoint could
+ * not be resolved. There may be other related exceptions being thrown which occurs <i>before</i> the {@link Producer}
+ * has started sending the message.
+ * <br/>
+ * <p/>All the send or request methods will return the content according to this strategy:
+ * <ul>
+ *   <li>throws {@link org.apache.camel.CamelExecutionException} if processing failed <i>during</i> routing
+ *       with the caused exception wrapped</li>
+ *   <li>The <tt>fault.body</tt> if there is a fault message set and its not <tt>null</tt></li>
+ *   <li>Either <tt>IN</tt> or <tt>OUT</tt> body according to the message exchange pattern. If the pattern is
+ *   Out capable then the <tt>OUT</tt> body is returned, otherwise <tt>IN</tt>.
+ * </ul>
+ * <br/>
+ * <p/>Before using the template it must be started.
+ * And when you are done using the template, make sure to {@link #stop()} the template.
+ * <br/>
+ * <p/><b>Important note on usage:</b> See this
+ * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
+ * before using.
+ *
+ * @see ProducerTemplate
+ * @see ConsumerTemplate
+ */
 public interface FluentProducerTemplate extends Service {
 
     /**
@@ -204,21 +239,21 @@ public interface FluentProducerTemplate extends Service {
     FluentProducerTemplate withProcessor(Supplier<Processor> processorSupplier);
 
     /**
-     * Set the message body
+     * Endpoint to send to
      *
      * @param endpointUri the endpoint URI to send to
      */
     FluentProducerTemplate to(String endpointUri);
 
     /**
-     * Set the message body
+     * Endpoint to send to
      *
      * @param endpoint the endpoint to send to
      */
     FluentProducerTemplate to(Endpoint endpoint);
 
     /**
-     * Send to an endpoint returning any result output body.
+     * Send to an endpoint (InOut) returning any result output body.
      *
      * @return the result
      * @throws CamelExecutionException is thrown if error occurred
@@ -226,24 +261,23 @@ public interface FluentProducerTemplate extends Service {
     Object request() throws CamelExecutionException;
 
     /**
-     * Send to an endpoint.
+     * Send to an endpoint (InOut).
      *
      * @param type the expected response type
      * @return the result
      * @throws CamelExecutionException is thrown if error occurred
      */
-    @SuppressWarnings("unchecked")
     <T> T request(Class<T> type) throws CamelExecutionException;
 
     /**
-     * Sends asynchronously to the given endpoint.
+     * Sends asynchronously to the given endpoint (InOut).
      *
      * @return a handle to be used to get the response in the future
      */
     Future<Object> asyncRequest();
 
     /**
-     * Sends asynchronously to the given endpoint.
+     * Sends asynchronously to the given endpoint (InOut).
      *
      * @param type the expected response type
      * @return a handle to be used to get the response in the future
@@ -251,14 +285,14 @@ public interface FluentProducerTemplate extends Service {
     <T> Future<T> asyncRequest(Class<T> type);
 
     /**
-     * Send to an endpoint
+     * Send to an endpoint (InOnly)
      *
      * @throws CamelExecutionException is thrown if error occurred
      */
     Exchange send() throws CamelExecutionException;
 
     /**
-     * Sends asynchronously to the given endpoint.
+     * Sends asynchronously to the given endpoint (InOnly).
      *
      * @return a handle to be used to get the response in the future
      */
