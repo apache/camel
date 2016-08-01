@@ -51,7 +51,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
-    @UriParam
+    @UriParam(label = "producer")
     private boolean bridgeEndpoint;
 
     public KafkaEndpoint() {
@@ -744,4 +744,13 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     public void setWorkerPoolCoreSize(Integer workerPoolCoreSize) {
         configuration.setWorkerPoolCoreSize(workerPoolCoreSize);
     }
+
+    public Integer getMaxPollRecords() {
+        return configuration.getMaxPollRecords();
+    }
+
+    public void setMaxPollRecords(Integer maxPollRecords) {
+        configuration.setMaxPollRecords(maxPollRecords);
+    }
+
 }
