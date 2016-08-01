@@ -26,6 +26,7 @@ import org.apache.camel.Consume;
 import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PollingConsumer;
@@ -34,6 +35,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ProxyInstantiationException;
 import org.apache.camel.Service;
+import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
@@ -203,6 +205,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                                     String injectionPointName, Object bean, String beanName) {
         if (type.isAssignableFrom(ProducerTemplate.class)) {
             return createInjectionProducerTemplate(endpointUri, endpointRef, endpointProperty, injectionPointName, bean);
+        } else if (type.isAssignableFrom(FluentProducerTemplate.class)) {
+            return createInjectionFluentProducerTemplate(endpointUri, endpointRef, endpointProperty, injectionPointName, bean);
         } else if (type.isAssignableFrom(ConsumerTemplate.class)) {
             return createInjectionConsumerTemplate(endpointUri, endpointRef, endpointProperty, injectionPointName);
         } else {
@@ -289,6 +293,26 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         Endpoint endpoint = getEndpointInjection(bean, endpointUri, endpointRef, endpointProperty, injectionPointName, false);
         CamelContext context = endpoint != null ? endpoint.getCamelContext() : getCamelContext();
         ProducerTemplate answer = new DefaultProducerTemplate(context, endpoint);
+        // start the template so its ready to use
+        try {
+            // no need to defer the template as it can adjust to the endpoint at runtime
+            startService(answer, context, bean, null);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+        return answer;
+    }
+
+    /**
+     * Factory method to create a {@link org.apache.camel.FluentProducerTemplate} to be injected into a POJO
+     */
+    protected FluentProducerTemplate createInjectionFluentProducerTemplate(String endpointUri, String endpointRef, String endpointProperty,
+                                                                           String injectionPointName, Object bean) {
+        // endpoint is optional for this injection point
+        Endpoint endpoint = getEndpointInjection(bean, endpointUri, endpointRef, endpointProperty, injectionPointName, false);
+        CamelContext context = endpoint != null ? endpoint.getCamelContext() : getCamelContext();
+        FluentProducerTemplate answer = new DefaultFluentProducerTemplate(context);
+        answer.setDefaultEndpoint(endpoint);
         // start the template so its ready to use
         try {
             // no need to defer the template as it can adjust to the endpoint at runtime
