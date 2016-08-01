@@ -44,9 +44,9 @@ set to your box account credentials.
 
 #### Step 4
 
-Deploy the example into Karak
+Deploy the example into Karaf
 
-	osgi:install -s mvn:org.apache.camel/camel-example-box-osgi/${version}
+	install -s mvn:org.apache.camel/camel-example-box-osgi/${version}
 
 #### Step 5
 

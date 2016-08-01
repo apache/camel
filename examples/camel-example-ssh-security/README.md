@@ -78,8 +78,8 @@ the `<karaf_home>` directory.
 From the running Karaf console, run the following commands to install this example into your
 running Karaf server.
 
-    features:addurl mvn:org.apache.camel/camel-example-ssh-security/<camel version>/xml/features
-    features:install camel-example-ssh-security
+    feature:repo-add mvn:org.apache.camel/camel-example-ssh-security/<camel version>/xml/features
+    feature:install camel-example-ssh-security
 
 This example outputs into the Karaf log file so you can either `tail -f <karaf_home>data/log/karaf.log`
 or from the Karaf console run the following command

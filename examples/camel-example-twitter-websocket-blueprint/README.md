@@ -22,17 +22,17 @@ This example requires running in Apache Karaf / ServiceMix
 To install Apache Camel in Karaf you type in the shell (as an example here we make use of
 Camel version 2.12.0):
 
-	features:chooseurl camel 2.12.0
+	feature:repo-add camel 2.12.0
 
 First you need to install the following features in Karaf/ServiceMix with:
 
-	features:install camel-blueprint
-	features:install camel-twitter
-	features:install camel-websocket
+	feature:install camel-blueprint
+	feature:install camel-twitter
+	feature:install camel-websocket
 
 Then you can install the Camel example:
 
-	osgi:install -s mvn:org.apache.camel/camel-example-twitter-websocket-blueprint/2.12.0
+	install -s mvn:org.apache.camel/camel-example-twitter-websocket-blueprint/2.12.0
 
 Then open a browser to see live twitter updates in the web page
 

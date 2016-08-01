@@ -31,7 +31,7 @@ karaf@root()> feature:install camel
 Then you need to install the following features in Karaf/ServiceMix:
 
 ```sh
-karaf@root()> features:install camel-netty-http
+karaf@root()> feature:install camel-netty-http
 ```
 
 Then you can install the shared Netty HTTP server which by default runs on port `8888`.
@@ -42,26 +42,26 @@ The port number can be changed by editing the following source file:
 In the Apache Karaf / ServiceMix shell type:
 
 ```sh
-karaf@root()> osgi:install -s mvn:org.apache.camel/camel-example-netty-http-shared/2.17.0
+karaf@root()> install -s mvn:org.apache.camel/camel-example-netty-http-shared/2.17.0
 ```
 
 Then you can install the Camel applications:
 
 ```sh
-karaf@root()> osgi:install -s mvn:org.apache.camel/camel-example-netty-myapp-one/2.17.0
-karaf@root()> osgi:install -s mvn:org.apache.camel/camel-example-netty-myapp-two/2.17.0
+karaf@root()> install -s mvn:org.apache.camel/camel-example-netty-myapp-one/2.17.0
+karaf@root()> install -s mvn:org.apache.camel/camel-example-netty-myapp-two/2.17.0
 ```
 
 If you want to test the Camel CDI application, you first need to install the required features:
 
 ```sh
-karaf@root()> features:install pax-cdi-weld camel-cdi
+karaf@root()> feature:install pax-cdi-weld camel-cdi
 ```
 
 And then install the Camel CDI application:
 
 ```sh
-karaf@root()> osgi:install -s mvn:org.apache.camel/camel-example-netty-myapp-cdi/2.17.0
+karaf@root()> install -s mvn:org.apache.camel/camel-example-netty-myapp-cdi/2.17.0
 ```
 
 From a web browser you can then try the example by accessing the followign URLs:
