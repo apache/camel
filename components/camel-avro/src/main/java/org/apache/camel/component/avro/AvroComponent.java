@@ -167,8 +167,15 @@ public class AvroComponent extends UriEndpointComponent {
         this.configuration = configuration;
     }
 
+    private AvroConfiguration getConfigurationOrCreate() {
+        if (this.getConfiguration() == null) {
+            this.setConfiguration(new AvroConfiguration());
+        }
+        return this.getConfiguration();
+    }
+
     public String getHost() {
-        return configuration.getHost();
+        return getConfigurationOrCreate().getHost();
     }
 
     /**
@@ -176,11 +183,11 @@ public class AvroComponent extends UriEndpointComponent {
      * @param host
      */
     public void setHost(String host) {
-        configuration.setHost(host);
+        getConfigurationOrCreate().setHost(host);
     }
 
     public int getPort() {
-        return configuration.getPort();
+        return getConfigurationOrCreate().getPort();
     }
 
     /**
@@ -188,11 +195,11 @@ public class AvroComponent extends UriEndpointComponent {
      * @param port
      */
     public void setPort(int port) {
-        configuration.setPort(port);
+        getConfigurationOrCreate().setPort(port);
     }
 
     public Protocol getProtocol() {
-        return configuration.getProtocol();
+        return getConfigurationOrCreate().getProtocol();
     }
 
     /**
@@ -200,11 +207,11 @@ public class AvroComponent extends UriEndpointComponent {
      * @param protocol
      */
     public void setProtocol(Protocol protocol) {
-        configuration.setProtocol(protocol);
+        getConfigurationOrCreate().setProtocol(protocol);
     }
 
     public AvroTransport getTransport() {
-        return configuration.getTransport();
+        return getConfigurationOrCreate().getTransport();
     }
 
     /**
@@ -212,15 +219,15 @@ public class AvroComponent extends UriEndpointComponent {
      * @param transport
      */
     public void setTransport(String transport) {
-        configuration.setTransport(transport);
+        getConfigurationOrCreate().setTransport(transport);
     }
 
     public void setTransport(AvroTransport transport) {
-        configuration.setTransport(transport);
+        getConfigurationOrCreate().setTransport(transport);
     }
 
     public String getProtocolLocation() {
-        return configuration.getProtocolLocation();
+        return getConfigurationOrCreate().getProtocolLocation();
     }
 
     /**
@@ -228,11 +235,11 @@ public class AvroComponent extends UriEndpointComponent {
      * @param protocolLocation
      */
     public void setProtocolLocation(String protocolLocation) {
-        configuration.setProtocolLocation(protocolLocation);
+        getConfigurationOrCreate().setProtocolLocation(protocolLocation);
     }
 
     public String getProtocolClassName() {
-        return configuration.getProtocolClassName();
+        return getConfigurationOrCreate().getProtocolClassName();
     }
 
     /**
@@ -240,11 +247,11 @@ public class AvroComponent extends UriEndpointComponent {
      * @param protocolClassName
      */
     public void setProtocolClassName(String protocolClassName) {
-        configuration.setProtocolClassName(protocolClassName);
+        getConfigurationOrCreate().setProtocolClassName(protocolClassName);
     }
 
     public String getMessageName() {
-        return configuration.getMessageName();
+        return getConfigurationOrCreate().getMessageName();
     }
 
     /**
@@ -252,11 +259,11 @@ public class AvroComponent extends UriEndpointComponent {
      * @param messageName
      */
     public void setMessageName(String messageName) {
-        configuration.setMessageName(messageName);
+        getConfigurationOrCreate().setMessageName(messageName);
     }
 
     public String getUriAuthority() {
-        return configuration.getUriAuthority();
+        return getConfigurationOrCreate().getUriAuthority();
     }
 
     /**
@@ -264,11 +271,11 @@ public class AvroComponent extends UriEndpointComponent {
      * @param uriAuthority
      */
     public void setUriAuthority(String uriAuthority) {
-        configuration.setUriAuthority(uriAuthority);
+        getConfigurationOrCreate().setUriAuthority(uriAuthority);
     }
 
     public boolean isReflectionProtocol() {
-        return configuration.isReflectionProtocol();
+        return getConfigurationOrCreate().isReflectionProtocol();
     }
 
     /**
@@ -276,11 +283,11 @@ public class AvroComponent extends UriEndpointComponent {
      * @param isReflectionProtocol
      */
     public void setReflectionProtocol(boolean isReflectionProtocol) {
-        configuration.setReflectionProtocol(isReflectionProtocol);
+        getConfigurationOrCreate().setReflectionProtocol(isReflectionProtocol);
     }
 
     public boolean isSingleParameter() {
-        return configuration.isSingleParameter();
+        return getConfigurationOrCreate().isSingleParameter();
     }
 
     /**
@@ -288,6 +295,6 @@ public class AvroComponent extends UriEndpointComponent {
      * @param singleParameter
      */
     public void setSingleParameter(boolean singleParameter) {
-        configuration.setSingleParameter(singleParameter);
+        getConfigurationOrCreate().setSingleParameter(singleParameter);
     }
 }
