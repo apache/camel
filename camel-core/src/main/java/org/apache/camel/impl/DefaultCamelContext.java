@@ -56,6 +56,7 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.FailedToStartRouteException;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.NamedNode;
@@ -82,6 +83,7 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -2695,6 +2697,23 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public ProducerTemplate createProducerTemplate(int maximumCacheSize) {
         DefaultProducerTemplate answer = new DefaultProducerTemplate(this);
+        answer.setMaximumCacheSize(maximumCacheSize);
+        // start it so its ready to use
+        try {
+            startService(answer);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+        return answer;
+    }
+
+    public FluentProducerTemplate createFluentProducerTemplate() {
+        int size = CamelContextHelper.getMaximumCachePoolSize(this);
+        return createFluentProducerTemplate(size);
+    }
+
+    public FluentProducerTemplate createFluentProducerTemplate(int maximumCacheSize) {
+        DefaultFluentProducerTemplate answer = new DefaultFluentProducerTemplate(this);
         answer.setMaximumCacheSize(maximumCacheSize);
         // start it so its ready to use
         try {

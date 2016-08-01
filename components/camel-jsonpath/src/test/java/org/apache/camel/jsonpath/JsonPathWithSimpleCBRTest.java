@@ -18,7 +18,6 @@ package org.apache.camel.jsonpath;
 
 import java.io.File;
 
-import org.apache.camel.builder.FluentProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -48,8 +47,7 @@ public class JsonPathWithSimpleCBRTest extends CamelTestSupport {
         getMockEndpoint("mock:average").expectedMessageCount(0);
         getMockEndpoint("mock:expensive").expectedMessageCount(0);
 
-        FluentProducerTemplate fluent = new FluentProducerTemplate(context);
-        fluent.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/cheap.json"))
+        fluentTemplate.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/cheap.json"))
                 .to("direct:start").send();
 
         assertMockEndpointsSatisfied();
@@ -61,8 +59,7 @@ public class JsonPathWithSimpleCBRTest extends CamelTestSupport {
         getMockEndpoint("mock:average").expectedMessageCount(1);
         getMockEndpoint("mock:expensive").expectedMessageCount(0);
 
-        FluentProducerTemplate fluent = new FluentProducerTemplate(context);
-        fluent.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/average.json"))
+        fluentTemplate.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/average.json"))
                 .to("direct:start").send();
 
         assertMockEndpointsSatisfied();
@@ -74,8 +71,7 @@ public class JsonPathWithSimpleCBRTest extends CamelTestSupport {
         getMockEndpoint("mock:average").expectedMessageCount(0);
         getMockEndpoint("mock:expensive").expectedMessageCount(1);
 
-        FluentProducerTemplate fluent = new FluentProducerTemplate(context);
-        fluent.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/expensive.json"))
+        fluentTemplate.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/expensive.json"))
                 .to("direct:start").send();
 
         assertMockEndpointsSatisfied();
