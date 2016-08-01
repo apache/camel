@@ -16,6 +16,10 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.xquery.springboot.XQueryComponentAutoConfiguration,\
-org.apache.camel.language.xquery.springboot.XQueryLanguageAutoConfiguration
+org.apache.camel.builder.script.springboot.JavaScriptLanguageAutoConfiguration,\
+org.apache.camel.builder.script.springboot.PythonLanguageAutoConfiguration,\
+org.apache.camel.builder.script.springboot.PhpLanguageAutoConfiguration,\
+org.apache.camel.builder.script.springboot.RubyLanguageAutoConfiguration
+
+
 
