@@ -68,10 +68,10 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private String httpMethodRestrict;
     @UriParam(label = "consumer", defaultValue = "true")
     private Boolean matchOnUriPrefix = true;
-    @UriParam(label = "producer")
-    private Boolean throwExceptionOnFailure;
-    @UriParam
-    private Boolean transferException;
+    @UriParam(label = "producer", defaultValue = "true")
+    private Boolean throwExceptionOnFailure = Boolean.TRUE;
+    @UriParam(label = "producer", defaultValue = "false")
+    private Boolean transferException = Boolean.FALSE;
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean keepAlive = Boolean.TRUE;
     @UriParam(label = "producer", defaultValue = "true")
@@ -221,6 +221,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
             // create a new binding and use the options from this endpoint
             undertowHttpBinding = new DefaultUndertowHttpBinding();
             undertowHttpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            undertowHttpBinding.setTransferException(getTransferException());
         }
         return undertowHttpBinding;
     }

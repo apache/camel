@@ -61,6 +61,7 @@ The Undertow component supports 2 options which are listed below.
 
 
 
+
 // endpoint options: START
 The Undertow component supports 17 endpoint options which are listed below:
 
@@ -69,7 +70,6 @@ The Undertow component supports 17 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | httpURI | common |  | URI | *Required* The url of the HTTP endpoint to use.
-| transferException | common |  | Boolean | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | httpMethodRestrict | consumer |  | String | Used to only allow consuming if the HttpMethod matches such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.
 | matchOnUriPrefix | consumer | true | Boolean | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
@@ -79,7 +79,8 @@ The Undertow component supports 17 endpoint options which are listed below:
 | options | producer |  | Map | Sets additional channel options. The options that can be used are defined in org.xnio.Options. To configure from endpoint uri then prefix each option with option. such as option.close-abort=true&option.send-buffer=8192
 | reuseAddresses | producer | true | Boolean | Setting to facilitate socket multiplexing
 | tcpNoDelay | producer | true | Boolean | Setting to improve TCP protocol performance
-| throwExceptionOnFailure | producer |  | Boolean | If the option is true HttpProducer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the option throwExceptionOnFailure to be false to let the producer send all the fault response back.
+| throwExceptionOnFailure | producer | true | Boolean | If the option is true HttpProducer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the option throwExceptionOnFailure to be false to let the producer send all the fault response back.
+| transferException | producer | false | Boolean | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | headerFilterStrategy | advanced |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
@@ -88,6 +89,7 @@ The Undertow component supports 17 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 [[Undertow-MessageHeaders]]

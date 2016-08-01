@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.undertow.handlers;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -118,7 +119,7 @@ public class HttpCamelHandler implements HttpHandler {
         httpExchange.getResponseSender().close();
     }
 
-    private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange, UndertowConsumer consumer) {
+    private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange, UndertowConsumer consumer) throws IOException {
         Object result;
         if (camelExchange.hasOut()) {
             result = consumer.getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getOut());
