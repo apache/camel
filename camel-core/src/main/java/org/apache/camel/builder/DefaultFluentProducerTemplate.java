@@ -27,14 +27,17 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.processor.ConvertBodyProcessor;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 
-public class FluentProducerTemplate {
+public class DefaultFluentProducerTemplate extends ServiceSupport implements FluentProducerTemplate {
     private final CamelContext context;
     private final ClassValue<ConvertBodyProcessor> resultProcessors;
     private Map<String, Object> headers;
@@ -43,9 +46,12 @@ public class FluentProducerTemplate {
     private Consumer<ProducerTemplate> templateCustomizer;
     private Supplier<Exchange> exchangeSupplier;
     private Supplier<Processor> processorSupplier;
-    private ProducerTemplate template;
+    private volatile ProducerTemplate template;
+    private Endpoint defaultEndpoint;
+    private int maximumCacheSize;
+    private boolean eventNotifierEnabled = true;
 
-    public FluentProducerTemplate(CamelContext context) {
+    public DefaultFluentProducerTemplate(CamelContext context) {
         this.context = context;
         this.headers = null;
         this.body = null;
@@ -62,12 +68,62 @@ public class FluentProducerTemplate {
         };
     }
 
-    /**
-     * Set the header
-     *
-     * @param key the key of the header
-     * @param value the value of the header
-     */
+    @Override
+    public CamelContext getCamelContext() {
+        return context;
+    }
+
+    @Override
+    public int getCurrentCacheSize() {
+        if (template == null) {
+            return 0;
+        }
+        return template.getCurrentCacheSize();
+    }
+
+    @Override
+    public void cleanUp() {
+        if (template != null) {
+            template.cleanUp();
+        }
+    }
+
+    @Override
+    public void setDefaultEndpointUri(String endpointUri) {
+        setDefaultEndpoint(getCamelContext().getEndpoint(endpointUri));
+    }
+
+    @Override
+    public Endpoint getDefaultEndpoint() {
+        return defaultEndpoint;
+    }
+
+    @Override
+    public void setDefaultEndpoint(Endpoint defaultEndpoint) {
+        this.defaultEndpoint = defaultEndpoint;
+    }
+
+    @Override
+    public int getMaximumCacheSize() {
+        return maximumCacheSize;
+    }
+
+    @Override
+    public void setMaximumCacheSize(int maximumCacheSize) {
+        this.maximumCacheSize = maximumCacheSize;
+    }
+
+    @Override
+    public boolean isEventNotifierEnabled() {
+        return eventNotifierEnabled;
+    }
+
+    @Override
+    public void setEventNotifierEnabled(boolean eventNotifierEnabled) {
+        this.eventNotifierEnabled = eventNotifierEnabled;
+    }
+
+    @Override
     public FluentProducerTemplate withHeader(String key, Object value) {
         if (headers == null) {
             headers = new HashMap<>();
@@ -78,9 +134,7 @@ public class FluentProducerTemplate {
         return this;
     }
 
-    /**
-     * Remove the headers.
-     */
+    @Override
     public FluentProducerTemplate clearHeaders() {
         if (headers != null) {
             headers.clear();
@@ -89,23 +143,14 @@ public class FluentProducerTemplate {
         return this;
     }
 
-    /**
-     * Set the message body
-     *
-     * @param body the body
-     */
+    @Override
     public FluentProducerTemplate withBody(Object body) {
         this.body = body;
 
         return this;
     }
 
-    /**
-     * Set the message body after converting it to the given type
-     *
-     * @param body the body
-     * @param type the type which the body should be converted to
-     */
+    @Override
     public FluentProducerTemplate withBodyAs(Object body, Class<?> type) {
         this.body = type != null
             ? context.getTypeConverter().convertTo(type, body)
@@ -114,111 +159,47 @@ public class FluentProducerTemplate {
         return this;
     }
 
-    /**
-     * Remove the body.
-     */
+    @Override
     public FluentProducerTemplate clearBody() {
         this.body = null;
 
         return this;
     }
 
-    /**
-     * To customize the producer template for advanced usage like to set the
-     * executor service to use.
-     *
-     * <pre>
-     * {@code
-     * FluentProducerTemplate.on(context)
-     *     .withTemplateCustomizer(
-     *         template -> {
-     *             template.setExecutorService(myExecutor);
-     *             template.setMaximumCacheSize(10);
-     *         }
-     *      )
-     *     .withBody("the body")
-     *     .to("direct:start")
-     *     .request()
-     * </pre>
-     *
-     * Note that it is invoked only once.
-     *
-     * @param templateCustomizer the customizer
-     */
+    @Override
     public FluentProducerTemplate withTemplateCustomizer(final Consumer<ProducerTemplate> templateCustomizer) {
         this.templateCustomizer = templateCustomizer;
         return this;
     }
 
-    /**
-     * Set the exchange to use for send.
-     *
-     * @param exchange the exchange
-     */
+    @Override
     public FluentProducerTemplate withExchange(final Exchange exchange) {
         return withExchange(() -> exchange);
     }
 
-    /**
-     * Set the exchangeSupplier which will be invoke to get the exchange to be
-     * used for send.
-     *
-     * @param exchangeSupplier the supplier
-     */
+    @Override
     public FluentProducerTemplate withExchange(final Supplier<Exchange> exchangeSupplier) {
         this.exchangeSupplier = exchangeSupplier;
         return this;
     }
 
-    /**
-     * Set the processor to use for send/request.
-     *
-     * <pre>
-     * {@code
-     * FluentProducerTemplate.on(context)
-     *     .withProcessor(
-     *         exchange -> {
-     *             exchange.getIn().setHeader("Key1", "Val1")
-     *             exchange.getIn().setHeader("Key2", "Val2")
-     *             exchange.getIn().setBody("the body")
-     *         }
-     *      )
-     *     .to("direct:start")
-     *     .request()
-     * </pre>
-     *
-     * @param processor
-     * @return
-     */
+    @Override
     public FluentProducerTemplate withProcessor(final Processor processor) {
         return withProcessor(() -> processor);
     }
 
-    /**
-     * Set the processorSupplier which will be invoke to get the processor to be
-     * used for send/request.
-     *
-     * @param processorSupplier the supplier
-     */
+    @Override
     public FluentProducerTemplate withProcessor(final Supplier<Processor> processorSupplier) {
         this.processorSupplier = processorSupplier;
         return this;
     }
 
-    /**
-     * Set the message body
-     *
-     * @param endpointUri the endpoint URI to send to
-     */
+    @Override
     public FluentProducerTemplate to(String endpointUri) {
         return to(context.getEndpoint(endpointUri));
     }
 
-    /**
-     * Set the message body
-     *
-     * @param endpoint the endpoint to send to
-     */
+    @Override
     public FluentProducerTemplate to(Endpoint endpoint) {
         this.endpoint = endpoint;
         return this;
@@ -228,34 +209,25 @@ public class FluentProducerTemplate {
     // REQUEST
     // ************************
 
-    /**
-     * Send to an endpoint returning any result output body.
-     *
-     * @return the result
-     * @throws CamelExecutionException is thrown if error occurred
-     */
+    @Override
     public Object request() throws CamelExecutionException {
         return request(Object.class);
     }
 
-    /**
-     * Send to an endpoint.
-     *
-     * @param type the expected response type
-     * @return the result
-     * @throws CamelExecutionException is thrown if error occurred
-     */
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T request(Class<T> type) throws CamelExecutionException {
         T result;
+        Endpoint target = endpoint != null ? endpoint : defaultEndpoint;
+
         if (type == Exchange.class) {
-            result = (T)template().request(endpoint, processorSupplier.get());
+            result = (T)template().request(target, processorSupplier.get());
         } else if (type == Message.class) {
-            Exchange exchange = template().request(endpoint, processorSupplier.get());
+            Exchange exchange = template().request(target, processorSupplier.get());
             result = exchange.hasOut() ? (T)exchange.getOut() : (T)exchange.getIn();
         } else {
             Exchange exchange = template().send(
-                endpoint,
+                target,
                 ExchangePattern.InOut,
                 processorSupplier.get(),
                 resultProcessors.get(type)
@@ -270,27 +242,19 @@ public class FluentProducerTemplate {
         return result;
     }
 
-    /**
-     * Sends asynchronously to the given endpoint.
-     *
-     * @return a handle to be used to get the response in the future
-     */
+    @Override
     public Future<Object> asyncRequest() {
         return asyncRequest(Object.class);
     }
 
-    /**
-     * Sends asynchronously to the given endpoint.
-     *
-     * @param type the expected response type
-     * @return a handle to be used to get the response in the future
-     */
+    @Override
     public <T> Future<T> asyncRequest(Class<T> type) {
+        Endpoint target = endpoint != null ? endpoint : defaultEndpoint;
         Future<T> result;
         if (headers != null) {
-            result = template().asyncRequestBodyAndHeaders(endpoint, body, headers, type);
+            result = template().asyncRequestBodyAndHeaders(target, body, headers, type);
         } else {
-            result = template().asyncRequestBody(endpoint, body, type);
+            result = template().asyncRequestBody(target, body, type);
         }
 
         return result;
@@ -300,26 +264,20 @@ public class FluentProducerTemplate {
     // SEND
     // ************************
 
-    /**
-     * Send to an endpoint
-     *
-     * @throws CamelExecutionException is thrown if error occurred
-     */
+    @Override
     public Exchange send() throws CamelExecutionException {
+        Endpoint target = endpoint != null ? endpoint : defaultEndpoint;
         return exchangeSupplier != null
-            ? template().send(endpoint, exchangeSupplier.get())
-            : template().send(endpoint, processorSupplier.get());
+            ? template().send(target, exchangeSupplier.get())
+            : template().send(target, processorSupplier.get());
     }
 
-    /**
-     * Sends asynchronously to the given endpoint.
-     *
-     * @return a handle to be used to get the response in the future
-     */
+    @Override
     public Future<Exchange> asyncSend() {
+        Endpoint target = endpoint != null ? endpoint : defaultEndpoint;
         return exchangeSupplier != null
-            ? template().asyncSend(endpoint, exchangeSupplier.get())
-            : template().asyncSend(endpoint, processorSupplier.get());
+            ? template().asyncSend(target, exchangeSupplier.get())
+            : template().asyncSend(target, processorSupplier.get());
     }
 
     // ************************
@@ -332,15 +290,18 @@ public class FluentProducerTemplate {
      * @param context the camel context
      */
     public static FluentProducerTemplate on(CamelContext context) {
-        return new FluentProducerTemplate(context);
+        return new DefaultFluentProducerTemplate(context);
     }
 
     private ProducerTemplate template() {
-        ObjectHelper.notNull(context, "camel-context");
-        ObjectHelper.notNull(endpoint, "endpoint");
+        ObjectHelper.notNull(context, "CamelContext");
 
-        if (this.template == null) {
-            template = context.createProducerTemplate();
+        if (template == null) {
+            template = maximumCacheSize > 0 ? context.createProducerTemplate(maximumCacheSize) : context.createProducerTemplate();
+            if (defaultEndpoint != null) {
+                template.setDefaultEndpoint(defaultEndpoint);
+            }
+            template.setEventNotifierEnabled(eventNotifierEnabled);
             if (templateCustomizer != null) {
                 templateCustomizer.accept(template);
             }
@@ -358,4 +319,16 @@ public class FluentProducerTemplate {
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        if (template == null) {
+            template = template();
+        }
+        ServiceHelper.startService(template);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(template);
+    }
 }
