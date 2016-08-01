@@ -81,14 +81,14 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     }
 
     public Boolean isTransferException() {
-		return transferException;
-	}
+        return transferException;
+    }
 
-	public void setTransferException(Boolean transferException) {
-		this.transferException = transferException;
-	}
+    public void setTransferException(Boolean transferException) {
+        this.transferException = transferException;
+    }
 
-	@Override
+    @Override
     public Message toCamelMessage(HttpServerExchange httpExchange, Exchange exchange) throws Exception {
         Message result = new DefaultMessage();
 
@@ -160,7 +160,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 // store a special header that this request was authenticated using HTTP Basic
                 if (value != null && value.trim().startsWith("Basic")) {
                     if (headerFilterStrategy != null
-                        && !headerFilterStrategy.applyFilterToExternalHeaders(Exchange.AUTHENTICATION, "Basic", exchange)) {
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(Exchange.AUTHENTICATION, "Basic", exchange)) {
                         UndertowHelper.appendHeader(headersMap, Exchange.AUTHENTICATION, "Basic");
                     }
                 }
@@ -172,7 +172,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 Object value = it.next();
                 LOG.trace("HTTP-header: {}", value);
                 if (headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToExternalHeaders(name.toString(), value, exchange)) {
+                        && !headerFilterStrategy.applyFilterToExternalHeaders(name.toString(), value, exchange)) {
                     UndertowHelper.appendHeader(headersMap, name.toString(), value);
                 }
             }
@@ -191,7 +191,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                     Object value = it.next();
                     LOG.trace("URI-Parameter: {}", value);
                     if (headerFilterStrategy != null
-                        && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
                         UndertowHelper.appendHeader(headersMap, name, value);
                     }
                 }
@@ -229,7 +229,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 // store a special header that this request was authenticated using HTTP Basic
                 if (value != null && value.trim().startsWith("Basic")) {
                     if (headerFilterStrategy != null
-                        && !headerFilterStrategy.applyFilterToExternalHeaders(Exchange.AUTHENTICATION, "Basic", exchange)) {
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(Exchange.AUTHENTICATION, "Basic", exchange)) {
                         UndertowHelper.appendHeader(headersMap, Exchange.AUTHENTICATION, "Basic");
                     }
                 }
@@ -241,7 +241,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 Object value = it.next();
                 LOG.trace("HTTP-header: {}", value);
                 if (headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToExternalHeaders(name.toString(), value, exchange)) {
+                        && !headerFilterStrategy.applyFilterToExternalHeaders(name.toString(), value, exchange)) {
                     UndertowHelper.appendHeader(headersMap, name.toString(), value);
                 }
             }
@@ -268,7 +268,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             while (it.hasNext()) {
                 String headerValue = tc.convertTo(String.class, it.next());
                 if (headerValue != null && headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
+                        && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
                     LOG.trace("HTTP-Header: {}={}", key, headerValue);
                     httpExchange.getResponseHeaders().add(new HttpString(key), headerValue);
                 }
@@ -342,7 +342,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             while (it.hasNext()) {
                 String headerValue = tc.convertTo(String.class, it.next());
                 if (headerValue != null && headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
+                        && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
                     LOG.trace("HTTP-Header: {}={}", key, headerValue);
                     clientRequest.getRequestHeaders().add(new HttpString(key), headerValue);
                 }

@@ -47,6 +47,7 @@ Options
 
 
 
+
 // component options: START
 The EHCache component supports 15 options which are listed below.
 
@@ -57,7 +58,7 @@ The EHCache component supports 15 options which are listed below.
 |=======================================================================
 | Name | Java Type | Description
 | cacheManagerFactory | CacheManagerFactory | To use the given CacheManagerFactory for creating the CacheManager. By default the DefaultCacheManagerFactory is used.
-| configuration | CacheConfiguration | Sets the Cache configuration
+| configuration | CacheConfiguration | Sets the Cache configuration. Properties of the shared configuration can also be set individually.
 | configurationFile | String | Sets the location of the ehcache.xml file to load from classpath or file system. By default the file is loaded from classpath:ehcache.xml
 | cacheName | String | Name of the cache
 | maxElementsInMemory | int | The number of elements that may be stored in the defined cache in memory.
@@ -74,6 +75,7 @@ The EHCache component supports 15 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

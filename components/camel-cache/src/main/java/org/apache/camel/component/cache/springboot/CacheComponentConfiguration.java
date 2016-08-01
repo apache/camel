@@ -38,7 +38,8 @@ public class CacheComponentConfiguration {
      */
     private CacheManagerFactory cacheManagerFactory;
     /**
-     * Sets the Cache configuration
+     * Sets the Cache configuration. Properties of the shared configuration can
+     * also be set individually.
      */
     private CacheConfiguration configuration;
     /**
