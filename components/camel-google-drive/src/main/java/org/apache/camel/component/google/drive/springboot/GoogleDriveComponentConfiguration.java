@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.google.drive.springboot;
 
+import java.util.List;
 import org.apache.camel.component.google.drive.GoogleDriveClientFactory;
 import org.apache.camel.component.google.drive.GoogleDriveConfiguration;
+import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -30,7 +32,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class GoogleDriveComponentConfiguration {
 
     /**
-     * To use the shared configuration
+     * To use the shared configuration. Properties of the shared configuration
+     * can also be set individually.
      */
     private GoogleDriveConfiguration configuration;
     /**
@@ -38,6 +41,43 @@ public class GoogleDriveComponentConfiguration {
      * client. Will by default use BatchGoogleDriveClientFactory
      */
     private GoogleDriveClientFactory clientFactory;
+    /**
+     * What kind of operation to perform
+     */
+    private GoogleDriveApiName apiName;
+    /**
+     * What sub operation to use for the selected operation
+     */
+    private String methodName;
+    /**
+     * Client ID of the drive application
+     */
+    private String clientId;
+    /**
+     * Client secret of the drive application
+     */
+    private String clientSecret;
+    /**
+     * OAuth 2 access token. This typically expires after an hour so
+     * refreshToken is recommended for long term usage.
+     */
+    private String accessToken;
+    /**
+     * OAuth 2 refresh token. Using this the Google Calendar component can
+     * obtain a new accessToken whenever the current one expires - a necessity
+     * if the application is long-lived.
+     */
+    private String refreshToken;
+    /**
+     * Google drive application name. Example would be camel-google-drive/1.0
+     */
+    private String applicationName;
+    /**
+     * Specifies the level of permissions you want a drive application to have
+     * to a user account. See https://developers.google.com/drive/web/scopes for
+     * more info.
+     */
+    private List<String> scopes;
 
     public GoogleDriveConfiguration getConfiguration() {
         return configuration;
@@ -53,5 +93,69 @@ public class GoogleDriveComponentConfiguration {
 
     public void setClientFactory(GoogleDriveClientFactory clientFactory) {
         this.clientFactory = clientFactory;
+    }
+
+    public GoogleDriveApiName getApiName() {
+        return apiName;
+    }
+
+    public void setApiName(GoogleDriveApiName apiName) {
+        this.apiName = apiName;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+    public List<String> getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(List<String> scopes) {
+        this.scopes = scopes;
     }
 }

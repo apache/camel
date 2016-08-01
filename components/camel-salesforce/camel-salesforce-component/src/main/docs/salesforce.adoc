@@ -201,8 +201,10 @@ Options
 
 
 
+
+
 // component options: START
-The Salesforce component supports 16 options which are listed below.
+The Salesforce component supports 55 options which are listed below.
 
 
 
@@ -210,8 +212,8 @@ The Salesforce component supports 16 options which are listed below.
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
-| loginConfig | SalesforceLoginConfig | To use the shared SalesforceLoginConfig as login configuration
-| config | SalesforceEndpointConfig | To use the shared SalesforceLoginConfig as configuration
+| loginConfig | SalesforceLoginConfig | To use the shared SalesforceLoginConfig as login configuration. Properties of the shared configuration can also be set individually.
+| config | SalesforceEndpointConfig | To use the shared SalesforceEndpointConfig as configuration. Properties of the shared configuration can also be set individually.
 | httpClientProperties | Map | Used for configuring HTTP client properties as key/value pairs
 | sslContextParameters | SSLContextParameters | To configure security using SSLContextParameters
 | httpProxyHost | String | To configure HTTP proxy host
@@ -226,9 +228,50 @@ The Salesforce component supports 16 options which are listed below.
 | httpProxyRealm | String | HTTP proxy authentication realm
 | httpProxyUseDigestAuth | boolean | Use HTTP proxy Digest authentication false by default
 | packages | String[] | Package names to scan for DTO classes (multiple packages can be separated by comma).
+| loginUrl | String | Salesforce login URL defaults to https://login.salesforce.com
+| clientId | String | Salesforce connected application Consumer Key
+| clientSecret | String | Salesforce connected application Consumer Secret
+| userName | String | Salesforce account user name
+| password | String | Salesforce account password
+| lazyLogin | boolean | Flag to enable/disable lazy OAuth default is false. When enabled OAuth token retrieval or generation is not done until the first API call
+| format | PayloadFormat | Payload format to use for Salesforce API calls either JSON or XML defaults to JSON
+| apiVersion | String | Salesforce API version defaults to SalesforceEndpointConfig.DEFAULT_VERSION
+| sObjectName | String | SObject name if required or supported by API
+| sObjectId | String | SObject ID if required by API
+| sObjectFields | String | SObject fields to retrieve
+| sObjectIdName | String | SObject external ID field name
+| sObjectIdValue | String | SObject external ID field value
+| sObjectBlobFieldName | String | SObject blob field name
+| sObjectClass | String | Fully qualified SObject class name usually generated using camel-salesforce-maven-plugin
+| sObjectQuery | String | Salesforce SOQL query string
+| sObjectSearch | String | Salesforce SOSL search string
+| apexMethod | String | APEX method name
+| apexUrl | String | APEX method URL
+| apexQueryParams | Map | Query params for APEX method
+| contentType | ContentType | Bulk API content type one of XML CSV ZIP_XML ZIP_CSV
+| jobId | String | Bulk API Job ID
+| batchId | String | Bulk API Batch ID
+| resultId | String | Bulk API Result ID
+| updateTopic | boolean | Whether to update an existing Push Topic when using the Streaming API defaults to false
+| notifyForFields | NotifyForFieldsEnum | Notify for fields options are ALL REFERENCED SELECT WHERE
+| notifyForOperations | NotifyForOperationsEnum | Notify for operations options are ALL CREATE EXTENDED UPDATE (API version 29.0)
+| notifyForOperationCreate | Boolean | Notify for create operation defaults to false (API version = 29.0)
+| notifyForOperationUpdate | Boolean | Notify for update operation defaults to false (API version = 29.0)
+| notifyForOperationDelete | Boolean | Notify for delete operation defaults to false (API version = 29.0)
+| notifyForOperationUndelete | Boolean | Notify for un-delete operation defaults to false (API version = 29.0)
+| reportId | String | Salesforce1 Analytics report Id
+| includeDetails | Boolean | Include details in Salesforce1 Analytics report defaults to false.
+| reportMetadata | ReportMetadata | Salesforce1 Analytics report metadata for filtering
+| instanceId | String | Salesforce1 Analytics report execution instance ID
+| httpClient | SalesforceHttpClient | Custom Jetty Http Client to use to connect to Salesforce.
+| objectMapper | ObjectMapper | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects.
+| defaultReplayId | Integer | Default replayId setting if no value is found in link initialReplayIdMap
+| initialReplayIdMap | Map | Replay IDs to start from per channel name.
 |=======================================================================
 {% endraw %}
 // component options: END
+
+
 
 
 

@@ -18,6 +18,7 @@ package org.apache.camel.component.zookeeper;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -74,9 +75,127 @@ public class ZooKeeperComponent extends UriEndpointComponent {
     }
 
     /**
-     * To use a shared {@link ZooKeeperConfiguration}
+     * To use a shared ZooKeeperConfiguration. Properties of the shared configuration can also be set individually.
      */
     public void setConfiguration(ZooKeeperConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    private ZooKeeperConfiguration getConfigurationOrCreate() {
+        if (this.getConfiguration() == null) {
+            this.setConfiguration(new ZooKeeperConfiguration());
+        }
+        return this.getConfiguration();
+    }
+
+    public List<String> getServers() {
+        return getConfigurationOrCreate().getServers();
+    }
+
+    /**
+     * The zookeeper server hosts
+     */
+    public void setServers(List<String> servers) {
+        getConfigurationOrCreate().setServers(servers);
+    }
+
+    public int getTimeout() {
+        return getConfigurationOrCreate().getTimeout();
+    }
+
+    /**
+     * The time interval to wait on connection before timing out.
+     * @param timeout
+     */
+    public void setTimeout(int timeout) {
+        getConfigurationOrCreate().setTimeout(timeout);
+    }
+
+    public boolean isListChildren() {
+        return getConfigurationOrCreate().isListChildren();
+    }
+
+    /**
+     * Whether the children of the node should be listed
+     * @param listChildren
+     */
+    public void setListChildren(boolean listChildren) {
+        getConfigurationOrCreate().setListChildren(listChildren);
+    }
+
+    public String getConnectString() {
+        return getConfigurationOrCreate().getConnectString();
+    }
+
+    /**
+     * The node in the ZooKeeper server (aka znode)
+     * @param path
+     */
+    public void setPath(String path) {
+        getConfigurationOrCreate().setPath(path);
+    }
+
+    public String getPath() {
+        return getConfigurationOrCreate().getPath();
+    }
+
+    public boolean isRepeat() {
+        return getConfigurationOrCreate().isRepeat();
+    }
+
+    /**
+     * Should changes to the znode be 'watched' and repeatedly processed.
+     * @param repeat
+     */
+    public void setRepeat(boolean repeat) {
+        getConfigurationOrCreate().setRepeat(repeat);
+    }
+
+    public long getBackoff() {
+        return getConfigurationOrCreate().getBackoff();
+    }
+
+    /**
+     * The time interval to backoff for after an error before retrying.
+     * @param backoff
+     */
+    public void setBackoff(long backoff) {
+        getConfigurationOrCreate().setBackoff(backoff);
+    }
+
+    public boolean isCreate() {
+        return getConfigurationOrCreate().isCreate();
+    }
+
+    /**
+     * Should the endpoint create the node if it does not currently exist.
+     * @param shouldCreate
+     */
+    public void setCreate(boolean shouldCreate) {
+        getConfigurationOrCreate().setCreate(shouldCreate);
+    }
+
+    public String getCreateMode() {
+        return getConfigurationOrCreate().getCreateMode();
+    }
+
+    /**
+     * The create mode that should be used for the newly created node
+     * @param createMode
+     */
+    public void setCreateMode(String createMode) {
+        getConfigurationOrCreate().setCreateMode(createMode);
+    }
+
+    public boolean isSendEmptyMessageOnDelete() {
+        return getConfigurationOrCreate().isSendEmptyMessageOnDelete();
+    }
+
+    /**
+     * Upon the delete of a znode, should an empty message be send to the consumer
+     * @param sendEmptyMessageOnDelete
+     */
+    public void setSendEmptyMessageOnDelete(boolean sendEmptyMessageOnDelete) {
+        getConfigurationOrCreate().setSendEmptyMessageOnDelete(sendEmptyMessageOnDelete);
     }
 }

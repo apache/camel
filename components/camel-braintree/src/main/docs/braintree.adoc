@@ -36,8 +36,9 @@ Braintree Options
 ^^^^^^^^^^^^^^^^^
 
 
+
 // component options: START
-The Braintree component supports 1 options which are listed below.
+The Braintree component supports 12 options which are listed below.
 
 
 
@@ -45,10 +46,22 @@ The Braintree component supports 1 options which are listed below.
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
-| configuration | BraintreeConfiguration | To use the shared configuration
+| configuration | BraintreeConfiguration | To use the shared configuration. Properties of the shared configuration can also be set individually.
+| apiName | BraintreeApiName | What kind of operation to perform
+| methodName | String | What sub operation to use for the selected operation
+| environment | String | The environment Either SANDBOX or PRODUCTION
+| merchantId | String | The merchant id provided by Braintree.
+| publicKey | String | The public key provided by Braintree.
+| privateKey | String | The private key provided by Braintree.
+| proxyHost | String | The proxy host
+| proxyPort | Integer | The proxy port
+| httpLogLevel | String | Set logging level for http calls see java.util.logging.Level
+| httpLogName | String | Set log category to use to log http calls default Braintree
+| httpReadTimeout | Integer | Set read timeout for http calls.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

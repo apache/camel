@@ -55,8 +55,9 @@ Ganglia component and endpoint URI options
 
 
 
+
 // component options: START
-The Ganglia component supports 1 options which are listed below.
+The Ganglia component supports 15 options which are listed below.
 
 
 
@@ -64,10 +65,25 @@ The Ganglia component supports 1 options which are listed below.
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
-| configuration | GangliaConfiguration | To use the shared configuration
+| configuration | GangliaConfiguration | To use the shared configuration. Properties of the shared configuration can also be set individually.
+| host | String | Host name for Ganglia server
+| port | int | Port for Ganglia server
+| mode | UDPAddressingMode | Send the UDP metric packets using MULTICAST or UNICAST
+| ttl | int | If using multicast set the TTL of the packets
+| wireFormat31x | boolean | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier.
+| spoofHostname | String | Spoofing information IP:hostname
+| groupName | String | The group that the metric belongs to.
+| prefix | String | Prefix the metric name with this string and an underscore.
+| metricName | String | The name to use for the metric.
+| type | GMetricType | The type of value
+| slope | GMetricSlope | The slope
+| units | String | Any unit of measurement that qualifies the metric e.g. widgets litres bytes. Do not include a prefix such as k (kilo) or m (milli) other tools may scale the units later. The value should be unscaled.
+| tmax | int | Maximum time in seconds that the value can be considered current. After this Ganglia considers the value to have expired.
+| dmax | int | Minumum time in seconds before Ganglia will purge the metric value if it expires. Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

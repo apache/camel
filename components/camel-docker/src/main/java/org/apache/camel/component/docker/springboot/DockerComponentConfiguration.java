@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.docker.springboot;
 
+import java.util.Map;
 import org.apache.camel.component.docker.DockerConfiguration;
+import org.apache.camel.component.docker.DockerOperation;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -28,9 +30,70 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class DockerComponentConfiguration {
 
     /**
-     * To use the shared docker configuration
+     * To use the shared docker configuration. Properties of the shared
+     * configuration can also be set individually.
      */
     private DockerConfiguration configuration;
+    /**
+     * Docker host
+     */
+    private String host;
+    /**
+     * Docker port
+     */
+    private Integer port;
+    /**
+     * User name to authenticate with
+     */
+    private String username;
+    /**
+     * Password to authenticate with
+     */
+    private String password;
+    /**
+     * Email address associated with the user
+     */
+    private String email;
+    /**
+     * Server address for docker registry.
+     */
+    private String serverAddress;
+    /**
+     * Request timeout for response (in seconds)
+     */
+    private Integer requestTimeout;
+    /**
+     * Use HTTPS communication
+     */
+    private Boolean secure = false;
+    /**
+     * Location containing the SSL certificate chain
+     */
+    private String certPath;
+    /**
+     * Maximum total connections
+     */
+    private Integer maxTotalConnections;
+    /**
+     * Maximum route connections
+     */
+    private Integer maxPerRouteConnections;
+    /**
+     * Whether to use logging filter
+     */
+    private Boolean loggingFilter = false;
+    /**
+     * Whether to follow redirect filter
+     */
+    private Boolean followRedirectFilter = false;
+    /**
+     * Additional configuration parameters as key/value pairs
+     */
+    private Map<String, Object> parameters;
+    /**
+     * Which operation to use
+     */
+    private DockerOperation operation;
 
     public DockerConfiguration getConfiguration() {
         return configuration;
@@ -38,5 +101,125 @@ public class DockerComponentConfiguration {
 
     public void setConfiguration(DockerConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getServerAddress() {
+        return serverAddress;
+    }
+
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
+    }
+
+    public Integer getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    public void setRequestTimeout(Integer requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public Boolean getSecure() {
+        return secure;
+    }
+
+    public void setSecure(Boolean secure) {
+        this.secure = secure;
+    }
+
+    public String getCertPath() {
+        return certPath;
+    }
+
+    public void setCertPath(String certPath) {
+        this.certPath = certPath;
+    }
+
+    public Integer getMaxTotalConnections() {
+        return maxTotalConnections;
+    }
+
+    public void setMaxTotalConnections(Integer maxTotalConnections) {
+        this.maxTotalConnections = maxTotalConnections;
+    }
+
+    public Integer getMaxPerRouteConnections() {
+        return maxPerRouteConnections;
+    }
+
+    public void setMaxPerRouteConnections(Integer maxPerRouteConnections) {
+        this.maxPerRouteConnections = maxPerRouteConnections;
+    }
+
+    public Boolean getLoggingFilter() {
+        return loggingFilter;
+    }
+
+    public void setLoggingFilter(Boolean loggingFilter) {
+        this.loggingFilter = loggingFilter;
+    }
+
+    public Boolean getFollowRedirectFilter() {
+        return followRedirectFilter;
+    }
+
+    public void setFollowRedirectFilter(Boolean followRedirectFilter) {
+        this.followRedirectFilter = followRedirectFilter;
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
+    }
+
+    public DockerOperation getOperation() {
+        return operation;
+    }
+
+    public void setOperation(DockerOperation operation) {
+        this.operation = operation;
     }
 }
