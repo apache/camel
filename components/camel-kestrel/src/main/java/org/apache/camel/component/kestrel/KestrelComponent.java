@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.kestrel;
 
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.spy.memcached.ConnectionFactory;
@@ -202,5 +204,41 @@ public class KestrelComponent extends UriEndpointComponent {
         }
 
         super.doStop();
+    }
+
+    public String[] getAddresses() {
+        return configuration.getAddresses();
+    }
+
+    /**
+     * The addresses
+     * @param addresses
+     */
+    public void setAddresses(String[] addresses) {
+        configuration.setAddresses(addresses);
+    }
+
+    public int getWaitTimeMs() {
+        return configuration.getWaitTimeMs();
+    }
+
+    /**
+     * The wait time in milliseconds
+     * @param waitTimeMs
+     */
+    public void setWaitTimeMs(int waitTimeMs) {
+        configuration.setWaitTimeMs(waitTimeMs);
+    }
+
+    public int getConcurrentConsumers() {
+        return configuration.getConcurrentConsumers();
+    }
+
+    /**
+     * The number of concurrent consumers
+     * @param concurrentConsumers
+     */
+    public void setConcurrentConsumers(int concurrentConsumers) {
+        configuration.setConcurrentConsumers(concurrentConsumers);
     }
 }

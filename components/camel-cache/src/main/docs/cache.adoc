@@ -46,8 +46,9 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
-The EHCache component supports 3 options which are listed below.
+The EHCache component supports 15 options which are listed below.
 
 
 
@@ -58,9 +59,22 @@ The EHCache component supports 3 options which are listed below.
 | cacheManagerFactory | CacheManagerFactory | To use the given CacheManagerFactory for creating the CacheManager. By default the DefaultCacheManagerFactory is used.
 | configuration | CacheConfiguration | Sets the Cache configuration
 | configurationFile | String | Sets the location of the ehcache.xml file to load from classpath or file system. By default the file is loaded from classpath:ehcache.xml
+| cacheName | String | Name of the cache
+| maxElementsInMemory | int | The number of elements that may be stored in the defined cache in memory.
+| memoryStoreEvictionPolicy | MemoryStoreEvictionPolicy | Which eviction strategy to use when maximum number of elements in memory is reached. The strategy defines which elements to be removed. LRU - Lest Recently Used LFU - Lest Frequently Used FIFO - First In First Out
+| overflowToDisk | boolean | Specifies whether cache may overflow to disk
+| eternal | boolean | Sets whether elements are eternal. If eternal timeouts are ignored and the element never expires.
+| timeToLiveSeconds | long | The maximum time between creation time and when an element expires. Is used only if the element is not eternal
+| timeToIdleSeconds | long | The maximum amount of time between accesses before an element expires
+| diskPersistent | boolean | Whether the disk store persists between restarts of the application.
+| diskExpiryThreadIntervalSeconds | long | The number of seconds between runs of the disk expiry thread.
+| eventListenerRegistry | CacheEventListenerRegistry | To configure event listeners using the CacheEventListenerRegistry
+| cacheLoaderRegistry | CacheLoaderRegistry | To configure cache loader using the CacheLoaderRegistry
+| objectCache | boolean | Whether to turn on allowing to store non serializable objects in the cache. If this option is enabled then overflow to disk cannot be enabled as well.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

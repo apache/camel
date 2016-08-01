@@ -17,6 +17,7 @@
 package org.apache.camel.component.nagios.springboot;
 
 import org.apache.camel.component.nagios.NagiosConfiguration;
+import org.apache.camel.component.nagios.NagiosEncryptionMethod;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -28,9 +29,34 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class NagiosComponentConfiguration {
 
     /**
-     * To use a shared NagiosConfiguration
+     * To use a shared configuraiton. Properties of the shared configuration can
+     * also be set individually.
      */
     private NagiosConfiguration configuration;
+    /**
+     * This is the address of the Nagios host where checks should be send.
+     */
+    private String host;
+    /**
+     * The port number of the host.
+     */
+    private Integer port;
+    /**
+     * Connection timeout in millis.
+     */
+    private Integer connectionTimeout;
+    /**
+     * Sending timeout in millis.
+     */
+    private Integer timeout;
+    /**
+     * Password to be authenticated when sending checks to Nagios.
+     */
+    private String password;
+    /**
+     * To specify an encryption method.
+     */
+    private NagiosEncryptionMethod encryptionMethod;
 
     public NagiosConfiguration getConfiguration() {
         return configuration;
@@ -38,5 +64,53 @@ public class NagiosComponentConfiguration {
 
     public void setConfiguration(NagiosConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    public Integer getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public void setConnectionTimeout(Integer connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public Integer getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public NagiosEncryptionMethod getEncryptionMethod() {
+        return encryptionMethod;
+    }
+
+    public void setEncryptionMethod(NagiosEncryptionMethod encryptionMethod) {
+        this.encryptionMethod = encryptionMethod;
     }
 }

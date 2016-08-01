@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.zookeeper.springboot;
 
+import java.util.List;
 import org.apache.camel.component.zookeeper.ZooKeeperConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -28,9 +29,47 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ZooKeeperComponentConfiguration {
 
     /**
-     * To use a shared ZooKeeperConfiguration
+     * To use a shared ZooKeeperConfiguration. Properties of the shared
+     * configuration can also be set individually.
      */
     private ZooKeeperConfiguration configuration;
+    /**
+     * The zookeeper server hosts
+     */
+    private List<String> servers;
+    /**
+     * The time interval to wait on connection before timing out.
+     */
+    private Integer timeout;
+    /**
+     * Whether the children of the node should be listed
+     */
+    private Boolean listChildren = false;
+    /**
+     * The node in the ZooKeeper server (aka znode)
+     */
+    private String path;
+    /**
+     * Should changes to the znode be 'watched' and repeatedly processed.
+     */
+    private Boolean repeat = false;
+    /**
+     * The time interval to backoff for after an error before retrying.
+     */
+    private long backoff;
+    /**
+     * Should the endpoint create the node if it does not currently exist.
+     */
+    private Boolean create = false;
+    /**
+     * The create mode that should be used for the newly created node
+     */
+    private String createMode;
+    /**
+     * Upon the delete of a znode should an empty message be send to the
+     * consumer
+     */
+    private Boolean sendEmptyMessageOnDelete = false;
 
     public ZooKeeperConfiguration getConfiguration() {
         return configuration;
@@ -38,5 +77,77 @@ public class ZooKeeperComponentConfiguration {
 
     public void setConfiguration(ZooKeeperConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public List<String> getServers() {
+        return servers;
+    }
+
+    public void setServers(List<String> servers) {
+        this.servers = servers;
+    }
+
+    public Integer getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
+
+    public Boolean getListChildren() {
+        return listChildren;
+    }
+
+    public void setListChildren(Boolean listChildren) {
+        this.listChildren = listChildren;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public Boolean getRepeat() {
+        return repeat;
+    }
+
+    public void setRepeat(Boolean repeat) {
+        this.repeat = repeat;
+    }
+
+    public long getBackoff() {
+        return backoff;
+    }
+
+    public void setBackoff(long backoff) {
+        this.backoff = backoff;
+    }
+
+    public Boolean getCreate() {
+        return create;
+    }
+
+    public void setCreate(Boolean create) {
+        this.create = create;
+    }
+
+    public String getCreateMode() {
+        return createMode;
+    }
+
+    public void setCreateMode(String createMode) {
+        this.createMode = createMode;
+    }
+
+    public Boolean getSendEmptyMessageOnDelete() {
+        return sendEmptyMessageOnDelete;
+    }
+
+    public void setSendEmptyMessageOnDelete(Boolean sendEmptyMessageOnDelete) {
+        this.sendEmptyMessageOnDelete = sendEmptyMessageOnDelete;
     }
 }

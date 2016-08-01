@@ -46,8 +46,9 @@ Olingo2 Options
 ^^^^^^^^^^^^^^^
 
 
+
 // component options: START
-The Olingo2 component supports 1 options which are listed below.
+The Olingo2 component supports 11 options which are listed below.
 
 
 
@@ -55,10 +56,21 @@ The Olingo2 component supports 1 options which are listed below.
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
-| configuration | Olingo2Configuration | To use the shared configuration
+| configuration | Olingo2Configuration | To use the shared configuration. Properties of the shared configuration can also be set individually.
+| apiName | Olingo2ApiName | What kind of operation to perform
+| methodName | String | What sub operation to use for the selected operation
+| serviceUri | String | Target OData service base URI e.g. http://services.odata.org/OData/OData.svc
+| contentType | String | Content-Type header value can be used to specify JSON or XML message format defaults to application/json;charset=utf-8
+| httpHeaders | Map | Custom HTTP headers to inject into every request this could include OAuth tokens etc.
+| connectTimeout | int | HTTP connection creation timeout in milliseconds defaults to 30000 (30 seconds)
+| socketTimeout | int | HTTP request timeout in milliseconds defaults to 30000 (30 seconds)
+| proxy | HttpHost | HTTP proxy server configuration
+| sslContextParameters | SSLContextParameters | To configure security using SSLContextParameters
+| httpAsyncClientBuilder | HttpAsyncClientBuilder | Custom HTTP async client builder for more complex HTTP client configuration overrides connectionTimeout socketTimeout proxy and sslContext. Note that a socketTimeout MUST be specified in the builder otherwise OData requests could block indefinitely
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

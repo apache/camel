@@ -16,6 +16,16 @@
  */
 package org.apache.camel.component.xmlsecurity.springboot;
 
+import java.util.List;
+import javax.xml.crypto.AlgorithmMethod;
+import javax.xml.crypto.KeySelector;
+import javax.xml.crypto.URIDereferencer;
+import javax.xml.crypto.dsig.spec.XPathFilterParameterSpec;
+import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
+import org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler;
+import org.apache.camel.component.xmlsecurity.api.XmlSignature2Message;
+import org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker;
+import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
 import org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -30,14 +40,322 @@ public class XmlSignatureComponentConfiguration {
 
     /**
      * To use a shared XmlSignerConfiguration configuration to use as base for
-     * configuring endpoints.
+     * configuring endpoints. Properties of the shared configuration can also be
+     * set individually.
      */
     private XmlSignerConfiguration signerConfiguration;
     /**
      * To use a shared XmlVerifierConfiguration configuration to use as base for
-     * configuring endpoints.
+     * configuring endpoints. Properties of the shared configuration can also be
+     * set individually.
      */
     private XmlVerifierConfiguration verifierConfiguration;
+    /**
+     * If you want to restrict the remote access via reference URIs you can
+     * setSigner an own dereferencer. Optional parameter. If not setSigner the
+     * provider default dereferencer is used which can resolve URI fragments
+     * HTTP file and XPpointer URIs. Attention: The implementation is provider
+     * dependent!
+     */
+    private URIDereferencer signerUriDereferencer;
+    /**
+     * You can setSigner a base URI which is used in the URI dereferencing.
+     * Relative URIs are then concatenated with the base URI.
+     */
+    private String signerBaseUri;
+    /**
+     * Disallows that the incoming XML document contains DTD DOCTYPE
+     * declaration. The default value is link BooleanTRUE.
+     */
+    private Boolean signerDisallowDoctypeDecl;
+    /**
+     * For the signing process a private key is necessary. You specify a key
+     * accessor bean which provides this private key. The key accessor bean must
+     * implement the KeyAccessor interface. The package
+     * org.apache.camel.component.xmlsecurity.api contains the default
+     * implementation class DefaultKeyAccessor which reads the private key from
+     * a Java keystore.
+     */
+    private KeyAccessor signerKeyAccessor;
+    /**
+     * Indicator whether the XML declaration in the outgoing message body should
+     * be omitted. Default value is false. Can be overwritten by the header link
+     * XmlSignatureConstantsHEADER_OMIT_XML_DECLARATION.
+     */
+    private Boolean signerOmitXmlDeclaration;
+    /**
+     * Determines if the XML signature specific headers be cleared after signing
+     * and verification. Defaults to true.
+     */
+    private Boolean signerClearHeaders;
+    /**
+     * Canonicalization method used to canonicalize the SignedInfo element
+     * before the digest is calculated. You can use the helper methods
+     * XmlSignatureHelper.getCanonicalizationMethod(String algorithm) or
+     * getSignerCanonicalizationMethod(String algorithm List
+     * inclusiveNamespacePrefixes) to create a canonicalization method.
+     */
+    private AlgorithmMethod signerCanonicalizationMethod;
+    /**
+     * Classpath to the XML Schema. Must be specified in the detached XML
+     * Signature case for determining the ID attributes might be setSigner in
+     * the enveloped and enveloping case. If setSigner then the XML document is
+     * validated with the specified XML schema. The schema resource URI can be
+     * overwritten by the header link
+     * XmlSignatureConstantsHEADER_SCHEMA_RESOURCE_URI.
+     */
+    private String signerSchemaResourceUri;
+    /**
+     * The character encoding of the resulting signed XML document. If null then
+     * the encoding of the original XML document is used.
+     */
+    private String signerOutputXmlEncoding;
+    /**
+     * Transforms which are executed on the message body before the digest is
+     * calculated. By default C14n is added and in the case of enveloped
+     * signature (see option parentLocalName) also
+     * http://www.w3.org/2000/09/xmldsigenveloped-signature is added at position
+     * 0 of the list. Use methods in XmlSignatureHelper to create the transform
+     * methods.
+     */
+    private List<AlgorithmMethod> signerTransformMethods;
+    /**
+     * Signature algorithm. Default value is
+     * http://www.w3.org/2000/09/xmldsigrsa-sha1.
+     */
+    private String signerSignatureAlgorithm;
+    /**
+     * Digest algorithm URI. Optional parameter. This digest algorithm is used
+     * for calculating the digest of the input message. If this digest algorithm
+     * is not specified then the digest algorithm is calculated from the
+     * signature algorithm. Example: http://www.w3.org/2001/04/xmlencsha256
+     */
+    private String signerDigestAlgorithm;
+    /**
+     * In order to protect the KeyInfo element from tampering you can add a
+     * reference to the signed info element so that it is protected via the
+     * signature value. The default value is true. Only relevant when a KeyInfo
+     * is returned by KeyAccessor. and link KeyInfogetId() is not null.
+     */
+    private Boolean signerAddKeyInfoReference;
+    /**
+     * Namespace prefix for the XML signature namespace
+     * http://www.w3.org/2000/09/xmldsig. Default value is ds. If null or an
+     * empty value is setSigner then no prefix is used for the XML signature
+     * namespace. See best practice
+     * http://www.w3.org/TR/xmldsig-bestpractices/signing-xml-
+     * without-namespaces
+     */
+    private String signerPrefixForXmlSignatureNamespace;
+    /**
+     * Local name of the parent element to which the XML signature element will
+     * be added. Only relevant for enveloped XML signature. Alternatively you
+     * can also use link setParentXpath(XPathFilterParameterSpec). Default value
+     * is null. The value must be null for enveloping and detached XML
+     * signature. This parameter or the parameter link
+     * setParentXpath(XPathFilterParameterSpec) for enveloped signature and the
+     * parameter link setXpathsToIdAttributes(List) for detached signature must
+     * not be setSigner in the same configuration. If the parameters parentXpath
+     * and parentLocalName are specified in the same configuration then an
+     * exception is thrown.
+     */
+    private String signerParentLocalName;
+    /**
+     * Namespace of the parent element to which the XML signature element will
+     * be added.
+     */
+    private String signerParentNamespace;
+    /**
+     * setSigners the content object Id attribute value. By default a UUID is
+     * generated. If you setSigner the null value then a new UUID will be
+     * generated. Only used in the enveloping case.
+     */
+    private String signerContentObjectId;
+    /**
+     * setSigners the signature Id. If this parameter is not setSigner (null
+     * value) then a unique ID is generated for the signature ID (default). If
+     * this parameter is setSigner to (empty string) then no Id attribute is
+     * created in the signature element.
+     */
+    private String signerSignatureId;
+    /**
+     * Reference URI for the content to be signed. Only used in the enveloped
+     * case. If the reference URI contains an ID attribute value then the
+     * resource schema URI ( link setSchemaResourceUri(String)) must also be
+     * setSigner because the schema validator will then find out which
+     * attributes are ID attributes. Will be ignored in the enveloping or
+     * detached case.
+     */
+    private String signerContentReferenceUri;
+    /**
+     * Type of the content reference. The default value is null. This value can
+     * be overwritten by the header link
+     * XmlSignatureConstantsHEADER_CONTENT_REFERENCE_TYPE.
+     */
+    private String signerContentReferenceType;
+    /**
+     * Indicator whether the message body contains plain text. The default value
+     * is false indicating that the message body contains XML. The value can be
+     * overwritten by the header link
+     * XmlSignatureConstantsHEADER_MESSAGE_IS_PLAIN_TEXT.
+     */
+    private Boolean signerPlainText;
+    /**
+     * Encoding of the plain text. Only relevant if the message body is plain
+     * text (see parameter link plainText. Default value is UTF-8.
+     */
+    private String signerPlainTextEncoding;
+    /**
+     * For adding additional References and Objects to the XML signature which
+     * contain additional properties you can provide a bean which implements the
+     * XmlSignatureProperties interface.
+     */
+    private XmlSignatureProperties signerProperties;
+    /**
+     * Define the elements which are signed in the detached case via XPATH
+     * expressions to ID attributes (attributes of type ID). For each element
+     * found via the XPATH expression a detached signature is created whose
+     * reference URI contains the corresponding attribute value (preceded by
+     * ''). The signature becomes the last sibling of the signed element.
+     * Elements with deeper hierarchy level are signed first. You can also
+     * setSigner the XPATH list dynamically via the header link
+     * XmlSignatureConstantsHEADER_XPATHS_TO_ID_ATTRIBUTES. The parameter link
+     * setParentLocalName(String) or link
+     * setParentXpath(XPathFilterParameterSpec) for enveloped signature and this
+     * parameter for detached signature must not be setSigner in the same
+     * configuration.
+     */
+    private List<XPathFilterParameterSpec> signerXpathsToIdAttributes;
+    /**
+     * setSigners the XPath to find the parent node in the enveloped case.
+     * Either you specify the parent node via this method or the local name and
+     * namespace of the parent with the methods link setParentLocalName(String)
+     * and link setParentNamespace(String). Default value is null. The value
+     * must be null for enveloping and detached XML signature. If the parameters
+     * parentXpath and parentLocalName are specified in the same configuration
+     * then an exception is thrown.
+     */
+    private XPathFilterParameterSpec signerParentXpath;
+    /**
+     * If you want to restrict the remote access via reference URIs you can
+     * setVerifier an own dereferencer. Optional parameter. If not setVerifier
+     * the provider default dereferencer is used which can resolve URI fragments
+     * HTTP file and XPpointer URIs. Attention: The implementation is provider
+     * dependent!
+     */
+    private URIDereferencer verifierUriDereferencer;
+    /**
+     * You can setVerifier a base URI which is used in the URI dereferencing.
+     * Relative URIs are then concatenated with the base URI.
+     */
+    private String verifierBaseUri;
+    /**
+     * Provides the key for validating the XML signature.
+     */
+    private KeySelector verifierKeySelector;
+    /**
+     * This interface allows the application to check the XML signature before
+     * the validation is executed. This step is recommended in
+     * http://www.w3.org/TR/xmldsig-bestpractices/check-what-is-signed
+     */
+    private XmlSignatureChecker verifierXmlSignatureChecker;
+    /**
+     * Disallows that the incoming XML document contains DTD DOCTYPE
+     * declaration. The default value is link BooleanTRUE.
+     */
+    private Boolean verifierDisallowDoctypeDecl;
+    /**
+     * Indicator whether the XML declaration in the outgoing message body should
+     * be omitted. Default value is false. Can be overwritten by the header link
+     * XmlSignatureConstantsHEADER_OMIT_XML_DECLARATION.
+     */
+    private Boolean verifierOmitXmlDeclaration;
+    /**
+     * Determines if the XML signature specific headers be cleared after signing
+     * and verification. Defaults to true.
+     */
+    private Boolean verifierClearHeaders;
+    /**
+     * Classpath to the XML Schema. Must be specified in the detached XML
+     * Signature case for determining the ID attributes might be setVerifier in
+     * the enveloped and enveloping case. If setVerifier then the XML document
+     * is validated with the specified XML schema. The schema resource URI can
+     * be overwritten by the header link
+     * XmlSignatureConstantsHEADER_SCHEMA_RESOURCE_URI.
+     */
+    private String verifierSchemaResourceUri;
+    /**
+     * The character encoding of the resulting signed XML document. If null then
+     * the encoding of the original XML document is used.
+     */
+    private String verifierOutputXmlEncoding;
+    /**
+     * Bean which maps the XML signature to the output-message after the
+     * validation. How this mapping should be done can be configured by the
+     * options outputNodeSearchType outputNodeSearch and
+     * removeSignatureElements. The default implementation offers three
+     * possibilities which are related to the three output node search types
+     * Default ElementName and XPath. The default implementation determines a
+     * node which is then serialized and setVerifier to the body of the output
+     * message If the search type is ElementName then the output node (which
+     * must be in this case an element) is determined by the local name and
+     * namespace defined in the search value (see option outputNodeSearch). If
+     * the search type is XPath then the output node is determined by the XPath
+     * specified in the search value (in this case the output node can be of
+     * type Element TextNode or Document). If the output node search type is
+     * Default then the following rules apply: In the enveloped XML signature
+     * case (there is a reference with URI= and transform
+     * http://www.w3.org/2000/09/xmldsigenveloped-signature) the incoming XML
+     * document without the Signature element is setVerifier to the output
+     * message body. In the non-enveloped XML signature case the message body is
+     * determined from a referenced Object; this is explained in more detail in
+     * chapter Output Node Determination in Enveloping XML Signature Case.
+     */
+    private XmlSignature2Message verifierXmlSignature2Message;
+    /**
+     * Handles the different validation failed situations. The default
+     * implementation throws specific exceptions for the different situations
+     * (All exceptions have the package name
+     * org.apache.camel.component.xmlsecurity.api and are a sub-class of
+     * XmlSignatureInvalidException. If the signature value validation fails a
+     * XmlSignatureInvalidValueException is thrown. If a reference validation
+     * fails a XmlSignatureInvalidContentHashException is thrown. For more
+     * detailed information see the JavaDoc.
+     */
+    private ValidationFailedHandler verifierValidationFailedHandler;
+    /**
+     * setVerifiers the output node search value for determining the node from
+     * the XML signature document which shall be setVerifier to the output
+     * message body. The class of the value depends on the type of the output
+     * node search. The output node search is forwarded to XmlSignature2Message.
+     */
+    private Object verifierOutputNodeSearch;
+    /**
+     * Determines the search type for determining the output node which is
+     * serialized into the output message bodyF. See link
+     * setOutputNodeSearch(Object). The supported default search types you can
+     * find in DefaultXmlSignature2Message.
+     */
+    private String verifierOutputNodeSearchType;
+    /**
+     * Indicator whether the XML signature elements (elements with local name
+     * Signature and namesapce http://www.w3.org/2000/09/xmldsig) shall be
+     * removed from the document setVerifier to the output message. Normally
+     * this is only necessary if the XML signature is enveloped. The default
+     * value is link BooleanFALSE. This parameter is forwarded to
+     * XmlSignature2Message. This indicator has no effect if the output node
+     * search is of type link
+     * DefaultXmlSignature2MessageOUTPUT_NODE_SEARCH_TYPE_DEFAULT.F
+     */
+    private Boolean verifierRemoveSignatureElements;
+    /**
+     * Enables secure validation. If true then secure validation is enabled.
+     */
+    private Boolean verifierSecureValidation;
+    /**
+     * Name of handler to
+     */
+    private String verifierValidationFailedHandlerName;
 
     public XmlSignerConfiguration getSignerConfiguration() {
         return signerConfiguration;
@@ -55,5 +373,345 @@ public class XmlSignatureComponentConfiguration {
     public void setVerifierConfiguration(
             XmlVerifierConfiguration verifierConfiguration) {
         this.verifierConfiguration = verifierConfiguration;
+    }
+
+    public URIDereferencer getSignerUriDereferencer() {
+        return signerUriDereferencer;
+    }
+
+    public void setSignerUriDereferencer(URIDereferencer signerUriDereferencer) {
+        this.signerUriDereferencer = signerUriDereferencer;
+    }
+
+    public String getSignerBaseUri() {
+        return signerBaseUri;
+    }
+
+    public void setSignerBaseUri(String signerBaseUri) {
+        this.signerBaseUri = signerBaseUri;
+    }
+
+    public Boolean getSignerDisallowDoctypeDecl() {
+        return signerDisallowDoctypeDecl;
+    }
+
+    public void setSignerDisallowDoctypeDecl(Boolean signerDisallowDoctypeDecl) {
+        this.signerDisallowDoctypeDecl = signerDisallowDoctypeDecl;
+    }
+
+    public KeyAccessor getSignerKeyAccessor() {
+        return signerKeyAccessor;
+    }
+
+    public void setSignerKeyAccessor(KeyAccessor signerKeyAccessor) {
+        this.signerKeyAccessor = signerKeyAccessor;
+    }
+
+    public Boolean getSignerOmitXmlDeclaration() {
+        return signerOmitXmlDeclaration;
+    }
+
+    public void setSignerOmitXmlDeclaration(Boolean signerOmitXmlDeclaration) {
+        this.signerOmitXmlDeclaration = signerOmitXmlDeclaration;
+    }
+
+    public Boolean getSignerClearHeaders() {
+        return signerClearHeaders;
+    }
+
+    public void setSignerClearHeaders(Boolean signerClearHeaders) {
+        this.signerClearHeaders = signerClearHeaders;
+    }
+
+    public AlgorithmMethod getSignerCanonicalizationMethod() {
+        return signerCanonicalizationMethod;
+    }
+
+    public void setSignerCanonicalizationMethod(
+            AlgorithmMethod signerCanonicalizationMethod) {
+        this.signerCanonicalizationMethod = signerCanonicalizationMethod;
+    }
+
+    public String getSignerSchemaResourceUri() {
+        return signerSchemaResourceUri;
+    }
+
+    public void setSignerSchemaResourceUri(String signerSchemaResourceUri) {
+        this.signerSchemaResourceUri = signerSchemaResourceUri;
+    }
+
+    public String getSignerOutputXmlEncoding() {
+        return signerOutputXmlEncoding;
+    }
+
+    public void setSignerOutputXmlEncoding(String signerOutputXmlEncoding) {
+        this.signerOutputXmlEncoding = signerOutputXmlEncoding;
+    }
+
+    public List<AlgorithmMethod> getSignerTransformMethods() {
+        return signerTransformMethods;
+    }
+
+    public void setSignerTransformMethods(
+            List<AlgorithmMethod> signerTransformMethods) {
+        this.signerTransformMethods = signerTransformMethods;
+    }
+
+    public String getSignerSignatureAlgorithm() {
+        return signerSignatureAlgorithm;
+    }
+
+    public void setSignerSignatureAlgorithm(String signerSignatureAlgorithm) {
+        this.signerSignatureAlgorithm = signerSignatureAlgorithm;
+    }
+
+    public String getSignerDigestAlgorithm() {
+        return signerDigestAlgorithm;
+    }
+
+    public void setSignerDigestAlgorithm(String signerDigestAlgorithm) {
+        this.signerDigestAlgorithm = signerDigestAlgorithm;
+    }
+
+    public Boolean getSignerAddKeyInfoReference() {
+        return signerAddKeyInfoReference;
+    }
+
+    public void setSignerAddKeyInfoReference(Boolean signerAddKeyInfoReference) {
+        this.signerAddKeyInfoReference = signerAddKeyInfoReference;
+    }
+
+    public String getSignerPrefixForXmlSignatureNamespace() {
+        return signerPrefixForXmlSignatureNamespace;
+    }
+
+    public void setSignerPrefixForXmlSignatureNamespace(
+            String signerPrefixForXmlSignatureNamespace) {
+        this.signerPrefixForXmlSignatureNamespace = signerPrefixForXmlSignatureNamespace;
+    }
+
+    public String getSignerParentLocalName() {
+        return signerParentLocalName;
+    }
+
+    public void setSignerParentLocalName(String signerParentLocalName) {
+        this.signerParentLocalName = signerParentLocalName;
+    }
+
+    public String getSignerParentNamespace() {
+        return signerParentNamespace;
+    }
+
+    public void setSignerParentNamespace(String signerParentNamespace) {
+        this.signerParentNamespace = signerParentNamespace;
+    }
+
+    public String getSignerContentObjectId() {
+        return signerContentObjectId;
+    }
+
+    public void setSignerContentObjectId(String signerContentObjectId) {
+        this.signerContentObjectId = signerContentObjectId;
+    }
+
+    public String getSignerSignatureId() {
+        return signerSignatureId;
+    }
+
+    public void setSignerSignatureId(String signerSignatureId) {
+        this.signerSignatureId = signerSignatureId;
+    }
+
+    public String getSignerContentReferenceUri() {
+        return signerContentReferenceUri;
+    }
+
+    public void setSignerContentReferenceUri(String signerContentReferenceUri) {
+        this.signerContentReferenceUri = signerContentReferenceUri;
+    }
+
+    public String getSignerContentReferenceType() {
+        return signerContentReferenceType;
+    }
+
+    public void setSignerContentReferenceType(String signerContentReferenceType) {
+        this.signerContentReferenceType = signerContentReferenceType;
+    }
+
+    public Boolean getSignerPlainText() {
+        return signerPlainText;
+    }
+
+    public void setSignerPlainText(Boolean signerPlainText) {
+        this.signerPlainText = signerPlainText;
+    }
+
+    public String getSignerPlainTextEncoding() {
+        return signerPlainTextEncoding;
+    }
+
+    public void setSignerPlainTextEncoding(String signerPlainTextEncoding) {
+        this.signerPlainTextEncoding = signerPlainTextEncoding;
+    }
+
+    public XmlSignatureProperties getSignerProperties() {
+        return signerProperties;
+    }
+
+    public void setSignerProperties(XmlSignatureProperties signerProperties) {
+        this.signerProperties = signerProperties;
+    }
+
+    public List<XPathFilterParameterSpec> getSignerXpathsToIdAttributes() {
+        return signerXpathsToIdAttributes;
+    }
+
+    public void setSignerXpathsToIdAttributes(
+            List<XPathFilterParameterSpec> signerXpathsToIdAttributes) {
+        this.signerXpathsToIdAttributes = signerXpathsToIdAttributes;
+    }
+
+    public XPathFilterParameterSpec getSignerParentXpath() {
+        return signerParentXpath;
+    }
+
+    public void setSignerParentXpath(XPathFilterParameterSpec signerParentXpath) {
+        this.signerParentXpath = signerParentXpath;
+    }
+
+    public URIDereferencer getVerifierUriDereferencer() {
+        return verifierUriDereferencer;
+    }
+
+    public void setVerifierUriDereferencer(
+            URIDereferencer verifierUriDereferencer) {
+        this.verifierUriDereferencer = verifierUriDereferencer;
+    }
+
+    public String getVerifierBaseUri() {
+        return verifierBaseUri;
+    }
+
+    public void setVerifierBaseUri(String verifierBaseUri) {
+        this.verifierBaseUri = verifierBaseUri;
+    }
+
+    public KeySelector getVerifierKeySelector() {
+        return verifierKeySelector;
+    }
+
+    public void setVerifierKeySelector(KeySelector verifierKeySelector) {
+        this.verifierKeySelector = verifierKeySelector;
+    }
+
+    public XmlSignatureChecker getVerifierXmlSignatureChecker() {
+        return verifierXmlSignatureChecker;
+    }
+
+    public void setVerifierXmlSignatureChecker(
+            XmlSignatureChecker verifierXmlSignatureChecker) {
+        this.verifierXmlSignatureChecker = verifierXmlSignatureChecker;
+    }
+
+    public Boolean getVerifierDisallowDoctypeDecl() {
+        return verifierDisallowDoctypeDecl;
+    }
+
+    public void setVerifierDisallowDoctypeDecl(
+            Boolean verifierDisallowDoctypeDecl) {
+        this.verifierDisallowDoctypeDecl = verifierDisallowDoctypeDecl;
+    }
+
+    public Boolean getVerifierOmitXmlDeclaration() {
+        return verifierOmitXmlDeclaration;
+    }
+
+    public void setVerifierOmitXmlDeclaration(Boolean verifierOmitXmlDeclaration) {
+        this.verifierOmitXmlDeclaration = verifierOmitXmlDeclaration;
+    }
+
+    public Boolean getVerifierClearHeaders() {
+        return verifierClearHeaders;
+    }
+
+    public void setVerifierClearHeaders(Boolean verifierClearHeaders) {
+        this.verifierClearHeaders = verifierClearHeaders;
+    }
+
+    public String getVerifierSchemaResourceUri() {
+        return verifierSchemaResourceUri;
+    }
+
+    public void setVerifierSchemaResourceUri(String verifierSchemaResourceUri) {
+        this.verifierSchemaResourceUri = verifierSchemaResourceUri;
+    }
+
+    public String getVerifierOutputXmlEncoding() {
+        return verifierOutputXmlEncoding;
+    }
+
+    public void setVerifierOutputXmlEncoding(String verifierOutputXmlEncoding) {
+        this.verifierOutputXmlEncoding = verifierOutputXmlEncoding;
+    }
+
+    public XmlSignature2Message getVerifierXmlSignature2Message() {
+        return verifierXmlSignature2Message;
+    }
+
+    public void setVerifierXmlSignature2Message(
+            XmlSignature2Message verifierXmlSignature2Message) {
+        this.verifierXmlSignature2Message = verifierXmlSignature2Message;
+    }
+
+    public ValidationFailedHandler getVerifierValidationFailedHandler() {
+        return verifierValidationFailedHandler;
+    }
+
+    public void setVerifierValidationFailedHandler(
+            ValidationFailedHandler verifierValidationFailedHandler) {
+        this.verifierValidationFailedHandler = verifierValidationFailedHandler;
+    }
+
+    public Object getVerifierOutputNodeSearch() {
+        return verifierOutputNodeSearch;
+    }
+
+    public void setVerifierOutputNodeSearch(Object verifierOutputNodeSearch) {
+        this.verifierOutputNodeSearch = verifierOutputNodeSearch;
+    }
+
+    public String getVerifierOutputNodeSearchType() {
+        return verifierOutputNodeSearchType;
+    }
+
+    public void setVerifierOutputNodeSearchType(
+            String verifierOutputNodeSearchType) {
+        this.verifierOutputNodeSearchType = verifierOutputNodeSearchType;
+    }
+
+    public Boolean getVerifierRemoveSignatureElements() {
+        return verifierRemoveSignatureElements;
+    }
+
+    public void setVerifierRemoveSignatureElements(
+            Boolean verifierRemoveSignatureElements) {
+        this.verifierRemoveSignatureElements = verifierRemoveSignatureElements;
+    }
+
+    public Boolean getVerifierSecureValidation() {
+        return verifierSecureValidation;
+    }
+
+    public void setVerifierSecureValidation(Boolean verifierSecureValidation) {
+        this.verifierSecureValidation = verifierSecureValidation;
+    }
+
+    public String getVerifierValidationFailedHandlerName() {
+        return verifierValidationFailedHandlerName;
+    }
+
+    public void setVerifierValidationFailedHandlerName(
+            String verifierValidationFailedHandlerName) {
+        this.verifierValidationFailedHandlerName = verifierValidationFailedHandlerName;
     }
 }

@@ -4,8 +4,10 @@ Mail Component SMTPs
 
 
 
+
+
 // component options: START
-The SMTPS component supports 2 options which are listed below.
+The SMTPS component supports 38 options which are listed below.
 
 
 
@@ -13,11 +15,49 @@ The SMTPS component supports 2 options which are listed below.
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
-| configuration | MailConfiguration | Sets the Mail configuration
+| configuration | MailConfiguration | Sets the Mail configuration. Properties of the shared configuration can also be set individually.
 | contentTypeResolver | ContentTypeResolver | Resolver to determine Content-Type for file attachments.
+| javaMailSender | JavaMailSender | To use a custom JavaMailSender for sending emails.
+| host | String | The mail server host name
+| javaMailProperties | Properties | Sets the java mail options. Will clear any default properties and only use the properties provided for this method.
+| additionalJavaMailProperties | Properties | Sets additional java mail properties that will append/override any default properties that is set based on all the other options. This is useful if you need to add some special options but want to keep the others as is.
+| password | String | The password for login
+| subject | String | The Subject of the message being sent. Note: Setting the subject in the header takes precedence over this option.
+| port | int | The port number of the mail server
+| protocol | String | The protocol for communicating with the mail server
+| session | Session | Specifies the mail session that camel should use for all mail interactions. Useful in scenarios where mail sessions are created and managed by some other resource such as a JavaEE container. If this is not specified Camel automatically creates the mail session for you.
+| username | String | The username for login
+| from | String | The from email address
+| delete | boolean | Deletes the messages after they have been processed. This is done by setting the DELETED flag on the mail message. If false the SEEN flag is set instead. As of Camel 2.10 you can override this configuration option by setting a header with the key delete to determine if the mail should be deleted or not.
+| mapMailMessage | boolean | Specifies whether Camel should map the received mail message to Camel body/headers. If set to true the body of the mail message is mapped to the body of the Camel IN message and the mail headers are mapped to IN headers. If this option is set to false then the IN message contains a raw javax.mail.Message. You can retrieve this raw message by calling exchange.getIn().getBody(javax.mail.Message.class).
+| folderName | String | The folder to poll.
+| ignoreUriScheme | boolean | Option to let Camel ignore unsupported charset in the local JVM when sending mails. If the charset is unsupported then charset=XXX (where XXX represents the unsupported charset) is removed from the content-type and it relies on the platform default instead.
+| unseen | boolean | Whether to limit by unseen mails only.
+| to | String | Sets the To email address. Separate multiple email addresses with comma.
+| cc | String | Sets the CC email address. Separate multiple email addresses with comma.
+| bcc | String | Sets the BCC email address. Separate multiple email addresses with comma.
+| replyTo | String | The Reply-To recipients (the receivers of the response mail). Separate multiple email addresses with a comma.
+| fetchSize | int | Sets the maximum number of messages to consume during a poll. This can be used to avoid overloading a mail server if a mailbox folder contains a lot of messages. Default value of -1 means no fetch size and all messages will be consumed. Setting the value to 0 is a special corner case where Camel will not consume any messages at all.
+| debugMode | boolean | Enable debug mode on the underlying mail framework. The SUN Mail framework logs the debug messages to System.out by default.
+| connectionTimeout | int | The connection timeout in milliseconds.
+| dummyTrustManager | boolean | To use a dummy security setting for trusting all certificates. Should only be used for development mode and not production.
+| contentType | String | The mail message content type. Use text/html for HTML mails.
+| alternativeBodyHeader | String | Specifies the key to an IN message header that contains an alternative email body. For example if you send emails in text/html format and want to provide an alternative mail body for non-HTML email clients set the alternative mail body with this key as a header.
+| useInlineAttachments | boolean | Whether to use disposition inline or attachment.
+| ignoreUnsupportedCharset | boolean | Option to let Camel ignore unsupported charset in the local JVM when sending mails. If the charset is unsupported then charset=XXX (where XXX represents the unsupported charset) is removed from the content-type and it relies on the platform default instead.
+| disconnect | boolean | Whether the consumer should disconnect after polling. If enabled this forces Camel to connect on each poll.
+| closeFolder | boolean | Whether the consumer should close the folder after polling. Setting this option to false and having disconnect=false as well then the consumer keep the folder open between polls.
+| sslContextParameters | SSLContextParameters | To configure security using SSLContextParameters.
+| copyTo | String | After processing a mail message it can be copied to a mail folder with the given name. You can override this configuration value with a header with the key copyTo allowing you to copy messages to folder names configured at runtime.
+| peek | boolean | Will mark the javax.mail.Message as peeked before processing the mail message. This applies to IMAPMessage messages types only. By using peek the mail will not be eager marked as SEEN on the mail server which allows us to rollback the mail message if there is an error processing in Camel.
+| skipFailedMessage | boolean | If the mail consumer cannot retrieve a given mail message then this option allows to skip the message and move on to retrieve the next mail message. The default behavior would be the consumer throws an exception and no mails from the batch would be able to be routed by Camel.
+| handleFailedMessage | boolean | If the mail consumer cannot retrieve a given mail message then this option allows to handle the caused exception by the consumer's error handler. By enable the bridge error handler on the consumer then the Camel routing error handler can handle the exception instead. The default behavior would be the consumer throws an exception and no mails from the batch would be able to be routed by Camel.
+| attachmentsContentTransferEncodingResolver | AttachmentsContentTransferEncodingResolver | To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments.
 |=======================================================================
 {% endraw %}
 // component options: END
+
+
 
 
 

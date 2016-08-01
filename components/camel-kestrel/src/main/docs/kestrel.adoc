@@ -67,8 +67,9 @@ Options
 
 
 
+
 // component options: START
-The Kestrel component supports 1 options which are listed below.
+The Kestrel component supports 4 options which are listed below.
 
 
 
@@ -77,9 +78,13 @@ The Kestrel component supports 1 options which are listed below.
 |=======================================================================
 | Name | Java Type | Description
 | configuration | KestrelConfiguration | To use a shared configured configuration as base for creating new endpoints.
+| addresses | String[] | The addresses
+| waitTimeMs | int | The wait time in milliseconds
+| concurrentConsumers | int | The number of concurrent consumers
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

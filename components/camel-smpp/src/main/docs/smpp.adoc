@@ -176,8 +176,9 @@ URI Options
 ^^^^^^^^^^^
 
 
+
 // component options: START
-The SMPP component supports 1 options which are listed below.
+The SMPP component supports 36 options which are listed below.
 
 
 
@@ -185,10 +186,46 @@ The SMPP component supports 1 options which are listed below.
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
-| configuration | SmppConfiguration | To use the shared SmppConfiguration as configuration.
+| configuration | SmppConfiguration | To use the shared SmppConfiguration as configuration. Properties of the shared configuration can also be set individually.
+| host | String | Hostname for the SMSC server to use.
+| port | Integer | Port number for the SMSC server to use.
+| systemId | String | The system id (username) for connecting to SMSC server.
+| dataCoding | byte | Defines the data coding according the SMPP 3.4 specification section 5.2.19. Example data encodings are: 0: SMSC Default Alphabet 3: Latin 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2 (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990)
+| alphabet | byte | Defines encoding of data according the SMPP 3.4 specification section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2 Alphabet
+| encoding | String | Defines the encoding scheme of the short message user data. Only for SubmitSm ReplaceSm and SubmitMulti.
+| password | String | The password for connecting to SMSC server.
+| enquireLinkTimer | Integer | Defines the interval in milliseconds between the confidence checks. The confidence check is used to test the communication path between an ESME and an SMSC.
+| transactionTimer | Integer | Defines the maximum period of inactivity allowed after a transaction after which an SMPP entity may assume that the session is no longer active. This timer may be active on either communicating SMPP entity (i.e. SMSC or ESME).
+| systemType | String | This parameter is used to categorize the type of ESME (External Short Message Entity) that is binding to the SMSC (max. 13 characters).
+| registeredDelivery | byte | Is used to request an SMSC delivery receipt and/or SME originated acknowledgements. The following values are defined: 0: No SMSC delivery receipt requested. 1: SMSC delivery receipt requested where final delivery outcome is success or failure. 2: SMSC delivery receipt requested where the final delivery outcome is delivery failure.
+| serviceType | String | The service type parameter can be used to indicate the SMS Application service associated with the message. The following generic service_types are defined: CMT: Cellular Messaging CPT: Cellular Paging VMN: Voice Mail Notification VMA: Voice Mail Alerting WAP: Wireless Application Protocol USSD: Unstructured Supplementary Services Data
+| sourceAddrTon | byte | Defines the type of number (TON) to be used in the SME originator address parameters. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated
+| destAddrTon | byte | Defines the type of number (TON) to be used in the SME destination address parameters. Only for SubmitSm SubmitMulti CancelSm and DataSm. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated
+| sourceAddrNpi | byte | Defines the numeric plan indicator (NPI) to be used in the SME originator address parameters. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum)
+| destAddrNpi | byte | Defines the type of number (TON) to be used in the SME destination address parameters. Only for SubmitSm SubmitMulti CancelSm and DataSm. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum)
+| protocolId | byte | The protocol id
+| priorityFlag | byte | Allows the originating SME to assign a priority level to the short message. Only for SubmitSm and SubmitMulti. Four Priority Levels are supported: 0: Level 0 (lowest) priority 1: Level 1 priority 2: Level 2 priority 3: Level 3 (highest) priority
+| replaceIfPresentFlag | byte | Used to request the SMSC to replace a previously submitted message that is still pending delivery. The SMSC will replace an existing message provided that the source address destination address and service type match the same fields in the new message. The following replace if present flag values are defined: 0: Don't replace 1: Replace
+| sourceAddr | String | Defines the address of SME (Short Message Entity) which originated this message.
+| destAddr | String | Defines the destination SME address. For mobile terminated messages this is the directory number of the recipient MS. Only for SubmitSm SubmitMulti CancelSm and DataSm.
+| typeOfNumber | byte | Defines the type of number (TON) to be used in the SME. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated
+| numberingPlanIndicator | byte | Defines the numeric plan indicator (NPI) to be used in the SME. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum)
+| usingSSL | boolean | Whether using SSL with the smpps protocol
+| initialReconnectDelay | long | Defines the initial delay in milliseconds after the consumer/producer tries to reconnect to the SMSC after the connection was lost.
+| reconnectDelay | long | Defines the interval in milliseconds between the reconnect attempts if the connection to the SMSC was lost and the previous was not succeed.
+| lazySessionCreation | boolean | Sessions can be lazily created to avoid exceptions if the SMSC is not available when the Camel producer is started. Camel will check the in message headers 'CamelSmppSystemId' and 'CamelSmppPassword' of the first exchange. If they are present Camel will use these data to connect to the SMSC.
+| httpProxyHost | String | If you need to tunnel SMPP through a HTTP proxy set this attribute to the hostname or ip address of your HTTP proxy.
+| httpProxyPort | Integer | If you need to tunnel SMPP through a HTTP proxy set this attribute to the port of your HTTP proxy.
+| httpProxyUsername | String | If your HTTP proxy requires basic authentication set this attribute to the username required for your HTTP proxy.
+| httpProxyPassword | String | If your HTTP proxy requires basic authentication set this attribute to the password required for your HTTP proxy.
+| sessionStateListener | SessionStateListener | You can refer to a org.jsmpp.session.SessionStateListener in the Registry to receive callbacks when the session state changed.
+| addressRange | String | You can specify the address range for the SmppConsumer as defined in section 5.2.7 of the SMPP 3.4 specification. The SmppConsumer will receive messages only from SMSC's which target an address (MSISDN or IP address) within this range.
+| splittingPolicy | SmppSplittingPolicy | You can specify a policy for handling long messages: ALLOW - the default long messages are split to 140 bytes per message TRUNCATE - long messages are split and only the first fragment will be sent to the SMSC. Some carriers drop subsequent fragments so this reduces load on the SMPP connection sending parts of a message that will never be delivered. REJECT - if a message would need to be split it is rejected with an SMPP NegativeResponseException and the reason code signifying the message is too long.
+| proxyHeaders | Map | These headers will be passed to the proxy server while establishing the connection.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

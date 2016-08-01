@@ -38,8 +38,10 @@ Box Options
 ^^^^^^^^^^^
 
 
+
+
 // component options: START
-The Box component supports 1 options which are listed below.
+The Box component supports 17 options which are listed below.
 
 
 
@@ -47,10 +49,28 @@ The Box component supports 1 options which are listed below.
 [width="100%",cols="2s,1m,8",options="header"]
 |=======================================================================
 | Name | Java Type | Description
-| configuration | BoxConfiguration | To use the shared configuration
+| configuration | BoxConfiguration | To use the shared configuration. Properties of the shared configuration can also be set individually.
+| apiName | BoxApiName | What kind of operation to perform
+| methodName | String | What sub operation to use for the selected operation
+| clientId | String | Box application client ID
+| clientSecret | String | Box application client secret
+| authSecureStorage | IAuthSecureStorage | OAuth Secure Storage callback can be used to provide and or save OAuth tokens. The callback may return null on first call to allow the component to login and authorize application and obtain an OAuth token which can then be saved in the secure storage. For the component to be able to create a token automatically a user password must be provided.
+| userName | String | Box user name MUST be provided
+| userPassword | String | Box user password MUST be provided if authSecureStorage is not set or returns null on first call
+| refreshListener | OAuthRefreshListener | OAuth listener for token updates if the Camel application needs to use the access token outside the route
+| revokeOnShutdown | boolean | Flag to revoke OAuth refresh token on route shutdown default false. Will require a fresh refresh token on restart using either a custom IAuthSecureStorage or automatic component login by providing a user password
+| sharedLink | String | Box shared link for shared endpoints can be a link for a shared comment file or folder
+| sharedPassword | String | Password associated with the shared link MUST be provided with sharedLink
+| boxConfig | IBoxConfig | Custom Box SDK configuration not required normally
+| connectionManagerBuilder | BoxConnectionManagerBuilder | Custom Box connection manager builder used to override default settings like max connections for underlying HttpClient.
+| httpParams | Map | Custom HTTP params for settings like proxy host
+| sslContextParameters | SSLContextParameters | To configure security using SSLContextParameters.
+| loginTimeout | int | Amount of time the component will wait for a response from Box.com default is 30 seconds
 |=======================================================================
 {% endraw %}
 // component options: END
+
+
 
 
 

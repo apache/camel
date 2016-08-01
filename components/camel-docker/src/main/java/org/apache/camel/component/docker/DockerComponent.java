@@ -71,7 +71,7 @@ public class DockerComponent extends DefaultComponent {
     }
 
     /**
-     * To use the shared docker configuration
+     * To use the shared docker configuration. Properties of the shared configuration can also be set individually.
      */
     protected DockerConfiguration getConfiguration() {
         return configuration;
@@ -88,4 +88,183 @@ public class DockerComponent extends DefaultComponent {
         clients.put(clientProfile, client);
     }
 
+    public String getHost() {
+        return configuration.getHost();
+    }
+
+    /**
+     * Docker host
+     * @param host
+     */
+    public void setHost(String host) {
+        configuration.setHost(host);
+    }
+
+    public Integer getPort() {
+        return configuration.getPort();
+    }
+
+    /**
+     * Docker port
+     * @param port
+     */
+    public void setPort(Integer port) {
+        configuration.setPort(port);
+    }
+
+    public String getUsername() {
+        return configuration.getUsername();
+    }
+
+    /**
+     * User name to authenticate with
+     * @param username
+     */
+    public void setUsername(String username) {
+        configuration.setUsername(username);
+    }
+
+    public String getPassword() {
+        return configuration.getPassword();
+    }
+
+    /**
+     * Password to authenticate with
+     * @param password
+     */
+    public void setPassword(String password) {
+        configuration.setPassword(password);
+    }
+
+    public String getEmail() {
+        return configuration.getEmail();
+    }
+
+    /**
+     * Email address associated with the user
+     * @param email
+     */
+    public void setEmail(String email) {
+        configuration.setEmail(email);
+    }
+
+    public String getServerAddress() {
+        return configuration.getServerAddress();
+    }
+
+    /**
+     * Server address for docker registry.
+     * @param serverAddress
+     */
+    public void setServerAddress(String serverAddress) {
+        configuration.setServerAddress(serverAddress);
+    }
+
+    public Integer getRequestTimeout() {
+        return configuration.getRequestTimeout();
+    }
+
+    /**
+     * Request timeout for response (in seconds)
+     * @param requestTimeout
+     */
+    public void setRequestTimeout(Integer requestTimeout) {
+        configuration.setRequestTimeout(requestTimeout);
+    }
+
+    public boolean isSecure() {
+        return configuration.isSecure();
+    }
+
+    /**
+     * Use HTTPS communication
+     * @param secure
+     */
+    public void setSecure(boolean secure) {
+        configuration.setSecure(secure);
+    }
+
+    public String getCertPath() {
+        return configuration.getCertPath();
+    }
+
+    /**
+     * Location containing the SSL certificate chain
+     * @param certPath
+     */
+    public void setCertPath(String certPath) {
+        configuration.setCertPath(certPath);
+    }
+
+    public Integer getMaxTotalConnections() {
+        return configuration.getMaxTotalConnections();
+    }
+
+    /**
+     * Maximum total connections
+     * @param maxTotalConnections
+     */
+    public void setMaxTotalConnections(Integer maxTotalConnections) {
+        configuration.setMaxTotalConnections(maxTotalConnections);
+    }
+
+    public Integer getMaxPerRouteConnections() {
+        return configuration.getMaxPerRouteConnections();
+    }
+
+    /**
+     * Maximum route connections
+     * @param maxPerRouteConnections
+     */
+    public void setMaxPerRouteConnections(Integer maxPerRouteConnections) {
+        configuration.setMaxPerRouteConnections(maxPerRouteConnections);
+    }
+
+    public boolean isLoggingFilterEnabled() {
+        return configuration.isLoggingFilterEnabled();
+    }
+
+    /**
+     * Whether to use logging filter
+     * @param loggingFilterEnabled
+     */
+    public void setLoggingFilter(boolean loggingFilterEnabled) {
+        configuration.setLoggingFilter(loggingFilterEnabled);
+    }
+
+    public boolean isFollowRedirectFilterEnabled() {
+        return configuration.isFollowRedirectFilterEnabled();
+    }
+
+    /**
+     * Whether to follow redirect filter
+     * @param followRedirectFilterEnabled
+     */
+    public void setFollowRedirectFilter(boolean followRedirectFilterEnabled) {
+        configuration.setFollowRedirectFilter(followRedirectFilterEnabled);
+    }
+
+    public Map<String, Object> getParameters() {
+        return configuration.getParameters();
+    }
+
+    /**
+     * Additional configuration parameters as key/value pairs
+     * @param parameters
+     */
+    public void setParameters(Map<String, Object> parameters) {
+        configuration.setParameters(parameters);
+    }
+
+    public DockerOperation getOperation() {
+        return configuration.getOperation();
+    }
+
+    /**
+     * Which operation to use
+     * @param operation
+     */
+    public void setOperation(DockerOperation operation) {
+        configuration.setOperation(operation);
+    }
 }

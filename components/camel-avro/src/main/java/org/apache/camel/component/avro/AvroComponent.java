@@ -89,7 +89,7 @@ public class AvroComponent extends UriEndpointComponent {
                 try {
                     Field f = protocolClass.getField("PROTOCOL");
                     if (f != null) {
-                        Protocol protocol = (Protocol)f.get(null);
+                        Protocol protocol = (Protocol) f.get(null);
                         config.setProtocol(protocol);
                     }
                 } catch (NoSuchFieldException e) {
@@ -110,9 +110,9 @@ public class AvroComponent extends UriEndpointComponent {
 
         if (config.isSingleParameter()) {
             Map<String, Protocol.Message> messageMap = config.getProtocol().getMessages();
-            Iterable<Protocol.Message> messagesToCheck = config.getMessageName() == null 
-                ? messageMap.values() 
-                : Collections.singleton(messageMap.get(config.getMessageName()));
+            Iterable<Protocol.Message> messagesToCheck = config.getMessageName() == null
+                    ? messageMap.values()
+                    : Collections.singleton(messageMap.get(config.getMessageName()));
             for (Protocol.Message message : messagesToCheck) {
                 if (message.getRequest().getFields().size() != 1) {
                     throw new IllegalArgumentException("Single parameter option can't be used with message "
@@ -123,12 +123,12 @@ public class AvroComponent extends UriEndpointComponent {
             }
         }
     }
-    
+
     /**
      * Registers new responder with uri as key. Registers consumer in responder.
      * In case if responder is already registered by this uri then just
      * registers consumer.
-     * 
+     *
      * @param uri URI of the endpoint without message name
      * @param messageName message name
      * @param consumer consumer that will be registered in providers` registry
@@ -142,7 +142,7 @@ public class AvroComponent extends UriEndpointComponent {
         }
         listener.register(messageName, consumer);
     }
-    
+
     /**
      * Calls unregister of consumer by appropriate message name.
      * In case if all consumers are unregistered then it removes responder from the registry.
@@ -161,9 +161,133 @@ public class AvroComponent extends UriEndpointComponent {
     }
 
     /**
-     * To use a shared {@link AvroConfiguration} to configure options once
+     * To use a shared {@link AvroConfiguration} to configure options once. Properties of the shared configuration can also be set individually.
      */
     public void setConfiguration(AvroConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public String getHost() {
+        return configuration.getHost();
+    }
+
+    /**
+     * Hostname to use
+     * @param host
+     */
+    public void setHost(String host) {
+        configuration.setHost(host);
+    }
+
+    public int getPort() {
+        return configuration.getPort();
+    }
+
+    /**
+     * Port number to use
+     * @param port
+     */
+    public void setPort(int port) {
+        configuration.setPort(port);
+    }
+
+    public Protocol getProtocol() {
+        return configuration.getProtocol();
+    }
+
+    /**
+     * Avro protocol to use
+     * @param protocol
+     */
+    public void setProtocol(Protocol protocol) {
+        configuration.setProtocol(protocol);
+    }
+
+    public AvroTransport getTransport() {
+        return configuration.getTransport();
+    }
+
+    /**
+     * Transport to use
+     * @param transport
+     */
+    public void setTransport(String transport) {
+        configuration.setTransport(transport);
+    }
+
+    public void setTransport(AvroTransport transport) {
+        configuration.setTransport(transport);
+    }
+
+    public String getProtocolLocation() {
+        return configuration.getProtocolLocation();
+    }
+
+    /**
+     * Avro protocol location
+     * @param protocolLocation
+     */
+    public void setProtocolLocation(String protocolLocation) {
+        configuration.setProtocolLocation(protocolLocation);
+    }
+
+    public String getProtocolClassName() {
+        return configuration.getProtocolClassName();
+    }
+
+    /**
+     * Avro protocol to use defined by the FQN class name
+     * @param protocolClassName
+     */
+    public void setProtocolClassName(String protocolClassName) {
+        configuration.setProtocolClassName(protocolClassName);
+    }
+
+    public String getMessageName() {
+        return configuration.getMessageName();
+    }
+
+    /**
+     * The name of the message to send.
+     * @param messageName
+     */
+    public void setMessageName(String messageName) {
+        configuration.setMessageName(messageName);
+    }
+
+    public String getUriAuthority() {
+        return configuration.getUriAuthority();
+    }
+
+    /**
+     * Authority to use (username and password)
+     * @param uriAuthority
+     */
+    public void setUriAuthority(String uriAuthority) {
+        configuration.setUriAuthority(uriAuthority);
+    }
+
+    public boolean isReflectionProtocol() {
+        return configuration.isReflectionProtocol();
+    }
+
+    /**
+     * If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected
+     * @param isReflectionProtocol
+     */
+    public void setReflectionProtocol(boolean isReflectionProtocol) {
+        configuration.setReflectionProtocol(isReflectionProtocol);
+    }
+
+    public boolean isSingleParameter() {
+        return configuration.isSingleParameter();
+    }
+
+    /**
+     * If true, consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message
+     * @param singleParameter
+     */
+    public void setSingleParameter(boolean singleParameter) {
+        configuration.setSingleParameter(singleParameter);
     }
 }

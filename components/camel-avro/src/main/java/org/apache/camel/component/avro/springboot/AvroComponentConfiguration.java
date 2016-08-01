@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.avro.springboot;
 
+import org.apache.avro.Protocol;
 import org.apache.camel.component.avro.AvroConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -28,9 +29,53 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class AvroComponentConfiguration {
 
     /**
-     * To use a shared AvroConfiguration to configure options once
+     * To use a shared AvroConfiguration to configure options once. Properties
+     * of the shared configuration can also be set individually.
      */
     private AvroConfiguration configuration;
+    /**
+     * Hostname to use
+     */
+    private String host;
+    /**
+     * Port number to use
+     */
+    private Integer port;
+    /**
+     * Avro protocol to use
+     */
+    private Protocol protocol;
+    /**
+     * Transport to use
+     */
+    private String transport;
+    /**
+     * Avro protocol location
+     */
+    private String protocolLocation;
+    /**
+     * Avro protocol to use defined by the FQN class name
+     */
+    private String protocolClassName;
+    /**
+     * The name of the message to send.
+     */
+    private String messageName;
+    /**
+     * Authority to use (username and password)
+     */
+    private String uriAuthority;
+    /**
+     * If protocol object provided is reflection protocol. Should be used only
+     * with protocol parameter because for protocolClassName protocol type will
+     * be auto detected
+     */
+    private Boolean reflectionProtocol = false;
+    /**
+     * If true consumer parameter won't be wrapped into array. Will fail if
+     * protocol specifies more then 1 parameter for the message
+     */
+    private Boolean singleParameter = false;
 
     public AvroConfiguration getConfiguration() {
         return configuration;
@@ -38,5 +83,85 @@ public class AvroComponentConfiguration {
 
     public void setConfiguration(AvroConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    public Protocol getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(Protocol protocol) {
+        this.protocol = protocol;
+    }
+
+    public String getTransport() {
+        return transport;
+    }
+
+    public void setTransport(String transport) {
+        this.transport = transport;
+    }
+
+    public String getProtocolLocation() {
+        return protocolLocation;
+    }
+
+    public void setProtocolLocation(String protocolLocation) {
+        this.protocolLocation = protocolLocation;
+    }
+
+    public String getProtocolClassName() {
+        return protocolClassName;
+    }
+
+    public void setProtocolClassName(String protocolClassName) {
+        this.protocolClassName = protocolClassName;
+    }
+
+    public String getMessageName() {
+        return messageName;
+    }
+
+    public void setMessageName(String messageName) {
+        this.messageName = messageName;
+    }
+
+    public String getUriAuthority() {
+        return uriAuthority;
+    }
+
+    public void setUriAuthority(String uriAuthority) {
+        this.uriAuthority = uriAuthority;
+    }
+
+    public Boolean getReflectionProtocol() {
+        return reflectionProtocol;
+    }
+
+    public void setReflectionProtocol(Boolean reflectionProtocol) {
+        this.reflectionProtocol = reflectionProtocol;
+    }
+
+    public Boolean getSingleParameter() {
+        return singleParameter;
+    }
+
+    public void setSingleParameter(Boolean singleParameter) {
+        this.singleParameter = singleParameter;
     }
 }
