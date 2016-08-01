@@ -32,6 +32,7 @@ import io.undertow.predicate.Predicate;
 import io.undertow.predicate.Predicates;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.PredicateHandler;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -94,14 +95,14 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
 
         // then re-create the http uri with the remaining parameters which the endpoint did not use
         URI httpUri = URISupport.createRemainingURI(
-            new URI(uriHttpUriAddress.getScheme(),
-                uriHttpUriAddress.getUserInfo(),
-                uriHttpUriAddress.getHost(),
-                uriHttpUriAddress.getPort(),
-                uriHttpUriAddress.getPath(),
-                uriHttpUriAddress.getQuery(),
-                uriHttpUriAddress.getFragment()),
-            parameters);
+                new URI(uriHttpUriAddress.getScheme(),
+                        uriHttpUriAddress.getUserInfo(),
+                        uriHttpUriAddress.getHost(),
+                        uriHttpUriAddress.getPort(),
+                        uriHttpUriAddress.getPath(),
+                        uriHttpUriAddress.getQuery(),
+                        uriHttpUriAddress.getFragment()),
+                parameters);
         endpoint.setHttpURI(httpUri);
 
         return endpoint;
