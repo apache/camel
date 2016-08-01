@@ -27,10 +27,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class XMLTokenizeLanguageConfiguration {
 
     /**
-     * Name of header to tokenize instead of using the message body.
-     */
-    private String headerName;
-    /**
      * The extraction mode. The available extraction modes are: i - injecting
      * the contextual namespace bindings into the extracted token (default) w -
      * wrapping the extracted token in its ancestor context u - unwrapping the
@@ -39,22 +35,10 @@ public class XMLTokenizeLanguageConfiguration {
      */
     private String mode;
     /**
-     * To group N parts together
-     */
-    private Integer group;
-    /**
      * Whether to trim the value to remove leading and trailing whitespaces and
      * line breaks
      */
     private Boolean trim = true;
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
 
     public String getMode() {
         return mode;
@@ -62,14 +46,6 @@ public class XMLTokenizeLanguageConfiguration {
 
     public void setMode(String mode) {
         this.mode = mode;
-    }
-
-    public Integer getGroup() {
-        return group;
-    }
-
-    public void setGroup(Integer group) {
-        this.group = group;
     }
 
     public Boolean getTrim() {

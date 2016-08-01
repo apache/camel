@@ -251,7 +251,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
                     String overrideLanguageName = null;
                     if (aliases.size() > 1) {
-                        // determine component name when there are multiple ones
+                        // determine language name when there are multiple ones
                         overrideLanguageName = model.getArtifactId().replace("camel-", "");
                     }
 
@@ -469,10 +469,39 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
         for (LanguageOptionModel option : model.getLanguageOptions()) {
-            // skip option with name id, expression, or resultType in language as we do not need that
+            // skip option with name id, or expression in language as we do not need that and skip resultType as they are not global options
             if ("id".equals(option.getName()) || "expression".equals(option.getName()) || "resultType".equals(option.getName())) {
                 continue;
             }
+            if ("bean".equals(model.getName())) {
+                // and skip following as they are not global options
+                if ("bean".equals(option.getName()) || "ref".equals(option.getName()) || "method".equals(option.getName()) || "beanType".equals(option.getName())) {
+                    continue;
+                }
+            } else if ("tokenize".equals(model.getName())) {
+                // and skip following as they are not global options
+                if ("token".equals(option.getName()) || "endToken".equals(option.getName()) || "inheritNamespaceTagName".equals(option.getName())
+                        || "headerName".equals(option.getName()) || "regex".equals(option.getName()) || "xml".equals(option.getName())
+                        || "includeTokens".equals(option.getName()) || "group".equals(option.getName()) || "skipFirst".equals(option.getName())) {
+                    continue;
+                }
+            } else if ("xtokenize".equals(model.getName())) {
+                // and skip following as they are not global options
+                if ("headerName".equals(option.getName()) || "group".equals(option.getName())) {
+                    continue;
+                }
+            } else if ("xpath".equals(model.getName())) {
+                // and skip following as they are not global options
+                if ("headerName".equals(option.getName())) {
+                    continue;
+                }
+            } else if ("xquery".equals(model.getName())) {
+                // and skip following as they are not global options
+                if ("headerName".equals(option.getName())) {
+                    continue;
+                }
+            }
+
             // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
             String type = option.getJavaType();
             type = type.replaceAll("\\<\\?\\>", "");
