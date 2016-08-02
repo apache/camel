@@ -35,6 +35,8 @@ public class CamelBamTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelBamTest.class))
+                .resource("components/bam-persistence.xml", "META-INF/persistence.xml")
+                .resource("components/bam-spring.xml", "META-INF/spring/spring.xml")
                 .build();
     }
 

@@ -147,7 +147,7 @@
         <configuration>
           <childDelegation>false</childDelegation>
           <forkedProcessTimeoutInSeconds>15000</forkedProcessTimeoutInSeconds>
-          <rerunFailingTestsCount>0</rerunFailingTestsCount>
+          <rerunFailingTestsCount>1</rerunFailingTestsCount>
           <includes>
             <include>**/*Test.java</include>
           </includes>
