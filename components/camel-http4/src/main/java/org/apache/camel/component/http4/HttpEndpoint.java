@@ -155,6 +155,16 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                 LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", new Object[]{host, port, scheme});
                 HttpHost proxy = new HttpHost(host, port, scheme);
                 clientBuilder.setProxy(proxy);
+            } else {
+            	if (ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort())) {
+                    String scheme = getProtocol();
+                    // fallback and use either http or https depending on secure
+                    if (scheme == null) {
+                        scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
+                    }
+                    HttpHost proxy = new HttpHost(getProxyHost(), getProxyPort(), scheme);
+                    clientBuilder.setProxy(proxy);
+            	}
             }
         } else {
             clientBuilder.useSystemProperties();
