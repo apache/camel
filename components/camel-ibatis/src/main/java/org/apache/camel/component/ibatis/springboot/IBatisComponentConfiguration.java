@@ -40,7 +40,7 @@ public class IBatisComponentConfiguration {
     /**
      * Whether to use transactions. This option is by default true.
      */
-    private Boolean useTransactions = false;
+    private Boolean useTransactions;
 
     public SqlMapClient getSqlMapClient() {
         return sqlMapClient;

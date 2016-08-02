@@ -56,7 +56,7 @@ public class NettyComponentConfiguration {
      * org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor
      * for more details.
      */
-    private Boolean orderedThreadPoolExecutor = false;
+    private Boolean orderedThreadPoolExecutor;
     /**
      * Sets the cap on the number of objects that can be allocated by the pool
      * (checked out to clients or idle awaiting checkout) at a given time. Use a
@@ -83,23 +83,23 @@ public class NettyComponentConfiguration {
      * as the pooling is needed for handling concurrency and reliable
      * request/reply.
      */
-    private Boolean producerPoolEnabled = false;
+    private Boolean producerPoolEnabled;
     /**
      * This option supports connection less udp sending which is a real fire and
      * forget. A connected udp send receive the PortUnreachableException if no
      * one is listen on the receiving port.
      */
-    private Boolean udpConnectionlessSending = false;
+    private Boolean udpConnectionlessSending;
     /**
      * If the clientMode is true netty consumer will connect the address as a
      * TCP client.
      */
-    private Boolean clientMode = false;
+    private Boolean clientMode;
     /**
      * If the useChannelBuffer is true netty producer will turn the message body
      * into ChannelBuffer before sending it out.
      */
-    private Boolean useChannelBuffer = false;
+    private Boolean useChannelBuffer;
     /**
      * The maximum total size of the queued events per channel when using
      * orderedThreadPoolExecutor. Specify 0 to disable.
@@ -126,7 +126,7 @@ public class NettyComponentConfiguration {
     /**
      * Setting to choose Multicast over UDP
      */
-    private Boolean broadcast = false;
+    private Boolean broadcast;
     /**
      * The TCP/UDP buffer sizes to be used during outbound communication. Size
      * is bytes.
@@ -157,15 +157,15 @@ public class NettyComponentConfiguration {
     /**
      * Setting to ensure socket is not closed due to inactivity
      */
-    private Boolean keepAlive = false;
+    private Boolean keepAlive;
     /**
      * Setting to improve TCP protocol performance
      */
-    private Boolean tcpNoDelay = false;
+    private Boolean tcpNoDelay;
     /**
      * Setting to facilitate socket multiplexing
      */
-    private Boolean reuseAddress = false;
+    private Boolean reuseAddress;
     /**
      * Time to wait for a socket connection to be available. Value is in millis.
      */
@@ -181,14 +181,14 @@ public class NettyComponentConfiguration {
     /**
      * Setting to specify whether SSL encryption is applied to this endpoint
      */
-    private Boolean ssl = false;
+    private Boolean ssl;
     /**
      * When enabled and in SSL mode then the Netty consumer will enrich the
      * Camel Message with headers having information about the client
      * certificate such as subject name issuer name serial number and the valid
      * date range.
      */
-    private Boolean sslClientCertHeaders = false;
+    private Boolean sslClientCertHeaders;
     /**
      * Reference to a class that could be used to return an SSL Handler
      */
@@ -200,7 +200,7 @@ public class NettyComponentConfiguration {
     /**
      * Configures whether the server needs client authentication when using SSL.
      */
-    private Boolean needClientAuth = false;
+    private Boolean needClientAuth;
     /**
      * Client side certificate keystore to be used for encryption. Is loaded by
      * default from classpath but you can prefix with classpath: file: or http:
@@ -246,13 +246,13 @@ public class NettyComponentConfiguration {
     /**
      * Setting to set endpoint as one-way or request-response
      */
-    private Boolean sync = false;
+    private Boolean sync;
     /**
      * Only used for TCP. If no codec is specified you can use this flag to
      * indicate a text line based codec; if not specified or the value is false
      * then Object Serialization is assumed over TCP.
      */
-    private Boolean textline = false;
+    private Boolean textline;
     /**
      * Allows to configure additional netty options using option. as prefix. For
      * example option.child.keepAlive=false to set the netty option
@@ -279,7 +279,7 @@ public class NettyComponentConfiguration {
      * Whether or not to auto append missing end delimiter when sending using
      * the textline codec.
      */
-    private Boolean autoAppendDelimiter = false;
+    private Boolean autoAppendDelimiter;
     /**
      * To use a explicit org.jboss.netty.channel.socket.nio.WorkerPool as the
      * worker thread pool. For example to share a thread pool with multiple
@@ -333,12 +333,12 @@ public class NettyComponentConfiguration {
      * Whether or not to disconnect(close) from Netty Channel right after use.
      * Can be used for both consumer and producer.
      */
-    private Boolean disconnect = false;
+    private Boolean disconnect;
     /**
      * Channels can be lazily created to avoid exceptions if the remote server
      * is not up and running when the Camel producer is started.
      */
-    private Boolean lazyChannelCreation = false;
+    private Boolean lazyChannelCreation;
     /**
      * Only used for TCP. You can transfer the exchange over the wire instead of
      * just the body. The following fields are transferred: In body Out body
@@ -346,12 +346,12 @@ public class NettyComponentConfiguration {
      * exchange exception. This requires that the objects are serializable.
      * Camel will exclude any non-serializable objects and log it at WARN level.
      */
-    private Boolean transferExchange = false;
+    private Boolean transferExchange;
     /**
      * If sync is enabled then this option dictates NettyConsumer if it should
      * disconnect where there is no reply to send back.
      */
-    private Boolean disconnectOnNoReply = false;
+    private Boolean disconnectOnNoReply;
     /**
      * If sync is enabled this option dictates NettyConsumer which logging level
      * to use when logging a there is no reply to send back.
@@ -376,7 +376,7 @@ public class NettyComponentConfiguration {
      * the netty component from installing a default codec as the first element
      * in the filter chain.
      */
-    private Boolean allowDefaultCodec = false;
+    private Boolean allowDefaultCodec;
     /**
      * To use a custom ClientPipelineFactory
      */

@@ -43,7 +43,7 @@ public class WebsocketComponentConfiguration {
      * Exchange. This is turn off by default as this may require servet specific
      * configuration to enable this when using Servlet's.
      */
-    private Boolean attachmentMultipartBinding = false;
+    private Boolean attachmentMultipartBinding;
     /**
      * To use a custom HttpBinding to control the mapping between Camel message
      * and HttpClient.
@@ -60,7 +60,7 @@ public class WebsocketComponentConfiguration {
      * the incoming data from the request to Java and that can be a potential
      * security risk.
      */
-    private Boolean allowJavaSerializedObject = false;
+    private Boolean allowJavaSerializedObject;
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.

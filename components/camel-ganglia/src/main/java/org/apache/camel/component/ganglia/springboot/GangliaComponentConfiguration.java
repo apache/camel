@@ -56,7 +56,7 @@ public class GangliaComponentConfiguration {
      * Use the wire format of Ganglia 3.1.0 and later versions. Set this to
      * false to use Ganglia 3.0.x or earlier.
      */
-    private Boolean wireFormat31x = false;
+    private Boolean wireFormat31x;
     /**
      * Spoofing information IP:hostname
      */

@@ -54,13 +54,13 @@ public class Mina2ComponentConfiguration {
     /**
      * Setting to set endpoint as one-way or request-response.
      */
-    private Boolean sync = false;
+    private Boolean sync;
     /**
      * Only used for TCP. If no codec is specified you can use this flag to
      * indicate a text line based codec; if not specified or the value is false
      * then Object Serialization is assumed over TCP.
      */
-    private Boolean textline = false;
+    private Boolean textline;
     /**
      * Only used for TCP and if textline=true. Sets the text line delimiter to
      * use. If none provided Camel will use DEFAULT. This delimiter is used to
@@ -87,7 +87,7 @@ public class Mina2ComponentConfiguration {
      * Sessions can be lazily created to avoid exceptions if the remote server
      * is not up and running when the Camel producer is started.
      */
-    private Boolean lazySessionCreation = false;
+    private Boolean lazySessionCreation;
     /**
      * Only used for TCP. You can transfer the exchange over the wire instead of
      * just the body. The following fields are transferred: In body Out body
@@ -95,7 +95,7 @@ public class Mina2ComponentConfiguration {
      * exchange exception. This requires that the objects are serializable.
      * Camel will exclude any non-serializable objects and log it at WARN level.
      */
-    private Boolean transferExchange = false;
+    private Boolean transferExchange;
     /**
      * To set the textline protocol encoder max line length. By default the
      * default value of Mina itself is used which are Integer.MAX_VALUE.
@@ -110,7 +110,7 @@ public class Mina2ComponentConfiguration {
      * You can enable the Apache MINA logging filter. Apache MINA uses slf4j
      * logging at INFO level to log all input and output.
      */
-    private Boolean minaLogger = false;
+    private Boolean minaLogger;
     /**
      * You can set a list of Mina IoFilters to use.
      */
@@ -122,17 +122,17 @@ public class Mina2ComponentConfiguration {
      * filter chain. This is useful in scenarios where another filter must be
      * the first in the filter chain like the SSL filter.
      */
-    private Boolean allowDefaultCodec = false;
+    private Boolean allowDefaultCodec;
     /**
      * Whether or not to disconnect(close) from Mina session right after use.
      * Can be used for both consumer and producer.
      */
-    private Boolean disconnect = false;
+    private Boolean disconnect;
     /**
      * If sync is enabled then this option dictates MinaConsumer if it should
      * disconnect where there is no reply to send back.
      */
-    private Boolean disconnectOnNoReply = false;
+    private Boolean disconnectOnNoReply;
     /**
      * If sync is enabled this option dictates MinaConsumer which logging level
      * to use when logging a there is no reply to send back.
@@ -145,7 +145,7 @@ public class Mina2ComponentConfiguration {
     /**
      * Whether to auto start SSL handshake.
      */
-    private Boolean autoStartTls = false;
+    private Boolean autoStartTls;
     /**
      * Number of worker threads in the worker pool for TCP and UDP
      */
@@ -154,17 +154,17 @@ public class Mina2ComponentConfiguration {
      * Whether to use ordered thread pool to ensure events are processed orderly
      * on the same channel.
      */
-    private Boolean orderedThreadPoolExecutor = false;
+    private Boolean orderedThreadPoolExecutor;
     /**
      * Whether to create the InetAddress once and reuse. Setting this to false
      * allows to pickup DNS changes in the network.
      */
-    private Boolean cachedAddress = false;
+    private Boolean cachedAddress;
     /**
      * If the clientMode is true mina consumer will connect the address as a TCP
      * client.
      */
-    private Boolean clientMode = false;
+    private Boolean clientMode;
 
     public Mina2Configuration getConfiguration() {
         return configuration;

@@ -84,7 +84,7 @@ public class BoxComponentConfiguration {
      * IAuthSecureStorage or automatic component login by providing a user
      * password
      */
-    private Boolean revokeOnShutdown = false;
+    private Boolean revokeOnShutdown;
     /**
      * Box shared link for shared endpoints can be a link for a shared comment
      * file or folder

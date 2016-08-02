@@ -65,7 +65,7 @@ public class DockerComponentConfiguration {
     /**
      * Use HTTPS communication
      */
-    private Boolean secure = false;
+    private Boolean secure;
     /**
      * Location containing the SSL certificate chain
      */
@@ -81,11 +81,11 @@ public class DockerComponentConfiguration {
     /**
      * Whether to use logging filter
      */
-    private Boolean loggingFilter = false;
+    private Boolean loggingFilter;
     /**
      * Whether to follow redirect filter
      */
-    private Boolean followRedirectFilter = false;
+    private Boolean followRedirectFilter;
     /**
      * Additional configuration parameters as key/value pairs
      */

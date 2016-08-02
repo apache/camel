@@ -60,7 +60,7 @@ public class PropertiesComponentConfiguration {
     /**
      * Whether or not to cache loaded properties. The default value is true.
      */
-    private Boolean cache = false;
+    private Boolean cache;
     /**
      * Optional prefix prepended to property names before resolution.
      */
@@ -74,12 +74,12 @@ public class PropertiesComponentConfiguration {
      * propertyPrefix and propertySuffix before falling back the plain property
      * name specified. If false only the augmented property name is searched.
      */
-    private Boolean fallbackToUnaugmentedProperty = false;
+    private Boolean fallbackToUnaugmentedProperty;
     /**
      * Whether to silently ignore if a location cannot be located such as a
      * properties file not found.
      */
-    private Boolean ignoreMissingLocation = false;
+    private Boolean ignoreMissingLocation;
     /**
      * Sets the value of the prefix token used to identify properties to
      * replace. Setting a value of null restores the default token (link link

@@ -76,11 +76,11 @@ public class SalesforceComponentConfiguration {
     /**
      * Enable for Socks4 proxy false by default
      */
-    private Boolean isHttpProxySocks4 = false;
+    private Boolean isHttpProxySocks4;
     /**
      * Enable for TLS connections true by default
      */
-    private Boolean isHttpProxySecure = false;
+    private Boolean isHttpProxySecure;
     /**
      * HTTP proxy included addresses
      */
@@ -100,7 +100,7 @@ public class SalesforceComponentConfiguration {
     /**
      * Use HTTP proxy Digest authentication false by default
      */
-    private Boolean httpProxyUseDigestAuth = false;
+    private Boolean httpProxyUseDigestAuth;
     /**
      * Package names to scan for DTO classes (multiple packages can be separated
      * by comma).
@@ -130,7 +130,7 @@ public class SalesforceComponentConfiguration {
      * Flag to enable/disable lazy OAuth default is false. When enabled OAuth
      * token retrieval or generation is not done until the first API call
      */
-    private Boolean lazyLogin = false;
+    private Boolean lazyLogin;
     /**
      * Payload format to use for Salesforce API calls either JSON or XML
      * defaults to JSON
@@ -210,7 +210,7 @@ public class SalesforceComponentConfiguration {
      * Whether to update an existing Push Topic when using the Streaming API
      * defaults to false
      */
-    private Boolean updateTopic = false;
+    private Boolean updateTopic;
     /**
      * Notify for fields options are ALL REFERENCED SELECT WHERE
      */

@@ -33,7 +33,7 @@ public class QuartzComponentConfiguration {
      * Whether or not the scheduler should be auto started. This options is
      * default true
      */
-    private Boolean autoStartScheduler = false;
+    private Boolean autoStartScheduler;
     /**
      * Seconds to wait before starting the quartz scheduler.
      */
@@ -42,12 +42,12 @@ public class QuartzComponentConfiguration {
      * Whether to prefix the quartz job with the endpoint id. This option is
      * default false.
      */
-    private Boolean prefixJobNameWithEndpointId = false;
+    private Boolean prefixJobNameWithEndpointId;
     /**
      * Whether to enable Quartz JMX which allows to manage the Quartz scheduler
      * from JMX. This options is default true
      */
-    private Boolean enableJmx = false;
+    private Boolean enableJmx;
     /**
      * Properties to configure the Quartz scheduler.
      */
@@ -63,7 +63,7 @@ public class QuartzComponentConfiguration {
      * to false to reuse Quartz scheduler instances between multiple
      * CamelContext's.
      */
-    private Boolean prefixInstanceName = false;
+    private Boolean prefixInstanceName;
     /**
      * To use the custom SchedulerFactory which is used to create the Scheduler.
      */

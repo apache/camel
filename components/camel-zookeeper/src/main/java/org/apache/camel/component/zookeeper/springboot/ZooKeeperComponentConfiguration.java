@@ -44,7 +44,7 @@ public class ZooKeeperComponentConfiguration {
     /**
      * Whether the children of the node should be listed
      */
-    private Boolean listChildren = false;
+    private Boolean listChildren;
     /**
      * The node in the ZooKeeper server (aka znode)
      */
@@ -52,7 +52,7 @@ public class ZooKeeperComponentConfiguration {
     /**
      * Should changes to the znode be 'watched' and repeatedly processed.
      */
-    private Boolean repeat = false;
+    private Boolean repeat;
     /**
      * The time interval to backoff for after an error before retrying.
      */
@@ -60,7 +60,7 @@ public class ZooKeeperComponentConfiguration {
     /**
      * Should the endpoint create the node if it does not currently exist.
      */
-    private Boolean create = false;
+    private Boolean create;
     /**
      * The create mode that should be used for the newly created node
      */
@@ -69,7 +69,7 @@ public class ZooKeeperComponentConfiguration {
      * Upon the delete of a znode should an empty message be send to the
      * consumer
      */
-    private Boolean sendEmptyMessageOnDelete = false;
+    private Boolean sendEmptyMessageOnDelete;
 
     public ZooKeeperConfiguration getConfiguration() {
         return configuration;

@@ -70,12 +70,12 @@ public class AvroComponentConfiguration {
      * with protocol parameter because for protocolClassName protocol type will
      * be auto detected
      */
-    private Boolean reflectionProtocol = false;
+    private Boolean reflectionProtocol;
     /**
      * If true consumer parameter won't be wrapped into array. Will fail if
      * protocol specifies more then 1 parameter for the message
      */
-    private Boolean singleParameter = false;
+    private Boolean singleParameter;
 
     public AvroConfiguration getConfiguration() {
         return configuration;
