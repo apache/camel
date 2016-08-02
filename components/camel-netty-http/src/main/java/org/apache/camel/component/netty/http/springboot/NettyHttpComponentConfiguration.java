@@ -23,7 +23,6 @@ import org.apache.camel.component.netty.ClientPipelineFactory;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyServerBootstrapFactory;
 import org.apache.camel.component.netty.ServerPipelineFactory;
-import org.apache.camel.component.netty.TextLineDelimiter;
 import org.apache.camel.component.netty.http.NettyHttpBinding;
 import org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -104,17 +103,6 @@ public class NettyHttpComponentConfiguration {
      */
     private Boolean producerPoolEnabled = false;
     /**
-     * This option supports connection less udp sending which is a real fire and
-     * forget. A connected udp send receive the PortUnreachableException if no
-     * one is listen on the receiving port.
-     */
-    private Boolean udpConnectionlessSending = false;
-    /**
-     * If the clientMode is true netty consumer will connect the address as a
-     * TCP client.
-     */
-    private Boolean clientMode = false;
-    /**
      * If the useChannelBuffer is true netty producer will turn the message body
      * into ChannelBuffer before sending it out.
      */
@@ -142,10 +130,6 @@ public class NettyHttpComponentConfiguration {
      * The host port number
      */
     private Integer port;
-    /**
-     * Setting to choose Multicast over UDP
-     */
-    private Boolean broadcast = false;
     /**
      * The TCP/UDP buffer sizes to be used during outbound communication. Size
      * is bytes.
@@ -267,12 +251,6 @@ public class NettyHttpComponentConfiguration {
      */
     private Boolean sync = false;
     /**
-     * Only used for TCP. If no codec is specified you can use this flag to
-     * indicate a text line based codec; if not specified or the value is false
-     * then Object Serialization is assumed over TCP.
-     */
-    private Boolean textline = false;
-    /**
      * Allows to configure additional netty options using option. as prefix. For
      * example option.child.keepAlive=false to set the netty option
      * child.keepAlive=false. See the Netty documentation for possible options
@@ -280,25 +258,11 @@ public class NettyHttpComponentConfiguration {
      */
     private Map<String, Object> options;
     /**
-     * The max line length to use for the textline codec.
-     */
-    private Integer decoderMaxLineLength;
-    /**
      * To use a explicit org.jboss.netty.channel.socket.nio.BossPool as the boss
      * thread pool. For example to share a thread pool with multiple consumers.
      * By default each consumer has their own boss pool with 1 core thread.
      */
     private BossPool bossPool;
-    /**
-     * The delimiter to use for the textline codec. Possible values are LINE and
-     * NULL.
-     */
-    private TextLineDelimiter delimiter;
-    /**
-     * Whether or not to auto append missing end delimiter when sending using
-     * the textline codec.
-     */
-    private Boolean autoAppendDelimiter = false;
     /**
      * To use a explicit org.jboss.netty.channel.socket.nio.WorkerPool as the
      * worker thread pool. For example to share a thread pool with multiple
@@ -310,16 +274,6 @@ public class NettyHttpComponentConfiguration {
      * To use a explicit ChannelGroup.
      */
     private ChannelGroup channelGroup;
-    /**
-     * The encoding (a charset name) to use for the textline codec. If not
-     * provided Camel will use the JVM default Charset.
-     */
-    private String encoding;
-    /**
-     * When using UDP then this option can be used to specify a network
-     * interface by its name such as eth0 to join a multicast group.
-     */
-    private String networkInterface;
     /**
      * A list of decoders to be used. You can use a String which have values
      * separated by comma and have the values be looked up in the Registry. Just
@@ -389,13 +343,6 @@ public class NettyHttpComponentConfiguration {
      * closed exceptions in the Netty server.
      */
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel;
-    /**
-     * The netty component installs a default codec if both encoder/deocder is
-     * null and textline is false. Setting allowDefaultCodec to false prevents
-     * the netty component from installing a default codec as the first element
-     * in the filter chain.
-     */
-    private Boolean allowDefaultCodec = false;
     /**
      * To use a custom ClientPipelineFactory
      */
@@ -492,22 +439,6 @@ public class NettyHttpComponentConfiguration {
         this.producerPoolEnabled = producerPoolEnabled;
     }
 
-    public Boolean getUdpConnectionlessSending() {
-        return udpConnectionlessSending;
-    }
-
-    public void setUdpConnectionlessSending(Boolean udpConnectionlessSending) {
-        this.udpConnectionlessSending = udpConnectionlessSending;
-    }
-
-    public Boolean getClientMode() {
-        return clientMode;
-    }
-
-    public void setClientMode(Boolean clientMode) {
-        this.clientMode = clientMode;
-    }
-
     public Boolean getUseChannelBuffer() {
         return useChannelBuffer;
     }
@@ -554,14 +485,6 @@ public class NettyHttpComponentConfiguration {
 
     public void setPort(Integer port) {
         this.port = port;
-    }
-
-    public Boolean getBroadcast() {
-        return broadcast;
-    }
-
-    public void setBroadcast(Boolean broadcast) {
-        this.broadcast = broadcast;
     }
 
     public long getSendBufferSize() {
@@ -759,14 +682,6 @@ public class NettyHttpComponentConfiguration {
         this.sync = sync;
     }
 
-    public Boolean getTextline() {
-        return textline;
-    }
-
-    public void setTextline(Boolean textline) {
-        this.textline = textline;
-    }
-
     public Map<String, Object> getOptions() {
         return options;
     }
@@ -775,36 +690,12 @@ public class NettyHttpComponentConfiguration {
         this.options = options;
     }
 
-    public Integer getDecoderMaxLineLength() {
-        return decoderMaxLineLength;
-    }
-
-    public void setDecoderMaxLineLength(Integer decoderMaxLineLength) {
-        this.decoderMaxLineLength = decoderMaxLineLength;
-    }
-
     public BossPool getBossPool() {
         return bossPool;
     }
 
     public void setBossPool(BossPool bossPool) {
         this.bossPool = bossPool;
-    }
-
-    public TextLineDelimiter getDelimiter() {
-        return delimiter;
-    }
-
-    public void setDelimiter(TextLineDelimiter delimiter) {
-        this.delimiter = delimiter;
-    }
-
-    public Boolean getAutoAppendDelimiter() {
-        return autoAppendDelimiter;
-    }
-
-    public void setAutoAppendDelimiter(Boolean autoAppendDelimiter) {
-        this.autoAppendDelimiter = autoAppendDelimiter;
     }
 
     public WorkerPool getWorkerPool() {
@@ -821,22 +712,6 @@ public class NettyHttpComponentConfiguration {
 
     public void setChannelGroup(ChannelGroup channelGroup) {
         this.channelGroup = channelGroup;
-    }
-
-    public String getEncoding() {
-        return encoding;
-    }
-
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-    }
-
-    public String getNetworkInterface() {
-        return networkInterface;
-    }
-
-    public void setNetworkInterface(String networkInterface) {
-        this.networkInterface = networkInterface;
     }
 
     public List<ChannelHandler> getDecoders() {
@@ -935,14 +810,6 @@ public class NettyHttpComponentConfiguration {
     public void setServerClosedChannelExceptionCaughtLogLevel(
             LoggingLevel serverClosedChannelExceptionCaughtLogLevel) {
         this.serverClosedChannelExceptionCaughtLogLevel = serverClosedChannelExceptionCaughtLogLevel;
-    }
-
-    public Boolean getAllowDefaultCodec() {
-        return allowDefaultCodec;
-    }
-
-    public void setAllowDefaultCodec(Boolean allowDefaultCodec) {
-        this.allowDefaultCodec = allowDefaultCodec;
     }
 
     public ClientPipelineFactory getClientPipelineFactory() {

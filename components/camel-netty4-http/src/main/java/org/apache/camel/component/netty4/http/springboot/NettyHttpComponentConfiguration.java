@@ -28,7 +28,6 @@ import org.apache.camel.component.netty4.ClientInitializerFactory;
 import org.apache.camel.component.netty4.NettyConfiguration;
 import org.apache.camel.component.netty4.NettyServerBootstrapFactory;
 import org.apache.camel.component.netty4.ServerInitializerFactory;
-import org.apache.camel.component.netty4.TextLineDelimiter;
 import org.apache.camel.component.netty4.http.NettyHttpBinding;
 import org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -86,10 +85,6 @@ public class NettyHttpComponentConfiguration {
      * The host port number
      */
     private Integer port;
-    /**
-     * Setting to choose Multicast over UDP
-     */
-    private Boolean broadcast = false;
     /**
      * The TCP/UDP buffer sizes to be used during outbound communication. Size
      * is bytes.
@@ -218,12 +213,6 @@ public class NettyHttpComponentConfiguration {
      */
     private Map<String, Object> options;
     /**
-     * Only used for TCP. If no codec is specified you can use this flag to
-     * indicate a text line based codec; if not specified or the value is false
-     * then Object Serialization is assumed over TCP.
-     */
-    private Boolean textline = false;
-    /**
      * Whether to use native transport instead of NIO. Native transport takes
      * advantage of the host operating system and is only supported on some
      * platforms. You need to add the netty JAR for the host operating system
@@ -232,24 +221,10 @@ public class NettyHttpComponentConfiguration {
      */
     private Boolean nativeTransport = false;
     /**
-     * The max line length to use for the textline codec.
-     */
-    private Integer decoderMaxLineLength;
-    /**
      * Set the BossGroup which could be used for handling the new connection of
      * the server side across the NettyEndpoint
      */
     private EventLoopGroup bossGroup;
-    /**
-     * The delimiter to use for the textline codec. Possible values are LINE and
-     * NULL.
-     */
-    private TextLineDelimiter delimiter;
-    /**
-     * Whether or not to auto append missing end delimiter when sending using
-     * the textline codec.
-     */
-    private Boolean autoAppendDelimiter = false;
     /**
      * To use a explicit EventLoopGroup as the boss thread pool. For example to
      * share a thread pool with multiple consumers. By default each consumer has
@@ -260,16 +235,6 @@ public class NettyHttpComponentConfiguration {
      * To use a explicit ChannelGroup.
      */
     private ChannelGroup channelGroup;
-    /**
-     * The encoding (a charset name) to use for the textline codec. If not
-     * provided Camel will use the JVM default Charset.
-     */
-    private String encoding;
-    /**
-     * When using UDP then this option can be used to specify a network
-     * interface by its name such as eth0 to join a multicast group.
-     */
-    private String networkInterface;
     /**
      * A list of decoders to be used. You can use a String which have values
      * separated by comma and have the values be looked up in the Registry. Just
@@ -287,20 +252,10 @@ public class NettyHttpComponentConfiguration {
      */
     private List<ChannelHandler> encoders;
     /**
-     * Used only in clientMode in consumer the consumer will attempt to
-     * reconnect on disconnection if this is enabled
-     */
-    private Boolean reconnect = false;
-    /**
      * A custom ChannelHandler class that can be used to perform special
      * marshalling of outbound payloads.
      */
     private ChannelHandler encoder;
-    /**
-     * Used if reconnect and clientMode is enabled. The interval in milli
-     * seconds to attempt reconnection
-     */
-    private Integer reconnectInterval;
     /**
      * A custom ChannelHandler class that can be used to perform special
      * marshalling of inbound payloads.
@@ -348,13 +303,6 @@ public class NettyHttpComponentConfiguration {
      */
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel;
     /**
-     * The netty component installs a default codec if both encoder/deocder is
-     * null and textline is false. Setting allowDefaultCodec to false prevents
-     * the netty component from installing a default codec as the first element
-     * in the filter chain.
-     */
-    private Boolean allowDefaultCodec = false;
-    /**
      * To use a custom ClientInitializerFactory
      */
     private ClientInitializerFactory clientInitializerFactory;
@@ -390,27 +338,6 @@ public class NettyHttpComponentConfiguration {
      * request/reply.
      */
     private Boolean producerPoolEnabled = false;
-    /**
-     * This option supports connection less udp sending which is a real fire and
-     * forget. A connected udp send receive the PortUnreachableException if no
-     * one is listen on the receiving port.
-     */
-    private Boolean udpConnectionlessSending = false;
-    /**
-     * If the clientMode is true netty consumer will connect the address as a
-     * TCP client.
-     */
-    private Boolean clientMode = false;
-    /**
-     * If the useByteBuf is true netty producer will turn the message body into
-     * ByteBuf before sending it out.
-     */
-    private Boolean useByteBuf = false;
-    /**
-     * For UDP only. If enabled the using byte array codec instead of Java
-     * serialization protocol.
-     */
-    private Boolean udpByteArrayCodec = false;
     /**
      * This option allows producers to reuse the same Netty Channel for the
      * lifecycle of processing the Exchange. This is useable if you need to call
@@ -495,14 +422,6 @@ public class NettyHttpComponentConfiguration {
 
     public void setPort(Integer port) {
         this.port = port;
-    }
-
-    public Boolean getBroadcast() {
-        return broadcast;
-    }
-
-    public void setBroadcast(Boolean broadcast) {
-        this.broadcast = broadcast;
     }
 
     public Integer getSendBufferSize() {
@@ -708,14 +627,6 @@ public class NettyHttpComponentConfiguration {
         this.options = options;
     }
 
-    public Boolean getTextline() {
-        return textline;
-    }
-
-    public void setTextline(Boolean textline) {
-        this.textline = textline;
-    }
-
     public Boolean getNativeTransport() {
         return nativeTransport;
     }
@@ -724,36 +635,12 @@ public class NettyHttpComponentConfiguration {
         this.nativeTransport = nativeTransport;
     }
 
-    public Integer getDecoderMaxLineLength() {
-        return decoderMaxLineLength;
-    }
-
-    public void setDecoderMaxLineLength(Integer decoderMaxLineLength) {
-        this.decoderMaxLineLength = decoderMaxLineLength;
-    }
-
     public EventLoopGroup getBossGroup() {
         return bossGroup;
     }
 
     public void setBossGroup(EventLoopGroup bossGroup) {
         this.bossGroup = bossGroup;
-    }
-
-    public TextLineDelimiter getDelimiter() {
-        return delimiter;
-    }
-
-    public void setDelimiter(TextLineDelimiter delimiter) {
-        this.delimiter = delimiter;
-    }
-
-    public Boolean getAutoAppendDelimiter() {
-        return autoAppendDelimiter;
-    }
-
-    public void setAutoAppendDelimiter(Boolean autoAppendDelimiter) {
-        this.autoAppendDelimiter = autoAppendDelimiter;
     }
 
     public EventLoopGroup getWorkerGroup() {
@@ -770,22 +657,6 @@ public class NettyHttpComponentConfiguration {
 
     public void setChannelGroup(ChannelGroup channelGroup) {
         this.channelGroup = channelGroup;
-    }
-
-    public String getEncoding() {
-        return encoding;
-    }
-
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-    }
-
-    public String getNetworkInterface() {
-        return networkInterface;
-    }
-
-    public void setNetworkInterface(String networkInterface) {
-        this.networkInterface = networkInterface;
     }
 
     public List<ChannelHandler> getDecoders() {
@@ -812,28 +683,12 @@ public class NettyHttpComponentConfiguration {
         this.encoders = encoders;
     }
 
-    public Boolean getReconnect() {
-        return reconnect;
-    }
-
-    public void setReconnect(Boolean reconnect) {
-        this.reconnect = reconnect;
-    }
-
     public ChannelHandler getEncoder() {
         return encoder;
     }
 
     public void setEncoder(ChannelHandler encoder) {
         this.encoder = encoder;
-    }
-
-    public Integer getReconnectInterval() {
-        return reconnectInterval;
-    }
-
-    public void setReconnectInterval(Integer reconnectInterval) {
-        this.reconnectInterval = reconnectInterval;
     }
 
     public ChannelHandler getDecoder() {
@@ -902,14 +757,6 @@ public class NettyHttpComponentConfiguration {
         this.serverClosedChannelExceptionCaughtLogLevel = serverClosedChannelExceptionCaughtLogLevel;
     }
 
-    public Boolean getAllowDefaultCodec() {
-        return allowDefaultCodec;
-    }
-
-    public void setAllowDefaultCodec(Boolean allowDefaultCodec) {
-        this.allowDefaultCodec = allowDefaultCodec;
-    }
-
     public ClientInitializerFactory getClientInitializerFactory() {
         return clientInitializerFactory;
     }
@@ -966,38 +813,6 @@ public class NettyHttpComponentConfiguration {
 
     public void setProducerPoolEnabled(Boolean producerPoolEnabled) {
         this.producerPoolEnabled = producerPoolEnabled;
-    }
-
-    public Boolean getUdpConnectionlessSending() {
-        return udpConnectionlessSending;
-    }
-
-    public void setUdpConnectionlessSending(Boolean udpConnectionlessSending) {
-        this.udpConnectionlessSending = udpConnectionlessSending;
-    }
-
-    public Boolean getClientMode() {
-        return clientMode;
-    }
-
-    public void setClientMode(Boolean clientMode) {
-        this.clientMode = clientMode;
-    }
-
-    public Boolean getUseByteBuf() {
-        return useByteBuf;
-    }
-
-    public void setUseByteBuf(Boolean useByteBuf) {
-        this.useByteBuf = useByteBuf;
-    }
-
-    public Boolean getUdpByteArrayCodec() {
-        return udpByteArrayCodec;
-    }
-
-    public void setUdpByteArrayCodec(Boolean udpByteArrayCodec) {
-        this.udpByteArrayCodec = udpByteArrayCodec;
     }
 
     public Boolean getReuseChannel() {
