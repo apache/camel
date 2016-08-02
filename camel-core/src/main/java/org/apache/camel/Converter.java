@@ -39,4 +39,17 @@ public @interface Converter {
      * Whether or not returning <tt>null</tt> is a valid response.
      */
     boolean allowNull() default false;
+
+    /**
+     * Whether to ignore the type converter if it cannot be loaded for some reason.
+     * <p/>
+     * This can be used if a Camel component provides multiple components
+     * where the end user can opt-out some of these components by excluding
+     * dependencies on the classpath, meaning the type converter would not
+     * be able to load due class not found errors. But in those cases its
+     * okay as the component is opted-out.
+     * <p/>
+     * Important this configuration must be set on the class-level, not on the method.
+     */
+    boolean ignoreOnLoadError() default false;
 }
