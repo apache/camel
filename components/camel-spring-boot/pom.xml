@@ -30,7 +30,7 @@
   <description>Camel :: Spring Boot</description>
 
   <properties>
-    <camel.osgi.export.pkg />
+    <camel.osgi.export.pkg/>
   </properties>
 
   <dependencies>
