@@ -478,10 +478,12 @@
     <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-resolver-dns/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-dns/${netty-version}</bundle>
     <bundle dependency='true'>mvn:org.mousio/etcd4j/${etcd4j-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-etcd/${project.version}</bundle>
   </feature>
