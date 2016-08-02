@@ -101,7 +101,7 @@ public class MailComponentConfiguration {
      * by setting a header with the key delete to determine if the mail should
      * be deleted or not.
      */
-    private Boolean delete = false;
+    private Boolean delete;
     /**
      * Specifies whether Camel should map the received mail message to Camel
      * body/headers. If set to true the body of the mail message is mapped to
@@ -110,7 +110,7 @@ public class MailComponentConfiguration {
      * raw javax.mail.Message. You can retrieve this raw message by calling
      * exchange.getIn().getBody(javax.mail.Message.class).
      */
-    private Boolean mapMailMessage = false;
+    private Boolean mapMailMessage;
     /**
      * The folder to poll.
      */
@@ -121,11 +121,11 @@ public class MailComponentConfiguration {
      * represents the unsupported charset) is removed from the content-type and
      * it relies on the platform default instead.
      */
-    private Boolean ignoreUriScheme = false;
+    private Boolean ignoreUriScheme;
     /**
      * Whether to limit by unseen mails only.
      */
-    private Boolean unseen = false;
+    private Boolean unseen;
     /**
      * Sets the To email address. Separate multiple email addresses with comma.
      */
@@ -155,7 +155,7 @@ public class MailComponentConfiguration {
      * Enable debug mode on the underlying mail framework. The SUN Mail
      * framework logs the debug messages to System.out by default.
      */
-    private Boolean debugMode = false;
+    private Boolean debugMode;
     /**
      * The connection timeout in milliseconds.
      */
@@ -164,7 +164,7 @@ public class MailComponentConfiguration {
      * To use a dummy security setting for trusting all certificates. Should
      * only be used for development mode and not production.
      */
-    private Boolean dummyTrustManager = false;
+    private Boolean dummyTrustManager;
     /**
      * The mail message content type. Use text/html for HTML mails.
      */
@@ -179,25 +179,25 @@ public class MailComponentConfiguration {
     /**
      * Whether to use disposition inline or attachment.
      */
-    private Boolean useInlineAttachments = false;
+    private Boolean useInlineAttachments;
     /**
      * Option to let Camel ignore unsupported charset in the local JVM when
      * sending mails. If the charset is unsupported then charset=XXX (where XXX
      * represents the unsupported charset) is removed from the content-type and
      * it relies on the platform default instead.
      */
-    private Boolean ignoreUnsupportedCharset = false;
+    private Boolean ignoreUnsupportedCharset;
     /**
      * Whether the consumer should disconnect after polling. If enabled this
      * forces Camel to connect on each poll.
      */
-    private Boolean disconnect = false;
+    private Boolean disconnect;
     /**
      * Whether the consumer should close the folder after polling. Setting this
      * option to false and having disconnect=false as well then the consumer
      * keep the folder open between polls.
      */
-    private Boolean closeFolder = false;
+    private Boolean closeFolder;
     /**
      * To configure security using SSLContextParameters.
      */
@@ -215,14 +215,14 @@ public class MailComponentConfiguration {
      * the mail will not be eager marked as SEEN on the mail server which allows
      * us to rollback the mail message if there is an error processing in Camel.
      */
-    private Boolean peek = false;
+    private Boolean peek;
     /**
      * If the mail consumer cannot retrieve a given mail message then this
      * option allows to skip the message and move on to retrieve the next mail
      * message. The default behavior would be the consumer throws an exception
      * and no mails from the batch would be able to be routed by Camel.
      */
-    private Boolean skipFailedMessage = false;
+    private Boolean skipFailedMessage;
     /**
      * If the mail consumer cannot retrieve a given mail message then this
      * option allows to handle the caused exception by the consumer's error
@@ -231,7 +231,7 @@ public class MailComponentConfiguration {
      * behavior would be the consumer throws an exception and no mails from the
      * batch would be able to be routed by Camel.
      */
-    private Boolean handleFailedMessage = false;
+    private Boolean handleFailedMessage;
     /**
      * To use a custom AttachmentsContentTransferEncodingResolver to resolve
      * what content-type-encoding to use for attachments.

@@ -54,12 +54,12 @@ public class QuartzComponentConfiguration {
      * Whether or not the scheduler should be auto started. This options is
      * default true
      */
-    private Boolean autoStartScheduler = false;
+    private Boolean autoStartScheduler;
     /**
      * Whether to enable Quartz JMX which allows to manage the Quartz scheduler
      * from JMX. This options is default true
      */
-    private Boolean enableJmx = false;
+    private Boolean enableJmx;
 
     public SchedulerFactory getFactory() {
         return factory;

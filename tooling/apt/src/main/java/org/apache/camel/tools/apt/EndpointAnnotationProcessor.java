@@ -264,10 +264,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
             String defaultValue = entry.getDefaultValue();
-            if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
-                // fallback as false for boolean types
-                defaultValue = "false";
-            }
+            // component option do not have default value for boolean (as we dont really known if its true or false)
 
             // component options do not have prefix
             String optionalPrefix = "";

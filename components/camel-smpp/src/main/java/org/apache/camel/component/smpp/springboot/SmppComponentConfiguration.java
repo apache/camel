@@ -180,7 +180,7 @@ public class SmppComponentConfiguration {
     /**
      * Whether using SSL with the smpps protocol
      */
-    private Boolean usingSSL = false;
+    private Boolean usingSSL;
     /**
      * Defines the initial delay in milliseconds after the consumer/producer
      * tries to reconnect to the SMSC after the connection was lost.
@@ -198,7 +198,7 @@ public class SmppComponentConfiguration {
      * exchange. If they are present Camel will use these data to connect to the
      * SMSC.
      */
-    private Boolean lazySessionCreation = false;
+    private Boolean lazySessionCreation;
     /**
      * If you need to tunnel SMPP through a HTTP proxy set this attribute to the
      * hostname or ip address of your HTTP proxy.

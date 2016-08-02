@@ -137,7 +137,7 @@ public class DigitalSignatureComponentConfiguration {
      * extreme peril as vital private information such as Keys and passwords may
      * escape if unset.
      */
-    private Boolean clearHeaders = false;
+    private Boolean clearHeaders;
     /**
      * Set the Crypto operation from that supplied after the crypto scheme in
      * the endpoint uri e.g. crypto:sign sets sign as the operation.

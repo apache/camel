@@ -37,7 +37,7 @@ public class DisruptorVmComponentConfiguration {
     /**
      * To configure the default value for multiple consumers
      */
-    private Boolean defaultMultipleConsumers = false;
+    private Boolean defaultMultipleConsumers;
     /**
      * To configure the default value for DisruptorProducerType The default
      * value is Multi.
@@ -52,7 +52,7 @@ public class DisruptorVmComponentConfiguration {
      * To configure the default value for block when full The default value is
      * true.
      */
-    private Boolean defaultBlockWhenFull = false;
+    private Boolean defaultBlockWhenFull;
     /**
      * To configure the ring buffer size
      */

@@ -64,12 +64,12 @@ public class CacheComponentConfiguration {
     /**
      * Specifies whether cache may overflow to disk
      */
-    private Boolean overflowToDisk = false;
+    private Boolean overflowToDisk;
     /**
      * Sets whether elements are eternal. If eternal timeouts are ignored and
      * the element never expires.
      */
-    private Boolean eternal = false;
+    private Boolean eternal;
     /**
      * The maximum time between creation time and when an element expires. Is
      * used only if the element is not eternal
@@ -82,7 +82,7 @@ public class CacheComponentConfiguration {
     /**
      * Whether the disk store persists between restarts of the application.
      */
-    private Boolean diskPersistent = false;
+    private Boolean diskPersistent;
     /**
      * The number of seconds between runs of the disk expiry thread.
      */
@@ -100,7 +100,7 @@ public class CacheComponentConfiguration {
      * cache. If this option is enabled then overflow to disk cannot be enabled
      * as well.
      */
-    private Boolean objectCache = false;
+    private Boolean objectCache;
 
     public CacheManagerFactory getCacheManagerFactory() {
         return cacheManagerFactory;

@@ -87,7 +87,7 @@ public class LinkedInComponentConfiguration {
      * Flag to enable/disable lazy OAuth default is true. when enabled OAuth
      * token retrieval or generation is not done until the first REST call
      */
-    private Boolean lazyAuth = false;
+    private Boolean lazyAuth;
 
     public LinkedInConfiguration getConfiguration() {
         return configuration;

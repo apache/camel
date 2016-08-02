@@ -96,7 +96,7 @@ public class JettyHttpComponentConfiguration9 {
      * If this option is true Jetty JMX support will be enabled for this
      * endpoint.
      */
-    private Boolean enableJmx = false;
+    private Boolean enableJmx;
     /**
      * To use a custom org.apache.camel.component.jetty.JettyHttpBinding which
      * are used to customize how a response should be written for the producer.
@@ -135,7 +135,7 @@ public class JettyHttpComponentConfiguration9 {
     /**
      * Whether or not to use Jetty continuations for the Jetty Server.
      */
-    private Boolean useContinuation = false;
+    private Boolean useContinuation;
     /**
      * To configure security using SSLContextParameters
      */
@@ -174,7 +174,7 @@ public class JettyHttpComponentConfiguration9 {
      * other camel-jetty endpoint is share the same port otherwise this option
      * may not work as expected.
      */
-    private Boolean sendServerVersion = false;
+    private Boolean sendServerVersion;
     /**
      * Whether to allow java serialization when a request uses
      * context-type=application/x-java-serialized-object This is by default
@@ -182,7 +182,7 @@ public class JettyHttpComponentConfiguration9 {
      * the incoming data from the request to Java and that can be a potential
      * security risk.
      */
-    private Boolean allowJavaSerializedObject = false;
+    private Boolean allowJavaSerializedObject;
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.

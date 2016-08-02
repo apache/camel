@@ -53,7 +53,7 @@ public class QuickfixjComponentConfiguration {
      * If set to true the engines will be created and started when needed (when
      * first message is send)
      */
-    private Boolean lazyCreateEngines = false;
+    private Boolean lazyCreateEngines;
 
     public MessageFactory getMessageFactory() {
         return messageFactory;
