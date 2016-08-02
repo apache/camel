@@ -532,6 +532,34 @@ which also offers a property placeholder service. Camel supports
 convention over configuration, so all you have to do is to define the
 OSGi Blueprint property placeholder in the XML file as shown below:
 
+[source]
+----
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+           xsi:schemaLocation="
+           http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+ 
+    <!-- OSGI blueprint property placeholder -->
+    <cm:property-placeholder id="myblueprint.placeholder" persistent-id="camel.blueprint">
+        <!-- list some properties as needed -->
+        <cm:default-properties>
+            <cm:property name="result" value="mock:result"/>
+        </cm:default-properties>
+    </cm:property-placeholder>
+ 
+    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+        <!-- in the route we can use {{ }} placeholders which will lookup in blueprint
+             as Camel will auto detect the OSGi blueprint property placeholder and use it -->
+        <route>
+            <from uri="direct:start"/>
+            <to uri="mock:foo"/>
+            <to uri="{{result}}"/>
+        </route>
+    </camelContext>
+</blueprint>
+----
+
 *Using OSGi blueprint property placeholders in Camel routes*
 
 By default Camel detects and uses OSGi blueprint property placeholder
@@ -557,6 +585,38 @@ align those if you want.
 You can also explicit refer to a specific OSGi blueprint property
 placeholder by its id. For that you need to use the Camel's
 `<propertyPlaceholder>` as shown in the example below:
+
+[source]
+----
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+           xsi:schemaLocation="
+           http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+ 
+    <!-- OSGI blueprint property placeholder -->
+    <cm:property-placeholder id="myblueprint.placeholder" persistent-id="camel.blueprint">
+        <!-- list some properties as needed -->
+        <cm:default-properties>
+            <cm:property name="prefix.result" value="mock:result"/>
+        </cm:default-properties>
+    </cm:property-placeholder>
+ 
+    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+        <!-- using Camel properties component and refer to the blueprint property placeholder by its id -->
+        <propertyPlaceholder id="properties" location="blueprint:myblueprint.placeholder"
+                             prefixToken="[[" suffixToken="]]"
+                             propertyPrefix="prefix."/>
+ 
+        <!-- in the route we can use {{ }} placeholders which will lookup in blueprint -->
+        <route>
+            <from uri="direct:start"/>
+            <to uri="mock:foo"/>
+            <to uri="[[result]]"/>
+        </route>
+    </camelContext>
+</blueprint>
+----
 
 *Explicit referring to a OSGi blueprint placeholder in Camel*
 
