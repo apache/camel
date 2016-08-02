@@ -69,6 +69,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected String charset;
     @UriParam(javaType = "java.lang.String")
     protected Expression fileName;
+    @UriParam
+    protected String doneFileName;
 
     // producer options
 
@@ -84,8 +86,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected boolean eagerDeleteTargetFile = true;
     @UriParam(label = "producer,advanced")
     protected boolean keepLastModified;
-    @UriParam(label = "producer")
-    protected String doneFileName;
     @UriParam(label = "producer,advanced")
     protected boolean allowNullBody;
 
