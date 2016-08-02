@@ -114,8 +114,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         }
 
         while (isRunAllowed()) {
-            // CAMEL-10215 - Synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
-            synchronized(this) {
+            // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
+            synchronized (this) {
                 try {
                     beforePoll(0);
                     // take will block waiting for message
@@ -137,8 +137,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             throw new RejectedExecutionException(this + " is not started, but in state: " + getStatus().name());
         }
 
-        // CAMEL-10215 - Synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
-        synchronized(this) {
+        // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
+        synchronized (this) {
             try {
                 // use the timeout value returned from beforePoll
                 timeout = beforePoll(timeout);
