@@ -298,7 +298,7 @@
     <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
     <javax-mail-version>1.5.5</javax-mail-version>
     <javax.servlet-api-version>3.1.0</javax.servlet-api-version>
-    <jaxb-bundle-version>2.2.6_1</jaxb-bundle-version>
+    <jaxb-bundle-version>2.2.11_1</jaxb-bundle-version>
     <jaxen-version>1.1.6</jaxen-version>
     <jbpm-version>6.4.0.Final</jbpm-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
