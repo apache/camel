@@ -283,6 +283,12 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
         for (ComponentOptionModel option : model.getComponentOptions()) {
+
+            if (skipComponentOption(model, option)) {
+                // some component options should be skipped
+                continue;
+            }
+
             // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
             String type = option.getJavaType();
             type = type.replaceAll("\\<\\?\\>", "");
@@ -353,6 +359,21 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             throw new MojoFailureException("IOError with file " + target, e);
         }
     }
+
+    // CHECKSTYLE:OFF
+    private static boolean skipComponentOption(ComponentModel model, ComponentOptionModel option) {
+        if ("netty4-http".equals(model.getScheme()) || "netty-http".equals(model.getScheme())) {
+            String name = option.getName();
+            if (name.equals("textline") || name.equals("delimiter") ||  name.equals("autoAppendDelimiter") || name.equals("decoderMaxLineLength")
+                || name.equals("encoding") || name.equals("allowDefaultCodec") ||  name.equals("udpConnectionlessSending") || name.equals("networkInterface")
+                || name.equals("clientMode") || name.equals("reconnect") ||  name.equals("reconnectInterval") || name.equals("useByteBuf")
+                || name.equals("udpByteArrayCodec") || name.equals("broadcast")) {
+                    return true;
+            }
+        }
+        return false;
+    }
+    // CHECKSTYLE:ON
 
     private void createDataFormatConfigurationSource(String packageName, DataFormatModel model, String overrideDataFormatName) throws MojoFailureException {
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
@@ -473,6 +494,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             if ("id".equals(option.getName()) || "expression".equals(option.getName()) || "resultType".equals(option.getName())) {
                 continue;
             }
+            // CHECKSTYLE:OFF
             if ("bean".equals(model.getName())) {
                 // and skip following as they are not global options
                 if ("bean".equals(option.getName()) || "ref".equals(option.getName()) || "method".equals(option.getName()) || "beanType".equals(option.getName())) {
@@ -501,6 +523,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     continue;
                 }
             }
+            // CHECKSTYLE:ON
 
             // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
             String type = option.getJavaType();
