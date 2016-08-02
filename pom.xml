@@ -243,6 +243,8 @@
                 <exclude>**/src/main/resources/META-INF/cxf/bus-extensions.txt</exclude>
                 <!-- ignore the api signatures files -->
                 <exclude>**/src/signatures/*.txt</exclude>
+                <!-- camel-salesforce BSD license from salesforce developers -->
+                <exclude>**/CometDReplayExtension.java</exclude>
                 <!-- camel website and user-manual -->
                 <exclude>**/node/**</exclude>
                 <exclude>**/node_modules/**</exclude>
