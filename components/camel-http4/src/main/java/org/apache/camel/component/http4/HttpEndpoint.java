@@ -156,7 +156,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                 HttpHost proxy = new HttpHost(host, port, scheme);
                 clientBuilder.setProxy(proxy);
             } else {
-            	if (ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort())) {
+                if (ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort())) {
                     String scheme = getProtocol();
                     // fallback and use either http or https depending on secure
                     if (scheme == null) {
@@ -164,7 +164,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                     }
                     HttpHost proxy = new HttpHost(getProxyHost(), getProxyPort(), scheme);
                     clientBuilder.setProxy(proxy);
-            	}
+                }
             }
         } else {
             clientBuilder.useSystemProperties();
