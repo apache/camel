@@ -56,7 +56,7 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
     }
 
     public void process(Exchange exchange) throws Exception {
-        // just to let the stacktrace reveal that this is a dead letter channel
+        // just to let the stacktrace reveal that this is a default error handler
         super.process(exchange);
     }
 
