@@ -42,7 +42,6 @@ public class FileComponentConfigurationAndDocumentationTest extends ContextTestS
         assertNotNull(json);
 
         assertTrue(json.contains("\"directoryName\": { \"kind\": \"path\", \"group\": \"common\", \"required\": \"true\""));
-        assertTrue(json.contains("\"doneFileName\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"string\""));
         assertTrue(json.contains("\"autoCreate\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
         assertTrue(json.contains("\"readLockMinAge\": { \"kind\": \"parameter\", \"group\": \"lock\", \"label\": \"consumer,lock\""));
     }
