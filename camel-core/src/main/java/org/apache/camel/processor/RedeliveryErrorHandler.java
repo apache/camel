@@ -67,6 +67,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected final AtomicInteger redeliverySleepCounter = new AtomicInteger();
     protected ScheduledExecutorService executorService;
     protected final CamelContext camelContext;
+    protected final AsyncProcessorAwaitManager awaitManager;
     protected final Processor deadLetter;
     protected final String deadLetterUri;
     protected final boolean deadLetterHandleNewException;
@@ -263,6 +264,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
 
         this.camelContext = camelContext;
+        this.awaitManager = camelContext.getAsyncProcessorAwaitManager();
         this.redeliveryProcessor = redeliveryProcessor;
         this.deadLetter = deadLetter;
         this.output = output;
@@ -394,7 +396,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
         // inline org.apache.camel.util.AsyncProcessorHelper.process(org.apache.camel.AsyncProcessor, org.apache.camel.Exchange)
         // to optimize and reduce stacktrace lengths
-        final AsyncProcessorAwaitManager awaitManager = exchange.getContext().getAsyncProcessorAwaitManager();
         final CountDownLatch latch = new CountDownLatch(1);
         boolean sync = process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
