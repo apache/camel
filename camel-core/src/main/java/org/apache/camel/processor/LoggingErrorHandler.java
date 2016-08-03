@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.util.CamelLogger;
-import org.springframework.context.annotation.DependsOn;
 
 /**
  * An {@link ErrorHandler} which uses commons-logging to dump the error
@@ -28,7 +27,7 @@ import org.springframework.context.annotation.DependsOn;
  * @version
  * @deprecated use {@link DeadLetterChannel} using a log endpoint instead
  */
-@DependsOn
+@Deprecated
 public class LoggingErrorHandler extends DefaultErrorHandler {
 
     /**
