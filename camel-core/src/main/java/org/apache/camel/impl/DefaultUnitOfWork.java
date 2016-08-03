@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.Predicate;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -190,6 +191,11 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     public void handoverSynchronization(Exchange target) {
+        handoverSynchronization(target, null);
+    }
+
+    @Override
+    public void handoverSynchronization(Exchange target, Predicate<Synchronization> filter) {
         if (synchronizations == null || synchronizations.isEmpty()) {
             return;
         }
@@ -204,7 +210,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
                 handover = veto.allowHandover();
             }
 
-            if (handover) {
+            if (handover && (filter == null || filter.test(synchronization))) {
                 log.trace("Handover synchronization {} to: {}", synchronization, target);
                 target.addOnCompletion(synchronization);
                 // remove it if its handed over
