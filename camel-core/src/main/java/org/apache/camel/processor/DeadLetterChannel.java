@@ -63,11 +63,6 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
-    public void process(Exchange exchange) throws Exception {
-        // just to let the stack trace reveal that this is a dead letter channel
-        super.process(exchange);
-    }
-
     @Override
     public String toString() {
         if (output == null) {
