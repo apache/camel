@@ -390,7 +390,7 @@
     <lucene-version>5.5.0</lucene-version>
     <lucene-version-range>[5,6)</lucene-version-range>
     <lightcouch-version>0.1.8</lightcouch-version>
-    <lightcouch-gson-version>2.3.1</lightcouch-gson-version>
+    <lightcouch-gson-version>2.4</lightcouch-gson-version>
     <lightcouch-bundle-version>0.1.8_2</lightcouch-bundle-version>
     <!-- needed from tooling/archetypes -->
     <!-- use antrun 1.6 as 1.7 fails with finding tools.jar on java on some platforms -->
@@ -487,7 +487,7 @@
     <restlet-jackson-version>2.4.4</restlet-jackson-version>
     <restlet-woodstox-version>4.3.0</restlet-woodstox-version>
     <restlet-yaml-version>1.13</restlet-yaml-version>
-    <restlet-gson-version>2.3.1</restlet-gson-version>
+    <restlet-gson-version>2.4</restlet-gson-version>
     <restlet-joda-time-version>2.3</restlet-joda-time-version>
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
     <rhino-version>1.7R2</rhino-version>
