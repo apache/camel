@@ -374,33 +374,28 @@
       <version>1.0.0</version>
     </dependency>
 
-    <!-- atomikos XA TX manager -->
+    <!-- Narayana XA TX manager -->
     <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions</artifactId>
-      <version>${atomikos-transactions-version}</version>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>jdbc</artifactId>
+      <version>${narayana-version}</version>
     </dependency>
     <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-jta</artifactId>
-      <version>${atomikos-transactions-version}</version>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>jms</artifactId>
+      <version>${narayana-version}</version>
     </dependency>
     <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-jms</artifactId>
-      <version>${atomikos-transactions-version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.jms</groupId>
-          <artifactId>jms</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>jta</artifactId>
+      <version>${narayana-version}</version>
     </dependency>
     <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-jdbc</artifactId>
-      <version>${atomikos-transactions-version}</version>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <version>${jboss-logging-version}</version>
     </dependency>
+
   </dependencies>
 
   <build>
