@@ -59,7 +59,6 @@
     <atmos-client-version>2.2.2</atmos-client-version>
     <atmosphere-version>2.4.5</atmosphere-version>
     <atmosphere-version-range>[2.4,3.0)</atmosphere-version-range>
-    <atomikos-transactions-version>4.0.4</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
     <avalon-version>4.3.1</avalon-version>
     <avro-version>1.8.1</avro-version>
@@ -434,6 +433,7 @@
     <mustache-bundle-version>0.9.1_2</mustache-bundle-version>
     <mvel-version>2.2.8.Final</mvel-version>
     <mybatis-version>3.4.1</mybatis-version>
+    <narayana-version>5.3.3.Final</narayana-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <netty3-version>3.10.6.Final</netty3-version>
     <netty-version>4.1.4.Final</netty-version>
