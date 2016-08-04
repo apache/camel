@@ -64,6 +64,8 @@ import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.xml.bind.marshaller.CharacterEscapeHandler;
+
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using JAXB2 to marshal to and from XML
@@ -101,6 +103,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     private JaxbXmlStreamWriterWrapper xmlStreamWriterWrapper;
     private TypeConverter typeConverter;
     private Schema cachedSchema;
+    private CharacterEscapeHandler escapeHandler;
 
     public JaxbDataFormat() {
     }
@@ -145,6 +148,13 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             }
             if (namespacePrefixMapper != null) {
                 marshaller.setProperty(namespacePrefixMapper.getRegistrationKey(), namespacePrefixMapper);
+            }
+            CharacterEscapeHandler escapeHandlerObject = exchange.getProperty(JaxbConstants.JAXB_ESCAPE_HANDLER, CharacterEscapeHandler.class);
+            if(escapeHandlerObject == null) {
+                escapeHandlerObject = getEscapeHandler();
+            }
+            if(escapeHandlerObject != null) {
+                marshaller.setProperty(CharacterEscapeHandler.class.getName(),escapeHandlerObject);
             }
 
             marshal(exchange, graph, stream, marshaller);
@@ -535,5 +545,13 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         if (factory != schemaFactory) {
             SCHEMA_FACTORY_POOL.offer(factory);
         }
+    }
+    
+    public CharacterEscapeHandler getEscapeHandler() {
+        return escapeHandler;
+    }
+
+    public void setEscapeHandler(CharacterEscapeHandler escapeHandler) {
+        this.escapeHandler = escapeHandler;
     }
 }
