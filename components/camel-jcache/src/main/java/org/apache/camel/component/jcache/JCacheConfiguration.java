@@ -31,6 +31,7 @@ import javax.cache.integration.CacheLoader;
 import javax.cache.integration.CacheWriter;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.EndpointHelper;
@@ -38,6 +39,7 @@ import org.apache.camel.util.EndpointHelper;
 @UriParams
 public class JCacheConfiguration {
     @UriParam(label = "advanced")
+    @Metadata(required = "true")
     private String cachingProvider;
 
     @UriParam(label = "advanced")
