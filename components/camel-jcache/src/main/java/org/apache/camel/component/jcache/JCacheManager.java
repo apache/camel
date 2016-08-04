@@ -148,6 +148,7 @@ public class JCacheManager<K, V> implements Closeable {
         mutableConfiguration.setStatisticsEnabled(configuration.isStatisticsEnabled());
         mutableConfiguration.setReadThrough(configuration.isReadThrough());
         mutableConfiguration.setStoreByValue(configuration.isStoreByValue());
+        mutableConfiguration.setWriteThrough(configuration.isWriteThrough());
 
         return mutableConfiguration;
     }
