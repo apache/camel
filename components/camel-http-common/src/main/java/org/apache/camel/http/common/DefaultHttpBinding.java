@@ -23,10 +23,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import javax.activation.DataHandler;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -54,10 +60,26 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultHttpBinding implements HttpBinding {
 
+    /**
+     * Whether Date/Locale should be converted to String types (enabled by default)
+     */
+    public static final String DATE_LOCALE_CONVERSION = "CamelHttpBindingDateLocaleConversion";
+
+    /**
+     * The data format used for storing java.util.Date instances as a String value.
+     */
+    public static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpBinding.class);
+    private static final TimeZone TIME_ZONE_GMT = TimeZone.getTimeZone("GMT");
+
     private boolean useReaderForPayload;
     private boolean eagerCheckContentAvailable;
     private boolean transferException;
+    private boolean allowJavaSerializedObject;
+    private boolean mapHttpMessageBody = true;
+    private boolean mapHttpMessageHeaders = true;
+    private boolean mapHttpMessageFormUrlEncodedBody = true;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
 
     public DefaultHttpBinding() {
@@ -72,16 +94,60 @@ public class DefaultHttpBinding implements HttpBinding {
     public DefaultHttpBinding(HttpCommonEndpoint endpoint) {
         this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
         this.transferException = endpoint.isTransferException();
+        if (endpoint.getComponent() != null) {
+            this.allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
+        }
     }
 
     public void readRequest(HttpServletRequest request, HttpMessage message) {
         LOG.trace("readRequest {}", request);
-        
-        // lets force a parse of the body and headers
-        message.getBody();
+
+        // must read body before headers
+        if (mapHttpMessageBody) {
+            readBody(request, message);
+        }
+        if (mapHttpMessageHeaders) {
+            readHeaders(request, message);
+        }
+        if (mapHttpMessageFormUrlEncodedBody) {
+            try {
+                readFormUrlEncodedBody(request, message);
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeCamelException("Cannot read Form URL encoded body due " + e.getMessage(), e);
+            }
+        }
+
         // populate the headers from the request
         Map<String, Object> headers = message.getHeaders();
-        
+
+        // always store these standard headers
+        // store the method and query and other info in headers as String types
+        String rawPath = getRawPath(request);
+        headers.put(Exchange.HTTP_METHOD, request.getMethod());
+        headers.put(Exchange.HTTP_QUERY, request.getQueryString());
+        headers.put(Exchange.HTTP_URL, request.getRequestURL().toString());
+        headers.put(Exchange.HTTP_URI, request.getRequestURI());
+        headers.put(Exchange.HTTP_PATH, rawPath);
+        // only set content type if not already extracted
+        if (!headers.containsKey(Exchange.CONTENT_TYPE)) {
+            headers.put(Exchange.CONTENT_TYPE, request.getContentType());
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("HTTP method {}", request.getMethod());
+            LOG.trace("HTTP query {}", request.getQueryString());
+            LOG.trace("HTTP url {}", request.getRequestURL());
+            LOG.trace("HTTP uri {}", request.getRequestURI());
+            LOG.trace("HTTP path {}", rawPath);
+            LOG.trace("HTTP content-type {}", headers.get(Exchange.CONTENT_TYPE));
+        }
+    }
+
+    protected void readHeaders(HttpServletRequest request, HttpMessage message) {
+        LOG.trace("readHeaders {}", request);
+
+        Map<String, Object> headers = message.getHeaders();
+
         //apply the headerFilterStrategy
         Enumeration<?> names = request.getHeaderNames();
         while (names.hasMoreElements()) {
@@ -94,11 +160,11 @@ public class DefaultHttpBinding implements HttpBinding {
                 name = Exchange.CONTENT_TYPE;
             }
             if (headerFilterStrategy != null
-                && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
+                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
                 HttpHelper.appendHeader(headers, name, extracted);
             }
         }
-                
+
         if (request.getCharacterEncoding() != null) {
             headers.put(Exchange.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
             message.getExchange().setProperty(Exchange.CHARSET_NAME, request.getCharacterEncoding());
@@ -109,43 +175,37 @@ public class DefaultHttpBinding implements HttpBinding {
         } catch (Exception e) {
             throw new RuntimeCamelException("Cannot read request parameters due " + e.getMessage(), e);
         }
-        
+    }
+
+    protected void readBody(HttpServletRequest request, HttpMessage message) {
+        LOG.trace("readBody {}", request);
+
+        // lets parse the body
         Object body = message.getBody();
         // reset the stream cache if the body is the instance of StreamCache
         if (body instanceof StreamCache) {
-            ((StreamCache)body).reset();
-        }
-
-        // store the method and query and other info in headers as String types
-        headers.put(Exchange.HTTP_METHOD, request.getMethod());
-        headers.put(Exchange.HTTP_QUERY, request.getQueryString());
-        headers.put(Exchange.HTTP_URL, request.getRequestURL().toString());
-        headers.put(Exchange.HTTP_URI, request.getRequestURI());
-        headers.put(Exchange.HTTP_PATH, request.getPathInfo());
-        headers.put(Exchange.CONTENT_TYPE, request.getContentType());
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("HTTP method {}", request.getMethod());
-            LOG.trace("HTTP query {}", request.getQueryString());
-            LOG.trace("HTTP url {}", request.getRequestURL());
-            LOG.trace("HTTP uri {}", request.getRequestURI());
-            LOG.trace("HTTP path {}", request.getPathInfo());
-            LOG.trace("HTTP content-type {}", request.getContentType());
+            ((StreamCache) body).reset();
         }
 
         // if content type is serialized java object, then de-serialize it to a Java object
         if (request.getContentType() != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(request.getContentType())) {
-            try {
-                InputStream is = message.getExchange().getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
-                Object object = HttpHelper.deserializeJavaObjectFromStream(is, message.getExchange().getContext());
-                if (object != null) {
-                    message.setBody(object);
+            // only deserialize java if allowed
+            if (allowJavaSerializedObject || isTransferException()) {
+                try {
+                    InputStream is = message.getExchange().getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
+                    Object object = HttpHelper.deserializeJavaObjectFromStream(is, message.getExchange().getContext());
+                    if (object != null) {
+                        message.setBody(object);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
                 }
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
+            } else {
+                // set empty body
+                message.setBody(null);
             }
         }
-        
+
         populateAttachments(request, message);
     }
 
@@ -168,37 +228,69 @@ public class DefaultHttpBinding implements HttpBinding {
                 }
             }
         }
+    }
 
-        LOG.trace("HTTP method {} with Content-Type {}", request.getMethod(), request.getContentType());
-        Boolean flag = message.getHeader(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.class);
-        boolean skipWwwFormUrlEncoding =  flag != null ? flag : false; 
-        if (request.getMethod().equals("POST") && request.getContentType() != null
-                && request.getContentType().startsWith(HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
-                && !skipWwwFormUrlEncoding) {
-            String charset = request.getCharacterEncoding();
-            if (charset == null) {
-                charset = "UTF-8";
-            }
-            // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
-            String body = message.getBody(String.class);
-            if (ObjectHelper.isNotEmpty(body)) {
-                for (String param : body.split("&")) {
-                    String[] pair = param.split("=", 2);
-                    if (pair.length == 2) {
-                        String name = URLDecoder.decode(pair[0], charset);
-                        String value = URLDecoder.decode(pair[1], charset);
-                        if (headerFilterStrategy != null
-                                && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                            HttpHelper.appendHeader(headers, name, value);
+    protected void readFormUrlEncodedBody(HttpServletRequest request, HttpMessage message) throws UnsupportedEncodingException {
+        LOG.trace("readFormUrlEncodedBody {}", request);
+        // should we extract key=value pairs from form bodies (application/x-www-form-urlencoded)
+        // and map those to Camel headers
+        if (mapHttpMessageBody && mapHttpMessageHeaders) {
+            LOG.trace("HTTP method {} with Content-Type {}", request.getMethod(), request.getContentType());
+            Map<String, Object> headers = message.getHeaders();
+            Boolean flag = message.getHeader(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.class);
+            boolean skipWwwFormUrlEncoding = flag != null ? flag : false;
+            if (request.getMethod().equals("POST") && request.getContentType() != null
+                    && request.getContentType().startsWith(HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
+                    && !skipWwwFormUrlEncoding) {
+                String charset = request.getCharacterEncoding();
+                if (charset == null) {
+                    charset = "UTF-8";
+                }
+
+                // lets parse the body
+                Object body = message.getBody();
+                // reset the stream cache if the body is the instance of StreamCache
+                if (body instanceof StreamCache) {
+                    ((StreamCache) body).reset();
+                }
+
+                // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
+                String text = message.getBody(String.class);
+                if (ObjectHelper.isNotEmpty(text)) {
+                    for (String param : text.split("&")) {
+                        String[] pair = param.split("=", 2);
+                        if (pair.length == 2) {
+                            String name = URLDecoder.decode(pair[0], charset);
+                            String value = URLDecoder.decode(pair[1], charset);
+                            if (headerFilterStrategy != null
+                                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                                HttpHelper.appendHeader(headers, name, value);
+                            }
+                        } else {
+                            throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
                         }
-                    } else {
-                        throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
                     }
+                }
+
+                // reset the stream cache if the body is the instance of StreamCache
+                if (body instanceof StreamCache) {
+                    ((StreamCache) body).reset();
                 }
             }
         }
     }
-    
+
+    private String getRawPath(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        /**
+         * In async case, it seems that request.getContextPath() can return null
+         * @see https://dev.eclipse.org/mhonarc/lists/jetty-users/msg04669.html
+         */
+        String contextPath = request.getContextPath() == null ? "" : request.getContextPath();
+        String servletPath = request.getServletPath() == null ? "" : request.getServletPath();
+        return uri.substring(contextPath.length() + servletPath.length());
+    }
+
     protected void populateAttachments(HttpServletRequest request, HttpMessage message) {
         // check if there is multipart files, if so will put it into DataHandler
         Enumeration<?> names = request.getAttributeNames();
@@ -282,7 +374,7 @@ public class DefaultHttpBinding implements HttpBinding {
             // use an iterator as there can be multiple values. (must not use a delimiter)
             final Iterator<?> it = ObjectHelper.createIterator(value, null);
             while (it.hasNext()) {
-                String headerValue = exchange.getContext().getTypeConverter().convertTo(String.class, it.next());
+                String headerValue = convertHeaderValueToString(exchange, it.next());
                 if (headerValue != null && headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
                     response.addHeader(key, headerValue);
@@ -300,10 +392,28 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
     
+    protected String convertHeaderValueToString(Exchange exchange, Object headerValue) {
+        if ((headerValue instanceof Date || headerValue instanceof Locale)
+            && convertDateAndLocaleLocally(exchange)) {
+            if (headerValue instanceof Date) {
+                return toHttpDate((Date)headerValue);
+            } else {
+                return toHttpLanguage((Locale)headerValue);
+            }
+        } else {
+            return exchange.getContext().getTypeConverter().convertTo(String.class, headerValue);
+        }
+    }
+
+    protected boolean convertDateAndLocaleLocally(Exchange exchange) {
+        // This check is done only if a given header value is Date or Locale
+        return exchange.getProperty(DATE_LOCALE_CONVERSION, Boolean.TRUE, Boolean.class);
+    }
+
     protected boolean isText(String contentType) {
         if (contentType != null) {
             String temp = contentType.toLowerCase();
-            if (temp.indexOf("text") >= 0 || temp.indexOf("html") >= 0) {
+            if (temp.contains("text") || temp.contains("html")) {
                 return true;
             }
         }
@@ -324,13 +434,17 @@ public class DefaultHttpBinding implements HttpBinding {
         // if content type is serialized Java object, then serialize and write it to the response
         String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
         if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
-            try {
-                Object object = message.getMandatoryBody(Serializable.class);
-                HttpHelper.writeObjectToServletResponse(response, object);
-                // object is written so return
-                return;
-            } catch (InvalidPayloadException e) {
-                throw new IOException(e);
+            if (allowJavaSerializedObject || isTransferException()) {
+                try {
+                    Object object = message.getMandatoryBody(Serializable.class);
+                    HttpHelper.writeObjectToServletResponse(response, object);
+                    // object is written so return
+                    return;
+                } catch (InvalidPayloadException e) {
+                    throw new IOException(e);
+                }
+            } else {
+                throw new RuntimeCamelException("Content-type " + HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed");
             }
         }
 
@@ -483,6 +597,14 @@ public class DefaultHttpBinding implements HttpBinding {
         this.transferException = transferException;
     }
 
+    public boolean isAllowJavaSerializedObject() {
+        return allowJavaSerializedObject;
+    }
+
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        this.allowJavaSerializedObject = allowJavaSerializedObject;
+    }
+
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -491,4 +613,50 @@ public class DefaultHttpBinding implements HttpBinding {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
+    public boolean isMapHttpMessageBody() {
+        return mapHttpMessageBody;
+    }
+
+    public void setMapHttpMessageBody(boolean mapHttpMessageBody) {
+        this.mapHttpMessageBody = mapHttpMessageBody;
+    }
+
+    public boolean isMapHttpMessageHeaders() {
+        return mapHttpMessageHeaders;
+    }
+
+    public void setMapHttpMessageHeaders(boolean mapHttpMessageHeaders) {
+        this.mapHttpMessageHeaders = mapHttpMessageHeaders;
+    }
+
+    public boolean isMapHttpMessageFormUrlEncodedBody() {
+        return mapHttpMessageFormUrlEncodedBody;
+    }
+
+    public void setMapHttpMessageFormUrlEncodedBody(boolean mapHttpMessageFormUrlEncodedBody) {
+        this.mapHttpMessageFormUrlEncodedBody = mapHttpMessageFormUrlEncodedBody;
+    }
+
+    protected static SimpleDateFormat getHttpDateFormat() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        dateFormat.setTimeZone(TIME_ZONE_GMT);
+        return dateFormat;
+    }
+    
+    protected static String toHttpDate(Date date) {
+        SimpleDateFormat format = getHttpDateFormat();
+        return format.format(date);
+    }
+    
+    protected static String toHttpLanguage(Locale locale) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(locale.getLanguage());
+        if (locale.getCountry() != null) {
+            // Locale.toString() will use a "_" separator instead, 
+            // while '-' is expected in headers such as Content-Language, etc:
+            // http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.10
+            sb.append('-').append(locale.getCountry());
+        }
+        return sb.toString();
+    }
 }

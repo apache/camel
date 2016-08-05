@@ -16,7 +16,6 @@
  */
 package org.apache.camel.util.component;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -62,7 +61,7 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T>
     @Override
     protected int poll() throws Exception {
         // invoke the consumer method
-        final Map<String, Object> args = new HashMap<String, Object>();
+        final Map<String, Object> args = new HashMap<>();
         args.putAll(endpoint.getEndpointProperties());
 
         // let the endpoint and the Consumer intercept properties
@@ -102,28 +101,12 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T>
 
     @Override
     public Object splitResult(Object result) {
-        // process result according to type
-        if (splitResult && result != null && (result instanceof Collection || result.getClass().isArray())) {
-            // create an exchange for every element
-            return getResultAsArray(result);
-        } else {
-            return result;
-        }
+        return result;
     }
 
     @Override
     public void interceptResult(Object result, Exchange resultExchange) {
         // do nothing by default
-    }
-
-    private static Object getResultAsArray(Object result) {
-        if (result.getClass().isArray()) {
-            // no conversion needed
-            return result;
-        }
-        // must be a Collection
-        Collection<?> collection = (Collection<?>) result;
-        return collection.toArray(new Object[collection.size()]);
     }
 
     public final boolean isSplitResult() {

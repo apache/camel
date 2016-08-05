@@ -22,11 +22,11 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.16-SNAPSHOT</version>
+        <version>2.18-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-dropbox</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Dropbox</name>
     <description>Camel Dropbox support</description>
 
@@ -56,7 +56,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>${jackson2-version}</version>
         </dependency>
 
         <!-- apache commons-io -->

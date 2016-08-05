@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(PeopleResourceIntegrationTest.class);
-    private static final String PATH_PREFIX = LinkedInApiCollection.getCollection().getApiName(PeopleResourceApiMethod.class).getName();
+    private static final String PATH_PREFIX = "people";
 
     // TODO provide parameter values for addActivity
     @Ignore

@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 import org.eclipse.californium.core.CoapServer;
 
 /**
- * Represents a CoAP endpoint.
+ * The coap component is used for sending and receiving messages from COAP capable devices.
  */
 @UriEndpoint(scheme = "coap", title = "CoAP", syntax = "coap:uri", consumerClass = CoAPConsumer.class, label = "iot")
 public class CoAPEndpoint extends DefaultEndpoint {
@@ -54,7 +54,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
     /**
      * The CoAP method this endpoint binds to. Default is to bind to all ("*") but can
-     * be restricted to GET, POST, PUT, DELETE 
+     * be restricted to GET, POST, PUT, DELETE, PING 
      * @return
      */
     public String getCoapMethod() {

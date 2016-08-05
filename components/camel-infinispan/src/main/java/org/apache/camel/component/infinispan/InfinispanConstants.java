@@ -17,13 +17,15 @@
 package org.apache.camel.component.infinispan;
 
 public interface InfinispanConstants {
+    int OPERATION_LEN = InfinispanConstants.OPERATION.length();
+
     String EVENT_TYPE = "CamelInfinispanEventType";
     String IS_PRE = "CamelInfinispanIsPre";
     String CACHE_NAME = "CamelInfinispanCacheName";
     String KEY = "CamelInfinispanKey";
     String VALUE = "CamelInfinispanValue";
     String OLD_VALUE = "CamelInfinispanOldValue";
-    String MAP = "CamelInfinispanMap";    
+    String MAP = "CamelInfinispanMap";
     String OPERATION = "CamelInfinispanOperation";
     String PUT = "CamelInfinispanOperationPut";
     String PUT_ASYNC = "CamelInfinispanOperationPutAsync";
@@ -46,4 +48,12 @@ public interface InfinispanConstants {
     String LIFESPAN_TIME_UNIT = "CamelInfinispanTimeUnit";
     String MAX_IDLE_TIME = "CamelInfinispanMaxIdleTime";
     String MAX_IDLE_TIME_UNIT = "CamelInfinispanMaxIdleTimeUnit";
+    String IGNORE_RETURN_VALUES = "CamelInfinispanIgnoreReturnValues";
+    String EVENT_DATA = "CamelInfinispanEventData";
+    String QUERY = "CamelInfinispanOperationQuery";
+    String QUERY_BUILDER = "CamelInfinispanQueryBuilder";
+    String STATS = "CamelInfinispanOperationStats";
+
+    String CACHE_ENTRY_JOINING = "CacheEntryJoining";
+    String CACHE_ENTRY_LEAVING = "CacheEntryLeaving";
 }

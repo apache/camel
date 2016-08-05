@@ -21,11 +21,11 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-atom</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Atom</name>
   <description>Camel Atom support</description>
 
@@ -76,10 +76,6 @@
       <version>${abdera-version}</version>
       <exclusions>
           <exclusion>
-              <groupId>javax.mail</groupId>
-              <artifactId>mail</artifactId>
-          </exclusion>
-          <exclusion>
               <groupId>xml-apis</groupId>
               <artifactId>xml-apis</artifactId>
           </exclusion>
@@ -118,8 +114,8 @@
         <artifactId>axiom-api</artifactId>
         <exclusions>
             <exclusion>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
+                <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                <groupId>org.apache.geronimo.specs</groupId>
             </exclusion>
             <exclusion>
                 <groupId>xml-apis</groupId>
@@ -160,8 +156,8 @@
         <artifactId>axiom-impl</artifactId>
         <exclusions>
             <exclusion>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
+                <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                <groupId>org.apache.geronimo.specs</groupId>
             </exclusion>
             <exclusion>
                 <groupId>xml-apis</groupId>
@@ -202,13 +198,13 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlet</artifactId>
-      <version>${jetty8-version}</version>
+      <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-security</artifactId>
-      <version>${jetty8-version}</version>
+      <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

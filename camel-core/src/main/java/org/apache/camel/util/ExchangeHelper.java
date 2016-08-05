@@ -16,8 +16,8 @@
  */
 package org.apache.camel.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
@@ -44,6 +45,7 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.MessageSupport;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
@@ -229,6 +231,21 @@ public final class ExchangeHelper {
      * @param useSameMessageId whether to use same message id on the copy message.
      */
     public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover, boolean useSameMessageId) {
+        return createCorrelatedCopy(exchange, handover, useSameMessageId, null);
+    }
+
+    /**
+     * Creates a new instance and copies from the current message exchange so that it can be
+     * forwarded to another destination as a new instance. Unlike regular copy this operation
+     * will not share the same {@link org.apache.camel.spi.UnitOfWork} so its should be used
+     * for async messaging, where the original and copied exchange are independent.
+     *
+     * @param exchange original copy of the exchange
+     * @param handover whether the on completion callbacks should be handed over to the new copy.
+     * @param useSameMessageId whether to use same message id on the copy message.
+     * @param filter whether to handover the on completion
+     */
+    public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover, boolean useSameMessageId, Predicate<Synchronization> filter) {
         String id = exchange.getExchangeId();
 
         // make sure to do a safe copy as the correlated copy can be routed independently of the source.
@@ -246,7 +263,7 @@ public final class ExchangeHelper {
         // hand over on completion to the copy if we got any
         UnitOfWork uow = exchange.getUnitOfWork();
         if (handover && uow != null) {
-            uow.handoverSynchronization(copy);
+            uow.handoverSynchronization(copy, filter);
         }
         // set a correlation id so we can track back the original exchange
         copy.setProperty(Exchange.CORRELATION_ID, id);
@@ -628,6 +645,20 @@ public final class ExchangeHelper {
     }
 
     /**
+     * Check whether or not stream caching is enabled for the given route or globally.
+     *
+     * @param exchange  the exchange
+     * @return <tt>true</tt> if enabled, <tt>false</tt> otherwise
+     */
+    public static boolean isStreamCachingEnabled(final Exchange exchange) {
+        if (exchange.getFromRouteId() == null) {
+            return exchange.getContext().getStreamCachingStrategy().isEnabled();
+        } else {
+            return exchange.getContext().getRoute(exchange.getFromRouteId()).getRouteContext().isStreamCaching();
+        }
+    }
+
+    /**
      * Extracts the body from the given exchange.
      * <p/>
      * If the exchange pattern is provided it will try to honor it and retrieve the body
@@ -788,7 +819,7 @@ public final class ExchangeHelper {
     public static void prepareOutToIn(Exchange exchange) {
         // we are routing using pipes and filters so we need to manually copy OUT to IN
         if (exchange.hasOut()) {
-            exchange.getIn().copyFrom(exchange.getOut());
+            exchange.setIn(exchange.getOut());
             exchange.setOut(null);
         }
     }
@@ -864,6 +895,32 @@ public final class ExchangeHelper {
         }
     }
 
+    /**
+     * Gets the original IN {@link Message} this Unit of Work was started with.
+     * <p/>
+     * The original message is only returned if the option {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()}
+     * is enabled. If its disabled, then <tt>null</tt> is returned.
+     *
+     * @return the original IN {@link Message}, or <tt>null</tt> if using original message is disabled.
+     */
+    public static Message getOriginalInMessage(Exchange exchange) {
+        Message answer = null;
+
+        // try parent first
+        UnitOfWork uow = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
+        if (uow != null) {
+            answer = uow.getOriginalInMessage();
+        }
+        // fallback to the current exchange
+        if (answer == null) {
+            uow = exchange.getUnitOfWork();
+            if (uow != null) {
+                answer = uow.getOriginalInMessage();
+            }
+        }
+        return answer;
+    }
+
     @SuppressWarnings("unchecked")
     private static Map<String, Object> safeCopy(Map<String, Object> properties) {
         if (properties == null) {
@@ -875,7 +932,7 @@ public final class ExchangeHelper {
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
         if (history != null) {
-            answer.put(Exchange.MESSAGE_HISTORY, new ArrayList<MessageHistory>(history));
+            answer.put(Exchange.MESSAGE_HISTORY, new LinkedList<>(history));
         }
 
         return answer;

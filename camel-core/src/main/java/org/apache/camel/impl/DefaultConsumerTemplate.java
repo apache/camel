@@ -22,9 +22,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.UnitOfWorkHelper;
 import org.slf4j.Logger;
@@ -63,6 +65,12 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
             return 0;
         }
         return consumerCache.size();
+    }
+
+    public void cleanUp() {
+        if (consumerCache != null) {
+            consumerCache.cleanUp();
+        }
     }
 
     /**

@@ -47,7 +47,7 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/changed/out/file.dat");
         // We should get the file on the first poll
-        mock.expectedMessagesMatches(property(Exchange.RECEIVED_TIMESTAMP).convertTo(long.class).isLessThan(new Date().getTime() + 15000));
+        mock.expectedMessagesMatches(exchangeProperty(Exchange.RECEIVED_TIMESTAMP).convertTo(long.class).isLessThan(new Date().getTime() + 15000));
 
         assertMockEndpointsSatisfied();
     }

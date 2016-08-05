@@ -18,9 +18,12 @@ package org.apache.camel.component.undertow;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Locale;
+import java.util.Map;
 import javax.net.ssl.SSLContext;
 
 import io.undertow.server.HttpServerExchange;
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -30,37 +33,56 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xnio.Option;
+import org.xnio.OptionMap;
+import org.xnio.Options;
 
 /**
- * Represents an Undertow endpoint.
+ * The undertow component provides HTTP-based endpoints for consuming and producing HTTP requests.
  */
 @UriEndpoint(scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
-    consumerClass = UndertowConsumer.class, label = "http")
-public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+        consumerClass = UndertowConsumer.class, label = "http", lenientProperties = true)
+public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
     private UndertowComponent component;
     private SSLContext sslContext;
+    private OptionMap optionMap;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private URI httpURI;
-    @UriParam
+    @UriParam(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;
-    @UriParam
-    private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
+    @UriParam(label = "advanced")
+    private HeaderFilterStrategy headerFilterStrategy = new UndertowHeaderFilterStrategy();
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "consumer")
     private String httpMethodRestrict;
     @UriParam(label = "consumer", defaultValue = "true")
     private Boolean matchOnUriPrefix = true;
-    @UriParam(label = "producer")
-    private Boolean throwExceptionOnFailure;
-    @UriParam
-    private Boolean transferException;
+    @UriParam(label = "producer", defaultValue = "true")
+    private Boolean throwExceptionOnFailure = Boolean.TRUE;
+    @UriParam(label = "producer", defaultValue = "false")
+    private Boolean transferException = Boolean.FALSE;
+    @UriParam(label = "producer", defaultValue = "true")
+    private Boolean keepAlive = Boolean.TRUE;
+    @UriParam(label = "producer", defaultValue = "true")
+    private Boolean tcpNoDelay = Boolean.TRUE;
+    @UriParam(label = "producer", defaultValue = "true")
+    private Boolean reuseAddresses = Boolean.TRUE;
+    @UriParam(label = "producer", prefix = "option.", multiValue = true)
+    private Map<String, Object> options;
+    @UriParam(label = "consumer",
+            description = "Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.")
+    private boolean optionsEnabled;
 
     public UndertowEndpoint(String uri, UndertowComponent component) throws URISyntaxException {
         super(uri, component);
@@ -74,7 +96,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
 
     @Override
     public Producer createProducer() throws Exception {
-        return new UndertowProducer(this);
+        return new UndertowProducer(this, optionMap);
     }
 
     @Override
@@ -157,7 +179,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
      */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
-        undertowHttpBinding.setHeaderFilterStrategy(headerFilterStrategy);
     }
 
     public SSLContextParameters getSslContextParameters() {
@@ -196,6 +217,12 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     }
 
     public UndertowHttpBinding getUndertowHttpBinding() {
+        if (undertowHttpBinding == null) {
+            // create a new binding and use the options from this endpoint
+            undertowHttpBinding = new DefaultUndertowHttpBinding();
+            undertowHttpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            undertowHttpBinding.setTransferException(getTransferException());
+        }
         return undertowHttpBinding;
     }
 
@@ -206,12 +233,119 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
         this.undertowHttpBinding = undertowHttpBinding;
     }
 
+    public Boolean getKeepAlive() {
+        return keepAlive;
+    }
+
+    /**
+     * Setting to ensure socket is not closed due to inactivity
+     */
+    public void setKeepAlive(Boolean keepAlive) {
+        this.keepAlive = keepAlive;
+    }
+
+    public Boolean getTcpNoDelay() {
+        return tcpNoDelay;
+    }
+
+    /**
+     * Setting to improve TCP protocol performance
+     */
+    public void setTcpNoDelay(Boolean tcpNoDelay) {
+        this.tcpNoDelay = tcpNoDelay;
+    }
+
+    public Boolean getReuseAddresses() {
+        return reuseAddresses;
+    }
+
+    /**
+     * Setting to facilitate socket multiplexing
+     */
+    public void setReuseAddresses(Boolean reuseAddresses) {
+        this.reuseAddresses = reuseAddresses;
+    }
+
+    public Map<String, Object> getOptions() {
+        return options;
+    }
+
+    /**
+     * Sets additional channel options. The options that can be used are defined in {@link org.xnio.Options}.
+     * To configure from endpoint uri, then prefix each option with <tt>option.</tt>, such as <tt>option.close-abort=true&option.send-buffer=8192</tt>
+     */
+    public void setOptions(Map<String, Object> options) {
+        this.options = options;
+    }
+
+    public boolean isOptionsEnabled() {
+        return optionsEnabled;
+    }
+
+    /**
+     * Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.
+     */
+    public void setOptionsEnabled(boolean optionsEnabled) {
+        this.optionsEnabled = optionsEnabled;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
 
         if (sslContextParameters != null) {
-            sslContext = sslContextParameters.createSSLContext();
+            sslContext = sslContextParameters.createSSLContext(getCamelContext());
+        }
+
+        // create options map
+        if (options != null && !options.isEmpty()) {
+
+            // favor to use the classloader that loaded the user application
+            ClassLoader cl = getComponent().getCamelContext().getApplicationContextClassLoader();
+            if (cl == null) {
+                cl = Options.class.getClassLoader();
+            }
+
+            OptionMap.Builder builder = OptionMap.builder();
+            for (Map.Entry<String, Object> entry : options.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                if (key != null && value != null) {
+                    // upper case and dash as underscore
+                    key = key.toUpperCase(Locale.ENGLISH).replace('-', '_');
+                    // must be field name
+                    key = Options.class.getName() + "." + key;
+                    Option option = Option.fromString(key, cl);
+                    value = option.parseValue(value.toString(), cl);
+                    LOG.trace("Parsed option {}={}", option.getName(), value);
+                    builder.set(option, value);
+                }
+            }
+            optionMap = builder.getMap();
+        } else {
+            // use an empty map
+            optionMap = OptionMap.EMPTY;
+        }
+
+        // and then configure these default options if they have not been explicit configured
+        if (keepAlive != null && !optionMap.contains(Options.KEEP_ALIVE)) {
+            // rebuild map
+            OptionMap.Builder builder = OptionMap.builder();
+            builder.addAll(optionMap).set(Options.KEEP_ALIVE, keepAlive);
+            optionMap = builder.getMap();
+        }
+        if (tcpNoDelay != null && !optionMap.contains(Options.TCP_NODELAY)) {
+            // rebuild map
+            OptionMap.Builder builder = OptionMap.builder();
+            builder.addAll(optionMap).set(Options.TCP_NODELAY, tcpNoDelay);
+            optionMap = builder.getMap();
+        }
+        if (reuseAddresses != null && !optionMap.contains(Options.REUSE_ADDRESSES)) {
+            // rebuild map
+            OptionMap.Builder builder = OptionMap.builder();
+            builder.addAll(optionMap).set(Options.REUSE_ADDRESSES, tcpNoDelay);
+            optionMap = builder.getMap();
         }
     }
+
 }

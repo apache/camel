@@ -19,6 +19,8 @@ package org.apache.camel.component.nagios;
 import java.net.URI;
 import java.util.Map;
 
+import com.googlecode.jsendnsca.core.NagiosSettings;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ObjectHelper;
@@ -57,9 +59,82 @@ public class NagiosComponent extends UriEndpointComponent {
     }
 
     /**
-     * To use a shared {@link NagiosConfiguration}
+     * To use a shared configuraiton. Properties of the shared configuration can also be set individually.
      */
     public void setConfiguration(NagiosConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+
+    public String getHost() {
+        return configuration.getHost();
+    }
+
+    /**
+     * This is the address of the Nagios host where checks should be send.
+     * @param host
+     */
+    public void setHost(String host) {
+        configuration.setHost(host);
+    }
+
+    public int getPort() {
+        return configuration.getPort();
+    }
+
+    /**
+     * The port number of the host.
+     * @param port
+     */
+    public void setPort(int port) {
+        configuration.setPort(port);
+    }
+
+    public int getConnectionTimeout() {
+        return configuration.getConnectionTimeout();
+    }
+
+    /**
+     * Connection timeout in millis.
+     * @param connectionTimeout
+     */
+    public void setConnectionTimeout(int connectionTimeout) {
+        configuration.setConnectionTimeout(connectionTimeout);
+    }
+
+    public int getTimeout() {
+        return configuration.getTimeout();
+    }
+
+    /**
+     * Sending timeout in millis.
+     * @param timeout
+     */
+    public void setTimeout(int timeout) {
+        configuration.setTimeout(timeout);
+    }
+
+    public String getPassword() {
+        return configuration.getPassword();
+    }
+
+    /**
+     * Password to be authenticated when sending checks to Nagios.
+     * @param password
+     */
+    public void setPassword(String password) {
+        configuration.setPassword(password);
+    }
+
+    public NagiosEncryptionMethod getEncryptionMethod() {
+        return configuration.getEncryptionMethod();
+    }
+
+    /**
+     * To specify an encryption method.
+     * @param encryptionMethod
+     */
+    public void setEncryptionMethod(NagiosEncryptionMethod encryptionMethod) {
+        configuration.setEncryptionMethod(encryptionMethod);
     }
 }

@@ -226,7 +226,7 @@ public class Car {
         this.nvic = nvic;
     }
 
-    public static enum Colour {
+    public enum Colour {
         BLACK
     }
 

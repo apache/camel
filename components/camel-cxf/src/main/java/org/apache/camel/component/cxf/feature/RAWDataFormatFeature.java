@@ -17,12 +17,16 @@
 
 package org.apache.camel.component.cxf.feature;
 
+import org.apache.camel.component.cxf.interceptors.OneWayOutgoingChainInterceptor;
 import org.apache.camel.component.cxf.interceptors.RawMessageContentRedirectInterceptor;
 import org.apache.camel.component.cxf.interceptors.RawMessageWSDLGetInterceptor;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
+import org.apache.cxf.interceptor.OneWayProcessorInterceptor;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +53,8 @@ public class RAWDataFormatFeature extends AbstractDataFormatFeature {
     // filter the unused in phase interceptor
     private static final String[] REMAINING_OUT_PHASES = {Phase.PREPARE_SEND, Phase.USER_STREAM,
         Phase.WRITE, Phase.SEND, Phase.PREPARE_SEND_ENDING};
+    
+    private boolean oneway;
 
     @Override
     public void initialize(Client client, Bus bus) {
@@ -89,11 +95,31 @@ public class RAWDataFormatFeature extends AbstractDataFormatFeature {
 
         // setup the RawMessageWSDLGetInterceptor
         server.getEndpoint().getInInterceptors().add(RawMessageWSDLGetInterceptor.INSTANCE);
+        // Oneway with RAW message
+        if (isOneway()) {
+            Interceptor<? extends Message> toRemove = null;
+            for (Interceptor<? extends Message> i : server.getEndpoint().getService().getInInterceptors()) {
+                if (i.getClass().getName().equals("org.apache.cxf.interceptor.OutgoingChainInterceptor")) {
+                    toRemove = i;
+                }
+            }
+            server.getEndpoint().getService().getInInterceptors().remove(toRemove);
+            server.getEndpoint().getInInterceptors().add(new OneWayOutgoingChainInterceptor());
+            server.getEndpoint().getInInterceptors().add(new OneWayProcessorInterceptor());
+        }
     }
 
     @Override
     protected Logger getLogger() {
         return LOG;
+    }
+
+    public boolean isOneway() {
+        return oneway;
+    }
+
+    public void setOneway(boolean oneway) {
+        this.oneway = oneway;
     }
    
 

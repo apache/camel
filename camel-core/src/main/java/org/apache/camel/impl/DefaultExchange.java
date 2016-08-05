@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -80,7 +81,8 @@ public final class DefaultExchange implements Exchange {
 
     @Override
     public String toString() {
-        return String.format("Exchange[%s][%s]", exchangeId, out == null ? in : out);
+        // do not output information about the message as it may contain sensitive information
+        return String.format("Exchange[%s]", exchangeId == null ? "" : exchangeId);
     }
 
     public Exchange copy() {
@@ -91,12 +93,9 @@ public final class DefaultExchange implements Exchange {
     public Exchange copy(boolean safeCopy) {
         DefaultExchange exchange = new DefaultExchange(this);
 
-        if (hasProperties()) {
-            exchange.setProperties(safeCopyProperties(getProperties()));
-        }
-
         if (safeCopy) {
             exchange.getIn().setBody(getIn().getBody());
+            exchange.getIn().setFault(getIn().isFault());
             if (getIn().hasHeaders()) {
                 exchange.getIn().setHeaders(safeCopyHeaders(getIn().getHeaders()));
                 // just copy the attachments here
@@ -104,6 +103,7 @@ public final class DefaultExchange implements Exchange {
             }
             if (hasOut()) {
                 exchange.getOut().setBody(getOut().getBody());
+                exchange.getOut().setFault(getOut().isFault());
                 if (getOut().hasHeaders()) {
                     exchange.getOut().setHeaders(safeCopyHeaders(getOut().getHeaders()));
                 }
@@ -119,6 +119,12 @@ public final class DefaultExchange implements Exchange {
             }
         }
         exchange.setException(getException());
+
+        // copy properties after body as body may trigger lazy init
+        if (hasProperties()) {
+            exchange.setProperties(safeCopyProperties(getProperties()));
+        }
+
         return exchange;
     }
 
@@ -145,7 +151,7 @@ public final class DefaultExchange implements Exchange {
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
         if (history != null) {
-            answer.put(Exchange.MESSAGE_HISTORY, new ArrayList<MessageHistory>(history));
+            answer.put(Exchange.MESSAGE_HISTORY, new LinkedList<>(history));
         }
 
         return answer;

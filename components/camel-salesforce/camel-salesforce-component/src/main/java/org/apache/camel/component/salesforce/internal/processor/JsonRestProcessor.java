@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -35,9 +38,7 @@ import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SearchResult;
 import org.apache.camel.component.salesforce.api.dto.Version;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.type.TypeReference;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.eclipse.jetty.util.StringUtil;
 
 public class JsonRestProcessor extends AbstractRestProcessor {
@@ -50,9 +51,11 @@ public class JsonRestProcessor extends AbstractRestProcessor {
     public JsonRestProcessor(SalesforceEndpoint endpoint) throws SalesforceException {
         super(endpoint);
 
-        this.objectMapper = new ObjectMapper();
-        // enable date time support including Joda DateTime
-        this.objectMapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+        if (endpoint.getConfiguration().getObjectMapper() != null) {
+            this.objectMapper = endpoint.getConfiguration().getObjectMapper();
+        } else {
+            this.objectMapper = JsonUtils.createObjectMapper();
+        }
     }
 
     @Override
@@ -166,7 +169,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             }
             // copy headers and attachments
             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-            exchange.getOut().getAttachments().putAll(exchange.getIn().getAttachments());
+            exchange.getOut().getAttachmentObjects().putAll(exchange.getIn().getAttachmentObjects());
         } catch (IOException e) {
             String msg = "Error parsing JSON response: " + e.getMessage();
             exchange.setException(new SalesforceException(msg, e));

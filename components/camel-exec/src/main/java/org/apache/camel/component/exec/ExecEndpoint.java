@@ -28,13 +28,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The endpoint utilizes an {@link ExecCommandExecutor} to execute a system
- * command when it receives message exchanges.
- *
- * @see ExecBinding
- * @see ExecCommandExecutor
- * @see ExecCommand
- * @see ExecResult
+ * The exec component can be used to execute OS system commands.
  */
 @UriEndpoint(scheme = "exec", title = "Exec", syntax = "exec:executable", producerOnly = true, label = "system")
 public class ExecEndpoint extends DefaultEndpoint {

@@ -134,7 +134,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @param maximumRequestsPerPeriod  the maximum request count number per time period
      * @return the builder
      */
-    public ThrottleDefinition maximumRequestsPerPeriod(Long maximumRequestsPerPeriod) {
+    public ThrottleDefinition maximumRequestsPerPeriod(long maximumRequestsPerPeriod) {
         setExpression(ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(maximumRequestsPerPeriod)));
         return this;
     }

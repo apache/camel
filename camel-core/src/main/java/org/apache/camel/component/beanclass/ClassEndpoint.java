@@ -21,7 +21,7 @@ import org.apache.camel.component.bean.BeanEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * Endpoint for the class component.
+ * The <a href="http://camel.apache.org/class.html">Class Component</a> is for invoking Java Classes (Java beans) from Camel.
  */
 @UriEndpoint(scheme = "class", title = "Class", syntax = "class:beanName", label = "core,java")
 public class ClassEndpoint extends BeanEndpoint {

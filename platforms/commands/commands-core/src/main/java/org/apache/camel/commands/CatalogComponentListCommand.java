@@ -27,7 +27,7 @@ import java.util.Map;
 public class CatalogComponentListCommand extends AbstractCamelCommand {
 
     private static final String TITLE_COLUMN_LABEL = "Title";
-    private static final String SCHEME_COLUMN_LABEL = "Scheme";
+    private static final String SYNTAX_COLUMN_LABEL = "Syntax";
     private static final String LABEL_COLUMN_LABEL = "Label";
     private static final String MAVEN_COLUMN_LABEL = "Maven Coordinate";
     private static final String DESCRIPTION_COLUMN_LABEL = "Description";
@@ -63,7 +63,7 @@ public class CatalogComponentListCommand extends AbstractCamelCommand {
         final String rowFormat = buildFormatString(columnWidths, false);
 
         if (verbose) {
-            out.println(String.format(headerFormat, TITLE_COLUMN_LABEL, SCHEME_COLUMN_LABEL, LABEL_COLUMN_LABEL, MAVEN_COLUMN_LABEL));
+            out.println(String.format(headerFormat, TITLE_COLUMN_LABEL, SYNTAX_COLUMN_LABEL, LABEL_COLUMN_LABEL, MAVEN_COLUMN_LABEL));
             out.println(String.format(headerFormat, "-----", "------", "-----", "----------------"));
         } else {
             out.println(String.format(headerFormat, TITLE_COLUMN_LABEL, DESCRIPTION_COLUMN_LABEL));
@@ -72,13 +72,13 @@ public class CatalogComponentListCommand extends AbstractCamelCommand {
         for (final Map<String, String> component : components) {
             if (verbose) {
                 String title = safeNull(component.get("title"));
-                String scheme = safeNull(component.get("name"));
+                String syntax = safeNull(component.get("syntax"));
                 String label = safeNull(component.get("label"));
                 String maven = "";
                 if (component.containsKey("groupId") && component.containsKey("artifactId") && component.containsKey("version")) {
                     maven = component.get("groupId") + "/" + component.get("artifactId") + "/" + component.get("version");
                 }
-                out.println(String.format(rowFormat, title, scheme, label, maven));
+                out.println(String.format(rowFormat, title, syntax, label, maven));
             } else {
                 String title = safeNull(component.get("title"));
                 String description = safeNull(component.get("description"));
@@ -95,7 +95,7 @@ public class CatalogComponentListCommand extends AbstractCamelCommand {
         } else {
             // some of the options is optional so we need to start from 1
             int maxTitleLen = TITLE_COLUMN_LABEL.length();
-            int maxSchemeLen = SCHEME_COLUMN_LABEL.length();
+            int maxSyntaxLen = SYNTAX_COLUMN_LABEL.length();
             int maxLabelLen = LABEL_COLUMN_LABEL.length();
             int maxMavenLen = MAVEN_COLUMN_LABEL.length();
             int maxDescriptionLen = DESCRIPTION_COLUMN_LABEL.length();
@@ -103,9 +103,9 @@ public class CatalogComponentListCommand extends AbstractCamelCommand {
             for (final Map<String, String> component : components) {
 
                 // grab the information and compute max len
-                String name = component.get("name");
-                if (name != null) {
-                    maxSchemeLen = Math.max(maxSchemeLen, name.length());
+                String syntax = component.get("syntax");
+                if (syntax != null) {
+                    maxSyntaxLen = Math.max(maxSyntaxLen, syntax.length());
                 }
                 String title = component.get("title");
                 if (title != null) {
@@ -127,7 +127,7 @@ public class CatalogComponentListCommand extends AbstractCamelCommand {
 
             final Map<String, Integer> retval = new Hashtable<String, Integer>();
             retval.put(TITLE_COLUMN_LABEL, maxTitleLen);
-            retval.put(SCHEME_COLUMN_LABEL, maxSchemeLen);
+            retval.put(SYNTAX_COLUMN_LABEL, maxSyntaxLen);
             retval.put(LABEL_COLUMN_LABEL, maxLabelLen);
             retval.put(MAVEN_COLUMN_LABEL, maxMavenLen);
             retval.put(DESCRIPTION_COLUMN_LABEL, maxDescriptionLen);
@@ -152,18 +152,18 @@ public class CatalogComponentListCommand extends AbstractCamelCommand {
 
         if (verbose) {
             int titleLen = Math.min(columnWidths.get(TITLE_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
-            int schemeLen = Math.min(columnWidths.get(SCHEME_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
+            int syntaxLen = Math.min(columnWidths.get(SYNTAX_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
             int labelLen = Math.min(columnWidths.get(LABEL_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
             int mavenLen = Math.min(columnWidths.get(MAVEN_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
 
             titleLen = Math.max(MIN_COLUMN_WIDTH, titleLen);
-            schemeLen = Math.max(MIN_COLUMN_WIDTH, schemeLen);
+            syntaxLen = Math.max(MIN_COLUMN_WIDTH, syntaxLen);
             labelLen = Math.max(MIN_COLUMN_WIDTH, labelLen);
             mavenLen = Math.max(MIN_COLUMN_WIDTH, mavenLen);
 
             final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
             retval.append(fieldPreamble).append("%-").append(titleLen).append('.').append(titleLen).append('s').append(fieldPostamble).append(' ');
-            retval.append(fieldPreamble).append("%-").append(schemeLen).append('.').append(schemeLen).append('s').append(fieldPostamble).append(' ');
+            retval.append(fieldPreamble).append("%-").append(syntaxLen).append('.').append(syntaxLen).append('s').append(fieldPostamble).append(' ');
             retval.append(fieldPreamble).append("%-").append(labelLen).append('.').append(labelLen).append('s').append(fieldPostamble).append(' ');
             retval.append(fieldPreamble).append("%-").append(mavenLen).append('.').append(mavenLen).append('s').append(fieldPostamble).append(' ');
             return retval.toString();

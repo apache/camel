@@ -30,7 +30,7 @@ class OAuthHelperListener implements OAuthRefreshListener {
 
     private String refreshToken;
 
-    public OAuthHelperListener(IAuthSecureStorage authSecureStorage, OAuthRefreshListener configListener) {
+    OAuthHelperListener(IAuthSecureStorage authSecureStorage, OAuthRefreshListener configListener) {
         this.authSecureStorage = authSecureStorage;
         this.configListener = configListener;
 

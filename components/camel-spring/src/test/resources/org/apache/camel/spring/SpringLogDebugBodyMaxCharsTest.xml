@@ -22,6 +22,8 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+  <bean id="logFormatter" class="org.apache.camel.impl.TraceExchangeFormatter"/>
+
   <camelContext xmlns="http://camel.apache.org/schema/spring">
       <properties>
           <property key="CamelLogDebugBodyMaxChars" value="20"/>

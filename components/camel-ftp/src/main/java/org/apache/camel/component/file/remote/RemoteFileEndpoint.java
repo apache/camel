@@ -24,7 +24,6 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileProducer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
@@ -40,6 +39,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     private long reconnectDelay = 1000;
     @UriParam
     private boolean disconnect;
+    @UriParam
+    private boolean disconnectOnBatchComplete;   
     @UriParam
     private boolean fastExistsCheck;
     @UriParam
@@ -218,6 +219,19 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
      */
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
+    }
+
+    public boolean isDisconnectOnBatchComplete() {
+        return disconnectOnBatchComplete;
+    }
+
+    /**
+     * Whether or not to disconnect from remote FTP server right after a Batch is complete.
+     * disconnectOnBatchComplete will only disconnect the current connection to the FTP server.
+     * If you have a consumer which you want to stop, then you need to stop the consumer/route instead.
+     */
+    public void setDisconnectOnBatchComplete(boolean disconnectOnBatchComplete) {
+        this.disconnectOnBatchComplete = disconnectOnBatchComplete;
     }
 
     public boolean isFastExistsCheck() {

@@ -21,7 +21,7 @@
 
   <groupId>${groupId}</groupId>
   <artifactId>${artifactId}</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <version>${version}</version>
 
   <name>Camel ${name} Component</name>
@@ -84,8 +84,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin-version}</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       

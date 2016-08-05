@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.salesforce.internal.dto;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * DTO for Salesforce login
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LoginToken {
 
     private String accessToken;
@@ -34,6 +36,8 @@ public class LoginToken {
     private String issuedAt;
 
     private String tokenType;
+
+    private String isReadOnly;
 
     @JsonProperty("access_token")
     public String getAccessToken() {
@@ -89,6 +93,16 @@ public class LoginToken {
     @JsonProperty("token_type")
     public void setTokenType(String tokenType) {
         this.tokenType = tokenType;
+    }
+
+    @JsonProperty("is_readonly")
+    public String getIsReadOnly() {
+        return isReadOnly;
+    }
+
+    @JsonProperty("is_readonly")
+    public void setIsReadOnly(String isReadOnly) {
+        this.isReadOnly = isReadOnly;
     }
 
 }

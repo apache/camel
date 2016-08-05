@@ -22,11 +22,11 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-google-mail</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: GoogleMail</name>
   <description>Camel Component for GoogleMail</description>
 
@@ -69,8 +69,8 @@
     </dependency>
 
     <dependency>
-        <groupId>javax.mail</groupId>
-        <artifactId>mail</artifactId>
+        <groupId>com.sun.mail</groupId>
+        <artifactId>javax.mail</artifactId>
         <version>${javax-mail-version}</version>
         <exclusions>
           <!-- javax activation is part of the JDK now -->

@@ -64,7 +64,7 @@ public class NettyRfc5425Test extends CamelTestSupport {
         mock2.expectedMessageCount(2);
         mock2.expectedBodiesReceived(rfc3164Message, rfc5424Message);
 
-        template.sendBody(uriClient , rfc3164Message.getBytes("UTF8"));
+        template.sendBody(uriClient, rfc3164Message.getBytes("UTF8"));
         template.sendBody(uriClient, rfc5424Message.getBytes("UTF8"));
 
         assertMockEndpointsSatisfied();

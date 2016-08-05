@@ -38,10 +38,12 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
+import org.apache.camel.core.osgi.OsgiServiceRegistry;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
 import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ReflectionHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -55,8 +57,11 @@ public abstract class AbstractCamelRunner implements Runnable {
     
     protected Logger log = LoggerFactory.getLogger(getClass());
     protected CamelContext context;
-    protected SimpleRegistry registry = new SimpleRegistry();
-    protected boolean active;
+    protected Registry registry;
+
+    // Configured fields
+    private String camelContextId;
+    private boolean active;
 
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture starter;
@@ -82,32 +87,30 @@ public abstract class AbstractCamelRunner implements Runnable {
         // Configure fields from properties
         configure(context, this, log, true);
 
-        setupCamelContext(bundleContext);
+        setupCamelContext(bundleContext, camelContextId);
     }
 
     protected void createCamelContext(final BundleContext bundleContext, final Map<String, String> props) {
         if (bundleContext != null) {
+            registry = new OsgiServiceRegistry(bundleContext);
             context = new OsgiDefaultCamelContext(bundleContext, registry);
             // Setup the application context classloader with the bundle classloader
             context.setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
             // and make sure the TCCL is our classloader
             Thread.currentThread().setContextClassLoader(context.getApplicationContextClassLoader());
         } else {
+            registry = new SimpleRegistry();
             context = new DefaultCamelContext(registry);
         }
         setupPropertiesComponent(context, props, log);
-
-        String name = props.remove("camelContextId");
-        if (name != null) {
-            context.setNameStrategy(new ExplicitCamelContextNameStrategy(name));
-        }
-
-        // ensure we publish this CamelContext to the OSGi service registry
-        context.getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));
     }
     
-    protected void setupCamelContext(final BundleContext bundleContext) throws Exception {
+    protected void setupCamelContext(final BundleContext bundleContext, final String camelContextId) throws Exception {
         // Set up CamelContext
+        if (camelContextId != null) {
+            context.setNameStrategy(new ExplicitCamelContextNameStrategy(camelContextId));
+        }
+        // TODO: allow to configure these options and not hardcode
         context.setUseMDCLogging(true);
         context.setUseBreadcrumb(true);
 
@@ -115,6 +118,9 @@ public abstract class AbstractCamelRunner implements Runnable {
         for (RoutesBuilder route : getRouteBuilders()) {
             context.addRoutes(configure(context, route, log));
         }
+
+        // ensure we publish this CamelContext to the OSGi service registry
+        context.getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));
     }
 
     public static void setupPropertiesComponent(final CamelContext context, final Map<String, String> props, Logger log) {
@@ -127,11 +133,11 @@ public abstract class AbstractCamelRunner implements Runnable {
         }
 
         // Set property prefix
-        if (null != System.getProperty(PROPERTY_PREFIX)) {
+        if (System.getProperty(PROPERTY_PREFIX) != null) {
             pc.setPropertyPrefix(System.getProperty(PROPERTY_PREFIX) + ".");
         }
 
-        if (null != props) {
+        if (props != null) {
             Properties initialProps = new Properties();
             initialProps.putAll(props);
             log.debug(String.format("Added %d initial properties", props.size()));
@@ -195,6 +201,7 @@ public abstract class AbstractCamelRunner implements Runnable {
             context.start();
             started = true;
         } catch (Exception e) {
+            // we should have a better way - than just try every 5th second to try to start the bundle
             log.warn("Failed to start Camel context. Will try again when more Camel components have been registered.", e);
         }
     }
@@ -206,7 +213,7 @@ public abstract class AbstractCamelRunner implements Runnable {
         try {
             context.stop();
         } catch (Exception e) {
-            log.error("Failed to stop Camel context.", e);
+            log.warn("Failed to stop Camel context.", e);
         } finally {
             // Even if stopping failed we consider Camel context stopped
             started = false;
@@ -255,7 +262,7 @@ public abstract class AbstractCamelRunner implements Runnable {
                     log.debug("Configured field {} with value {}", field.getName(), propertyValue);
                 }
             } catch (Exception e) {
-                log.error("Error setting field " + field.getName() + " due: " + e.getMessage() + ". This exception is ignored.", e);
+                log.warn("Error setting field " + field.getName() + " due: " + e.getMessage() + ". This exception is ignored.", e);
             }
         }
         return target;

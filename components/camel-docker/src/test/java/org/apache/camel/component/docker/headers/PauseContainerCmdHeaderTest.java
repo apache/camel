@@ -22,7 +22,6 @@ import com.github.dockerjava.api.command.PauseContainerCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -36,7 +35,6 @@ public class PauseContainerCmdHeaderTest extends BaseDockerHeaderTest<PauseConta
     @Mock
     private PauseContainerCmd mockObject;
 
-    @Ignore
     @Test
     public void pauseHeaderTest() {
 

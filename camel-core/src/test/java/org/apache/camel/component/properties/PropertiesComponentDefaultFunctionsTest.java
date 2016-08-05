@@ -49,7 +49,7 @@ public class PropertiesComponentDefaultFunctionsTest extends ContextTestSupport 
 
         assertMockEndpointsSatisfied();
 
-        System.getProperties().remove("FOO");
+        System.clearProperty("FOO");
     }
 
     public void testFunctionGetOrElse() throws Exception {
@@ -72,7 +72,7 @@ public class PropertiesComponentDefaultFunctionsTest extends ContextTestSupport 
 
         assertMockEndpointsSatisfied();
 
-        System.getProperties().remove("FOO2");
+        System.clearProperty("FOO2");
     }
 
 }

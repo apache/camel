@@ -35,7 +35,7 @@ public class TestJAXBPojo {
 
     @Override
     public boolean equals(Object obj) {
-        return this.name.equals(((TestPojo) obj).getName());
+        return this.name.equals(((TestJAXBPojo) obj).getName());
     }
 
     @Override

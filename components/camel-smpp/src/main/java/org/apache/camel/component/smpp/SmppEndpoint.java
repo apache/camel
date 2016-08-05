@@ -30,11 +30,10 @@ import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 
 /**
- * A SMPP Endpoint
- * 
- * @version 
+ * To send and receive SMS using a SMSC (Short Message Service Center).
  */
-@UriEndpoint(scheme = "smpp,smpps", title = "SMPP", syntax = "smpp:host:port", consumerClass = SmppConsumer.class, label = "mobile,messaging")
+@UriEndpoint(scheme = "smpp,smpps", title = "SMPP", syntax = "smpp:host:port",
+        consumerClass = SmppConsumer.class, label = "mobile", lenientProperties = true)
 public class SmppEndpoint extends DefaultEndpoint {
 
     private SmppBinding binding;

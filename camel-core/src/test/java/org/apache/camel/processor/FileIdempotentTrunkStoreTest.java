@@ -49,27 +49,16 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
         sendMessage("EEEEEEEEEE", "E");
 
         resultEndpoint.assertIsSatisfied();
+
         resultEndpoint.reset();
         resultEndpoint.expectedBodiesReceived("Z", "X");
 
         // should trunk the file store
         sendMessage("ZZZZZZZZZZ", "Z");
-
-        // load in new store and verify we only have the last 5 elements
-        IdempotentRepository<String> repo2 = FileIdempotentRepository.fileIdempotentRepository(store);
-        repo2.start();
-        assertFalse(repo2.contains("AAAAAAAAAA"));
-        assertTrue(repo2.contains("BBBBBBBBBB"));
-        assertTrue(repo2.contains("CCCCCCCCCC"));
-        assertTrue(repo2.contains("DDDDDDDDDD"));
-        assertTrue(repo2.contains("EEEEEEEEEE"));
-        assertTrue(repo2.contains("ZZZZZZZZZZ"));
-
-        // should trunk the file store
         sendMessage("XXXXXXXXXX", "X");
 
         resultEndpoint.assertIsSatisfied();
-        assertFalse(repo.contains("BBBBBBBBBB"));
+
         assertTrue(repo.contains("XXXXXXXXXX"));
     }
 

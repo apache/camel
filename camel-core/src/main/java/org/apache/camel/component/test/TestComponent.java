@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
@@ -40,28 +41,19 @@ public class TestComponent extends UriEndpointComponent {
         super(TestEndpoint.class);
     }
 
-    public Endpoint createEndpoint(String uri) throws Exception {
-        // lets not use the normal parameter handling so that all parameters are sent to the nested endpoint
-
-        ObjectHelper.notNull(getCamelContext(), "camelContext");
-        URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
-        String path = u.getSchemeSpecificPart();
-        if (path.startsWith("//")) {
-            path = path.substring(2);
-        }
-
-        return createEndpoint(uri, path, new HashMap<String, Object>());
-    }
-
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Long timeout = getAndRemoveParameter(parameters, "timeout", Long.class);
-        Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(getCamelContext(), remaining);
-
-        TestEndpoint answer = new TestEndpoint(uri, this, endpoint);
+        TestEndpoint answer = new TestEndpoint(uri, this);
         if (timeout != null) {
             answer.setTimeout(timeout);
         }
+        setProperties(answer, parameters);
+
+        // from the rest create a new uri with those parameters
+        String endpointUri = URISupport.appendParametersToURI(remaining, parameters);
+        Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(getCamelContext(), endpointUri);
+        answer.setExpectedMessageEndpoint(endpoint);
         return answer;
     }
 

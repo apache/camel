@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Paxlogging endpoint.
+ * The paxlogging component can be used in an OSGi environment to receive PaxLogging events and process them.
  */
 @UriEndpoint(scheme = "paxlogging", title = "OSGi PAX Logging", syntax = "paxlogging:appender", consumerOnly = true, consumerClass = PaxLoggingConsumer.class, label = "monitoring")
 public class PaxLoggingEndpoint extends DefaultEndpoint {

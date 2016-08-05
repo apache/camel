@@ -35,7 +35,7 @@ public class FromFtpToBinarySampleTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // we use a delay of 60 minutes (eg. once pr. hour we poll the FTP server
-                long delay = 60 * 60 * 1000L;
+                long delay = 3600000;
 
                 // from the given FTP server we poll (= download) all the files
                 // from the public/reports folder as BINARY types and store this as files

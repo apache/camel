@@ -44,9 +44,9 @@ public class FreemarkerComponent extends UriEndpointComponent {
         Configuration config;
         String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
+        int templateUpdateDelay = getAndRemoveParameter(parameters, "templateUpdateDelay", Integer.class, 0);
         if (cache) {
             config = getConfiguration();
-            int templateUpdateDelay = getAndRemoveParameter(parameters, "templateUpdateDelay", Integer.class, 0);
             if (templateUpdateDelay > 0) {
                 config.setTemplateUpdateDelay(templateUpdateDelay);
             }
@@ -58,7 +58,9 @@ public class FreemarkerComponent extends UriEndpointComponent {
         if (ObjectHelper.isNotEmpty(encoding)) {
             endpoint.setEncoding(encoding);
         }
+        endpoint.setContentCache(cache);
         endpoint.setConfiguration(config);
+        endpoint.setTemplateUpdateDelay(templateUpdateDelay);
 
         // if its a http resource then append any remaining parameters and update the resource uri
         if (ResourceHelper.isHttpUri(remaining)) {

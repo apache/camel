@@ -90,6 +90,12 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         // must reset for each poll
         shutdownRunningTask = null;
         pendingExchanges = 0;
+        
+        // Recreate EntityManager in case it is disposed due to transaction rollback
+        if (entityManager == null) {
+            entityManager = entityManagerFactory.createEntityManager();
+            LOG.trace("Recreated EntityManager {} on {}", entityManager, this);
+        }
 
         Object messagePolled = transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
@@ -110,7 +116,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                     DataHolder holder = new DataHolder();
                     holder.manager = entityManager;
                     holder.result = result;
-                    holder.exchange = createExchange(result);
+                    holder.exchange = createExchange(result, entityManager);
                     answer.add(holder);
                 }
 
@@ -130,6 +136,12 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                     if (!isTransacted()) {
                         LOG.warn("Error processing last message due: {}. Will commit all previous successful processed message, and ignore this last failure.", cause.getMessage(), cause);
                     } else {
+                        // Potentially EntityManager could be in an inconsistent state after transaction rollback,
+                        // so disposing it to have it recreated in next poll. cf. Java Persistence API 3.3.2 Transaction Rollback
+                        LOG.info("Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
+                        entityManager.close();
+                        entityManager = null;
+                        
                         // rollback all by throwning exception
                         throw cause;
                     }
@@ -153,7 +165,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
+            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there were " + total + " messages in this poll.");
             total = maxMessagesPerPoll;
         }
 
@@ -490,10 +502,10 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
-    protected Exchange createExchange(Object result) {
+    protected Exchange createExchange(Object result, EntityManager entityManager) {
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setBody(result);
-        exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, entityManager);
+        exchange.getIn().setHeader(JpaConstants.ENTITY_MANAGER, entityManager);
         return exchange;
     }
 

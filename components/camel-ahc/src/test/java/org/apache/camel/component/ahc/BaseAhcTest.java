@@ -23,6 +23,7 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.jsse.CipherSuitesParameters;
 import org.apache.camel.util.jsse.ClientAuthentication;
 import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;
@@ -131,7 +132,6 @@ public abstract class BaseAhcTest extends CamelTestSupport {
     }
     
     protected String getTestServerEndpointTwoUri() {
-        
         return "jetty:" + getTestServerEndpointTwoUrl();
     }
     

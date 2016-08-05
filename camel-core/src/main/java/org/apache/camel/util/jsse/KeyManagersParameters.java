@@ -195,7 +195,7 @@ public class KeyManagersParameters extends JsseParameters {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("KeyManagersParameters [keyStore=");
+        builder.append("KeyManagersParameters[keyStore=");
         builder.append(keyStore);
         builder.append(", keyPassword=");
         builder.append("********");
@@ -203,8 +203,6 @@ public class KeyManagersParameters extends JsseParameters {
         builder.append(provider);
         builder.append(", algorithm=");
         builder.append(algorithm);
-        builder.append(", getContext()=");
-        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

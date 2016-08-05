@@ -24,6 +24,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.MultipleConsumersSupport;
@@ -37,7 +38,7 @@ import org.apache.camel.component.routebox.RouteboxEndpoint;
 import org.apache.camel.component.routebox.RouteboxProducer;
 import org.apache.camel.spi.BrowsableEndpoint;
 
-public class RouteboxSedaEndpoint extends RouteboxEndpoint implements BrowsableEndpoint, MultipleConsumersSupport {
+public class RouteboxSedaEndpoint extends RouteboxEndpoint implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport {
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
     private volatile BlockingQueue<Exchange> queue;
     private volatile Set<RouteboxProducer> producers = new CopyOnWriteArraySet<RouteboxProducer>();

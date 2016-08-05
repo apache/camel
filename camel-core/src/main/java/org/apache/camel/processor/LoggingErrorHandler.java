@@ -24,8 +24,10 @@ import org.apache.camel.util.CamelLogger;
 /**
  * An {@link ErrorHandler} which uses commons-logging to dump the error
  *
- * @version 
+ * @version
+ * @deprecated use {@link DeadLetterChannel} using a log endpoint instead
  */
+@Deprecated
 public class LoggingErrorHandler extends DefaultErrorHandler {
 
     /**
@@ -39,7 +41,7 @@ public class LoggingErrorHandler extends DefaultErrorHandler {
      */
     public LoggingErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
                                RedeliveryPolicy redeliveryPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        super(camelContext, output, logger, null, redeliveryPolicy, exceptionPolicyStrategy, null, null, null);
+        super(camelContext, output, logger, null, redeliveryPolicy, exceptionPolicyStrategy, null, null, null, null);
     }
 
     @Override

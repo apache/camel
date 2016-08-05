@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link ErrorListener} which logs the errors.
+ * {@link ErrorListener} which logs the errors and rethrow the exceptions for error and fatal conditions.
  */
 public class XsltErrorListener implements ErrorListener {
 
@@ -31,16 +31,19 @@ public class XsltErrorListener implements ErrorListener {
 
     @Override
     public void warning(TransformerException e) throws TransformerException {
-        LOG.warn(e.getMessageAndLocation());
+        // just log warning
+        LOG.warn("Warning parsing XSLT file: " + e.getMessageAndLocation());
     }
 
     @Override
     public void error(TransformerException e) throws TransformerException {
-        LOG.error(e.getMessageAndLocation(), e);
+        LOG.error("Error parsing XSLT file: " + e.getMessageAndLocation());
+        throw e;
     }
 
     @Override
     public void fatalError(TransformerException e) throws TransformerException {
-        LOG.error(e.getMessageAndLocation(), e);
+        LOG.error("Fatal error parsing XSLT file: " + e.getMessageAndLocation());
+        throw e;
     }
 }

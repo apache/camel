@@ -200,13 +200,23 @@ public final class NettyHttpHelper {
             if (path.startsWith("/")) {
                 path = path.substring(1);
             }
+            
             if (path.length() > 0) {
-                // make sure that there is exactly one "/" between HTTP_URI and
-                // HTTP_PATH
-                if (!uri.endsWith("/")) {
-                    uri = uri + "/";
+                // inject the dynamic path before the query params, if there are any
+                int idx = uri.indexOf("?");
+
+                // if there are no query params
+                if (idx == -1) {
+                    // make sure that there is exactly one "/" between HTTP_URI and HTTP_PATH
+                    uri = uri.endsWith("/") ? uri : uri + "/";
+                    uri = uri.concat(path);
+                } else {
+                    // there are query params, so inject the relative path in the right place
+                    String base = uri.substring(0, idx);
+                    base = base.endsWith("/") ? base : base + "/";
+                    base = base.concat(path);
+                    uri = base.concat(uri.substring(idx));
                 }
-                uri = uri.concat(path);
             }
         }
 
@@ -226,8 +236,12 @@ public final class NettyHttpHelper {
      */
     public static URI createURI(Exchange exchange, String url, NettyHttpEndpoint endpoint) throws URISyntaxException {
         URI uri = new URI(url);
-        // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        // is a query string provided in the endpoint URI or in a header
+        // (header overrules endpoint, raw query header overrules query header)
+        String queryString = exchange.getIn().getHeader(Exchange.HTTP_RAW_QUERY, String.class);
+        if (queryString == null) {
+            queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        }
         if (queryString == null) {
             // use raw as we encode just below
             queryString = uri.getRawQuery();

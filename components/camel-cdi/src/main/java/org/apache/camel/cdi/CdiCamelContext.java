@@ -16,77 +16,23 @@
  */
 package org.apache.camel.cdi;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.Injector;
-import org.apache.camel.spi.Registry;
-import org.apache.camel.util.ObjectHelper;
 
 /**
- * CDI {@link org.apache.camel.CamelContext} class.
+ * CDI {@link org.apache.camel.CamelContext} class that can be extended
+ * to declare custom Camel context beans. Camel CDI is capable of managing
+ * any bean that implements {@code org.apache.camel.CamelContext},
+ * so that directly extending {@link org.apache.camel.impl.DefaultCamelContext}
+ * is an option to avoid having to depend on Camel CDI specific API, e.g.:
+ *
+ * <pre><code>
+ * {@literal @}ApplicationScoped
+ * {@literal @}ContextName("foo")
+ * public class FooCamelContext extends DefaultCamelContext {
+ * }
+ * </code></pre>
  */
+@Vetoed
 public class CdiCamelContext extends DefaultCamelContext {
-
-    private BeanManager beanManager;
-
-    public CdiCamelContext() {
-    }
-
-    @Inject
-    public void setBeanManager(Instance<BeanManager> beanManager) {
-        this.beanManager = beanManager.get();
-    }
-
-    @Inject
-    public void setRegistry(Instance<Registry> instance) {
-        if (isSingular(instance)) {
-            setRegistry(instance.get());
-        }
-    }
-
-    @Inject
-    public void setInjector(Instance<Injector> instance) {
-        if (isSingular(instance)) {
-            setInjector(instance.get());
-        }
-    }
-
-    private <T> boolean isSingular(Instance<T> instance) {
-        return !instance.isUnsatisfied() && !instance.isAmbiguous();
-    }
-
-    @PostConstruct
-    @Override
-    public void start() {
-        // make sure to use cdi capable bean registry and injector
-        if (!(getRegistry() instanceof CdiBeanRegistry)) {
-            setRegistry(new CdiBeanRegistry(beanManager));
-        }
-
-        if (!(getInjector() instanceof CdiInjector)) {
-            setInjector(new CdiInjector(getInjector()));
-        }
-
-        try {
-            super.start();
-        } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
-    }
-
-    @PreDestroy
-    @Override
-    public void stop() {
-        try {
-            super.stop();
-        } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
-    }
 
 }

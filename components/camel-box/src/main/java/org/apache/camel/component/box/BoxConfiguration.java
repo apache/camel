@@ -38,49 +38,34 @@ public class BoxConfiguration {
 
     @UriPath @Metadata(required = "true")
     private BoxApiName apiName;
-
     @UriPath @Metadata(required = "true")
     private String methodName;
-
     @UriParam
     private String clientId;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String clientSecret;
-
-    @UriParam
-    private IAuthSecureStorage authSecureStorage;
-
-    @UriParam @Metadata(required = "true")
+    @UriParam(label = "security", secret = true)
     private String userName;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String userPassword;
-
-    @UriParam
+    @UriParam(label = "advanced,security")
+    private IAuthSecureStorage authSecureStorage;
+    @UriParam(label = "advanced")
     private OAuthRefreshListener refreshListener;
-
     @UriParam
     private boolean revokeOnShutdown;
-
     @UriParam
     private String sharedLink;
-
     @UriParam
     private String sharedPassword;
-
-    @UriParam
+    @UriParam(label = "advanced")
     private IBoxConfig boxConfig;
-
-    @UriParam
+    @UriParam(label = "advanced")
     private BoxConnectionManagerBuilder connectionManagerBuilder;
-
-    @UriParam
+    @UriParam(label = "advanced")
     private Map<String, Object> httpParams;
-
-    @UriParam
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-
     @UriParam(defaultValue = "30")
     private int loginTimeout = 30;
 

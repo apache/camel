@@ -77,4 +77,35 @@ public @interface UriParam {
      */
     String label() default "";
 
+    /**
+     * Whether the option is secret/sensitive information such as a password.
+     */
+    boolean secret() default false;
+
+    /**
+     * To re-associate the preferred Java type of this parameter.
+     * <p/>
+     * This is used for parameters which are of a specialized type but can be configured by another Java type, such as from a String.
+     */
+    String javaType() default "";
+
+    /**
+     * If the parameter can be configured multiple times, such as configuring options to a <tt>Map</tt> type.
+     */
+    boolean multiValue() default false;
+
+    /**
+     * If the parameter must be configured with a prefix.
+     * <p/>
+     * For example to configure scheduler options, the parameters is prefixed with <tt>scheduler.foo=bar</tt>
+     */
+    String prefix() default "";
+
+    /**
+     * If the parameter can be configured with an optional prefix.
+     * <p/>
+     * For example to configure consumer options, the parameters can be prefixed with <tt>consumer.</tt>, eg <tt>consumer.delay=5000</tt>
+     */
+    String optionalPrefix() default "";
+
 }

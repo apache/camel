@@ -19,6 +19,7 @@ package org.apache.camel.commands.jolokia;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +28,7 @@ import javax.management.InstanceNotFoundException;
 import javax.management.ObjectName;
 
 import org.apache.camel.commands.AbstractCamelController;
-import org.apache.camel.util.LRUCache;
-import org.apache.camel.util.StringHelper;
+
 import org.jolokia.client.J4pClient;
 import org.jolokia.client.exception.J4pException;
 import org.jolokia.client.exception.J4pRemoteException;
@@ -48,7 +48,7 @@ import org.json.simple.JSONObject;
  */
 public class DefaultJolokiaCamelController extends AbstractCamelController implements JolokiaCamelController {
 
-    private Map<String, ObjectName> cache = new LRUCache<String, ObjectName>(1000);
+    private Map<String, ObjectName> cache = new HashMap<String, ObjectName>(100);
 
     private J4pClient jolokia;
     private String url;
@@ -61,7 +61,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             if (sr != null) {
                 for (ObjectName name : sr.getObjectNames()) {
                     String id = name.getKeyProperty("name");
-                    id = StringHelper.removeLeadingAndEndingQuotes(id);
+                    id = removeLeadingAndEndingQuotes(id);
                     if (camelContextName.equals(id)) {
                         found = name;
                         break;
@@ -74,6 +74,12 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             }
         }
         return on;
+    }
+
+    @Override
+    public void using(J4pClient client) {
+        this.jolokia = client;
+        this.url = null;
     }
 
     @Override
@@ -229,7 +235,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
     }
 
     @Override
-    public List<Map<String, Object>> browseInflightExchanges(String camelContextName, int limit, boolean sortByLongestDuration) throws Exception {
+    public List<Map<String, Object>> browseInflightExchanges(String camelContextName, String route, int limit, boolean sortByLongestDuration) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
@@ -240,7 +246,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
         if (found != null) {
             String pattern = String.format("%s:context=%s,type=services,name=DefaultInflightRepository", found.getDomain(), found.getKeyProperty("context"));
             ObjectName on = ObjectName.getInstance(pattern);
-            J4pExecResponse er = jolokia.execute(new J4pExecRequest(on, "browse(int,boolean)", limit, sortByLongestDuration));
+            J4pExecResponse er = jolokia.execute(new J4pExecRequest(on, "browse(String,int,boolean)", route, limit, sortByLongestDuration));
             if (er != null) {
                 JSONObject data = er.getValue();
                 if (data != null) {
@@ -332,7 +338,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
 
             List<J4pReadRequest> list = new ArrayList<J4pReadRequest>();
             for (ObjectName on : sr.getObjectNames()) {
-                list.add(new J4pReadRequest(on, "CamelId", "RouteId", "State"));
+                list.add(new J4pReadRequest(on, "CamelId", "RouteId", "State", "Uptime", "ExchangesTotal", "ExchangesInflight", "ExchangesFailed"));
             }
 
             List<J4pReadResponse> lrr = jolokia.execute(list);
@@ -343,6 +349,10 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
                     row.put("camelContextName", rr.getValue("CamelId").toString());
                     row.put("routeId", routeId);
                     row.put("state", rr.getValue("State").toString());
+                    row.put("uptime", rr.getValue("Uptime").toString());
+                    row.put("exchangesTotal", rr.getValue("ExchangesTotal").toString());
+                    row.put("exchangesInflight", rr.getValue("ExchangesInflight").toString());
+                    row.put("exchangesFailed", rr.getValue("ExchangesFailed").toString());
                     answer.add(row);
                 }
             }
@@ -452,7 +462,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
     }
 
     @Override
-    public String getRouteModelAsXml(String camelContextName, String routeId) throws Exception {
+    public String getRouteModelAsXml(String routeId, String camelContextName) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
@@ -472,7 +482,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
     }
 
     @Override
-    public String getRouteStatsAsXml(String camelContextName, String routeId, boolean fullStats, boolean includeProcessors) throws Exception {
+    public String getRouteStatsAsXml(String routeId, String camelContextName, boolean fullStats, boolean includeProcessors) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
@@ -503,6 +513,27 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             if (response != null) {
                 String xml = response.getValue();
                 return xml;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public String getRestApiDocAsJson(String camelContextName) throws Exception {
+        if (jolokia == null) {
+            throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=services,name=DefaultRestRegistry", found.getDomain(), found.getKeyProperty("context"));
+            ObjectName on = ObjectName.getInstance(pattern);
+
+            J4pExecResponse response = jolokia.execute(new J4pExecRequest(on, "apiDocAsJson()"));
+            if (response != null) {
+                String json = response.getValue();
+                return json;
             }
         }
 
@@ -611,24 +642,26 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             J4pExecResponse response = jolokia.execute(new J4pExecRequest(on, "listRestServices()"));
             if (response != null) {
                 JSONObject data = response.getValue();
-                for (Object obj : data.values()) {
-                    JSONObject data2 = (JSONObject) obj;
-                    JSONObject service = (JSONObject) data2.values().iterator().next();
+                if (data != null) {
+                    for (Object obj : data.values()) {
+                        JSONObject data2 = (JSONObject) obj;
+                        JSONObject service = (JSONObject) data2.values().iterator().next();
 
-                    Map<String, String> row = new LinkedHashMap<String, String>();
-                    row.put("basePath", asString(service.get("basePath")));
-                    row.put("baseUrl", asString(service.get("baseUrl")));
-                    row.put("consumes", asString(service.get("consumes")));
-                    row.put("description", asString(service.get("description")));
-                    row.put("inType", asString(service.get("inType")));
-                    row.put("method", asString(service.get("method")));
-                    row.put("outType", asString(service.get("outType")));
-                    row.put("produces", asString(service.get("produces")));
-                    row.put("routeId", asString(service.get("routeId")));
-                    row.put("state", asString(service.get("state")));
-                    row.put("uriTemplate", asString(service.get("uriTemplate")));
-                    row.put("url", asString(service.get("url")));
-                    answer.add(row);
+                        Map<String, String> row = new LinkedHashMap<String, String>();
+                        row.put("basePath", asString(service.get("basePath")));
+                        row.put("baseUrl", asString(service.get("baseUrl")));
+                        row.put("consumes", asString(service.get("consumes")));
+                        row.put("description", asString(service.get("description")));
+                        row.put("inType", asString(service.get("inType")));
+                        row.put("method", asString(service.get("method")));
+                        row.put("outType", asString(service.get("outType")));
+                        row.put("produces", asString(service.get("produces")));
+                        row.put("routeId", asString(service.get("routeId")));
+                        row.put("state", asString(service.get("state")));
+                        row.put("uriTemplate", asString(service.get("uriTemplate")));
+                        row.put("url", asString(service.get("url")));
+                        answer.add(row);
+                    }
                 }
             }
 
@@ -737,6 +770,23 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
         } else {
             return basePath.toString();
         }
+    }
+
+    private static String removeLeadingAndEndingQuotes(String s) {
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+
+        String copy = s.trim();
+        if (copy.startsWith("'") && copy.endsWith("'")) {
+            return copy.substring(1, copy.length() - 1);
+        }
+        if (copy.startsWith("\"") && copy.endsWith("\"")) {
+            return copy.substring(1, copy.length() - 1);
+        }
+
+        // no quotes, so return as-is
+        return s;
     }
 
 }

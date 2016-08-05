@@ -26,7 +26,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <toD uri="mock:+xpath:/order/@uri+header:sub"/>
+      <toD uri="mock:+language:xpath:/order/@uri+language:header:sub"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: e1 -->

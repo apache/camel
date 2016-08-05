@@ -70,7 +70,7 @@ public class ManagedLoopTest extends ManagementTestSupport {
 
         data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
         assertNotNull(data);
-        assertEquals(5, data.size());
+        assertEquals(6, data.size());
 
         String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
         assertNotNull(json);

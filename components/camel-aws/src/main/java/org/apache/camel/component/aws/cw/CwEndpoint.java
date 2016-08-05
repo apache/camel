@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Defines the <a href="http://aws.amazon.com/cloudwatch/">AWS CloudWatch Endpoint</a>
+ * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
  */
 @UriEndpoint(scheme = "aws-cw", title = "AWS CloudWatch", syntax = "aws-cw:namespace", producerOnly = true, label = "cloud,monitoring")
 public class CwEndpoint extends DefaultEndpoint {

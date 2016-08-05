@@ -61,4 +61,9 @@ public @interface Metadata {
      */
     String description() default "";
 
+    /**
+     * Whether the option is secret/sensitive information such as a password.
+     */
+    boolean secret() default false;
+
 }

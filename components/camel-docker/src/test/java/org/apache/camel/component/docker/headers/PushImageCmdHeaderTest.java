@@ -23,7 +23,6 @@ import com.github.dockerjava.api.command.PushImageCmd;
 import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -44,7 +43,6 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
     private String name = "imagename";
     private String tag = "1.0";
 
-    @Ignore
     @Test
     public void pushImageHeaderTest() {
 

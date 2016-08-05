@@ -32,7 +32,6 @@ import org.apache.camel.component.sjms.BatchMessage;
 import org.apache.camel.component.sjms.MessageProducerResources;
 import org.apache.camel.component.sjms.SjmsProducer;
 import org.apache.camel.component.sjms.TransactionCommitStrategy;
-import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
@@ -46,11 +45,6 @@ public class InOnlyProducer extends SjmsProducer {
         super(endpoint);
     }
 
-    /*
-     * @see org.apache.camel.component.sjms.SjmsProducer#doCreateProducerModel()
-     * @return
-     * @throws Exception
-     */
     @Override
     public MessageProducerResources doCreateProducerModel() throws Exception {
         MessageProducerResources answer;
@@ -75,13 +69,6 @@ public class InOnlyProducer extends SjmsProducer {
         return answer;
     }
 
-    /*
-     * @see
-     * org.apache.camel.component.sjms.SjmsProducer#sendMessage(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)
-     * @param exchange
-     * @param callback
-     * @throws Exception
-     */
     @Override
     public void sendMessage(final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer) throws Exception {
         try {
@@ -93,19 +80,18 @@ public class InOnlyProducer extends SjmsProducer {
                         Message message;
                         if (BatchMessage.class.isInstance(object)) {
                             BatchMessage<?> batchMessage = (BatchMessage<?>) object;
-                            message = JmsMessageHelper.createMessage(producer.getSession(), batchMessage.getPayload(), batchMessage.getHeaders(), getEndpoint());
+                            message = getEndpoint().getBinding().makeJmsMessage(exchange, batchMessage.getPayload(), batchMessage.getHeaders(), producer.getSession(), null);
                         } else {
-                            message = JmsMessageHelper.createMessage(producer.getSession(), object, exchange.getIn().getHeaders(), getEndpoint());
+                            message = getEndpoint().getBinding().makeJmsMessage(exchange, object, exchange.getIn().getHeaders(), producer.getSession(), null);
                         }
                         messages.add(message);
                     }
                 } else {
-                    Object payload = exchange.getIn().getBody();
-                    Message message = JmsMessageHelper.createMessage(producer.getSession(), payload, exchange.getIn().getHeaders(), getEndpoint());
+                    Message message = getEndpoint().getBinding().makeJmsMessage(exchange, producer.getSession());
                     messages.add(message);
                 }
             } else {
-                Message message = JmsMessageHelper.createMessage(producer.getSession(), null, exchange.getIn().getHeaders(), getEndpoint());
+                Message message = getEndpoint().getBinding().makeJmsMessage(exchange, producer.getSession());
                 messages.add(message);
             }
 
@@ -124,4 +110,5 @@ public class InOnlyProducer extends SjmsProducer {
             callback.done(isSynchronous());
         }
     }
+
 }

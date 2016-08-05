@@ -53,7 +53,7 @@ public final class JmsBroker {
         final String brokerUrl;
         Exception exception;
 
-        public JMSEmbeddedBroker(String url) {
+        JMSEmbeddedBroker(String url) {
             brokerUrl = url;
         }
         

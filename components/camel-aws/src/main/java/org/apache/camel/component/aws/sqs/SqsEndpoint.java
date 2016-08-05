@@ -39,21 +39,22 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS SQS Endpoint</a>.  
+ * The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
  */
-@UriEndpoint(scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueName", consumerClass = SqsConsumer.class, label = "cloud,messaging")
+@UriEndpoint(scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueNameOrArn", consumerClass = SqsConsumer.class, label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
     
     private static final Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);
@@ -61,6 +62,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     private AmazonSQS client;
     private String queueUrl;
 
+    @UriPath(description = "Queue name or ARN")
+    @Metadata(required = "true")
+    private String queueNameOrArn; // to support component docs
     @UriParam
     private SqsConfiguration configuration;
     @UriParam(label = "consumer")

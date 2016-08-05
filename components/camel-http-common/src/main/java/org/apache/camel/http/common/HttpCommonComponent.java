@@ -22,6 +22,7 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
 
     protected HttpBinding httpBinding;
     protected HttpConfiguration httpConfiguration;
+    protected boolean allowJavaSerializedObject;
 
     public HttpCommonComponent(Class<? extends HttpCommonEndpoint> endpointClass) {
         super(endpointClass);
@@ -70,6 +71,20 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
      */
     public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
         this.httpConfiguration = httpConfiguration;
+    }
+
+    public boolean isAllowJavaSerializedObject() {
+        return allowJavaSerializedObject;
+    }
+
+    /**
+     * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
+     */
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 
 }

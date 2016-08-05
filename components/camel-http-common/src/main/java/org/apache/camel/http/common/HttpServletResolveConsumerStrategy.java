@@ -19,6 +19,8 @@ package org.apache.camel.http.common;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.camel.support.RestConsumerContextPathMatcher;
+
 /**
  * A default implementation of {@link org.apache.camel.http.common.ServletResolveConsumerStrategy}.
  */
@@ -37,13 +39,15 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
                 //We need to look up the consumer path here
                 String consumerPath = consumers.get(key).getPath();
                 HttpConsumer consumer = consumers.get(key);
+                boolean matchOnUriPrefix = consumer.getEndpoint().isMatchOnUriPrefix();
                 // Just make sure the we get the right consumer path first
-                if (consumerPath.equals(path) || (consumer.getEndpoint().isMatchOnUriPrefix() && path.startsWith(consumerPath))) {
+                if (RestConsumerContextPathMatcher.matchPath(path, consumerPath, matchOnUriPrefix)) {
                     answer = consumers.get(key);
                     break;
                 }
             }
         }
+
         return answer;
     }
 

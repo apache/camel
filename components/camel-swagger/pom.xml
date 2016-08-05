@@ -21,12 +21,12 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-swagger</artifactId>
-  <packaging>bundle</packaging>
-  <name>Camel :: Swagger</name>
+  <packaging>jar</packaging>
+  <name>Camel :: Swagger (deprecated)</name>
   <description>Camel Swagger support</description>
 
   <properties>
@@ -46,7 +46,7 @@
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-annotations</artifactId>
-      <version>${swagger-version}</version>
+      <version>${swagger-scala-version}</version>
     </dependency>
 
     <!-- To override the scala-library version of swagger-jaxrs-2.10 for supporting Java8 -->
@@ -59,13 +59,13 @@
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-jaxrs_2.10</artifactId>
-      <version>${swagger-version}</version>
+      <version>${swagger-scala-version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-servlet_2.10</artifactId>
-      <version>${swagger-version}</version>
+      <version>${swagger-scala-version}</version>
     </dependency>
 
     <dependency>
@@ -83,7 +83,17 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty8</artifactId>
+      <artifactId>camel-jetty</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-http-common</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty-common</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

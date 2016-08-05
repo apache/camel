@@ -160,10 +160,6 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
             }
         }
         
-        if (answer == null) {
-            throw new IllegalArgumentException("Property placeholder key: " + key + " not found");
-        }
-
         log.trace("Returning parsed property key: {} as value: {}", key, answer);
         return answer;
     }

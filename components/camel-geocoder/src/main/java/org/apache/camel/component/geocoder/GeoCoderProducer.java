@@ -197,11 +197,7 @@ public class GeoCoderProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        if (endpoint.getClientId() != null) {
-            geocoder = new Geocoder(endpoint.getClientId(), endpoint.getClientKey());
-        } else {
-            geocoder = new Geocoder();
-        }
+        geocoder = endpoint.createGeocoder();
     }
 
 }

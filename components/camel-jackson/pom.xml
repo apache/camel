@@ -21,17 +21,17 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.16-SNAPSHOT</version>
+        <version>2.18-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jackson</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Jackson</name>
     <description>Camel Jackson support</description>
 
     <properties>
         <camel.osgi.import.before.defaults>
-          com.fasterxml.jackson.*;version="[2.3,3)"
+          com.fasterxml.jackson.*;version="[2.6,3)"
         </camel.osgi.import.before.defaults>
         <camel.osgi.export.pkg>org.apache.camel.component.jackson.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=json-jackson</camel.osgi.export.service>
@@ -46,12 +46,10 @@
         <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-databind</artifactId>
-          <version>${jackson2-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-jaxb-annotations</artifactId>
-            <version>${jackson2-version}</version>
         </dependency>
 
         <!-- testing -->

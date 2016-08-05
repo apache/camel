@@ -30,6 +30,7 @@ import org.apache.camel.Channel;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
@@ -135,7 +136,15 @@ public class RouteService extends ChildServiceSupport {
         this.removingRoutes = removingRoutes;
     }
 
-    public synchronized void warmUp() throws Exception {
+    public void warmUp() throws Exception {
+        try {
+            doWarmUp();
+        } catch (Exception e) {
+            throw new FailedToCreateRouteException(routeDefinition.getId(), routeDefinition.toString(), e);
+        }
+    }
+
+    protected synchronized void doWarmUp() throws Exception {
         if (endpointDone.compareAndSet(false, true)) {
             // endpoints should only be started once as they can be reused on other routes
             // and whatnot, thus their lifecycle is to start once, and only to stop when Camel shutdown
@@ -196,7 +205,6 @@ public class RouteService extends ChildServiceSupport {
     }
 
     protected void doStart() throws Exception {
-        // ensure we are warmed up before starting the route
         warmUp();
 
         for (Route route : routes) {

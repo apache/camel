@@ -31,7 +31,7 @@ public class MyBatisSelectOneWithInputAndOutputHeaderTest extends MyBatisTestSup
     public void testSelectOne() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).body().equals(TEST_ACCOUNT_ID_BAD);
+        mock.message(0).body().isEqualTo(TEST_ACCOUNT_ID_BAD);
         mock.message(0).header(TEST_CASE_OUTPUT_HEADER_NAME).isInstanceOf(Account.class);
 
         template.sendBodyAndHeader("direct:start", TEST_ACCOUNT_ID_BAD, TEST_CASE_INPUT_HEADER_NAME, TEST_ACCOUNT_ID);
@@ -46,7 +46,7 @@ public class MyBatisSelectOneWithInputAndOutputHeaderTest extends MyBatisTestSup
     public void tesSelectOneNotFound() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).body().equals(TEST_ACCOUNT_ID);
+        mock.message(0).body().isEqualTo(TEST_ACCOUNT_ID);
         mock.message(0).header(TEST_CASE_OUTPUT_HEADER_NAME).isNull();
 
         template.sendBodyAndHeader("direct:start", TEST_ACCOUNT_ID, TEST_CASE_INPUT_HEADER_NAME, TEST_ACCOUNT_ID_BAD);

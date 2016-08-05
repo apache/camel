@@ -126,7 +126,7 @@ public class StreamResequencerTest extends ContextTestSupport {
         private final int increment;
         private final Random random;
 
-        public Sender(ProducerTemplate template, int start, int end, int increment) {
+        Sender(ProducerTemplate template, int start, int end, int increment) {
             this.template = template;
             this.start = start;
             this.end = end;

@@ -27,6 +27,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileMessage;
@@ -129,18 +130,22 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         } else {
             zipFile = oldExchange.getIn().getBody(File.class);
         }
+
+        Object body = newExchange.getIn().getBody();
+        if (body instanceof WrappedFile) {
+            body = ((WrappedFile) body).getFile();
+        }
         
-        // Handle GenericFileMessages
-        if (GenericFileMessage.class.isAssignableFrom(newExchange.getIn().getClass())) {
+        if (body instanceof File) {
             try {
-                File appendFile = newExchange.getIn().getMandatoryBody(File.class);
-                if (appendFile != null) {
-                    addFileToZip(zipFile, appendFile, this.preserveFolderStructure ? newExchange.getIn().toString() : null);
+                File appendFile = (File) body;
+                // do not try to append empty files
+                if (appendFile.length() > 0) {
+                    String entryName = preserveFolderStructure ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class) : newExchange.getIn().getMessageId();
+                    addFileToZip(zipFile, appendFile, this.preserveFolderStructure ? entryName : null);
                     GenericFile<File> genericFile = 
                         FileConsumer.asGenericFile(
-                            zipFile.getParent(), 
-                            zipFile, 
-                            Charset.defaultCharset().toString());
+                            zipFile.getParent(), zipFile, Charset.defaultCharset().toString(), false);
                     genericFile.bindToExchange(answer);
                 }
             } catch (Exception e) {
@@ -150,11 +155,14 @@ public class ZipAggregationStrategy implements AggregationStrategy {
             // Handle all other messages
             try {
                 byte[] buffer = newExchange.getIn().getMandatoryBody(byte[].class);
-                String entryName = useFilenameHeader ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class) : newExchange.getIn().getMessageId();
-                addEntryToZip(zipFile, entryName, buffer, buffer.length);
-                GenericFile<File> genericFile = FileConsumer.asGenericFile(
-                    zipFile.getParent(), zipFile, Charset.defaultCharset().toString());
-                genericFile.bindToExchange(answer);
+                // do not try to append empty data
+                if (buffer.length > 0) {
+                    String entryName = useFilenameHeader ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class) : newExchange.getIn().getMessageId();
+                    addEntryToZip(zipFile, entryName, buffer, buffer.length);
+                    GenericFile<File> genericFile = FileConsumer.asGenericFile(
+                            zipFile.getParent(), zipFile, Charset.defaultCharset().toString(), false);
+                    genericFile.bindToExchange(answer);
+                }
             } catch (Exception e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
@@ -170,25 +178,30 @@ public class ZipAggregationStrategy implements AggregationStrategy {
             throw new IOException("Could not make temp file (" + source.getName() + ")");
         }
         byte[] buffer = new byte[8192];
-        ZipInputStream zin = new ZipInputStream(new FileInputStream(tmpZip));
+
+        FileInputStream fis = new FileInputStream(tmpZip);
+        ZipInputStream zin = new ZipInputStream(fis);
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(source));
 
-        InputStream in = new FileInputStream(file);
-        out.putNextEntry(new ZipEntry(fileName == null ? file.getName() : fileName));
-        for (int read = in.read(buffer); read > -1; read = in.read(buffer)) {
-            out.write(buffer, 0, read);
-        }
-        out.closeEntry();
-        IOHelper.close(in);
-
-        for (ZipEntry ze = zin.getNextEntry(); ze != null; ze = zin.getNextEntry()) {
-            out.putNextEntry(ze);
-            for (int read = zin.read(buffer); read > -1; read = zin.read(buffer)) {
+        try {
+            InputStream in = new FileInputStream(file);
+            out.putNextEntry(new ZipEntry(fileName == null ? file.getName() : fileName));
+            for (int read = in.read(buffer); read > -1; read = in.read(buffer)) {
                 out.write(buffer, 0, read);
             }
             out.closeEntry();
+            IOHelper.close(in);
+
+            for (ZipEntry ze = zin.getNextEntry(); ze != null; ze = zin.getNextEntry()) {
+                out.putNextEntry(ze);
+                for (int read = zin.read(buffer); read > -1; read = zin.read(buffer)) {
+                    out.write(buffer, 0, read);
+                }
+                out.closeEntry();
+            }
+        } finally {
+            IOHelper.close(fis, zin, out);
         }
-        IOHelper.close(zin, out);
         tmpZip.delete();
     }
     
@@ -198,21 +211,25 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         if (!source.renameTo(tmpZip)) {
             throw new IOException("Cannot create temp file: " + source.getName());
         }
-        ZipInputStream zin = new ZipInputStream(new FileInputStream(tmpZip));
-        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(source));
-        
-        out.putNextEntry(new ZipEntry(entryName));
-        out.write(buffer, 0, length);
-        out.closeEntry();
 
-        for (ZipEntry ze = zin.getNextEntry(); ze != null; ze = zin.getNextEntry()) {
-            out.putNextEntry(ze);
-            for (int read = zin.read(buffer); read > -1; read = zin.read(buffer)) {
-                out.write(buffer, 0, read);
-            }
+        FileInputStream fis = new FileInputStream(tmpZip);
+        ZipInputStream zin = new ZipInputStream(fis);
+        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(source));
+        try {
+            out.putNextEntry(new ZipEntry(entryName));
+            out.write(buffer, 0, length);
             out.closeEntry();
+
+            for (ZipEntry ze = zin.getNextEntry(); ze != null; ze = zin.getNextEntry()) {
+                out.putNextEntry(ze);
+                for (int read = zin.read(buffer); read > -1; read = zin.read(buffer)) {
+                    out.write(buffer, 0, read);
+                }
+                out.closeEntry();
+            }
+        } finally {
+            IOHelper.close(fis, zin, out);
         }
-        IOHelper.close(zin, out);
         tmpZip.delete();
     }
     
@@ -223,7 +240,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         
         private final File fileToDelete;
         
-        public DeleteZipFileOnCompletion(File fileToDelete) {
+        DeleteZipFileOnCompletion(File fileToDelete) {
             this.fileToDelete = fileToDelete;
         }
         

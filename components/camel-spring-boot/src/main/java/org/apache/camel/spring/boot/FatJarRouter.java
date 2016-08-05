@@ -26,7 +26,7 @@ public class FatJarRouter extends RouteBuilder {
         ApplicationContext applicationContext = new SpringApplication(FatJarRouter.class).run(args);
         CamelSpringBootApplicationController applicationController =
                 applicationContext.getBean(CamelSpringBootApplicationController.class);
-        applicationController.blockMainThread();
+        applicationController.run();
     }
 
     @Override

@@ -41,7 +41,7 @@ public final class JpaHelper {
      * @return the entity manager (is never null)
      */
     public static EntityManager getTargetEntityManager(Exchange exchange, EntityManagerFactory entityManagerFactory,
-                                                       boolean usePassedInEntityManager, boolean useSharedEntityManager) {
+                                                       boolean usePassedInEntityManager, boolean useSharedEntityManager, boolean allowRecreate) {
         EntityManager em = null;
 
         // favor using entity manager provided as a header from the end user
@@ -59,6 +59,16 @@ public final class JpaHelper {
         }
         
         if (em == null) {
+            // create a new entity manager
+            em = entityManagerFactory.createEntityManager();
+            if (exchange != null) {
+                // we want to reuse the EM so store as property and make sure we close it when done with the exchange
+                exchange.setProperty(JpaConstants.ENTITY_MANAGER, em);
+                exchange.addOnCompletion(new JpaCloseEntityManagerOnCompletion(em));
+            }
+        }
+
+        if (allowRecreate && em == null || !em.isOpen()) {
             // create a new entity manager
             em = entityManagerFactory.createEntityManager();
             if (exchange != null) {

@@ -38,7 +38,6 @@ public class PropertiesComponentSetHeaderSimpleTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setCamelContext(context);
         pc.setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
         context.addComponent("properties", pc);
 

@@ -60,6 +60,7 @@ public class DefaultRouteContext implements RouteContext {
     private boolean routeAdded;
     private Boolean trace;
     private Boolean messageHistory;
+    private Boolean logExhaustedMessageBody;
     private Boolean streamCache;
     private Boolean handleFault;
     private Long delay;
@@ -283,6 +284,19 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
+    public void setLogExhaustedMessageBody(Boolean logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
+    }
+
+    public Boolean isLogExhaustedMessageBody() {
+        if (logExhaustedMessageBody != null) {
+            return logExhaustedMessageBody;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isLogExhaustedMessageBody();
+        }
+    }
+
     public void setStreamCaching(Boolean cache) {
         this.streamCache = cache;
     }
@@ -339,10 +353,12 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     public void setAllowUseOriginalMessage(Boolean allowUseOriginalMessage) {
-        throw new IllegalArgumentException("This option can only be configured on CamelContext");
+        // can only be configured on CamelContext
+        getCamelContext().setAllowUseOriginalMessage(allowUseOriginalMessage);
     }
 
     public Boolean isAllowUseOriginalMessage() {
+        // can only be configured on CamelContext
         return getCamelContext().isAllowUseOriginalMessage();
     }
 

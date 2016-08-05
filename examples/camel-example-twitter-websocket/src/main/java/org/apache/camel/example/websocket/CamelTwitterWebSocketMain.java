@@ -50,9 +50,6 @@ public final class CamelTwitterWebSocketMain {
         // create a new Camel Main so we can easily start Camel
         Main main = new Main();
 
-        // enable hangup support which mean we detect when the JVM terminates, and stop Camel graceful
-        main.enableHangupSupport();
-
         TwitterWebSocketRoute route = new TwitterWebSocketRoute();
 
         // setup twitter application authentication
@@ -61,9 +58,9 @@ public final class CamelTwitterWebSocketMain {
         route.setConsumerKey(consumerKey);
         route.setConsumerSecret(consumerSecret);
 
-        // poll for gaga, every 2nd second
+        // poll for gaga, every 5nd second
         route.setSearchTerm("gaga");
-        route.setDelay(2);
+        route.setDelay(5);
 
         // web socket on port 9090
         route.setPort(9090);

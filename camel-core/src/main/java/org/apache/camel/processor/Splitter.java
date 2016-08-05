@@ -36,6 +36,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExchangeHelper;
@@ -97,7 +98,10 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         // and propagate exceptions which is done by a per exchange specific aggregation strategy
         // to ensure it supports async routing
         if (strategy == null) {
-            UseOriginalAggregationStrategy original = new UseOriginalAggregationStrategy(exchange, true);
+            AggregationStrategy original = new UseOriginalAggregationStrategy(exchange, true);
+            if (isShareUnitOfWork()) {
+                original = new ShareUnitOfWorkAggregationStrategy(original);
+            }
             setAggregationStrategyOnExchange(exchange, original);
         }
 
@@ -176,28 +180,32 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
                 public ProcessorExchangePair next() {
                     Object part = iterator.next();
-                    // create a correlated copy as the new exchange to be routed in the splitter from the copy
-                    // and do not share the unit of work
-                    Exchange newExchange = ExchangeHelper.createCorrelatedCopy(copy, false);
-                    // If the splitter has an aggregation strategy
-                    // then the StreamCache created by the child routes must not be 
-                    // closed by the unit of work of the child route, but by the unit of 
-                    // work of the parent route or grand parent route or grand grand parent route... (in case of nesting).
-                    // Therefore, set the unit of work of the parent route as stream cache unit of work, if not already set.
-                    if (newExchange.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK) == null) {
-                        newExchange.setProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, original.getUnitOfWork());
-                    }
-                    // if we share unit of work, we need to prepare the child exchange
-                    if (isShareUnitOfWork()) {
-                        prepareSharedUnitOfWork(newExchange, copy);
-                    }
-                    if (part instanceof Message) {
-                        newExchange.setIn((Message) part);
+                    if (part != null) {
+                        // create a correlated copy as the new exchange to be routed in the splitter from the copy
+                        // and do not share the unit of work
+                        Exchange newExchange = ExchangeHelper.createCorrelatedCopy(copy, false);
+                        // If the splitter has an aggregation strategy
+                        // then the StreamCache created by the child routes must not be
+                        // closed by the unit of work of the child route, but by the unit of
+                        // work of the parent route or grand parent route or grand grand parent route... (in case of nesting).
+                        // Therefore, set the unit of work of the parent route as stream cache unit of work, if not already set.
+                        if (newExchange.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK) == null) {
+                            newExchange.setProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, original.getUnitOfWork());
+                        }
+                        // if we share unit of work, we need to prepare the child exchange
+                        if (isShareUnitOfWork()) {
+                            prepareSharedUnitOfWork(newExchange, copy);
+                        }
+                        if (part instanceof Message) {
+                            newExchange.setIn((Message) part);
+                        } else {
+                            Message in = newExchange.getIn();
+                            in.setBody(part);
+                        }
+                        return createProcessorExchangePair(index++, getProcessors().iterator().next(), newExchange, routeContext);
                     } else {
-                        Message in = newExchange.getIn();
-                        in.setBody(part);
+                        return null;
                     }
-                    return createProcessorExchangePair(index++, getProcessors().iterator().next(), newExchange, routeContext);
                 }
 
                 public void remove() {
@@ -231,7 +239,9 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         Iterable<ProcessorExchangePair> pairs = createProcessorExchangePairsIterable(exchange, value);
         try {
             for (ProcessorExchangePair pair : pairs) {
-                result.add(pair);
+                if (pair != null) {
+                    result.add(pair);
+                }
             }
         } finally {
             if (pairs instanceof Closeable) {
@@ -274,7 +284,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     private static Exchange copyExchangeNoAttachments(Exchange exchange, boolean preserveExchangeId) {
         Exchange answer = ExchangeHelper.createCopy(exchange, preserveExchangeId);
         // we do not want attachments for the splitted sub-messages
-        answer.getIn().setAttachments(null);
+        answer.getIn().setAttachmentObjects(null);
         // we do not want to copy the message history for splitted sub-messages
         answer.getProperties().remove(Exchange.MESSAGE_HISTORY);
         return answer;

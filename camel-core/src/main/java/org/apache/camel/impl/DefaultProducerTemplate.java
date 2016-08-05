@@ -32,6 +32,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
@@ -92,6 +93,12 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return eventNotifierEnabled;
     }
 
+    public void cleanUp() {
+        if (producerCache != null) {
+            producerCache.cleanUp();
+        }
+    }
+
     public void setEventNotifierEnabled(boolean eventNotifierEnabled) {
         this.eventNotifierEnabled = eventNotifierEnabled;
         // if we already created the cache then adjust its setting as well
@@ -126,6 +133,10 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor) {
         return getProducerCache().send(endpoint, pattern, processor);
+    }
+
+    public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor, Processor resultProcessor) {
+        return getProducerCache().send(endpoint, pattern, processor, resultProcessor);
     }
 
     public Object sendBody(Endpoint endpoint, ExchangePattern pattern, Object body) {
@@ -318,37 +329,44 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public <T> T requestBody(Object body, Class<T> type) {
-        Object answer = requestBody(body);
+        Exchange exchange = producerCache.send(getMandatoryDefaultEndpoint(), ExchangePattern.InOut, createSetBodyProcessor(body), createConvertBodyProcessor(type));
+        Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBody(Endpoint endpoint, Object body, Class<T> type) {
-        Object answer = requestBody(endpoint, body);
+        Exchange exchange = producerCache.send(endpoint, ExchangePattern.InOut, createSetBodyProcessor(body), createConvertBodyProcessor(type));
+        Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBody(String endpointUri, Object body, Class<T> type) {
-        Object answer = requestBody(endpointUri, body);
+        Exchange exchange = producerCache.send(resolveMandatoryEndpoint(endpointUri), ExchangePattern.InOut, createSetBodyProcessor(body), createConvertBodyProcessor(type));
+        Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue, Class<T> type) {
-        Object answer = requestBodyAndHeader(endpoint, body, header, headerValue);
+        Exchange exchange = producerCache.send(endpoint, ExchangePattern.InOut, createBodyAndHeaderProcessor(body, header, headerValue), createConvertBodyProcessor(type));
+        Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue, Class<T> type) {
-        Object answer = requestBodyAndHeader(endpointUri, body, header, headerValue);
+        Exchange exchange = producerCache.send(resolveMandatoryEndpoint(endpointUri), ExchangePattern.InOut, createBodyAndHeaderProcessor(body, header, headerValue), createConvertBodyProcessor(type));
+        Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type) {
-        Object answer = requestBodyAndHeaders(endpointUri, body, headers);
+        Exchange exchange = producerCache.send(resolveMandatoryEndpoint(endpointUri), ExchangePattern.InOut, createBodyAndHeaders(body, headers), createConvertBodyProcessor(type));
+        Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type) {
-        Object answer = requestBodyAndHeaders(endpoint, body, headers);
+        Exchange exchange = producerCache.send(endpoint, ExchangePattern.InOut, createBodyAndHeaders(body, headers), createConvertBodyProcessor(type));
+        Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
@@ -430,6 +448,20 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         };
     }
 
+    protected Processor createBodyAndHeaders(final Object body, final Map<String, Object> headers) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                if (headers != null) {
+                    for (Map.Entry<String, Object> header : headers.entrySet()) {
+                        in.setHeader(header.getKey(), header.getValue());
+                    }
+                }
+                in.setBody(body);
+            }
+        };
+    }
+
     protected Processor createBodyAndPropertyProcessor(final Object body, final String property, final Object propertyValue) {
         return new Processor() {
             public void process(Exchange exchange) {
@@ -447,6 +479,10 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 in.setBody(body);
             }
         };
+    }
+
+    protected Processor createConvertBodyProcessor(final Class<?> type) {
+        return new ConvertBodyProcessor(type);
     }
 
     protected Endpoint resolveMandatoryEndpoint(String endpointUri) {

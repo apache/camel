@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
@@ -106,8 +107,14 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         if (logger == null) {
             String name = getLogName();
             if (name == null) {
+                name = routeContext.getCamelContext().getProperty(Exchange.LOG_EIP_NAME);
+                if (name != null) {
+                    LOG.debug("Using logName from CamelContext properties: {}", name);
+                }
+            }
+            if (name == null) {
                 name = routeContext.getRoute().getId();
-                LOG.debug("The LogName is null. Falling back to create logger by using the route id {}.", name);
+                LOG.debug("LogName is not configured, using route id as logName: {}", name);
             }
             logger = LoggerFactory.getLogger(name);
         }

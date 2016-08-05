@@ -19,7 +19,6 @@ package org.apache.camel.component.hazelcast.replicatedmap;
 import java.util.Map;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.MultiMap;
 import com.hazelcast.core.ReplicatedMap;
 
 import org.apache.camel.Exchange;

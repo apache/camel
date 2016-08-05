@@ -28,7 +28,9 @@ public interface Producer extends Processor, Service, IsSingleton, EndpointAware
      * Creates a new exchange to send to this endpoint
      * 
      * @return a newly created exchange
+     * @deprecated use {@link Endpoint#createExchange()} - will be removed in Camel 3.0
      */
+    @Deprecated
     Exchange createExchange();
 
     /**
@@ -36,7 +38,9 @@ public interface Producer extends Processor, Service, IsSingleton, EndpointAware
      *
      * @param pattern the exchange pattern
      * @return a newly created exchange
+     * @deprecated use {@link Endpoint#createExchange(ExchangePattern)} - will be removed in Camel 3.0
      */
+    @Deprecated
     Exchange createExchange(ExchangePattern pattern);
 
     /**

@@ -115,7 +115,5 @@ public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
 
         value = converter.convertTo(String.class, exchange, person);
         assertTrue("Should not filter the non-xml chars", value.indexOf("<lastName>BAR\uD8FF</lastName>") > 0);
-
     }
-
 }

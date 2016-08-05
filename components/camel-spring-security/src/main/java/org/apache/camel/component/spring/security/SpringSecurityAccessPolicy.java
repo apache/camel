@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.spring.security;
 
-
 import java.util.List;
 
 import org.springframework.security.access.ConfigAttribute;

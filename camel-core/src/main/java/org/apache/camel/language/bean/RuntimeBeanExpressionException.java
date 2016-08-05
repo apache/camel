@@ -38,6 +38,13 @@ public class RuntimeBeanExpressionException extends RuntimeExpressionException {
         this.method = method;
     }
 
+    public RuntimeBeanExpressionException(Exchange exchange, String beanName, String method, String message) {
+        super("Failed to invoke method: " + method + " on " + beanName + " due " + message);
+        this.exchange = exchange;
+        this.beanName = beanName;
+        this.method = method;
+    }
+
     public String getBeanName() {
         return beanName;
     }

@@ -17,9 +17,9 @@
 package org.apache.camel.component.jms.reply;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -29,6 +29,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.jms.JmsMessageHelper;
@@ -49,7 +50,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final CamelContext camelContext;
-    protected ScheduledExecutorService executorService;
+    protected ScheduledExecutorService scheduledExecutorService;
+    protected ExecutorService executorService;
     protected JmsEndpoint endpoint;
     protected Destination replyTo;
     protected AbstractMessageListenerContainer listenerContainer;
@@ -62,6 +64,10 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     }
 
     public void setScheduledExecutorService(ScheduledExecutorService executorService) {
+        this.scheduledExecutorService = executorService;
+    }
+
+    public void setOnTimeoutExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
 
@@ -168,6 +174,17 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     } else {
                         log.debug("Reply received. OUT message body set to reply payload: {}", body);
                     }
+                    if (endpoint.isTransferFault()) {
+                        // remove the header as we do not want to keep it on the Camel Message either
+                        Object faultHeader = response.removeHeader(JmsConstants.JMS_TRANSFER_FAULT);
+                        if (faultHeader != null) {
+                            boolean isFault = exchange.getContext().getTypeConverter().tryConvertTo(boolean.class, faultHeader);
+                            log.debug("Transfer fault on OUT message: {}", isFault);
+                            if (isFault) {
+                                exchange.getOut().setFault(true);
+                            }
+                        }
+                    }
 
                     // restore correlation id in case the remote server messed with it
                     if (holder.getOriginalCorrelationId() != null) {
@@ -204,13 +221,13 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
         ReplyHandler answer = null;
 
-        // wait up till 5 seconds
+        // wait up until configured values
         boolean done = false;
         int counter = 0;
-        while (!done && counter++ < 50) {
+        while (!done && counter++ < endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedCounter()) {
             log.trace("Early reply not found handler at attempt {}. Waiting a bit longer.", counter);
             try {
-                Thread.sleep(100);
+                Thread.sleep(endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime());
             } catch (InterruptedException e) {
                 // ignore
             }
@@ -233,12 +250,13 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(executorService, "executorService", this);
+        ObjectHelper.notNull(scheduledExecutorService, "scheduledExecutorService", this);
         ObjectHelper.notNull(endpoint, "endpoint", this);
 
         // timeout map to use for purging messages which have timed out, while waiting for an expected reply
         // when doing request/reply over JMS
         log.trace("Using timeout checker interval with {} millis", endpoint.getRequestTimeoutCheckerInterval());
-        correlation = new CorrelationTimeoutMap(executorService, endpoint.getRequestTimeoutCheckerInterval());
+        correlation = new CorrelationTimeoutMap(scheduledExecutorService, endpoint.getRequestTimeoutCheckerInterval(), executorService);
         ServiceHelper.startService(correlation);
 
         // create JMS listener and start it
@@ -266,6 +284,10 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         }
 
         // must also stop executor service
+        if (scheduledExecutorService != null) {
+            camelContext.getExecutorServiceManager().shutdownGraceful(scheduledExecutorService);
+            scheduledExecutorService = null;
+        }
         if (executorService != null) {
             camelContext.getExecutorServiceManager().shutdownGraceful(executorService);
             executorService = null;

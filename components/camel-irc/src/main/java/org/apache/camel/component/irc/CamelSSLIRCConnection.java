@@ -24,6 +24,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.schwering.irc.lib.ssl.SSLIRCConnection;
@@ -36,6 +37,7 @@ import org.schwering.irc.lib.ssl.SSLNotSupportedException;
 public class CamelSSLIRCConnection extends SSLIRCConnection {
     
     private SSLContextParameters sslContextParameters;
+    private CamelContext camelContext;
 
     public CamelSSLIRCConnection(String host, int portMin, int portMax, String pass, 
                                  String nick, String username, String realname,
@@ -46,9 +48,10 @@ public class CamelSSLIRCConnection extends SSLIRCConnection {
 
     public CamelSSLIRCConnection(String host, int[] ports, String pass,
                                  String nick, String username, String realname,
-                                 SSLContextParameters sslContextParameters) {
+                                 SSLContextParameters sslContextParameters, CamelContext camelContext) {
         super(host, ports, pass, nick, username, realname);
         this.sslContextParameters = sslContextParameters;
+        this.camelContext = camelContext;
     }
 
     @Override
@@ -65,7 +68,7 @@ public class CamelSSLIRCConnection extends SSLIRCConnection {
             
             final SSLContext sslContext;
             try {
-                sslContext = sslContextParameters.createSSLContext();
+                sslContext = sslContextParameters.createSSLContext(camelContext);
             } catch (GeneralSecurityException e) {
                 throw new RuntimeCamelException("Error in SSLContextParameters configuration or instantiation.", e);
             }

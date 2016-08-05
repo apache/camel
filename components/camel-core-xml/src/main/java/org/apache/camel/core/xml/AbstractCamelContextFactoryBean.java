@@ -48,6 +48,7 @@ import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.ContextScanDefinition;
+import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -85,11 +86,13 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
@@ -348,7 +351,26 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                     getRoutes().add(route);
                 }
             }
-
+            // convert rests api-doc into routes so they are routes for runtime
+            for (RestConfiguration config : getContext().getRestConfigurations()) {
+                if (config.getApiContextPath() != null) {
+                    // avoid adding rest-api multiple times, in case multiple RouteBuilder classes is added
+                    // to the CamelContext, as we only want to setup rest-api once
+                    // so we check all existing routes if they have rest-api route already added
+                    boolean hasRestApi = false;
+                    for (RouteDefinition route : getContext().getRouteDefinitions()) {
+                        FromDefinition from = route.getInputs().get(0);
+                        if (from.getUri() != null && from.getUri().startsWith("rest-api:")) {
+                            hasRestApi = true;
+                        }
+                    }
+                    if (!hasRestApi) {
+                        RouteDefinition route = RestDefinition.asRouteApiDefinition(getContext(), config);
+                        LOG.debug("Adding routeId: {} as rest-api route", route.getId());
+                        getRoutes().add(route);
+                    }
+                }
+            }
 
             // do special preparation for some concepts such as interceptors and policies
             // this is needed as JAXB does not build exactly the same model definition as Spring DSL would do
@@ -528,7 +550,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (anySpoolRules != null) {
             getContext().getStreamCachingStrategy().setAnySpoolRules(anySpoolRules);
         }
-        String spoolRules = CamelContextHelper.parseText(getContext(), streamCaching.getAnySpoolRules());
+        String spoolRules = CamelContextHelper.parseText(getContext(), streamCaching.getSpoolRules());
         if (spoolRules != null) {
             Iterator<Object> it = ObjectHelper.createIterator(spoolRules);
             while (it.hasNext()) {
@@ -673,6 +695,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getMessageHistory();
 
+    public abstract String getLogExhaustedMessageBody();
+
     public abstract String getStreamCache();
 
     public abstract String getDelayer();
@@ -749,6 +773,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getMessageHistory() != null) {
             ctx.setMessageHistory(CamelContextHelper.parseBoolean(getContext(), getMessageHistory()));
+        }
+        if (getLogExhaustedMessageBody() != null) {
+            ctx.setLogExhaustedMessageBody(CamelContextHelper.parseBoolean(getContext(), getLogExhaustedMessageBody()));
         }
         if (getDelayer() != null) {
             ctx.setDelayer(CamelContextHelper.parseLong(getContext(), getDelayer()));
@@ -1024,6 +1051,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (streamCachingStrategy != null) {
             LOG.info("Using custom StreamCachingStrategy: {}", streamCachingStrategy);
             getContext().setStreamCachingStrategy(streamCachingStrategy);
+        }
+        MessageHistoryFactory messageHistoryFactory = getBeanForType(MessageHistoryFactory.class);
+        if (messageHistoryFactory != null) {
+            LOG.info("Using custom MessageHistoryFactory: {}", messageHistoryFactory);
+            getContext().setMessageHistoryFactory(messageHistoryFactory);
         }
     }
 }

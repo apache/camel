@@ -16,6 +16,11 @@
  */
 package org.apache.camel.dataformat.bindy.util;
 
+import org.apache.camel.dataformat.bindy.FormattingOptions;
+import org.apache.camel.dataformat.bindy.annotation.BindyConverter;
+import org.apache.camel.dataformat.bindy.annotation.DataField;
+import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
+
 /**
  * To help return the char associated to the unicode string
  */
@@ -59,5 +64,30 @@ public final class ConverterUtils {
         } else {
             return returnCharacter;
         }
+    }
+
+    public static FormattingOptions convert(DataField dataField, Class<?> clazz, BindyConverter converter, String locale) {
+        return new FormattingOptions()
+                .forClazz(clazz)
+                .withPattern(dataField.pattern())
+                .withLocale(locale)
+                .withTimezone(dataField.timezone())
+                .withPrecision(dataField.precision())
+                .withRounding(dataField.rounding())
+                .withImpliedDecimalSeparator(dataField.impliedDecimalSeparator())
+                .withDecimalSeparator(dataField.decimalSeparator())
+                .withBindyConverter(converter)
+                .withGroupingSeparator(dataField.groupingSeparator());
+    }
+
+    public static FormattingOptions convert(KeyValuePairField dataField, Class<?> clazz, BindyConverter converter, String locale) {
+        return new FormattingOptions()
+                .forClazz(clazz)
+                .withPattern(dataField.pattern())
+                .withLocale(locale)
+                .withTimezone(dataField.timezone())
+                .withPrecision(dataField.precision())
+                .withBindyConverter(converter)
+                .withImpliedDecimalSeparator(dataField.impliedDecimalSeparator());
     }
 }

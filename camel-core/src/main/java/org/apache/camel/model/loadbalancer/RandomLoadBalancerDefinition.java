@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * The random load balancer selects a random endpoint for each exchange.
  */
-@Metadata(label = "configuration,loadbalance")
+@Metadata(label = "eip,routing,loadbalance")
 @XmlRootElement(name = "random")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RandomLoadBalancerDefinition extends LoadBalancerDefinition {

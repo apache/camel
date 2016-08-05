@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * <code>ZooKeeperEndpoint</code>
+ * The zookeeper component allows interaction with a ZooKeeper cluster.
  */
 @ManagedResource(description = "ZooKeeper Endpoint")
 @UriEndpoint(scheme = "zookeeper", title = "ZooKeeper", syntax = "zookeeper:serverUrls/path", consumerClass = ZooKeeperConsumer.class, label = "clustering")
@@ -45,7 +45,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new ZookeeperProducer(this);
+        return new ZooKeeperProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -167,7 +167,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
     public void setSendEmptyMessageOnDelete(boolean sendEmptyMessageOnDelete) {
         getConfiguration().setSendEmptyMessageOnDelete(sendEmptyMessageOnDelete);
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         if (connectionManager != null) {

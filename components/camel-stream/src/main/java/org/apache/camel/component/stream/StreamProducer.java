@@ -143,7 +143,7 @@ public class StreamProducer extends DefaultProducer {
             LOG.debug("Writing as text: {} to {} using encoding: {}", new Object[]{body, outputStream, charset});
         }
         bw.write(s);
-        bw.write("\n");
+        bw.write(System.lineSeparator());
         bw.flush();
     }
 

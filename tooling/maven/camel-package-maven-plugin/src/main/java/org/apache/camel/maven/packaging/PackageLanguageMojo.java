@@ -110,7 +110,7 @@ public class PackageLanguageMojo extends AbstractMojo {
         // first we need to setup the output directory because the next check
         // can stop the build before the end and eclipse always needs to know about that directory 
         if (projectHelper != null) {
-            projectHelper.addResource(project, languageOutDir.getPath(), Collections.singletonList("**/dataformat.properties"), Collections.emptyList());
+            projectHelper.addResource(project, languageOutDir.getPath(), Collections.singletonList("**/language.properties"), Collections.emptyList());
         }
 
         if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/language")) {
@@ -165,53 +165,55 @@ public class PackageLanguageMojo extends AbstractMojo {
                                 is = new FileInputStream(new File(core, "org/apache/camel/model/language/" + modelName + ".json"));
                             }
                             String json = loadText(is);
-                            if (json != null) {
-                                LanguageModel languageModel = new LanguageModel();
-                                languageModel.setName(name);
-                                languageModel.setTitle("");
-                                languageModel.setModelName(modelName);
-                                languageModel.setLabel("");
-                                languageModel.setDescription("");
-                                languageModel.setJavaType(javaType);
-                                languageModel.setGroupId(project.getGroupId());
-                                languageModel.setArtifactId(project.getArtifactId());
-                                languageModel.setVersion(project.getVersion());
+                            LanguageModel languageModel = new LanguageModel();
+                            languageModel.setName(name);
+                            languageModel.setTitle("");
+                            languageModel.setModelName(modelName);
+                            languageModel.setLabel("");
+                            languageModel.setDescription("");
+                            languageModel.setJavaType(javaType);
+                            languageModel.setGroupId(project.getGroupId());
+                            languageModel.setArtifactId(project.getArtifactId());
+                            languageModel.setVersion(project.getVersion());
 
-                                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-                                for (Map<String, String> row : rows) {
-                                    if (row.containsKey("title")) {
-                                        languageModel.setTitle(row.get("title"));
-                                    }
-                                    if (row.containsKey("description")) {
-                                        languageModel.setDescription(row.get("description"));
-                                    }
-                                    if (row.containsKey("label")) {
-                                        languageModel.setLabel(row.get("label"));
-                                    }
-                                    if (row.containsKey("javaType")) {
-                                        languageModel.setModelJavaType(row.get("javaType"));
-                                    }
+                            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
+                            for (Map<String, String> row : rows) {
+                                if (row.containsKey("title")) {
+                                    // title may be special for some languages
+                                    String title = asTitle(name, row.get("title"));
+                                    languageModel.setTitle(title);
                                 }
-                                log.debug("Model " + languageModel);
-
-                                // build json schema for the data format
-                                String properties = after(json, "  \"properties\": {");
-                                String schema = createParameterJsonSchema(languageModel, properties);
-                                log.debug("JSon schema\n" + schema);
-
-                                // write this to the directory
-                                File dir = new File(schemaOutDir, schemaSubDirectory(languageModel.getJavaType()));
-                                dir.mkdirs();
-
-                                File out = new File(dir, name + ".json");
-                                OutputStream fos = buildContext.newFileOutputStream(out);
-                                fos.write(schema.getBytes());
-                                fos.close();
-
-                                buildContext.refresh(out);
-
-                                log.debug("Generated " + out + " containing JSon schema for " + name + " language");
+                                if (row.containsKey("description")) {
+                                    // description may be special for some languages
+                                    String desc = asDescription(name, row.get("description"));
+                                    languageModel.setDescription(desc);
+                                }
+                                if (row.containsKey("label")) {
+                                    languageModel.setLabel(row.get("label"));
+                                }
+                                if (row.containsKey("javaType")) {
+                                    languageModel.setModelJavaType(row.get("javaType"));
+                                }
                             }
+                            log.debug("Model " + languageModel);
+
+                            // build json schema for the data format
+                            String properties = after(json, "  \"properties\": {");
+                            String schema = createParameterJsonSchema(languageModel, properties);
+                            log.debug("JSon schema\n" + schema);
+
+                            // write this to the directory
+                            File dir = new File(schemaOutDir, schemaSubDirectory(languageModel.getJavaType()));
+                            dir.mkdirs();
+
+                            File out = new File(dir, name + ".json");
+                            OutputStream fos = buildContext.newFileOutputStream(out);
+                            fos.write(schema.getBytes());
+                            fos.close();
+
+                            buildContext.refresh(out);
+
+                            log.debug("Generated " + out + " containing JSon schema for " + name + " language");
                         }
                     }
                 }
@@ -262,9 +264,6 @@ public class PackageLanguageMojo extends AbstractMojo {
 
                 log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "languages: " : "language: ") + names);
 
-                if (projectHelper != null) {
-                    projectHelper.attachArtifact(project, "properties", "camelLanguage", outFile);
-                }
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to write properties to " + outFile + ". Reason: " + e, e);
             }
@@ -314,6 +313,22 @@ public class PackageLanguageMojo extends AbstractMojo {
         return name;
     }
 
+    private static String asTitle(String name, String title) {
+        // special for some languages
+        if ("file".equals(name)) {
+            return "File";
+        }
+        return title;
+    }
+
+    private static String asDescription(String name, String description) {
+        // special for some languages
+        if ("file".equals(name)) {
+            return "For expressions and predicates using the file/simple language";
+        }
+        return description;
+    }
+
     private static Artifact findCamelCoreArtifact(MavenProject project) {
         // maybe this project is camel-core itself
         Artifact artifact = project.getArtifact();
@@ -340,7 +355,7 @@ public class PackageLanguageMojo extends AbstractMojo {
 
     private static String createParameterJsonSchema(LanguageModel languageModel, String schema) {
         StringBuilder buffer = new StringBuilder("{");
-        // component model
+        // language model
         buffer.append("\n \"language\": {");
         buffer.append("\n    \"name\": \"").append(languageModel.getName()).append("\",");
         buffer.append("\n    \"kind\": \"").append("language").append("\",");

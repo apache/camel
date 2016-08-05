@@ -203,6 +203,14 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("c", it.next());
     }
 
+    public void testCreateIteratorPattern() {
+        String s = "a\nb\rc";
+        Iterator<?> it = ObjectHelper.createIterator(s, "\n|\r", false, true);
+        assertEquals("a", it.next());
+        assertEquals("b", it.next());
+        assertEquals("c", it.next());
+    }
+
     public void testCreateIteratorWithStringAndCommaSeparator() {
         String s = "a,b,c";
         Iterator<?> it = ObjectHelper.createIterator(s, ",");

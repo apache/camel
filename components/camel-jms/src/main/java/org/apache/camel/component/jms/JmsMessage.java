@@ -102,7 +102,7 @@ public class JmsMessage extends DefaultMessage {
 
         getAttachments().clear();
         if (that.hasAttachments()) {
-            getAttachments().putAll(that.getAttachments());
+            getAttachmentObjects().putAll(that.getAttachmentObjects());
         }
     }
 
@@ -161,25 +161,8 @@ public class JmsMessage extends DefaultMessage {
     }
 
     public Object getHeader(String name) {
-        Object answer = null;
-
-        // we will exclude using JMS-prefixed headers here to avoid strangeness with some JMS providers
-        // e.g. ActiveMQ returns the String not the Destination type for "JMSReplyTo"!
-        // only look in jms message directly if we have not populated headers
-        if (jmsMessage != null && !hasPopulatedHeaders() && !name.startsWith("JMS")) {
-            try {
-                // use binding to do the lookup as it has to consider using encoded keys
-                answer = getBinding().getObjectProperty(jmsMessage, name);
-            } catch (JMSException e) {
-                throw new RuntimeExchangeException("Unable to retrieve header from JMS Message: " + name, getExchange(), e);
-            }
-        }
-        // only look if we have populated headers otherwise there are no headers at all
-        // if we do lookup a header starting with JMS then force a lookup
-        if (answer == null && (hasPopulatedHeaders() || name.startsWith("JMS"))) {
-            answer = super.getHeader(name);
-        }
-        return answer;
+        ensureInitialHeaders();
+        return super.getHeader(name);
     }
 
     @Override

@@ -32,12 +32,12 @@ public interface UndertowHost {
     void validateEndpointURI(URI httpURI);
 
     /**
-     * Register a handler on the given path
+     * Register a handler with the given {@link HttpHandlerRegistrationInfo}
      */
-    void registerHandler(String path, HttpHandler handler);
+    void registerHandler(HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler);
 
     /**
-     * Unregister a handler on the given path
+     * Unregister a handler with the given {@link HttpHandlerRegistrationInfo}
      */
-    void unregisterHandler(String path);
+    void unregisterHandler(HttpHandlerRegistrationInfo registrationInfo);
 }

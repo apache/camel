@@ -45,7 +45,7 @@ public class NettyRecipientListHttpBaseTest extends BaseNettyTest {
                     .transform(body().prepend("Bye "));
 
                 from("direct:start")
-                    .recipientList().constant("netty4-http:http://0.0.0.0:{{port}}");
+                    .recipientList().constant("netty4-http:http://localhost:{{port}}");
             }
         };
     }

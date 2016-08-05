@@ -26,6 +26,8 @@ import org.apache.camel.impl.UriEndpointComponent;
  */
 public class RedisComponent extends UriEndpointComponent {
 
+    private final ExchangeConverter exchangeConverter = new ExchangeConverter();
+
     public RedisComponent() {
         super(RedisEndpoint.class);
     }
@@ -47,5 +49,9 @@ public class RedisComponent extends UriEndpointComponent {
         if (hostAndPort.length > 1 && hostAndPort[1].length() > 0) {
             configuration.setPort(Integer.parseInt(hostAndPort[1]));
         }
+    }
+
+    public ExchangeConverter getExchangeConverter() {
+        return exchangeConverter;
     }
 }

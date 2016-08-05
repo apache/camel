@@ -16,6 +16,7 @@
  */
 package org.apache.camel.scala.dsl
 
+import org.apache.camel.RoutesBuilder
 import org.apache.camel.ServiceStatus
 import org.apache.camel.ServiceStatus.{Started, Stopped}
 import org.apache.camel.builder.RouteBuilder
@@ -26,7 +27,7 @@ import org.scalatest.{BeforeAndAfterAll, FunSuiteLike}
 
 class AutoStartupTest extends CamelTestSupport with FunSuiteLike with BeforeAndAfterAll {
 
-  override protected def createRouteBuilders(): Array[RouteBuilder] = {
+  override protected def createRouteBuilders(): Array[RoutesBuilder] = {
     Array(
       createRoute(_ from s"direct:start1" id withoutDslRouteId to "mock:output"),
       createRoute(_ from s"direct:start2" autoStartup false id booleanDslRouteId to "mock:output"),

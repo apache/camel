@@ -40,7 +40,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
         assertNotNull(on);
-        mbeanServer.isRegistered(on);
+        assertTrue(mbeanServer.isRegistered(on));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
         assertEquals("Should not be enabled", Boolean.FALSE, enabled);

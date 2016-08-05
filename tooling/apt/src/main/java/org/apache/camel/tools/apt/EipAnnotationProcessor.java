@@ -18,6 +18,7 @@ package org.apache.camel.tools.apt;
 
 import java.io.PrintWriter;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,22 +44,27 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
+import org.apache.camel.tools.apt.helper.Strings;
 
-import static org.apache.camel.tools.apt.JsonSchemaHelper.sanitizeDescription;
-import static org.apache.camel.tools.apt.Strings.canonicalClassName;
-import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
-import static org.apache.camel.tools.apt.Strings.safeNull;
+import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.sanitizeDescription;
+import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
+import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
+import static org.apache.camel.tools.apt.helper.Strings.safeNull;
 
 /**
  * Process all camel-core's model classes (EIPs and DSL) and generate json schema documentation
  */
 @SupportedAnnotationTypes({"javax.xml.bind.annotation.*", "org.apache.camel.spi.Label"})
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
     // special when using expression/predicates in the model
     private static final String ONE_OF_TYPE_NAME = "org.apache.camel.model.ExpressionSubElementDefinition";
-    private static final String ONE_OF_LANGUAGES = "org.apache.camel.model.language.ExpressionDefinition";
+    private static final String[] ONE_OF_LANGUAGES = new String[]{
+        "org.apache.camel.model.language.ExpressionDefinition",
+        "org.apache.camel.model.language.NamespaceAwareExpression"
+    };
     // special for inputs (these classes have sub classes, so we use this to find all classes)
     private static final String[] ONE_OF_INPUTS = new String[]{
         "org.apache.camel.model.ProcessorDefinition",
@@ -74,21 +80,30 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         "org.apache.camel.model.SendDefinition",
         "org.apache.camel.model.InterceptDefinition",
         "org.apache.camel.model.WhenDefinition",
+        "org.apache.camel.model.ToDynamicDefinition"
+    };
+    // special for verbs (these classes have sub classes, so we use this to find all classes)
+    private static final String[] ONE_OF_VERBS = new String[]{
+        "org.apache.camel.model.rest.VerbDefinition"
     };
 
     private boolean skipUnwanted = true;
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (roundEnv.processingOver()) {
-            return true;
-        }
-
-        Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(XmlRootElement.class);
-        for (Element element : elements) {
-            if (element instanceof TypeElement) {
-                processModelClass(roundEnv, (TypeElement) element);
+        try {
+            if (roundEnv.processingOver()) {
+                return true;
             }
+
+            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(XmlRootElement.class);
+            for (Element element : elements) {
+                if (element instanceof TypeElement) {
+                    processModelClass(roundEnv, (TypeElement) element);
+                }
+            }
+        } catch (Throwable e) {
+            dumpExceptionToErrorFile("camel-apt-error.log", "Error processing EIP model", e);
         }
         return true;
     }
@@ -145,13 +160,13 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, XmlRootElement rootElement,
-                                                String javaTypeName, String name) {
+                                                String javaTypeName, String modelName) {
         // gather eip information
-        EipModel eipModel = findEipModelProperties(roundEnv, classElement, javaTypeName, name);
+        EipModel eipModel = findEipModelProperties(roundEnv, classElement, javaTypeName, modelName);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
         Set<EipOption> eipOptions = new TreeSet<EipOption>(new EipOptionComparator(eipModel));
-        findClassProperties(writer, roundEnv, eipOptions, classElement, classElement, "");
+        findClassProperties(writer, roundEnv, eipOptions, classElement, classElement, "", modelName);
 
         // after we have found all the options then figure out if the model accepts input/output
         eipModel.setInput(hasInput(roundEnv, classElement));
@@ -193,7 +208,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             String doc = entry.getDocumentation();
             doc = sanitizeDescription(doc, false);
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
-                    entry.isDeprecated(), null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes()));
+                    entry.isDeprecated(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes(), null, null, false));
         }
         buffer.append("\n  }");
 
@@ -237,7 +252,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     protected void findClassProperties(PrintWriter writer, RoundEnvironment roundEnv, Set<EipOption> eipOptions,
-                                       TypeElement originalClassType, TypeElement classElement, String prefix) {
+                                       TypeElement originalClassType, TypeElement classElement, String prefix, String modelName) {
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
             for (VariableElement fieldElement : fieldElements) {
@@ -246,7 +261,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
                 XmlAttribute attribute = fieldElement.getAnnotation(XmlAttribute.class);
                 if (attribute != null) {
-                    boolean skip = processAttribute(roundEnv, originalClassType, classElement, fieldElement, fieldName, attribute, eipOptions, prefix);
+                    boolean skip = processAttribute(roundEnv, originalClassType, classElement, fieldElement, fieldName, attribute, eipOptions, prefix, modelName);
                     if (skip) {
                         continue;
                     }
@@ -254,7 +269,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
                 XmlValue value = fieldElement.getAnnotation(XmlValue.class);
                 if (value != null) {
-                    processValue(roundEnv, originalClassType, classElement, fieldElement, fieldName, value, eipOptions, prefix);
+                    processValue(roundEnv, originalClassType, classElement, fieldElement, fieldName, value, eipOptions, prefix, modelName);
                 }
 
                 XmlElements elements = fieldElement.getAnnotation(XmlElements.class);
@@ -271,14 +286,24 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
                 XmlElementRef elementRef = fieldElement.getAnnotation(XmlElementRef.class);
                 if (elementRef != null) {
 
+                    // special for routes
+                    processRoutes(roundEnv, originalClassType, elementRef, fieldElement, fieldName, eipOptions, prefix);
+
                     // special for outputs
                     processOutputs(roundEnv, originalClassType, elementRef, fieldElement, fieldName, eipOptions, prefix);
+
+                    // special for when clauses (choice eip)
+                    processRefWhenClauses(roundEnv, originalClassType, elementRef, fieldElement, fieldName, eipOptions, prefix);
+
+                    // special for rests (rest-dsl)
+                    processRests(roundEnv, originalClassType, elementRef, fieldElement, fieldName, eipOptions, prefix);
+
+                    // special for verbs (rest-dsl)
+                    processVerbs(roundEnv, originalClassType, elementRef, fieldElement, fieldName, eipOptions, prefix);
 
                     // special for expression
                     processRefExpression(roundEnv, originalClassType, classElement, elementRef, fieldElement, fieldName, eipOptions, prefix);
 
-                    // special for when clauses
-                    processRefWhenClauses(roundEnv, originalClassType, elementRef, fieldElement, fieldName, eipOptions, prefix);
                 }
             }
 
@@ -304,8 +329,8 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         }
     }
 
-    private boolean processAttribute(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement, VariableElement fieldElement, String fieldName, XmlAttribute attribute,
-        Set<EipOption> eipOptions, String prefix) {
+    private boolean processAttribute(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement, VariableElement fieldElement,
+                                     String fieldName, XmlAttribute attribute, Set<EipOption> eipOptions, String prefix, String modelName) {
         Elements elementUtils = processingEnv.getElementUtils();
 
         String name = attribute.name();
@@ -357,11 +382,18 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     private void processValue(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement, VariableElement fieldElement, String fieldName, XmlValue value,
-        Set<EipOption> eipOptions, String prefix) {
+        Set<EipOption> eipOptions, String prefix, String modelName) {
         Elements elementUtils = processingEnv.getElementUtils();
 
         // XmlValue has no name attribute
         String name = fieldName;
+
+        if ("method".equals(modelName) || "tokenize".equals(modelName) || "xtokenize".equals(modelName)) {
+            // skip expression attribute on these three languages as they are solely configured using attributes
+            if ("expression".equals(name)) {
+                return;
+            }
+        }
 
         name = prefix + name;
         TypeMirror fieldType = fieldElement.asType();
@@ -424,21 +456,28 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             if (isOneOf) {
                 // okay its actually an language expression, so favor using that in the eip option
                 kind = "expression";
-                fieldTypeName = ONE_OF_LANGUAGES;
-                TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
-                String superClassName = canonicalClassName(languages.toString());
-                // find all classes that has that superClassName
-                Set<TypeElement> children = new LinkedHashSet<TypeElement>();
-                findTypeElementChildren(roundEnv, children, superClassName);
-                for (TypeElement child : children) {
-                    XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
-                    if (rootElement != null) {
-                        String childName = rootElement.name();
-                        if (childName != null) {
-                            oneOfTypes.add(childName);
+                for (String language : ONE_OF_LANGUAGES) {
+                    fieldTypeName = language;
+                    TypeElement languages = findTypeElement(roundEnv, language);
+                    String superClassName = canonicalClassName(languages.toString());
+                    // find all classes that has that superClassName
+                    Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+                    findTypeElementChildren(roundEnv, children, superClassName);
+                    for (TypeElement child : children) {
+                        XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
+                        if (rootElement != null) {
+                            String childName = rootElement.name();
+                            if (childName != null) {
+                                oneOfTypes.add(childName);
+                            }
                         }
                     }
                 }
+            }
+            // special for otherwise as we want to indicate that the element is
+            if ("otherwise".equals(name)) {
+                isOneOf = true;
+                oneOfTypes.add("otherwise");
             }
 
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
@@ -612,6 +651,42 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     /**
+     * Special for processing an @XmlElementRef routes field
+     */
+    private void processRoutes(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElementRef elementRef,
+                               VariableElement fieldElement, String fieldName, Set<EipOption> eipOptions, String prefix) {
+        if ("routes".equals(fieldName)) {
+
+            TypeMirror fieldType = fieldElement.asType();
+            String fieldTypeName = fieldType.toString();
+
+            Set<String> oneOfTypes = new TreeSet<String>();
+            oneOfTypes.add("route");
+
+            EipOption ep = new EipOption("routes", "element", fieldTypeName, false, "", "Contains the Camel routes", false, false, null, true, oneOfTypes);
+            eipOptions.add(ep);
+        }
+    }
+
+    /**
+     * Special for processing an @XmlElementRef rests field
+     */
+    private void processRests(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElementRef elementRef,
+                               VariableElement fieldElement, String fieldName, Set<EipOption> eipOptions, String prefix) {
+        if ("rests".equals(fieldName)) {
+
+            TypeMirror fieldType = fieldElement.asType();
+            String fieldTypeName = fieldType.toString();
+
+            Set<String> oneOfTypes = new TreeSet<String>();
+            oneOfTypes.add("rest");
+
+            EipOption ep = new EipOption("rests", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, false, null, true, oneOfTypes);
+            eipOptions.add(ep);
+        }
+    }
+
+    /**
      * Special for processing an @XmlElementRef outputs field
      */
     private void processOutputs(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElementRef elementRef,
@@ -652,6 +727,48 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     /**
+     * Special for processing an @XmlElementRef verbs field (rest-dsl)
+     */
+    private void processVerbs(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElementRef elementRef,
+                              VariableElement fieldElement, String fieldName, Set<EipOption> eipOptions, String prefix) {
+
+        Elements elementUtils = processingEnv.getElementUtils();
+
+        if ("verbs".equals(fieldName) && supportOutputs(originalClassType)) {
+            String kind = "element";
+            String name = elementRef.name();
+            if (isNullOrEmpty(name) || "##default".equals(name)) {
+                name = fieldName;
+            }
+            name = prefix + name;
+            TypeMirror fieldType = fieldElement.asType();
+            String fieldTypeName = fieldType.toString();
+
+            String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, originalClassType, true);
+
+            // gather oneOf which extends any of the output base classes
+            Set<String> oneOfTypes = new TreeSet<String>();
+            // find all classes that has that superClassName
+            Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+            for (String superclass : ONE_OF_VERBS) {
+                findTypeElementChildren(roundEnv, children, superclass);
+            }
+            for (TypeElement child : children) {
+                XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
+                if (rootElement != null) {
+                    String childName = rootElement.name();
+                    if (childName != null) {
+                        oneOfTypes.add(childName);
+                    }
+                }
+            }
+
+            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", docComment, false, false, null, true, oneOfTypes);
+            eipOptions.add(ep);
+        }
+    }
+
+    /**
      * Special for processing an @XmlElementRef expression field
      */
     private void processRefExpression(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement,
@@ -674,17 +791,19 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
             // gather oneOf expression/predicates which uses language
             Set<String> oneOfTypes = new TreeSet<String>();
-            TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
-            String superClassName = canonicalClassName(languages.toString());
-            // find all classes that has that superClassName
-            Set<TypeElement> children = new LinkedHashSet<TypeElement>();
-            findTypeElementChildren(roundEnv, children, superClassName);
-            for (TypeElement child : children) {
-                XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
-                if (rootElement != null) {
-                    String childName = rootElement.name();
-                    if (childName != null) {
-                        oneOfTypes.add(childName);
+            for (String language : ONE_OF_LANGUAGES) {
+                TypeElement languages = findTypeElement(roundEnv, language);
+                String superClassName = canonicalClassName(languages.toString());
+                // find all classes that has that superClassName
+                Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+                findTypeElementChildren(roundEnv, children, superClassName);
+                for (TypeElement child : children) {
+                    XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
+                    if (rootElement != null) {
+                        String childName = rootElement.name();
+                        if (childName != null) {
+                            oneOfTypes.add(childName);
+                        }
                     }
                 }
             }
@@ -717,7 +836,11 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, originalClassType, true);
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
 
-            EipOption ep = new EipOption(name, kind, fieldTypeName, false, "", docComment, deprecated, false, null, false, null);
+            // indicate that this element is one of when
+            Set<String> oneOfTypes = new HashSet<String>();
+            oneOfTypes.add("when");
+
+            EipOption ep = new EipOption(name, kind, fieldTypeName, false, "", docComment, deprecated, false, null, true, oneOfTypes);
             eipOptions.add(ep);
         }
     }
@@ -793,8 +916,8 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     private boolean hasOutput(EipModel model, Set<EipOption> options) {
-        // if we are from/rest then we accept output
-        if ("from".equals(model.getName()) || "rest".equals(model.getName())) {
+        // if we are route/rest then we accept output
+        if ("route".equals(model.getName()) || "rest".equals(model.getName())) {
             return true;
         }
 
@@ -1003,6 +1126,12 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
         private int weigth(EipOption o) {
             String name = o.getName();
+
+            // these should be first
+            if ("expression".equals(name)) {
+                return 10;
+            }
+
             // these should be last
             if ("description".equals(name)) {
                 return -10;

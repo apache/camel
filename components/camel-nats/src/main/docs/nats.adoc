@@ -1,0 +1,105 @@
+[[NATS-NATSComponent]]
+NATS Component
+~~~~~~~~~~~~~~
+
+*Available since Camel 2.17.0*
+
+http://nats.io/[NATS] is a fast and reliable messaging platform.
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-nats</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+------------------------------------------------------------
+
+[[NATS-URIformat]]
+URI format
+^^^^^^^^^^
+
+[source,java]
+----------------------
+nats:servers[?options]
+----------------------
+
+Where *servers* represents the list of NATS servers.
+
+[[NATS-Options]]
+Options
+^^^^^^^
+
+
+// component options: START
+The Nats component has no options.
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The Nats component supports 18 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| servers | common |  | String | *Required* URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
+| maxReconnectAttempts | common | 3 | int | Max reconnection attempts
+| noRandomizeServers | common | false | boolean | Whether or not randomizing the order of servers for the connection attempts
+| pedantic | common | false | boolean | Whether or not running in pedantic mode (this affects performace)
+| pingInterval | common | 4000 | int | Ping interval to be aware if connection is still alive (in milliseconds)
+| reconnect | common | true | boolean | Whether or not using reconnection feature
+| reconnectTimeWait | common | 2000 | int | Waiting time before attempts reconnection (in milliseconds)
+| ssl | common | false | boolean | Whether or not using SSL
+| topic | common |  | String | *Required* The name of topic we want to use
+| verbose | common | false | boolean | Whether or not running in verbose mode
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| maxMessages | consumer |  | String | Stop receiving messages from a topic we are subscribing to after maxMessages
+| poolSize | consumer | 10 | int | Consumer pool size
+| queueName | consumer |  | String | The Queue name if we are using nats for a queue configuration
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| replySubject | producer |  | String | the subject to which subscribers should send response
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
+// endpoint options: END
+
+
+
+
+[[NATS-Headers]]
+Headers
+^^^^^^^
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Type |Description
+
+|CamelNatsMessageTimestamp |long |The timestamp of a consumed message.
+
+|CamelNatsSubscriptionId |Integer |The subscription ID of a consumer.
+|=======================================================================
+ 
+*Producer example:*
+
+[source,java]
+-----------------------------------------------------------
+from("direct:send").to("nats://localhost:4222?topic=test");
+-----------------------------------------------------------
+
+ 
+
+*Consumer example:*
+
+[source,java]
+----------------------------------------------------------------------------------------
+from("nats://localhost:4222?topic=test&maxMessages=5&queueName=test").to("mock:result");
+----------------------------------------------------------------------------------------

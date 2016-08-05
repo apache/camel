@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
@@ -42,6 +43,7 @@ import static org.junit.Assert.fail;
 public final class JettyTestServer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyTestServer.class);
+    private static final int PORT = AvailablePortFinder.getNextAvailable();
     private static JettyTestServer instance;
 
     public int port;
@@ -51,7 +53,8 @@ public final class JettyTestServer {
     }
 
     public void startServer() {
-        server = new Server(0);
+        server = new Server(PORT);
+        port = PORT;
 
         ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
         servletContext.setSecurityHandler(basicAuth("camel", "camelPass", "Private!"));
@@ -64,7 +67,6 @@ public final class JettyTestServer {
             LOG.error("Could not start Server!", ex);
             fail(ex.getLocalizedMessage());
         }
-        port = server.getConnectors()[0].getLocalPort();
     }
 
     public void stopServer() {

@@ -60,6 +60,8 @@ public class SplunkConfiguration {
     @UriParam(label = "producer")
     private String source;
     @UriParam(label = "producer")
+    private String eventHost;
+    @UriParam(label = "producer")
     private int tcpReceiverPort;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean raw;
@@ -184,6 +186,17 @@ public class SplunkConfiguration {
      */
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public String getEventHost() {
+        return eventHost;
+    }
+
+    /**
+     * Override the default Splunk event host field
+     */
+    public void setEventHost(String eventHost) {
+        this.eventHost = eventHost;
     }
 
     /**
@@ -359,4 +372,5 @@ public class SplunkConfiguration {
         splunkConnectionFactory.setSslProtocol(getSslProtocol());
         return splunkConnectionFactory;
     }
+
 }

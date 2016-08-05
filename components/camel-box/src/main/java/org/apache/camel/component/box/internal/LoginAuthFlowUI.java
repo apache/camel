@@ -17,13 +17,13 @@
 package org.apache.camel.component.box.internal;
 
 import java.io.IOException;
+import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.net.ssl.SSLContext;
 
 import com.box.boxjavalibv2.BoxClient;
@@ -84,7 +84,7 @@ public final class LoginAuthFlowUI implements IAuthFlowUI {
         // TODO run this on an Executor to make it async
 
         // create HtmlUnit client
-        final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_24);
+        final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_38);
         final WebClientOptions options = webClient.getOptions();
         options.setRedirectEnabled(true);
         options.setJavaScriptEnabled(false);
@@ -165,7 +165,7 @@ public final class LoginAuthFlowUI implements IAuthFlowUI {
                     throw e;
                 }
                 final String location = e.getResponse().getResponseHeaderValue("Location");
-                redirectQuery = location.substring(location.indexOf('?') + 1);
+                redirectQuery = new URL(location).getQuery();
             }
             final Map<String, String> params = new HashMap<String, String>();
             final Matcher matcher = QUERY_PARAM_PATTERN.matcher(redirectQuery);

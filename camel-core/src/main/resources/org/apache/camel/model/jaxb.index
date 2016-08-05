@@ -30,6 +30,8 @@ ExpressionSubElementDefinition
 FilterDefinition
 FinallyDefinition
 FromDefinition
+HystrixDefinition
+HystrixConfigurationDefinition
 IdempotentConsumerDefinition
 InOnlyDefinition
 InOutDefinition
@@ -45,6 +47,7 @@ MulticastDefinition
 OnCompletionDefinition
 OnCompletionMode
 OnExceptionDefinition
+OnFallbackDefinition
 OptimisticLockRetryPolicyDefinition
 OptionalIdentifiedDefinition
 OtherwiseDefinition

@@ -22,6 +22,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 
+/**
+ * Allows SPI to plugin a {@link RestConsumerFactory} that creates the Camel {@link Consumer} responsible
+ * for handling incoming HTTP requests from clients that request to access REST services which has been created using
+ * the <a href="http://camel.apache.org/rest-dsl">rest-dsl</a>.
+ */
 public interface RestConsumerFactory {
 
     /**
@@ -41,5 +46,5 @@ public interface RestConsumerFactory {
      * @throws Exception can be thrown
      */
     Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                            String consumes, String produces, Map<String, Object> parameters) throws Exception;
+                            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception;
 }

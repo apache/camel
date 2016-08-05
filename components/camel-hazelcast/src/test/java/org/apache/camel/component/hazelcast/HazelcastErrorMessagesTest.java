@@ -36,7 +36,7 @@ public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
         } catch (Exception e) {
             assertTrue(e.getMessage().contains(
                     "Your URI does not provide a correct 'type' prefix. It should be anything like "
-                            + "'hazelcast:[map:|multimap:|atomicvalue:|instance:|queue:|seda:|list:|replicatedmap:|set:]name' but is 'hazelcast://error:foo"));
+                            + "'hazelcast:[map:|multimap:|atomicvalue:|instance:|queue:|seda:|list:|replicatedmap:|set:|ringbuffer:]name' but is 'hazelcast://error:foo"));
         }
     }
 

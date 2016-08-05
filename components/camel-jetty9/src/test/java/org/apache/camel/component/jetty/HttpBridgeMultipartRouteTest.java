@@ -38,7 +38,7 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
     private int port2;
 
     private static class MultipartHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
-        public MultipartHeaderFilterStrategy() {
+        MultipartHeaderFilterStrategy() {
             initialize();
         }
 
@@ -65,7 +65,7 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
         assertEquals(body, responseBody);
         
         String numAttachments = method.getResponseHeader("numAttachments").getValue();
-        assertEquals(numAttachments, "1");
+        assertEquals(numAttachments, "2");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

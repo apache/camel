@@ -24,7 +24,6 @@ import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.ChannelHandlerFactory;
 import org.apache.camel.component.netty.ClientPipelineFactory;
-import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyProducer;
 import org.apache.camel.component.netty.http.handlers.HttpClientChannelHandler;
@@ -129,7 +128,7 @@ public class HttpClientPipelineFactory extends ClientPipelineFactory {
 
         // create ssl context once
         if (configuration.getSslContextParameters() != null) {
-            answer = configuration.getSslContextParameters().createSSLContext();
+            answer = configuration.getSslContextParameters().createSSLContext(producer.getContext());
         } else {
             if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
                 LOG.debug("keystorefile is null");

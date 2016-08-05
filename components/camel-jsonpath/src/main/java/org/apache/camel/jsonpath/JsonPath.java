@@ -46,6 +46,11 @@ public @interface JsonPath {
     boolean suppressExceptions() default false;
 
     /**
+     * Whether to allow in inlined simple exceptions in the json path expression
+     */
+    boolean allowSimple() default true;
+
+    /**
      * To configure the json path options to use
      */
     Option[] options() default {};

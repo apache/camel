@@ -37,9 +37,7 @@ import org.apache.mina.common.IoConnectorConfig;
 import org.apache.mina.common.IoSession;
 
 /**
- * Endpoint for Camel MINA.
- *
- * @version 
+ * Socket level networking using TCP or UDP with the Apache Mina 1.x library.
  */
 @UriEndpoint(scheme = "mina", title = "Mina", syntax = "mina:protocol:host:port", consumerClass = MinaConsumer.class, label = "networking,tcp,udp")
 public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {

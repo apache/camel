@@ -114,14 +114,17 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         }
 
         while (isRunAllowed()) {
-            try {
-                beforePoll(0);
-                // take will block waiting for message
-                return queue.take();
-            } catch (InterruptedException e) {
-                handleInterruptedException(e);
-            } finally {
-                afterPoll();
+            // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
+            synchronized (this) {
+                try {
+                    beforePoll(0);
+                    // take will block waiting for message
+                    return queue.take();
+                } catch (InterruptedException e) {
+                    handleInterruptedException(e);
+                } finally {
+                    afterPoll();
+                }
             }
         }
         LOG.trace("Consumer is not running, so returning null");
@@ -134,15 +137,18 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             throw new RejectedExecutionException(this + " is not started, but in state: " + getStatus().name());
         }
 
-        try {
-            // use the timeout value returned from beforePoll
-            timeout = beforePoll(timeout);
-            return queue.poll(timeout, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            handleInterruptedException(e);
-            return null;
-        } finally {
-            afterPoll();
+        // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
+        synchronized (this) {
+            try {
+                // use the timeout value returned from beforePoll
+                timeout = beforePoll(timeout);
+                return queue.poll(timeout, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                handleInterruptedException(e);
+                return null;
+            } finally {
+                afterPoll();
+            }
         }
     }
 
@@ -172,6 +178,10 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
     public void setInterruptedExceptionHandler(ExceptionHandler interruptedExceptionHandler) {
         this.interruptedExceptionHandler = interruptedExceptionHandler;
+    }
+
+    public Consumer getDelegateConsumer() {
+        return consumer;
     }
 
     protected void handleInterruptedException(InterruptedException e) {

@@ -23,15 +23,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.spring.integration.SpringIntegrationBinding;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.integration.Message;
-import org.springframework.integration.MessageChannel;
-import org.springframework.integration.MessageHeaders;
 import org.springframework.integration.channel.DirectChannel;
-import org.springframework.integration.core.MessageHandler;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.MessageHeaders;
 
 /**
  * A CamelContext will be injected into CameSourceAdapter which will
@@ -62,10 +63,10 @@ public class CamelSourceAdapter extends AbstractCamelAdapter implements Initiali
 
     protected class ConsumerProcessor implements Processor {
         public void process(final Exchange exchange) throws Exception {
-            org.springframework.integration.Message<?> request = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
+            org.springframework.messaging.Message<?> request = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
 
             if (exchange.getPattern().isOutCapable()) {
-                exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL , replyChannel);
+                exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL, replyChannel);
 
                 // we want to do in-out so the inputChannel is mandatory (used to receive reply from spring integration)
                 if (replyChannel == null) {
@@ -75,7 +76,7 @@ public class CamelSourceAdapter extends AbstractCamelAdapter implements Initiali
                 replyChannel.subscribe(new MessageHandler() {
                     public void handleMessage(Message<?> message) {
                         LOG.debug("Received {} from ReplyChannel: {}", message, replyChannel);
-                        //TODO set the corralationID
+                        //TODO set the correlationID
                         SpringIntegrationBinding.storeToCamelMessage(message, exchange.getOut());
                     }
                 });
@@ -93,7 +94,7 @@ public class CamelSourceAdapter extends AbstractCamelAdapter implements Initiali
 
     public void destroy() throws Exception {
         if (consumer != null) {
-            consumer.stop();
+            ServiceHelper.stopAndShutdownService(consumer);
         }
     }
 
@@ -101,7 +102,7 @@ public class CamelSourceAdapter extends AbstractCamelAdapter implements Initiali
         // start the service here
         camelEndpoint = getCamelContext().getEndpoint(getCamelEndpointUri());
         consumer = camelEndpoint.createConsumer(new ConsumerProcessor());
-        consumer.start();
+        ServiceHelper.startService(consumer);
     }
 
 }

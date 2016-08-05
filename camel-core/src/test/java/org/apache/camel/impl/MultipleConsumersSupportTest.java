@@ -53,7 +53,7 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
-            assertTrue(e.getMessage().endsWith("Multiple consumers for the same endpoint is not allowed: Endpoint[my:endpoint]"));
+            assertTrue(e.getMessage().endsWith("Multiple consumers for the same endpoint is not allowed: my:endpoint"));
         }
     }
 

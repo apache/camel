@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms.reply;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -47,9 +48,15 @@ public interface ReplyManager extends SessionAwareMessageListener {
     void setReplyTo(Destination replyTo);
 
     /**
-     * Sets the scheduled to use when checking for timeouts (no reply received within a given time period)
+     * Sets the scheduled thread pool to use when checking for timeouts (no reply received within a given time period)
      */
     void setScheduledExecutorService(ScheduledExecutorService executorService);
+
+    /**
+     * Sets the thread pool to use for continue routing {@link Exchange} when a timeout was triggered
+     * when doing request/reply over JMS.
+     */
+    void setOnTimeoutExecutorService(ExecutorService executorService);
 
     /**
      * Gets the reply to queue being used

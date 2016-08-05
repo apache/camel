@@ -21,11 +21,11 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-ahc</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: AHC</name>
   <description>Camel Async Http Client support</description>
 
@@ -41,20 +41,14 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.ning</groupId>
+      <groupId>org.asynchttpclient</groupId>
       <artifactId>async-http-client</artifactId>
       <version>${ahc-version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.netty</groupId>
-      <artifactId>netty</artifactId>
-      <version>${netty3-version}</version>
+      <artifactId>netty-all</artifactId>
+      <version>${netty-version}</version>
     </dependency>
 
     <!-- testing -->
@@ -70,7 +64,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty8</artifactId>
+      <artifactId>camel-jetty9</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

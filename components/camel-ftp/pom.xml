@@ -21,18 +21,17 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-ftp</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: FTP</name>
   <description>Camel FTP support</description>
 
   <properties>
     <camel.osgi.import.before.defaults>
-        com.jcraft.jsch.*;version="[0.1.40,0.2)",
-        org.apache.camel.component.file.strategy;${camel.osgi.import.strict.version}
+        com.jcraft.jsch.*;version="[0.1.40,0.2)"
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.file.remote.*</camel.osgi.export.pkg>
     <camel.osgi.export.service>
@@ -129,6 +128,11 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

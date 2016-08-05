@@ -17,7 +17,6 @@
 package org.apache.camel.component.apns.spring;
 
 import com.notnoop.apns.utils.ApnsServerStub;
-import com.notnoop.apns.utils.FixedCertificates;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;

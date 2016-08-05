@@ -569,7 +569,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         String referenceId = properties == null ? null : properties.getContentReferenceId();
         // Create Reference with URI="#<objectId>" for enveloping signature, URI="" for enveloped signature, and URI = <value from configuration> for detached signature and the transforms
         Reference ref = createReference(input.getSignatureFactory(), input.getContentReferenceUri(),
-                getContentReferenceType(input.getMessage()), input.getSignatureType(), referenceId);
+                getContentReferenceType(input.getMessage()), input.getSignatureType(), referenceId, input.getMessage());
         Reference keyInfoRef = createKeyInfoReference(input.getSignatureFactory(), keyInfoId, input.getContentDigestAlgorithm());
 
         int propsRefsSize = properties == null || properties.getReferences() == null || properties.getReferences().isEmpty() ? 0
@@ -646,10 +646,10 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
     }
 
-    protected Reference createReference(XMLSignatureFactory fac, String uri, String type, SignatureType sigType, String id)
+    protected Reference createReference(XMLSignatureFactory fac, String uri, String type, SignatureType sigType, String id, Message message)
         throws InvalidAlgorithmParameterException, XmlSignatureException {
         try {
-            List<Transform> transforms = getTransforms(fac, sigType);
+            List<Transform> transforms = getTransforms(fac, sigType, message);
             Reference ref = fac.newReference(uri, fac.newDigestMethod(getDigestAlgorithmUri(), null), transforms, type, id);
             return ref;
         } catch (NoSuchAlgorithmException e) {
@@ -766,32 +766,46 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return fac.newXMLObject(Collections.singletonList(new DOMStructure(node)), id, null, null);
     }
 
-    private List<Transform> getTransforms(XMLSignatureFactory fac, SignatureType sigType) throws NoSuchAlgorithmException,
+    private List<Transform> getTransforms(XMLSignatureFactory fac, SignatureType sigType, Message message) throws NoSuchAlgorithmException,
             InvalidAlgorithmParameterException {
-        List<AlgorithmMethod> configuredTrafos = getConfiguration().getTransformMethods();
-        if (SignatureType.enveloped == sigType) {
-            // add enveloped transform if necessary
-            if (configuredTrafos.size() > 0) {
-                if (!containsEnvelopedTransform(configuredTrafos)) {
-                    configuredTrafos = new ArrayList<AlgorithmMethod>(configuredTrafos.size() + 1);
+        String transformMethodsHeaderValue = message.getHeader(XmlSignatureConstants.HEADER_TRANSFORM_METHODS, String.class);
+        if (transformMethodsHeaderValue == null) {
+            List<AlgorithmMethod> configuredTrafos = getConfiguration().getTransformMethods();
+            if (SignatureType.enveloped == sigType) {
+                // add enveloped transform if necessary
+                if (configuredTrafos.size() > 0) {
+                    if (!containsEnvelopedTransform(configuredTrafos)) {
+                        configuredTrafos = new ArrayList<AlgorithmMethod>(configuredTrafos.size() + 1);
+                        configuredTrafos.add(XmlSignatureHelper.getEnvelopedTransform());
+                        configuredTrafos.addAll(getConfiguration().getTransformMethods());
+                    }
+                } else {
+                    // add enveloped and C14N trafo
+                    configuredTrafos = new ArrayList<AlgorithmMethod>(2);
                     configuredTrafos.add(XmlSignatureHelper.getEnvelopedTransform());
-                    configuredTrafos.addAll(getConfiguration().getTransformMethods());
+                    configuredTrafos.add(XmlSignatureHelper.getCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE));
                 }
-            } else {
-                // add enveloped and C14N trafo
-                configuredTrafos = new ArrayList<AlgorithmMethod>(2);
-                configuredTrafos.add(XmlSignatureHelper.getEnvelopedTransform());
-                configuredTrafos.add(XmlSignatureHelper.getCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE));
             }
-        }
 
-        List<Transform> transforms = new ArrayList<Transform>(configuredTrafos.size());
-        for (AlgorithmMethod trafo : configuredTrafos) {
-            Transform transform = fac.newTransform(trafo.getAlgorithm(), (TransformParameterSpec) trafo.getParameterSpec());
-            transforms.add(transform);
-            LOG.debug("Transform method: {}", trafo.getAlgorithm());
+            List<Transform> transforms = new ArrayList<Transform>(configuredTrafos.size());
+            for (AlgorithmMethod trafo : configuredTrafos) {
+                Transform transform = fac.newTransform(trafo.getAlgorithm(), (TransformParameterSpec) trafo.getParameterSpec());
+                transforms.add(transform);
+                LOG.debug("Transform method: {}", trafo.getAlgorithm());
+            }
+            return transforms;
+        } else {
+            LOG.debug("Header {} with value '{}' found", XmlSignatureConstants.HEADER_TRANSFORM_METHODS, transformMethodsHeaderValue);
+            String[] transformAlgorithms = transformMethodsHeaderValue.split(",");
+            List<Transform> transforms = new ArrayList<Transform>(transformAlgorithms.length);
+            for (String transformAlgorithm : transformAlgorithms) {
+                transformAlgorithm = transformAlgorithm.trim();
+                Transform transform = fac.newTransform(transformAlgorithm, (TransformParameterSpec) null);
+                transforms.add(transform);
+                LOG.debug("Transform method: {}", transformAlgorithm);
+            }
+            return transforms;
         }
-        return transforms;
     }
 
     private boolean containsEnvelopedTransform(List<AlgorithmMethod> configuredTrafos) {

@@ -21,12 +21,14 @@
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
            xsi:schemaLocation="
              http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd
-             http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
   <!-- blueprint property placeholders, that will use etc/stuff.cfg as the properties file -->
   <cm:property-placeholder persistent-id="stuff" update-strategy="reload">
     <cm:default-properties>
-      <cm:property name="destination" value="to-be-replaced" />
+      <cm:property name="greeting" value="Hello" />
+      <cm:property name="echo" value="Hey" />
+      <cm:property name="destination" value="mock:original" />
     </cm:default-properties>
   </cm:property-placeholder>
 

@@ -32,7 +32,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.jms.JmsConstants;
-import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.spi.Synchronization;
 
 /**
@@ -157,7 +156,9 @@ public class InOutMessageHandler extends AbstractMessageHandler {
         @Override
         public void done(boolean sync) {
             try {
-                Message response = JmsMessageHelper.createMessage(exchange, getSession(), getEndpoint());
+                // the response can either be in OUT or IN
+                org.apache.camel.Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+                Message response = getEndpoint().getBinding().makeJmsMessage(exchange, msg.getBody(), msg.getHeaders(), getSession(), null);
                 response.setJMSCorrelationID(exchange.getIn().getHeader(JmsConstants.JMS_CORRELATION_ID, String.class));
                 localProducer.send(response);
             } catch (Exception e) {

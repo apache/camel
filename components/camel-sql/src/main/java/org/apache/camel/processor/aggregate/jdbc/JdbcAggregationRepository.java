@@ -73,6 +73,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     private String deadLetterUri;
     private List<String> headersToStoreAsText;
     private boolean storeBodyAsText;
+    private boolean allowSerializedHeaders;
 
     /**
      * Creates an aggregation repository
@@ -235,7 +236,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     }
 
     protected void insertAndUpdateHelper(final CamelContext camelContext, final String key, final Exchange exchange, String sql, final boolean idComesFirst) throws Exception {
-        final byte[] data = codec.marshallExchange(camelContext, exchange);
+        final byte[] data = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
         jdbcTemplate.execute(sql,
                 new AbstractLobCreatingPreparedStatementCallback(getLobHandler()) {
                     @Override
@@ -428,7 +429,15 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         this.storeBodyAsText = storeBodyAsText;
     }
 
-    /**
+    public boolean isAllowSerializedHeaders() {
+        return allowSerializedHeaders;
+    }
+
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        this.allowSerializedHeaders = allowSerializedHeaders;
+    }
+
+   /**
      * @return the lobHandler
      */
     public LobHandler getLobHandler() {

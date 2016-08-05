@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 /**
- * This class is used by the toknizer to extract data while reading from the stream.
- * REVIST it is used package internally but may be moved to some common package.
+ * This class is used by the tokenizer to extract data while reading from the stream.
+ * TODO it is used package internally but may be moved to some common package.
  */
 class RecordableInputStream extends FilterInputStream {
     private TrimmableByteArrayOutputStream buf;

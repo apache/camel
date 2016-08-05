@@ -24,21 +24,25 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
-public class ServletComponent extends HttpCommonComponent implements RestConsumerFactory {
+public class ServletComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
     private String servletName = "CamelServlet";
     private HttpRegistry httpRegistry;
+    private boolean attachmentMultipartBinding;
 
     public ServletComponent() {
         super(ServletEndpoint.class);
@@ -54,22 +58,34 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
-        // TODO we need to remove the Ref in Camel 3.0
-        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
-        if (binding == null) {
-            // just check the httpBinding parameter
-            binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
-        }
+        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         String servletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        Boolean async = getAndRemoveParameter(parameters, "async", Boolean.class);
+
+        if (lenientContextPath()) {
+            // the uri must have a leading slash for the context-path matching to work with servlet, and it can be something people
+            // forget to add and then the servlet consumer cannot match the context-path as would have been expected
+            String scheme = ObjectHelper.before(uri, ":");
+            String after = ObjectHelper.after(uri, ":");
+            // rebuild uri to have exactly one leading slash
+            while (after.startsWith("/")) {
+                after = after.substring(1);
+            }
+            after = "/" + after;
+            uri = scheme + ":" + after;
+        }
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encodeHttpURI(uri)), parameters);
 
         ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri);
         endpoint.setServletName(servletName);
+        if (async != null) {
+            endpoint.setAsync(async);
+        }
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         } else {
@@ -104,6 +120,13 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    /**
+     * Whether defining the context-path is lenient and do not require an exact leading slash.
+     */
+    protected boolean lenientContextPath() {
+        return true;
     }
 
     /**
@@ -157,9 +180,35 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         this.httpRegistry = httpRegistry;
     }
 
+    public boolean isAttachmentMultipartBinding() {
+        return attachmentMultipartBinding;
+    }
+
+    /**
+     * Whether to automatic bind multipart/form-data as attachments on the Camel {@link Exchange}.
+     * <p/>
+     * This is turn off by default as this may require servet specific configuration to enable this when using Servlet's.
+     */
+    public void setAttachmentMultipartBinding(boolean attachmentMultipartBinding) {
+        this.attachmentMultipartBinding = attachmentMultipartBinding;
+    }
+
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration, parameters, false);
+    }
+
+    @Override
+    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath,
+                                      RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
+        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters, true);
+    }
+
+    Consumer doCreateConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+                              String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters, boolean api) throws Exception {
+
         String path = basePath;
         if (uriTemplate != null) {
             // make sure to avoid double slashes
@@ -172,42 +221,78 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         path = FileUtil.stripLeadingSeparator(path);
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration("servlet", true);
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = camelContext.getRestConfiguration("servlet", true);
+        }
 
         Map<String, Object> map = new HashMap<String, Object>();
-        // setup endpoint options
-        if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
-            map.putAll(config.getEndpointProperties());
+        // build query string, and append any endpoint configuration properties
+        if (config.getComponent() == null || config.getComponent().equals("servlet")) {
+            // setup endpoint options
+            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+                map.putAll(config.getEndpointProperties());
+            }
         }
+
+        boolean cors = config.isEnableCORS();
+        if (cors) {
+            // allow HTTP Options as we want to handle CORS in rest-dsl
+            map.put("optionsEnabled", "true");
+        }
+
+        // do not append with context-path as the servlet path should be without context-path
 
         String query = URISupport.createQueryString(map);
 
-        String url = "servlet:///%s?httpMethodRestrict=%s";
+        String url;
+        if (api) {
+            url = "servlet:///%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
+        } else {
+            url = "servlet:///%s?httpMethodRestrict=%s";
+        }
+
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
-
+        if (cors) {
+            restrict += ",OPTIONS";
+        }
         // get the endpoint
         url = String.format(url, path, restrict);
         
         if (!query.isEmpty()) {
             url = url + "&" + query;
         }       
-        ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
-        setProperties(endpoint, parameters);
 
-        // use the rest binding
-        HttpBinding binding = new ServletRestHttpBinding();
-        binding.setHeaderFilterStrategy(endpoint.getHeaderFilterStrategy());
-        binding.setTransferException(endpoint.isTransferException());
-        binding.setEagerCheckContentAvailable(endpoint.isEagerCheckContentAvailable());
-        endpoint.setBinding(binding);
+        ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
+        setProperties(camelContext, endpoint, parameters);
+
+        if (!map.containsKey("httpBindingRef")) {
+            // use the rest binding, if not using a custom http binding
+            HttpBinding binding = new ServletRestHttpBinding();
+            binding.setHeaderFilterStrategy(endpoint.getHeaderFilterStrategy());
+            binding.setTransferException(endpoint.isTransferException());
+            binding.setEagerCheckContentAvailable(endpoint.isEagerCheckContentAvailable());
+            endpoint.setHttpBinding(binding);
+        }
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
-        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+            setProperties(camelContext, consumer, config.getConsumerProperties());
         }
 
         return consumer;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        RestConfiguration config = getCamelContext().getRestConfiguration("servlet", true);
+        // configure additional options on jetty configuration
+        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+            setProperties(this, config.getComponentProperties());
+        }
     }
 }

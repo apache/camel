@@ -30,15 +30,24 @@ public class CMISComponent extends UriEndpointComponent {
         super(CMISEndpoint.class);
     }
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-        throws Exception {
+    protected Endpoint createEndpoint(String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
         boolean queryMode = removeQueryMode(parameters);
 
         CMISSessionFacade sessionFacade = new CMISSessionFacade(remaining);
         setProperties(sessionFacade, parameters);
-        sessionFacade.initSession();
-        CMISEndpoint endpoint = new CMISEndpoint(uri, this, sessionFacade);
+
+        CMISEndpoint endpoint = new CMISEndpoint(uri, this, new CMISSessionFacadeFactory() {
+            @Override
+            public CMISSessionFacade create() throws Exception {
+                CMISSessionFacade sessionFacade = new CMISSessionFacade(remaining);
+                setProperties(sessionFacade, parameters);
+
+                return sessionFacade;
+            }
+        });
+
         endpoint.setQueryMode(queryMode);
+
         return endpoint;
     }
 

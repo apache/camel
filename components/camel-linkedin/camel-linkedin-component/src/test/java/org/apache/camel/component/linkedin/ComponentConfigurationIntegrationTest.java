@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class ComponentConfigurationIntegrationTest extends AbstractLinkedInTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComponentConfigurationIntegrationTest.class);
-    private static final String PATH_PREFIX = LinkedInApiCollection.getCollection().getApiName(CommentsResourceApiMethod.class).getName();
+    private static final String PATH_PREFIX = "comments";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

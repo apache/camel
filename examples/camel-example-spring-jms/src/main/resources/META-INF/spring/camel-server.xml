@@ -64,7 +64,12 @@
   <!-- START SNIPPET: e5 -->
   <!-- lets configure the Camel ActiveMQ to use the embedded ActiveMQ broker declared above -->
   <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
-    <property name="brokerURL" value="vm://myBroker"/>
+    <property name="connectionFactory">
+      <bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="vm://myBroker"/>
+        <property name="trustAllPackages" value="true"/>
+      </bean>
+    </property>
   </bean>
   <!-- END SNIPPET: e5 -->
 

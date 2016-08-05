@@ -137,7 +137,7 @@ public class StringDataFormatTest extends TestSupport {
         private String encoding;
         private String title;
 
-        public MyBookProcessor(String encoding, String title) {
+        MyBookProcessor(String encoding, String title) {
             this.encoding = encoding;
             this.title = title;
         }

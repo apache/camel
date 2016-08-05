@@ -30,6 +30,7 @@ import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
 import javax.jms.Topic;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
@@ -63,26 +64,25 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ErrorHandler;
 
 /**
- * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
+ * The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
  *
- * @version
+ * This component uses Spring JMS.
  */
 @ManagedResource(description = "Managed JMS Endpoint")
 @UriEndpoint(scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")
-public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
+public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final AtomicInteger runningMessageListeners = new AtomicInteger();
     private boolean pubSubDomain;
     private JmsBinding binding;
-    @UriPath(defaultValue = "queue", enums = "queue,topic,temp:queue,temp:topic")
+    @UriPath(defaultValue = "queue", enums = "queue,topic,temp:queue,temp:topic", description = "The kind of destination to use")
     private String destinationType;
-    @UriPath @Metadata(required = "true")
+    @UriPath(description = "Name of the queue or topic to use as destination")
+    @Metadata(required = "true")
     private String destinationName;
     private Destination destination;
-    @UriParam
+    @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
-    private String selector;
     @UriParam
     private JmsConfiguration configuration;
 
@@ -228,7 +228,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         } else {
             // do nothing, as we're working with a DefaultJmsMessageListenerContainer with an explicit DefaultTaskExecutorType,
             // so DefaultJmsMessageListenerContainer#createDefaultTaskExecutor will handle the creation
-            log.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}", 
+            log.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}",
                     listenerContainer, configuration.getDefaultTaskExecutorType());
         }
 
@@ -319,7 +319,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public String getThreadName() {
         return "JmsConsumer[" + getEndpointConfiguredDestinationName() + "]";
     }
-    
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -403,17 +403,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setConfiguration(JmsConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getSelector() {
-        return selector;
-    }
-
-    /**
-     * Sets the JMS selector to use
-     */
-    public void setSelector(String selector) {
-        this.selector = selector;
     }
 
     public boolean isSingleton() {
@@ -572,11 +561,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public ErrorHandler getErrorHandler() {
         return getConfiguration().getErrorHandler();
     }
-    
+
     public LoggingLevel getErrorHandlerLoggingLevel() {
         return getConfiguration().getErrorHandlerLoggingLevel();
     }
-   
+
     @ManagedAttribute
     public boolean isErrorHandlerLogStackTrace() {
         return getConfiguration().isErrorHandlerLogStackTrace();
@@ -616,6 +605,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public int getReplyToOnTimeoutMaxConcurrentConsumers() {
+        return getConfiguration().getReplyToOnTimeoutMaxConcurrentConsumers();
+    }
+
+    @ManagedAttribute
     public int getMaxMessagesPerTask() {
         return getConfiguration().getMaxMessagesPerTask();
     }
@@ -646,6 +640,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public String getReplyTo() {
         return getConfiguration().getReplyTo();
+    }
+
+    @ManagedAttribute
+    public String getReplyToOverride() {
+        return getConfiguration().getReplyToOverride();
+    }
+
+    @ManagedAttribute
+    public boolean isReplyToSameDestinationAllowed() {
+        return getConfiguration().isReplyToSameDestinationAllowed();
     }
 
     @ManagedAttribute
@@ -695,6 +699,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().isAcceptMessagesWhileStopping();
     }
 
+    @ManagedAttribute
+    public boolean isAllowReplyManagerQuickStop() {
+        return getConfiguration().isAllowReplyManagerQuickStop();
+    }
+    
     @ManagedAttribute
     public boolean isAlwaysCopyMessage() {
         return getConfiguration().isAlwaysCopyMessage();
@@ -792,6 +801,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
     }
 
+    @ManagedAttribute
+    public void setAllowReplyManagerQuickStop(boolean allowReplyManagerQuickStop) {
+        getConfiguration().setAllowReplyManagerQuickStop(allowReplyManagerQuickStop);
+    }
+    
     @ManagedAttribute
     public void setAcknowledgementMode(int consumerAcknowledgementMode) {
         getConfiguration().setAcknowledgementMode(consumerAcknowledgementMode);
@@ -979,6 +993,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public void setReplyToOverride(String replyToDestination) {
+        getConfiguration().setReplyToOverride(replyToDestination);
+    }
+
+    @ManagedAttribute
+    public void setReplyToSameDestinationAllowed(boolean replyToSameDestinationAllowed) {
+        getConfiguration().setReplyToSameDestinationAllowed(replyToSameDestinationAllowed);
+    }
+
+    @ManagedAttribute
     public void setReplyToDeliveryPersistent(boolean replyToDeliveryPersistent) {
         getConfiguration().setReplyToDeliveryPersistent(replyToDeliveryPersistent);
     }
@@ -1089,6 +1113,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setTransferException(boolean transferException) {
         getConfiguration().setTransferException(transferException);
+    }
+
+    @ManagedAttribute
+    public void setTransferFault(boolean transferFault) {
+        getConfiguration().setTransferFault(transferFault);
+    }
+
+    @ManagedAttribute
+    public boolean isTransferFault() {
+        return getConfiguration().isTransferFault();
     }
 
     @ManagedAttribute
@@ -1217,6 +1251,35 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute(description = "Number of running message listeners")
     public int getRunningMessageListeners() {
         return runningMessageListeners.get();
+    }
+
+    @ManagedAttribute
+    public String getSelector() {
+        return configuration.getSelector();
+    }
+
+    public void setSelector(String selector) {
+        configuration.setSelector(selector);
+    }
+
+    @ManagedAttribute
+    public int getWaitForProvisionCorrelationToBeUpdatedCounter() {
+        return configuration.getWaitForProvisionCorrelationToBeUpdatedCounter();
+    }
+
+    @ManagedAttribute
+    public void setWaitForProvisionCorrelationToBeUpdatedCounter(int counter) {
+        configuration.setWaitForProvisionCorrelationToBeUpdatedCounter(counter);
+    }
+
+    @ManagedAttribute
+    public long getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime() {
+        return configuration.getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime();
+    }
+
+    @ManagedAttribute
+    public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(long sleepingTime) {
+        configuration.setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(sleepingTime);
     }
 
     // Implementation methods

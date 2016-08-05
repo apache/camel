@@ -52,10 +52,17 @@ public final class DirectVmProcessor extends DelegateAsyncProcessor {
                 Thread.currentThread().setContextClassLoader(appClassLoader);
                 changed = true;
             }
+            
+            final boolean chgd = changed;
             return processor.process(copy, new AsyncCallback() {
                 @Override
                 public void done(boolean done) {
                     try {
+                        // restore TCCL if it was changed during processing
+                        if (chgd) {
+                            LOG.trace("Restoring Thread ContextClassLoader to {}", current);
+                            Thread.currentThread().setContextClassLoader(current);
+                        }
                         // make sure to copy results back
                         ExchangeHelper.copyResults(exchange, copy);
                     } finally {

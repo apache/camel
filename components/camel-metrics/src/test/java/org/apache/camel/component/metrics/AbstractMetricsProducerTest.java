@@ -31,8 +31,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.apache.camel.component.metrics.AbstractMetricsProducer.HEADER_PATTERN;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 

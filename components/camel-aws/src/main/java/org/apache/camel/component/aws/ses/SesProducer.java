@@ -17,16 +17,10 @@
 package org.apache.camel.component.aws.ses;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-
-import javax.activation.DataHandler;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
 import com.amazonaws.services.simpleemail.model.Body;
 import com.amazonaws.services.simpleemail.model.Content;
@@ -42,11 +36,15 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.URISupport;
 
+import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
+
 /**
  * A Producer which sends messages to the Amazon Simple Email Service
  * <a href="http://aws.amazon.com/ses/">AWS SES</a>
  */
 public class SesProducer extends DefaultProducer {
+    
+    private transient String sesProducerToString;
     
     public SesProducer(Endpoint endpoint) {
         super(endpoint);
@@ -168,22 +166,16 @@ public class SesProducer extends DefaultProducer {
         return subject;
     }
 
-    private Message getMessageForResponse(Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
-    }
-
     protected SesConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
 
     @Override
     public String toString() {
-        return "SesProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (sesProducerToString == null) {
+            sesProducerToString = "SesProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return sesProducerToString;
     }
 
     @Override

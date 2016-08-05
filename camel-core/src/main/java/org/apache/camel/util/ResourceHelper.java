@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -74,7 +75,7 @@ public final class ResourceHelper {
             if (hasScheme(external)) {
                 InputStream is = null;
                 try {
-                    is = resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), external);
+                    is = resolveMandatoryResourceAsInputStream(camelContext, external);
                     expression = camelContext.getTypeConverter().convertTo(String.class, is);
                 } catch (IOException e) {
                     throw new RuntimeCamelException("Cannot load resource " + external, e);
@@ -118,13 +119,49 @@ public final class ResourceHelper {
     /**
      * Resolves the mandatory resource.
      * <p/>
+     * The resource uri can refer to the following systems to be loaded from
+     * <ul>
+     *     <il>file:nameOfFile - to refer to the file system</il>
+     *     <il>classpath:nameOfFile - to refer to the classpath (default)</il>
+     *     <il>http:uri - to load the resoufce using HTTP</il>
+     *     <il>ref:nameOfBean - to lookup the resource in the {@link org.apache.camel.spi.Registry}</il>
+     * </ul>
+     * If no prefix has been given, then the resource is loaded from the classpath
+     * <p/>
+     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
+     *
+     * @param camelContext the Camel Context
+     * @param uri URI of the resource
+     * @return the resource as an {@link InputStream}.  Remember to close this stream after usage.
+     * @throws java.io.IOException is thrown if the resource file could not be found or loaded as {@link InputStream}
+     */
+    public static InputStream resolveMandatoryResourceAsInputStream(CamelContext camelContext, String uri) throws IOException {
+        if (uri.startsWith("ref:")) {
+            String ref = uri.substring(4);
+            String value = CamelContextHelper.mandatoryLookup(camelContext, ref, String.class);
+            return new ByteArrayInputStream(value.getBytes());
+        }
+        InputStream is = resolveResourceAsInputStream(camelContext.getClassResolver(), uri);
+        if (is == null) {
+            String resolvedName = resolveUriPath(uri);
+            throw new FileNotFoundException("Cannot find resource: " + resolvedName + " in classpath for URI: " + uri);
+        } else {
+            return is;
+        }
+    }
+
+    /**
+     * Resolves the mandatory resource.
+     * <p/>
      * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
      *
      * @param classResolver the class resolver to load the resource from the classpath
      * @param uri URI of the resource
      * @return the resource as an {@link InputStream}.  Remember to close this stream after usage.
      * @throws java.io.IOException is thrown if the resource file could not be found or loaded as {@link InputStream}
+     * @deprecated use {@link #resolveMandatoryResourceAsInputStream(CamelContext, String)}
      */
+    @Deprecated
     public static InputStream resolveMandatoryResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
         InputStream is = resolveResourceAsInputStream(classResolver, uri);
         if (is == null) {

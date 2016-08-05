@@ -39,7 +39,7 @@ public class CxfBeanWithWsdlLocationInBeanTest extends AbstractJUnit4SpringConte
     @Test
     public void testDoNotUseWsdlDefinedInJaxWsBeanByDefault() throws Exception {        
         HttpPost post = new HttpPost("http://localhost:" + port + "/customerservice/customers");
-        post.addHeader("Accept" , "text/xml");
+        post.addHeader("Accept", "text/xml");
         String body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<soap:Body><GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\">" 
             + "<personId>hello</personId></GetPerson></soap:Body></soap:Envelope>";

@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
 
@@ -69,17 +70,19 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("1", rest.getVerbs().get(0).getParams().get(0).getDefaultValue());
         assertEquals("b", rest.getVerbs().get(0).getParams().get(1).getDefaultValue());
 
-        assertEquals(Boolean.FALSE, rest.getVerbs().get(0).getParams().get(0).getAllowMultiple());
-        assertEquals(Boolean.TRUE, rest.getVerbs().get(0).getParams().get(1).getAllowMultiple());
+        assertEquals(null, rest.getVerbs().get(0).getParams().get(0).getCollectionFormat());
+        assertEquals(CollectionFormat.multi, rest.getVerbs().get(0).getParams().get(1).getCollectionFormat());
 
         assertEquals("header_count", rest.getVerbs().get(0).getParams().get(0).getName());
         assertEquals("header_letter", rest.getVerbs().get(0).getParams().get(1).getName());
         assertEquals(Boolean.TRUE, rest.getVerbs().get(0).getParams().get(0).getRequired());
         assertEquals(Boolean.FALSE, rest.getVerbs().get(0).getParams().get(1).getRequired());
-        assertEquals("acc1", rest.getVerbs().get(0).getParams().get(0).getAccess());
-        assertEquals("acc2", rest.getVerbs().get(0).getParams().get(1).getAccess());
 
-        assertEquals(300, rest.getVerbs().get(0).getResponseMsgs().get(0).getCode());
+        assertEquals("300", rest.getVerbs().get(0).getResponseMsgs().get(0).getCode());
+        assertEquals("rate", rest.getVerbs().get(0).getResponseMsgs().get(0).getHeaders().get(0).getName());
+        assertEquals("Rate limit", rest.getVerbs().get(0).getResponseMsgs().get(0).getHeaders().get(0).getDescription());
+        assertEquals("integer", rest.getVerbs().get(0).getResponseMsgs().get(0).getHeaders().get(0).getDataType());
+        assertEquals("error", rest.getVerbs().get(0).getResponseMsgs().get(1).getCode());
         assertEquals("test msg", rest.getVerbs().get(0).getResponseMsgs().get(0).getMessage());
         assertEquals(Integer.class.getCanonicalName(), rest.getVerbs().get(0).getResponseMsgs().get(0).getResponseModel());
 
@@ -109,12 +112,15 @@ public class FromRestGetTest extends ContextTestSupport {
                 rest("/say/bye")
                         .get().consumes("application/json")
                         .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues("1", "2", "3", "4")
-                        .defaultValue("1").allowMultiple(false).name("header_count").required(true).access("acc1")
+                        .defaultValue("1").name("header_count").required(true)
                         .endParam().
                         param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
-                        .defaultValue("b").allowMultiple(true).name("header_letter").required(false).access("acc2")
+                        .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
                         .endParam()
-                        .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
+                        .responseMessage().code(300).message("test msg").responseModel(Integer.class)
+                            .header("rate").description("Rate limit").dataType("integer").endHeader()
+                        .endResponseMessage()
+                        .responseMessage().code("error").message("does not work").endResponseMessage()
                         .to("direct:bye")
                         .post().to("mock:update");
 

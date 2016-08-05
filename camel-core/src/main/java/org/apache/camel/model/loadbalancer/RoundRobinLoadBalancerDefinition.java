@@ -31,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
  * The round robin load balancer will use the next endpoint for each message.
  * This load balancer is not meant to work with failover, for that you should use the dedicated failover load balancer.
  */
-@Metadata(label = "configuration,loadbalance")
+@Metadata(label = "eip,routing,loadbalance")
 @XmlRootElement(name = "roundRobin")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoundRobinLoadBalancerDefinition extends LoadBalancerDefinition {

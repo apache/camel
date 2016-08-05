@@ -108,7 +108,7 @@ public class MessageReceiverListenerImplTest {
             .andReturn(exchange);
         processor.process(exchange);
         expect(exchange.getException()).andReturn(null);
-        expect(dataSm.getOptionalParametes())
+        expect(dataSm.getOptionalParameters())
             .andReturn(optionalParameters);
         
         replay(endpoint, processor, exceptionHandler, session, dataSm, exchange);

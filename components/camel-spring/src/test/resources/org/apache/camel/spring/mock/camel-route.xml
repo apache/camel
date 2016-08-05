@@ -23,6 +23,7 @@
     ">
 
     <!-- START SNIPPET: e1 -->
+    <!-- tag::e1[] -->
     <!-- this camel route is in the camel-route.xml file -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
 
@@ -41,6 +42,7 @@
         </route>
 
     </camelContext>
+    <!-- end::e1[] -->
     <!-- END SNIPPET: e1 -->
 
 </beans>

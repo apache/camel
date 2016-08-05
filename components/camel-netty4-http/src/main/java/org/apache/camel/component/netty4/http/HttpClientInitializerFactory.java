@@ -118,8 +118,6 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
        
         // handler to route Camel messages
         pipeline.addLast("handler", new HttpClientChannelHandler(producer));
-
-        
     }
 
     private SSLContext createSSLContext(NettyProducer producer) throws Exception {
@@ -133,7 +131,7 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
 
         // create ssl context once
         if (configuration.getSslContextParameters() != null) {
-            answer = configuration.getSslContextParameters().createSSLContext();
+            answer = configuration.getSslContextParameters().createSSLContext(producer.getContext());
         } else {
             if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
                 LOG.debug("keystorefile is null");

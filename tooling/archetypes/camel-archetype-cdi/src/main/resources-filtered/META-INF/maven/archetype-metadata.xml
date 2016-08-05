@@ -25,7 +25,7 @@
       <defaultValue>${project.version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="cdi-api-version">
-      <defaultValue>1.2</defaultValue>
+      <defaultValue>${cdi-api-1.2-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="deltaspike-version">
       <defaultValue>${deltaspike-version}</defaultValue>
@@ -41,12 +41,6 @@
     </requiredProperty>
     <requiredProperty key="exec-maven-plugin-version">
       <defaultValue>${exec-maven-plugin-version}</defaultValue>
-    </requiredProperty>
-    <requiredProperty key="slf4j-version">
-      <defaultValue>${slf4j-version}</defaultValue>
-    </requiredProperty>
-    <requiredProperty key="log4j-version">
-      <defaultValue>${log4j-version}</defaultValue>
     </requiredProperty>
   </requiredProperties>
   <fileSets>
@@ -75,15 +69,9 @@
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>src/data</directory>
-      <includes>
-        <include>**/*.xml</include>
-      </includes>
-    </fileSet>
-    <fileSet filtered="true" encoding="UTF-8">
       <directory></directory>
       <includes>
-        <include>ReadMe.txt</include>
+        <include>ReadMe.md</include>
       </includes>
     </fileSet>
   </fileSets>

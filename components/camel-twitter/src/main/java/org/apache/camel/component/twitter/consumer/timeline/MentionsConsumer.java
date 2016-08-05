@@ -19,30 +19,25 @@ package org.apache.camel.component.twitter.consumer.timeline;
 import java.util.List;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
-import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
-
-import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
 /**
  * Consumes tweets in which the user has been mentioned.
  */
-public class MentionsConsumer extends Twitter4JConsumer {
+public class MentionsConsumer extends AbstractStatusConsumer {
 
-    public MentionsConsumer(TwitterEndpoint te) {
-        super(te);
+    public MentionsConsumer(TwitterEndpoint endpoint) {
+        super(endpoint);
     }
 
-    public List<Status> pollConsume() throws TwitterException {
-        List<Status> list = te.getProperties().getTwitter().getMentionsTimeline(new Paging(lastId));
-        for (Status s : list) {
-            checkLastId(s.getId());
-        }
-        return list;
+    @Override
+    protected List<Status> doPoll() throws TwitterException {
+        return getTwitter().getMentionsTimeline(getLastIdPaging());
     }
 
-    public List<Status> directConsume() throws TwitterException {
-        return te.getProperties().getTwitter().getMentionsTimeline();
+    @Override
+    protected List<Status> doDirect() throws TwitterException {
+        return getTwitter().getMentionsTimeline();
     }
 }

@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * For XPath expressions and predicates
  */
-@Metadata(label = "language", title = "XPath")
+@Metadata(label = "language,core,xml", title = "XPath")
 @XmlRootElement(name = "xpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XPathExpression extends NamespaceAwareExpression {
@@ -202,6 +202,13 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     @Override
     public Predicate createPredicate(CamelContext camelContext) {
+        if (documentType == null && documentTypeName != null) {
+            try {
+                documentType = camelContext.getClassResolver().resolveMandatoryClass(documentTypeName);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
         resolveXPathFactory(camelContext);
         return super.createPredicate(camelContext);
     }

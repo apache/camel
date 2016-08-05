@@ -81,7 +81,7 @@ public class HttpNoConnectionTest extends BaseHttpTest {
         Exception e = reply.getException();
         assertNotNull("Should have thrown an exception", e);
         ConnectException cause = assertIsInstanceOf(ConnectException.class, e);
-        assertTrue(cause.getMessage().contains("refused"));
+        assertTrue(cause.getMessage().contains("failed"));
     }
 
 }

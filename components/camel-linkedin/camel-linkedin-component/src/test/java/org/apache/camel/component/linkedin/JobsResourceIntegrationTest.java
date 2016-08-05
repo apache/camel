@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class JobsResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobsResourceIntegrationTest.class);
-    private static final String PATH_PREFIX = LinkedInApiCollection.getCollection().getApiName(JobsResourceApiMethod.class).getName();
+    private static final String PATH_PREFIX = "jobs";
 
     // TODO provide parameter values for addJob
     @Ignore

@@ -141,7 +141,7 @@ public class HttpCompressionTest extends BaseHttpTest {
 
         static class GzipDecompressingEntity extends HttpEntityWrapper {
 
-            public GzipDecompressingEntity(final HttpEntity entity) {
+            GzipDecompressingEntity(final HttpEntity entity) {
                 super(entity);
             }
 
@@ -174,7 +174,7 @@ public class HttpCompressionTest extends BaseHttpTest {
 
         static class GzipCompressingEntity extends HttpEntityWrapper {
 
-            public GzipCompressingEntity(final HttpEntity entity) {
+            GzipCompressingEntity(final HttpEntity entity) {
                 super(entity);
             }
 

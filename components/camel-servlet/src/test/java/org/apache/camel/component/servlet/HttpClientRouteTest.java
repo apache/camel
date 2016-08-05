@@ -28,6 +28,7 @@ import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -121,9 +122,9 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                 }
             });
             fail("Excepts exception here");
-        } catch (Exception ex) {
-            assertTrue("Get a wrong exception.", ex instanceof FailedToCreateProducerException);
-            assertTrue("Get a wrong cause of exception.", ex.getCause() instanceof UnsupportedOperationException);
+        } catch (FailedToCreateRouteException ex) {
+            assertTrue("Get a wrong exception.", ex.getCause() instanceof FailedToCreateProducerException);
+            assertTrue("Get a wrong cause of exception.", ex.getCause().getCause() instanceof UnsupportedOperationException);
         }
     }
 
@@ -133,7 +134,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
         public void configure() throws Exception {
             errorHandler(noErrorHandler());
             // START SNIPPET: route
-            from("servlet:///hello?matchOnUriPrefix=true").process(new Processor() {
+            from("servlet:hello?matchOnUriPrefix=true").process(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
                     String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
@@ -152,14 +153,14 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
             });
             // END SNIPPET: route
             
-            from("servlet:///testHttpMethodRestrict?httpMethodRestrict=POST").process(new Processor() {
+            from("servlet:testHttpMethodRestrict?httpMethodRestrict=POST").process(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     String request = exchange.getIn().getBody(String.class);
                     exchange.getOut().setBody(request);
                 }
             });
 
-            from("servlet:///testConverter?matchOnUriPrefix=true")
+            from("servlet:testConverter?matchOnUriPrefix=true")
                     .convertBodyTo(String.class)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
@@ -172,7 +173,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                         }
                     }).transform(constant("Bye World"));
 
-            from("servlet:///testUnicodeWithStringResponse?matchOnUriPrefix=true")
+            from("servlet:testUnicodeWithStringResponse?matchOnUriPrefix=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
@@ -181,7 +182,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                     })
                     .transform(constant(UNICODE_TEXT));
 
-            from("servlet:///testUnicodeWithObjectResponse?matchOnUriPrefix=true")
+            from("servlet:testUnicodeWithObjectResponse?matchOnUriPrefix=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);

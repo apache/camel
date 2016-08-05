@@ -95,7 +95,7 @@ public class TradeExecutorComponent extends DefaultComponent {
         private final TradeExecutor tradeExecutor;
         private List<Processor> processors = new CopyOnWriteArrayList<Processor>();
         
-        public TradeExecutorEndpoint(String uri, TradeExecutor tradeExecutor) {
+        TradeExecutorEndpoint(String uri, TradeExecutor tradeExecutor) {
             super(uri, TradeExecutorComponent.this);
             this.tradeExecutor = tradeExecutor;
             tradeExecutor.addListener(new QuickfixjMessageListener() {

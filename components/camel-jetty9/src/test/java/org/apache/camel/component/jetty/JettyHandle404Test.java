@@ -50,6 +50,7 @@ public class JettyHandle404Test extends BaseJettyTest {
     public void testCustomerErrorHandler() throws Exception {
         String response = template.requestBody("http://localhost:{{port}}/myserver1?throwExceptionOnFailure=false", null, String.class);
         // look for the error message which is sent by MyErrorHandler
+        log.info("Response: {}", response);
         assertTrue("Get a wrong error message", response.indexOf("MyErrorHandler") > 0);
     }
 

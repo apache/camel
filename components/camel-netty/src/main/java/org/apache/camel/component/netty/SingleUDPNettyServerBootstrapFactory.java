@@ -23,6 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Suspendable;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
@@ -44,12 +45,12 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link NettyServerBootstrapFactory} which is used by a single consumer (not shared).
  */
-public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
+public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory, Suspendable {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SingleUDPNettyServerBootstrapFactory.class);
     private static final String LOOPBACK_INTERFACE = "lo";
     private static final String MULTICAST_SUBNET = "224.0.0.0/4";
-    private final ChannelGroup allChannels;
+    private ChannelGroup allChannels;
     private CamelContext camelContext;
     private ThreadFactory threadFactory;
     private NettyServerBootstrapConfiguration configuration;
@@ -62,19 +63,26 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     private WorkerPool workerPool;
 
     public SingleUDPNettyServerBootstrapFactory() {
-        this.allChannels = new DefaultChannelGroup(SingleUDPNettyServerBootstrapFactory.class.getName());
     }
 
     public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
         this.camelContext = camelContext;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
+
+        this.allChannels = configuration.getChannelGroup() != null
+            ? configuration.getChannelGroup()
+            : new DefaultChannelGroup(SingleUDPNettyServerBootstrapFactory.class.getName());
     }
 
     public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
         this.threadFactory = threadFactory;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
+
+        this.allChannels = configuration.getChannelGroup() != null
+            ? configuration.getChannelGroup()
+            : new DefaultChannelGroup(SingleUDPNettyServerBootstrapFactory.class.getName());
     }
 
     public void addChannel(Channel channel) {

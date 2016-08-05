@@ -58,7 +58,7 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
             return;
         }
 
-        Exchange exchange = producer.createExchange();
+        Exchange exchange = producer.getEndpoint().createExchange();
         exchange.getIn().setBody(event);
 
         // make sure we don't send out events for this as well

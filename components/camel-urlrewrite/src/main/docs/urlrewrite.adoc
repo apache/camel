@@ -1,0 +1,189 @@
+[[UrlRewrite-UrlRewriteComponent]]
+UrlRewrite Component
+~~~~~~~~~~~~~~~~~~~~
+
+*Available as of Camel 2.11*
+
+The `camel-urlrewrite` component allows to plugin url rewrite
+functionality to link:http.html[HTTP], link:http4.html[HTTP4],
+link:jetty.html[Jetty], or link:ahc.html[AHC] components. This component
+integrates the
+http://code.google.com/p/urlrewritefilter/[UrlRewriteFilter] project
+with Apache Camel. This allows you to use the capabilities from the url
+rewrite project with your Camel routes.
+
+This component *requires* that your Camel routes starts from a servlet
+based endpoint such as link:jetty.html[Jetty] or
+link:servlet.html[SERVLET].
+
+[[UrlRewrite-Options]]
+Options
+^^^^^^^
+
+The `camel-urlrewrite` component offers the following options
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Default Value |Description
+
+|`conf` |`null` |To use a custom `org.tuckey.web.filters.urlrewrite.Conf` as the
+configuration for the url rewrite filter.
+
+|`configFile` |`null` |Refers to a file name to load as the configuration file. The file should
+be XML file.
+
+|`modRewriteConfFile` |`null` |Refers to a file name to load as the Apache mod_rewrite style based
+configuration file. This file should be a plain text file.
+
+|`modRewriteConfText` |`null` |Is used to quickly configure a Apache mod_rewrite style based
+configuration without using a file.
+
+|`useQueryString` |`false` |Whether to use query strings in the url rewrite rules.
+
+|`useContext` |`false` |Whether to include context-path or not in the matching. Will be default
+remove the context-path.
+
+|`defaultMatchType` |`"regex"` |Which match type to use. Can be either "wildcard" or "regex".
+
+|`decodeUsing` |`null` |To use a specific encoding such as "utf-8" or "iso-8859-1".
+|=======================================================================
+
+[[UrlRewrite-Usage]]
+Usage
+^^^^^
+
+The following component producers supports using together with the
+`camel-urlrewrite` component: link:http.html[HTTP],
+link:http4.html[HTTP4] and link:jetty.html[Jetty].
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Component |Class
+|`camel-http` | *Camel 2.15 or
+older:*` org.apache.camel.component.urlrewrite.http.HttpUrlRewrite`
+
+|`camel-jetty` |*Camel 2.15 or
+older:*org.apache.camel.component.urlrewrite.http.HttpUrlRewrite
+
+|`camel-http4` |*Camel 2.15 or
+older:*org.apache.camel.component.urlrewrite.http4.HttpUrlRewrite
+|=======================================================================
+
+From *Camel 2.16* onwards this is no longer necessary and there is only
+one class, which
+is `org.apache.camel.component.urlrewrite.HttpUrlRewrite` that works
+with any of the components.
+
+You setup the url rewrite as a bean of the type
+`org.apache.camel.component.urlrewrite.http.HttpUrlRewrite` (when using
+link:http.html[HTTP] component) as shown below:
+
+And in XML DSL you can do:
+
+[source,xml]
+----------------------------------------------------------------------------------
+<bean id="myRewrite" class="org.apache.camel.component.urlrewrite.HttpUrlRewrite">
+  <property name="configFile" value="example/urlrewrite2.xml"/>
+</bean>
+----------------------------------------------------------------------------------
+
+In the bean above we configure it with the `configFile` option which is
+a XML http://code.google.com/p/urlrewritefilter/[UrlRewriteFilter]
+configuration file.
+
+
+TIP:See more details at
+http://code.google.com/p/urlrewritefilter/[UrlRewriteFilter] for how to
+configure the XML rules file.
+
+In the Camel routes, you bridge the endpoints, and refer to the url
+rewrite on the producer endpoint as shown below. Notice how we refer to
+our url rewrite filter using the `urlRewrite` option in the endpoint
+uri.
+
+[[UrlRewrite-Usingloadbalancingeip]]
+Using load balancing eip
+++++++++++++++++++++++++
+
+You can also use Camel's link:load-balancer.html[Load Balancer] together
+with link:urlrewrite.html[UrlRewrite], as shown below. In this code we
+use the failover load balancer, to failover to the 2nd endpoint (which
+goes to myapp3) in case of any exception thrown.
+
+[[UrlRewrite-UsingApachemod_rewritestyleconfiguration]]
+Using Apache mod_rewrite style configuration
+++++++++++++++++++++++++++++++++++++++++++++
+
+The http://code.google.com/p/urlrewritefilter/[UrlRewriteFilter] project
+also supports Apache mod_rewrite style configuration.
+
+For example to configure the bean using the modRewriteConfFile property
+to refer to a mod configuration file:
+
+[source,xml]
+----------------------------------------------------------------------------------
+<bean id="myRewrite" class="org.apache.camel.component.urlrewrite.HttpUrlRewrite">
+  <property name="modRewriteConfFile" value="example/modrewrite.cxf"/>
+</bean>
+----------------------------------------------------------------------------------
+
+Which then can contain mod rewrite rules and the likes:
+
+You can have multiple RewriteRule rules and other configurations. See
+more details at
+http://code.google.com/p/urlrewritefilter/[UrlRewriteFilter] project.
+
+[[UrlRewrite-Writingcustomurlrewriters]]
+Writing custom url rewriters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can implement your custom url rewriters by implementing either of
+the following interfaces from the component of choice:
+
+Component(s): camel-http / camel-jetty
+
+* `org.apache.camel.component.http.UrlRewrite`
+* `org.apache.camel.component.http.HttpServletUrlRewrite`
+
+Component(s): camel-http4
+
+* `org.apache.camel.component.http4.UrlRewrite`
+* `org.apache.camel.component.http4.HttpServletUrlRewrite`
+
+The former is a simple and generic interface, which is not dependent on
+the Servlet API. The later is servlet based which requires the Camel route to start from
+a servlet based component such as link:jetty.html[Jetty] or
+link:servlet.html[SERVLET]. The servlet based is more feature rich and
+that's the API we use to integrate with the
+http://code.google.com/p/urlrewritefilter/[UrlRewriteFilter] project in
+this `camel-urlrewrite` component.
+
+[[UrlRewrite-Asimpleurlrewritefilter]]
+A simple url rewrite filter
++++++++++++++++++++++++++++
+
+In this example we implement a custom
+`org.apache.camel.component.http.UrlRewrite` that just replaces yahoo
+with google. Mind this example is based on a unit test, and only for
+demonstration purposes. As its java code you have full power to
+implement more complex logic.
+
+The url parameter contains the full url including
+scheme://hostname:port/path?query. The relativeUrl parameter is the url
+without the endpoint configured path. Notice this option may be null if
+the url doesn't start with the endpoint configured path.
+
+[[UrlRewrite-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+
+* link:jetty.html[Jetty]
+* link:http4.html[HTTP4]
+* link:http.html[HTTP]
+* link:ahc.html[AHC]
+

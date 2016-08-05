@@ -28,6 +28,16 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class BeanHandlerMethodTest extends ContextTestSupport {
 
+    public void testInterfaceBeanMethod() throws Exception {
+        BeanInfo info = new BeanInfo(context, MyConcreteBean.class);
+
+        Exchange exchange = new DefaultExchange(context);
+        MyConcreteBean pojo = new MyConcreteBean();
+        MethodInvocation mi = info.createInvocation(pojo, exchange);
+        assertNotNull(mi);
+        assertEquals("hello", mi.getMethod().getName());
+    }
+
     public void testNoHandleMethod() throws Exception {
         BeanInfo info = new BeanInfo(context, MyNoDummyBean.class);
 
@@ -95,6 +105,30 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         } catch (AmbiguousMethodCallException e) {
             assertEquals(3, e.getMethods().size());
         }
+    }
+
+    public interface MyBaseInterface {
+
+        @Handler
+        String hello(@Body String hi);
+
+    }
+
+    public abstract static class MyAbstractBean implements MyBaseInterface {
+
+        public String hello(@Body String hi) {
+            return "Hello " + hi;
+        }
+
+        public String doCompute(String input) {
+            fail("Should not invoke me");
+            return null;
+        }
+
+    }
+
+    public static class MyConcreteBean extends MyAbstractBean {
+
     }
 
     public static class MyNoDummyBean {

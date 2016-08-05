@@ -57,6 +57,8 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
     private boolean useRecovery = true;
     private int maximumRedeliveries;
     private String deadLetterUri;
+    
+    private boolean allowSerializedHeaders;
 
     /**
      * Creates an aggregation repository
@@ -122,7 +124,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
             // in some cases.  But since we can't.. we are going to force
             // early marshaling.
             final Buffer keyBuffer = codec.marshallKey(key);
-            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange);
+            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
             Buffer rc = hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
                     SortedIndex<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, true);
@@ -187,7 +189,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
         try {
             final Buffer keyBuffer = codec.marshallKey(key);
             final Buffer confirmKeyBuffer = codec.marshallKey(exchange.getExchangeId());
-            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange);
+            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
             hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
                     SortedIndex<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, true);
@@ -472,6 +474,14 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
 
     public void setPageSize(short pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public boolean isAllowSerializedHeaders() {
+        return allowSerializedHeaders;
+    }
+
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        this.allowSerializedHeaders = allowSerializedHeaders;
     }
 
     @Override

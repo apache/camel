@@ -159,6 +159,7 @@ public interface Exchange {
     String LANGUAGE_SCRIPT          = "CamelLanguageScript";
     String LOG_DEBUG_BODY_MAX_CHARS = "CamelLogDebugBodyMaxChars";
     String LOG_DEBUG_BODY_STREAMS   = "CamelLogDebugStreams";
+    String LOG_EIP_NAME             = "CamelLogEipName";
     String LOOP_INDEX               = "CamelLoopIndex";
     String LOOP_SIZE                = "CamelLoopSize";
 

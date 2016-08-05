@@ -36,7 +36,6 @@ public class MainApp {
         System.out.println("\n\n\n\n");
 
         Main main = new Main();
-        main.enableHangupSupport();
         main.addRouteBuilder(new MyRouteBuilder());
         main.run(args);
     }

@@ -46,7 +46,7 @@ public class ClassComponentWithPropertiesLookupSetFromEndpointTest extends Conte
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("class:org.apache.camel.component.bean.MyPrefixBean?prefix=#foo")
+                    .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.prefix=#foo")
                     .to("mock:result");
             }
         };

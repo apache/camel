@@ -47,7 +47,6 @@ public class MailUsingOwnComponentTest extends CamelTestSupport {
 
         MailComponent myMailbox = new MailComponent();
         myMailbox.setConfiguration(config);
-        myMailbox.setCamelContext(context);
 
         context.addComponent("mailbox", myMailbox);
 

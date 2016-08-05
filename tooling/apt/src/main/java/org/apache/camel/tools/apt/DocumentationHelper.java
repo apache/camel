@@ -26,12 +26,15 @@ import java.io.LineNumberReader;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.camel.tools.apt.JsonSchemaHelper.parseJsonSchema;
+import org.apache.camel.tools.apt.helper.IOHelper;
+
+import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.parseJsonSchema;
 
 /**
  * Helper to find documentation for inherited options when a component extends another.
  */
 public final class DocumentationHelper {
+
     private DocumentationHelper() {
         //utility class, never constructed
     }

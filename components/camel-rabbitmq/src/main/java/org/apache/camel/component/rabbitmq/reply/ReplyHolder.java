@@ -115,7 +115,6 @@ public class ReplyHolder {
 
     /**
      * The message properties
-     * @return
      */
     public AMQP.BasicProperties getProperties() {
         return properties;

@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "language", title = "JSonPath")
+@Metadata(label = "language,json", title = "JSonPath")
 @XmlRootElement(name = "jsonpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonPathExpression extends ExpressionDefinition {
@@ -44,6 +44,8 @@ public class JsonPathExpression extends ExpressionDefinition {
     private Class<?> resultType;
     @XmlAttribute @Metadata(defaultValue = "false")
     private Boolean suppressExceptions;
+    @XmlAttribute @Metadata(defaultValue = "true")
+    private Boolean allowSimple;
 
     public JsonPathExpression() {
     }
@@ -78,6 +80,17 @@ public class JsonPathExpression extends ExpressionDefinition {
         return suppressExceptions;
     }
 
+    public Boolean getAllowSimple() {
+        return allowSimple;
+    }
+
+    /**
+     * Whether to allow in inlined simple exceptions in the json path expression
+     */
+    public void setAllowSimple(Boolean allowSimple) {
+        this.allowSimple = allowSimple;
+    }
+
     /**
      * Whether to suppress exceptions such as PathNotFoundException.
      */
@@ -109,6 +122,9 @@ public class JsonPathExpression extends ExpressionDefinition {
         if (suppressExceptions != null) {
             setProperty(expression, "suppressExceptions", suppressExceptions);
         }
+        if (allowSimple != null) {
+            setProperty(expression, "allowSimple", allowSimple);
+        }
         super.configureExpression(camelContext, expression);
     }
 
@@ -119,6 +135,9 @@ public class JsonPathExpression extends ExpressionDefinition {
         }
         if (suppressExceptions != null) {
             setProperty(predicate, "suppressExceptions", suppressExceptions);
+        }
+        if (allowSimple != null) {
+            setProperty(predicate, "allowSimple", allowSimple);
         }
         super.configurePredicate(camelContext, predicate);
     }

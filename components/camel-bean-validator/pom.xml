@@ -20,13 +20,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.16-SNAPSHOT</version>
+        <version>2.18-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-bean-validator</artifactId>
     <name>Camel :: Bean validator</name>
     <description>Camel bean validation support (JSR 303)</description>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.bean.validator.*</camel.osgi.export.pkg>

@@ -54,6 +54,8 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     @XmlAttribute
     private String onRedeliveryRef;
     @XmlAttribute
+    private String onExceptionOccurredRef;
+    @XmlAttribute
     private String onPrepareFailureRef;
     @XmlAttribute
     private String retryWhileRef;

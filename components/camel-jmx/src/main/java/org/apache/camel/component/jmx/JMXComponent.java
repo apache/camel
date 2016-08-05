@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.jmx;
 
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.IntrospectionSupport;
 
 /**
  * Component for connecting JMX Notification events to a camel route.
@@ -38,6 +36,7 @@ public class JMXComponent extends UriEndpointComponent {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         JMXEndpoint endpoint = new JMXEndpoint(uri, this);
         // use the helper class to set all of the properties
@@ -46,20 +45,8 @@ public class JMXComponent extends UriEndpointComponent {
 
         endpoint.setServerURL(remaining);
 
-        // we may have some extra params left over for the object properties hashtable
-        // these properties need to be consumed or the framework will throw an exception
-        // for unused params
-        if (!parameters.isEmpty()) {
-            Hashtable<String, String> objectProperties = new Hashtable<String, String>();
-
-            for (Iterator<Entry<String, Object>> it = parameters.entrySet().iterator(); it.hasNext();) {
-                Entry<String, Object> entry = it.next();
-                if (entry.getKey().startsWith("key.")) {
-                    objectProperties.put(entry.getKey().substring("key.".length()), entry.getValue().toString());
-                    it.remove();
-                }
-            }
-
+        Map objectProperties = IntrospectionSupport.extractProperties(parameters, "key.");
+        if (objectProperties != null && !objectProperties.isEmpty()) {
             endpoint.setObjectProperties(objectProperties);
         }
 

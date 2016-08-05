@@ -21,16 +21,19 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.16-SNAPSHOT</version>
+        <version>2.18-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-mail</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Mail</name>
     <description>Camel Mail support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.mail.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>
+          org.apache.camel.component.mail.*,
+          org.apache.camel.dataformat.mime.multipart.*
+        </camel.osgi.export.pkg>
         <camel.osgi.export.service>
           org.apache.camel.spi.ComponentResolver;component=imap,
           org.apache.camel.spi.ComponentResolver;component=imaps,
@@ -38,7 +41,8 @@
           org.apache.camel.spi.ComponentResolver;component=pop3,
           org.apache.camel.spi.ComponentResolver;component=pop3s,
           org.apache.camel.spi.ComponentResolver;component=smtp,
-          org.apache.camel.spi.ComponentResolver;component=smtps
+          org.apache.camel.spi.ComponentResolver;component=smtps,
+          org.apache.camel.spi.DataFormatResolver;dataformat=mime-multipart
         </camel.osgi.export.service>
     </properties>
 
@@ -48,8 +52,8 @@
             <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
             <version>${javax-mail-version}</version>
             <exclusions>
               <!-- javax activation is part of the JDK now -->
@@ -96,7 +100,17 @@
         <dependency>
           <groupId>commons-io</groupId>
           <artifactId>commons-io</artifactId>
-          <version>${commons-io-version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.quartz-scheduler</groupId>
+          <artifactId>quartz</artifactId>
+          <version>${quartz2-version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-quartz2</artifactId>
           <scope>test</scope>
         </dependency>
     </dependencies>

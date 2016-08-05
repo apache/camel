@@ -74,7 +74,7 @@ public class CxfConsumerSoap12Test extends CamelBlueprintTestSupport {
         mock.expectedMessageCount(1);
 
         Service service = Service.create(SERVICE_NAME);
-        service.addPort(PORT_NAME , "http://www.w3.org/2003/05/soap/bindings/HTTP/", 
+        service.addPort(PORT_NAME, "http://www.w3.org/2003/05/soap/bindings/HTTP/", 
                         "http://localhost:" + CXFTestSupport.getPort1() + "/CxfConsumerSoap12Test/router");
         Greeter greeter = service.getPort(PORT_NAME, Greeter.class);
         

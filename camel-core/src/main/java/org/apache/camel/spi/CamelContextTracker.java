@@ -16,13 +16,42 @@
  */
 package org.apache.camel.spi;
 
+import java.io.Closeable;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.CamelContextTrackerRegistry;
 
 /**
  * A camel context creation tracker.
  */
-public class CamelContextTracker {
+public class CamelContextTracker implements Closeable {
+
+    public interface Filter {
+
+        boolean accept(CamelContext camelContext);
+
+    }
+
+    private final Filter filter;
+
+    public CamelContextTracker() {
+        filter = new Filter() {
+            public boolean accept(CamelContext camelContext) {
+                return !camelContext.getClass().getName().contains("Proxy");
+            }
+        };
+    }
+
+    public CamelContextTracker(Filter filter) {
+        this.filter = filter;
+    }
+
+    /**
+     * Called to determine whether this tracker should accept the given context.
+     */
+    public boolean accept(CamelContext camelContext) {
+        return filter == null || filter.accept(camelContext);
+    }
 
     /**
      * Called when a context is created.

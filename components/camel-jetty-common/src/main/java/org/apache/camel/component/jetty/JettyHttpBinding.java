@@ -70,6 +70,9 @@ public interface JettyHttpBinding {
     /**
      * Whether to transfer exception back as a serialized java object
      * if processing failed due to an exception
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
      *
      * @param transferException <tt>true</tt> to transfer exception
      */
@@ -78,10 +81,31 @@ public interface JettyHttpBinding {
     /**
      * Whether to transfer exception back as a serialized java object
      * if processing failed due to an exception
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
      *
      * @return <tt>true</tt> to transfer exception
      */
     boolean isTransferException();
+
+    /**
+     * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
+     *
+     * @param allowJavaSerializedObject <tt>true</tt> to allow serializing java objects
+     */
+    void setAllowJavaSerializedObject(boolean allowJavaSerializedObject);
+
+    /**
+     * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
+     */
+    boolean isAllowJavaSerializedObject();
 
     /**
      * The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.

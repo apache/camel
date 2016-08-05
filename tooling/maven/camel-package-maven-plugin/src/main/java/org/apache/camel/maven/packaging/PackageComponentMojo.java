@@ -170,9 +170,6 @@ public class PackageComponentMojo extends AbstractMojo {
 
                 log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "components: " : "component: ") + names);
 
-                if (projectHelper != null) {
-                    projectHelper.attachArtifact(project, "properties", "camelComponent", outFile);
-                }
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to write properties to " + outFile + ". Reason: " + e, e);
             }

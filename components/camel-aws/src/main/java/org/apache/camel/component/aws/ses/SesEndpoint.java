@@ -33,8 +33,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS SES Endpoint</a>.  
- *
+ * The aws-ses component is used for sending emails with Amazon's SES service.
  */
 @UriEndpoint(scheme = "aws-ses", title = "AWS Simple Email Service", syntax = "aws-ses:from", producerOnly = true, label = "cloud,mail")
 public class SesEndpoint extends DefaultEndpoint {

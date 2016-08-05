@@ -51,7 +51,7 @@ public class CassandraProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (isPrepareStatements()) {
+        if (isPrepareStatements() && getEndpoint().getCql() != null) {
             this.preparedStatement = getEndpoint().prepareStatement();
         }
     }
@@ -165,6 +165,9 @@ public class CassandraProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
+        // copy the header of in message to the out message
+        exchange.getOut().copyFrom(exchange.getIn());
+
         ResultSet resultSet = execute(exchange.getIn());
         getEndpoint().fillMessage(resultSet, exchange.getOut());
     }

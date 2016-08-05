@@ -41,7 +41,7 @@ public class CamelMockBundle extends MockBundle {
         private final List<E> list;                    
         private int index;
         
-        public ListEnumeration(List<E> list) {
+        ListEnumeration(List<E> list) {
             this.list = list;
         }
 

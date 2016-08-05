@@ -34,6 +34,7 @@ public class UndertowConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowConsumer.class);
 
     private UndertowHost undertowHost;
+    private HttpHandlerRegistrationInfo registrationInfo;
 
     public UndertowConsumer(UndertowEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -61,23 +62,38 @@ public class UndertowConsumer extends DefaultConsumer {
         LOG.debug("Undertow consumer is starting");
         getEndpoint().getComponent().registerConsumer(this);
 
-        URI httpUri = getEndpoint().getHttpURI();
         UndertowHost host = getUndertowHost();
 
-        host.validateEndpointURI(httpUri);
-        host.registerHandler(httpUri.getPath(), new HttpCamelHandler(this));
+        HttpCamelHandler httpCamelHandler = new HttpCamelHandler();
+        httpCamelHandler.connectConsumer(this);
+
+        HttpHandlerRegistrationInfo registrationInfo = getHttpHandlerRegistrationInfo();
+
+        host.validateEndpointURI(registrationInfo.getUri());
+        host.registerHandler(registrationInfo, httpCamelHandler);
     }
 
     @Override
     protected void doStop() {
         LOG.debug("Undertow consumer is stopping");
 
-        URI httpUri = getEndpoint().getHttpURI();
+        HttpHandlerRegistrationInfo registrationInfo = getHttpHandlerRegistrationInfo();
         UndertowHost host = getUndertowHost();
-
-        host.unregisterHandler(httpUri.getPath());
+        host.unregisterHandler(registrationInfo);
 
         getEndpoint().getComponent().unregisterConsumer(this);
+    }
+
+    private HttpHandlerRegistrationInfo getHttpHandlerRegistrationInfo() {
+        if (registrationInfo == null) {
+            UndertowEndpoint endpoint = getEndpoint();
+
+            registrationInfo = new HttpHandlerRegistrationInfo();
+            registrationInfo.setUri(endpoint.getHttpURI());
+            registrationInfo.setMethodRestrict(endpoint.getHttpMethodRestrict());
+            registrationInfo.setMatchOnUriPrefix(endpoint.getMatchOnUriPrefix());
+        }
+        return registrationInfo;
     }
 
     class DefaultUndertowHost implements UndertowHost {
@@ -88,12 +104,12 @@ public class UndertowConsumer extends DefaultConsumer {
         }
 
         @Override
-        public void registerHandler(String path, HttpHandler handler) {
+        public void registerHandler(HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler) {
             getEndpoint().getComponent().startServer(UndertowConsumer.this);
         }
 
         @Override
-        public void unregisterHandler(String path) {
+        public void unregisterHandler(HttpHandlerRegistrationInfo registrationInfo) {
             // do nothing
         }
     }

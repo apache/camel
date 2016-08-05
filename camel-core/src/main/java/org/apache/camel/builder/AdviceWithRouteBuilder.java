@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -134,7 +135,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveById(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        return new AdviceWithBuilder<T>(this, pattern, null, null);
+        return new AdviceWithBuilder<T>(this, pattern, null, null, null);
     }
 
     /**
@@ -148,7 +149,22 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToString(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        return new AdviceWithBuilder<T>(this, null, pattern, null);
+        return new AdviceWithBuilder<T>(this, null, pattern, null, null);
+    }
+
+    /**
+     * Weaves by matching sending to endpoints with the given uri of the nodes in the route.
+     * <p/>
+     * Uses the {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)} matching algorithm.
+     *
+     * @param pattern the pattern
+     * @return the builder
+     * @see org.apache.camel.util.EndpointHelper#matchPattern(String, String)
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToUri(String pattern) {
+        ObjectHelper.notNull(originalRoute, "originalRoute", this);
+        return new AdviceWithBuilder<T>(this, null, null, pattern, null);
     }
 
     /**
@@ -159,7 +175,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByType(Class<T> type) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        return new AdviceWithBuilder<T>(this, null, null, type);
+        return new AdviceWithBuilder<T>(this, null, null, null, type);
     }
 
     /**
@@ -169,7 +185,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> ProcessorDefinition<?> weaveAddFirst() {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        return new AdviceWithBuilder<T>(this, "*", null, null).selectFirst().before();
+        return new AdviceWithBuilder<T>(this, "*", null, null, null).selectFirst().before();
     }
 
     /**
@@ -179,7 +195,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> ProcessorDefinition<?> weaveAddLast() {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        return new AdviceWithBuilder<T>(this, "*", null, null).maxDeep(1).selectLast().after();
+        return new AdviceWithBuilder<T>(this, "*", null, null, null).maxDeep(1).selectLast().after();
     }
 
 }

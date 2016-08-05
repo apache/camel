@@ -27,20 +27,20 @@ import org.apache.camel.impl.DefaultMessage;
  * @version 
  */
 public class SpringIntegrationMessage extends DefaultMessage {
-    private org.springframework.integration.Message<?> siMessage;
+    private org.springframework.messaging.Message<?> siMessage;
 
     public SpringIntegrationMessage() {
     }
 
-    public SpringIntegrationMessage(org.springframework.integration.Message<?> message) {
+    public SpringIntegrationMessage(org.springframework.messaging.Message<?> message) {
         this.siMessage = message;
     }
 
-    public void setMessage(org.springframework.integration.Message<?> message) {
+    public void setMessage(org.springframework.messaging.Message<?> message) {
         this.siMessage = message;
     }
 
-    public org.springframework.integration.Message<?> getMessage() {
+    public org.springframework.messaging.Message<?> getMessage() {
         return siMessage;
     }
 

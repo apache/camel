@@ -38,9 +38,9 @@ public class UriConfigurationTest extends Assert {
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"awaitJob\": { \"kind\": \"parameter\", \"label\": \"consumer\", \"type\": \"boolean\""));
-        assertTrue(json.contains("\"command\": { \"kind\": \"parameter\", \"type\": \"string\""));
-        assertTrue(json.contains("\"jobTimeToRun\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"command\": { \"kind\": \"parameter\", \"group\": \"common\", \"type\": \"string\""));
+        assertTrue(json.contains("\"jobTimeToRun\": { \"kind\": \"parameter\", \"group\": \"common\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"awaitJob\": { \"kind\": \"parameter\", \"group\": \"consumer\", \"label\": \"consumer\", \"type\": \"boolean\""));
     }
 
     @Test

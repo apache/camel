@@ -32,7 +32,7 @@
  */
 package org.apache.camel.dataformat.csv;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -55,7 +55,7 @@ public class CsvRouteTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(1);
 
         // START SNIPPET: marshalInput
-        Map<String, Object> body = new HashMap<String, Object>();
+        Map<String, Object> body = new LinkedHashMap<String, Object>();
         body.put("foo", "abc");
         body.put("bar", 123);
         // END SNIPPET: marshalInput
@@ -82,11 +82,11 @@ public class CsvRouteTest extends CamelTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMulti",
                 MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
-        Map<String, Object> body1 = new HashMap<String, Object>();
+        Map<String, Object> body1 = new LinkedHashMap<String, Object>();
         body1.put("foo", "abc");
         body1.put("bar", 123);
 
-        Map<String, Object> body2 = new HashMap<String, Object>();
+        Map<String, Object> body2 = new LinkedHashMap<String, Object>();
         body2.put("foo", "def");
         body2.put("bar", 456);
         body2.put("baz", 789);
@@ -123,11 +123,11 @@ public class CsvRouteTest extends CamelTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMultiCustom",
                 MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
-        Map<String, Object> body1 = new HashMap<String, Object>();
+        Map<String, Object> body1 = new LinkedHashMap<String, Object>();
         body1.put("foo", "abc");
         body1.put("bar", 123);
 
-        Map<String, Object> body2 = new HashMap<String, Object>();
+        Map<String, Object> body2 = new LinkedHashMap<String, Object>();
         body2.put("foo", "def");
         body2.put("bar", 456);
         body2.put("baz", 789);

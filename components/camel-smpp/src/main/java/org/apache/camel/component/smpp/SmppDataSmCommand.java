@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.jsmpp.bean.DataCoding;
+import org.jsmpp.bean.DataCodings;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
@@ -65,8 +65,8 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
                     dataSm.getDestAddress(),
                     new ESMClass(dataSm.getEsmClass()),
                     new RegisteredDelivery(dataSm.getRegisteredDelivery()),
-                    DataCoding.newInstance(dataSm.getDataCoding()),
-                    dataSm.getOptionalParametes());
+                    DataCodings.newInstance(dataSm.getDataCoding()),
+                    dataSm.getOptionalParameters());
         } catch (Exception e) {
             throw new SmppException(e);
         }
@@ -199,14 +199,14 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
         Map<java.lang.Short, Object> optinalParamater = in.getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
         if (optinalParamater != null) {
             List<OptionalParameter> optParams = createOptionalParametersByCode(optinalParamater);
-            dataSm.setOptionalParametes(optParams.toArray(new OptionalParameter[optParams.size()]));
+            dataSm.setOptionalParameters(optParams.toArray(new OptionalParameter[optParams.size()]));
         } else {
             Map<String, String> optinalParamaters = in.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
             if (optinalParamaters != null) {
                 List<OptionalParameter> optParams = createOptionalParametersByName(optinalParamaters);
-                dataSm.setOptionalParametes(optParams.toArray(new OptionalParameter[optParams.size()]));
+                dataSm.setOptionalParameters(optParams.toArray(new OptionalParameter[optParams.size()]));
             } else {
-                dataSm.setOptionalParametes();
+                dataSm.setOptionalParameters();
             }
         }
 

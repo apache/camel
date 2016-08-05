@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.netty4.http;
 
+import java.io.UnsupportedEncodingException;
+
 import io.netty.handler.codec.http.HttpContent;
 import org.apache.camel.CamelException;
+import org.apache.camel.component.netty4.NettyConverter;
 import org.apache.camel.util.ObjectHelper;
-
 
 /**
  * Exception when a Netty HTTP operation failed.
@@ -31,6 +33,7 @@ public class NettyHttpOperationFailedException extends CamelException {
     private final int statusCode;
     private final String statusText;
     private final transient HttpContent content;
+    private final String contentAsString;
 
     public NettyHttpOperationFailedException(String uri, int statusCode, String statusText, String location, HttpContent content) {
         super("Netty HTTP operation failed invoking " + uri + " with statusCode: " + statusCode + (location != null ? ", redirectLocation: " + location : ""));
@@ -39,6 +42,14 @@ public class NettyHttpOperationFailedException extends CamelException {
         this.statusText = statusText;
         this.redirectLocation = location;
         this.content = content;
+
+        String str = "";
+        try {
+            str = NettyConverter.toString(content.content(), null);
+        } catch (UnsupportedEncodingException e) {
+            // ignore
+        }
+        this.contentAsString = str;
     }
 
     public String getUri() {
@@ -70,8 +81,20 @@ public class NettyHttpOperationFailedException extends CamelException {
      * <p/>
      * Notice this may be <tt>null</tt> if this exception has been serialized,
      * as the {@link HttpContent} instance is marked as transient in this class.
+     *
+     * @deprecated use getContentAsString();
      */
+    @Deprecated
     public HttpContent getHttpContent() {
         return content;
+    }
+
+    /**
+     * Gets the HTTP content as a String
+     * <p/>
+     * Notice this may be <tt>null</tt> if it was not possible to read the content
+     */
+    public String getContentAsString() {
+        return contentAsString;
     }
 }

@@ -342,7 +342,6 @@ public class Tracer implements InterceptStrategy, Service {
         this.jpaTraceEventMessageClassName = jpaTraceEventMessageClassName;
     }
 
-
     public boolean isJmxTraceNotifications() {
         return jmxTraceNotifications;
     }

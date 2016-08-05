@@ -59,7 +59,7 @@ public class DropboxProducerPutWithRemotePathTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://put?" + getAuthParams() + "&uploadMode=add&localPath=/XXX&remotePath=/XXX")
+                        .to("dropbox://put?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&uploadMode=add&localPath=/XXX&remotePath=/XXX")
                         .to("mock:result");
             }
         };

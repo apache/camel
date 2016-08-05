@@ -31,6 +31,9 @@ public class JmsProducerDisableReplyToTest extends CamelTestSupport {
 
     @Test
     public void testProducerDisableReplyTo() throws Exception {
+        // must start CamelContext because use route builder is false
+        context.start();
+
         String url = "activemq:queue:foo?disableReplyTo=true";
         template.requestBody(url, "Hello World");
 

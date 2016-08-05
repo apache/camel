@@ -23,7 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ResolverHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,35 +33,21 @@ import org.slf4j.LoggerFactory;
  * scheme name in the <b>META-INF/services/org/apache/camel/component/</b>
  * directory on the classpath.
  *
- * @version 
+ * @version
  */
 public class DefaultComponentResolver implements ComponentResolver {
 
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/component/";
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultComponentResolver.class);
+
     private FactoryFinder factoryFinder;
 
     public Component resolveComponent(String name, CamelContext context) {
         // lookup in registry first
-        Object bean = null;
-        try {
-            bean = context.getRegistry().lookupByName(name);
-            getLog().debug("Found component: {} in registry: {}", name, bean);
-        } catch (Exception e) {
-            getLog().debug("Ignored error looking up bean: " + name, e);
-        }
-        if (bean != null) {
-            if (bean instanceof Component) {
-                return (Component) bean;
-            } else {
-                // lets use Camel's type conversion mechanism to convert things like CamelContext
-                // and other types into a valid Component
-                Component component = CamelContextHelper.convertTo(context, Component.class, bean);
-                if (component != null) {
-                    return component;
-                }
-            }
-            // we do not throw the exception here and try to auto create a component
+        Component componentReg = ResolverHelper.lookupComponentInRegistryWithFallback(context, name);
+        if (componentReg != null) {
+            return componentReg;
         }
 
         // not in registry then use component factory

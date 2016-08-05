@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
 
 public class ManagedFromRestGetTest extends ManagementTestSupport {
@@ -55,16 +56,16 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         assertTrue(xml.contains("<rest path=\"/say/hello\">"));
         assertTrue(xml.contains("<rest path=\"/say/bye\">"));
         assertTrue(xml.contains("</rest>"));
-        assertTrue(xml.contains("<get>"));
+        assertTrue(xml.contains("<get"));
         assertTrue(xml.contains("application/json"));
-        assertTrue(xml.contains("<post>"));
+        assertTrue(xml.contains("<post"));
         assertTrue(xml.contains("application/json"));
         assertTrue(xml.contains("</rests>"));
 
         assertTrue(xml.contains("<param name=\"header_letter\" type=\"query\" description=\"header param description2\""
-                + " defaultValue=\"b\" required=\"false\" allowMultiple=\"true\" dataType=\"string\" access=\"acc2\">"));
+                + " defaultValue=\"b\" required=\"false\" collectionFormat=\"multi\" dataType=\"string\">"));
         assertTrue(xml.contains("<param name=\"header_count\" type=\"header\" description=\"header param description1\" "
-                + "defaultValue=\"1\" required=\"true\" allowMultiple=\"false\" dataType=\"integer\" access=\"acc1\">"));
+                + "defaultValue=\"1\" required=\"true\" dataType=\"integer\""));
         assertTrue(xml.contains("<value>1</value>"));
         assertTrue(xml.contains("<value>a</value>"));
 
@@ -91,10 +92,10 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
                 rest("/say/bye")
                     .get().consumes("application/json")
                         .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues(Arrays.asList("1", "2", "3", "4"))
-                            .defaultValue("1").allowMultiple(false).name("header_count").required(true).access("acc1")
+                            .defaultValue("1").name("header_count").required(true)
                         .endParam().
                         param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues(Arrays.asList("a", "b", "c", "d"))
-                            .defaultValue("b").allowMultiple(true).name("header_letter").required(false).access("acc2")
+                            .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
                         .endParam()
                         .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
                         .to("direct:bye")

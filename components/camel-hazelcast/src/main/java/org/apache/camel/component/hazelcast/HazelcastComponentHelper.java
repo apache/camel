@@ -103,6 +103,7 @@ public final class HazelcastComponentHelper {
         addMapping("valueCount", HazelcastConstants.VALUE_COUNT_OPERATION);
         addMapping("containsKey", HazelcastConstants.CONTAINS_KEY_OPERATION);
         addMapping("containsValue", HazelcastConstants.CONTAINS_VALUE_OPERATION);
+        addMapping("keySet", HazelcastConstants.GET_KEYS_OPERATION);
 
         // multimap
         addMapping("removevalue", HazelcastConstants.REMOVEVALUE_OPERATION);
@@ -125,6 +126,11 @@ public final class HazelcastComponentHelper {
 
         // topic
         addMapping("publish", HazelcastConstants.PUBLISH_OPERATION);
+        
+        // ringbuffer
+        addMapping("capacity", HazelcastConstants.GET_CAPACITY_OPERATION);
+        addMapping("readonceHead", HazelcastConstants.READ_ONCE_HEAD_OPERATION);
+        addMapping("readonceTail", HazelcastConstants.READ_ONCE_TAIL_OPERATION);
     }
 
     private void addMapping(String operationName, int operationNumber) {

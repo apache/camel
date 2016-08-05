@@ -20,12 +20,12 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-bam</artifactId>
-  <packaging>bundle</packaging>
-  <name>Camel :: BAM</name>
+  <packaging>jar</packaging>
+  <name>Camel :: BAM (deprecated)</name>
   <description>Camel Business Activity Monitor support</description>
 
   <properties>

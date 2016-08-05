@@ -300,7 +300,7 @@ public class JmsBinding {
             } else {
                 ObjectHelper.notNull(camelMessage, "message");
                 // create regular jms message using the camel message body
-                answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session, exchange.getContext());
+                answer = createJmsMessage(exchange, camelMessage, session, exchange.getContext());
                 appendJmsProperties(answer, exchange, camelMessage);
             }
         }
@@ -450,8 +450,19 @@ public class JmsBinding {
         return answer;
     }
 
+    protected Message createJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session, CamelContext context) throws JMSException {
+        Message answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session, context);
+
+        // special for transferFault
+        boolean isFault = camelMessage.isFault();
+        if (answer != null && isFault && endpoint != null && endpoint.isTransferFault()) {
+            answer.setBooleanProperty(JmsConstants.JMS_TRANSFER_FAULT, true);
+        }
+        return answer;
+    }
+
     protected Message createJmsMessage(Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) throws JMSException {
-        JmsMessageType type = null;
+        JmsMessageType type;
 
         // special for transferExchange
         if (endpoint != null && endpoint.isTransferExchange()) {

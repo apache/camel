@@ -166,7 +166,12 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public List<Bucket> listBuckets() throws AmazonClientException, AmazonServiceException {
-        return new ArrayList<Bucket>();
+        ArrayList<Bucket> list = new ArrayList<Bucket>();
+        Bucket bucket = new Bucket("camel-bucket");
+        bucket.setOwner(new Owner("Camel", "camel"));
+        bucket.setCreationDate(new Date());
+        list.add(bucket);
+        return list;
     }
 
     @Override
@@ -340,7 +345,10 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public CopyObjectResult copyObject(CopyObjectRequest copyObjectRequest) throws AmazonClientException, AmazonServiceException {
-        throw new UnsupportedOperationException();
+        CopyObjectResult copyObjectResult = new CopyObjectResult();
+        copyObjectResult.setETag("3a5c8b1ad448bca04584ecb55b836264");
+        copyObjectResult.setVersionId("11192828ahsh2723");
+        return copyObjectResult;
     }
 
     @Override

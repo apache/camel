@@ -82,6 +82,9 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         String uptime = (String) mbeanServer.getAttribute(on, "Uptime");
         assertNotNull(uptime);
 
+        long uptimeMillis = (Long) mbeanServer.getAttribute(on, "UptimeMillis");
+        assertTrue(uptimeMillis > 0);
+
         String status = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Started", status);
 
@@ -268,18 +271,16 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         int pos2 = json.indexOf("groupDelay");
         assertTrue("LoggerName should come before groupDelay", pos < pos2);
 
-        assertEquals(8, StringHelper.countChar(json, '{'));
-        assertEquals(8, StringHelper.countChar(json, '}'));
+        assertEquals(6, StringHelper.countChar(json, '{'));
+        assertEquals(6, StringHelper.countChar(json, '}'));
 
         assertTrue(json.contains("\"scheme\": \"log\""));
         assertTrue(json.contains("\"label\": \"core,monitoring\""));
 
-        assertTrue(json.contains("\"groupDelay\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"deprecated\": \"false\", \"value\": \"2000\","
-                + " \"description\": \"Set the initial delay for stats (in millis)\" }"));
-        assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"value\": \"5\","
-                + " \"description\": \"An integer that specifies a group size for throughput logging.\" }"));
-        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\","
-                + " \"value\": \"foo\", \"description\": \"The logger name to use\" }"));
+        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
+        assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"integer\","
+                + " \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"5\""));
+
         // and we should also have the javadoc documentation
         assertTrue(json.contains("Set the initial delay for stats (in millis)"));
     }
@@ -303,19 +304,15 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         int pos2 = json.indexOf("groupDelay");
         assertTrue("LoggerName should come before groupDelay", pos < pos2);
 
-        assertEquals(14, StringHelper.countChar(json, '{'));
-        assertEquals(14, StringHelper.countChar(json, '}'));
+        assertEquals(30, StringHelper.countChar(json, '{'));
+        assertEquals(30, StringHelper.countChar(json, '}'));
 
         assertTrue(json.contains("\"scheme\": \"log\""));
         assertTrue(json.contains("\"label\": \"core,monitoring\""));
 
-        assertTrue(json.contains("\"groupDelay\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"deprecated\": \"false\", \"value\": \"2000\","
-                + " \"description\": \"Set the initial delay for stats (in millis)\" }"));
-        assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"value\": \"5\","
-                + " \"description\": \"An integer that specifies a group size for throughput logging.\" }"));
-        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\","
-                + " \"value\": \"foo\", \"description\": \"The logger name to use\" }"));
-        assertTrue(json.contains("\"marker\": { \"kind\": \"parameter\", \"type\": \"string\", \"javaType\": \"java.lang.String\""));
+        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
+        assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"integer\","
+                + " \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"5\""));
         // and we should also have the javadoc documentation
         assertTrue(json.contains("Set the initial delay for stats (in millis)"));
     }
@@ -395,7 +392,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("\"label\": \"core,endpoint\""));
         assertTrue(json.contains("\"defaultQueueFactory\": { \"kind\": \"property\", \"type\": \"object\", \"javaType\":"
             + " \"org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>\","));
-        assertTrue(json.contains("\"queueSize\": { \"kind\": \"property\", \"type\": \"integer\", \"javaType\": \"int\", \"deprecated\": \"false\", \"value\": \"0\""));
+        assertTrue(json.contains("\"queueSize\": { \"kind\": \"property\", \"type\": \"integer\", \"javaType\": \"int\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"0\""));
     }
 
     @Override

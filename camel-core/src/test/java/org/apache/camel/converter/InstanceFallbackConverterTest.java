@@ -36,7 +36,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
         Currency cur = Currency.getInstance(Locale.US);
 
         String money = context.getTypeConverter().convertTo(String.class, exchange, cur);
-        assertEquals("Money talks", money);
+        assertEquals("Money talks says " + context.getName(), money);
     }
 
     public void testInstanceFallbackMandatoryConverter() throws Exception {
@@ -44,7 +44,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
         Currency cur = Currency.getInstance(Locale.US);
 
         String money = context.getTypeConverter().mandatoryConvertTo(String.class, exchange, cur);
-        assertEquals("Money talks", money);
+        assertEquals("Money talks says " + context.getName(), money);
     }
 
     public void testInstanceFallbackMandatoryFailed() throws Exception {

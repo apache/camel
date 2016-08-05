@@ -59,6 +59,9 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
         return rests;
     }
 
+    /**
+     * The rest services
+     */
     public void setRests(List<RestDefinition> rests) {
         this.rests = rests;
     }

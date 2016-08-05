@@ -55,7 +55,6 @@ public class SimplePropertiesNestedTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setCamelContext(context);
         pc.setLocations(new String[]{"org/apache/camel/component/properties/bar.properties"});
         context.addComponent("properties", pc);
 

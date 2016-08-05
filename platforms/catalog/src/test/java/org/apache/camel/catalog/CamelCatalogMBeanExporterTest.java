@@ -20,9 +20,11 @@ import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class CamelCatalogMBeanExporterTest extends TestCase {
+public class CamelCatalogMBeanExporterTest {
 
     private CamelCatalogMBeanExporter exporter = new CamelCatalogMBeanExporter();
 

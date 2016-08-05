@@ -48,8 +48,9 @@ public class DropboxTestSupport extends CamelTestSupport {
         }
     }
 
-    protected String getAuthParams() {
-        return "accessToken=" + properties.get("accessToken")
-                + "&clientIdentifier=" + properties.get("clientIdentifier");
+    @Override
+    protected Properties useOverridePropertiesWithPropertiesComponent() {
+        return properties;
     }
+
 }

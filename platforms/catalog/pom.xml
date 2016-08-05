@@ -21,19 +21,13 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>platforms</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-catalog</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Platforms :: Catalog</name>
   <description>Camel Catalog</description>
-
-  <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.catalog*
-    </camel.osgi.export.pkg>
-  </properties>
 
   <dependencies>
 
@@ -43,7 +37,22 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson2-version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- for testing simple language parser -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- for testing activemq component -->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-camel</artifactId>
+      <version>${activemq-version}</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -81,6 +90,12 @@
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>org.apache.camel.catalog*</Export-Package>
+            <Import-Package>org.apache.camel.language.simple;resolution:=optional,*</Import-Package>
+          </instructions>
+        </configuration>
       </plugin>
     </plugins>
 

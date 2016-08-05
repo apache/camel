@@ -17,13 +17,17 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.RestShowCommand;
+import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
 @Command(scope = "camel", name = "rest-show", description = "Display the Camel REST definition in XML")
-public class RestShow extends AbstractRouteCommand {
+public class RestShow extends CamelCommandSupport {
+
+    @Argument(index = 0, name = "name", description = "The name of the Camel context", required = true, multiValued = false)
+    String name;
 
     public Object doExecute() throws Exception {
-        RestShowCommand command = new RestShowCommand(context);
+        RestShowCommand command = new RestShowCommand(name);
         return command.execute(camelController, System.out, System.err);
     }
 

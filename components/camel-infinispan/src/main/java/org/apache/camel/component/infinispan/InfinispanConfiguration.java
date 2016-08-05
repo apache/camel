@@ -24,22 +24,43 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import org.infinispan.commons.api.BasicCacheContainer;
+import org.infinispan.context.Flag;
 
 @UriParams
 public class InfinispanConfiguration {
-    private BasicCacheContainer cacheContainer;
     @UriPath @Metadata(required = "true")
     private String host;
     @UriParam
+    private BasicCacheContainer cacheContainer;
+    @UriParam
     private String cacheName;
-    @UriParam(label = "producer", defaultValue = "put", enums = "put,putAll,putIfAbsent,putAsync,putAllAsync,putIfAbsentAsync,get,containsKey,containsValue,remove,removeAsync,"
-           + "replace,replaceAsync,clear,size")
+    @UriParam(label = "producer", defaultValue = "put", enums =
+             "put,putAll,putIfAbsent,putAsync,putAllAsync,putIfAbsentAsync,"
+           + "get,"
+           + "containsKey,containsValue,"
+           + "remove,removeAsync,"
+           + "replace,replaceAsync,"
+           + "size,"
+           + "clear,clearAsync,"
+           + "query,stats")
     private String command;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean sync = true;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", javaType = "java.lang.String")
     private Set<String> eventTypes;
+    @UriParam(label = "consumer")
+    private InfinispanCustomListener customListener;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean clusteredListener;
+    @UriParam
+    private InfinispanQueryBuilder queryBuilder;
+    @UriParam(label = "advanced", javaType = "java.lang.String")
+    private Flag[] flags;
+    @UriParam(label = "advanced")
+    private String configurationUri;
+
 
     public String getCommand() {
         return command;
@@ -50,6 +71,10 @@ public class InfinispanConfiguration {
      */
     public void setCommand(String command) {
         this.command = command;
+    }
+
+    public boolean hasCommand() {
+        return ObjectHelper.isNotEmpty(command);
     }
 
     /**
@@ -65,7 +90,7 @@ public class InfinispanConfiguration {
 
     /**
      * Specifies the cache Container to connect
-     */   
+     */
     public BasicCacheContainer getCacheContainer() {
         return cacheContainer;
     }
@@ -76,7 +101,7 @@ public class InfinispanConfiguration {
 
     /**
      * Specifies the cache name
-     */  
+     */
     public String getCacheName() {
         return cacheName;
     }
@@ -94,6 +119,17 @@ public class InfinispanConfiguration {
 
     public void setSync(boolean sync) {
         this.sync = sync;
+    }
+
+    /**
+     * If true, the listener will be installed for the entire cluster
+     */
+    public boolean isClusteredListener() {
+        return clusteredListener;
+    }
+
+    public void setClusteredListener(boolean clusteredListener) {
+        this.clusteredListener = clusteredListener;
     }
 
     public Set<String> getEventTypes() {
@@ -119,6 +155,72 @@ public class InfinispanConfiguration {
      * TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED
      */
     public void setEventTypes(String eventTypes) {
-        this.eventTypes = new HashSet<String>(Arrays.asList(eventTypes.split(",")));
+        this.eventTypes = new HashSet<>(Arrays.asList(eventTypes.split(",")));
+    }
+
+    /**
+     * Returns the custom listener in use, if provided
+     */
+    public InfinispanCustomListener getCustomListener() {
+        return customListener;
+    }
+
+    public void setCustomListener(InfinispanCustomListener customListener) {
+        this.customListener = customListener;
+    }
+
+    public boolean hasCustomListener() {
+        return customListener != null;
+    }
+
+    public InfinispanQueryBuilder getQueryBuilder() {
+        return queryBuilder;
+    }
+
+    /**
+     * Specifies the query builder.
+     */
+    public void setQueryBuilder(InfinispanQueryBuilder queryBuilder) {
+        this.queryBuilder = queryBuilder;
+    }
+
+    public boolean hasQueryBuilder() {
+        return queryBuilder != null;
+    }
+
+    public Flag[] getFlags() {
+        return flags;
+    }
+
+    /**
+     * A comma separated list of Flag to be applied by default on each cache
+     * invocation, not applicable to remote caches.
+     */
+    public void setFlags(String flagsAsString) {
+        String[] flagsArray = flagsAsString.split(",");
+        this.flags = new Flag[flagsArray.length];
+
+        for (int i = 0; i < flagsArray.length; i++) {
+            this.flags[i] = Flag.valueOf(flagsArray[i]);
+        }
+    }
+
+    public void setFlags(Flag... flags) {
+        this.flags = flags;
+    }
+
+    public boolean hasFlags() {
+        return flags != null && flags.length > 0;
+    }
+
+    /**
+     * An implementation specific URI for the CacheManager
+     */
+    public String getConfigurationUri() {
+        return configurationUri;
+    }
+
+    public void setConfigurationUri(String configurationUri) {
+        this.configurationUri = configurationUri;
     }
 }

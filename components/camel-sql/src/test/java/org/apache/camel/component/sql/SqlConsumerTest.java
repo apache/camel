@@ -35,7 +35,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
  */
 public class SqlConsumerTest extends CamelTestSupport {
 
-    private EmbeddedDatabase db;
+    EmbeddedDatabase db;
 
     @Before
     public void setUp() throws Exception {

@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * CSV data format
  */
-@Metadata(label = "dataformat,transformation", title = "CSV")
+@Metadata(label = "dataformat,transformation,csv", title = "CSV")
 @XmlRootElement(name = "csv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CsvDataFormat extends DataFormatDefinition {
@@ -76,7 +76,8 @@ public class CsvDataFormat extends DataFormatDefinition {
     private String recordSeparator;
     @XmlAttribute
     private Boolean skipHeaderRecord;
-
+    @XmlAttribute
+    private String quoteMode;
     // Unmarshall options
     @XmlAttribute
     private Boolean lazyLoad;
@@ -159,7 +160,10 @@ public class CsvDataFormat extends DataFormatDefinition {
         if (skipHeaderRecord != null) {
             setProperty(camelContext, dataFormat, "skipHeaderRecord", skipHeaderRecord);
         }
-
+        if (quoteMode != null) {
+            setProperty(camelContext, dataFormat, "quoteMode", quoteMode);
+        }
+        
         // Unmarshall options
         if (lazyLoad != null) {
             setProperty(camelContext, dataFormat, "lazyLoad", lazyLoad);
@@ -389,6 +393,17 @@ public class CsvDataFormat extends DataFormatDefinition {
      */
     public void setSkipHeaderRecord(Boolean skipHeaderRecord) {
         this.skipHeaderRecord = skipHeaderRecord;
+    }
+
+    public String getQuoteMode() {
+        return quoteMode;
+    }
+
+    /**
+     * Sets the quote mode
+     */
+    public void setQuoteMode(String quoteMode) {
+        this.quoteMode = quoteMode;
     }
 
     public Boolean getLazyLoad() {

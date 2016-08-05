@@ -26,7 +26,7 @@ public interface ResultInterceptor {
     /**
      * Split a complex result into result elements.
      * @param result API method invocation result
-     * @return either the same result if it cannot be split, or an array object with split results
+     * @return either the same result if it cannot be split, an array or collection object with split results
      */
     Object splitResult(Object result);
 

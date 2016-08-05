@@ -33,6 +33,8 @@ import org.apache.camel.Message;
  */
 public interface DataFormat {
 
+    // TODO: DataFormats should extends Service like the others
+
     /**
      * Marshals the object to the given Stream.
      *

@@ -126,6 +126,10 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         if (isOnCompleteOnly && isOnFailureOnly) {
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
+        if (original) {
+            // ensure allow original is turned on
+            routeContext.setAllowUseOriginalMessage(true);
+        }
 
         String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
 

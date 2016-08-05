@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.Deflater;
@@ -24,14 +23,16 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.util.IOHelper;
 
 /**
  * "Deflate" compression data format.
  * See {@link org.apache.camel.model.dataformat.ZipFileDataFormat} for Zip file compression.
  */
-public class ZipDataFormat implements DataFormat {
+public class ZipDataFormat extends org.apache.camel.support.ServiceSupport implements DataFormat, DataFormatName {
 
     private int compressionLevel;
 
@@ -43,6 +44,11 @@ public class ZipDataFormat implements DataFormat {
         this.compressionLevel = compressionLevel;
     }
 
+    @Override
+    public String getDataFormatName() {
+        return "zip";
+    }
+
     public int getCompressionLevel() {
         return compressionLevel;
     }
@@ -51,7 +57,7 @@ public class ZipDataFormat implements DataFormat {
         this.compressionLevel = compressionLevel;
     }
 
-    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+    public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
         // ask for a mandatory type conversion to avoid a possible NPE beforehand as we do copy from the InputStream
         InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
 
@@ -63,19 +69,26 @@ public class ZipDataFormat implements DataFormat {
         }
     }
 
-    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
-        InflaterInputStream unzipInput = new InflaterInputStream(is);
-        
-        // Create an expandable byte array to hold the inflated data
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
+        InflaterInputStream inflaterInputStream = new InflaterInputStream(inputStream);
+        OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
+
         try {
-            IOHelper.copy(unzipInput, bos);
-            return bos.toByteArray();
+            IOHelper.copy(inflaterInputStream, osb);
+            return osb.build();
         } finally {
             // must close input streams
-            IOHelper.close(is, unzipInput);
+            IOHelper.close(osb, inflaterInputStream, inputStream);
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }

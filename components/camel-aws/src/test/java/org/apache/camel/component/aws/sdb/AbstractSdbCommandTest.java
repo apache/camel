@@ -55,15 +55,6 @@ public class AbstractSdbCommandTest {
     }
     
     @Test
-    public void getMessageForResponse() {
-        assertSame(exchange.getIn(), this.command.getMessageForResponse(exchange));
-        
-        exchange.setPattern(ExchangePattern.InOut);
-        
-        assertSame(exchange.getOut(), this.command.getMessageForResponse(exchange));
-    }
-    
-    @Test
     public void determineDomainName() {
         assertEquals("DOMAIN1", this.command.determineDomainName());
         

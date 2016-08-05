@@ -40,6 +40,9 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
     }
 
     public void testQueueSize() throws Exception {
+        // must start context as we do not use route builder that auto-start
+        context.start();
+
         PollingConsumer consumer = context.getEndpoint(uri).createPollingConsumer();
         consumer.start();
 

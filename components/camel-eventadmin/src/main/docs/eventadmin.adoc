@@ -1,0 +1,76 @@
+[[EventAdmin-EventAdmincomponent]]
+EventAdmin component
+~~~~~~~~~~~~~~~~~~~~
+
+*Available in Camel 2.6*
+
+The `eventadmin` component can be used in an OSGi environment to receive
+OSGi EventAdmin events and process them.
+
+[[EventAdmin-Dependencies]]
+Dependencies
+^^^^^^^^^^^^
+
+Maven users need to add the following dependency to their `pom.xml`
+
+[source,xml]
+-------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-eventadmin</artifactId>
+  <version>${camel-version}</version>
+</dependency>
+-------------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel
+(2.6.0 or higher).
+
+[[EventAdmin-URIformat]]
+URI format
+^^^^^^^^^^
+
+[source,xml]
+--------------------------
+eventadmin:topic[?options]
+--------------------------
+
+where `topic` is the name of the topic to listen too.
+
+[[EventAdmin-URIoptions]]
+URI options
+^^^^^^^^^^^
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Default value |Description
+
+|`send` |`false` |Whether to use 'send' or 'synchronous' deliver. Default false (async
+delivery)
+|=======================================================================
+
+[[EventAdmin-Messageheaders]]
+Message headers
+^^^^^^^^^^^^^^^
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Type |Message |Description
+|=======================================================================
+
+[[EventAdmin-Messagebody]]
+Message body
+^^^^^^^^^^^^
+
+The `in` message body will be set to the received Event.
+
+[[EventAdmin-Exampleusage]]
+Example usage
+^^^^^^^^^^^^^
+
+[source,xml]
+------------------------------
+<route>
+    <from uri="eventadmin:*"/>
+    <to uri="stream:out"/>
+</route>
+------------------------------

@@ -35,15 +35,24 @@ public class RegistryBean implements BeanHolder {
     private ParameterMappingStrategy parameterMappingStrategy;
 
     public RegistryBean(CamelContext context, String name) {
-        this.context = context;
-        this.name = name;
-        this.registry = context.getRegistry();
+        this(context.getRegistry(), context, name);
     }
 
     public RegistryBean(Registry registry, CamelContext context, String name) {
         this.registry = registry;
         this.context = context;
-        this.name = name;
+        if (name != null) {
+            // for ref it may have "ref:" or "bean:" as prefix by mistake
+            if (name.startsWith("ref:")) {
+                this.name = name.substring(4);
+            } else if (name.startsWith("bean:")) {
+                this.name = name.substring(5);
+            } else {
+                this.name = name;
+            }
+        } else {
+            this.name = null;
+        }
     }
 
     @Override

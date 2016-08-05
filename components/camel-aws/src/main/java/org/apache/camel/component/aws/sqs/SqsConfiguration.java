@@ -16,19 +16,14 @@
  */
 package org.apache.camel.component.aws.sqs;
 
-import java.util.Collection;
-
 import com.amazonaws.services.sqs.AmazonSQS;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class SqsConfiguration {
 
     // common properties
-    @UriPath @Metadata(required = "true")
     private String queueName;
     @UriParam
     private AmazonSQS amazonSQSClient;
@@ -42,9 +37,9 @@ public class SqsConfiguration {
     private String queueOwnerAWSAccountId;
     @UriParam
     private String region;
-    @UriParam
+    @UriParam(label = "proxy")
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer proxyPort;
 
     // consumer properties
@@ -55,9 +50,9 @@ public class SqsConfiguration {
     @UriParam(label = "consumer")
     private Integer visibilityTimeout;
     @UriParam(label = "consumer")
-    private Collection<String> attributeNames;
+    private String attributeNames;
     @UriParam(label = "consumer")
-    private Collection<String> messageAttributeNames;
+    private String messageAttributeNames;
     @UriParam(label = "consumer")
     private Integer waitTimeSeconds;
     @UriParam(label = "consumer")
@@ -72,17 +67,17 @@ public class SqsConfiguration {
     private Integer delaySeconds;
 
     // queue properties
-    @UriParam
+    @UriParam(label = "queue")
     private Integer maximumMessageSize;
-    @UriParam
+    @UriParam(label = "queue")
     private Integer messageRetentionPeriod;
-    @UriParam
+    @UriParam(label = "queue")
     private Integer receiveMessageWaitTimeSeconds;
-    @UriParam
+    @UriParam(label = "queue")
     private String policy;
     
     // dead letter queue properties
-    @UriParam
+    @UriParam(label = "queue")
     private String redrivePolicy;
 
     /**
@@ -167,25 +162,25 @@ public class SqsConfiguration {
         this.visibilityTimeout = visibilityTimeout;
     }
 
-    public Collection<String> getAttributeNames() {
+    public String getAttributeNames() {
         return attributeNames;
     }
 
     /**
-     * A list of attribute names to receive when consuming
+     * A list of attribute names to receive when consuming.  Multiple names can be separated by comma.
      */
-    public void setAttributeNames(Collection<String> attributeNames) {
+    public void setAttributeNames(String attributeNames) {
         this.attributeNames = attributeNames;
     }
 
-    public Collection<String> getMessageAttributeNames() {
+    public String getMessageAttributeNames() {
         return messageAttributeNames;
     }
 
     /**
-     * A list of message attribute names to receive when consuming
+     * A list of message attribute names to receive when consuming. Multiple names can be separated by comma.
      */
-    public void setMessageAttributeNames(Collection<String> messageAttributeNames) {
+    public void setMessageAttributeNames(String messageAttributeNames) {
         this.messageAttributeNames = messageAttributeNames;
     }
 

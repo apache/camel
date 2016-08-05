@@ -73,7 +73,7 @@ public class LogComponent extends UriEndpointComponent {
         if (localFormatter != null) {
             setProperties(localFormatter, parameters);
         } else if (localFormatter == null && exchangeFormatter != null) {
-            // do not set properties, the exchangeFormatter is explicitly set, thefore the 
+            // do not set properties, the exchangeFormatter is explicitly set, therefore the
             // user would have set its properties explicitly too
             localFormatter = exchangeFormatter;
         } else {

@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation", title = "XML JSon")
+@Metadata(label = "dataformat,transformation,xml,json", title = "XML JSon")
 @XmlRootElement(name = "xmljson")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlJsonDataFormat extends DataFormatDefinition {

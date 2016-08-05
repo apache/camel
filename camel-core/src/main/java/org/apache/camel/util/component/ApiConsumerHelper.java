@@ -49,14 +49,11 @@ public final class ApiConsumerHelper {
 
         ApiMethod result;
         // find one that takes the largest subset of endpoint parameters
-        final Set<String> argNames = new HashSet<String>();
-        argNames.addAll(endpoint.getEndpointPropertyNames());
-
+        final Set<String> argNames = new HashSet<>(endpoint.getEndpointPropertyNames());
         propertyNamesInterceptor.interceptPropertyNames(argNames);
 
-        final String[] argNamesArray = argNames.toArray(new String[argNames.size()]);
         List<ApiMethod> filteredMethods = endpoint.methodHelper.filterMethods(
-                endpoint.getCandidates(), ApiMethodHelper.MatchType.SUPER_SET, argNamesArray);
+                endpoint.getCandidates(), ApiMethodHelper.MatchType.SUPER_SET, argNames);
 
         if (filteredMethods.isEmpty()) {
             ApiMethodHelper<? extends ApiMethod> methodHelper = endpoint.getMethodHelper();
@@ -91,15 +88,39 @@ public final class ApiConsumerHelper {
         // process result according to type
         if (result != null && splitResult) {
             // try to split the result
-            final Object resultArray = consumer.splitResult(result);
+            final Object results = consumer.splitResult(result);
 
-            if (resultArray != result && resultArray.getClass().isArray()) {
-                // create an exchange for every element
-                final int length = Array.getLength(resultArray);
-                for (int i = 0; i < length; i++) {
-                    processResult(consumer, result, Array.get(resultArray, i));
+            if (results != null) {
+                if (results instanceof List) {
+                    // Optimized for lists
+                    final List<?> list = (List<?>)results;
+                    final int size = list.size();
+
+                    // access elements by position rather than with iterator to
+                    // reduce garbage
+                    for (int i = 0; i < size; i++) {
+                        processResult(consumer, result, list.get(i));
+                    }
+
+                    return size;
+                } else if (results instanceof Iterable) {
+                    // Optimized for iterable
+                    int size = 0;
+                    for (Object singleResult : (Iterable<?>)results) {
+                        processResult(consumer, result, singleResult);
+                        size++;
+                    }
+
+                    return size;
+                } else if (results.getClass().isArray()) {
+                    // Optimized for array
+                    final int size = Array.getLength(results);
+                    for (int i = 0; i < size; i++) {
+                        processResult(consumer, result, Array.get(results, i));
+                    }
+
+                    return size;
                 }
-                return length;
             }
         }
 

@@ -35,9 +35,9 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Sends the message to a dynamic endpoint (uri supports languages)
+ * Sends the message to a dynamic endpoint
  * <p/>
- * You can specify multiple languages in the uri separated by the plus sign, such as <tt>mock:+xpath:/order/@uri</tt>
+ * You can specify multiple languages in the uri separated by the plus sign, such as <tt>mock:+language:xpath:/order/@uri</tt>
  * where <tt>mock:</tt> would be a prefix to a xpath expression.
  * <p/>
  * For more dynamic behavior use <a href="http://camel.apache.org/recipient-list.html">Recipient List</a> or
@@ -86,17 +86,22 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         String[] parts = uri.split("\\+");
         for (String part : parts) {
             // the part may have optional language to use, so you can mix languages
-            String before = ObjectHelper.before(part, ":");
-            String after = ObjectHelper.after(part, ":");
-            if (before != null && after != null) {
-                // maybe its a language
-                try {
-                    Language partLanguage = routeContext.getCamelContext().resolveLanguage(before);
-                    Expression exp = partLanguage.createExpression(after);
-                    list.add(exp);
-                    continue;
-                } catch (NoSuchLanguageException e) {
-                    // ignore
+            String value = ObjectHelper.after(part, "language:");
+            if (value != null) {
+                String before = ObjectHelper.before(value, ":");
+                String after = ObjectHelper.after(value, ":");
+                if (before != null && after != null) {
+                    // maybe its a language, must have language: as prefix
+                    try {
+                        Language partLanguage = routeContext.getCamelContext().resolveLanguage(before);
+                        if (partLanguage != null) {
+                            Expression exp = partLanguage.createExpression(after);
+                            list.add(exp);
+                            continue;
+                        }
+                    } catch (NoSuchLanguageException e) {
+                        // ignore
+                    }
                 }
             }
             // fallback and use simple language

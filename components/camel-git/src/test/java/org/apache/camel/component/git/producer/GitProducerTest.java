@@ -19,6 +19,7 @@ package org.apache.camel.component.git.producer;
 import java.io.File;
 import java.util.List;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +27,7 @@ import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitTestSupport;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
@@ -46,6 +48,23 @@ public class GitProducerTest extends GitTestSupport {
         template.sendBody("direct:init", "");
         File gitDir = new File(gitLocalRepo, ".git");
         assertEquals(gitDir.exists(), true);
+    }
+    
+    @Test(expected = CamelExecutionException.class)
+    public void doubleCloneOperationTest() throws Exception {
+        template.sendBody("direct:clone", "");
+        template.sendBody("direct:clone", "");
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+    }
+    
+    @Test
+    public void pullTest() throws Exception {
+        template.sendBody("direct:clone", "");
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        PullResult pr = template.requestBody("direct:pull", "", PullResult.class);
+        assertTrue(pr.isSuccessful());
     }
     
     @Test
@@ -831,6 +850,215 @@ public class GitProducerTest extends GitTestSupport {
         repository.close();
     }
     
+    @Test
+    public void cherryPickTest() throws Exception {
+
+        Repository repository = getTestRepository();
+        
+        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, filenameToAdd);
+            }
+        });
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        Status status = new Git(repository).status().call();
+        assertTrue(status.getAdded().contains(filenameToAdd));
+        
+        template.send("direct:commit", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
+            }
+        });
+        Iterable<RevCommit> logs = new Git(repository).log()
+                .call();
+        int count = 0;
+        
+        for (RevCommit rev : logs) {
+            assertEquals(rev.getShortMessage(), commitMessage);
+            count++;
+        }
+        assertEquals(count, 1);
+        
+        template.sendBody("direct:create-branch", "");
+        
+        List<Ref> branches = template.requestBody("direct:show-branches", "", List.class);
+        
+        Boolean branchExists = false;
+        
+        for (Ref reference : branches) {
+            if (("refs/heads/" + branchTest).equals(reference.getName())) {
+                branchExists = true;
+            }
+        }
+        assertTrue(branchExists);
+        
+        File fileToAdd1 = new File(gitLocalRepo, "filetest1test.txt");
+        fileToAdd1.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, "filetest1test.txt");
+            }
+        });
+        
+        status = new Git(repository).status().call();
+        assertTrue(status.getAdded().contains("filetest1test.txt"));
+        
+        template.send("direct:commit", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, "Test second commit");
+            }
+        });
+        logs = new Git(repository).log()
+                .call();
+        count = 0;
+        String id = "";
+        for (RevCommit rev : logs) {
+            if (count == 0) { 
+                id = rev.getName();
+                assertEquals(rev.getShortMessage(), "Test second commit");
+            }
+            count++;
+        }
+        assertEquals(count, 2);
+        
+        final String str = id;
+        template.send("direct:cherrypick", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_ID, str);
+            }
+        });
+        
+        Git git = new Git(repository);
+        git.checkout().setCreateBranch(false).setName(branchTest).call();
+        logs = git.log()
+                .call();
+        count = 0;
+        for (RevCommit rev : logs) {
+            if (count == 0) {
+                assertEquals(rev.getShortMessage(), "Test second commit");
+            }
+            count++;
+        }
+        assertEquals(count, 2);
+        repository.close();
+    }
+    
+    @Test
+    public void cherryPickBranchToMasterTest() throws Exception {
+
+        Repository repository = getTestRepository();
+        
+        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        fileToAdd.createNewFile();
+        
+        template.send("direct:add", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, filenameToAdd);
+            }
+        });
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        
+        Status status = new Git(repository).status().call();
+        assertTrue(status.getAdded().contains(filenameToAdd));
+        
+        template.send("direct:commit", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
+            }
+        });
+        Iterable<RevCommit> logs = new Git(repository).log()
+                .call();
+        int count = 0;
+        
+        for (RevCommit rev : logs) {
+            assertEquals(rev.getShortMessage(), commitMessage);
+            count++;
+        }
+        assertEquals(count, 1);
+        
+        template.sendBody("direct:create-branch", "");
+        
+        List<Ref> branches = template.requestBody("direct:show-branches", "", List.class);
+        
+        Boolean branchExists = false;
+        
+        for (Ref reference : branches) {
+            if (("refs/heads/" + branchTest).equals(reference.getName())) {
+                branchExists = true;
+            }
+        }
+        assertTrue(branchExists);
+        
+        File fileToAdd1 = new File(gitLocalRepo, "filetest1test.txt");
+        fileToAdd1.createNewFile();
+        
+        template.send("direct:add-on-branch", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, "filetest1test.txt");
+            }
+        });
+        Git git = new Git(repository);
+        git.checkout().setCreateBranch(false).setName(branchTest).call();
+        status = git.status().call();
+        assertTrue(status.getAdded().contains("filetest1test.txt"));
+        
+        template.send("direct:commit-branch", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, "Test second commit");
+            }
+        });
+        logs = git.log()
+                .call();
+        count = 0;
+        String id = "";
+        for (RevCommit rev : logs) {
+            if (count == 0) { 
+                id = rev.getName();
+                assertEquals(rev.getShortMessage(), "Test second commit");
+            }
+            count++;
+        }
+        assertEquals(count, 2);
+        
+        final String str = id;
+        template.send("direct:cherrypick-master", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_ID, str);
+            }
+        });
+        
+        git = new Git(repository);
+        git.checkout().setCreateBranch(false).setName("refs/heads/master").call();
+        logs = git.log()
+                .call();
+        count = 0;
+        for (RevCommit rev : logs) {
+            if (count == 0) {
+                assertEquals(rev.getShortMessage(), "Test second commit");
+            }
+            count++;
+        }
+        assertEquals(count, 2);
+        repository.close();
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {            
@@ -843,7 +1071,7 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:add")
                         .to("git://" + gitLocalRepo + "?operation=add");
                 from("direct:remove")
-                        .to("git://" + gitLocalRepo + "?operation=rm");
+                        .to("git://" + gitLocalRepo + "?operation=remove");
                 from("direct:add-on-branch")
                         .to("git://" + gitLocalRepo + "?operation=add&branchName=" + branchTest);
                 from("direct:remove-on-branch")
@@ -874,6 +1102,12 @@ public class GitProducerTest extends GitTestSupport {
                         .to("git://" + gitLocalRepo + "?operation=deleteTag&tagName=" + tagTest);
                 from("direct:show-branches")
                         .to("git://" + gitLocalRepo + "?operation=showBranches");
+                from("direct:cherrypick")
+                        .to("git://" + gitLocalRepo + "?operation=cherryPick&branchName=" + branchTest);
+                from("direct:cherrypick-master")
+                        .to("git://" + gitLocalRepo + "?operation=cherryPick&branchName=refs/heads/master");
+                from("direct:pull")
+                        .to("git://" + gitLocalRepo + "?remoteName=origin&operation=pull");
             } 
         };
     }

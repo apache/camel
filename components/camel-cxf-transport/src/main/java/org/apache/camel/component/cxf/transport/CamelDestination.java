@@ -262,7 +262,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     private class CamelOutputStream extends CachedOutputStream {
         private Message outMessage;
 
-        public CamelOutputStream(Message m) {
+        CamelOutputStream(Message m) {
             outMessage = m;
         }
 

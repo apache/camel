@@ -58,7 +58,7 @@ public class DropboxProducerMoveTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://move?" + getAuthParams() + "&remotePath=/XXX&newRemotePath=/XXX")
+                        .to("dropbox://move?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/XXX&newRemotePath=/XXX")
                         .to("mock:result");
             }
         };

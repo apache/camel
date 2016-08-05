@@ -50,11 +50,13 @@ public class ManagedBrowsableEndpointTest extends ManagementTestSupport {
 
         String out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});
         assertNotNull(out);
-        assertTrue(out.contains("Hello World"));
+        // message body is not dumped when browsing exchange
+        assertFalse(out.contains("Hello World"));
 
         out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{1}, new String[]{"java.lang.Integer"});
         assertNotNull(out);
-        assertTrue(out.contains("Bye World"));
+        // message body is not dumped when browsing exchange
+        assertFalse(out.contains("Bye World"));
 
         out = (String) mbeanServer.invoke(name, "browseMessageBody", new Object[]{1}, new String[]{"java.lang.Integer"});
         assertNotNull(out);

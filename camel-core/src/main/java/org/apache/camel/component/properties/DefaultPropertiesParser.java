@@ -77,7 +77,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
         private final String propertySuffix;
         private final boolean fallbackToUnaugmentedProperty;
 
-        public ParsingContext(Properties properties, String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
+        ParsingContext(Properties properties, String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
                               boolean fallbackToUnaugmentedProperty) {
             this.properties = properties;
             this.prefixToken = prefixToken;
@@ -256,7 +256,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
 
             if (value == null) {
                 StringBuilder esb = new StringBuilder();
-                if (propertiesComponent.isDefaultCreated()) {
+                if (propertiesComponent == null || propertiesComponent.isDefaultCreated()) {
                     // if the component was auto created then include more information that the end user should define it
                     esb.append("PropertiesComponent with name properties must be defined in CamelContext to support property placeholders. ");
                 }

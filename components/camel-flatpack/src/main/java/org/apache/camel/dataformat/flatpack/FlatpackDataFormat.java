@@ -36,6 +36,8 @@ import net.sf.flatpack.writer.Writer;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.flatpack.DataSetList;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
@@ -55,7 +57,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class FlatpackDataFormat implements DataFormat {
+public class FlatpackDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private static final Logger LOG = LoggerFactory.getLogger(FlatpackDataFormat.class);
     private ParserFactory parserFactory = DefaultParserFactory.getInstance();
     private char delimiter = ',';
@@ -65,6 +67,11 @@ public class FlatpackDataFormat implements DataFormat {
     private boolean allowShortLines;
     private boolean ignoreExtraColumns;
     private String definition;
+
+    @Override
+    public String getDataFormatName() {
+        return "flatback";
+    }
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
@@ -108,6 +115,17 @@ public class FlatpackDataFormat implements DataFormat {
         } finally {
             reader.close();
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+
     }
 
     // Properties
@@ -188,7 +206,7 @@ public class FlatpackDataFormat implements DataFormat {
 
     protected Parser createParser(Exchange exchange, Reader bodyReader) throws IOException {
         if (isFixed()) {
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), getDefinition());
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), getDefinition());
             InputStreamReader reader = new InputStreamReader(is, IOHelper.getCharsetName(exchange));
             Parser parser = getParserFactory().newFixedLengthParser(reader, bodyReader);
             if (allowShortLines) {
@@ -204,7 +222,7 @@ public class FlatpackDataFormat implements DataFormat {
             if (ObjectHelper.isEmpty(getDefinition())) {
                 return getParserFactory().newDelimitedParser(bodyReader, delimiter, textQualifier);
             } else {
-                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), getDefinition());
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), getDefinition());
                 InputStreamReader reader = new InputStreamReader(is, IOHelper.getCharsetName(exchange));
                 Parser parser = getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
                 if (allowShortLines) {
@@ -222,7 +240,7 @@ public class FlatpackDataFormat implements DataFormat {
 
     private Writer createWriter(Exchange exchange, Map<String, Object> firstRow, OutputStream stream) throws JDOMException, IOException {
         if (isFixed()) {
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), getDefinition());
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), getDefinition());
             InputStreamReader reader = new InputStreamReader(is, IOHelper.getCharsetName(exchange));
             FixedWriterFactory factory = new FixedWriterFactory(reader);
             return factory.createWriter(new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange)));
@@ -235,7 +253,7 @@ public class FlatpackDataFormat implements DataFormat {
                 }
                 return factory.createWriter(new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange)));
             } else {
-                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), getDefinition());
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), getDefinition());
                 InputStreamReader reader = new InputStreamReader(is, IOHelper.getCharsetName(exchange));
                 DelimiterWriterFactory factory = new DelimiterWriterFactory(reader, delimiter, textQualifier);
                 return factory.createWriter(new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange)));

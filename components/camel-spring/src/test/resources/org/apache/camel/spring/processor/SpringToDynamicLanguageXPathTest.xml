@@ -26,7 +26,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <toD uri="xpath:/order/@uri"/>
+      <toD uri="language:xpath:/order/@uri"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: e1 -->

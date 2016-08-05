@@ -33,9 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * To specify the rest operation parameters using Swagger.
  * <p/>
- * This maps to the Swagger Parameter Object.
- * see com.wordnik.swagger.model.Parameter
- * and https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md#524-parameter-object.
+ * This maps to the Swagger Parameter Message Object.
  */
 @Metadata(label = "rest")
 @XmlRootElement(name = "param")
@@ -65,8 +63,12 @@ public class RestOperationParamDefinition {
     private Boolean required;
 
     @XmlAttribute
-    @Metadata(defaultValue = "false")
-    private Boolean allowMultiple;
+    @Metadata(defaultValue = "csv")
+    private CollectionFormat collectionFormat;
+
+    @XmlAttribute
+    @Metadata(defaultValue = "string")
+    private String arrayType;
 
     @XmlAttribute
     @Metadata(defaultValue = "string")
@@ -142,15 +144,27 @@ public class RestOperationParamDefinition {
         this.required = required;
     }
 
-    public Boolean getAllowMultiple() {
-        return allowMultiple != null ? allowMultiple : false;
+    public CollectionFormat getCollectionFormat() {
+        return collectionFormat;
     }
 
     /**
-     * Sets the Swagger Parameter allowMultiple flag.
+     * Sets the Swagger Parameter collection format.
      */
-    public void setAllowMultiple(Boolean allowMultiple) {
-        this.allowMultiple = allowMultiple;
+    public void setCollectionFormat(CollectionFormat collectionFormat) {
+        this.collectionFormat = collectionFormat;
+    }
+
+    public String getArrayType() {
+        return arrayType;
+    }
+
+    /**
+     * Sets the Swagger Parameter array type.
+     * Required if data type is "array". Describes the type of items in the array.
+     */
+    public void setArrayType(String arrayType) {
+        this.arrayType = arrayType;
     }
 
     public String getDataType() {
@@ -173,19 +187,28 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter list of allowable values.
+     * Sets the Swagger Parameter list of allowable values (enum).
      */
     public void setAllowableValues(List<String> allowableValues) {
         this.allowableValues = allowableValues;
     }
 
+    /**
+     * Gets the Swagger Parameter paramAccess flag.
+     *
+     * @deprecated is not in use in swagger specification 2.0
+     */
+    @Deprecated
     public String getAccess() {
         return access != null ? access : "";
     }
 
     /**
      * Sets the Swagger Parameter paramAccess flag.
+     *
+     * @deprecated is not in use in swagger specification 2.0
      */
+    @Deprecated
     public void setAccess(String access) {
         this.access = access;
     }
@@ -225,15 +248,23 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Whether the parameter can be used multiple times
+     * Sets the collection format.
      */
-    public RestOperationParamDefinition allowMultiple(Boolean allowMultiple) {
-        setAllowMultiple(allowMultiple);
+    public RestOperationParamDefinition collectionFormat(CollectionFormat collectionFormat) {
+        setCollectionFormat(collectionFormat);
         return this;
     }
 
     /**
-     * The data type of the parameter such as <tt>string</tt>, <tt>long</tt>, <tt>int</tt>, <tt>boolean</tt>
+     * The data type of the array data type
+     */
+    public RestOperationParamDefinition arrayType(String arrayType) {
+        setArrayType(arrayType);
+        return this;
+    }
+
+    /**
+     * The data type of the parameter such as <tt>string</tt>, <tt>integer</tt>, <tt>boolean</tt>
      */
     public RestOperationParamDefinition dataType(String type) {
         setDataType(type);
@@ -267,7 +298,10 @@ public class RestOperationParamDefinition {
     /**
      * Parameter access. Use <tt>false</tt> or <tt>internal</tt> to indicate the parameter
      * should be hidden for the public.
+     *
+     * @deprecated is not in use in swagger specification 2.0
      */
+    @Deprecated
     public RestOperationParamDefinition access(String paramAccess) {
         setAccess(paramAccess);
         return this;

@@ -34,7 +34,6 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.ZooKeeper;
 
-
 /**
  * <code>ZooKeeperConsumer</code> uses various {@link ZooKeeperOperation} to
  * interact and consume data from a ZooKeeper cluster.
@@ -42,36 +41,32 @@ import org.apache.zookeeper.ZooKeeper;
 @SuppressWarnings("rawtypes")
 public class ZooKeeperConsumer extends DefaultConsumer {
 
-    private ZooKeeperConnectionManager connectionManager;
-
+    private final ZooKeeperConnectionManager zkm;
     private ZooKeeper connection;
-
     private ZooKeeperConfiguration configuration;
-
     private LinkedBlockingQueue<ZooKeeperOperation> operations = new LinkedBlockingQueue<ZooKeeperOperation>();
-
-    private boolean shuttingDown;
-
     private ExecutorService executor;
+    private volatile boolean shuttingDown;
 
     public ZooKeeperConsumer(ZooKeeperEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.connectionManager = endpoint.getConnectionManager();
+        this.zkm = endpoint.getConnectionManager();
         this.configuration = endpoint.getConfiguration();
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        connection = connectionManager.getConnection();
+        connection = zkm.getConnection();
         if (log.isDebugEnabled()) {
             log.debug(String.format("Connected to Zookeeper cluster %s", configuration.getConnectString()));
         }
 
         initializeConsumer();
-        executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(configuration.getPath(), "Camel-Zookeeper Ops executor", 1);
+        executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "Camel-Zookeeper OperationsExecutor", 1);
+
         OperationsExecutor opsService = new OperationsExecutor();
-        executor.execute(opsService);
+        executor.submit(opsService);
     }
 
     @Override
@@ -81,7 +76,8 @@ public class ZooKeeperConsumer extends DefaultConsumer {
         if (log.isTraceEnabled()) {
             log.trace(String.format("Shutting down zookeeper consumer of '%s'", configuration.getPath()));
         }
-        executor.shutdown();
+        getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(executor);
+        zkm.shutdown();
     }
 
     private void initializeConsumer() {
@@ -131,7 +127,6 @@ public class ZooKeeperConsumer extends DefaultConsumer {
 
         public void run() {
             while (isRunAllowed()) {
-
                 try {
                     current = operations.take();
                     if (log.isTraceEnabled()) {
@@ -172,6 +167,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                     initializeConsumer();
                 }
             } catch (Exception e) {
+                // ignore
             }
         }
     }

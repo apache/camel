@@ -35,7 +35,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @UriParams
 public class LinkedInConfiguration {
 
-    @UriPath
+    @UriPath(enums = "comments,companies,groups,jobs,people,posts,search")
     @Metadata(required = "true")
     private LinkedInApiName apiName;
     @UriPath(enums = "addActivity,addComment,addCompanyUpdateComment,addCompanyUpdateCommentAsCompany,addGroupMembership,addInvite"
@@ -49,9 +49,9 @@ public class LinkedInConfiguration {
             + ",removeGroupSuggestion,removeJob,removeJobBookmark,removePost,searchCompanies,searchJobs,searchPeople,share,stopFollowingCompany,updateGroupMembership")
     @Metadata(required = "true")
     private String methodName;
-    @UriParam @Metadata(required = "true")
+    @UriParam
     private String userName;
-    @UriParam @Metadata(required = "true")
+    @UriParam
     private String userPassword;
     @UriParam
     private OAuthSecureStorage secureStorage;

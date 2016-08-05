@@ -216,6 +216,27 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
                      sourceIn.getClass(), destIn.getClass());
     }
 
+    public void testFaultCopy() {
+        testFaultCopy(false);
+    }
+
+    public void testFaultSafeCopy() {
+        testFaultCopy(true);
+    }
+
+    private void testFaultCopy(boolean safe) {
+        DefaultExchange sourceExchange = new DefaultExchange(context);
+        MyMessage source = new MyMessage();
+        source.setFault(true);
+        sourceExchange.setIn(source);
+        sourceExchange.setOut(source);
+        Exchange destExchange = sourceExchange.copy(safe);
+        assertEquals("Fault property was not copied to IN message",
+                sourceExchange.getIn().isFault(), destExchange.getIn().isFault());
+        assertEquals("Fault property was not copied to OUT message",
+                sourceExchange.getOut().isFault(), destExchange.getOut().isFault());
+    }
+
     public static class MyMessage extends DefaultMessage {
         @Override
         public MyMessage newInstance() {

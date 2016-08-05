@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.ddb;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
@@ -26,6 +27,7 @@ import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import org.apache.camel.Exchange;
 
 public class QueryCommand extends AbstractDdbCommand {
+
     public QueryCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration, Exchange exchange) {
         super(ddbClient, configuration, exchange);
     }
@@ -41,11 +43,13 @@ public class QueryCommand extends AbstractDdbCommand {
                 .withExclusiveStartKey(determineStartKey())
                 .withLimit(determineLimit())
                 .withScanIndexForward(determineScanIndexForward()));
-
-        addToResult(DdbConstants.ITEMS, result.getItems());
-        addToResult(DdbConstants.LAST_EVALUATED_KEY, result.getLastEvaluatedKey());
-        addToResult(DdbConstants.CONSUMED_CAPACITY, result.getConsumedCapacity());
-        addToResult(DdbConstants.COUNT, result.getCount());
+        
+        Map tmp = new HashMap<>();
+        tmp.put(DdbConstants.ITEMS, result.getItems());
+        tmp.put(DdbConstants.LAST_EVALUATED_KEY, result.getLastEvaluatedKey());
+        tmp.put(DdbConstants.CONSUMED_CAPACITY, result.getConsumedCapacity());
+        tmp.put(DdbConstants.COUNT, result.getCount());
+        addToResults(tmp);
     }
 
     private  Map<String, AttributeValue> determineStartKey() {

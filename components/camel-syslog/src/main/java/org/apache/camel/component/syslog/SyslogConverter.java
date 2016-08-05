@@ -34,7 +34,7 @@ public final class SyslogConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(SyslogConverter.class);
 
-    private static enum MONTHS {
+    private enum MONTHS {
         jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec
     }
 

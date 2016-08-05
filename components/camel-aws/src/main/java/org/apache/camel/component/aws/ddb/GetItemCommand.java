@@ -23,6 +23,7 @@ import com.amazonaws.services.dynamodbv2.model.GetItemResult;
 import org.apache.camel.Exchange;
 
 public class GetItemCommand extends AbstractDdbCommand {
+
     public GetItemCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration, Exchange exchange) {
         super(ddbClient, configuration, exchange);
     }

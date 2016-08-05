@@ -20,16 +20,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
-import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
+import org.apache.camel.Attachment;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpMessage;
+import org.apache.camel.impl.DefaultAttachment;
 import org.eclipse.jetty.util.MultiPartInputStreamParser;
 
+/**
+ * To handle attachments with Jetty 9.
+ * <p/>
+ * This implementation is needed to deal with attachments when using Jetty 9.
+ */
 final class AttachmentHttpBinding extends DefaultHttpBinding {
 
     AttachmentHttpBinding() {
@@ -44,13 +50,14 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
             try {
                 parts = parser.getParts();
                 for (Part part : parts) {
-                    String contentType = part.getContentType();
-                    if (!contentType.startsWith("application/octet-stream")) {
-                        continue;
-                    }
-
                     DataSource ds = new PartDataSource(part);
-                    message.addAttachment(part.getName(), new DataHandler(ds));
+                    Attachment attachment = new DefaultAttachment(ds);
+                    for (String headerName : part.getHeaderNames()) {
+                        for (String headerValue : part.getHeaders(headerName)) {
+                            attachment.addHeader(headerName, headerValue);
+                        }
+                    }
+                    message.addAttachmentObject(part.getName(), attachment);
                 }
             } catch (Exception e) {
                 throw new RuntimeCamelException("Cannot populate attachments", e);

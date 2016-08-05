@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -62,18 +63,44 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
         this.tagToken = tagToken;
         // namespace token is optional
         this.inheritNamespaceToken = inheritNamespaceToken;
-
-        // must be XML tokens
-        if (!tagToken.startsWith("<") || !tagToken.endsWith(">")) {
-            throw new IllegalArgumentException("XML Tag token must be a valid XML tag, was: " + tagToken);
-        }
-        if (inheritNamespaceToken != null && (!inheritNamespaceToken.startsWith("<") || !inheritNamespaceToken.endsWith(">"))) {
-            throw new IllegalArgumentException("Namespace token must be a valid XML token, was: " + inheritNamespaceToken);
-        }
     }
 
-    protected Iterator<?> createIterator(InputStream in, String charset) {
-        XMLTokenIterator iterator = new XMLTokenIterator(tagToken, inheritNamespaceToken, in, charset);
+    protected Iterator<?> createIterator(Exchange exchange, InputStream in, String charset) {
+        String tag = tagToken;
+        if (SimpleLanguage.hasSimpleFunction(tag)) {
+            tag = SimpleLanguage.expression(tag).evaluate(exchange, String.class);
+        }
+        String inherit = inheritNamespaceToken;
+        if (inherit != null && SimpleLanguage.hasSimpleFunction(inherit)) {
+            inherit = SimpleLanguage.expression(inherit).evaluate(exchange, String.class);
+        }
+
+        // must be XML tokens
+        if (!tag.startsWith("<")) {
+            tag = "<" + tag;
+        }
+        if (!tag.endsWith(">")) {
+            tag = tag + ">";
+        }
+
+        if (inherit != null) {
+            if (!inherit.startsWith("<")) {
+                inherit = "<" + inherit;
+            }
+            if (!inherit.endsWith(">")) {
+                inherit = inherit + ">";
+            }
+        }
+
+        // must be XML tokens
+        if (!tag.startsWith("<") || !tag.endsWith(">")) {
+            throw new IllegalArgumentException("XML Tag token must be a valid XML tag, was: " + tag);
+        }
+        if (inherit != null && (!inherit.startsWith("<") || !inherit.endsWith(">"))) {
+            throw new IllegalArgumentException("Namespace token must be a valid XML token, was: " + inherit);
+        }
+
+        XMLTokenIterator iterator = new XMLTokenIterator(tag, inherit, in, charset);
         iterator.init();
         return iterator;
     }
@@ -105,7 +132,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
             in = exchange.getIn().getMandatoryBody(InputStream.class);
             // we may read from a file, and want to support custom charset defined on the exchange
             String charset = IOHelper.getCharsetName(exchange);
-            return createIterator(in, charset);
+            return createIterator(exchange, in, charset);
         } catch (InvalidPayloadException e) {
             exchange.setException(e);
             // must close input stream

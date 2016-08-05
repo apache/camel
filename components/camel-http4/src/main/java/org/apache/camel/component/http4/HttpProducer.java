@@ -43,6 +43,7 @@ import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.GZIPHelper;
 import org.apache.camel.util.IOHelper;
@@ -64,6 +65,7 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -105,8 +107,6 @@ public class HttpProducer extends DefaultProducer {
             if (queryString != null) {
                 skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
-            // Need to remove the Host key as it should be not used
-            exchange.getIn().getHeaders().remove("host");
         }
         HttpRequestBase httpRequest = createMethod(exchange);
         Message in = exchange.getIn();
@@ -155,6 +155,20 @@ public class HttpProducer extends DefaultProducer {
             }
         }
 
+        //In reverse proxy applications it can be desirable for the downstream service to see the original Host header
+        //if this option is set, and the exchange Host header is not null, we will set it's current value on the httpRequest
+        if (getEndpoint().isPreserveHostHeader()) {
+            String hostHeader = exchange.getIn().getHeader("Host", String.class);
+            if (hostHeader != null) {
+                //HttpClient 4 will check to see if the Host header is present, and use it if it is, see org.apache.http.protocol.RequestTargetHost in httpcore
+                httpRequest.setHeader("Host", hostHeader);
+            }
+        }
+        
+        if (getEndpoint().isConnectionClose()) {
+            httpRequest.addHeader("Connection", HTTP.CONN_CLOSE);
+        }
+
         // lets store the result in the output message.
         HttpResponse httpResponse = null;
         try {
@@ -179,11 +193,25 @@ public class HttpProducer extends DefaultProducer {
                 }
             }
         } finally {
-            if (httpResponse != null) {
+            final HttpResponse response = httpResponse;
+            if (httpResponse != null && getEndpoint().isDisableStreamCache()) {
+                // close the stream at the end of the exchange to ensure it gets eventually closed later
+                exchange.addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onDone(Exchange exchange) {
+                        try {
+                            EntityUtils.consume(response.getEntity());
+                        } catch (Throwable e) {
+                            // ignore
+                        }
+                    }
+                });
+            } else if (httpResponse != null) {
+                // close the stream now
                 try {
-                    EntityUtils.consume(httpResponse.getEntity());
-                } catch (IOException e) {
-                    // nothing we could do
+                    EntityUtils.consume(response.getEntity());
+                } catch (Throwable e) {
+                    // ignore
                 }
             }
         }
@@ -299,12 +327,8 @@ public class HttpProducer extends DefaultProducer {
 
     /**
      * Extracts the response from the method as a InputStream.
-     *
-     * @param httpRequest the method that was executed
-     * @return the response either as a stream, or as a deserialized java object
-     * @throws IOException can be thrown
      */
-    protected static Object extractResponseBody(HttpRequestBase httpRequest, HttpResponse httpResponse, Exchange exchange, boolean ignoreResponseBody) throws IOException, ClassNotFoundException {
+    protected Object extractResponseBody(HttpRequestBase httpRequest, HttpResponse httpResponse, Exchange exchange, boolean ignoreResponseBody) throws IOException, ClassNotFoundException {
         HttpEntity entity = httpResponse.getEntity();
         if (entity == null) {
             return null;
@@ -323,7 +347,7 @@ public class HttpProducer extends DefaultProducer {
         }
         // Honor the character encoding
         String contentType = null;
-        header = httpRequest.getFirstHeader("content-type");
+        header = httpResponse.getFirstHeader("content-type");
         if (header != null) {
             contentType = header.getValue();
             // find the charset and set it to the Exchange
@@ -331,13 +355,25 @@ public class HttpProducer extends DefaultProducer {
         }
         // if content type is a serialized java object then de-serialize it back to a Java object
         if (contentType != null && contentType.equals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
-            return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext());
-        } else {
-            InputStream response = null;
-            if (!ignoreResponseBody) {
-                response = doExtractResponseBodyAsStream(is, exchange);
+            // only deserialize java if allowed
+            if (getEndpoint().getComponent().isAllowJavaSerializedObject() || getEndpoint().isTransferException()) {
+                return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext());
+            } else {
+                // empty response
+                return null;
             }
-            return response;
+        } else {
+            if (!getEndpoint().isDisableStreamCache()) {
+                // wrap the response in a stream cache so its re-readable
+                InputStream response = null;
+                if (!ignoreResponseBody) {
+                    response = doExtractResponseBodyAsStream(is, exchange);
+                }
+                return response;
+            } else {
+                // use the response stream as-is
+                return is;
+            }
         }
     }
 
@@ -444,6 +480,9 @@ public class HttpProducer extends DefaultProducer {
                     }
 
                     if (contentTypeString != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentTypeString)) {
+                        if (!getEndpoint().getComponent().isAllowJavaSerializedObject()) {
+                            throw new CamelExchangeException("Content-type " + org.apache.camel.http.common.HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed", exchange);
+                        }
                         // serialized java object
                         Serializable obj = in.getMandatoryBody(Serializable.class);
                         // write object to output stream

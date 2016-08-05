@@ -65,7 +65,7 @@
     <!-- route that process the orders by picking up new rows from the database
          and when done processing then update the row to mark it as processed -->
     <route id="processOrder-route">
-      <from uri="sql:{{sql.selectOrder}}?consumer.onConsume={{sql.markOrder}}"/>
+      <from uri="sql:{{sql.selectOrder}}?onConsume={{sql.markOrder}}"/>
       <to uri="bean:orderBean?method=processOrder"/>
       <log message="${body}"/>
     </route>

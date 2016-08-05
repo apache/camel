@@ -16,16 +16,18 @@
  */
 package org.apache.camel.dataformat.zipfile;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -35,27 +37,28 @@ import static org.apache.camel.Exchange.FILE_NAME;
  * Zip file data format.
  * See {@link org.apache.camel.model.dataformat.ZipDataFormat} for "deflate" compression.
  */
-public class ZipFileDataFormat implements DataFormat {
+public class ZipFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private boolean usingIterator;
-    
-    public void setUsingIterator(boolean usingIterator) {
-        this.usingIterator = usingIterator;
+
+    @Override
+    public String getDataFormatName() {
+        return "zipFile";
     }
 
     @Override
-    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+    public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
         String filename = exchange.getIn().getHeader(FILE_NAME, String.class);
-        if (filename != null) {
-            filename = new File(filename).getName(); // remove any path elements
-        } else {
+        if (filename == null) {
             // generate the file name as the camel file component would do
             filename = StringHelper.sanitize(exchange.getIn().getMessageId());
+        } else {
+            filename = Paths.get(filename).getFileName().toString(); // remove any path elements
         }
 
         ZipOutputStream zos = new ZipOutputStream(stream);
         zos.putNextEntry(new ZipEntry(filename));
 
-        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, graph);
+        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
 
         try {
             IOHelper.copy(is, zos);
@@ -68,20 +71,18 @@ public class ZipFileDataFormat implements DataFormat {
     }
 
     @Override
-    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+    public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
         if (usingIterator) {
             return new ZipIterator(exchange.getIn());
         } else {
-            InputStream is = exchange.getIn().getMandatoryBody(
-                    InputStream.class);
-            ZipInputStream zis = new ZipInputStream(is);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ZipInputStream zis = new ZipInputStream(inputStream);
+            OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
             try {
                 ZipEntry entry = zis.getNextEntry();
                 if (entry != null) {
                     exchange.getOut().setHeader(FILE_NAME, entry.getName());
-                    IOHelper.copy(zis, baos);
+                    IOHelper.copy(zis, osb);
                 }
 
                 entry = zis.getNextEntry();
@@ -89,12 +90,28 @@ public class ZipFileDataFormat implements DataFormat {
                     throw new IllegalStateException("Zip file has more than 1 entry.");
                 }
 
-                return baos.toByteArray();
-
+                return osb.build();
             } finally {
-                IOHelper.close(zis, baos);
+                IOHelper.close(zis, osb);
             }
         }
     }
 
+    public boolean isUsingIterator() {
+        return usingIterator;
+    }
+
+    public void setUsingIterator(boolean usingIterator) {
+        this.usingIterator = usingIterator;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }

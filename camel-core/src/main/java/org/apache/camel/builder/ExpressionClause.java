@@ -488,7 +488,19 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @return the builder to continue processing the DSL
      */
     public T tokenize(String token, boolean regex) {
-        return delegate.tokenize(token, regex);
+        return tokenize(token, regex, false);
+    }
+
+    /**
+     * Evaluates a token expression on the message body
+     *
+     * @param token the token
+     * @param regex whether the token is a regular expression or not
+     * @param skipFirst whether to skip the first element
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, boolean regex, boolean skipFirst) {
+        return delegate.tokenize(token, null, regex, skipFirst);
     }
 
     /**
@@ -500,7 +512,20 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @return the builder to continue processing the DSL
      */
     public T tokenize(String token, boolean regex, int group) {
-        return delegate.tokenize(token, regex);
+        return tokenize(token, regex, group, false);
+    }
+
+    /**
+     * Evaluates a token expression on the message body
+     *
+     * @param token the token
+     * @param regex whether the token is a regular expression or not
+     * @param group to group by the given number
+     * @param skipFirst whether to skip the first element
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, boolean regex, int group, boolean skipFirst) {
+        return delegate.tokenize(token, null, regex, group, skipFirst);
     }
 
     /**
@@ -512,6 +537,18 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      */
     public T tokenize(String token, int group) {
         return delegate.tokenize(token, group);
+    }
+
+    /**
+     * Evaluates a token expression on the message body
+     *
+     * @param token the token
+     * @param group to group by the given number
+     * @param skipFirst whether to skip the first element
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, int group, boolean skipFirst) {
+        return delegate.tokenize(token, group, skipFirst);
     }
 
     /**
@@ -616,43 +653,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     public T xtokenize(String path, char mode, Namespaces namespaces, int group) {
         return delegate.xtokenize(path, mode, namespaces, group);
-    }
-
-    /**
-     * Evaluates an <a href="http://camel.apache.org/vtdxml.html">XPath
-     * expression using the VTD-XML library</a>
-     *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    public T vtdxml(String text) {
-        return delegate.vtdxml(text);
-    }
-
-    /**
-     * Evaluates an <a href="http://camel.apache.org/vtdxml.html">XPath
-     * expression using the VTD-XML library</a>
-     * with the specified set of namespace prefixes and URIs
-     *
-     * @param text the expression to be evaluated
-     * @param namespaces the namespace prefix and URIs to use
-     * @return the builder to continue processing the DSL
-     */
-    public T vtdxml(String text, Namespaces namespaces) {
-        return delegate.vtdxml(text, namespaces);
-    }
-
-    /**
-     * Evaluates an <a href="http://camel.apache.org/vtdxml.html">XPath
-     * expression using the VTD-XML library</a>
-     * with the specified set of namespace prefixes and URIs
-     *
-     * @param text the expression to be evaluated
-     * @param namespaces the namespace prefix and URIs to use
-     * @return the builder to continue processing the DSL
-     */
-    public T vtdxml(String text, Map<String, String> namespaces) {
-        return delegate.vtdxml(text, namespaces);
     }
 
     /**

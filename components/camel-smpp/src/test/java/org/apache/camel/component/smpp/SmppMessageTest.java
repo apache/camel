@@ -124,6 +124,7 @@ public class SmppMessageTest {
             for (String encoding : encodings) {
                 config.setEncoding(encoding);
                 message = new SmppMessage(command, config);
+                
                 assertArrayEquals(
                     String.format("data coding=0x%02X; encoding=%s",
                                   dataCoding,

@@ -1,0 +1,17 @@
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://dozer.sourceforge.net  http://dozer.sourceforge.net/schema/beanmapping.xsd">
+    
+    <mapping>
+        <class-a>org.apache.camel.converter.dozer.model.CustomerA</class-a>
+        <class-b>org.apache.camel.converter.dozer.model.CustomerB</class-b>
+        <field>
+            <a>street</a>
+            <b>address.street</b>
+        </field>
+        <field>
+            <a>zip</a>
+            <b>address.zip</b>
+        </field>
+    </mapping>
+    
+</mappings>

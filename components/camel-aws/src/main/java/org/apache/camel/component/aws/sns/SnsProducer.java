@@ -27,6 +27,8 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
+
 
 /**
  * A Producer which sends messages to the Amazon Web Service Simple Notification Service
@@ -35,6 +37,8 @@ import org.slf4j.LoggerFactory;
 public class SnsProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnsProducer.class);
+    
+    private transient String snsProducerToString;
 
     public SnsProducer(Endpoint endpoint) {
         super(endpoint);
@@ -56,16 +60,6 @@ public class SnsProducer extends DefaultProducer {
         
         Message message = getMessageForResponse(exchange);
         message.setHeader(SnsConstants.MESSAGE_ID, result.getMessageId());
-    }
-    
-    private Message getMessageForResponse(Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        
-        return exchange.getIn();
     }
 
     private String determineSubject(Exchange exchange) {
@@ -92,7 +86,10 @@ public class SnsProducer extends DefaultProducer {
     
     @Override
     public String toString() {
-        return "SnsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (snsProducerToString == null) {
+            snsProducerToString = "SnsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return snsProducerToString;
     }
     
     @Override

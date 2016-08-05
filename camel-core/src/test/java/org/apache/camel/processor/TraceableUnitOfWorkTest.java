@@ -34,7 +34,7 @@ public class TraceableUnitOfWorkTest extends ContextTestSupport {
 
     public void testSendingSomeMessages() throws Exception {
         Object out = template.requestBody("direct:start", "Hello London");
-        assertEquals("Failed at: sendTo(Endpoint[bean://bar])", out);
+        assertEquals("Failed at: sendTo(bean://bar)", out);
     }
 
     @Override

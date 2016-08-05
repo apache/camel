@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class PostsResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(PostsResourceIntegrationTest.class);
-    private static final String PATH_PREFIX = LinkedInApiCollection.getCollection().getApiName(PostsResourceApiMethod.class).getName();
+    private static final String PATH_PREFIX = "comments";
 
     // TODO provide parameter values for addComment
     @Ignore

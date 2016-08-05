@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.jibx.model.PurchaseOrder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -32,8 +33,7 @@ public class JibxDataFormatUnmarshallWithBindingNameTest extends CamelTestSuppor
     private static final String BINDING_NAME = "purchaseOrder-jibx";
 
     @Test
-    public void testUnmarshallWithBindingName() throws InterruptedException, ParserConfigurationException, IOException,
-            SAXException {
+    public void testUnmarshallWithBindingName() throws InterruptedException, ParserConfigurationException, IOException, SAXException {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 

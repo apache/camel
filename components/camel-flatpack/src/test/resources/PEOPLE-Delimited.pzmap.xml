@@ -1,0 +1,8 @@
+<?xml version='1.0'?>
+<!DOCTYPE PZMAP SYSTEM
+	"flatpack.dtd" >
+<PZMAP>
+	<COLUMN name="NAME" />
+	<COLUMN name="COUNTRY" />
+	<COLUMN name="GENDER" />
+</PZMAP>

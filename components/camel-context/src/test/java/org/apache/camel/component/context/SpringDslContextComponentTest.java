@@ -34,7 +34,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration
 public class SpringDslContextComponentTest extends AbstractJUnit4SpringContextTests {
 
-    @EndpointInject(uri = "tester:results", context = "tester")
+    @EndpointInject(uri = "mock:results", context = "tester")
     private MockEndpoint resultEndpoint;
 
     @Produce(uri = "tester:start", context = "tester")

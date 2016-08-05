@@ -22,7 +22,7 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 /**
  * @version 
  */
-@CsvRecord(separator = "\\|")
+@CsvRecord(separator = "\\|", generateHeaderColumns = true)
 public class MyData {
 
     @DataField(pos = 1)

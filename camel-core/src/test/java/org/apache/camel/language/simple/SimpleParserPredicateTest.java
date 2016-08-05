@@ -223,6 +223,11 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         parser = new SimplePredicateParser("${body[foo bar]} == 456", true);
         pre = parser.parsePredicate();
         assertTrue("Should match", pre.matches(exchange));
+
+        // no header with that name
+        parser = new SimplePredicateParser("${body[unknown]} == 456", true);
+        pre = parser.parsePredicate();
+        assertFalse("Should not match", pre.matches(exchange));
     }
 
     protected JndiRegistry createRegistry() throws Exception {

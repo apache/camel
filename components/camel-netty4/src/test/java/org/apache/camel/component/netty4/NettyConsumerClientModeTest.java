@@ -89,7 +89,7 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
         private EventLoopGroup bossGroup;
         private EventLoopGroup workerGroup;
         
-        public MyServer(int port) {
+        MyServer(int port) {
             this.port = port;
         }
 

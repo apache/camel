@@ -1,0 +1,6 @@
+CREATE TABLE MYTABLE (
+	ID  INT PRIMARY KEY,
+  	SUBJECT         VARCHAR(255)
+);
+
+insert into MYTABLE (ID, SUBJECT) VALUES (1, 'subject');

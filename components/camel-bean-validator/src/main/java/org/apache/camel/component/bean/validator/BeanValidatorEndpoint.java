@@ -35,6 +35,11 @@ import org.apache.camel.util.PlatformHelper;
 
 import static org.apache.camel.component.bean.validator.ValidatorFactories.buildValidatorFactory;
 
+/**
+ * The Validator component performs bean validation of the message body using the Java Bean Validation API.
+ *
+ * Camel uses the reference implementation, which is Hibernate Validator.
+ */
 @UriEndpoint(scheme = "bean-validator", title = "Bean Validator", syntax = "bean-validator:label", producerOnly = true, label = "validation")
 public class BeanValidatorEndpoint extends DefaultEndpoint {
 

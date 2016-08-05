@@ -22,7 +22,7 @@ import org.apache.camel.component.ahc.AhcComponent;
 import org.apache.camel.component.ahc.AhcEndpoint;
 
 /**
- *  Defines the <a href="http://camel.apache.org/ws.html">WebSocket Client Component</a>
+ * To exchange data with external Websocket servers using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>
  */
 public class WsComponent extends AhcComponent {
     

@@ -18,19 +18,98 @@ package org.apache.camel.core.osgi;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.ComponentConfiguration;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Test;
 
 public class OsgiComponentResolverTest extends CamelOsgiTestSupport {
-    
+
     @Test
-    public void testOsgiResolverFindLanguageTest() throws Exception {
+    public void testOsgiResolverFindComponentTest() throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
         OsgiComponentResolver resolver = new OsgiComponentResolver(getBundleContext());
         Component component = resolver.resolveComponent("file_test", camelContext);
         assertNotNull("We should find file_test component", component);
         assertTrue("We should get the file component here", component instanceof FileComponent);
+    }
+
+    @Test
+    public void testOsgiResolverFindComponentFallbackTest() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
+        registry.put("allstar-component", new SampleComponent(true));
+
+        CamelContext camelContext = new DefaultCamelContext(registry);
+
+        OsgiComponentResolver resolver = new OsgiComponentResolver(getBundleContext());
+        Component component = resolver.resolveComponent("allstar", camelContext);
+        assertNotNull("We should find the super component", component);
+        assertTrue("We should get the super component here", component instanceof SampleComponent);
+    }
+
+    @Test
+    public void testOsgiResolverFindLanguageDoubleFallbackTest() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
+        registry.put("allstar", new SampleComponent(false));
+        registry.put("allstar-component", new SampleComponent(true));
+
+        CamelContext camelContext = new DefaultCamelContext(registry);
+
+        OsgiComponentResolver resolver = new OsgiComponentResolver(getBundleContext());
+        Component component = resolver.resolveComponent("allstar", camelContext);
+        assertNotNull("We should find the super component", component);
+        assertTrue("We should get the super component here", component instanceof SampleComponent);
+        assertFalse("We should NOT find the fallback component", ((SampleComponent) component).isFallback());
+    }
+
+    private static class SampleComponent implements Component {
+
+        private boolean fallback;
+
+        SampleComponent(boolean fallback) {
+            this.fallback = fallback;
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            throw new UnsupportedOperationException("Should not be called");
+        }
+
+        @Override
+        public CamelContext getCamelContext() {
+            throw new UnsupportedOperationException("Should not be called");
+        }
+
+        @Override
+        public Endpoint createEndpoint(String uri) throws Exception {
+            throw new UnsupportedOperationException("Should not be called");
+        }
+
+        @Override
+        public boolean useRawUri() {
+            throw new UnsupportedOperationException("Should not be called");
+        }
+
+        @Override
+        public EndpointConfiguration createConfiguration(String uri) throws Exception {
+            throw new UnsupportedOperationException("Should not be called");
+        }
+
+        @Override
+        public ComponentConfiguration createComponentConfiguration() {
+            throw new UnsupportedOperationException("Should not be called");
+        }
+
+        public boolean isFallback() {
+            return fallback;
+        }
+
+        public void setFallback(boolean fallback) {
+            this.fallback = fallback;
+        }
     }
 
 }

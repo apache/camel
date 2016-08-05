@@ -33,15 +33,15 @@ public class XmlRpcConfiguration {
     private String basicEncoding;
     @UriParam
     private String encoding;
-    @UriParam
+    @UriParam(label = "advanced")
     private java.util.TimeZone timeZone;
     @UriParam
     private boolean gzipCompressing;
     @UriParam
     private boolean gzipRequesting;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String basicUserName;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String basicPassword;
     @UriParam
     private int connectionTimeout;
@@ -49,9 +49,9 @@ public class XmlRpcConfiguration {
     private int replyTimeout;
     @UriParam
     private boolean enabledForExceptions;
-    @UriParam
+    @UriParam(label = "advanced")
     private org.apache.xmlrpc.common.XmlRpcRequestProcessor xmlRpcServer;
-    @UriParam
+    @UriParam(label = "advanced")
     private String userAgent;
 
     public boolean isEnabledForExtensions() {

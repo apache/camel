@@ -42,7 +42,7 @@ public class ServicePoolTest extends ContextTestSupport {
         private boolean start;
         private boolean stop;
 
-        public MyProducer(Endpoint endpoint) throws Exception {
+        MyProducer(Endpoint endpoint) throws Exception {
             super(endpoint);
             start();
         }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-
 /**
  * Salesforce DTO for compound type GeoLocation.
  */

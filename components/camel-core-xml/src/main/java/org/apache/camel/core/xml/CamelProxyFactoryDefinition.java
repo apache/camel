@@ -28,15 +28,59 @@ import org.apache.camel.model.IdentifiedType;
 */ // to fudge the XSD generation
 @XmlRootElement(name = "proxy")
 public class CamelProxyFactoryDefinition extends IdentifiedType {
+
     @XmlAttribute
     private String serviceUrl;
+
     @XmlAttribute
     private String serviceRef;
+
     @XmlAttribute
     private Class<?> serviceInterface;
+
     @XmlAttribute
     private String camelContextId;
+
     @XmlAttribute
     private Boolean binding;
 
+    public String getServiceUrl() {
+        return serviceUrl;
+    }
+
+    public void setServiceUrl(String serviceUrl) {
+        this.serviceUrl = serviceUrl;
+    }
+
+    public String getServiceRef() {
+        return serviceRef;
+    }
+
+    public void setServiceRef(String serviceRef) {
+        this.serviceRef = serviceRef;
+    }
+
+    public Class<?> getServiceInterface() {
+        return serviceInterface;
+    }
+
+    public void setServiceInterface(Class<?> serviceInterface) {
+        this.serviceInterface = serviceInterface;
+    }
+
+    public String getCamelContextId() {
+        return camelContextId;
+    }
+
+    public void setCamelContextId(String camelContextId) {
+        this.camelContextId = camelContextId;
+    }
+
+    public Boolean getBinding() {
+        return binding;
+    }
+
+    public void setBinding(Boolean binding) {
+        this.binding = binding;
+    }
 }

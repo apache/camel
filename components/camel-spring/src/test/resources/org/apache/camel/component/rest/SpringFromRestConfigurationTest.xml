@@ -25,6 +25,8 @@
   <!-- use a dummy rest consumer factory for the rest engine -->
   <bean id="dummy-rest" class="org.apache.camel.component.rest.DummyRestConsumerFactory"/>
 
+  <bean id="myDummy" class="org.apache.camel.impl.FooBar"/>
+
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
     <restConfiguration component="dummy-rest" host="localhost" port="9090">
@@ -32,6 +34,7 @@
       <componentProperty key="other" value="stuff"/>
       <endpointProperty key="size" value="200"/>
       <consumerProperty key="pollTimeout" value="1000"/>
+      <consumerProperty key="dummy" value="#myDummy"/>
     </restConfiguration>
 
     <rest path="/say/hello">
@@ -41,7 +44,7 @@
     </rest>
     <rest path="/say/bye">
       <get consumes="application/json">
-          <param name="header_count" type="header" description="header param description1" dataType="integer" defaultValue="1" allowMultiple="false" required="true" access="acc1">
+          <param name="header_count" type="header" description="header param description1" dataType="integer" defaultValue="1" required="true">
               <allowableValues>
                   <value>1</value>
                   <value>2</value>
@@ -49,7 +52,7 @@
                   <value>4</value>
               </allowableValues>
           </param>
-          <param name="header_letter" type="query" description="header param description2" dataType="string" defaultValue="b" allowMultiple="true" required="false" access="acc2">
+          <param name="header_letter" type="query" description="header param description2" dataType="string" defaultValue="b" collectionFormat="multi" required="false">
               <allowableValues>
                   <value>a</value>
                   <value>b</value>
@@ -57,7 +60,10 @@
                   <value>d</value>
               </allowableValues>
           </param>
-          <responseMessage code="300" message="test msg" responseModel="java.lang.Integer"/>
+          <responseMessage code="300" message="test msg" responseModel="java.lang.Integer">
+            <header name="rate" description="Rate limit" dataType="integer"/>
+          </responseMessage>
+          <responseMessage code="error" message="does not work"/>
         <to uri="direct:bye"/>
       </get>
       <post>

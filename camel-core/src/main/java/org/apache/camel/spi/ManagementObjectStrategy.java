@@ -38,6 +38,8 @@ public interface ManagementObjectStrategy {
 
     Object getManagedObjectForComponent(CamelContext context, Component component, String name);
 
+    Object getManagedObjectForDataFormat(CamelContext context, DataFormat dataFormat);
+
     Object getManagedObjectForEndpoint(CamelContext context, Endpoint endpoint);
 
     Object getManagedObjectForErrorHandler(CamelContext context, RouteContext routeContext,

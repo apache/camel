@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina2;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.charset.Charset;
@@ -58,7 +59,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link org.apache.camel.Consumer Consumer} implementation for Apache MINA.
  *
- * @version 
+ * @version
  */
 public class Mina2Consumer extends DefaultConsumer {
 
@@ -67,14 +68,14 @@ public class Mina2Consumer extends DefaultConsumer {
     private IoConnector connector;
     private SocketAddress address;
     private IoAcceptor acceptor;
-    private Mina2Configuration configuration;
+    private final Mina2Configuration configuration;
     private ExecutorService workerPool;
 
     public Mina2Consumer(final Mina2Endpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.configuration = endpoint.getConfiguration();
         //
-        // All mina2 endpoints are InOut. The endpoints are asynchronous. 
+        // All mina2 endpoints are InOut. The endpoints are asynchronous.
         // Endpoints can send "n" messages and receive "m" messages.
         //
         this.getEndpoint().setExchangePattern(ExchangePattern.InOut);
@@ -114,7 +115,7 @@ public class Mina2Consumer extends DefaultConsumer {
         if (configuration.isClientMode() && configuration.getProtocol().equals("tcp")) {
             LOG.info("Disconnect from server address: {} using connector: {}", address, connector);
             if (session != null) {
-                CloseFuture closeFuture = session.close(true);
+                CloseFuture closeFuture = session.closeNow();
                 closeFuture.awaitUninterruptibly();
             }
             connector.dispose(true);
@@ -127,7 +128,7 @@ public class Mina2Consumer extends DefaultConsumer {
                     acceptor.unbind(acceptor.getLocalAddresses());
                 } else {
                     acceptor.unbind(address);
-                }   
+                }
             } else {
                 acceptor.unbind(address);
             }
@@ -139,6 +140,9 @@ public class Mina2Consumer extends DefaultConsumer {
     protected void doShutdown() throws Exception {
         if (workerPool != null) {
             workerPool.shutdown();
+        }
+        if (acceptor != null) {
+            acceptor.dispose(true);
         }
         super.doShutdown();
     }
@@ -191,7 +195,7 @@ public class Mina2Consumer extends DefaultConsumer {
         }
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
-            SslFilter filter = new SslFilter(configuration.getSslContextParameters().createSSLContext(), configuration.isAutoStartTls());
+            SslFilter filter = new SslFilter(configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()), configuration.isAutoStartTls());
             filter.setUseClientMode(false);
             acceptor.getFilterChain().addFirst("sslFilter", filter);
         }
@@ -218,7 +222,7 @@ public class Mina2Consumer extends DefaultConsumer {
         }
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
-            SslFilter filter = new SslFilter(configuration.getSslContextParameters().createSSLContext(), configuration.isAutoStartTls());
+            SslFilter filter = new SslFilter(configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()), configuration.isAutoStartTls());
             filter.setUseClientMode(true);
             connector.getFilterChain().addFirst("sslFilter", filter);
         }
@@ -371,10 +375,14 @@ public class Mina2Consumer extends DefaultConsumer {
 
         @Override
         public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+            if (cause instanceof IOException) {
+                LOG.debug("IOExceptions are automatically handled by MINA");
+                return;
+            }
             // close invalid session
             if (session != null) {
                 LOG.warn("Closing session as an exception was thrown from MINA");
-                session.close(true);
+                session.closeNow();
             }
 
             // must wrap and rethrow since cause can be of Throwable and we must only throw Exception
@@ -448,7 +456,7 @@ public class Mina2Consumer extends DefaultConsumer {
             }
             if (disconnect) {
                 LOG.debug("Closing session when complete at address: {}", address);
-                session.close(true);
+                session.closeNow();
             }
         }
     }

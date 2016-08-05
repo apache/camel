@@ -41,7 +41,6 @@ public class FileMarkerFileRecursiveDoNotDeleteOldLockFilesTest extends ContextT
     public void testDeleteOldLockOnStartup() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("New World");
-        mock.setResultMinimumWaitTime(1000);
 
         // start the route
         context.startRoute("foo");

@@ -64,10 +64,8 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
                 map.put("string", "hello");
                 map.put("long", new Long(123));
                 map.put("double", new Double(1.23));
-                map.put("requestObject", new SerializableRequestDto("Restless Camel"));
-                
+
                 exchange.getIn().setHeaders(map);
-                exchange.setProperty("requestObjectProperty", new SerializableRequestDto("Restless Camel"));
             }
         });
 
@@ -76,23 +74,17 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
         Exchange transferExchange = transfer.getExchanges().get(0);
         Message transferMessage = transferExchange.getIn();
         assertNotNull(transferMessage.getBody(SerializableRequestDto.class));
-        assertNotNull(transferMessage.getHeader("requestObject", SerializableRequestDto.class));
         assertEquals(Boolean.TRUE, transferMessage.getHeader("boolean", Boolean.class));
         assertEquals((Long) 123L, transferMessage.getHeader("long", Long.class));
         assertEquals((Double) 1.23, transferMessage.getHeader("double", Double.class));
         assertEquals("hello", transferMessage.getHeader("string", String.class));
-        assertNotNull(transferExchange.getProperty("requestObjectProperty", SerializableRequestDto.class));
 
-        Exchange resultExchange = result.getExchanges().get(0);
         Message resultMessage = result.getExchanges().get(0).getIn();
         assertNotNull(resultMessage.getBody(SerializableResponseDto.class));
-        assertNotNull(resultMessage.getHeader("requestObject", SerializableRequestDto.class));
         assertEquals(Boolean.TRUE, resultMessage.getHeader("boolean", Boolean.class));
         assertEquals((Long) 123L, resultMessage.getHeader("long", Long.class));
         assertEquals((Double) 1.23, resultMessage.getHeader("double", Double.class));
         assertEquals("hello", resultMessage.getHeader("string", String.class));
-        assertNotNull(resultMessage.getHeader("responseHeader", SerializableResponseDto.class));
-        assertNotNull(resultExchange.getProperty("responseObjectProperty", SerializableResponseDto.class));
     }
 
     @Override
@@ -108,8 +100,6 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             exchange.getIn().setBody(new SerializableResponseDto(true));
-                            exchange.getIn().setHeader("responseHeader", new SerializableResponseDto(true));
-                            exchange.setProperty("responseObjectProperty", new SerializableResponseDto(true));
                         }
                     });
             }

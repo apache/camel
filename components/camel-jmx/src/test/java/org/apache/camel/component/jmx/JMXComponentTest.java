@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jmx;
 
-import java.util.Hashtable;
+import java.util.Map;
 
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -41,7 +41,7 @@ public class JMXComponentTest {
         JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.propOne=prop1&key.propTwo=prop2", JMXEndpoint.class);
         assertNotNull(ep);
 
-        Hashtable<String, String> props = ep.getObjectProperties();
+        Map<String, String> props = ep.getObjectProperties();
         assertEquals(2, props.size());
         assertEquals("prop1", props.get("propOne"));
         assertEquals("prop2", props.get("propTwo"));
@@ -56,7 +56,7 @@ public class JMXComponentTest {
 
         assertEquals("theObjectName", ep.getObjectName());
 
-        Hashtable<String, String> props = ep.getObjectProperties();
+        Map<String, String> props = ep.getObjectProperties();
         assertNull(props);
     }
 

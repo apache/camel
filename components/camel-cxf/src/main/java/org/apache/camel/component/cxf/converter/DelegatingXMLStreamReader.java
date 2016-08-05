@@ -17,9 +17,6 @@
 
 package org.apache.camel.component.cxf.converter;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,9 +35,14 @@ class DelegatingXMLStreamReader implements XMLStreamReader {
     private final String[] xprefixes;
     private int depth;
 
-    public DelegatingXMLStreamReader(XMLStreamReader reader, Map<String, String> nsmap) {
+    DelegatingXMLStreamReader(XMLStreamReader reader, Map<String, String> nsmap) {
         this.reader = reader;
-        this.xprefixes = nsmap.keySet().toArray(new String[0]);
+        //the original nsmap will be mutated if some of its declarations are redundantly present at the current reader 
+        Set<String> prefixes = nsmap.keySet();
+        for (int i = 0; i < reader.getNamespaceCount(); i++) {
+            prefixes.remove(reader.getNamespacePrefix(i));
+        }
+        this.xprefixes = prefixes.toArray(new String[0]);
     }
 
     @Override

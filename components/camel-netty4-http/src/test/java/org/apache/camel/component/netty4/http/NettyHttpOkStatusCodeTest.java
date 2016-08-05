@@ -32,7 +32,7 @@ public class NettyHttpOkStatusCodeTest extends BaseNettyTest {
         } catch (CamelExecutionException e) {
             NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
             assertEquals(209, cause.getStatusCode());
-            String body = context.getTypeConverter().convertTo(String.class, cause.getHttpContent().content());
+            String body = cause.getContentAsString();
             assertEquals("Not allowed", body);
         }
     }

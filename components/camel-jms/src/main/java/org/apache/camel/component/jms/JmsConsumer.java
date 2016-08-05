@@ -21,7 +21,7 @@ import javax.jms.Connection;
 
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
-import org.apache.camel.SuspendableService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.impl.DefaultConsumer;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.support.JmsUtils;
@@ -34,7 +34,7 @@ import org.springframework.jms.support.JmsUtils;
  * @see DefaultJmsMessageListenerContainer
  * @see SimpleJmsMessageListenerContainer
  */
-public class JmsConsumer extends DefaultConsumer implements SuspendableService {
+public class JmsConsumer extends DefaultConsumer implements Suspendable {
     private volatile AbstractMessageListenerContainer listenerContainer;
     private volatile EndpointMessageListener messageListener;
     private volatile boolean initialized;

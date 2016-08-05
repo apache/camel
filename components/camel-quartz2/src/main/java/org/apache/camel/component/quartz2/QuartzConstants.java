@@ -34,6 +34,8 @@ public final class QuartzConstants {
     public static final String QUARTZ_TRIGGER_CRON_TIMEZONE = "CamelQuartzTriggerCronTimeZone";
     public static final String QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER = "CamelQuartzTriggerSimpleRepeatCounter";
     public static final String QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL = "CamelQuartzTriggerSimpleRepeatInterval";
+    
+    public static final String QUARTZ_CAMEL_CUSTOM_CALENDAR = "CamelQuartzCustomCalendar";
 
     private QuartzConstants() {
         // Utility class

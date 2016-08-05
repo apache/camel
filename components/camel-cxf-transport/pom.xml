@@ -21,11 +21,11 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-cxf-transport</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: CXF :: Transport</name>
   <description>Camel Transport for CXF </description>
 
@@ -36,10 +36,10 @@
       javax.activation*;version="[0.0,2)",
       javax.annotation*;version="[0.0,2)",
       javax.jws*;version="[0.0,3)",
+      javax.servlet.*;version="${servlet-version-range}",
       javax.ws.rs*;version="[0.0,2)",
       javax.xml.stream*;version="[0.0,2)",
       javax.xml.ws*;version="[0.0,3.0)",
-      javax.servlet*;resolution="optional";version="[0,4)",
       org.apache.camel.*;${camel.osgi.import.camel.version},
       org.springframework*;version="${spring-version-range}";resolution:=optional,
       ${camel.osgi.import.defaults},
@@ -73,6 +73,11 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
 
     <!-- OSGi, Blueprint -->
     <dependency>
@@ -104,7 +109,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty8</artifactId>
+      <artifactId>camel-jetty</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.pgevent;
 
+import java.sql.PreparedStatement;
+
 import com.impossibl.postgres.api.jdbc.PGConnection;
 import com.impossibl.postgres.api.jdbc.PGNotificationListener;
 import org.apache.camel.Exchange;
@@ -41,13 +43,15 @@ public class PgEventConsumer extends DefaultConsumer implements PGNotificationLi
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
         dbConnection = endpoint.initJdbc();
-        dbConnection.createStatement().execute("LISTEN " + endpoint.getChannel());
+        String sql = String.format("LISTEN %s", endpoint.getChannel());
+        try (PreparedStatement statement = dbConnection.prepareStatement(sql)) {
+            statement.execute();
+        }
         dbConnection.addNotificationListener(endpoint.getChannel(), endpoint.getChannel(), this);
     }
 
-    @Override
+
     public void notification(int processId, String channel, String payload) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Notification processId: {}, channel: {}, payload: {}", new Object[]{processId, channel, payload});
@@ -70,6 +74,10 @@ public class PgEventConsumer extends DefaultConsumer implements PGNotificationLi
     protected void doStop() throws Exception {
         if (dbConnection != null) {
             dbConnection.removeNotificationListener(endpoint.getChannel());
+            String sql = String.format("UNLISTEN %s", endpoint.getChannel());
+            try (PreparedStatement statement = dbConnection.prepareStatement(sql)) {
+                statement.execute();
+            }
             dbConnection.close();
         }
     }

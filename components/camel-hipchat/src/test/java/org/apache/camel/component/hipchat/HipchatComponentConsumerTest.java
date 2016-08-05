@@ -38,7 +38,7 @@ import static org.mockito.Mockito.when;
 public class HipchatComponentConsumerTest extends CamelTestSupport {
     private CloseableHttpResponse closeableHttpResponse = mock(CloseableHttpResponse.class);
 
-    @EndpointInject(uri = "hipchat://?authToken=anything&consumeUsers=@AUser")
+    @EndpointInject(uri = "hipchat:http:api.hipchat.com?authToken=anything&consumeUsers=@AUser")
     private ProducerTemplate template;
 
     @EndpointInject(uri = "mock:result")
@@ -202,7 +202,7 @@ public class HipchatComponentConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("hipchat://?authToken=anything&consumeUsers=@AUser")
+                from("hipchat:http://api.hipchat.com?authToken=anything&consumeUsers=@AUser")
                         .to("mock:result");
             }
         };

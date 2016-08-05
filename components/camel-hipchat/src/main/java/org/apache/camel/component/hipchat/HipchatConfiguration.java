@@ -16,15 +16,16 @@
  */
 package org.apache.camel.component.hipchat;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class HipchatConfiguration {
-    @UriPath(defaultValue = HipchatConstants.DEFAULT_PROTOCOL)
-    private String protocol = HipchatConstants.DEFAULT_PROTOCOL;
-    @UriPath(defaultValue = HipchatConstants.DEFAULT_HOST)
+    @UriPath @Metadata(required = "true")
+    private String protocol;
+    @UriPath @Metadata(required = "true")
     private String host = HipchatConstants.DEFAULT_HOST;
     @UriPath(defaultValue = "" + HipchatConstants.DEFAULT_PORT)
     private Integer port = HipchatConstants.DEFAULT_PORT;
@@ -38,7 +39,7 @@ public class HipchatConfiguration {
     }
 
     /**
-     * The host for the hipchat server. Is by default api.hipchat.com
+     * The host for the hipchat server, such as api.hipchat.com
      */
     public void setHost(String host) {
         this.host = host;
@@ -60,7 +61,7 @@ public class HipchatConfiguration {
     }
 
     /**
-     * The protocol for the hipchat server. Is by default http.
+     * The protocol for the hipchat server, such as http.
      */
     public void setProtocol(String protocol) {
         this.protocol = protocol;

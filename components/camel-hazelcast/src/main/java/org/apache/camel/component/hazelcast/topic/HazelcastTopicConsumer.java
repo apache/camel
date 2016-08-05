@@ -17,12 +17,10 @@
 package org.apache.camel.component.hazelcast.topic;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IQueue;
 import com.hazelcast.core.ITopic;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
-import org.apache.camel.component.hazelcast.listener.CamelItemListener;
 import org.apache.camel.component.hazelcast.listener.CamelMessageListener;
 
 /**

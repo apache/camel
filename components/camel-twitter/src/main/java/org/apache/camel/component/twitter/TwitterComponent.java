@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.spi.UriParam;
 
 /**
  * Twitter component

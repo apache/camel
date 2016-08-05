@@ -58,6 +58,26 @@ public class DefaultCamelContextTest extends TestSupport {
         assertNull(component);
     }
     
+    public void testAutoStartComponentsOff() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
+        ctx.start();
+
+        BeanComponent component = (BeanComponent) ctx.getComponent("bean", true, false);
+        // should be stopped
+        assertTrue(component.getStatus().isStopped());
+    }
+
+    public void testAutoStartComponentsOn() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
+        ctx.start();
+
+        BeanComponent component = (BeanComponent) ctx.getComponent("bean", true, true);
+        // should be started
+        assertTrue(component.getStatus().isStarted());
+    }
+
     public void testCreateDefaultUuidGenerator() {
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.disableJMX();
@@ -118,8 +138,12 @@ public class DefaultCamelContextTest extends TestSupport {
         assertEquals(2, list.size());
 
         Iterator<Endpoint> it = list.iterator();
-        assertEquals("log://bar", it.next().getEndpointUri());
-        assertEquals("log://baz", it.next().getEndpointUri());
+        String s1 = it.next().getEndpointUri();
+        String s2 = it.next().getEndpointUri();
+        assertTrue("log://bar".equals(s1) || "log://bar".equals(s2));
+        assertTrue("log://baz".equals(s1) || "log://baz".equals(s2));
+        assertTrue("log://baz".equals(s1) || "log://baz".equals(s2));
+        assertTrue("log://baz".equals(s1) || "log://baz".equals(s2));
 
         assertEquals(1, ctx.getEndpoints().size());
     }
@@ -327,6 +351,7 @@ public class DefaultCamelContextTest extends TestSupport {
 
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.addService(my);
+        ctx.start();
 
         assertEquals(ctx, my.getCamelContext());
         assertEquals("Started", my.getStatus().name());

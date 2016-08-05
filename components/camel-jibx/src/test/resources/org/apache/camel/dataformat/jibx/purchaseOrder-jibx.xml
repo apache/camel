@@ -16,7 +16,12 @@
     limitations under the License.
 -->
 <binding>
-    <mapping name="order" class="org.apache.camel.dataformat.jibx.PurchaseOrder">
+    <mapping name="order" class="org.apache.camel.dataformat.jibx.model.PurchaseOrder">
+        <value name="name" field="name" style="attribute"/>
+        <value name="price" field="price" style="attribute"/>
+        <value name="amount" field="amount" style="attribute"/>
+    </mapping>
+    <mapping name="order2" class="org.apache.camel.dataformat.jibx.model.PurchaseOrder2">
         <value name="name" field="name" style="attribute"/>
         <value name="price" field="price" style="attribute"/>
         <value name="amount" field="amount" style="attribute"/>

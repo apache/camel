@@ -54,6 +54,7 @@ public class FopProducer extends DefaultProducer {
         Map<String, Object> headers = exchange.getIn().getHeaders();
         setRenderParameters(userAgent, headers);
         setEncryptionParameters(userAgent, headers);
+        setUserAgentRendererOptions(userAgent, headers);
 
         String outputFormat = getOutputFormat(exchange);
         Source src = exchange.getIn().getBody(StreamSource.class);
@@ -104,9 +105,15 @@ public class FopProducer extends DefaultProducer {
         }
     }
 
+    private void setUserAgentRendererOptions(FOUserAgent userAgent, Map<String, Object> headers) {
+        Map<String, Object> parameters = IntrospectionSupport.extractProperties(headers, FopConstants.CAMEL_FOP_RENDERER_OPTIONS);
+        if (!parameters.isEmpty()) {
+            userAgent.getRendererOptions().putAll(parameters);
+        }
+    }
+
     private void setRenderParameters(FOUserAgent userAgent, Map<String, Object> headers) throws Exception {
-        Map<String, Object> parameters = IntrospectionSupport
-                .extractProperties(headers, FopConstants.CAMEL_FOP_RENDER);
+        Map<String, Object> parameters = IntrospectionSupport.extractProperties(headers, FopConstants.CAMEL_FOP_RENDER);
         if (!parameters.isEmpty()) {
             IntrospectionSupport.setProperties(userAgent, parameters);
         }

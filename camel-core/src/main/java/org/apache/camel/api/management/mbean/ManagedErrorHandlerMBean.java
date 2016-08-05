@@ -131,6 +131,12 @@ public interface ManagedErrorHandlerMBean {
     @ManagedAttribute(description = "RedeliveryPolicy for logging exhausted with message history")
     void setLogExhaustedMessageHistory(Boolean log);
 
+    @ManagedAttribute(description = "RedeliveryPolicy for logging exhausted with message history")
+    Boolean getLogExhaustedMessageBody();
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging exhausted with message body")
+    void setLogExhaustedMessageBody(Boolean log);
+
     @ManagedAttribute(description = "RedeliveryPolicy for logging handled and continued exceptions")
     Boolean getLogContinued();
 

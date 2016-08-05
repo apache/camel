@@ -25,6 +25,9 @@ import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
+/**
+ * The vm component provides asynchronous call to another endpoint from the same CamelContext.
+ */
 @UriEndpoint(scheme = "vm", title = "VM", syntax = "vm:name", consumerClass = VmConsumer.class, label = "core,endpoint")
 public class VmEndpoint extends SedaEndpoint {
 

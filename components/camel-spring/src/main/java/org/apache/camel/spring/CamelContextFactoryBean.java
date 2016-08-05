@@ -42,6 +42,7 @@ import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.model.ContextScanDefinition;
+import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
@@ -55,6 +56,11 @@ import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.model.remote.ConsulConfigurationDefinition;
+import org.apache.camel.model.remote.DnsConfigurationDefinition;
+import org.apache.camel.model.remote.EtcdConfigurationDefinition;
+import org.apache.camel.model.remote.KubernetesConfigurationDefinition;
+import org.apache.camel.model.remote.RibbonConfigurationDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.PackageScanFilter;
@@ -95,6 +101,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String trace;
     @XmlAttribute(required = false)
     private String messageHistory;
+    @XmlAttribute(required = false)
+    private String logExhaustedMessageBody;
     @XmlAttribute(required = false)
     private String streamCache;
     @XmlAttribute(required = false)
@@ -147,6 +155,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class, required = false)
     private CamelJMXAgentDefinition camelJMXAgent;
     @XmlElements({
+            @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class, required = false),
+            @XmlElement(name = "consulConfiguration", type = ConsulConfigurationDefinition.class, required = false),
+            @XmlElement(name = "dnsConfiguration", type = DnsConfigurationDefinition.class, required = false),
+            @XmlElement(name = "etcdConfiguration", type = EtcdConfigurationDefinition.class, required = false),
+            @XmlElement(name = "kubernetesConfiguration", type = KubernetesConfigurationDefinition.class, required = false),
+            @XmlElement(name = "ribbonConfiguration", type = RibbonConfigurationDefinition.class, required = false),
             @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
             @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
             @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),
@@ -557,6 +571,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public String getLogExhaustedMessageBody() {
+        return logExhaustedMessageBody;
+    }
+
+    public void setLogExhaustedMessageBody(String logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
     }
 
     public String getStreamCache() {

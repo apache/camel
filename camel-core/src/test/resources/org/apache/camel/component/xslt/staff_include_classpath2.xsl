@@ -20,7 +20,7 @@
     <!-- test with a directory from classpath that has dot in the name -->
     <xsl:include href="staff_template.xsl"/>
 
-    <xsl:template match="staff/programmer">
+    <xsl:template match="staff/programmer" priority="2">
         <html>
             <body>
                 <xsl:apply-templates select="name"/>

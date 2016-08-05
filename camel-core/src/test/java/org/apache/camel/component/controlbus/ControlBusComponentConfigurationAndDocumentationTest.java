@@ -42,8 +42,8 @@ public class ControlBusComponentConfigurationAndDocumentationTest extends Contex
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"action\": { \"kind\": \"parameter\", \"type\": \"string\""));
-        assertTrue(json.contains("\"async\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"action\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"string\""));
+        assertTrue(json.contains("\"async\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"boolean\""));
     }
 
     @Test

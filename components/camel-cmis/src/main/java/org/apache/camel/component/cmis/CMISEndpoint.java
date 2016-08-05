@@ -20,43 +20,49 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Represents a CMIS endpoint.
+ * The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
  */
 @UriEndpoint(scheme = "cmis", title = "CMIS", syntax = "cmis:url", consumerClass = CMISConsumer.class, label = "cms,database")
 public class CMISEndpoint extends DefaultEndpoint {
+    private static final Logger LOG = LoggerFactory.getLogger(CMISEndpoint.class);
 
-    @UriParam
-    private CMISSessionFacade sessionFacade;
+    private final CMISSessionFacadeFactory sessionFacadeFactory;
+
+    @UriPath(description = "the cmis url")
+    @Metadata(required = "true")
+    private final String url;
+
     @UriParam(label = "producer")
     private boolean queryMode;
 
-    public CMISEndpoint() {
+    public CMISEndpoint(String uri, CMISComponent cmisComponent, CMISSessionFacadeFactory sessionFacadeFactory) {
+        super(uri, cmisComponent);
+
+        this.url = uri;
+        this.sessionFacadeFactory = sessionFacadeFactory;
     }
 
-    public CMISEndpoint(String uri, CMISComponent component) {
-        super(uri, component);
-    }
-
-    public CMISEndpoint(String uri, CMISComponent cmisComponent, CMISSessionFacade sessionFacade) {
-        this(uri, cmisComponent);
-        this.sessionFacade = sessionFacade;
-    }
-
+    @Override
     public Producer createProducer() throws Exception {
-        if (this.queryMode) {
-            return new CMISQueryProducer(this, sessionFacade);
-        }
-        return new CMISProducer(this, sessionFacade);
+        return this.queryMode
+            ? new CMISQueryProducer(this, sessionFacadeFactory)
+            : new CMISProducer(this, sessionFacadeFactory);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        CMISConsumer answer = new CMISConsumer(this, processor, sessionFacade);
-        configureConsumer(answer);
-        return answer;
+        CMISConsumer consumer = new CMISConsumer(this, processor, sessionFacadeFactory);
+        configureConsumer(consumer);
+
+        return consumer;
     }
 
     public boolean isSingleton() {

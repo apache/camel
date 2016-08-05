@@ -28,6 +28,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.springframework.ldap.core.LdapTemplate;
 
+/**
+ * The spring-ldap component allows you to perform searches in LDAP servers using filters as the message payload.
+ */
 @UriEndpoint(scheme = "spring-ldap", title = "Spring LDAP", syntax = "spring-ldap:templateName", producerOnly = true, label = "spring,ldap")
 public class SpringLdapEndpoint extends DefaultEndpoint {
 

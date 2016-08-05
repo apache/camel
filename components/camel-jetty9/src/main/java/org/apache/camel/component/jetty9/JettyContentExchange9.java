@@ -48,8 +48,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Jetty specific exchange which keeps track of the the request and response.
- *
- * @version 
  */
 public class JettyContentExchange9 implements JettyContentExchange {
 
@@ -68,14 +66,14 @@ public class JettyContentExchange9 implements JettyContentExchange {
 
     private boolean supportRedirect;
 
-    public void init(Exchange exchange, JettyHttpBinding jettyBinding, 
+    public void init(Exchange exchange, JettyHttpBinding jettyBinding,
                      final HttpClient client, AsyncCallback callback) {
         this.exchange = exchange;
         this.jettyBinding = jettyBinding;
         this.client = client;
         this.callback = callback;
     }
-    
+
     protected void onRequestComplete() {
         LOG.trace("onRequestComplete");
         closeRequestContentSource();
@@ -135,15 +133,15 @@ public class JettyContentExchange9 implements JettyContentExchange {
             throw new IllegalStateException(e.getMessage(), e);
         }
     }
-    
+
     protected void closeRequestContentSource() {
         tryClose(this.request.getContent());
     }
-    
+
     private void tryClose(Object obj) {
         if (obj instanceof Closeable) {
             try {
-                ((Closeable)obj).close();
+                ((Closeable) obj).close();
             } catch (IOException e) {
                 // Ignore
             }
@@ -175,11 +173,11 @@ public class JettyContentExchange9 implements JettyContentExchange {
     public void setMethod(String method) {
         this.request.method(method);
     }
-    
+
     public void setTimeout(long timeout) {
         this.request.timeout(timeout, TimeUnit.MILLISECONDS);
     }
-    
+
     public void setURL(String url) {
         this.request = client.newRequest(url);
     }
@@ -194,7 +192,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
     }
 
     public void setRequestContent(InputStream ins) {
-        this.request.content(new InputStreamContentProvider(ins), this.requestContentType);        
+        this.request.content(new InputStreamContentProvider(ins), this.requestContentType);
     }
 
     public void addRequestHeader(String key, String s) {
@@ -236,14 +234,21 @@ public class JettyContentExchange9 implements JettyContentExchange {
     public byte[] getResponseContentBytes() {
         return responseContent;
     }
-    
-    public Map<String, Collection<String>> getResponseHeaders() {
-        final HttpFields f = response.getHeaders();
-        Map<String, Collection<String>> ret = new TreeMap<String, Collection<String>>(String.CASE_INSENSITIVE_ORDER);
-        for (String n : f.getFieldNamesCollection()) {
-            ret.put(n,  f.getValuesList(n));
+
+    private Map<String, Collection<String>> getFieldsAsMap(HttpFields fields) {
+        final Map<String, Collection<String>> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        for (String name : fields.getFieldNamesCollection()) {
+            result.put(name, fields.getValuesList(name));
         }
-        return ret;
+        return result;
+    }
+
+    public Map<String, Collection<String>> getRequestHeaders() {
+        return getFieldsAsMap(request.getHeaders());
+    }
+
+    public Map<String, Collection<String>> getResponseHeaders() {
+        return getFieldsAsMap(response.getHeaders());
     }
 
     @Override

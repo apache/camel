@@ -158,8 +158,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         handleMockEndpoints(context, testClass);
         handleMockEndpointsAndSkip(context, testClass);
         handleUseOverridePropertiesWithPropertiesComponent(context, testClass);
-        handleLazyLoadTypeConverters(context, testClass);
-        
+
         // CamelContext(s) startup
         handleCamelContextStartup(context, testClass);
         
@@ -409,29 +408,6 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         }
     }
     
-    @SuppressWarnings("deprecation")
-    protected void handleLazyLoadTypeConverters(GenericApplicationContext context, Class<?> testClass) throws Exception {
-        final boolean lazy;
-        
-        if (testClass.isAnnotationPresent(LazyLoadTypeConverters.class)) {
-            lazy = testClass.getAnnotation(LazyLoadTypeConverters.class).value();
-        } else {
-            lazy = true;
-        }
-         
-        if (lazy) {
-            CamelSpringTestHelper.doToSpringCamelContexts(context, new DoToSpringCamelContextsStrategy() {
-                
-                @Override
-                public void execute(String contextName, SpringCamelContext camelContext)
-                    throws Exception {
-                    LOG.info("Enabling lazy loading of type converters on CamelContext with name [{}].", contextName);
-                    camelContext.setLazyLoadTypeConverters(lazy);
-                }
-            });
-        }
-    }
-
     /**
      * Handles override this method to include and override properties with the Camel {@link org.apache.camel.component.properties.PropertiesComponent}.
      *

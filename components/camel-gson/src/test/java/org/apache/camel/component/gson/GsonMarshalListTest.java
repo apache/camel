@@ -48,7 +48,7 @@ public class GsonMarshalListTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reversePojo");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(List.class);
-        mock.message(0).body().equals(inList);
+        mock.message(0).body().isEqualTo(inList);
 
         String marshalled = template.requestBody("direct:inPojo", inList, String.class);
         assertEquals("[{\"name\":\"Camel1\"},{\"name\":\"Camel2\"}]", marshalled);

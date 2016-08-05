@@ -56,6 +56,8 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
     @XmlAttribute
     private String onPrepareFailureRef;
     @XmlAttribute
+    private String onExceptionOccurredRef;
+    @XmlAttribute
     private String retryWhileRef;
     @XmlAttribute
     private String executorServiceRef;
@@ -91,6 +93,9 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
             }
             if (onPrepareFailureRef != null) {
                 handler.setOnPrepareFailure(lookup(onPrepareFailureRef, Processor.class));
+            }
+            if (onExceptionOccurredRef != null) {
+                handler.setOnExceptionOccurred(lookup(onExceptionOccurredRef, Processor.class));
             }
             if (retryWhileRef != null) {
                 handler.setRetryWhileRef(retryWhileRef);

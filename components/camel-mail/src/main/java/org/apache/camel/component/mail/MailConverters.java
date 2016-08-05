@@ -35,9 +35,12 @@ import javax.mail.search.SearchTerm;
 import com.sun.mail.imap.SortTerm;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.FallbackConverter;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
  * JavaMail specific converters.
@@ -104,12 +107,30 @@ public final class MailConverters {
      * must be text based (ie start with text). Can return null.
      */
     @Converter
-    public static InputStream toInputStream(Multipart multipart) throws IOException, MessagingException {
+    public static InputStream toInputStream(Multipart multipart, Exchange exchange) throws IOException, MessagingException {
         String s = toString(multipart);
         if (s == null) {
             return null;
         }
-        return IOConverter.toInputStream(s, null);
+        return IOConverter.toInputStream(s, exchange);
+    }
+
+    /**
+     * Converts a JavaMail multipart into a body of any type a String can be
+     * converted into. The content-type of the part must be text based.
+     */
+    @FallbackConverter
+    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) throws MessagingException, IOException {
+        if (Multipart.class.isAssignableFrom(value.getClass())) {
+            TypeConverter tc = registry.lookup(type, String.class);
+            if (tc != null) {
+                String s = toString((Multipart)value);
+                if (s != null) {
+                    return tc.convertTo(type, s);
+                }
+            }
+        }
+        return null;
     }
 
     public static SearchTerm toSearchTerm(SimpleSearchTerm simple, TypeConverter typeConverter) throws ParseException, NoTypeConversionAvailableException {

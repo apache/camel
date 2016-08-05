@@ -16,9 +16,6 @@
  */
 package org.apache.camel.test.issues;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.test.spring.CamelSpringTestSupport;

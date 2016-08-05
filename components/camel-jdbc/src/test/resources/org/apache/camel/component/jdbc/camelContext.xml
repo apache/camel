@@ -37,7 +37,7 @@
     </route>
   </camelContext>
   
-  <!-- Just add a demo to show how to bind a date source for camel in Spring-->
+  <!-- Just add a demo to show how to bind a data source for camel in Spring-->
   <jdbc:embedded-database id="testdb" type="DERBY">
   	<jdbc:script location="classpath:sql/init.sql"/>
   </jdbc:embedded-database>

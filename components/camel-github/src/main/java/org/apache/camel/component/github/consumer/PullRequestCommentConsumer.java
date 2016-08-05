@@ -24,6 +24,7 @@ import java.util.Stack;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
 import org.apache.camel.spi.Registry;
 import org.eclipse.egit.github.core.Comment;
@@ -47,7 +48,7 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
         super(endpoint, processor);
 
         Registry registry = endpoint.getCamelContext().getRegistry();
-        Object service = registry.lookupByName("githubPullRequestService");
+        Object service = registry.lookupByName(GitHubConstants.GITHUB_PULL_REQUEST_SERVICE);
         if (service != null) {
             LOG.debug("Using PullRequestService found in registry " + service.getClass().getCanonicalName());
             pullRequestService = (PullRequestService) service;
@@ -56,7 +57,7 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
         }
         initService(pullRequestService);
 
-        service = registry.lookupByName("githbIssueService");
+        service = registry.lookupByName(GitHubConstants.GITHUB_ISSUE_SERVICE);
         if (service != null) {
             issueService = (IssueService) service;
         } else {
@@ -113,7 +114,7 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
             e.getIn().setBody(newComment);
             
             // Required by the producers.  Set it here for convenience.
-            e.getIn().setHeader("GitHubPullRequest", commentIdToPullRequest.get(newComment.getId()));
+            e.getIn().setHeader(GitHubConstants.GITHUB_PULLREQUEST, commentIdToPullRequest.get(newComment.getId()));
             
             getProcessor().process(e);
         }

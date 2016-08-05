@@ -22,62 +22,75 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <onException>
-            <exception>org.apache.camel.processor.ThrottlerRejectedExecutionException</exception>
-            <handled><constant>true</constant></handled>
-            <to uri="mock:error"/>
-        </onException>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <onException>
+      <exception>org.apache.camel.processor.ThrottlerRejectedExecutionException</exception>
+      <handled>
+        <constant>true</constant>
+      </handled>
+      <to uri="mock:error"/>
+    </onException>
 
-        <!-- START SNIPPET: example -->
-        <route>
-            <from uri="seda:a"/>
-            <!-- throttle 3 messages per 10 sec -->
-            <throttle timePeriodMillis="10000">
-                <constant>3</constant>
-                <to uri="mock:result"/>
-            </throttle>
-        </route>
-        <!-- END SNIPPET: example -->
+    <!-- START SNIPPET: example -->
+    <route>
+      <from uri="seda:a"/>
+      <!-- throttle 3 messages per 10 sec -->
+      <throttle timePeriodMillis="10000">
+        <constant>3</constant>
+        <to uri="log:result"/>
+        <to uri="mock:result"/>
+      </throttle>
+    </route>
+    <!-- END SNIPPET: example -->
 
-        <route>
-            <from uri="direct:a"/>
-            <!-- throttle 1 messages per 0.5 sec -->
-            <throttle timePeriodMillis="500">
-                <constant>1</constant>
-                <to uri="mock:result"/>
-            </throttle>
-        </route>
+    <route>
+      <from uri="direct:a"/>
+      <!-- throttle 1 messages per 0.5 sec -->
+      <throttle timePeriodMillis="500">
+        <constant>1</constant>
+        <to uri="log:result"/>
+        <to uri="mock:result"/>
+      </throttle>
+    </route>
 
-        <route>
-            <from uri="direct:expressionConstant"/>
-            <throttle timePeriodMillis="500">
-                <constant>1</constant>
-                <to uri="mock:result"/>
-            </throttle>
-        </route>
+    <route>
+      <from uri="direct:expressionConstant"/>
+      <throttle timePeriodMillis="500">
+        <constant>1</constant>
+        <to uri="mock:result"/>
+      </throttle>
+    </route>
 
-        <!-- START SNIPPET: e2 -->
-        <route>
-            <from uri="direct:expressionHeader"/>
-            <throttle timePeriodMillis="500">
-                <!-- use a header to determine how many messages to throttle per 0.5 sec -->
-                <header>throttleValue</header>
-                <to uri="mock:result"/>
-            </throttle>
-        </route>
-        <!-- END SNIPPET: e2 -->
-        
-        <route>
-            <from uri="direct:start"/>
-            <!-- throttle 2 messages per 10 sec -->
-            <throttle timePeriodMillis="10000" rejectExecution="true">
-                <constant>2</constant>
-                <to uri="mock:result"/>
-            </throttle>
-            
-        </route>
+    <!-- START SNIPPET: e2 -->
+    <route>
+      <from uri="direct:expressionHeader"/>
+      <throttle timePeriodMillis="500">
+        <!-- use a header to determine how many messages to throttle per 0.5 sec -->
+        <header>throttleValue</header>
+        <to uri="log:result"/>
+        <to uri="mock:result"/>
+      </throttle>
+    </route>
+    <!-- END SNIPPET: e2 -->
 
-    </camelContext>
+    <route>
+      <from uri="direct:start"/>
+      <!-- throttle 2 messages per 10 sec -->
+      <throttle timePeriodMillis="10000" rejectExecution="true">
+        <constant>2</constant>
+        <to uri="log:result"/>
+        <to uri="mock:result"/>
+      </throttle>
+    </route>
+
+    <route>
+      <from uri="direct:highThrottleRate"/>
+      <throttle timePeriodMillis="500">
+        <constant>1000</constant>
+        <to uri="mock:result"/>
+      </throttle>
+    </route>
+
+  </camelContext>
 
 </beans>

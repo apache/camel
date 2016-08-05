@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
@@ -44,6 +45,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+
 import org.xml.sax.SAXException;
 
 import org.apache.camel.CamelContext;
@@ -53,6 +55,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
@@ -61,14 +64,13 @@ import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using JAXB2 to marshal to and from XML
  *
  * @version
  */
-public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(JaxbDataFormat.class);
     private static final BlockingQueue<SchemaFactory> SCHEMA_FACTORY_POOL = new LinkedBlockingQueue<SchemaFactory>();
@@ -80,8 +82,10 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     private String contextPath;
     private String schema;
     private String schemaLocation;
+    private String noNamespaceSchemaLocation;
 
     private boolean prettyPrint = true;
+    private boolean objectFactory;
     private boolean ignoreJAXBElement = true;
     private boolean mustBeJAXBElement = true;
     private boolean filterNonXmlChars;
@@ -109,6 +113,11 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         this.contextPath = contextPath;
     }
 
+    @Override
+    public String getDataFormatName() {
+        return "jaxb";
+    }
+
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException, SAXException {
         try {
             // must create a new instance of marshaller as its not thread safe
@@ -131,6 +140,9 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             if (ObjectHelper.isNotEmpty(schemaLocation)) {
                 marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, schemaLocation);
             }
+            if (ObjectHelper.isNotEmpty(noNamespaceSchemaLocation)) {
+                marshaller.setProperty(Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION, noNamespaceSchemaLocation);
+            }
             if (namespacePrefixMapper != null) {
                 marshaller.setProperty(namespacePrefixMapper.getRegistrationKey(), namespacePrefixMapper);
             }
@@ -145,13 +157,13 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     void marshal(Exchange exchange, Object graph, OutputStream stream, Marshaller marshaller)
         throws XMLStreamException, JAXBException, NoTypeConversionAvailableException, IOException, InvalidPayloadException {
 
-        Object e = graph;
+        Object element = graph;
         if (partialClass != null && getPartNamespace() != null) {
-            e = new JAXBElement<Object>(getPartNamespace(), partialClass, graph);
+            element = new JAXBElement<Object>(getPartNamespace(), partialClass, graph);
         }
 
         // only marshal if its possible
-        if (introspector.isElement(e)) {
+        if (introspector.isElement(element)) {
             if (asXmlStreamWriter(exchange)) {
                 XMLStreamWriter writer = typeConverter.convertTo(XMLStreamWriter.class, stream);
                 if (needFiltering(exchange)) {
@@ -160,11 +172,40 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
                 if (xmlStreamWriterWrapper != null) {
                     writer = xmlStreamWriterWrapper.wrapWriter(writer);
                 }
-                marshaller.marshal(e, writer);
+                marshaller.marshal(element, writer);
             } else {
-                marshaller.marshal(e, stream);
+                marshaller.marshal(element, stream);
             }
-        } else if (!mustBeJAXBElement) {
+            return;
+        } else if (objectFactory && element != null) {
+            Method objectFactoryMethod = JaxbHelper.getJaxbElementFactoryMethod(camelContext, element.getClass());
+            if (objectFactoryMethod != null) {
+                try {
+                    Object instance = objectFactoryMethod.getDeclaringClass().newInstance();
+                    if (instance != null) {
+                        Object toMarshall = objectFactoryMethod.invoke(instance, element);
+                        if (asXmlStreamWriter(exchange)) {
+                            XMLStreamWriter writer = typeConverter.convertTo(XMLStreamWriter.class, stream);
+                            if (needFiltering(exchange)) {
+                                writer = new FilteringXmlStreamWriter(writer);
+                            }
+                            if (xmlStreamWriterWrapper != null) {
+                                writer = xmlStreamWriterWrapper.wrapWriter(writer);
+                            }
+                            marshaller.marshal(toMarshall, writer);
+                        } else {
+                            marshaller.marshal(toMarshall, stream);
+                        }
+                        return;
+                    }
+                } catch (Exception e) {
+                    LOG.debug("Unable to create JAXBElement object for type " + element.getClass() + " due to " + e.getMessage(), e);
+                }
+            }
+        }
+
+        // cannot marshal
+        if (!mustBeJAXBElement) {
             // write the graph as is to the output stream
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Attempt to marshalling non JAXBElement with type {} as InputStream", ObjectHelper.classCanonicalName(graph));
@@ -276,6 +317,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         this.prettyPrint = prettyPrint;
     }
 
+    public boolean isObjectFactory() {
+        return objectFactory;
+    }
+
+    public void setObjectFactory(boolean objectFactory) {
+        this.objectFactory = objectFactory;
+    }
+
     public boolean isFragment() {
         return fragment;
     }
@@ -356,6 +405,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         this.schemaLocation = schemaLocation;
     }
 
+    public String getNoNamespaceSchemaLocation() {
+        return schemaLocation;
+    }
+
+    public void setNoNamespaceSchemaLocation(String schemaLocation) {
+        this.noNamespaceSchemaLocation = schemaLocation;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
@@ -380,6 +437,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         if (schema != null) {
             cachedSchema = createSchema(getSources());
         }
+
+        LOG.debug("JaxbDataFormat [prettyPrint={}, objectFactory={}]", prettyPrint, objectFactory);
     }
 
     @Override
@@ -395,14 +454,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             // load the the class which has been JAXB annotated
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl != null) {
-                LOG.info("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);
+                LOG.debug("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);
                 return JAXBContext.newInstance(contextPath, cl);
             } else {
-                LOG.info("Creating JAXBContext with contextPath: " + contextPath);
+                LOG.debug("Creating JAXBContext with contextPath: " + contextPath);
                 return JAXBContext.newInstance(contextPath);
             }
         } else {
-            LOG.info("Creating JAXBContext");
+            LOG.debug("Creating JAXBContext");
             return JAXBContext.newInstance();
         }
     }

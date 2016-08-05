@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Represents an endpoint that synchronously invokes an LDAP server when a producer sends a message to it.
+ * The ldap component allows you to perform searches in LDAP servers using filters as the message payload.
  */
 @UriEndpoint(scheme = "ldap", title = "LDAP", syntax = "ldap:dirContextName", producerOnly = true, label = "ldap")
 public class LdapEndpoint extends DefaultEndpoint {

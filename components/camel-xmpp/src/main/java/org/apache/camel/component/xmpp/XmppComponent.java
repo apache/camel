@@ -56,7 +56,13 @@ public class XmppComponent extends UriEndpointComponent {
         endpoint.setHost(u.getHost());
         endpoint.setPort(u.getPort());
         if (u.getUserInfo() != null) {
-            endpoint.setUser(u.getUserInfo());
+            String[] parts = u.getUserInfo().split(":");
+            if (parts.length == 2) {
+                endpoint.setUser(parts[0]);
+                endpoint.setPassword(parts[1]);
+            } else {
+                endpoint.setUser(u.getUserInfo());
+            }
         }
         String remainingPath = u.getPath();
         if (remainingPath != null) {

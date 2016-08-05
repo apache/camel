@@ -26,14 +26,16 @@ public enum OAuthScope {
     R_EMAILADDRESS("r_emailaddress"),
     R_NETWORK("r_network"),
     R_CONTACTINFO("r_contactinfo"),
+    @Deprecated // use W_SHARE instead
     RW_NUS("rw_nus"),
     RW_COMPANY_ADMIN("rw_company_admin"),
     RW_GROUPS("rw_groups"),
-    W_MESSAGES("w_messages");
+    W_MESSAGES("w_messages"),
+    W_SHARE("w_share");
 
     private final String value;
 
-    private OAuthScope(String value) {
+    OAuthScope(String value) {
         this.value = value;
     }
 

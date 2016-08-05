@@ -47,13 +47,13 @@ public class JGroupsComponentTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        JGroupsComponent defaultComponent = new JGroupsComponent();
-        defaultComponent.setChannel(defaultComponentChannel);
-        context().addComponent("my-default-jgroups", defaultComponent);
-
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                JGroupsComponent defaultComponent = new JGroupsComponent();
+                defaultComponent.setChannel(defaultComponentChannel);
+                context().addComponent("my-default-jgroups", defaultComponent);
+
                 from("my-default-jgroups:" + CLUSTER_NAME).to("mock:default");
                 from(CONFIGURED_ENDPOINT_URI).to("mock:configured");
             }

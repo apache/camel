@@ -30,7 +30,6 @@ public final class SplunkSavedSearchClient {
         LOG.info("About to run splunk-camel integration...");
         Main main = new Main();
         main.addRouteBuilder(new SplunkSavedSearchRouteBuilder());
-        main.enableHangupSupport();
         main.run();
     }
 }

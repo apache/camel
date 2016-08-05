@@ -16,16 +16,14 @@
  */
 package org.apache.camel.component.twitter.data;
 
-public enum ConsumerType {
+import org.apache.camel.component.twitter.TwitterHelper;
 
+public enum ConsumerType {
     TIMELINE, SEARCH, DIRECTMESSAGE, STREAMING, UNKNOWN;
 
+    private static final ConsumerType[] VALUES = values();
+
     public static ConsumerType fromUri(String uri) {
-        for (ConsumerType consumerType : ConsumerType.values()) {
-            if (consumerType.name().equalsIgnoreCase(uri)) {
-                return consumerType;
-            }
-        }
-        return ConsumerType.UNKNOWN;
+        return TwitterHelper.enumFromString(VALUES, uri, ConsumerType.UNKNOWN);
     }
 }

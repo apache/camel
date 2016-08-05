@@ -18,7 +18,6 @@ package org.apache.camel.dataformat.xstream;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
-import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 

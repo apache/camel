@@ -39,7 +39,7 @@ public class FacebookMethodsTypeTest {
                 // check all methods of this *Methods interface
                 for (Method method : clazz.getDeclaredMethods()) {
                     final FacebookMethodsType methodsType = FacebookMethodsType.findMethod(method.getName(), method.getParameterTypes());
-                    assertNotNull(methodsType);
+                    assertNotNull("Expected method mapping not found:" + method.getName(), methodsType);
                     assertEquals("Methods are not equal", method, methodsType.getMethod());
                 }
             }

@@ -20,8 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-import org.jsmpp.bean.OptionalParameter.COctetString;
-import org.jsmpp.bean.OptionalParameter.OctetString;
+import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.session.SMPPSession;
 import org.junit.Before;
@@ -64,11 +63,11 @@ public class AbstractSmppCommandTest {
 
     @Test
     public void determineTypeClass() throws Exception {
-        assertSame(OctetString.class, command.determineTypeClass(Tag.SOURCE_SUBADDRESS));
-        assertSame(COctetString.class, command.determineTypeClass(Tag.ADDITIONAL_STATUS_INFO_TEXT));
-        assertSame(org.jsmpp.bean.OptionalParameter.Byte.class, command.determineTypeClass(Tag.DEST_ADDR_SUBUNIT));
-        assertSame(org.jsmpp.bean.OptionalParameter.Short.class, command.determineTypeClass(Tag.DEST_TELEMATICS_ID));
-        assertSame(org.jsmpp.bean.OptionalParameter.Int.class, command.determineTypeClass(Tag.QOS_TIME_TO_LIVE));
-        assertSame(org.jsmpp.bean.OptionalParameter.Null.class, command.determineTypeClass(Tag.ALERT_ON_MESSAGE_DELIVERY));
+        assertSame(OptionalParameter.Source_subaddress.class, command.determineTypeClass(Tag.SOURCE_SUBADDRESS));
+        assertSame(OptionalParameter.Additional_status_info_text.class, command.determineTypeClass(Tag.ADDITIONAL_STATUS_INFO_TEXT));
+        assertSame(OptionalParameter.Dest_addr_subunit.class, command.determineTypeClass(Tag.DEST_ADDR_SUBUNIT));
+        assertSame(OptionalParameter.Dest_telematics_id.class, command.determineTypeClass(Tag.DEST_TELEMATICS_ID));
+        assertSame(OptionalParameter.Qos_time_to_live.class, command.determineTypeClass(Tag.QOS_TIME_TO_LIVE));
+        assertSame(OptionalParameter.Alert_on_message_delivery.class, command.determineTypeClass(Tag.ALERT_ON_MESSAGE_DELIVERY));
     }
 }

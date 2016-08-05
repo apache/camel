@@ -37,9 +37,11 @@ import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 
 /**
- * Represents a Box endpoint.
+ * For uploading, downloading and managing files, folders, groups, collaborations, etc on box DOT com.
  */
-@UriEndpoint(scheme = "box", title = "Box", syntax = "box:apiName/methodName", consumerClass = BoxConsumer.class, consumerPrefix = "consumer", label = "api,file,cloud")
+@UriEndpoint(scheme = "box", title = "Box", syntax = "box:apiName/methodName", consumerClass = BoxConsumer.class, consumerPrefix = "consumer", label = "api,file,cloud",
+        lenientProperties = true)
+// need to be lenient as the box component has a bunch of generated configuration classes that lacks documentation
 public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguration> {
 
     private static final String SHARED_LINK_PROPERTY = "sharedLink";
@@ -173,6 +175,7 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
             if (ObjectHelper.isEmpty(sharedLink)) {
                 throw new IllegalArgumentException("Missing required property sharedLink");
             }
+            break;
         default:
         }
 

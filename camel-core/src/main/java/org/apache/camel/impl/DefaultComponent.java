@@ -41,8 +41,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Default component to use for base for components implementations.
- *
- * @version 
  */
 public abstract class DefaultComponent extends ServiceSupport implements Component {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultComponent.class);
@@ -106,7 +104,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         validateURI(uri, path, parameters);
         if (LOG.isTraceEnabled()) {
             // at trace level its okay to have parameters logged, that may contain passwords
-            LOG.trace("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", new Object[]{URISupport.sanitizeUri(uri), URISupport.sanitizePath(path), parameters});
+            LOG.trace("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path), parameters);
         } else if (LOG.isDebugEnabled()) {
             // but at debug level only output sanitized uris
             LOG.debug("Creating endpoint uri=[{}], path=[{}]", new Object[]{URISupport.sanitizeUri(uri), URISupport.sanitizePath(path)});
@@ -116,17 +114,15 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             return null;
         }
 
-        if (!parameters.isEmpty()) {
-            endpoint.configureProperties(parameters);
-            if (useIntrospectionOnEndpoint()) {
-                setProperties(endpoint, parameters);
-            }
+        endpoint.configureProperties(parameters);
+        if (useIntrospectionOnEndpoint()) {
+            setProperties(endpoint, parameters);
+        }
 
-            // if endpoint is strict (not lenient) and we have unknown parameters configured then
-            // fail if there are parameters that could not be set, then they are probably misspell or not supported at all
-            if (!endpoint.isLenientProperties()) {
-                validateParameters(uri, parameters, null);
-            }
+        // if endpoint is strict (not lenient) and we have unknown parameters configured then
+        // fail if there are parameters that could not be set, then they are probably misspell or not supported at all
+        if (!endpoint.isLenientProperties()) {
+            validateParameters(uri, parameters, null);
         }
 
         afterConfiguration(uri, path, endpoint, parameters);
@@ -174,6 +170,10 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
      */
     protected void validateParameters(String uri, Map<String, Object> parameters, String optionPrefix) {
+        if (parameters == null || parameters.isEmpty()) {
+            return;
+        }
+
         Map<String, Object> param = parameters;
         if (optionPrefix != null) {
             param = IntrospectionSupport.extractProperties(parameters, optionPrefix);
@@ -196,12 +196,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
      */
     protected void validateURI(String uri, String path, Map<String, Object> parameters) {
-        // check for uri containing & but no ? marker
-        if (uri.contains("&") && !uri.contains("?")) {
-            throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: no ? marker however the uri "
-                + "has & parameter separators. Check the uri if its missing a ? marker.");
-        }
-
         // check for uri containing double && markers without include by RAW
         if (uri.contains("&&")) {
             Pattern pattern = Pattern.compile("RAW(.*&&.*)");
@@ -258,9 +252,19 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param parameters  properties to set
      */
     protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {        
+        setProperties(getCamelContext(), bean, parameters);
+    }
+
+    /**
+     * Sets the bean properties on the given bean using the given {@link CamelContext}
+     * @param camelContext  the {@link CamelContext} to use
+     * @param bean  the bean
+     * @param parameters  properties to set
+     */
+    protected void setProperties(CamelContext camelContext, Object bean, Map<String, Object> parameters) throws Exception {
         // set reference properties first as they use # syntax that fools the regular properties setter
-        EndpointHelper.setReferenceProperties(getCamelContext(), bean, parameters);
-        EndpointHelper.setProperties(getCamelContext(), bean, parameters);
+        EndpointHelper.setReferenceProperties(camelContext, bean, parameters);
+        EndpointHelper.setProperties(camelContext, bean, parameters);
     }
 
     /**
@@ -376,7 +380,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         if (value == null) {
             return defaultValue;
         } else {
-            return EndpointHelper.resolveReferenceParameter(getCamelContext(), value.toString(), type);
+            return EndpointHelper.resolveReferenceParameter(getCamelContext(), value, type);
         }
     }
     
@@ -397,7 +401,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @see EndpointHelper#resolveReferenceListParameter(CamelContext, String, Class)
      */
     public <T> List<T> resolveAndRemoveReferenceListParameter(Map<String, Object> parameters, String key, Class<T> elementType) {
-        return resolveAndRemoveReferenceListParameter(parameters, key, elementType, new ArrayList<T>(0));
+        return resolveAndRemoveReferenceListParameter(parameters, key, elementType, new ArrayList<>(0));
     }
 
     /**
@@ -424,7 +428,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         if (value == null) {
             return defaultValue;
         } else {
-            return EndpointHelper.resolveReferenceListParameter(getCamelContext(), value.toString(), elementType);
+            return EndpointHelper.resolveReferenceListParameter(getCamelContext(), value, elementType);
         }
     }
     

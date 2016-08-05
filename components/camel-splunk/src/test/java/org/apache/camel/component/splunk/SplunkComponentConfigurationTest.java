@@ -52,7 +52,7 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
 
         SplunkEndpoint endpoint = (SplunkEndpoint)component
             .createEndpoint("splunk://tcp?username=test&password=pw&host=myhost&port=3333&" + "tcpReceiverPort=4444&index=myindex&sourceType=testSource&"
-                            + "source=test&owner=me&app=fantasticapp&useSunHttpsHandler=true&raw=true&sslProtocol=SSLv3");
+                            + "source=test&eventHost=original-host.com&owner=me&app=fantasticapp&useSunHttpsHandler=true&raw=true&sslProtocol=SSLv3");
         assertEquals("myhost", endpoint.getConfiguration().getHost());
         assertEquals(3333, endpoint.getConfiguration().getPort());
         assertEquals("test", endpoint.getConfiguration().getUsername());
@@ -61,6 +61,7 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
         assertEquals("myindex", endpoint.getConfiguration().getIndex());
         assertEquals("testSource", endpoint.getConfiguration().getSourceType());
         assertEquals("test", endpoint.getConfiguration().getSource());
+        assertEquals("original-host.com", endpoint.getConfiguration().getEventHost());
         assertEquals("me", endpoint.getConfiguration().getOwner());
         assertEquals("fantasticapp", endpoint.getConfiguration().getApp());
         assertTrue(endpoint.getConfiguration().isUseSunHttpsHandler());

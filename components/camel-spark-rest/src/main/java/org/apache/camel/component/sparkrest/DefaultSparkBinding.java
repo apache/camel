@@ -23,6 +23,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -33,6 +34,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
@@ -69,8 +71,27 @@ public class DefaultSparkBinding implements SparkBinding {
         headers.put(Exchange.HTTP_QUERY, request.raw().getQueryString());
         headers.put(Exchange.HTTP_URL, request.raw().getRequestURL().toString());
         headers.put(Exchange.HTTP_URI, request.raw().getRequestURI());
-        headers.put(Exchange.HTTP_PATH, request.raw().getPathInfo());
         headers.put(Exchange.CONTENT_TYPE, request.raw().getContentType());
+
+        String path = request.raw().getPathInfo();
+        SparkEndpoint endpoint = (SparkEndpoint) exchange.getFromEndpoint();
+        if (endpoint.getPath() != null) {
+            // need to match by lower case as we want to ignore case on context-path
+            String endpointPath = endpoint.getPath();
+            String matchPath = path.toLowerCase(Locale.US);
+            String match = endpointPath.toLowerCase(Locale.US);
+
+            if (match.endsWith("/*")) {
+                match = match.substring(0, match.length() - 2);
+            }
+            if (!match.startsWith("/")) {
+                match = "/" + match;
+            }
+            if (matchPath.startsWith(match)) {
+                path = path.substring(match.length());
+            }
+        }
+        headers.put(Exchange.HTTP_PATH, path);
 
         for (String key : request.attributes()) {
             Object value = request.attribute(key);
@@ -127,6 +148,12 @@ public class DefaultSparkBinding implements SparkBinding {
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
+
+            if (Exchange.CONTENT_TYPE.equalsIgnoreCase(key)) {
+               // we set content-type later
+                continue;
+            }
+
             // use an iterator as there can be multiple values. (must not use a delimiter)
             final Iterator<?> it = ObjectHelper.createIterator(value, null);
             while (it.hasNext()) {

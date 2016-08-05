@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
 import com.thoughtworks.xstream.XStream;
@@ -35,7 +36,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
-import org.apache.camel.component.salesforce.api.JodaTimeConverter;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
@@ -45,6 +45,8 @@ import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SearchResults;
 import org.apache.camel.component.salesforce.api.dto.Versions;
+import org.apache.camel.component.salesforce.api.utils.DateTimeConverter;
+import org.apache.camel.component.salesforce.internal.client.XStreamUtils;
 import org.eclipse.jetty.util.StringUtil;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_NAME;
@@ -56,22 +58,24 @@ public class XmlRestProcessor extends AbstractRestProcessor {
     // not very efficient when both JSON and XML are used together with a single Thread pool
     // but this will do for now
     private static ThreadLocal<XStream> xStream =
-            new ThreadLocal<XStream>() {
-                @Override
-                protected XStream initialValue() {
-                    // use NoNameCoder to avoid escaping __ in custom field names
-                    // and CompactWriter to avoid pretty printing
-                    XStream result = new XStream(new XppDriver(new NoNameCoder()) {
-                        @Override
-                        public HierarchicalStreamWriter createWriter(Writer out) {
-                            return new CompactWriter(out, getNameCoder());
-                        }
+        new ThreadLocal<XStream>() {
+            @Override
+            protected XStream initialValue() {
+                // use NoNameCoder to avoid escaping __ in custom field names
+                // and CompactWriter to avoid pretty printing
+                XStream result = new XStream(new XppDriver(new NoNameCoder()) {
+                    @Override
+                    public HierarchicalStreamWriter createWriter(Writer out) {
+                        return new CompactWriter(out, getNameCoder());
+                    }
 
-                    });
-                    result.registerConverter(new JodaTimeConverter());
-                    return result;
-                }
-            };
+                });
+                result.ignoreUnknownElements();
+                XStreamUtils.addDefaultPermissions(result);
+                result.registerConverter(new DateTimeConverter());
+                return result;
+            }
+        };
 
     private static final String RESPONSE_ALIAS = XmlRestProcessor.class.getName() + ".responseAlias";
 
@@ -168,7 +172,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                     localXStream.processAnnotations(dto.getClass());
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
                     // make sure we write the XML with the right encoding
-                    localXStream.toXML(dto, new OutputStreamWriter(out, StringUtil.__UTF8_CHARSET));
+                    localXStream.toXML(dto, new OutputStreamWriter(out, StringUtil.__UTF8));
                     request = new ByteArrayInputStream(out.toByteArray());
                 } else {
                     // if all else fails, get body as String
@@ -178,12 +182,15 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                             + (in.getBody() == null ? null : in.getBody().getClass());
                         throw new SalesforceException(msg, null);
                     } else {
-                        request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8_CHARSET));
+                        request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8));
                     }
                 }
             }
             return request;
         } catch (XStreamException e) {
+            String msg = "Error marshaling request: " + e.getMessage();
+            throw new SalesforceException(msg, e);
+        } catch (UnsupportedEncodingException e) {
             String msg = "Error marshaling request: " + e.getMessage();
             throw new SalesforceException(msg, e);
         }
@@ -227,7 +234,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
             }
             // copy headers and attachments
             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-            exchange.getOut().getAttachments().putAll(exchange.getIn().getAttachments());
+            exchange.getOut().getAttachmentObjects().putAll(exchange.getIn().getAttachmentObjects());
         } catch (XStreamException e) {
             String msg = "Error parsing XML response: " + e.getMessage();
             exchange.setException(new SalesforceException(msg, e));

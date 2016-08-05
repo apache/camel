@@ -48,7 +48,7 @@ public class RedisConsumer extends DefaultConsumer implements MessageListener {
 
     private Collection<Topic> toTopics(String channels) {
         String[] channelsArrays = channels.split(",");
-        List<Topic> topics = new ArrayList<Topic>();
+        List<Topic> topics = new ArrayList<>();
         for (String channel : channelsArrays) {
             String name = channel.trim();
             if (Command.PSUBSCRIBE.equals(redisConfiguration.getCommand())) {

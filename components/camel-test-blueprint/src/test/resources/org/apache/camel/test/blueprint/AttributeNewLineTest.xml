@@ -18,7 +18,7 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="
-             http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
 
@@ -33,6 +33,11 @@
               timeout=10000&amp;
               blockWhenFull=true"/>
       <to uri="mock:bar"/>
+    </route>
+
+    <route>
+      <from uri="stub:GET    /v1/phonebook/companies/{companyCode}?oauth=OPTIONAL"/>
+      <to uri="mock:stub"/>
     </route>
 
   </camelContext>

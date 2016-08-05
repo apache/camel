@@ -45,10 +45,10 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
-                        + " \"deprecated\": \"false\", \"description\": \"Name of data format\" }"));
-        assertTrue(json.contains("\"operation\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\""));
-        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
+                        + " \"deprecated\": \"false\", \"secret\": \"false\", \"description\": \"Name of data format\" }"));
+        assertTrue(json.contains("\"operation\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\", \"type\": \"string\""));
+        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
 
         // the default value is a bit tricky as its ", which is written escaped as \"
         assertTrue(json.contains("\"textQualifier\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"string\""
-                + ", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\", \"defaultValue\": \"\\\"\""));
+                + ", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"\\\"\""));
 
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
         assertEquals(9, rows.size());
@@ -87,6 +87,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
         assertEquals("string", found.get("type"));
         assertEquals("java.lang.String", found.get("javaType"));
         assertEquals("false", found.get("deprecated"));
+        assertEquals("false", found.get("secret"));
         assertEquals("\"", found.get("defaultValue"));
         assertEquals("If the text is qualified with a char such as \"", found.get("description"));
     }
@@ -101,7 +102,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
 
         // the default value is a bit tricky as its \, which is written escaped as \\
         assertTrue(json.contains("\"escapeChar\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
-                + " \"deprecated\": \"false\", \"defaultValue\": \"\\\\\", \"description\": \"The escape character.\""));
+                + " \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"\\\\\", \"description\": \"The escape character.\""));
 
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
         assertEquals(15, rows.size());
@@ -120,6 +121,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
         assertEquals("string", found.get("type"));
         assertEquals("java.lang.String", found.get("javaType"));
         assertEquals("false", found.get("deprecated"));
+        assertEquals("false", found.get("secret"));
         assertEquals("\\", found.get("defaultValue"));
         assertEquals("The escape character.", found.get("description"));
     }

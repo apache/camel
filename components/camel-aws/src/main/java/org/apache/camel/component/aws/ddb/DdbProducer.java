@@ -27,6 +27,8 @@ import org.apache.camel.util.URISupport;
  */
 public class DdbProducer extends DefaultProducer {
 
+    private transient String ddbProducerToString;
+    
     public DdbProducer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -79,7 +81,10 @@ public class DdbProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        return "DdbProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (ddbProducerToString == null) {
+            ddbProducerToString = "DdbProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return ddbProducerToString;
     }
 
     @Override

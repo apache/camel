@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.undertow.handlers;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -29,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.undertow.ExchangeHeaders;
 import org.apache.camel.component.undertow.UndertowConsumer;
+import org.apache.camel.component.undertow.UndertowConsumerResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,31 +43,31 @@ import org.slf4j.LoggerFactory;
  * This class can be considered part of UndertowConsumer implementation.
  */
 public class HttpCamelHandler implements HttpHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(UndertowConsumer.class);
-
-    private UndertowConsumer consumer;
-
-    public HttpCamelHandler(UndertowConsumer consumer) {
-        this.consumer = consumer;
-    }
-
-    public UndertowConsumer getConsumer() {
-        return consumer;
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(HttpCamelHandler.class);
+    private UndertowConsumerResolver resolver = new UndertowConsumerResolver();
+    private ConcurrentMap<String, UndertowConsumer> consumers = new ConcurrentHashMap<String, UndertowConsumer>();
 
     @Override
     public void handleRequest(HttpServerExchange httpExchange) throws Exception {
+        UndertowConsumer consumer = resolver.resolve(httpExchange, consumers);
+
+        if (consumer == null) {
+            LOG.debug("Unable to resolve consumer matching path {}", httpExchange.getRequestPath());
+            new NotFoundHandler().handleRequest(httpExchange);
+            return;
+        }
+
         HttpString requestMethod = httpExchange.getRequestMethod();
 
-        if (Methods.OPTIONS.equals(requestMethod)) {
+        if (Methods.OPTIONS.equals(requestMethod) && !consumer.getEndpoint().isOptionsEnabled()) {
             String allowedMethods;
             if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
-                allowedMethods = "OPTIONS" + consumer.getEndpoint().getHttpMethodRestrict();
+                allowedMethods = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
             } else {
                 allowedMethods = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
             }
             //return list of allowed methods in response headers
-            httpExchange.setResponseCode(StatusCodes.OK);
+            httpExchange.setStatusCode(StatusCodes.OK);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_LENGTH, 0);
             httpExchange.getResponseHeaders().put(Headers.ALLOW, allowedMethods);
@@ -74,7 +78,7 @@ public class HttpCamelHandler implements HttpHandler {
         //reject if the method is not allowed
         if (consumer.getEndpoint().getHttpMethodRestrict() != null
             && !consumer.getEndpoint().getHttpMethodRestrict().contains(requestMethod.toString())) {
-            httpExchange.setResponseCode(StatusCodes.METHOD_NOT_ALLOWED);
+            httpExchange.setStatusCode(StatusCodes.METHOD_NOT_ALLOWED);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_LENGTH, 0);
             httpExchange.getResponseSender().close();
@@ -101,7 +105,7 @@ public class HttpCamelHandler implements HttpHandler {
             consumer.doneUoW(camelExchange);
         }
 
-        Object body = getResponseBody(httpExchange, camelExchange);
+        Object body = getResponseBody(httpExchange, camelExchange, consumer);
         TypeConverter tc = consumer.getEndpoint().getCamelContext().getTypeConverter();
 
         if (body == null) {
@@ -115,8 +119,7 @@ public class HttpCamelHandler implements HttpHandler {
         httpExchange.getResponseSender().close();
     }
 
-
-    private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange) {
+    private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange, UndertowConsumer consumer) throws IOException {
         Object result;
         if (camelExchange.hasOut()) {
             result = consumer.getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getOut());
@@ -126,4 +129,7 @@ public class HttpCamelHandler implements HttpHandler {
         return result;
     }
 
+    public void connectConsumer(UndertowConsumer consumer) {
+        consumers.put(consumer.getEndpoint().getEndpointUri(), consumer);
+    }
 }

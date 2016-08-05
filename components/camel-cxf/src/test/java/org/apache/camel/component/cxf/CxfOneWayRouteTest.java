@@ -61,7 +61,7 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
     
     protected Greeter getCXFClient() throws Exception {
         Service service = Service.create(SERVICE_NAME);
-        service.addPort(PORT_NAME , "http://schemas.xmlsoap.org/soap/", ROUTER_ADDRESS);
+        service.addPort(PORT_NAME, "http://schemas.xmlsoap.org/soap/", ROUTER_ADDRESS);
         Greeter greeter = service.getPort(PORT_NAME, Greeter.class);
         return greeter;
     }

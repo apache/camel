@@ -37,7 +37,15 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getAmazonSNSEndpoint());
         assertNull(endpoint.getConfiguration().getPolicy());
     }
-    
+
+    public void createEndpointWithMinimalArnConfiguration() throws Exception {
+        SnsComponent component = new SnsComponent(context);
+        SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://arn:aws:sns:region:account:MyTopic?accessKey=xxx&secretKey=yyy");
+
+        assertNull(endpoint.getConfiguration().getTopicName());
+        assertEquals("arn:aws:sns:region:account:MyTopic", endpoint.getConfiguration().getTopicArn());
+    }
+
     @Test
     public void createEndpointWithMinimalConfigurationAndProvidedClient() throws Exception {
         AmazonSNSClientMock mock = new AmazonSNSClientMock();

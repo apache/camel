@@ -39,6 +39,7 @@ public class IrcMessage extends DefaultMessage {
         this.messageType = messageType;
         this.user = user;
         this.message = message;
+        setBody(message);
     }
 
     public IrcMessage(String messageType, String target, IRCUser user, String message) {
@@ -46,6 +47,7 @@ public class IrcMessage extends DefaultMessage {
         this.target = target;
         this.user = user;
         this.message = message;
+        setBody(message);
     }
 
     public IrcMessage(String messageType, String target, IRCUser user, String whoWasKickedNick, String message) {
@@ -54,6 +56,7 @@ public class IrcMessage extends DefaultMessage {
         this.user = user;
         this.whoWasKickedNick = whoWasKickedNick;
         this.message = message;
+        setBody(message);
     }
 
     public IrcMessage(String messageType, String target, IRCUser user) {
@@ -67,6 +70,7 @@ public class IrcMessage extends DefaultMessage {
         this.num = num;
         this.value = value;
         this.message = message;
+        setBody(message);
     }
 
     public String getMessageType() {

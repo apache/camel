@@ -22,7 +22,7 @@ package org.apache.camel.component.sjms.jms;
  * This can be used for sending keys contain package names that is common by
  * Java frameworks.
  */
-public class DefaultJmsKeyFormatStrategy implements KeyFormatStrategy {
+public class DefaultJmsKeyFormatStrategy implements JmsKeyFormatStrategy {
 
     public String encodeKey(String key) {
         String answer = key.replace(".", "_DOT_");

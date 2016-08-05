@@ -31,6 +31,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.xmlrpc.XmlRpcConstants;
 import org.apache.camel.component.xmlrpc.XmlRpcRequestImpl;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.ws.commons.serialize.CharSetXMLWriter;
 import org.apache.ws.commons.serialize.XMLWriter;
@@ -45,7 +47,7 @@ import org.apache.xmlrpc.parser.XmlRpcRequestParser;
 import org.apache.xmlrpc.parser.XmlRpcResponseParser;
 import org.apache.xmlrpc.util.SAXParsers;
 
-public class XmlRpcDataFormat implements DataFormat {
+public class XmlRpcDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private XmlRpcStreamRequestConfig xmlRpcStreamRequestConfig = new XmlRpcHttpRequestConfigImpl();
     private TypeFactory typeFactory = new TypeFactoryImpl(null);
     private boolean isRequest;
@@ -65,18 +67,28 @@ public class XmlRpcDataFormat implements DataFormat {
     }
 
     @Override
+    public String getDataFormatName() {
+        return "xmlrpc";
+    }
+
+    @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         // need to check the object type
         XMLWriter control = getXMLWriter(exchange, stream);
         XmlRpcWriter writer = new XmlRpcWriter(xmlRpcStreamRequestConfig, control, typeFactory);
-        if (graph instanceof XmlRpcRequest) {
-            writer.writeRequest(xmlRpcStreamRequestConfig, (XmlRpcRequest)graph);
+
+        XmlRpcRequest request = null;
+        if (isRequest || graph instanceof XmlRpcRequest) {
+            request = exchange.getContext().getTypeConverter().mandatoryConvertTo(XmlRpcRequest.class, exchange, graph);
+        }
+
+        if (request != null) {
+            writer.writeRequest(xmlRpcStreamRequestConfig, request);
         } else {
             // write the result here directly
             // TODO write the fault message here
             writer.write(xmlRpcStreamRequestConfig, graph);
         }
-        
     }
 
     protected int getErrorCode(Exchange exchange) {
@@ -165,6 +177,16 @@ public class XmlRpcDataFormat implements DataFormat {
     
     public TypeFactory getTypeFactory() {
         return typeFactory;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 
 }

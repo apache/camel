@@ -26,6 +26,7 @@ import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Produce;
@@ -235,6 +236,30 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
         MyEndpointInjectProducerTemplate bean = new MyEndpointInjectProducerTemplate();
+        Field field = bean.getClass().getField("producer");
+
+        EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+        Class<?> type = field.getType();
+        String propertyName = "producer";
+        Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), propertyName, bean, "foo");
+
+        field.set(bean, value);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("Hello World");
+
+        bean.send(exchange);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testEndpointInjectFluentProducerTemplateField() throws Exception {
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyEndpointInjectFluentProducerTemplate bean = new MyEndpointInjectFluentProducerTemplate();
         Field field = bean.getClass().getField("producer");
 
         EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
@@ -468,7 +493,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         public void produceSomething(String body) throws Exception {
             assertEquals("Hello World", body);
 
-            Exchange exchange = producer.createExchange();
+            Exchange exchange = producer.getEndpoint().createExchange();
             exchange.addOnCompletion(mySynchronization);
             exchange.getIn().setBody(body);
             producer.process(exchange);
@@ -556,6 +581,17 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         public void send(Exchange exchange) throws Exception {
             producer.send(exchange);
+        }
+
+    }
+
+    public class MyEndpointInjectFluentProducerTemplate {
+
+        @EndpointInject(uri = "mock:result")
+        public FluentProducerTemplate producer;
+
+        public void send(Exchange exchange) throws Exception {
+            producer.withExchange(exchange).send();
         }
 
     }

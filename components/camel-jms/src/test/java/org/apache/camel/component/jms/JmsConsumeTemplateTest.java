@@ -31,6 +31,9 @@ public class JmsConsumeTemplateTest extends CamelTestSupport {
 
     @Test
     public void testConsumeTemplate() throws Exception {
+        // must start CamelContext because use route builder is false
+        context.start();
+
         String url = "activemq:queue:foo";
         template.sendBody(url, "Hello World");
 

@@ -29,11 +29,14 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.impl.DeferServiceStartupListener;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.remote.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -53,6 +56,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -108,6 +112,11 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return this {@link org.apache.camel.CamelContext} adapted to the given type
      */
     <T extends CamelContext> T adapt(Class<T> type);
+
+    /**
+     * If CamelContext during the start procedure was vetoed, and therefore causing Camel to not start.
+     */
+    boolean isVetoStarted();
 
     /**
      * Starts the {@link CamelContext} (<b>important:</b> the start method is not blocked, see more details
@@ -195,6 +204,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     String getUptime();
 
+    /**
+     * Gets the uptime in milli seconds
+     *
+     * @return the uptime in millis seconds
+     */
+    long getUptimeMillis();
+
     // Service Methods
     //-----------------------------------------------------------------------
 
@@ -229,6 +245,25 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void addService(Object object, boolean stopOnShutdown) throws Exception;
 
     /**
+     * Adds a service to this context.
+     * <p/>
+     * The service will also have {@link CamelContext} injected if its {@link CamelContextAware}.
+     * The service will also be enlisted in JMX for management (if JMX is enabled).
+     * The service will be started, if its not already started.
+     * <p/>
+     * If the option <tt>closeOnShutdown</tt> is <tt>true</tt> then this context will control the lifecycle, ensuring
+     * the service is stopped when the context stops.
+     * If the option <tt>closeOnShutdown</tt> is <tt>false</tt> then this context will not stop the service when the context stops.
+     *
+     * @param object the service
+     * @param stopOnShutdown whether to stop the service when this CamelContext shutdown.
+     * @param forceStart whether to force starting the service right now, as otherwise the service may be deferred being started
+     *                   to later using {@link #deferStartService(Object, boolean)}
+     * @throws Exception can be thrown when starting the service
+     */
+    void addService(Object object, boolean stopOnShutdown, boolean forceStart) throws Exception;
+
+    /**
      * Removes a service from this context.
      * <p/>
      * The service is assumed to have been previously added using {@link #addService(Object)} method.
@@ -257,7 +292,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     <T> T hasService(Class<T> type);
 
     /**
-     * Defers starting the service until {@link CamelContext} is started and has initialized all its prior services and routes.
+     * Defers starting the service until {@link CamelContext} is (almost started) or started and has initialized all its prior services and routes.
      * <p/>
      * If {@link CamelContext} is already started then the service is started immediately.
      *
@@ -302,6 +337,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Gets a component from the context by name.
+     * <p/>
+     * Notice the returned component will be auto-started. If you do not intend to do that
+     * then use {@link #getComponent(String, boolean, boolean)}.
      *
      * @param componentName the name of the component
      * @return the component
@@ -310,6 +348,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Gets a component from the context by name.
+     * <p/>
+     * Notice the returned component will be auto-started. If you do not intend to do that
+     * then use {@link #getComponent(String, boolean, boolean)}.
      *
      * @param name                 the name of the component
      * @param autoCreateComponents whether or not the component should
@@ -317,6 +358,17 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the component
      */
     Component getComponent(String name, boolean autoCreateComponents);
+
+    /**
+     * Gets a component from the context by name.
+     *
+     * @param name                 the name of the component
+     * @param autoCreateComponents whether or not the component should
+     *                             be lazily created if it does not already exist
+     * @param autoStart            whether to auto start the component if {@link CamelContext} is already started.
+     * @return the component
+     */
+    Component getComponent(String name, boolean autoCreateComponents, boolean autoStart);
 
     /**
      * Gets a component from the context by name and specifying the expected type of component.
@@ -500,6 +552,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Gets the REST configuration for the given component
+     *
      * @param component the component name to get the configuration
      * @param defaultIfNotFound determine if the default configuration is returned if there isn't a 
      *        specific configuration for the given component  
@@ -508,10 +561,34 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     RestConfiguration getRestConfiguration(String component, boolean defaultIfNotFound);
     
     /**
-     * Gets all the RestConfigurations 
-     * @return
+     * Gets all the RestConfiguration's
      */
     Collection<RestConfiguration> getRestConfigurations();
+
+    /**
+     * Gets the service call configuration by the given name. If no name is given and there is only one configuration
+     * which matches the type then this configuration is returned.
+     *
+     * @param serviceName name of service, or <tt>null</tt> to return the default configuration
+     * @param type implementation of the configuration such as kubernetes, ribbon etc.
+     * @return the configuration, or <tt>null</tt> if no configuration has been registered
+     */
+    <T extends ServiceCallConfigurationDefinition> T getServiceCallConfiguration(String serviceName, Class<T> type);
+
+    /**
+     * Sets the default service call configuration
+     *
+     * @param configuration the configuration
+     */
+    void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration);
+
+    /**
+     * Adds the service call configuration
+     *
+     * @param serviceName name of the service
+     * @param configuration the configuration
+     */
+    void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration);
 
     /**
      * Returns the order in which the route inputs was started.
@@ -625,6 +702,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception;
 
+    /**
+     * Loads a collection of rest definitions from the given {@link java.io.InputStream}.
+     *
+     * @param is input stream with the rest(s) definition to add
+     * @throws Exception if the rest definitions could not be loaded for whatever reason
+     * @return the rest definitions
+     */
+    RestsDefinition loadRestsDefinition(InputStream is) throws Exception;
+    
     /**
      * Adds a collection of route definitions to the context
      *
@@ -982,6 +1068,40 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @throws RuntimeCamelException is thrown if error starting the template
      */
     ProducerTemplate createProducerTemplate(int maximumCacheSize);
+
+    /**
+     * Creates a new {@link FluentProducerTemplate} which is <b>started</b> and therefore ready to use right away.
+     * <p/>
+     * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
+     * Why does Camel use too many threads with ProducerTemplate?</a>
+     * <p/>
+     * <b>Important:</b> Make sure to call {@link org.apache.camel.ProducerTemplate#stop()} when you are done using the template,
+     * to clean up any resources.
+     * <p/>
+     * Will use cache size defined in Camel property with key {@link Exchange#MAXIMUM_CACHE_POOL_SIZE}.
+     * If no key was defined then it will fallback to a default size of 1000.
+     * You can also use the {@link org.apache.camel.FluentProducerTemplate#setMaximumCacheSize(int)} method to use a custom value
+     * before starting the template.
+     *
+     * @return the template
+     * @throws RuntimeCamelException is thrown if error starting the template
+     */
+    FluentProducerTemplate createFluentProducerTemplate();
+
+    /**
+     * Creates a new {@link FluentProducerTemplate} which is <b>started</b> and therefore ready to use right away.
+     * <p/>
+     * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
+     * Why does Camel use too many threads with ProducerTemplate?</a>
+     * <p/>
+     * <b>Important:</b> Make sure to call {@link FluentProducerTemplate#stop()} when you are done using the template,
+     * to clean up any resources.
+     *
+     * @param maximumCacheSize the maximum cache size
+     * @return the template
+     * @throws RuntimeCamelException is thrown if error starting the template
+     */
+    FluentProducerTemplate createFluentProducerTemplate(int maximumCacheSize);
 
     /**
      * Creates a new {@link ConsumerTemplate} which is <b>started</b> and therefore ready to use right away.
@@ -1379,6 +1499,20 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setProcessorFactory(ProcessorFactory processorFactory);
 
     /**
+     * Gets the current {@link org.apache.camel.spi.MessageHistoryFactory}
+     *
+     * @return the factory
+     */
+    MessageHistoryFactory getMessageHistoryFactory();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.MessageHistoryFactory}
+     *
+     * @param messageHistoryFactory the custom factory
+     */
+    void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory);
+
+    /**
      * Gets the current {@link Debugger}
      *
      * @return the debugger
@@ -1557,6 +1691,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the json or <tt>null</tt> if the component was not found
      */
     String explainComponentJson(String componentName, boolean includeAllOptions);
+
+    /**
+     * Returns a JSON schema representation of the component parameters (not endpoint parameters) for the given component by its id.
+     *
+     * @param dataFormat the data format instance.
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     * @return the json
+     */
+    String explainDataFormatJson(String dataFormatName, DataFormat dataFormat, boolean includeAllOptions);
 
     /**
      * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri.

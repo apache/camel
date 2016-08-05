@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.ahc;
 
-import com.ning.http.client.AsyncHttpClientConfig;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.junit.Test;
 
 public class AhcComponentCustomClientConfigTest extends BaseAhcTest {
@@ -29,8 +29,8 @@ public class AhcComponentCustomClientConfigTest extends BaseAhcTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
-        AsyncHttpClientConfig config = builder.setFollowRedirect(true).setMaxRequestRetry(3).build();
+        DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
+        DefaultAsyncHttpClientConfig config = builder.setFollowRedirect(true).setMaxRequestRetry(3).build();
 
         AhcComponent ahc = context.getComponent("ahc", AhcComponent.class);
         ahc.setClientConfig(config);

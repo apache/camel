@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * Defines the <a href="http://aws.amazon.com/ec2/">AWS EC2 Component</a> 
+ * For working with Amazon's Elastic Compute Cloud (EC2).
  */
 public class EC2Component extends UriEndpointComponent {
 

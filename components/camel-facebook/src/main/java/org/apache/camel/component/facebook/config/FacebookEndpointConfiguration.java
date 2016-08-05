@@ -23,6 +23,7 @@ import java.util.Map;
 
 import facebook4j.AlbumUpdate;
 import facebook4j.CheckinUpdate;
+import facebook4j.CommentUpdate;
 import facebook4j.EventUpdate;
 import facebook4j.GeoLocation;
 import facebook4j.Media;
@@ -55,6 +56,8 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     private String checkinId;
     @UriParam
     private String commentId;
+    @UriParam
+    private CommentUpdate commentUpdate;
     @UriParam
     private String description;
     @UriParam
@@ -125,6 +128,8 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     private String questionId;
     @UriParam
     private Reading reading;
+    @UriParam(prefix = "reading.", multiValue = true)
+    private Map<String, Object> readingOptions;
     @UriParam
     private Integer scoreValue;
     @UriParam
@@ -159,6 +164,22 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     private String userLocale;
     @UriParam
     private String videoId;
+    @UriParam
+    private Integer pictureId;
+    @UriParam
+    private Integer pictureId2;
+    @UriParam
+    private PictureSize pictureSize;
+    @UriParam
+    private String pageId;
+    @UriParam
+    private String tabId;
+    @UriParam
+    private Boolean isHidden;
+    @UriParam
+    private String offerId;
+    @UriParam
+    private String milestoneId;
 
     public URL getAchievementURL() {
         return achievementURL;
@@ -252,6 +273,17 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
 
     public String getDescription() {
         return description;
+    }
+
+    public CommentUpdate getCommentUpdate() {
+        return commentUpdate;
+    }
+
+    /**
+     * The facebook Comment to be created or updated
+     */
+    public void setCommentUpdate(CommentUpdate commentUpdate) {
+        this.commentUpdate = commentUpdate;
     }
 
     /**
@@ -635,6 +667,17 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         this.reading = reading;
     }
 
+    public Map<String, Object> getReadingOptions() {
+        return readingOptions;
+    }
+
+    /**
+     * To configure {@link Reading} using key/value pairs from the Map.
+     */
+    public void setReadingOptions(Map<String, Object> readingOptions) {
+        this.readingOptions = readingOptions;
+    }
+
     public Integer getScoreValue() {
         return scoreValue;
     }
@@ -822,4 +865,91 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         this.videoId = videoId;
     }
 
+    public Integer getPictureId() {
+        return pictureId;
+    }
+
+    /**
+     * The picture id
+     */
+    public void setPictureId(Integer pictureId) {
+        this.pictureId = pictureId;
+    }
+
+    public Integer getPictureId2() {
+        return pictureId2;
+    }
+
+    /**
+     * The picture2 id
+     */
+    public void setPictureId2(Integer pictureId2) {
+        this.pictureId2 = pictureId2;
+    }
+
+    public PictureSize getPictureSize() {
+        return pictureSize;
+    }
+
+    /**
+     * The picture size
+     */
+    public void setPictureSize(PictureSize pictureSize) {
+        this.pictureSize = pictureSize;
+    }
+
+    public String getPageId() {
+        return pageId;
+    }
+
+    /**
+     * The page id
+     */
+    public void setPageId(String pageId) {
+        this.pageId = pageId;
+    }
+
+    public String getTabId() {
+        return tabId;
+    }
+
+    /**
+     * The tab id
+     */
+    public void setTabId(String tabId) {
+        this.tabId = tabId;
+    }
+
+    public Boolean isHidden() {
+        return isHidden;
+    }
+
+    /**
+     * Whether hidden
+     */
+    public void setIsHidden(Boolean isHidden) {
+        this.isHidden = isHidden;
+    }
+
+    public String getOfferId() {
+        return offerId;
+    }
+
+    /**
+     * The offer id
+     */
+    public void setOfferId(String offerId) {
+        this.offerId = offerId;
+    }
+
+    public String getMilestoneId() {
+        return milestoneId;
+    }
+
+    /**
+     * The milestone id
+     */
+    public void setMilestoneId(String milestoneId) {
+        this.milestoneId = milestoneId;
+    }
 }

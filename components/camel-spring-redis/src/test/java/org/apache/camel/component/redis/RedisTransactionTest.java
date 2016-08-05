@@ -69,7 +69,7 @@ public class RedisTransactionTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteWATCH() throws Exception {
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
         keys.add("key");
 
         sendHeaders(

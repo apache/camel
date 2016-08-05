@@ -17,6 +17,7 @@
 package org.apache.camel.component.websocket;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 
 import org.apache.camel.CamelExchangeException;
@@ -26,13 +27,12 @@ import org.apache.camel.impl.DefaultProducer;
 
 public class WebsocketProducer extends DefaultProducer implements WebsocketProducerConsumer {
 
-    private final WebsocketStore store;
+    private WebsocketStore store;
     private final Boolean sendToAll;
     private final WebsocketEndpoint endpoint;
 
-    public WebsocketProducer(WebsocketEndpoint endpoint, WebsocketStore store) {
+    public WebsocketProducer(WebsocketEndpoint endpoint) {
         super(endpoint);
-        this.store = store;
         this.sendToAll = endpoint.getSendToAll();
         this.endpoint = endpoint;
     }
@@ -102,13 +102,19 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
 
     void sendMessage(DefaultWebsocket websocket, Object message) throws IOException {
         // in case there is web socket and socket connection is open - send message
-        if (websocket != null && websocket.getConnection().isOpen()) {
+        if (websocket != null && websocket.getSession().isOpen()) {
             log.trace("Sending to websocket {} -> {}", websocket.getConnectionKey(), message);
             if (message instanceof String) {
-                websocket.getConnection().sendMessage((String)message);
+                websocket.getSession().getRemote().sendString((String) message);
             } else if (message instanceof byte[]) {
-                websocket.getConnection().sendMessage((byte[])message, 0, ((byte[])message).length);
+                ByteBuffer buf = ByteBuffer.wrap((byte[]) message);
+                websocket.getSession().getRemote().sendBytes(buf);
             }
         }
+    }
+
+    //Store is set/unset upon connect/disconnect of the producer
+    public void setStore(WebsocketStore store) {
+        this.store = store;
     }
 }

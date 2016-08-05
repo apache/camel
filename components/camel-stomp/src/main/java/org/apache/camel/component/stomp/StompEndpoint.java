@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -45,8 +46,11 @@ import static org.fusesource.stomp.client.Constants.SEND;
 import static org.fusesource.stomp.client.Constants.SUBSCRIBE;
 import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 
+/**
+ * The stomp component is used for communicating with Stomp compliant message brokers.
+ */
 @UriEndpoint(scheme = "stomp", title = "Stomp", syntax = "stomp:destination", consumerClass = StompConsumer.class, label = "messaging")
-public class StompEndpoint extends DefaultEndpoint {
+public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     @UriPath(description = "Name of the queue") @Metadata(required = "true")
     private String destination;
@@ -77,11 +81,14 @@ public class StompEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        final Promise<CallbackConnection> promise = new Promise<CallbackConnection>();
+        final Promise<CallbackConnection> promise = new Promise<>();
 
         stomp = new Stomp(configuration.getBrokerURL());
         stomp.setLogin(configuration.getLogin());
         stomp.setPasscode(configuration.getPasscode());
+        if (configuration.getSslContextParameters() != null) {
+            stomp.setSslContext(configuration.getSslContextParameters().createSSLContext(getCamelContext()));
+        }
         stomp.connectCallback(promise);
         if (configuration.getHost() != null && !configuration.getHost().isEmpty()) {
             stomp.setHost(configuration.getHost());
@@ -131,7 +138,8 @@ public class StompEndpoint extends DefaultEndpoint {
     protected void send(final Exchange exchange, final AsyncCallback callback) {
         final StompFrame frame = new StompFrame(SEND);
         frame.addHeader(DESTINATION, StompFrame.encodeHeader(destination));
-        frame.content(utf8(exchange.getIn().getBody().toString()));
+        //Fix for CAMEL-9506 leveraging the camel converter to do the change
+        frame.content(utf8(exchange.getIn().getBody(String.class)));
 
         connection.getDispatchQueue().execute(new Task() {
             @Override

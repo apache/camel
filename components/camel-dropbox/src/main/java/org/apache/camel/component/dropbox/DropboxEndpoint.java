@@ -37,6 +37,9 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.dropbox.util.DropboxConstants.POLL_CONSUMER_DELAY;
 
+/**
+ * For uploading, downloading and managing files, folders, groups, collaborations, etc on dropbox DOT com.
+ */
 @UriEndpoint(scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation", consumerClass = DropboxScheduledPollConsumer.class, label = "api,file")
 public class DropboxEndpoint extends DefaultEndpoint {
 

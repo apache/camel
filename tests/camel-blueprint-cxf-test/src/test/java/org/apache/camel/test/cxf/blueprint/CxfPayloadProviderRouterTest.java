@@ -109,7 +109,7 @@ public class CxfPayloadProviderRouterTest extends CamelBlueprintTestSupport {
     static class VerifyInboundInterceptor extends AbstractPhaseInterceptor<Message> {
         private boolean called;
         
-        public VerifyInboundInterceptor() {
+        VerifyInboundInterceptor() {
             super(Phase.USER_PROTOCOL);
         }
 

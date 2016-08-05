@@ -65,12 +65,7 @@ public class HttpComponent extends HttpCommonComponent {
      */
     protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, Set<AuthMethod> authMethods) {
         // prefer to use endpoint configured over component configured
-        // TODO cmueller: remove the "httpClientConfigurerRef" look up in Camel 3.0
-        HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
-        if (configurer == null) {
-            // try without ref
-            configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
-        }
+        HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
         if (configurer == null) {
             // fallback to component configured
             configurer = getHttpClientConfigurer();
@@ -200,12 +195,7 @@ public class HttpComponent extends HttpCommonComponent {
         }
         Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
         // must extract well known parameters before we create the endpoint
-        // TODO cmueller: remove the "httpBindingRef" look up in Camel 3.0
-        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
-        if (binding == null) {
-            // try without ref
-            binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
-        }
+        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
         String authMethodPriority = getAndRemoveParameter(parameters, "authMethodPriority", String.class);
@@ -213,14 +203,17 @@ public class HttpComponent extends HttpCommonComponent {
         UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
         // http client can be configured from URI options
         HttpClientParams clientParams = new HttpClientParams();
-        IntrospectionSupport.setProperties(clientParams, parameters, "httpClient.");
+        Map<String, Object> httpClientOptions = IntrospectionSupport.extractProperties(parameters, "httpClient.");
+        IntrospectionSupport.setProperties(clientParams, httpClientOptions);
         // validate that we could resolve all httpClient. parameters as this component is lenient
-        validateParameters(uri, parameters, "httpClient.");       
+        validateParameters(uri, httpClientOptions, null);
         // http client can be configured from URI options
         HttpConnectionManagerParams connectionManagerParams = new HttpConnectionManagerParams();
         // setup the httpConnectionManagerParams
-        IntrospectionSupport.setProperties(connectionManagerParams, parameters, "httpConnectionManager.");
-        validateParameters(uri, parameters, "httpConnectionManager.");
+        Map<String, Object> httpConnectionManagerOptions = IntrospectionSupport.extractProperties(parameters, "httpConnectionManager.");
+        IntrospectionSupport.setProperties(connectionManagerParams, httpConnectionManagerOptions);
+        // validate that we could resolve all httpConnectionManager. parameters as this component is lenient
+        validateParameters(uri, httpConnectionManagerOptions, null);
         // make sure the component httpConnectionManager is take effect
         HttpConnectionManager thisHttpConnectionManager = httpConnectionManager;
         if (thisHttpConnectionManager == null) {
@@ -290,6 +283,7 @@ public class HttpComponent extends HttpCommonComponent {
             }
         }
         endpoint.setHttpUri(httpUri);
+        endpoint.setHttpClientOptions(httpClientOptions);
         return endpoint;
     }
 
@@ -336,5 +330,17 @@ public class HttpComponent extends HttpCommonComponent {
     public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
         // need to override and call super for component docs
         super.setHttpConfiguration(httpConfiguration);
+    }
+
+    /**
+     * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
+     */
+    @Override
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        // need to override and call super for component docs
+        super.setAllowJavaSerializedObject(allowJavaSerializedObject);
     }
 }

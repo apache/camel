@@ -67,6 +67,20 @@ public interface RuntimeConfiguration {
     Boolean isMessageHistory();
 
     /**
+     * Sets whether to log exhausted message body with message history.
+     *
+     * @param logExhaustedMessageBody whether message body should be logged
+     */
+    void setLogExhaustedMessageBody(Boolean logExhaustedMessageBody);
+
+    /**
+     * Returns whether to log exhausted message body with message history.
+     * 
+     * @return <tt>true</tt> if logging of message body is enabled
+     */
+    Boolean isLogExhaustedMessageBody();
+
+    /**
      * Sets whether fault handling is enabled or not (default is disabled).
      *
      * @param handleFault whether to enable fault handling.

@@ -52,6 +52,9 @@ public class SalesforceLoginConfig {
         return loginUrl;
     }
 
+    /**
+     * Salesforce login URL, defaults to https://login.salesforce.com
+     */
     public void setLoginUrl(String loginUrl) {
         this.loginUrl = loginUrl;
     }
@@ -60,6 +63,9 @@ public class SalesforceLoginConfig {
         return clientId;
     }
 
+    /**
+     * Salesforce connected application Consumer Key
+     */
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
@@ -68,6 +74,9 @@ public class SalesforceLoginConfig {
         return clientSecret;
     }
 
+    /**
+     * Salesforce connected application Consumer Secret
+     */
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
     }
@@ -76,6 +85,9 @@ public class SalesforceLoginConfig {
         return userName;
     }
 
+    /**
+     * Salesforce account user name
+     */
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -84,6 +96,9 @@ public class SalesforceLoginConfig {
         return password;
     }
 
+    /**
+     * Salesforce account password
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -92,6 +107,9 @@ public class SalesforceLoginConfig {
         return lazyLogin;
     }
 
+    /**
+     * Flag to enable/disable lazy OAuth, default is false. When enabled, OAuth token retrieval or generation is not done until the first API call
+     */
     public void setLazyLogin(boolean lazyLogin) {
         this.lazyLogin = lazyLogin;
     }

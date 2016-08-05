@@ -1,0 +1,195 @@
+[[HawtDB-HawtDB]]
+HawtDB
+~~~~~~
+
+*Available as of Camel 2.3*
+
+http://hawtdb.fusesource.org/[HawtDB] is a very lightweight and
+embedable key value database. It allows together with Camel to provide
+persistent support for various Camel features such as
+link:aggregator2.html[Aggregator].
+
+*Deprecated*
+
+The http://hawtdb.fusesource.org/[HawtDB] project is being deprecated
+and replaced by https://code.google.com/p/leveldb/[leveldb] as the
+lightweight and embedable key value database. To make using leveldb easy
+there is a https://github.com/fusesource/leveldbjni[leveldbjni] project
+for that. The Apache ActiveMQ project is planning on using leveldb as
+their primary file based message store in the future, to replace kahadb.
+
+There os a link:leveldb.html[camel-leveldb] component we recommend to
+use instead of this.
+
+*Issue with HawtDB 1.4 or older*
+
+There is a bug in HawtDB 1.4 or older which means the filestore will not
+free unused space. That means the file keeps growing. This has been
+fixed in HawtDB 1.5 which is shipped with Camel 2.5 onwards.
+
+Current features it provides:
+
+* HawtDBAggregationRepository
+
+[[HawtDB-UsingHawtDBAggregationRepository]]
+Using HawtDBAggregationRepository
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+`HawtDBAggregationRepository` is an `AggregationRepository` which on the
+fly persists the aggregated messages. This ensures that you will not
+loose messages, as the default aggregator will use an in memory only
+`AggregationRepository`.
+
+It has the following options:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Option |Type |Description
+
+|`repositoryName` |String |A mandatory repository name. Allows you to use a shared `HawtDBFile` for
+multiple repositories.
+
+|`persistentFileName` |String |Filename for the persistent storage. If no file exists on startup a new
+file is created.
+
+|`bufferSize` |int |The size of the memory segment buffer which is mapped to the file store.
+By default its 8mb. The value is in bytes.
+
+|`sync` |boolean |Whether or not the `HawtDBFile` should sync on write or not. Default is
+`true`. By sync on write ensures that its always waiting for all writes
+to be spooled to disk and thus will not loose updates. If you disable
+this option, then HawtDB will auto sync when it has batched up a number
+of writes.
+
+|`pageSize` |short |The size of memory pages. By default its 512 bytes. The value is in
+bytes.
+
+|`hawtDBFile` |HawtDBFile |Use an existing configured
+`org.apache.camel.component.hawtdb.HawtDBFile` instance.
+
+|`returnOldExchange` |boolean |Whether the get operation should return the old existing Exchange if any
+existed. By default this option is `false` to optimize as we do not need
+the old exchange when aggregating.
+
+|`useRecovery` |boolean |Whether or not recovery is enabled. This option is by default `true`.
+When enabled the Camel link:aggregator2.html[Aggregator] automatic
+recover failed aggregated exchange and have them resubmitted.
+
+|`recoveryInterval` |long |If recovery is enabled then a background task is run every x'th time to
+scan for failed exchanges to recover and resubmit. By default this
+interval is 5000 millis.
+
+|`maximumRedeliveries` |int |Allows you to limit the maximum number of redelivery attempts for a
+recovered exchange. If enabled then the Exchange will be moved to the
+dead letter channel if all redelivery attempts failed. By default this
+option is disabled. If this option is used then the `deadLetterUri`
+option must also be provided.
+
+|`deadLetterUri` |String |An endpoint uri for a link:dead-letter-channel.html[Dead Letter Channel]
+where exhausted recovered Exchanges will be moved. If this option is
+used then the `maximumRedeliveries` option must also be provided.
+
+|`optimisticLocking` |`false` |*Camel 2.12:* To turn on optimistic locking, which often would be needed
+in clustered environments where multiple Camel applications shared the
+same HawtDB based aggregation repository.
+|=======================================================================
+
+The `repositoryName` option must be provided. Then either the
+`persistentFileName` or the `hawtDBFile` must be provided.
+
+[[HawtDB-Whatispreservedwhenpersisting]]
+What is preserved when persisting
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+`HawtDBAggregationRepository` will only preserve any `Serializable`
+compatible data types. If a data type is not such a type its dropped and
+a `WARN` is logged. And it only persists the `Message` body and the
+`Message` headers. The `Exchange` properties are *not* persisted.
+
+[[HawtDB-Recovery]]
+Recovery
+^^^^^^^^
+
+The `HawtDBAggregationRepository` will by default recover any failed
+link:exchange.html[Exchange]. It does this by having a background tasks
+that scans for failed link:exchange.html[Exchange]s in the persistent
+store. You can use the `checkInterval` option to set how often this task
+runs. The recovery works as transactional which ensures that Camel will
+try to recover and redeliver the failed link:exchange.html[Exchange].
+Any link:exchange.html[Exchange] which was found to be recovered will be
+restored from the persistent store and resubmitted and send out again.
+
+The following headers is set when an link:exchange.html[Exchange] is
+being recovered/redelivered:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`Exchange.REDELIVERED` |Boolean |Is set to true to indicate the link:exchange.html[Exchange] is being
+redelivered.
+
+|`Exchange.REDELIVERY_COUNTER` |Integer |The redelivery attempt, starting from 1.
+|=======================================================================
+
+Only when an link:exchange.html[Exchange] has been successfully
+processed it will be marked as complete which happens when the `confirm`
+method is invoked on the `AggregationRepository`. This means if the same
+link:exchange.html[Exchange] fails again it will be kept retried until
+it success.
+
+You can use option `maximumRedeliveries` to limit the maximum number of
+redelivery attempts for a given recovered link:exchange.html[Exchange].
+You must also set the `deadLetterUri` option so Camel knows where to
+send the link:exchange.html[Exchange] when the `maximumRedeliveries` was
+hit.
+
+You can see some examples in the unit tests of camel-hawtdb, for example
+https://svn.apache.org/repos/asf/camel/trunk/components/camel-hawtdb/src/test/java/org/apache/camel/component/hawtdb/HawtDBAggregateRecoverTest.java[this
+test].
+
+[[HawtDB-UsingHawtDBAggregationRepositoryinJavaDSL]]
+Using HawtDBAggregationRepository in Java DSL
++++++++++++++++++++++++++++++++++++++++++++++
+
+In this example we want to persist aggregated messages in the
+`target/data/hawtdb.dat` file.
+
+[[HawtDB-UsingHawtDBAggregationRepositoryinSpringXML]]
+Using HawtDBAggregationRepository in Spring XML
++++++++++++++++++++++++++++++++++++++++++++++++
+
+The same example but using Spring XML instead:
+
+[[HawtDB-Dependencies]]
+Dependencies
+^^^^^^^^^^^^
+
+To use link:hawtdb.html[HawtDB] in your camel routes you need to add the
+a dependency on *camel-hawtdb*.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+link:download.html[the download page for the latest versions]).
+
+[source,xml]
+---------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-hawtdb</artifactId>
+  <version>2.3.0</version>
+</dependency>
+---------------------------------------
+
+[[HawtDB-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+
+* link:aggregator2.html[Aggregator]
+* link:components.html[Components]
+

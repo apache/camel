@@ -22,12 +22,12 @@
     <parent>
         <groupId>org.apache.camel.tests.bundles</groupId>
         <artifactId>bundles-pom</artifactId>
-        <version>2.16-SNAPSHOT</version>
+        <version>2.18-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.camel.tests</groupId>
     <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: Integration Tests :: Test Bundles: ${pkgArtifactId}-${pkgVersion}</name>
     <description>
         This bundle simply wraps ${pkgArtifactId}-${pkgVersion}.jar.
@@ -66,8 +66,8 @@
             </exclusions>
         </dependency>
         <dependency>
-	    <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
             <version>${javax-mail-version}</version>
         </dependency>
     </dependencies>

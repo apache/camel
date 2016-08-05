@@ -58,9 +58,12 @@ public class CassandraComponentProducerTest extends CamelTestSupport {
 
     @Produce(uri = "direct:inputNotConsistent")
     ProducerTemplate notConsistentProducerTemplate;
-    
+
     @Produce(uri = "direct:loadBalancingPolicy")
     ProducerTemplate loadBalancingPolicyTemplate;
+
+    @Produce(uri = "direct:inputNoEndpointCql")
+    ProducerTemplate producerTemplateNoEndpointCql;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -85,6 +88,8 @@ public class CassandraComponentProducerTest extends CamelTestSupport {
                         .to("cql://localhost/camel_ks?cql=" + NO_PARAMETER_CQL + "&loadBalancingPolicy=RoundRobinPolicy");
                 from("direct:inputNotConsistent")
                         .to(NOT_CONSISTENT_URI);
+                from("direct:inputNoEndpointCql")
+                        .to("cql://localhost/camel_ks");
             }
         };
     }
@@ -137,7 +142,7 @@ public class CassandraComponentProducerTest extends CamelTestSupport {
         session.close();
         cluster.close();
     }
-    
+
     @Test
     public void testLoadBalancing() throws Exception {
         Object response = loadBalancingPolicyTemplate.requestBodyAndHeader(new Object[]{"Claus 2", "Ibsen 2", "c_ibsen"},
@@ -173,6 +178,43 @@ public class CassandraComponentProducerTest extends CamelTestSupport {
         assertNotNull(row);
         assertEquals("Claus 2", row.getString("first_name"));
         assertEquals("Ibsen 2", row.getString("last_name"));
+        session.close();
+        cluster.close();
+    }
+
+    /**
+     * Simulate different CQL statements in the incoming message containing a header with RegularStatement, justifying the cassandracql endpoint not containing a "cql" Uri parameter
+     */
+    @Test
+    public void testEndpointNoCqlParameter() throws Exception {
+        Update.Where updateFirstName = update("camel_user")
+                .with(set("first_name", bindMarker()))
+                .where(eq("login", bindMarker()));
+        @SuppressWarnings("unused")
+        Object response1 = producerTemplateNoEndpointCql.requestBodyAndHeader(new Object[]{"Claus 2", "c_ibsen"},
+                CassandraConstants.CQL_QUERY, updateFirstName);
+
+        Cluster cluster = CassandraUnitUtils.cassandraCluster();
+        Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
+        ResultSet resultSet1 = session.execute("select login, first_name, last_name from camel_user where login = ?", "c_ibsen");
+        Row row1 = resultSet1.one();
+        assertNotNull(row1);
+        assertEquals("Claus 2", row1.getString("first_name"));
+        assertEquals("Ibsen", row1.getString("last_name"));
+
+        Update.Where updateLastName = update("camel_user")
+                .with(set("last_name", bindMarker()))
+                .where(eq("login", bindMarker()));
+        @SuppressWarnings("unused")
+        Object response2 = producerTemplateNoEndpointCql.requestBodyAndHeader(new Object[]{"Ibsen 2", "c_ibsen"},
+                CassandraConstants.CQL_QUERY, updateLastName);
+
+        ResultSet resultSet2 = session.execute("select login, first_name, last_name from camel_user where login = ?", "c_ibsen");
+        Row row2 = resultSet2.one();
+        assertNotNull(row2);
+        assertEquals("Claus 2", row2.getString("first_name"));
+        assertEquals("Ibsen 2", row2.getString("last_name"));
+
         session.close();
         cluster.close();
     }

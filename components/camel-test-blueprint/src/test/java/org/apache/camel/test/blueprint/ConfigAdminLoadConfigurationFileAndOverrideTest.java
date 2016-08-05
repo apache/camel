@@ -22,8 +22,8 @@ import org.junit.Test;
 
 // START SNIPPET: e1
 /**
- * This example will load a Blueprint .cfdg file, and also override its property placeholders from this unit test
- * source code directly.
+ * This example will load a Blueprint .cfg file (which will initialize configadmin), and also override its property
+ * placeholders from this unit test source code directly (the change will reload blueprint container).
  */
 public class ConfigAdminLoadConfigurationFileAndOverrideTest extends CamelBlueprintTestSupport {
 
@@ -50,7 +50,11 @@ public class ConfigAdminLoadConfigurationFileAndOverrideTest extends CamelBluepr
 
     @Test
     public void testConfigAdmin() throws Exception {
-        // regular unit test method
+        // mock:original comes from <cm:default-properties>/<cm:property name="destination" value="mock:original" />
+        getMockEndpoint("mock:original").setExpectedMessageCount(0);
+        // mock:result comes from loadConfigAdminConfigurationFile()
+        getMockEndpoint("mock:result").setExpectedMessageCount(0);
+        // mock:extra comes from useOverridePropertiesWithConfigAdmin()
         getMockEndpoint("mock:extra").expectedBodiesReceived("Bye World", "Yay Bye WorldYay Bye World");
 
         template.sendBody("direct:start", "World");

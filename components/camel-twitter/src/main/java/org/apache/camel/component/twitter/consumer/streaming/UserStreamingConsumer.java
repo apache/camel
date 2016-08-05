@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.twitter.consumer.streaming;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterEndpoint;
+import org.apache.camel.component.twitter.TwitterHelper;
+import org.apache.camel.component.twitter.consumer.TwitterEventType;
 import twitter4j.DirectMessage;
 import twitter4j.StallWarning;
 import twitter4j.Status;
@@ -24,110 +28,168 @@ import twitter4j.User;
 import twitter4j.UserList;
 import twitter4j.UserStreamListener;
 
-public class UserStreamingConsumer extends StreamingConsumer implements UserStreamListener {
+public class UserStreamingConsumer extends AbstractStreamingConsumer implements UserStreamListener {
 
-    public UserStreamingConsumer(TwitterEndpoint te) {
-        super(te);
+    public UserStreamingConsumer(TwitterEndpoint endpoint) {
+        super(endpoint);
     }
 
     @Override
-    protected void startStreaming() {
-        twitterStream.user();
+    public void start() {
+        getTwitterStream().user();
     }
 
     @Override
-    public void onDeletionNotice(long l, long l2) {
+    public void onDeletionNotice(long directMessageId, long userId) {
         // noop
     }
 
     @Override
-    public void onFriendList(long[] longs) {
+    public void onFriendList(long[] friendIds) {
         // noop
     }
 
     @Override
-    public void onFavorite(User user, User user2, Status status) {
-        // noop
+    public void onFavorite(User source, User target, Status favoritedStatus) {
+        Exchange exchange = TwitterEventType.FAVORITE.createExchange(endpoint, favoritedStatus);
+        TwitterHelper.setUserHeader(exchange, 1, source, "source");
+        TwitterHelper.setUserHeader(exchange, 2, target, "target");
+
+        onEvent(exchange);
     }
 
     @Override
-    public void onUnfavorite(User user, User user2, Status status) {
-        // noop
+    public void onUnfavorite(User source, User target, Status unfavoritedStatus) {
+        Exchange exchange = TwitterEventType.UNFAVORITE.createExchange(endpoint, unfavoritedStatus);
+        TwitterHelper.setUserHeader(exchange, 1, source, "source");
+        TwitterHelper.setUserHeader(exchange, 2, target, "target");
+
+        onEvent(exchange);
     }
 
     @Override
-    public void onFollow(User user, User user2) {
-        // noop
+    public void onFollow(User source, User followedUser) {
+        Exchange exchange = TwitterEventType.FOLLOW.createExchange(endpoint);
+        TwitterHelper.setUserHeader(exchange, 1, source, "source");
+        TwitterHelper.setUserHeader(exchange, 2, followedUser, "followed");
+
+        onEvent(exchange);
     }
 
     @Override
-    public void onUnfollow(User user, User user2) {
-        // noop
+    public void onUnfollow(User source, User unfollowedUser) {
+        Exchange exchange = TwitterEventType.UNFOLLOW.createExchange(endpoint);
+        TwitterHelper.setUserHeader(exchange, 1, source, "source");
+        TwitterHelper.setUserHeader(exchange, 2, unfollowedUser, "unfollowed");
+
+        onEvent(exchange);
     }
 
     @Override
     public void onDirectMessage(DirectMessage directMessage) {
-        // noop
+        onEvent(TwitterEventType.DIRECT_MESSAGE.createExchange(endpoint, directMessage));
     }
 
     @Override
-    public void onUserListMemberAddition(User user, User user2, UserList userList) {
-        // noop
+    public void onUserListMemberAddition(User addedMember, User listOwner, UserList list) {
+        Exchange exchange = TwitterEventType.USERLIST_MEMBER_ADDITION.createExchange(endpoint, list);
+        TwitterHelper.setUserHeader(exchange, 1, addedMember, "addedMember");
+        TwitterHelper.setUserHeader(exchange, 2, listOwner, "listOwner");
+
+        onEvent(exchange);
     }
 
     @Override
-    public void onUserListMemberDeletion(User user, User user2, UserList userList) {
-        // noop
+    public void onUserListMemberDeletion(User deletedMember, User listOwner, UserList list) {
+        Exchange exchange = TwitterEventType.USERLIST_MEMBER_DELETION.createExchange(endpoint, list);
+        TwitterHelper.setUserHeader(exchange, 1, deletedMember, "deletedMember");
+        TwitterHelper.setUserHeader(exchange, 2, listOwner, "listOwner");
+
+        onEvent(exchange);
     }
 
     @Override
-    public void onUserListSubscription(User user, User user2, UserList userList) {
-        // noop
+    public void onUserListSubscription(User subscriber, User listOwner, UserList list) {
+        Exchange exchange = TwitterEventType.USERLIST_SUBSCRIPTION.createExchange(endpoint, list);
+        TwitterHelper.setUserHeader(exchange, 1, subscriber, "subscriber");
+        TwitterHelper.setUserHeader(exchange, 2, listOwner, "listOwner");
+
+        onEvent(exchange);
     }
 
     @Override
-    public void onUserListUnsubscription(User user, User user2, UserList userList) {
-        // noop
+    public void onUserListUnsubscription(User subscriber, User listOwner, UserList list) {
+        Exchange exchange = TwitterEventType.USERLIST_UNSUBSCRIPTION.createExchange(endpoint, list);
+        TwitterHelper.setUserHeader(exchange, 1, subscriber, "subscriber");
+        TwitterHelper.setUserHeader(exchange, 2, listOwner, "listOwner");
+
+        onEvent(exchange);
     }
 
     @Override
     public void onUserListCreation(User user, UserList userList) {
-        // noop
+        Exchange exchange = TwitterEventType.USERLIST_CREATION.createExchange(endpoint, userList);
+        TwitterHelper.setUserHeader(exchange, user);
+
+        onEvent(exchange);
     }
 
     @Override
     public void onUserListUpdate(User user, UserList userList) {
-        // noop
+        Exchange exchange = TwitterEventType.USERLIST_UPDATE.createExchange(endpoint, userList);
+        TwitterHelper.setUserHeader(exchange, user);
+
+        onEvent(exchange);
     }
 
     @Override
     public void onUserListDeletion(User user, UserList userList) {
-        // noop
+        Exchange exchange = TwitterEventType.USERLIST_DELETETION.createExchange(endpoint, userList);
+        TwitterHelper.setUserHeader(exchange, user);
+
+        onEvent(exchange);
     }
 
     @Override
     public void onUserProfileUpdate(User user) {
-        // noop
+        Exchange exchange = TwitterEventType.USER_PROFILE_UPDATE.createExchange(endpoint);
+        TwitterHelper.setUserHeader(exchange, user);
+
+        onEvent(exchange);
     }
 
     @Override
-    public void onUserSuspension(long l) {
-        // noop
+    public void onUserSuspension(long suspendedUser) {
+        Exchange exchange = TwitterEventType.USER_SUSPENSION.createExchange(endpoint);
+        exchange.getIn().setHeader(TwitterConstants.TWITTER_USER, suspendedUser);
+
+        onEvent(exchange);
     }
 
     @Override
-    public void onUserDeletion(long l) {
-        // noop
+    public void onUserDeletion(long deletedUser) {
+        Exchange exchange = TwitterEventType.USER_DELETION.createExchange(endpoint);
+        exchange.getIn().setHeader(TwitterConstants.TWITTER_USER, deletedUser);
+
+        onEvent(exchange);
     }
 
     @Override
-    public void onBlock(User user, User user2) {
-        // noop
+    public void onBlock(User source, User blockedUser) {
+        Exchange exchange = TwitterEventType.BLOCK.createExchange(endpoint);
+        TwitterHelper.setUserHeader(exchange, 1, source, "source");
+        TwitterHelper.setUserHeader(exchange, 2, blockedUser, "blocked");
+
+        onEvent(exchange);
     }
 
     @Override
-    public void onUnblock(User user, User user2) {
-        // noop
+    public void onUnblock(User source, User unblockedUser) {
+        Exchange exchange = TwitterEventType.UNBLOCK.createExchange(endpoint);
+        TwitterHelper.setUserHeader(exchange, 1, source, "source");
+        TwitterHelper.setUserHeader(exchange, 2, unblockedUser, "unblocked");
+
+        onEvent(exchange);
     }
 
     @Override
@@ -137,20 +199,28 @@ public class UserStreamingConsumer extends StreamingConsumer implements UserStre
 
     @Override
     public void onRetweetedRetweet(User source, User target, Status retweetedStatus) {
-        // TODO Auto-generated method stub
-        
+        Exchange exchange = TwitterEventType.RETWEETED_RETWEET.createExchange(endpoint, retweetedStatus);
+        TwitterHelper.setUserHeader(exchange, 1, source, "source");
+        TwitterHelper.setUserHeader(exchange, 2, target, "target");
+
+        onEvent(exchange);
     }
 
     @Override
     public void onFavoritedRetweet(User source, User target, Status favoritedRetweeet) {
-        // TODO Auto-generated method stub
-        
+        Exchange exchange = TwitterEventType.FAVORITED_RETWEET.createExchange(endpoint, favoritedRetweeet);
+        TwitterHelper.setUserHeader(exchange, 1, source, "source");
+        TwitterHelper.setUserHeader(exchange, 2, target, "target");
+
+        onEvent(exchange);
     }
 
     @Override
     public void onQuotedTweet(User source, User target, Status quotingTweet) {
-        // TODO Auto-generated method stub
-        
-    }
+        Exchange exchange = TwitterEventType.QUOTED_TWEET.createExchange(endpoint, quotingTweet);
+        TwitterHelper.setUserHeader(exchange, 1, source, "source");
+        TwitterHelper.setUserHeader(exchange, 2, target, "target");
 
+        onEvent(exchange);
+    }
 }

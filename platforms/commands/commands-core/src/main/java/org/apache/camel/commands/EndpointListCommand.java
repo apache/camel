@@ -18,8 +18,6 @@ package org.apache.camel.commands;
 
 import java.io.PrintStream;
 import java.net.URLDecoder;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -85,19 +83,6 @@ public class EndpointListCommand extends AbstractContextCommand {
                     // use a basic json parser
                     List<Map<String, String>> options = JsonSchemaHelper.parseJsonSchema("properties", json, true);
 
-                    // lets sort the options by name
-                    Collections.sort(options, new Comparator<Map<String, String>>() {
-                        @Override
-                        public int compare(Map<String, String> o1, Map<String, String> o2) {
-                            // sort by kind first (need to -1 as we want path on top), then name
-                            int answer = -1 * o1.get("kind").compareTo(o2.get("kind"));
-                            if (answer == 0) {
-                                answer = o1.get("name").compareTo(o2.get("name"));
-                            }
-                            return answer;
-                        }
-                    });
-
                     for (Map<String, String> option : options) {
                         String key = option.get("name");
                         String kind = option.get("kind");
@@ -149,8 +134,6 @@ public class EndpointListCommand extends AbstractContextCommand {
             int maxStatusLen = 0;
 
             for (Map<String, String> row : endpoints) {
-                final String name = row.get("camelContextName");
-
                 String uri = row.get("uri");
                 if (decode) {
                     // decode uri so its more human readable

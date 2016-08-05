@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.salesforce.internal.streaming;
 
-import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -28,18 +29,18 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import org.apache.camel.CamelException;
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceConsumer;
+import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.apache.camel.component.salesforce.internal.client.SalesforceSecurityListener;
 import org.apache.camel.support.ServiceSupport;
 import org.cometd.bayeux.Message;
+import org.cometd.bayeux.client.ClientSession;
+import org.cometd.bayeux.client.ClientSession.Extension;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
 import org.cometd.client.transport.ClientTransport;
 import org.cometd.client.transport.LongPollingTransport;
-import org.eclipse.jetty.client.ContentExchange;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.http.HttpHeaders;
-import org.eclipse.jetty.http.HttpSchemes;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.http.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,14 +75,14 @@ public class SubscriptionHelper extends ServiceSupport {
     private String connectError;
     private boolean reconnecting;
 
-    public SubscriptionHelper(SalesforceComponent component) throws Exception {
+    public SubscriptionHelper(SalesforceComponent component, String topicName) throws Exception {
         this.component = component;
         this.session = component.getSession();
 
         this.listenerMap = new ConcurrentHashMap<SalesforceConsumer, ClientSessionChannel.MessageListener>();
 
         // create CometD client
-        this.client = createClient();
+        this.client = createClient(topicName);
     }
 
     @Override
@@ -182,12 +183,12 @@ public class SubscriptionHelper extends ServiceSupport {
         }
     }
 
-    private BayeuxClient createClient() throws Exception {
+    private BayeuxClient createClient(String topicName) throws Exception {
         // use default Jetty client from SalesforceComponent, its shared by all consumers
-        final HttpClient httpClient = component.getConfig().getHttpClient();
+        final SalesforceHttpClient httpClient = component.getConfig().getHttpClient();
 
         Map<String, Object> options = new HashMap<String, Object>();
-        options.put(ClientTransport.TIMEOUT_OPTION, httpClient.getTimeout());
+        options.put(ClientTransport.MAX_NETWORK_DELAY_OPTION, httpClient.getTimeout());
 
         // check login access token
         if (session.getAccessToken() == null) {
@@ -197,29 +198,38 @@ public class SubscriptionHelper extends ServiceSupport {
 
         LongPollingTransport transport = new LongPollingTransport(options, httpClient) {
             @Override
-            protected void customize(ContentExchange exchange) {
-                super.customize(exchange);
-                // add SalesforceSecurityListener to handle token expiry
-                final String accessToken = session.getAccessToken();
-                try {
-                    final boolean isHttps = HttpSchemes.HTTPS.equals(String.valueOf(exchange.getScheme()));
-                    exchange.setEventListener(new SalesforceSecurityListener(
-                            httpClient.getDestination(exchange.getAddress(), isHttps),
-                            exchange, session, accessToken));
-                } catch (IOException e) {
-                    throw new RuntimeException(
-                            String.format("Error adding SalesforceSecurityListener to exchange %s", e.getMessage()),
-                            e);
-                }
+            protected void customize(Request request) {
+                super.customize(request);
 
                 // add current security token obtained from session
-                exchange.setRequestHeader(HttpHeaders.AUTHORIZATION,
-                        "OAuth " + accessToken);
+                request.header(HttpHeader.AUTHORIZATION, "OAuth " + session.getAccessToken());
             }
         };
 
         BayeuxClient client = new BayeuxClient(getEndpointUrl(), transport);
-        client.setDebugEnabled(false);
+        Integer replayId = null;
+        String channelName = getChannelName(topicName);
+        Map<String, Integer> replayIdMap = component.getConfig().getInitialReplayIdMap();
+        if (replayIdMap != null) {
+            replayId = replayIdMap.get(channelName);
+        }
+        if (replayId == null) {
+            replayId = component.getConfig().getDefaultReplayId();
+        }
+        if (replayId != null) {
+            LOG.info("Sending replayId={} for channel {}", replayId, channelName);
+            List<Extension> extensions = client.getExtensions();
+            Extension ext = null;
+            for (Iterator<Extension> iter = extensions.iterator(); iter.hasNext(); ext = iter.next()) {
+                if (ext instanceof CometDReplayExtension) {
+                    iter.remove();
+                }
+            }
+            Map<String, Integer> dataMap = new HashMap<>();
+            dataMap.put(channelName, replayId);
+            ClientSession.Extension extension = new CometDReplayExtension<>(dataMap);
+            client.addExtension(extension);
+        }
         return client;
     }
 
@@ -361,6 +371,15 @@ public class SubscriptionHelper extends ServiceSupport {
     }
 
     public String getEndpointUrl() {
+        // In version 36.0 replay is only enabled on a separate endpoint
+        if (Double.valueOf(component.getConfig().getApiVersion()) == 36.0) {
+            boolean replayOptionsPresent = component.getConfig().getDefaultReplayId() != null
+                    || !component.getConfig().getInitialReplayIdMap().isEmpty();
+            if (replayOptionsPresent) {
+                return component.getSession().getInstanceUrl() + "/cometd/replay/"
+                        + component.getConfig().getApiVersion();
+            }
+        }
         return component.getSession().getInstanceUrl() + "/cometd/" + component.getConfig().getApiVersion();
     }
 

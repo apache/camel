@@ -17,7 +17,6 @@
 package org.apache.camel.component.hipchat;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
 import org.apache.camel.CamelContext;
 import org.junit.Test;
@@ -29,12 +28,10 @@ import static org.junit.Assert.assertTrue;
 public class HipchatComponentTest {
 
     @Test
-    public void testUriParseNoPort() throws Exception {
+    public void testUriParseNoSlashAndNoPort() throws Exception {
         HipchatComponent component = new HipchatComponent(Mockito.mock(CamelContext.class));
-        HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("authToken", "token");
-        parameters.put("protocol", "https");
-        HipchatEndpoint endpoint = (HipchatEndpoint)component.createEndpoint("hipchat://localhost?authToken=token&protocol=https", "localhost", parameters);
+        HipchatEndpoint endpoint = (HipchatEndpoint) component.createEndpoint("hipchat:https:localhost?authToken=token");
+
         assertEquals("localhost", endpoint.getConfiguration().getHost());
         assertEquals(new Integer(80), endpoint.getConfiguration().getPort());
         assertEquals("https", endpoint.getConfiguration().getProtocol());
@@ -46,11 +43,8 @@ public class HipchatComponentTest {
     @Test
     public void testUriParseFull() throws Exception {
         HipchatComponent component = new HipchatComponent(Mockito.mock(CamelContext.class));
-        HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("authToken", "token");
-        parameters.put("protocol", "https");
-        parameters.put("consumeUsers", "@auser,@buser");
-        HipchatEndpoint endpoint = (HipchatEndpoint)component.createEndpoint("hipchat://localhost:8080?authToken=token&protocol=https@consumeUsers=@auser,@buser", "localhost:8080", parameters);
+        HipchatEndpoint endpoint = (HipchatEndpoint) component.createEndpoint("hipchat:https://localhost:8080?authToken=token&consumeUsers=@auser,@buser");
+
         assertEquals("localhost", endpoint.getConfiguration().getHost());
         assertEquals(new Integer(8080), endpoint.getConfiguration().getPort());
         assertEquals("https", endpoint.getConfiguration().getProtocol());

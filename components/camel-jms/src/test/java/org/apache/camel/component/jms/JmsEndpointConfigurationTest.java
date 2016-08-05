@@ -95,14 +95,14 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
             resolveMandatoryEndpoint("jms:topic:Foo.Bar?username=James");
             fail("Expect the exception here");
         } catch (ResolveEndpointFailedException refe) {
-            assertEquals("Failed to resolve endpoint: jms://topic:Foo.Bar?username=James due to: The JmsComponent's username or password is null", refe.getMessage());
+            // expected
         }
 
         try {
             resolveMandatoryEndpoint("jms:topic:Foo.Bar?password=ABC");
             fail("Expect the exception here");
         } catch (ResolveEndpointFailedException refe) {
-            assertEquals("Failed to resolve endpoint: jms://topic:Foo.Bar?password=ABC due to: The JmsComponent's username or password is null", refe.getMessage());
+            // expected
         }
     }
 
@@ -320,6 +320,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals("Foo", endpoint.getEndpointConfiguredDestinationName());
 
         assertFalse(endpoint.isAcceptMessagesWhileStopping());
+        assertFalse(endpoint.isAllowReplyManagerQuickStop());
         assertFalse(endpoint.isAlwaysCopyMessage());
         assertTrue(endpoint.isAllowNullBody());
         assertFalse(endpoint.isAsyncConsumer());
@@ -362,6 +363,9 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
         endpoint.setAcceptMessagesWhileStopping(true);
         assertTrue(endpoint.isAcceptMessagesWhileStopping());
+        
+        endpoint.setAllowReplyManagerQuickStop(true);
+        assertTrue(endpoint.isAllowReplyManagerQuickStop());
 
         endpoint.setAcknowledgementMode(2);
         assertEquals(2, endpoint.getAcknowledgementMode());

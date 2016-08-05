@@ -152,4 +152,5 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     public void setAnySpoolRules(String anySpoolRules) {
         this.anySpoolRules = anySpoolRules;
     }
+
 }

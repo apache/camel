@@ -21,19 +21,14 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import rx.Subscription;
-import rx.functions.Func1;
 import rx.observables.ConnectableObservable;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 
-/**
- */
+
 public class CamelOperatorTest extends RxTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(CamelOperatorTest.class);
 
     @Test
     public void testCamelOperator() throws Exception {
@@ -64,20 +59,14 @@ public class CamelOperatorTest extends RxTestSupport {
 
         // Define an InOut route
         ConnectableObservable<Exchange> inOut = reactiveCamel.from("restlet:http://localhost:9080/test?restletMethod=POST")
-            .map(new Func1<Exchange, Exchange>() { // Convert body to String
-                @Override
-                public Exchange call(Exchange exchange) {
-                    exchange.getIn().setBody(exchange.getIn().getBody(String.class));
-                    return exchange;
-                }
+            .map(exchange -> {
+                exchange.getIn().setBody(exchange.getIn().getBody(String.class));
+                return exchange;
             })
             .lift(reactiveCamel.to("log:inOut"))
-            .map(new Func1<Exchange, Exchange>() { // Change body for response
-                @Override
-                public Exchange call(Exchange exchange) {
-                    exchange.getIn().setBody(exchange.getIn().getBody(String.class) + " back");
-                    return exchange;
-                }
+            .map(exchange -> {
+                exchange.getIn().setBody(exchange.getIn().getBody(String.class) + " back");
+                return exchange;
             })
             .lift(reactiveCamel.to(mockEndpoint4))
             .publish();

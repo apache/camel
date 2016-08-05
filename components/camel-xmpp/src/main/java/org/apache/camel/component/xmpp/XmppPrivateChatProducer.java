@@ -65,7 +65,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             throw new RuntimeException("Could not connect to XMPP server.", e);
         }
 
-        String participant = exchange.getIn().getHeader(XmppConstants.TO, String.class);
+        String participant = endpoint.getParticipant();
         String thread = endpoint.getChatId();
         if (participant == null) {
             participant = getParticipant();
@@ -108,8 +108,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
                 public void processMessage(Chat chat, Message message) {
                     // not here to do conversation
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Received and discarding message from {} : {}"
-                                , participant, message.getBody());
+                        LOG.debug("Received and discarding message from {} : {}", participant, message.getBody());
                     }
                 }
             });

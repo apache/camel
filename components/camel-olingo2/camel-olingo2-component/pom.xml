@@ -22,11 +22,11 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-olingo2-parent</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.18-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-olingo2</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Olingo2 :: Component</name>
   <description>Camel Olingo2 component</description>
 
@@ -134,13 +134,13 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlet</artifactId>
-      <version>${jetty9-version}</version>
+      <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
-      <version>${jetty9-version}</version>
+      <version>${jetty-version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -152,7 +152,7 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-webapp</artifactId>
-      <version>${jetty9-version}</version>
+      <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -222,14 +222,7 @@
               </sources>
             </configuration>
           </execution>
-        </executions>
-      </plugin>
-
-      <!-- add the olingo odata2 sample service source. See profile get-olingo2-sample below --> 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
+          <!-- add the olingo odata2 sample service source. See profile get-olingo2-sample below -->
           <execution>
             <id>add-test-source</id>
             <phase>generate-test-sources</phase>
@@ -305,6 +298,7 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
+            <version>${exec-maven-plugin-version}</version>
             <executions>
               <execution>
                 <id>generate-sources</id>

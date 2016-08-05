@@ -84,6 +84,11 @@ public final class StreamCacheConverter {
     }
 
     @Converter
+    public static StreamCache convertToStreamCache(CachedOutputStream cos, Exchange exchange) throws IOException {
+        return cos.newStreamCache();
+    }
+
+    @Converter
     public static StreamCache convertToStreamCache(Reader reader, Exchange exchange) throws IOException {
         String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, reader);
         return new ReaderCache(data);

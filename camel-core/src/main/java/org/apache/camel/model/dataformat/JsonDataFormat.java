@@ -27,6 +27,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -34,10 +35,12 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation", title = "JSon")
+@Metadata(label = "dataformat,transformation,json", title = "JSon")
 @XmlRootElement(name = "json")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonDataFormat extends DataFormatDefinition {
+    @XmlAttribute
+    private String objectMapper;
     @XmlAttribute
     private Boolean prettyPrint;
     @XmlAttribute @Metadata(defaultValue = "XStream")
@@ -68,6 +71,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     private String enableFeatures;
     @XmlAttribute
     private String disableFeatures;
+    @XmlAttribute
+    private String permissions;
 
     public JsonDataFormat() {
         super("json");
@@ -75,6 +80,17 @@ public class JsonDataFormat extends DataFormatDefinition {
 
     public JsonDataFormat(JsonLibrary library) {
         this.library = library;
+    }
+
+    public String getObjectMapper() {
+        return objectMapper;
+    }
+
+    /**
+     * Lookup and use the existing ObjectMapper with the given id when using Jackson.
+     */
+    public void setObjectMapper(String objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     public Boolean getPrettyPrint() {
@@ -117,9 +133,7 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Which json library to use such.
-     * <p/>
-     * Is by default xstream
+     * Which json library to use.
      */
     public void setLibrary(JsonLibrary library) {
         this.library = library;
@@ -253,6 +267,42 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.disableFeatures = disableFeatures;
     }
 
+    public String getPermissions() {
+        return permissions;
+    }
+
+    /**
+     * Adds permissions that controls which Java packages and classes XStream is allowed to use during
+     * unmarshal from xml/json to Java beans.
+     * <p/>
+     * A permission must be configured either here or globally using a JVM system property. The permission
+     * can be specified in a syntax where a plus sign is allow, and minus sign is deny.
+     * <br/>
+     * Wildcards is supported by using <tt>.*</tt> as prefix. For example to allow <tt>com.foo</tt> and all subpackages
+     * then specfy <tt>+com.foo.*</tt>. Multiple permissions can be configured separated by comma, such as
+     * <tt>+com.foo.*,-com.foo.bar.MySecretBean</tt>.
+     * <br/>
+     * The following default permission is always included: <tt>"-*,java.lang.*,java.util.*"</tt> unless
+     * its overridden by specifying a JVM system property with they key <tt>org.apache.camel.xstream.permissions</tt>.
+     */
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
+    }
+
+    /**
+     * To add permission for the given pojo classes.
+     * @param type the pojo class(es) xstream should use as allowed permission
+     * @see #setPermissions(String)
+     */
+    public void setPermissions(Class<?>... type) {
+        CollectionStringBuffer csb = new CollectionStringBuffer(",");
+        for (Class<?> clazz : type) {
+            csb.append("+");
+            csb.append(clazz.getName());
+        }
+        setPermissions(csb.toString());
+    }
+
     @Override
     public String getDataFormatName() {
         // json data format is special as the name can be from different bundles
@@ -265,8 +315,10 @@ public class JsonDataFormat extends DataFormatDefinition {
             setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-xstream");
         } else if (library == JsonLibrary.Jackson) {
             setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-jackson");
-        } else {
+        } else if (library == JsonLibrary.Gson) {
             setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-gson");
+        } else {
+            setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-johnzon");
         }
 
         if (unmarshalType == null && unmarshalTypeName != null) {
@@ -289,6 +341,11 @@ public class JsonDataFormat extends DataFormatDefinition {
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+        if (objectMapper != null) {
+            // must be a reference value
+            String ref = objectMapper.startsWith("#") ? objectMapper : "#" + objectMapper;
+            setProperty(camelContext, dataFormat, "objectMapper", ref);
+        }
         if (unmarshalType != null) {
             setProperty(camelContext, dataFormat, "unmarshalType", unmarshalType);
         }
@@ -324,6 +381,14 @@ public class JsonDataFormat extends DataFormatDefinition {
         }
         if (disableFeatures != null) {
             setProperty(camelContext, dataFormat, "disableFeatures", disableFeatures);
+        }
+        if (permissions != null) {
+            setProperty(camelContext, dataFormat, "permissions", permissions);
+        }
+        // if we have the unmarshal type, but no permission set, then use it to be allowed
+        if (permissions == null && unmarshalType != null) {
+            String allow = "+" + unmarshalType.getName();
+            setProperty(camelContext, dataFormat, "permissions", allow);
         }
     }
 

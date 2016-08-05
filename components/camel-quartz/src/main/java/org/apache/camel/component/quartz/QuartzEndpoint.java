@@ -17,6 +17,7 @@
 package org.apache.camel.component.quartz;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -31,6 +32,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.quartz.JobDetail;
@@ -42,9 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <a href="http://activemq.apache.org/quartz.html">Quartz Endpoint</a>
- *
- * @version 
+ * Provides a scheduled delivery of messages using the Quartz 1.x scheduler.
  */
 @UriEndpoint(scheme = "quartz", title = "Quartz", syntax = "quartz:groupName/timerName", consumerOnly = true, consumerClass = QuartzConsumer.class, label = "scheduling")
 public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableService {
@@ -68,7 +68,15 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     @UriParam
     private boolean pauseJob;
     @UriParam
+    private boolean fireNow;
+    @UriParam
+    private int startDelayedSeconds;
+    @UriParam
     private boolean usingFixedCamelContextName;
+    @UriParam(prefix = "trigger.", multiValue = true)
+    private Map<String, Object> triggerParameters;
+    @UriParam(prefix = "job.", multiValue = true)
+    private Map<String, Object> jobParameters;
 
     public QuartzEndpoint(final String endpointUri, final QuartzComponent component) {
         super(endpointUri, component);
@@ -284,6 +292,28 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
         this.pauseJob = pauseJob;
     }
 
+    public boolean isFireNow() {
+        return fireNow;
+    }
+
+    /**
+     * Whether to fire the scheduler asap when its started using the simple trigger (this option does not support cron)
+     */
+    public void setFireNow(boolean fireNow) {
+        this.fireNow = fireNow;
+    }
+
+    public int getStartDelayedSeconds() {
+        return startDelayedSeconds;
+    }
+
+    /**
+     * Seconds to wait before starting the quartz scheduler.
+     */
+    public void setStartDelayedSeconds(int startDelayedSeconds) {
+        this.startDelayedSeconds = startDelayedSeconds;
+    }
+
     public boolean isUsingFixedCamelContextName() {
         return usingFixedCamelContextName;
     }
@@ -294,6 +324,28 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
      */
     public void setUsingFixedCamelContextName(boolean usingFixedCamelContextName) {
         this.usingFixedCamelContextName = usingFixedCamelContextName;
+    }
+
+    public Map<String, Object> getTriggerParameters() {
+        return triggerParameters;
+    }
+
+    /**
+     * To configure additional options on the trigger.
+     */
+    public void setTriggerParameters(Map<String, Object> triggerParameters) {
+        this.triggerParameters = triggerParameters;
+    }
+
+    public Map<String, Object> getJobParameters() {
+        return jobParameters;
+    }
+
+    /**
+     * To configure additional options on the job.
+     */
+    public void setJobParameters(Map<String, Object> jobParameters) {
+        this.jobParameters = jobParameters;
     }
 
     // Implementation methods

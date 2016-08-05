@@ -67,7 +67,7 @@ public interface PollingConsumer extends Consumer {
      * @param timeout the amount of time in milliseconds to wait for a message
      *                before timing out and returning <tt>null</tt>
      * 
-     * @return the message exchange if one iwas available within the timeout
+     * @return the message exchange if one was available within the timeout
      *         period, or <tt>null</tt> if the timeout expired
      */
     Exchange receive(long timeout);

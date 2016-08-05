@@ -81,17 +81,12 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         String body = message.getBody(String.class);
 
         SmppSplitter splitter;
-        switch (alphabet) {
-        case ALPHA_8_BIT:
+        if (SmppUtils.is8Bit(alphabet)) {
             splitter = new Smpp8BitSplitter(body.length());
-            break;
-        case ALPHA_UCS2:
+        } else if (alphabet == Alphabet.ALPHA_UCS2) {
             splitter = new SmppUcs2Splitter(body.length());
-            break;
-        case ALPHA_DEFAULT:
-        default:
+        } else {
             splitter = new SmppDefaultSplitter(body.length());
-            break;
         }
 
         return splitter;
@@ -112,10 +107,10 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
     private static boolean has8bitDataCoding(Message message) {
         Byte dcs = message.getHeader(SmppConstants.DATA_CODING, Byte.class);
         if (dcs != null) {
-            return SmppUtils.parseAlphabetFromDataCoding(dcs.byteValue()) == Alphabet.ALPHA_8_BIT;
+            return SmppUtils.is8Bit(Alphabet.parseDataCoding(dcs.byteValue()));
         } else {
             Byte alphabet = message.getHeader(SmppConstants.ALPHABET, Byte.class);
-            return alphabet != null && alphabet.equals(Alphabet.ALPHA_8_BIT.value());
+            return alphabet != null && SmppUtils.is8Bit(Alphabet.valueOf(alphabet));
         }
     }
 

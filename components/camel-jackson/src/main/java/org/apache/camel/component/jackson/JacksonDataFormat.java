@@ -37,6 +37,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -47,12 +48,12 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://jackson.codehaus.org/">Jackson</a> to marshal to and from JSON.
  */
-public class JacksonDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+public class JacksonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(JacksonDataFormat.class);
 
-    private final ObjectMapper objectMapper;
     private CamelContext camelContext;
+    private ObjectMapper objectMapper;
     private Class<? extends Collection> collectionType;
     private List<Module> modules;
     private String moduleClassNames;
@@ -69,10 +70,10 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
     private boolean enableJacksonTypeConverter;
 
     /**
-     * Use the default Jackson {@link ObjectMapper} and {@link Map}
+     * Use the default Jackson {@link ObjectMapper} and {@link Object}
      */
     public JacksonDataFormat() {
-        this(HashMap.class);
+        this(Object.class);
     }
 
     /**
@@ -107,7 +108,6 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
      * @param enableJaxbAnnotationModule if it is true, will enable the JaxbAnnotationModule.
      */
     public JacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView, boolean enableJaxbAnnotationModule) {
-        this.objectMapper = new ObjectMapper();
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
         this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
@@ -135,6 +135,11 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
         this.objectMapper = mapper;
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "json-jackson";
     }
 
     public CamelContext getCamelContext() {
@@ -171,6 +176,14 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
     // Properties
     // -------------------------------------------------------------------------
 
+    public ObjectMapper getObjectMapper() {
+        return this.objectMapper;
+    }
+
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     public Class<?> getUnmarshalType() {
         return this.unmarshalType;
     }
@@ -193,10 +206,6 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
 
     public void setJsonView(Class<?> jsonView) {
         this.jsonView = jsonView;
-    }
-
-    public ObjectMapper getObjectMapper() {
-        return this.objectMapper;
     }
 
     public String getInclude() {
@@ -392,11 +401,14 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
 
     @Override
     protected void doStart() throws Exception {
+        if (objectMapper == null) {
+            objectMapper = new ObjectMapper();
+        }
         
         if (enableJaxbAnnotationModule) {
             // Enables JAXB processing
             JaxbAnnotationModule module = new JaxbAnnotationModule();
-            LOG.info("Registering module: {}", module);
+            LOG.debug("Registering JaxbAnnotationModule: {}", module);
             objectMapper.registerModule(module);
         }
 
@@ -460,7 +472,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
 
         if (modules != null) {
             for (Module module : modules) {
-                LOG.info("Registering module: {}", module);
+                LOG.debug("Registering module: {}", module);
                 objectMapper.registerModules(module);
             }
         }
@@ -470,7 +482,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
                 String name = o.toString();
                 Class<Module> clazz = camelContext.getClassResolver().resolveMandatoryClass(name, Module.class);
                 Module module = camelContext.getInjector().newInstance(clazz);
-                LOG.info("Registering module: {} -> {}", name, module);
+                LOG.debug("Registering module: {} -> {}", name, module);
                 objectMapper.registerModule(module);
             }
         }
@@ -482,7 +494,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
                     name = name.substring(1);
                 }
                 Module module = CamelContextHelper.mandatoryLookup(camelContext, name, Module.class);
-                LOG.info("Registering module: {} -> {}", name, module);
+                LOG.debug("Registering module: {} -> {}", name, module);
                 objectMapper.registerModule(module);
             }
         }

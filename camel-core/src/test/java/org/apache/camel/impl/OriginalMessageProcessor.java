@@ -24,7 +24,10 @@ public class OriginalMessageProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Message original = exchange.getUnitOfWork().getOriginalInMessage();
+        Message original = null;
+        if (exchange.getContext().isAllowUseOriginalMessage()) {
+            original = exchange.getUnitOfWork().getOriginalInMessage();
+        }
         if (original == null) {
             exchange.getIn().setHeader("HasOriginal", "false");
         } else {

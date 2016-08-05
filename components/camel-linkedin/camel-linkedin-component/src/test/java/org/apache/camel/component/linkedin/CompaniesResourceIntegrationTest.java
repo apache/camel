@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CompaniesResourceIntegrationTest.class);
-    private static final String PATH_PREFIX = LinkedInApiCollection.getCollection().getApiName(CompaniesResourceApiMethod.class).getName();
+    private static final String PATH_PREFIX = "companies";
     private static final Long TEST_COMPANY_ID = 1337L;
 
     // TODO provide parameter values for addCompanyUpdateCommentAsCompany

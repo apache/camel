@@ -29,13 +29,15 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- *
+ * To exchange data with external Websocket clients using Atmosphere.
  */
 @UriEndpoint(scheme = "atmosphere-websocket", extendsScheme = "servlet", title = "Atmosphere Websocket",
-        syntax = "atmosphere-websocket:servicePath", consumerClass = WebsocketConsumer.class, label = "websocket")
+        syntax = "atmosphere-websocket:servicePath", consumerClass = WebsocketConsumer.class, label = "websocket",
+        excludeProperties = "httpUri,contextPath")
 public class WebsocketEndpoint extends ServletEndpoint {
 
     private WebSocketStore store;
+    private WebsocketConsumer websocketConsumer;
 
     @UriPath(description = "Name of websocket endpoint") @Metadata(required = "true")
     private String servicePath;
@@ -62,7 +64,8 @@ public class WebsocketEndpoint extends ServletEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new WebsocketConsumer(this, processor);
+        websocketConsumer = new WebsocketConsumer(this, processor);
+        return websocketConsumer;
     }
 
     @Override
@@ -94,5 +97,9 @@ public class WebsocketEndpoint extends ServletEndpoint {
 
     WebSocketStore getWebSocketStore() {
         return store;
+    }
+
+    public WebsocketConsumer getWebsocketConsumer() {
+        return websocketConsumer;
     }
 }

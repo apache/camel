@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -38,7 +37,13 @@ import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.remote.ConsulConfigurationDefinition;
+import org.apache.camel.model.remote.DnsConfigurationDefinition;
+import org.apache.camel.model.remote.EtcdConfigurationDefinition;
+import org.apache.camel.model.remote.KubernetesConfigurationDefinition;
+import org.apache.camel.model.remote.RibbonConfigurationDefinition;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
@@ -101,14 +106,18 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             for (int i = 0; i < map.getLength(); i++) {
                 Node att = map.item(i);
                 if (att.getNodeName().equals("uri") || att.getNodeName().endsWith("Uri")) {
+                    final String value = att.getNodeValue();
+                    String before = ObjectHelper.before(value, "?");
+                    String after = ObjectHelper.after(value, "?");
 
-                    String value = att.getNodeValue();
-                    // remove all double spaces
-                    String changed = value.replaceAll("\\s{2,}", "");
-
-                    if (!value.equals(changed)) {
-                        LOG.debug("Removed whitespace noise from attribute {} -> {}", value, changed);
-                        att.setNodeValue(changed);
+                    if (before != null && after != null) {
+                        // remove all double spaces in the uri parameters
+                        String changed = after.replaceAll("\\s{2,}", "");
+                        if (!after.equals(changed)) {
+                            String newAtr = before.trim() + "?" + changed.trim();
+                            LOG.debug("Removed whitespace noise from attribute {} -> {}", value, newAtr);
+                            att.setNodeValue(newAtr);
+                        }
                     }
                 }
             }
@@ -138,10 +147,16 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("threadPool", CamelThreadPoolFactoryBean.class, true, true);
         addBeanDefinitionParser("redeliveryPolicyProfile", CamelRedeliveryPolicyFactoryBean.class, true, true);
 
-        // jmx agent, stream caching, and property placeholder cannot be used outside of the camel context
+        // jmx agent, stream caching, hystrix, service call configurations and property placeholder cannot be used outside of the camel context
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false, false);
         addBeanDefinitionParser("streamCaching", CamelStreamCachingStrategyDefinition.class, false, false);
         addBeanDefinitionParser("propertyPlaceholder", CamelPropertyPlaceholderDefinition.class, false, false);
+        addBeanDefinitionParser("hystrixConfiguration", HystrixConfigurationDefinition.class, false, false);
+        addBeanDefinitionParser("consulConfiguration", ConsulConfigurationDefinition.class, false, false);
+        addBeanDefinitionParser("dnsConfiguration", DnsConfigurationDefinition.class, false, false);
+        addBeanDefinitionParser("etcdConfiguration", EtcdConfigurationDefinition.class, false, false);
+        addBeanDefinitionParser("kubernetesConfiguration", KubernetesConfigurationDefinition.class, false, false);
+        addBeanDefinitionParser("ribbonConfiguration", RibbonConfigurationDefinition.class, false, false);
 
         // errorhandler could be the sub element of camelContext or defined outside camelContext
         BeanDefinitionParser errorHandlerParser = new ErrorHandlerDefinitionParser();

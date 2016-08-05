@@ -60,7 +60,7 @@ public class Mina2UdpProtocolCodecFactory implements ProtocolCodecFactory {
             public void decode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
                 // convert to bytes to write, we can not pass in the byte buffer as it could be sent to
                 // multiple mina sessions so we must convert it to bytes
-                byte[] bytes = context.getTypeConverter().convertTo(byte[].class, in);
+                byte[] bytes = context.getTypeConverter().mandatoryConvertTo(byte[].class, in);
                 out.write(bytes);
             }
 

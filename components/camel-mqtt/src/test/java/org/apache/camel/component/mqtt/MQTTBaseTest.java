@@ -39,7 +39,7 @@ public abstract class MQTTBaseTest extends CamelTestSupport {
         brokerService = new BrokerService();
         brokerService.setPersistent(false);
         brokerService.setAdvisorySupport(false);
-        brokerService.addConnector("mqtt://127.0.0.1:1883");
+        brokerService.addConnector(MQTTTestSupport.getConnection());
         brokerService.start();
         super.setUp();
     }

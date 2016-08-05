@@ -35,7 +35,6 @@ import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.util.ServiceHelper;
-import org.eclipse.jetty.http.HttpMethods;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_METHOD;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX;
@@ -143,6 +142,9 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 break;
             case QUERY_MORE:
                 processQueryMore(exchange, callback);
+                break;
+            case QUERY_ALL:
+                processQueryAll(exchange, callback);
                 break;
             case SEARCH:
                 processSearch(exchange, callback);
@@ -472,6 +474,20 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         });
     }
 
+    private void processQueryAll(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
+        final String sObjectQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
+
+        // use custom response class property
+        setResponseClass(exchange, null);
+
+        restClient.queryAll(sObjectQuery, new RestClient.ResponseCallback() {
+            @Override
+            public void onResponse(InputStream response, SalesforceException exception) {
+                processResponse(exchange, response, exception, callback);
+            }
+        });
+    }
+
     private void processSearch(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         final String sObjectSearch = getParameter(SOBJECT_SEARCH, exchange, USE_BODY, NOT_OPTIONAL);
 
@@ -490,7 +506,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         String apexMethod = getParameter(APEX_METHOD, exchange, IGNORE_BODY, IS_OPTIONAL);
         // default to GET
         if (apexMethod == null) {
-            apexMethod = HttpMethods.GET;
+            apexMethod = "GET";
             log.debug("Using HTTP GET method by default for APEX REST call for {}", apexUrl);
         }
         final Map<String, Object> queryParams = getQueryParams(exchange);

@@ -106,10 +106,10 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
         return "";
     }
 
-    class MyHeaderValidationHandler extends HeaderValidationHandler {
+    private class MyHeaderValidationHandler extends HeaderValidationHandler {
         private String expectProtocolVersion;
 
-        public MyHeaderValidationHandler(String expectedMethod, String protocolVersion,
+        MyHeaderValidationHandler(String expectedMethod, String protocolVersion,
                                          String responseContent, Map<String, String> expectedHeaders) {
             super(expectedMethod, null, null, responseContent, expectedHeaders);
             expectProtocolVersion = protocolVersion;

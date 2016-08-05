@@ -47,12 +47,18 @@ public class ContainerTest extends TestCase {
         CamelContext camel1 = new DefaultCamelContext();
         CamelContext camel2 = new DefaultCamelContext();
 
+        // Must call start to make contexts 'managed'
+        camel1.start();
+        camel2.start();
+
         assertEquals(0, myContainer.names.size());
         Container.Instance.set(myContainer);
         // after we set, then we should manage the 2 pending contexts
         assertEquals(2, myContainer.names.size());
 
         CamelContext camel3 = new DefaultCamelContext();
+        camel3.start();
+
         assertEquals(3, myContainer.names.size());
         assertEquals(camel1.getName(), myContainer.names.get(0));
         assertEquals(camel2.getName(), myContainer.names.get(1));
@@ -68,6 +74,9 @@ public class ContainerTest extends TestCase {
 
         CamelContext camel1 = new DefaultCamelContext();
         CamelContext camel2 = new DefaultCamelContext();
+
+        camel1.start();
+        camel2.start();
 
         assertEquals(0, myContainer.names.size());
 

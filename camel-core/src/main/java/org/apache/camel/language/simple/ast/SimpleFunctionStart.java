@@ -72,8 +72,8 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                         String text = ((LiteralNode) child).getText();
                         sb.append(text);
                         quoteEmbeddedFunctions |= ((LiteralNode) child).quoteEmbeddedNodes();
-                    // if its a function or quoted literal, then embed that as text
-                    } else if (child instanceof SimpleFunctionStart || child instanceof SingleQuoteStart || child instanceof DoubleQuoteStart) {
+                    // if its quoted literal then embed that as text
+                    } else if (child instanceof SingleQuoteStart || child instanceof DoubleQuoteStart) {
                         try {
                             // pass in null when we evaluate the nested expressions
                             Expression nested = child.createExpression(null);
@@ -89,6 +89,9 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                             // must rethrow parser exception as illegal syntax with details about the location
                             throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
                         }
+                    // if its an inlined function then embed that function as text so it can be evaluated lazy
+                    } else if (child instanceof SimpleFunctionStart) {
+                        sb.append(child);
                     }
                 }
 

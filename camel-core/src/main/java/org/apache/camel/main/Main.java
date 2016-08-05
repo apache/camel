@@ -42,8 +42,9 @@ public class Main extends MainSupport {
     public static void main(String... args) throws Exception {
         Main main = new Main();
         instance = main;
-        main.enableHangupSupport();
         main.run(args);
+
+        System.exit(main.getExitCode());
     }
 
     /**
@@ -123,7 +124,14 @@ public class Main extends MainSupport {
         super.doStart();
         postProcessContext();
         if (getCamelContexts().size() > 0) {
-            getCamelContexts().get(0).start();
+            try {
+                getCamelContexts().get(0).start();
+                // if we were veto started then mark as completed
+            } finally {
+                if (getCamelContexts().get(0).isVetoStarted()) {
+                    completed();
+                }
+            }
         }
     }
 

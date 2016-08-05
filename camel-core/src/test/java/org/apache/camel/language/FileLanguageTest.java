@@ -169,7 +169,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         file = new File("target/filelanguage/test/bigfile.tar.gz");
 
         String uri = "file://target/filelanguage?fileExist=Override";
-        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null);
+        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null, false);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
 
@@ -188,7 +188,7 @@ public class FileLanguageTest extends LanguageTestSupport {
 
         // get the file handle
         file = new File("target/filelanguage/test/hello.txt");
-        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null);
+        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null, false);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
 

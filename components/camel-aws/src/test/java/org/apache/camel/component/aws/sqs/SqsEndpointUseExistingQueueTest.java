@@ -29,6 +29,7 @@ import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
+import com.amazonaws.services.sqs.model.SetQueueAttributesResult;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -72,7 +73,7 @@ public class SqsEndpointUseExistingQueueTest extends CamelTestSupport {
     
     static class AmazonSQSClientMock extends AmazonSQSClient {
         
-        public AmazonSQSClientMock() {
+        AmazonSQSClientMock() {
             super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
         }
 
@@ -91,8 +92,8 @@ public class SqsEndpointUseExistingQueueTest extends CamelTestSupport {
         }
         
         @Override
-        public void setQueueAttributes(SetQueueAttributesRequest setQueueAttributesRequest) throws AmazonServiceException, AmazonClientException {
-            // noop
+        public SetQueueAttributesResult setQueueAttributes(SetQueueAttributesRequest setQueueAttributesRequest) throws AmazonServiceException, AmazonClientException {
+            return new SetQueueAttributesResult();
         }
         
         @Override

@@ -18,7 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
+import org.apache.camel.NamedNode;
 import org.apache.camel.processor.DefaultExchangeFormatter;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ExchangeFormatter;
@@ -240,23 +241,12 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         private final Exchange exchange;
         private final CountDownLatch latch;
         private final long start;
-        private String routeId;
-        private String nodeId;
 
         private AwaitThreadEntry(Thread thread, Exchange exchange, CountDownLatch latch) {
             this.thread = thread;
             this.exchange = exchange;
             this.latch = latch;
             this.start = System.currentTimeMillis();
-
-            // capture details from message history if enabled
-            List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
-            if (list != null && !list.isEmpty()) {
-                // grab last part
-                MessageHistory history = list.get(list.size() - 1);
-                routeId = history.getRouteId();
-                nodeId = history.getNode() != null ? history.getNode().getId() : null;
-            }
         }
 
         @Override
@@ -276,16 +266,44 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
         @Override
         public String getRouteId() {
-            return routeId;
+            MessageHistory lastMessageHistory = getLastMessageHistory();
+            if (lastMessageHistory == null) {
+                return null;
+            }
+            return lastMessageHistory.getRouteId();
         }
 
         @Override
         public String getNodeId() {
-            return nodeId;
+            NamedNode node = getNode();
+            if (node == null) {
+                return null;
+            }
+            return node.getId();
         }
 
         public CountDownLatch getLatch() {
             return latch;
+        }
+
+        private NamedNode getNode() {
+            MessageHistory lastMessageHistory = getLastMessageHistory();
+            if (lastMessageHistory == null) {
+                return null;
+            }
+            return lastMessageHistory.getNode();
+        }
+
+        private MessageHistory getLastMessageHistory() {
+            LinkedList<MessageHistory> list = getMessageHistories();
+            if (list == null || list.isEmpty()) {
+                return null;
+            }
+            return list.getLast();
+        }
+
+        private LinkedList<MessageHistory> getMessageHistories() {
+            return exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
         }
 
         @Override

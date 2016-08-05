@@ -64,8 +64,8 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
             }
         });
         context.start();
-        context.stopRoute("test1", 0, TimeUnit.MILLISECONDS);
-        context.stopRoute("test2", 0, TimeUnit.MILLISECONDS);
+        context.stopRoute("test1", 1000, TimeUnit.MILLISECONDS);
+        context.stopRoute("test2", 1000, TimeUnit.MILLISECONDS);
 
         Thread.sleep(5000);
         assertTrue(context.getRouteStatus("test1") == ServiceStatus.Started);
@@ -125,7 +125,7 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
             }
         });
         context.start();
-        context.stopRoute("test", 0, TimeUnit.MILLISECONDS);
+        context.stopRoute("test", 1000, TimeUnit.MILLISECONDS);
         
         Thread.sleep(5000);
         assertTrue(context.getRouteStatus("test") == ServiceStatus.Started);

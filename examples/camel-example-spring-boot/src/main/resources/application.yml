@@ -16,3 +16,8 @@
 ## ------------------------------------------------------------------------
 
 spring.main.sources: org.apache.camel.example.spring.boot.MySpringBootRouter
+shell.auth.simple.user.password: password
+
+camel:
+  springboot:
+    allow-use-original-message: false

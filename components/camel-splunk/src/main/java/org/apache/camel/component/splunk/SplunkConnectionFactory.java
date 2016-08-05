@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import com.splunk.HttpService;
 import com.splunk.SSLSecurityProtocol;
 import com.splunk.Service;
 import com.splunk.ServiceArgs;
@@ -135,7 +136,7 @@ public class SplunkConnectionFactory {
             public Service call() throws Exception {
                 if (Service.DEFAULT_SCHEME.equals(getScheme())) {
                     LOG.debug("Https in use. Setting SSL protocol to {}", getSslProtocol());
-                    Service.setSslSecurityProtocol(getSslProtocol());
+                    HttpService.setSslSecurityProtocol(getSslProtocol());
                 }
                 return Service.connect(args);
             }

@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.quartz2.QuartzComponent;
@@ -47,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * See org.apache.camel.component.quartz2.QuartzComponent
  *
  */
-public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements ScheduledRoutePolicyConstants {
+public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements ScheduledRoutePolicyConstants, NonManagedService {
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledRoutePolicy.class);
     protected Map<String, ScheduledRouteDetails> scheduledRouteDetailsMap = new LinkedHashMap<String, ScheduledRouteDetails>();
     private Scheduler scheduler;

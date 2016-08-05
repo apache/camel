@@ -29,7 +29,8 @@
         
         <!-- we define the json xstream data formats to be used (xstream is default) -->
         <dataFormats>
-            <xstream id="xstream-1" mode="NO_REFERENCES">
+            <xstream id="xstream-1" mode="NO_REFERENCES"
+                permissions="-org.apache.camel.dataformat.xstream.*,org.apache.camel.dataformat.xstream.PurchaseHistory,org.apache.camel.dataformat.xstream.PurchaseOrder">
                 <converters>
                     <converter class="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter" />
                 </converters>
@@ -43,7 +44,7 @@
                 </implicitCollections>
             </xstream>
             
-           <xstream id="xstream-json" driver="json">
+           <xstream id="xstream-json" driver="json" permissions="org.apache.camel.dataformat.xstream.*">
                 <converters>
                     <converter class="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter" />
                 </converters>
@@ -57,7 +58,7 @@
                 </implicitCollections>
             </xstream>
             
-            <xstream id="xstream-driver" driverRef="myDriver"/>            
+            <xstream id="xstream-driver" driverRef="myDriver" permissions="org.apache.camel.dataformat.xstream.*"/>
         </dataFormats>
 
         <route>

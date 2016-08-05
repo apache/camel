@@ -26,15 +26,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The control bus producer.
  */
 public class ControlBusProducer extends DefaultAsyncProducer {
+    private static final Expression ROUTE_ID_EXPRESSION = ExpressionBuilder.routeIdExpression();
 
     private final CamelLogger logger;
 
@@ -143,6 +146,10 @@ public class ControlBusProducer extends DefaultAsyncProducer {
         public void run() {
             String action = getEndpoint().getAction();
             String id = getEndpoint().getRouteId();
+
+            if (ObjectHelper.equal("current", id)) {
+                id = ROUTE_ID_EXPRESSION.evaluate(exchange, String.class);
+            }
 
             Object result = null;
             String task = action + " route " + id;

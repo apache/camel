@@ -21,6 +21,7 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.apache.camel.Converter;
 
@@ -30,7 +31,7 @@ import org.apache.camel.Converter;
 @Converter
 public final class HL7Converter {
 
-    private static final HapiContext DEFAULT_CONTEXT = new DefaultHapiContext(ValidationContextFactory.noValidation());
+    private static final HapiContext DEFAULT_CONTEXT = new DefaultHapiContext((ValidationContext) ValidationContextFactory.noValidation());
 
     private HL7Converter() {
         // Helper class

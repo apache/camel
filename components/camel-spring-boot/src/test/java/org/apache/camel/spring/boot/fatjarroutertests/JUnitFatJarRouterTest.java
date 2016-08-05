@@ -24,17 +24,15 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestFatJarRouter.class)
-@IntegrationTest("spring.main.sources=org.apache.camel.spring.boot.fatjarroutertests")
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = TestFatJarRouter.class, properties = "spring.main.sources=org.apache.camel.spring.boot.fatjarroutertests")
 public class JUnitFatJarRouterTest extends Assert {
 
-    static int port = SocketUtils.findAvailableTcpPort();
+    static int port = SocketUtils.findAvailableTcpPort(20000);
 
     @BeforeClass
     public static void beforeClass() {

@@ -33,7 +33,6 @@ public class AtmosMoveProducer extends AtmosProducer {
         AtmosResult result = AtmosAPIFacade.getInstance(configuration.getClient())
                 .move(configuration.getRemotePath(), configuration.getNewRemotePath());
         result.populateExchange(exchange);
-        log.info("Moved from " + configuration.getRemotePath() + " to " + configuration.getNewRemotePath());
     }
 
 }

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.gora;
 
 import java.util.Map;
@@ -32,10 +31,8 @@ import static org.apache.camel.component.gora.utils.GoraUtils.constractQueryFrom
 import static org.apache.camel.component.gora.utils.GoraUtils.getKeyFromExchange;
 import static org.apache.camel.component.gora.utils.GoraUtils.getValueFromExchange;
 
-
 /**
  * Camel-Gora {@link DefaultProducer}.
- *
  */
 public class GoraProducer extends DefaultProducer implements ServicePoolAware {
 
@@ -70,53 +67,38 @@ public class GoraProducer extends DefaultProducer implements ServicePoolAware {
         this.configuration = configuration;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final Exchange exchange) throws Exception {
-
         final String operation = (String) exchange.getIn().getHeader(GoraAttribute.GORA_OPERATION.value);
 
         if (operation == null || operation.isEmpty()) {
-
             throw new RuntimeException("Gora operation is null or empty!");
         }
 
         Object result = 0; // 0 used as default response in order to avoid null body exception
 
         if (GoraOperation.PUT.value.equalsIgnoreCase(operation)) {
-
             dataStore.put(getKeyFromExchange(exchange), getValueFromExchange(exchange));
         } else if (GoraOperation.GET.value.equalsIgnoreCase(operation)) {
-
             result = dataStore.get(getKeyFromExchange(exchange));
         } else if (GoraOperation.DELETE.value.equalsIgnoreCase(operation)) {
-
             result = dataStore.delete(getKeyFromExchange(exchange));
         } else if (GoraOperation.QUERY.value.equalsIgnoreCase(operation)) {
-
             final Map<String, Object> props = exchange.getIn().getHeaders();
             result = constractQueryFromPropertiesMap(props, dataStore, this.configuration).execute();
         } else if (GoraOperation.DELETE_BY_QUERY.value.equalsIgnoreCase(operation)) {
-
             final Map<String, Object> props = exchange.getIn().getHeaders();
             result = dataStore.deleteByQuery(constractQueryFromPropertiesMap(props, dataStore, this.configuration));
         } else if (GoraOperation.GET_SCHEMA_NAME.value.equalsIgnoreCase(operation)) {
-
             result = dataStore.getSchemaName();
         } else if (GoraOperation.DELETE_SCHEMA.value.equalsIgnoreCase(operation)) {
-
             dataStore.deleteSchema();
         } else if (GoraOperation.CREATE_SCHEMA.value.equalsIgnoreCase(operation)) {
-
             dataStore.createSchema();
         } else if (GoraOperation.SCHEMA_EXIST.value.equalsIgnoreCase(operation)) {
-
             result = dataStore.schemaExists();
         } else {
-
-            throw new RuntimeException("Unknown operation!");
+            throw new RuntimeException("Unknown operation: " + operation);
         }
 
         /*
@@ -129,6 +111,9 @@ public class GoraProducer extends DefaultProducer implements ServicePoolAware {
         }
 
         exchange.getOut().setBody(result);
+        // preserve headers and attachments
+        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+        exchange.getOut().setAttachments(exchange.getIn().getAttachments());
     }
 
 }

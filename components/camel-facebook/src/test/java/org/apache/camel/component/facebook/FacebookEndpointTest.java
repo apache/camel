@@ -55,7 +55,7 @@ public class FacebookEndpointTest extends CamelFacebookTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:testNoArgs")
-                    .to("facebook://user")
+                    .to("facebook:getuserlikes")
                     .to("mock://testNoArgs");
             }
         };

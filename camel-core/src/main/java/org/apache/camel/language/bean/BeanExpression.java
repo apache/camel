@@ -86,7 +86,7 @@ public class BeanExpression implements Expression, Predicate {
             sb.append(ObjectHelper.className(type));
         }
         if (method != null) {
-            sb.append(" method: ").append(method);
+            sb.append(" method:").append(method);
         }
         sb.append("]");
         return sb.toString();
@@ -114,7 +114,10 @@ public class BeanExpression implements Expression, Predicate {
                 ognl.process(exchange);
                 return ognl.getResult();
             } catch (Exception e) {
-                throw new RuntimeBeanExpressionException(exchange, beanName, method, e);
+                if (e instanceof RuntimeBeanExpressionException) {
+                    throw (RuntimeBeanExpressionException) e;
+                }
+                throw new RuntimeBeanExpressionException(exchange, getBeanName(beanName, beanHolder), method, e);
             }
         } else {
             // regular non ognl invocation
@@ -123,7 +126,10 @@ public class BeanExpression implements Expression, Predicate {
                 invoke.process(exchange);
                 return invoke.getResult();
             } catch (Exception e) {
-                throw new RuntimeBeanExpressionException(exchange, beanName, method, e);
+                if (e instanceof RuntimeBeanExpressionException) {
+                    throw (RuntimeBeanExpressionException) e;
+                }
+                throw new RuntimeBeanExpressionException(exchange, getBeanName(beanName, beanHolder), method, e);
             }
         }
     }
@@ -160,6 +166,17 @@ public class BeanExpression implements Expression, Predicate {
             throw new IllegalArgumentException("Either bean, beanName or type should be set on " + this);
         }
         return holder;
+    }
+
+    private static String getBeanName(String beanName, BeanHolder beanHolder) {
+        String name = beanName;
+        if (name == null && beanHolder != null && beanHolder.getBean() != null) {
+            name = beanHolder.getBean().getClass().getCanonicalName();
+        }
+        if (name == null && beanHolder != null && beanHolder.getBeanInfo() != null && beanHolder.getBeanInfo().getType() != null) {
+            name = beanHolder.getBeanInfo().getType().getCanonicalName();
+        }
+        return name;
     }
 
     /**
@@ -228,7 +245,7 @@ public class BeanExpression implements Expression, Predicate {
         private final BeanHolder beanHolder;
         private Object result;
 
-        public OgnlInvokeProcessor(BeanHolder beanHolder, String ognl) {
+        OgnlInvokeProcessor(BeanHolder beanHolder, String ognl) {
             this.beanHolder = beanHolder;
             this.ognl = ognl;
             // we must start with having bean as the result
@@ -251,9 +268,16 @@ public class BeanExpression implements Expression, Predicate {
 
             // loop and invoke each method
             Object beanToCall = beanHolder.getBean();
+            Class<?> beanType = beanHolder.getBeanInfo().getType();
+
             // there must be a bean to call with, we currently does not support OGNL expressions on using purely static methods
-            if (beanToCall == null) {
-                throw new IllegalArgumentException("Bean instance is null. OGNL bean expressions requires bean instances.");
+            if (beanToCall == null && beanType == null) {
+                throw new IllegalArgumentException("Bean instance and bean type is null. OGNL bean expressions requires to have either a bean instance of the class name of the bean to use.");
+            }
+
+            if (ognl != null) {
+                // must be a valid method name according to java identifier ruling
+                OgnlHelper.validateMethodName(ognl);
             }
 
             // Split ognl except when this is not a Map, Array
@@ -261,10 +285,22 @@ public class BeanExpression implements Expression, Predicate {
             List<String> methods = OgnlHelper.splitOgnl(ognl);
 
             for (String methodName : methods) {
-                BeanHolder holder = new ConstantBeanHolder(beanToCall, exchange.getContext());
+                BeanHolder holder;
+                if (beanToCall != null) {
+                    holder = new ConstantBeanHolder(beanToCall, exchange.getContext());
+                } else if (beanType != null) {
+                    holder = new ConstantTypeBeanHolder(beanType, exchange.getContext());
+                } else {
+                    holder = null;
+                }
 
                 // support the null safe operator
                 boolean nullSafe = OgnlHelper.isNullSafeOperator(methodName);
+
+                if (holder == null) {
+                    String name = getBeanName(null, beanHolder);
+                    throw new RuntimeBeanExpressionException(exchange, name, ognl, "last method returned null and therefore cannot continue to invoke method " + methodName + " on a null instance");
+                }
 
                 // keep up with how far are we doing
                 ognlPath += methodName;
@@ -305,6 +341,7 @@ public class BeanExpression implements Expression, Predicate {
 
                 // prepare for next bean to invoke
                 beanToCall = result;
+                beanType = null;
             }
         }
 

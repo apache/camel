@@ -57,7 +57,7 @@ public class RmiRouteTest extends RmiRouteTestSupport {
 
         // START SNIPPET: invoke
         Endpoint endpoint = camelContext.getEndpoint("direct:hello");
-        ISay proxy = ProxyHelper.createProxy(endpoint, ISay.class);
+        ISay proxy = ProxyHelper.createProxy(endpoint, false, ISay.class);
         String rc = proxy.say();
         assertEquals("Good Bye!", rc);
         // END SNIPPET: invoke

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.exec;
 
+import java.io.InputStream;
 import org.apache.camel.RuntimeCamelException;
 
 /**
@@ -25,18 +26,33 @@ public class ExecException extends RuntimeCamelException {
 
     private static final long serialVersionUID = 7808703605527644487L;
 
-    public ExecException() {
-    }
+    private final int exitValue;
+    private final InputStream stdout;
+    private final InputStream stderr;
 
-    public ExecException(String message) {
+    public ExecException(String message, final InputStream stdout, final InputStream stderr, final int exitValue) {
         super(message);
+        this.exitValue = exitValue;
+        this.stderr = stderr;
+        this.stdout = stdout;
     }
 
-    public ExecException(String message, Throwable cause) {
+    public ExecException(String message, final InputStream stdout, final InputStream stderr, final int exitValue, Throwable cause) {
         super(message, cause);
+        this.exitValue = exitValue;
+        this.stderr = stderr;
+        this.stdout = stdout;
     }
 
-    public ExecException(Throwable cause) {
-        super(cause);
+    public int getExitValue() {
+        return exitValue;
+    }
+
+    public InputStream getStdout() {
+        return stdout;
+    }
+
+    public InputStream getStderr() {
+        return stderr;
     }
 }

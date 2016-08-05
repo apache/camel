@@ -95,7 +95,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         private DestinationResolver delegate;
         private Destination destination;
 
-        public DestinationResolverDelegate(DestinationResolver delegate) {
+        DestinationResolverDelegate(DestinationResolver delegate) {
             this.delegate = delegate;
         }
 

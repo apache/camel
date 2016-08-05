@@ -31,9 +31,10 @@ import org.apache.camel.spi.UriPath;
  */
 @UriParams
 public class GoogleCalendarConfiguration {
-    private static final List<String> DEFAULT_SCOPES = Arrays.asList(CalendarScopes.CALENDAR); 
+    private static final List<String> DEFAULT_SCOPES = Arrays.asList(CalendarScopes.CALENDAR);
 
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = "true")
     private GoogleCalendarApiName apiName;
 
     @UriPath(enums = "calendarImport,clear,delete,get,insert,instances,list,move,patch,query,quickAdd,stop,update,watch")
@@ -42,7 +43,7 @@ public class GoogleCalendarConfiguration {
 
     @UriParam(defaultValue = CalendarScopes.CALENDAR)
     private List<String> scopes = DEFAULT_SCOPES;
-    
+
     @UriParam
     private String clientId;
 
@@ -63,6 +64,9 @@ public class GoogleCalendarConfiguration {
 
     @UriParam
     private String p12FileName;
+
+    @UriParam
+    private String user;
 
     public GoogleCalendarApiName getApiName() {
         return apiName;
@@ -151,7 +155,7 @@ public class GoogleCalendarConfiguration {
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
-    
+
     public List<String> getScopes() {
         return scopes;
     }
@@ -172,6 +176,17 @@ public class GoogleCalendarConfiguration {
      */
     public void setP12FileName(String p12FileName) {
         this.p12FileName = p12FileName;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    /**
+     * The email address of the user the application is trying to impersonate in the service account flow
+     */
+    public void setUser(String user) {
+        this.user = user;
     }
 
 }

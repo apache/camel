@@ -26,6 +26,16 @@ import org.apache.camel.component.vm.VmConsumer;
 import org.apache.camel.component.vm.VmEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
+/**
+ * The stub component provides a simple way to stub out any physical endpoints while in development or testing.
+ *
+ * For example to run a route without needing to actually connect to a specific SMTP or Http endpoint.
+ * Just add stub: in front of any endpoint URI to stub out the endpoint.
+ * Internally the Stub component creates VM endpoints. The main difference between Stub and VM is that VM
+ * will validate the URI and parameters you give it, so putting vm: in front of a typical URI with
+ * query arguments will usually fail. Stub won't though, as it basically ignores all query parameters
+ * to let you quickly stub out one or more endpoints in your route temporarily.
+ */
 @UriEndpoint(scheme = "stub", title = "Stub", syntax = "stub:name", consumerClass = VmConsumer.class, label = "core,testing")
 public class StubEndpoint extends VmEndpoint {
 

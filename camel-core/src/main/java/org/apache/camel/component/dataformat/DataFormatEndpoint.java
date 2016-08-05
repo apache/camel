@@ -32,7 +32,11 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ServiceHelper;
 
-@UriEndpoint(scheme = "dataformat", title = "Data Format", syntax = "dataformat:name:operation", producerOnly = true, label = "core,transformation")
+/**
+ * The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.
+ */
+@UriEndpoint(scheme = "dataformat", title = "Data Format", syntax = "dataformat:name:operation", producerOnly = true,
+        label = "core,transformation", lenientProperties = true)
 public class DataFormatEndpoint extends DefaultEndpoint {
 
     private MarshalProcessor marshal;
@@ -105,6 +109,11 @@ public class DataFormatEndpoint extends DefaultEndpoint {
 
     @Override
     public boolean isSingleton() {
+        return true;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
         return true;
     }
 

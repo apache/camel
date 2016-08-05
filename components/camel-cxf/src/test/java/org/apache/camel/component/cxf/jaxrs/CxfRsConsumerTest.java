@@ -90,7 +90,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     
     private void invokeGetCustomer(String uri, String expect) throws Exception {
         HttpGet get = new HttpGet(uri);
-        get.addHeader("Accept" , "application/json");
+        get.addHeader("Accept", "application/json");
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {

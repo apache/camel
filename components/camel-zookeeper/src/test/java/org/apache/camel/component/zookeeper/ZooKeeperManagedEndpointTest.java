@@ -18,7 +18,6 @@ package org.apache.camel.component.zookeeper;
 
 import java.util.ArrayList;
 import java.util.Set;
-import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 

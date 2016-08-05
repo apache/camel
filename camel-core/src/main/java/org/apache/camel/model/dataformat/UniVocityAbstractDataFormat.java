@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Represents the common parts of all uniVocity {@link org.apache.camel.spi.DataFormat} parsers.
  */
-@Metadata(label = "dataformat,transformation", title = "uniVocity")
+@Metadata(label = "dataformat,transformation,csv", title = "uniVocity")
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 

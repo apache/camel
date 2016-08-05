@@ -35,15 +35,20 @@ import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.rabbitmq.testbeans.TestNonSerializableObject;
+import org.apache.camel.component.rabbitmq.testbeans.TestPartiallySerializableObject;
 import org.apache.camel.component.rabbitmq.testbeans.TestSerializableObject;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class RabbitMQInOutIntTest extends CamelTestSupport {
-    
+
     public static final String ROUTING_KEY = "rk5";
     public static final long TIMEOUT_MS = 2000;
     private static final String EXCHANGE = "ex5";
+    private static final String EXCHANGE_NO_ACK = "ex5.noAutoAck";
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
@@ -51,9 +56,34 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
     @Produce(uri = "direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?exchangeType=direct&username=cameltest&password=cameltest" + "&autoAck=true&queue=q4&routingKey=" + ROUTING_KEY
+    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
+                    + "&autoAck=true&queue=q4&routingKey=" + ROUTING_KEY
                     + "&transferException=true&requestTimeout=" + TIMEOUT_MS)
     private Endpoint rabbitMQEndpoint;
+
+    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE_NO_ACK + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
+            + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=" + ROUTING_KEY
+            + "&transferException=true&requestTimeout=" + TIMEOUT_MS
+            + "&queueArgsConfigurer=#queueArgs")
+    private Endpoint noAutoAckEndpoint;
+
+    @EndpointInject(uri = "mock:result")
+    private MockEndpoint resultEndpoint;
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+
+        ArgsConfigurer queueArgs = new ArgsConfigurer() {
+            @Override
+            public void configurArgs(Map<String, Object> args) {
+                args.put("x-expires", 60000);
+            }
+        };
+        jndi.bind("queueArgs", queueArgs);
+
+        return jndi;
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -68,6 +98,10 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         if (exchange.getIn().getBody(TestSerializableObject.class) != null) {
                             TestSerializableObject foo = exchange.getIn().getBody(TestSerializableObject.class);
+                            foo.setDescription("foobar");
+                        } else if (exchange.getIn().getBody(TestPartiallySerializableObject.class) != null) {
+                            TestPartiallySerializableObject foo = exchange.getIn().getBody(TestPartiallySerializableObject.class);
+                            foo.setNonSerializableObject(new TestNonSerializableObject());
                             foo.setDescription("foobar");
                         } else if (exchange.getIn().getBody(String.class) != null) {
                             if (exchange.getIn().getBody(String.class).contains("header")) {
@@ -88,6 +122,12 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
 
                     }
                 });
+
+                from("direct:rabbitMQNoAutoAck").id("producingRouteNoAutoAck").setHeader("routeHeader", simple("routeHeader")).inOut(noAutoAckEndpoint);
+
+                from(noAutoAckEndpoint).id("consumingRouteNoAutoAck")
+                        .to(resultEndpoint)
+                        .throwException(new IllegalStateException("test exception"));
             }
         };
     }
@@ -149,6 +189,21 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
     }
 
     @Test
+    public void partiallySerializeTest() throws InterruptedException, IOException {
+        TestPartiallySerializableObject foo = new TestPartiallySerializableObject();
+        foo.setName("foobar");
+
+        try {
+            TestPartiallySerializableObject reply = template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, TestPartiallySerializableObject.class);
+        } catch (CamelExecutionException e) {
+            // expected
+        }
+        // Make sure we didn't crash the one Consumer thread
+        String reply2 = template.requestBodyAndHeader("direct:rabbitMQ", "partiallySerializeTest1", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, String.class);
+        assertEquals("partiallySerializeTest1 response", reply2);
+    }
+
+    @Test
     public void testSerializableObject() throws IOException {
         TestSerializableObject foo = new TestSerializableObject();
         foo.setName("foobar");
@@ -195,4 +250,33 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
     public void inOutNullTest() {
         template.requestBodyAndHeader("direct:rabbitMQ", null, RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, Object.class);
     }
+
+    @Test
+    public void messageAckOnExceptionWhereNoAutoAckTest() throws Exception {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(RabbitMQConstants.EXCHANGE_NAME, EXCHANGE_NO_ACK);
+        headers.put(RabbitMQConstants.ROUTING_KEY, ROUTING_KEY);
+
+        resultEndpoint.expectedMessageCount(1);
+
+        try {
+            String reply = template.requestBodyAndHeaders("direct:rabbitMQNoAutoAck", "testMessage", headers, String.class);
+            fail("This should have thrown an exception");
+        } catch (CamelExecutionException e) {
+            if (!(e.getCause() instanceof IllegalStateException)) {
+                throw e;
+            }
+        }
+
+        resultEndpoint.assertIsSatisfied();
+        resultEndpoint.reset();
+
+        resultEndpoint.expectedMessageCount(0);
+
+        context.stop(); //On restarting the camel context, if the message was not acknowledged the message would be reprocessed
+        context.start();
+
+        resultEndpoint.assertIsSatisfied();
+    }
+
 }

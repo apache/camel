@@ -82,8 +82,15 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
             }
             LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.size());
             for (ChannelSftp.LsEntry f : files) {
-                if (f.getFilename().equals(file.getFileNameOnly())) {
-                    newLastModified = f.getAttrs().getMTime();
+                boolean match;
+                if (fastExistsCheck) {
+                    // uses the absolute file path as well
+                    match = f.getFilename().equals(file.getAbsoluteFilePath()) || f.getFilename().equals(file.getFileNameOnly());
+                } else {
+                    match = f.getFilename().equals(file.getFileNameOnly());
+                }
+                if (match) {
+                    newLastModified = f.getAttrs().getMTime() * 1000;
                     newLength = f.getAttrs().getSize();
                 }
             }

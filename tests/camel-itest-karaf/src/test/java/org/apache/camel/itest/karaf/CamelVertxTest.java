@@ -18,27 +18,17 @@ package org.apache.camel.itest.karaf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelVertxTest extends AbstractFeatureTest {
+public class CamelVertxTest extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelVertxTest.class);
 
     @Test
     public void test() throws Exception {
-        // vertx requires Java 1.8
-        String javaVersion = System.getProperty("java.version");
-        if (javaVersion.startsWith("1.8")) {
-            testComponent(COMPONENT);
-        }
+        testComponent(COMPONENT);
     }
 
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
-    }
 
 }

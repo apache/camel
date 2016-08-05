@@ -23,33 +23,31 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
-import org.apache.camel.component.sjms.jms.KeyFormatStrategy;
+import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
+import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/sjms">Simple JMS</a> component.
  */
 public class SjmsComponent extends UriEndpointComponent implements HeaderFilterStrategyAware {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SjmsComponent.class);
 
     private ConnectionFactory connectionFactory;
     private ConnectionResource connectionResource;
     private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
-    private KeyFormatStrategy keyFormatStrategy = new DefaultJmsKeyFormatStrategy();
+    private JmsKeyFormatStrategy jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
     private Integer connectionCount = 1;
     private TransactionCommitStrategy transactionCommitStrategy;
     private TimedTaskManager timedTaskManager;
     private DestinationCreationStrategy destinationCreationStrategy;
     private ExecutorService asyncStartStopExecutorService;
+    private MessageCreatedStrategy messageCreatedStrategy;
 
     public SjmsComponent() {
         super(SjmsEndpoint.class);
@@ -68,6 +66,12 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
         }
         if (destinationCreationStrategy != null) {
             endpoint.setDestinationCreationStrategy(destinationCreationStrategy);
+        }
+        if (headerFilterStrategy != null) {
+            endpoint.setHeaderFilterStrategy(headerFilterStrategy);
+        }
+        if (messageCreatedStrategy != null) {
+            endpoint.setMessageCreatedStrategy(messageCreatedStrategy);
         }
         return endpoint;
     }
@@ -97,31 +101,14 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
         timedTaskManager = new TimedTaskManager();
-
-        LOGGER.trace("Verify ConnectionResource");
-        if (getConnectionResource() == null) {
-            LOGGER.debug("No ConnectionResource provided. Initialize the ConnectionFactoryResource.");
-            // We always use a connection pool, even for a pool of 1
-            ConnectionFactoryResource connections = new ConnectionFactoryResource(getConnectionCount(), getConnectionFactory());
-            connections.fillPool();
-            setConnectionResource(connections);
-        } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
-            ((ConnectionFactoryResource) getConnectionResource()).fillPool();
-        }
     }
 
     @Override
     protected void doStop() throws Exception {
         if (timedTaskManager != null) {
             timedTaskManager.cancelTasks();
-        }
-
-        if (getConnectionResource() != null) {
-            if (getConnectionResource() instanceof ConnectionFactoryResource) {
-                ((ConnectionFactoryResource) getConnectionResource()).drainPool();
-            }
+            timedTaskManager = null;
         }
         super.doStop();
     }
@@ -200,12 +187,12 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
      * You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy
      * and refer to it using the # notation.
      */
-    public void setKeyFormatStrategy(KeyFormatStrategy keyFormatStrategy) {
-        this.keyFormatStrategy = keyFormatStrategy;
+    public void setJmsKeyFormatStrategy(JmsKeyFormatStrategy jmsKeyFormatStrategy) {
+        this.jmsKeyFormatStrategy = jmsKeyFormatStrategy;
     }
 
-    public KeyFormatStrategy getKeyFormatStrategy() {
-        return keyFormatStrategy;
+    public JmsKeyFormatStrategy getJmsKeyFormatStrategy() {
+        return jmsKeyFormatStrategy;
     }
 
     public TransactionCommitStrategy getTransactionCommitStrategy() {
@@ -241,4 +228,17 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     public void setTimedTaskManager(TimedTaskManager timedTaskManager) {
         this.timedTaskManager = timedTaskManager;
     }
+
+    public MessageCreatedStrategy getMessageCreatedStrategy() {
+        return messageCreatedStrategy;
+    }
+
+    /**
+     * To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of <tt>javax.jms.Message</tt>
+     * objects when Camel is sending a JMS message.
+     */
+    public void setMessageCreatedStrategy(MessageCreatedStrategy messageCreatedStrategy) {
+        this.messageCreatedStrategy = messageCreatedStrategy;
+    }
+
 }

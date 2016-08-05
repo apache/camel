@@ -117,7 +117,6 @@ public class NettyUdpConnectedSendTest extends BaseNettyTest {
         @Override
         protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
             receivedCount++;
-            assertEquals(SEND_STRING, s);
         }
     }
 }

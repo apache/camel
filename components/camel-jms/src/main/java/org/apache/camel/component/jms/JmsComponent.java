@@ -28,6 +28,10 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -48,6 +52,8 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
  * @version 
  */
 public class JmsComponent extends UriEndpointComponent implements ApplicationContextAware, HeaderFilterStrategyAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JmsComponent.class);
 
     private static final String KEY_FORMAT_STRATEGY_PARAM = "jmsKeyFormatStrategy";
     private JmsConfiguration configuration;
@@ -172,7 +178,17 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
      * may be moved at a dead letter queue on the JMS broker. To avoid this its recommended to enable this option.
      */
     public void setAcceptMessagesWhileStopping(boolean acceptMessagesWhileStopping) {
-        getConfiguration().setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
+        getConfiguration().setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);   
+    }
+    
+    /**
+     * Whether the DefaultMessageListenerContainer used in the reply managers for request-reply messaging allow 
+     * the DefaultMessageListenerContainer.runningAllowed flag to quick stop in case JmsConfiguration#isAcceptMessagesWhileStopping
+     * is enabled, and org.apache.camel.CamelContext is currently being stopped. This quick stop ability is enabled by
+     * default in the regular JMS consumers but to enable for reply managers you must enable this flag.
+      */
+    public void setAllowReplyManagerQuickStop(boolean allowReplyManagerQuickStop) {
+        getConfiguration().setAllowReplyManagerQuickStop(allowReplyManagerQuickStop);
     }
 
     /**
@@ -271,6 +287,22 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
      */
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         getConfiguration().setConnectionFactory(connectionFactory);
+    }
+
+    /**
+     * Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.
+     */
+    @Metadata(secret = true)
+    public void setUsername(String username) {
+        getConfiguration().setUsername(username);
+    }
+
+    /**
+     * Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.
+     */
+    @Metadata(secret = true)
+    public void setPassword(String password) {
+        getConfiguration().setPassword(password);
     }
 
     /**
@@ -378,6 +410,13 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
      */
     public void setReplyToMaxConcurrentConsumers(int maxConcurrentConsumers) {
         getConfiguration().setReplyToMaxConcurrentConsumers(maxConcurrentConsumers);
+    }
+
+    /**
+     * Specifies the maximum number of concurrent consumers for continue routing when timeout occurred when using request/reply over JMS.
+     */
+    public void setReplyOnTimeoutToMaxConcurrentConsumers(int maxConcurrentConsumers) {
+        getConfiguration().setReplyToOnTimeoutMaxConcurrentConsumers(maxConcurrentConsumers);
     }
 
     /**
@@ -607,6 +646,18 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
     }
 
     /**
+     * If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side,
+     * then the fault flag on {@link org.apache.camel.Message#isFault()} will be send back in the response as a JMS header with the key
+     * {@link JmsConstants#JMS_TRANSFER_FAULT}.
+     * If the client is Camel, the returned fault flag will be set on the {@link org.apache.camel.Message#setFault(boolean)}.
+     * <p/>
+     * You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws.
+     */
+    public void setTransferFault(boolean transferFault) {
+        getConfiguration().setTransferFault(transferFault);
+    }
+
+    /**
      * Allows you to use your own implementation of the org.springframework.jms.core.JmsOperations interface.
      * Camel uses JmsTemplate as default. Can be used for testing purpose, but not used much as stated in the spring API docs.
      */
@@ -771,9 +822,31 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
         this.messageCreatedStrategy = messageCreatedStrategy;
     }
 
+    public int getWaitForProvisionCorrelationToBeUpdatedCounter() {
+        return getConfiguration().getWaitForProvisionCorrelationToBeUpdatedCounter();
+    }
+
+    /**
+     * Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS
+     * and when the option useMessageIDAsCorrelationID is enabled.
+     */
+    public void setWaitForProvisionCorrelationToBeUpdatedCounter(int counter) {
+        getConfiguration().setWaitForProvisionCorrelationToBeUpdatedCounter(counter);
+    }
+
+    public long getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime() {
+        return getConfiguration().getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime();
+    }
+
+    /**
+     * Interval in millis to sleep each time while waiting for provisional correlation id to be updated.
+     */
+    public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(long sleepingTime) {
+        getConfiguration().setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(sleepingTime);
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
-
 
     @Override
     protected void doStart() throws Exception {
@@ -849,19 +922,26 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
             endpoint.getConfiguration().setConnectionFactory(cf);
         }
 
-        String username = getAndRemoveParameter(parameters, "username", String.class);
-        String password = getAndRemoveParameter(parameters, "password", String.class);
-        if (username != null && password != null) {
+        // if username or password provided then wrap the connection factory
+        String cfUsername = getAndRemoveParameter(parameters, "username", String.class, getConfiguration().getUsername());
+        String cfPassword = getAndRemoveParameter(parameters, "password", String.class, getConfiguration().getPassword());
+        if (cfUsername != null && cfPassword != null) {
             cf = endpoint.getConfiguration().getConnectionFactory();
+            ObjectHelper.notNull(cf, "ConnectionFactory");
+            LOG.debug("Wrapping existing ConnectionFactory with UserCredentialsConnectionFactoryAdapter using username: {} and password: ******", cfUsername);
             UserCredentialsConnectionFactoryAdapter ucfa = new UserCredentialsConnectionFactoryAdapter();
             ucfa.setTargetConnectionFactory(cf);
-            ucfa.setPassword(password);
-            ucfa.setUsername(username);
+            ucfa.setPassword(cfPassword);
+            ucfa.setUsername(cfUsername);
             endpoint.getConfiguration().setConnectionFactory(ucfa);
         } else {
-            if (username != null || password != null) {
-                // exclude the the saturation of username and password are all empty
-                throw new IllegalArgumentException("The JmsComponent's username or password is null");
+            // if only username or password was provided then fail
+            if (cfUsername != null || cfPassword != null) {
+                if (cfUsername == null) {
+                    throw new IllegalArgumentException("Password must also be provided when using username/password as credentials.");
+                } else {
+                    throw new IllegalArgumentException("Username must also be provided when using username/password as credentials.");
+                }
             }
         }
 
@@ -879,6 +959,10 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
 
         MessageListenerContainerFactory messageListenerContainerFactory = resolveAndRemoveReferenceParameter(parameters,
                 "messageListenerContainerFactoryRef", MessageListenerContainerFactory.class);
+        if (messageListenerContainerFactory == null) {
+            messageListenerContainerFactory = resolveAndRemoveReferenceParameter(parameters,
+                    "messageListenerContainerFactory", MessageListenerContainerFactory.class);
+        }
         if (messageListenerContainerFactory != null) {
             endpoint.setMessageListenerContainerFactory(messageListenerContainerFactory);
         }

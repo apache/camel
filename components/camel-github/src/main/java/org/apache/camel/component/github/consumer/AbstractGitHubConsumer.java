@@ -17,6 +17,7 @@
 package org.apache.camel.component.github.consumer;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.spi.Registry;
@@ -40,7 +41,7 @@ public abstract class AbstractGitHubConsumer extends ScheduledPollConsumer {
         this.endpoint = endpoint;
 
         Registry registry = endpoint.getCamelContext().getRegistry();
-        Object service = registry.lookupByName("githubRepositoryService");
+        Object service = registry.lookupByName(GitHubConstants.GITHUB_REPOSITORY_SERVICE);
         if (service != null) {
             LOG.debug("Using RepositoryService found in registry " + service.getClass().getCanonicalName());
             repositoryService = (RepositoryService) service;

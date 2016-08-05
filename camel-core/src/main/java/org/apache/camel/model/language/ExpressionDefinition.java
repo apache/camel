@@ -33,6 +33,7 @@ import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.spi.Language;
@@ -156,6 +157,9 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
             } else if (getExpression() != null) {
                 ObjectHelper.notNull("language", getLanguage());
                 Language language = camelContext.resolveLanguage(getLanguage());
+                if (language == null) {
+                    throw new NoSuchLanguageException(getLanguage());
+                }
                 String exp = getExpression();
                 // should be true by default
                 boolean isTrim = getTrim() == null || getTrim();
@@ -184,6 +188,9 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
             } else if (getExpression() != null) {
                 ObjectHelper.notNull("language", getLanguage());
                 Language language = camelContext.resolveLanguage(getLanguage());
+                if (language == null) {
+                    throw new NoSuchLanguageException(getLanguage());
+                }
                 String exp = getExpression();
                 // should be true by default
                 boolean isTrim = getTrim() == null || getTrim();

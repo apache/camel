@@ -45,4 +45,9 @@ public class ProjectModel {
     public String getLicense() {
         return license;
     }
+
+    @Override
+    public String toString() {
+        return "ProjectModel{id=" + id + ", project='" + project + '\'' + ", license='" + license + '\'' + '}';
+    }
 }

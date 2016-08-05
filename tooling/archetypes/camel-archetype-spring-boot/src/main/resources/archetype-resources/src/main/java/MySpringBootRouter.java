@@ -25,9 +25,9 @@ public class MySpringBootRouter extends FatJarRouter {
 
     @Override
     public void configure() {
-        from("timer://trigger").
-                transform().simple("ref:myBean").
-                to("log:out", "mock:test");
+        from("timer:trigger")
+                .transform().simple("ref:myBean")
+                .to("log:out");
     }
 
     @Bean

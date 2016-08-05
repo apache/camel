@@ -31,7 +31,6 @@ public final class LoanBroker {
         // create a new main which will boot the Spring XML file
         Main main = new Main();
         main.setApplicationContext(new ClassPathXmlApplicationContext("META-INF/spring/webServiceCamelContext.xml"));
-        main.enableHangupSupport();
         main.run();
     }
 

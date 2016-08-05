@@ -56,9 +56,8 @@ public class RemoteFileProduceOverruleOnlyOnceTest extends FtpServerTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:input")
-                    .to("ftp://admin:admin@localhost:" + getPort()
-                        + "/out/")
-                    .to("file://target/out", "mock:result");
+                    .to("ftp://admin:admin@localhost:" + getPort() + "/out/")
+                        .to("file://target/out", "mock:result");
             }
         };
     }

@@ -24,8 +24,8 @@ import com.github.dockerjava.api.model.AuthConfig;
 import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -42,7 +42,6 @@ public class AuthCmdHeaderTest extends BaseDockerHeaderTest<AuthCmd> {
     private String email = "jdoe@example.com";
     private String serverAddress = "http://docker.io/v1";
 
-    @Ignore
     @Test
     public void authHeaderTest() {
         String userName = "jdoe";
@@ -59,7 +58,7 @@ public class AuthCmdHeaderTest extends BaseDockerHeaderTest<AuthCmd> {
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).authCmd();
-        Mockito.verify(mockObject, Mockito.times(1)).withAuthConfig((AuthConfig) Mockito.anyObject());
+        Mockito.verify(mockObject, Mockito.times(1)).withAuthConfig((AuthConfig) Matchers.anyObject());
 
     }
 

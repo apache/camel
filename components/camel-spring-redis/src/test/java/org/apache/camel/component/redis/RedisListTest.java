@@ -204,7 +204,7 @@ public class RedisListTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteLRANGE() throws Exception {
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         values.add("value");
 
         when(listOperations.range(anyString(), anyLong(), anyLong()))

@@ -36,6 +36,16 @@ import org.apache.camel.util.ServiceHelper;
 import static org.apache.camel.util.CamelContextHelper.getMandatoryEndpoint;
 
 /**
+ * The binding component is used for as a of wrapping an Endpoint in a contract with a data format.
+ *
+ * In Camel terms a binding is a way of wrapping an Endpoint in a contract; such as a Data Format,
+ * a Content Enricher or validation step. Bindings are completely optional and you can choose to use
+ * them on any camel endpoint.
+ * Bindings are inspired by the work of SwitchYard project adding service contracts to various technologies
+ * like Camel and many others. But rather than the SwitchYard approach of wrapping Camel in SCA,
+ * Camel Bindings provide a way of wrapping Camel endpoints with contracts inside the Camel framework itself;
+ * so you can use them easily inside any Camel route.
+ *
  * Applies a {@link org.apache.camel.spi.Binding} to an underlying {@link Endpoint} so that the binding processes messages
  * before its sent to the endpoint and processes messages received by the endpoint consumer before its passed
  * to the real consumer.

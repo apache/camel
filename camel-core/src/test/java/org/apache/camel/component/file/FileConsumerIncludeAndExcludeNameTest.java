@@ -34,8 +34,8 @@ public class FileConsumerIncludeAndExcludeNameTest extends ContextTestSupport {
 
     public void testIncludePreAndPostfixes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-        mock.expectedBodiesReceivedInAnyOrder("Report 2", "Report 3");
+        mock.expectedBodiesReceivedInAnyOrder("Report 2", "Report 3", "Report 4");
+        mock.expectedMessageCount(3);
 
         sendFiles();
 
@@ -48,12 +48,14 @@ public class FileConsumerIncludeAndExcludeNameTest extends ContextTestSupport {
         template.sendBodyAndHeader(url, "Report 1", Exchange.FILE_NAME, "report1.xml");
         template.sendBodyAndHeader(url, "Report 2", Exchange.FILE_NAME, "report2.txt");
         template.sendBodyAndHeader(url, "Report 3", Exchange.FILE_NAME, "report3.txt");
+        template.sendBodyAndHeader(url, "Report 4", Exchange.FILE_NAME, "Report4.txt");
+        template.sendBodyAndHeader(url, "Secret", Exchange.FILE_NAME, "Secret.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/includeexclude/?include=.*txt&exclude=hello.*")
+                from("file://target/includeexclude/?include=report.*txt&exclude=hello.*")
                     .convertBodyTo(String.class).to("mock:result");
             }
         };

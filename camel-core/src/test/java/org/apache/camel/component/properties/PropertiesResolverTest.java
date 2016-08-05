@@ -54,7 +54,6 @@ public class PropertiesResolverTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setCamelContext(context);
         pc.setLocation("foo");
         pc.setPropertiesResolver(new MyCustomResolver());
         context.addComponent("properties", pc);

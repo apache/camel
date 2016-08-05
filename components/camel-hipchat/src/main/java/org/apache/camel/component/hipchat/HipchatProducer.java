@@ -44,6 +44,8 @@ public class HipchatProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(HipchatProducer.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final CloseableHttpClient HTTP_CLIENT = HttpClients.createDefault();
+    
+    private transient String hipchatProducerToString;
 
     public HipchatProducer(HipchatEndpoint endpoint) {
         super(endpoint);
@@ -126,6 +128,9 @@ public class HipchatProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        return "HipchatProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (hipchatProducerToString == null) {
+            hipchatProducerToString = "HipchatProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return hipchatProducerToString;
     }
 }

@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,34 @@ public final class URISupport {
 
     private URISupport() {
         // Helper class
+    }
+
+    /**
+     * Normalizes the URI so unsafe charachters is encoded
+     *
+     * @param uri the input uri
+     * @return as URI instance
+     * @throws URISyntaxException is thrown if syntax error in the input uri
+     */
+    public static URI normalizeUri(String uri) throws URISyntaxException {
+        return new URI(UnsafeUriCharactersEncoder.encode(uri, true));
+    }
+
+    public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
+        Map<String, Object> rc = new LinkedHashMap<String, Object>(properties.size());
+
+        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, Object> entry = it.next();
+            String name = entry.getKey();
+            if (name.startsWith(optionPrefix)) {
+                Object value = properties.get(name);
+                name = name.substring(optionPrefix.length());
+                rc.put(name, value);
+                it.remove();
+            }
+        }
+
+        return rc;
     }
 
     /**
@@ -272,7 +301,7 @@ public final class URISupport {
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
     @SuppressWarnings("unchecked")
-    public static String createQueryString(Map<String, String> options, String ampersand) throws URISyntaxException {
+    public static String createQueryString(Map<String, String> options, String ampersand, boolean encode) throws URISyntaxException {
         try {
             if (options.size() > 0) {
                 StringBuilder rc = new StringBuilder();
@@ -289,7 +318,7 @@ public final class URISupport {
 
                     // use the value as a String
                     String s = value != null ? value.toString() : null;
-                    appendQueryStringParameter(key, s, rc);
+                    appendQueryStringParameter(key, s, rc, encode);
                 }
                 return rc.toString();
             } else {
@@ -302,8 +331,12 @@ public final class URISupport {
         }
     }
 
-    private static void appendQueryStringParameter(String key, String value, StringBuilder rc) throws UnsupportedEncodingException {
-        rc.append(URLEncoder.encode(key, CHARSET));
+    private static void appendQueryStringParameter(String key, String value, StringBuilder rc, boolean encode) throws UnsupportedEncodingException {
+        if (encode) {
+            rc.append(URLEncoder.encode(key, CHARSET));
+        } else {
+            rc.append(key);
+        }
         // only append if value is not null
         if (value != null) {
             rc.append("=");
@@ -311,7 +344,11 @@ public final class URISupport {
                 // do not encode RAW parameters
                 rc.append(value);
             } else {
-                rc.append(URLEncoder.encode(value, CHARSET));
+                if (encode) {
+                    rc.append(URLEncoder.encode(value, CHARSET));
+                } else {
+                    rc.append(value);
+                }
             }
         }
     }

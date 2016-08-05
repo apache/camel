@@ -68,6 +68,20 @@ public final class StringHelper {
         return matches;
     }
 
+    /**
+     * Limits the length of a string
+     * 
+     * @param s the string
+     * @param maxLength the maximum length of the returned string
+     * @return s if the length of s is less than maxLength or the first maxLength characters of s
+     */
+    public static String limitLenght(String s, int maxLength) {
+        if (ObjectHelper.isEmpty(s)) {
+            return s;
+        }
+        return s.length() <= maxLength ? s : s.substring(0, maxLength);
+    }
+
     public static String removeQuotes(String s) {
         if (ObjectHelper.isEmpty(s)) {
             return s;

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class SearchResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SearchResourceIntegrationTest.class);
-    private static final String PATH_PREFIX = LinkedInApiCollection.getCollection().getApiName(SearchResourceApiMethod.class).getName();
+    private static final String PATH_PREFIX = "search";
 
     @Test
     public void testSearchCompanies() throws Exception {

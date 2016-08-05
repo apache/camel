@@ -241,11 +241,13 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             // we only capture details in extended mode
             ExchangeCreatedEvent ece = (ExchangeCreatedEvent) event;
             Endpoint endpoint = ece.getExchange().getFromEndpoint();
-            String routeId = ece.getExchange().getFromRouteId();
-            String uri = endpoint.getEndpointUri();
-            String key = asUtilizationKey(routeId, uri);
-            if (key != null) {
-                inputUtilization.onHit(key);
+            if (endpoint != null) {
+                String routeId = ece.getExchange().getFromRouteId();
+                String uri = endpoint.getEndpointUri();
+                String key = asUtilizationKey(routeId, uri);
+                if (key != null) {
+                    inputUtilization.onHit(key);
+                }
             }
         } else if (event instanceof ExchangeSendingEvent) {
             ExchangeSendingEvent ese = (ExchangeSendingEvent) event;

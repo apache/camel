@@ -39,6 +39,6 @@ public class ClassPathURIResolver implements URIResolver {
     @Override
     public Source resolve(String href, String base) throws TransformerException {
         return new StreamSource(ClassPathURIResolver.class.getClassLoader()
-                .getResourceAsStream(rulesDir.concat(File.separator).concat(href)));
+                .getResourceAsStream(rulesDir.concat("/").concat(href)));
     }
 }

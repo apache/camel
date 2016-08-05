@@ -25,6 +25,9 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
+/**
+ * To insert or query from Apache Lucene databases.
+ */
 @UriEndpoint(scheme = "lucene", title = "Lucene", syntax = "lucene:host:operation", producerOnly = true, label = "database,search")
 public class LuceneEndpoint extends DefaultEndpoint {
     @UriParam

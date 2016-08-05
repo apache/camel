@@ -18,19 +18,17 @@ package org.apache.camel.test.spring;
 
 import java.util.Properties;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(CamelSpringJUnit4ClassRunner.class)
+@RunWith(CamelSpringRunner.class)
 @BootstrapWith(CamelTestContextBootstrapper.class)
 @ContextConfiguration()
 // Put here to prevent Spring context caching across tests and test methods since some tests inherit
@@ -38,9 +36,6 @@ import org.springframework.test.context.ContextConfiguration;
 // Camel context and mock endpoints between test methods automatically.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CamelSpringOverridePropertiesTest {
-
-    @Autowired
-    private CamelContext camelContext;
 
     @Produce(uri = "direct:start")
     private ProducerTemplate start;

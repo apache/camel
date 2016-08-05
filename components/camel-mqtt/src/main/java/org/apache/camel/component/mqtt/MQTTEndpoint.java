@@ -21,6 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -39,14 +40,29 @@ import org.fusesource.mqtt.client.Listener;
 import org.fusesource.mqtt.client.Promise;
 import org.fusesource.mqtt.client.QoS;
 import org.fusesource.mqtt.client.Topic;
+import org.fusesource.mqtt.client.Tracer;
+import org.fusesource.mqtt.codec.CONNACK;
+import org.fusesource.mqtt.codec.CONNECT;
+import org.fusesource.mqtt.codec.DISCONNECT;
+import org.fusesource.mqtt.codec.MQTTFrame;
+import org.fusesource.mqtt.codec.PINGREQ;
+import org.fusesource.mqtt.codec.PINGRESP;
+import org.fusesource.mqtt.codec.PUBACK;
+import org.fusesource.mqtt.codec.PUBCOMP;
+import org.fusesource.mqtt.codec.PUBLISH;
+import org.fusesource.mqtt.codec.PUBREC;
+import org.fusesource.mqtt.codec.PUBREL;
+import org.fusesource.mqtt.codec.SUBACK;
+import org.fusesource.mqtt.codec.SUBSCRIBE;
+import org.fusesource.mqtt.codec.UNSUBSCRIBE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * MQTT endpoint
+ * Component for communicating with MQTT M2M message brokers using FuseSource MQTT Client.
  */
-@UriEndpoint(scheme = "mqtt", title = "MQTT", syntax = "mqtt:name", consumerClass = MQTTConsumer.class, label = "messaging")
-public class MQTTEndpoint extends DefaultEndpoint {
+@UriEndpoint(scheme = "mqtt", title = "MQTT", syntax = "mqtt:name", consumerClass = MQTTConsumer.class, label = "messaging,iot")
+public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MQTTEndpoint.class);
 
     private static final int PUBLISH_MAX_RECONNECT_ATTEMPTS = 3;
@@ -57,12 +73,127 @@ public class MQTTEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
     private String name;
+
     @UriParam
     private final MQTTConfiguration configuration;
 
-    public MQTTEndpoint(String uri, MQTTComponent component, MQTTConfiguration properties) {
+    public MQTTEndpoint(final String uri, MQTTComponent component, MQTTConfiguration properties) {
         super(uri, component);
         this.configuration = properties;
+        if (LOG.isTraceEnabled()) {
+            configuration.setTracer(new Tracer() {
+                @Override
+                public void debug(String message, Object...args) {
+                    LOG.trace("tracer.debug() " + this + ": uri=" + uri + ", message=" + String.format(message, args));
+                }
+
+                @Override
+                public void onSend(MQTTFrame frame) {
+                    String decoded = null;
+                    try {
+                        switch (frame.messageType()) {
+                        case PINGREQ.TYPE:
+                            decoded = new PINGREQ().decode(frame).toString();
+                            break;
+                        case PINGRESP.TYPE:
+                            decoded = new PINGRESP().decode(frame).toString();
+                            break;
+                        case CONNECT.TYPE:
+                            decoded = new CONNECT().decode(frame).toString();
+                            break;
+                        case DISCONNECT.TYPE:
+                            decoded = new DISCONNECT().decode(frame).toString();
+                            break;
+                        case SUBSCRIBE.TYPE:
+                            decoded = new SUBSCRIBE().decode(frame).toString();
+                            break;
+                        case UNSUBSCRIBE.TYPE:
+                            decoded = new UNSUBSCRIBE().decode(frame).toString();
+                            break;
+                        case PUBLISH.TYPE:
+                            decoded = new PUBLISH().decode(frame).toString();
+                            break;
+                        case PUBACK.TYPE:
+                            decoded = new PUBACK().decode(frame).toString();
+                            break;
+                        case PUBREC.TYPE:
+                            decoded = new PUBREC().decode(frame).toString();
+                            break;
+                        case PUBREL.TYPE:
+                            decoded = new PUBREL().decode(frame).toString();
+                            break;
+                        case PUBCOMP.TYPE:
+                            decoded = new PUBCOMP().decode(frame).toString();
+                            break;
+                        case CONNACK.TYPE:
+                            decoded = new CONNACK().decode(frame).toString();
+                            break;
+                        case SUBACK.TYPE:
+                            decoded = new SUBACK().decode(frame).toString();
+                            break;
+                        default:
+                            decoded = frame.toString();
+                        }
+                    } catch (Throwable e) {
+                        decoded = frame.toString();
+                    }
+                    LOG.trace("tracer.onSend() " + this + ":  uri=" + uri + ", frame=" + decoded);
+                }
+
+                @Override
+                public void onReceive(MQTTFrame frame) {
+                    String decoded = null;
+                    try {
+                        switch (frame.messageType()) {
+                        case PINGREQ.TYPE:
+                            decoded = new PINGREQ().decode(frame).toString();
+                            break;
+                        case PINGRESP.TYPE:
+                            decoded = new PINGRESP().decode(frame).toString();
+                            break;
+                        case CONNECT.TYPE:
+                            decoded = new CONNECT().decode(frame).toString();
+                            break;
+                        case DISCONNECT.TYPE:
+                            decoded = new DISCONNECT().decode(frame).toString();
+                            break;
+                        case SUBSCRIBE.TYPE:
+                            decoded = new SUBSCRIBE().decode(frame).toString();
+                            break;
+                        case UNSUBSCRIBE.TYPE:
+                            decoded = new UNSUBSCRIBE().decode(frame).toString();
+                            break;
+                        case PUBLISH.TYPE:
+                            decoded = new PUBLISH().decode(frame).toString();
+                            break;
+                        case PUBACK.TYPE:
+                            decoded = new PUBACK().decode(frame).toString();
+                            break;
+                        case PUBREC.TYPE:
+                            decoded = new PUBREC().decode(frame).toString();
+                            break;
+                        case PUBREL.TYPE:
+                            decoded = new PUBREL().decode(frame).toString();
+                            break;
+                        case PUBCOMP.TYPE:
+                            decoded = new PUBCOMP().decode(frame).toString();
+                            break;
+                        case CONNACK.TYPE:
+                            decoded = new CONNACK().decode(frame).toString();
+                            break;
+                        case SUBACK.TYPE:
+                            decoded = new SUBACK().decode(frame).toString();
+                            break;
+                        default:
+                            decoded = frame.toString();
+                        }
+                    } catch (Throwable e) {
+                        decoded = frame.toString();
+                    }
+                    LOG.trace("tracer.onReceive() " + this + ":  uri=" + uri + ", frame=" + decoded);
+                }
+            });
+        }
     }
 
     @Override
@@ -109,7 +240,11 @@ public class MQTTEndpoint extends DefaultEndpoint {
             }
 
             public void onDisconnected() {
-                connected = false;
+                // no connected = false required here because the MQTT client should trigger its own reconnect;
+                // setting connected = false would make the publish() method to launch a new connection while the original
+                // one is still reconnecting, likely leading to duplicate messages as observed in CAMEL-9092;
+                // if retries are exhausted and it desists, we should get a callback on onFailure, and then we can set
+                // connected = false safely
                 LOG.debug("MQTT Connection disconnected from {}", configuration.getHost());
             }
 
@@ -181,6 +316,7 @@ public class MQTTEndpoint extends DefaultEndpoint {
                         }
 
                         public void onFailure(Throwable value) {
+                            LOG.debug("Failed to subscribe", value);
                             promise.onFailure(value);
                             connection.disconnect(null);
                             connected = false;

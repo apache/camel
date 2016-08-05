@@ -60,14 +60,14 @@ public final class CassandraUnitUtils {
     }
 
     public static CassandraCQLUnit cassandraCQLUnit(CQLDataSet dataset) {
-        return new CassandraCQLUnit(dataset, "/camel-cassandra.yaml", HOST, 9042);
+        return new CassandraCQLUnit(dataset, "/camel-cassandra.yaml");
     }
 
     /**
      * Start embedded Cassandra.
      */
     public static void startEmbeddedCassandra() throws Exception {
-        EmbeddedCassandraServerHelper.startEmbeddedCassandra("/camel-cassandra.yaml", "target/camel-cassandra");
+        EmbeddedCassandraServerHelper.startEmbeddedCassandra("/camel-cassandra.yaml", "target/camel-cassandra", 30000);
     }
 
     /**

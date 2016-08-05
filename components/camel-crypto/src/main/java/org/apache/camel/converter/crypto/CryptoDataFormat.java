@@ -16,7 +16,6 @@
  */
 package org.apache.camel.converter.crypto;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -34,7 +33,10 @@ import static javax.crypto.Cipher.DECRYPT_MODE;
 import static javax.crypto.Cipher.ENCRYPT_MODE;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -67,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * <li>http://en.wikipedia.org/wiki/HMAC</li>
  * </ul>
  */
-public class CryptoDataFormat implements DataFormat {
+public class CryptoDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     public static final String KEY = "CamelCryptoKey";
 
@@ -94,6 +96,11 @@ public class CryptoDataFormat implements DataFormat {
         this.algorithm = algorithm;
         this.configuredkey = key;
         this.cryptoProvider = cryptoProvider;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "crypto";
     }
 
     private Cipher initializeCipher(int mode, Key key, byte[] iv) throws Exception {
@@ -146,31 +153,40 @@ public class CryptoDataFormat implements DataFormat {
         }
     }
 
-    public Object unmarshal(Exchange exchange, InputStream encryptedStream) throws Exception {
-        Object unmarshalled = null;
+    public Object unmarshal(final Exchange exchange, final InputStream encryptedStream) throws Exception {
         if (encryptedStream != null) {
             byte[] iv = getInlinedInitializationVector(exchange, encryptedStream);
             Key key = getKey(exchange);
             CipherInputStream cipherStream = null;
-            ByteArrayOutputStream plaintextStream = null;
+            OutputStreamBuilder osb = null;
             try {
                 cipherStream = new CipherInputStream(encryptedStream, initializeCipher(DECRYPT_MODE, key, iv));
-                plaintextStream = new ByteArrayOutputStream(bufferSize);
+                osb = OutputStreamBuilder.withExchange(exchange);
                 HMACAccumulator hmac = getMessageAuthenticationCode(key);
                 byte[] buffer = new byte[bufferSize];
-                hmac.attachStream(plaintextStream);
+                hmac.attachStream(osb);
                 int read;
                 while ((read = cipherStream.read(buffer)) >= 0) {
                     hmac.decryptUpdate(buffer, read);
                 }
                 hmac.validate();
-                unmarshalled = plaintextStream.toByteArray();
+                return osb.build();
             } finally {
                 IOHelper.close(cipherStream, "cipher", LOG);
-                IOHelper.close(plaintextStream, "plaintext", LOG);
+                IOHelper.close(osb, "plaintext", LOG);
             }
         }
-        return unmarshalled;
+        return null;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 
     private void inlineInitVector(OutputStream outputStream, byte[] iv) throws IOException {

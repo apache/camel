@@ -40,11 +40,11 @@ class GrapeProducer extends DefaultProducer {
                 def rawCoordinates = exchange.in.getBody(String.class)
                 try {
                     def coordinates = MavenCoordinates.parseMavenCoordinates(rawCoordinates)
-                    Grape.grab(classLoader: classLoader, group: coordinates.groupId, module: coordinates.artifactId, version: coordinates.version)
+                    Grape.grab(classLoader: classLoader, group: coordinates.groupId, module: coordinates.artifactId, version: coordinates.version, classifier: coordinates.classifier)
                     endpoint.component.patchesRepository.install(rawCoordinates)
                 } catch (IllegalArgumentException ex) {
                     def coordinates = MavenCoordinates.parseMavenCoordinates(getEndpoint().defaultCoordinates)
-                    Grape.grab(classLoader: classLoader, group: coordinates.groupId, module: coordinates.artifactId, version: coordinates.version)
+                    Grape.grab(classLoader: classLoader, group: coordinates.groupId, module: coordinates.artifactId, version: coordinates.version, classifier: coordinates.classifier)
                     endpoint.component.patchesRepository.install(getEndpoint().defaultCoordinates)
                 }
                 break

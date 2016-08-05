@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class DefaultProducer extends ServiceSupport implements Producer {
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    private transient String producerToString;
     private final Endpoint endpoint;
 
     public DefaultProducer(Endpoint endpoint) {
@@ -40,7 +41,10 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
 
     @Override
     public String toString() {
-        return "Producer[" + URISupport.sanitizeUri(endpoint.getEndpointUri()) + "]";
+        if (producerToString == null) {
+            producerToString = "Producer[" + URISupport.sanitizeUri(endpoint.getEndpointUri()) + "]";
+        }
+        return producerToString;
     }
 
     public Endpoint getEndpoint() {

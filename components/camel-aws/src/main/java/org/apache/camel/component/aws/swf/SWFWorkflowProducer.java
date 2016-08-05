@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.swf;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -31,6 +32,8 @@ public class SWFWorkflowProducer extends DefaultProducer {
     private final CamelSWFWorkflowClient camelSWFClient;
     private SWFEndpoint endpoint;
     private SWFConfiguration configuration;
+    
+    private transient String swfWorkflowProducerToString;
 
     public SWFWorkflowProducer(SWFEndpoint endpoint, CamelSWFWorkflowClient camelSWFClient) {
         super(endpoint);
@@ -68,7 +71,7 @@ public class SWFWorkflowProducer extends DefaultProducer {
 
             case START:
                 String[] ids = camelSWFClient.startWorkflowExecution(getWorkflowId(exchange), getRunId(exchange),
-                        getEventName(exchange), getVersion(exchange), getArguments(exchange));
+                        getEventName(exchange), getVersion(exchange), getArguments(exchange), getTags(exchange));
                 setHeader(exchange, SWFConstants.WORKFLOW_ID, ids[0]);
                 setHeader(exchange, SWFConstants.RUN_ID, ids[1]);
                 break;
@@ -98,6 +101,10 @@ public class SWFWorkflowProducer extends DefaultProducer {
     private String getVersion(Exchange exchange) {
         String version = exchange.getIn().getHeader(SWFConstants.VERSION, String.class);
         return version != null ? version : configuration.getVersion();
+    }
+    
+    private List<String> getTags(Exchange exchange) {
+        return exchange.getIn().getHeader(SWFConstants.TAGS, List.class);
     }
 
     private String getSignalName(Exchange exchange) {
@@ -161,7 +168,10 @@ public class SWFWorkflowProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        return "SWFWorkflowProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (swfWorkflowProducerToString == null) {
+            swfWorkflowProducerToString = "SWFWorkflowProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return swfWorkflowProducerToString;
     }
 
     private enum Operation {

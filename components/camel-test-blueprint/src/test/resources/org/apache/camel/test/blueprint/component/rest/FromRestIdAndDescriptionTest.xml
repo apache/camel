@@ -18,7 +18,7 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="
-             http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
   <!-- use a dummy rest consumer factory for the rest engine -->
   <bean id="dummy-rest" class="org.apache.camel.test.blueprint.component.rest.DummyRestConsumerFactory"/>
@@ -36,7 +36,7 @@
       <description lang="en">Bye Service</description>
       <get consumes="application/json">
         <description>Says bye to you</description>
-          <param name="header_count" type="header" description="header param description1" dataType="integer" defaultValue="1" allowMultiple="false" required="true" access="acc1">
+          <param name="header_count" type="header" description="header param description1" dataType="integer" defaultValue="1" required="true">
               <allowableValues>
                   <value>1</value>
                   <value>2</value>
@@ -44,7 +44,7 @@
                   <value>4</value>
               </allowableValues>
           </param>
-          <param name="header_letter" type="query" description="header param description2" dataType="string" defaultValue="b" allowMultiple="true" required="false" access="acc2">
+          <param name="header_letter" type="query" description="header param description2" dataType="string" defaultValue="b" collectionFormat="multi" required="false">
               <allowableValues>
                   <value>a</value>
                   <value>b</value>
@@ -52,7 +52,9 @@
                   <value>d</value>
               </allowableValues>
           </param>
-          <responseMessage code="300" message="test msg" responseModel="java.lang.Integer"/>
+          <responseMessage code="300" message="test msg" responseModel="java.lang.Integer">
+            <header name="rate" description="Rate limit" dataType="integer"/>
+          </responseMessage>
         <to uri="direct:bye"/>
       </get>
       <post>

@@ -23,10 +23,67 @@ import java.util.Set;
 import javax.management.MXBean;
 
 /**
- * Catalog of components, data formats, models (EIPs), languages, and more  from this Apache Camel release.
+ * Catalog of components, data formats, models (EIPs), languages, and more from this Apache Camel release.
  */
 @MXBean
 public interface CamelCatalog {
+
+    /**
+     * Enables caching of the resources which makes the catalog faster, but keeps data in memory during caching.
+     * <p/>
+     * The catalog does not cache by default.
+     */
+    void enableCache();
+
+    /**
+     * To plugin a custom {@link SuggestionStrategy} to provide suggestion for unknown options
+     */
+    void setSuggestionStrategy(SuggestionStrategy suggestionStrategy);
+
+    /**
+     * To plugin a custom {@link VersionManager} to load other versions of Camel the catalog should use.
+     */
+    void setVersionManager(VersionManager versionManager);
+
+    /**
+     * Adds a 3rd party component to this catalog.
+     *
+     * @param name      the component name
+     * @param className the fully qualified class name for the component class
+     */
+    void addComponent(String name, String className);
+
+    /**
+     * Adds a 3rd party data format to this catalog.
+     *
+     * @param name      the data format name
+     * @param className the fully qualified class name for the data format class
+     */
+    void addDataFormat(String name, String className);
+
+    /**
+     * The version of this Camel Catalog
+     */
+    String getCatalogVersion();
+
+    /**
+     * Attempt to load the Camel version to be used by the catalog.
+     * <p/>
+     * Loading the camel-catalog JAR of the given version of choice may require internet access
+     * to download the JAR from Maven central. You can pre download the JAR and install in a local
+     * Maven repository to avoid internet access for offline environments.
+     * <p/>
+     * When loading a new version the cache will be invalidated.
+     *
+     * @param version  the Camel version such as <tt>2.17.1</tt>
+     * @return <tt>true</tt> if the version was loaded, <tt>false</tt> if not.
+     */
+    boolean loadVersion(String version);
+
+    /**
+     * Gets the current loaded Camel version used by the catalog.
+     */
+    String getLoadedVersion();
 
     /**
      * Find all the component names from the Camel catalog
@@ -158,6 +215,56 @@ public interface CamelCatalog {
     Map<String, String> endpointProperties(String uri) throws URISyntaxException;
 
     /**
+     * Validates the pattern whether its a valid time pattern.
+     *
+     * @param pattern  the pattern such as 5000, 5s, 5sec, 4min, 4m30s, 1h, etc.
+     * @return <tt>true</tt> if valid, <tt>false</tt> if invalid
+     */
+    boolean validateTimePattern(String pattern);
+
+    /**
+     * Parses and validates the endpoint uri and constructs a key/value properties of each option.
+     *
+     * @param uri  the endpoint uri
+     * @return validation result
+     */
+    EndpointValidationResult validateEndpointProperties(String uri);
+
+    /**
+     * Parses and validates the endpoint uri and constructs a key/value properties of each option.
+     * <p/>
+     * The option ignoreLenientProperties can be used to ignore components that uses lenient properties.
+     * When this is true, then the uri validation is stricter but would fail on properties that are not part of the component
+     * but in the uri because of using lenient properties.
+     * For example using the HTTP components to provide query parameters in the endpoint uri.
+     *
+     * @param uri  the endpoint uri
+     * @param ignoreLenientProperties  whether to ignore components that uses lenient properties.
+     * @return validation result
+     */
+    EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties);
+
+    /**
+     * Parses and validates the simple expression.
+     * <p/>
+     * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
+     *
+     * @param simple  the simple expression
+     * @return validation result
+     */
+    SimpleValidationResult validateSimpleExpression(String simple);
+
+    /**
+     * Parses and validates the simple predicate
+     * <p/>
+     * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
+     *
+     * @param simple  the simple predicate
+     * @return validation result
+     */
+    SimpleValidationResult validateSimplePredicate(String simple);
+
+    /**
      * Returns the component name from the given endpoint uri
      *
      * @param uri  the endpoint uri
@@ -166,42 +273,72 @@ public interface CamelCatalog {
     String endpointComponentName(String uri);
 
     /**
-     * Creates an endpoint uri from the information in the json schema
+     * Creates an endpoint uri in Java style from the information in the json schema
      *
      * @param scheme the endpoint schema
      * @param json the json schema with the endpoint properties
+     * @param encode whether to URL encode the returned uri or not
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
-    String asEndpointUri(String scheme, String json) throws URISyntaxException;
+    String asEndpointUri(String scheme, String json, boolean encode) throws URISyntaxException;
 
     /**
-     * Creates an endpoint uri from the information in the json schema
+     * Creates an endpoint uri in XML style (eg escape & as &ampl;) from the information in the json schema
      *
      * @param scheme the endpoint schema
      * @param json the json schema with the endpoint properties
+     * @param encode whether to URL encode the returned uri or not
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
-    String asEndpointUriXml(String scheme, String json) throws URISyntaxException;
+    String asEndpointUriXml(String scheme, String json, boolean encode) throws URISyntaxException;
 
     /**
-     * Creates an endpoint uri in XML style from the information from the properties
+     * Creates an endpoint uri in Java style from the information from the properties
      *
      * @param scheme the endpoint schema
      * @param properties the properties as key value pairs
+     * @param encode whether to URL encode the returned uri or not
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
-    String asEndpointUri(String scheme, Map<String, String> properties) throws URISyntaxException;
+    String asEndpointUri(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException;
 
     /**
-     * Creates an endpoint uri in XML style from the information from the properties
+     * Creates an endpoint uri in XML style (eg escape & as &ampl;) from the information from the properties
      *
      * @param scheme the endpoint schema
      * @param properties the properties as key value pairs
+     * @param encode whether to URL encode the returned uri or not
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
-    String asEndpointUriXml(String scheme, Map<String, String> properties) throws URISyntaxException;
+    String asEndpointUriXml(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException;
+
+    /**
+     * Lists all the components summary details in JSon
+     */
+    String listComponentsAsJson();
+
+    /**
+     * Lists all the data formats summary details in JSon
+     */
+    String listDataFormatsAsJson();
+
+    /**
+     * Lists all the languages summary details in JSon
+     */
+    String listLanguagesAsJson();
+
+    /**
+     * Lists all the models (EIPs) summary details in JSon
+     */
+    String listModelsAsJson();
+
+    /**
+     * Reports a summary what the catalog contains in JSon
+     */
+    String summaryAsJson();
+
 }

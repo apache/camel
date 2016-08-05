@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.util.HashMap;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -45,6 +47,13 @@ public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
         config.setApiVersion(System.getProperty("apiVersion", SalesforceEndpointConfig.DEFAULT_VERSION));
         component.setConfig(config);
         component.setLoginConfig(LoginConfigHelper.getLoginConfig());
+
+        HashMap<String, Object> clientProperties = new HashMap<>();
+        clientProperties.put("timeout", "60000");
+        clientProperties.put("maxRetreis", "3");
+        // 4MB for RestApiIntegrationTest.testGetBlobField()
+        clientProperties.put("maxContentLength", String.valueOf(4 * 1024 * 1024));
+        component.setHttpClientProperties(clientProperties);
 
         // set DTO package
         component.setPackages(new String[] {

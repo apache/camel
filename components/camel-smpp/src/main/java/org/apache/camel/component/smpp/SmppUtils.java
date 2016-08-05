@@ -115,14 +115,8 @@ public final class SmppUtils {
         }
     }
 
-    public static Alphabet parseAlphabetFromDataCoding(byte dataCoding) {
-        /* Both the 3.4 and 5.0 SMPP specs clearly state that 0x02 is
-         * 'Octet-unspecified (8-bit)', but jsmpp doesn't account for this for
-         * some reason.
-         */
-        return dataCoding == 0x02
-            ? Alphabet.ALPHA_8_BIT
-            : Alphabet.valueOf((byte)(dataCoding & Alphabet.MASK_ALPHABET));
+    public static boolean is8Bit(Alphabet alphabet) {
+        return alphabet == Alphabet.ALPHA_UNSPECIFIED_2 || alphabet == Alphabet.ALPHA_8_BIT;
     }
 
     /**
@@ -160,7 +154,7 @@ public final class SmppUtils {
         dest.setDestAddrNpi(src.getDestAddrNpi());
         dest.setDestAddrTon(src.getDestAddrTon());
         dest.setEsmClass(src.getEsmClass());
-        dest.setOptionalParametes(src.getOptionalParametes());
+        dest.setOptionalParameters(src.getOptionalParameters());
         dest.setPriorityFlag(src.getPriorityFlag());
         dest.setProtocolId(src.getProtocolId());
         dest.setRegisteredDelivery(src.getRegisteredDelivery());
@@ -251,7 +245,7 @@ public final class SmppUtils {
         dest.setDestAddrNpi(src.getDestAddrNpi());
         dest.setDestAddrTon(src.getDestAddrTon());
         dest.setEsmClass(src.getEsmClass());
-        dest.setOptionalParametes(src.getOptionalParametes());
+        dest.setOptionalParameters(src.getOptionalParameters());
         dest.setRegisteredDelivery(src.getRegisteredDelivery());
         dest.setSequenceNumber(src.getSequenceNumber());
         dest.setServiceType(src.getServiceType());

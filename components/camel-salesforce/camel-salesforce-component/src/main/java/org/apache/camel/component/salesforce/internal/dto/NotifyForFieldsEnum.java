@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.salesforce.internal.dto;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Salesforce Enumeration DTO for picklist NotifyForFields
@@ -35,7 +35,7 @@ public enum NotifyForFieldsEnum {
 
     final String value;
 
-    private NotifyForFieldsEnum(String value) {
+    NotifyForFieldsEnum(String value) {
         this.value = value;
     }
 

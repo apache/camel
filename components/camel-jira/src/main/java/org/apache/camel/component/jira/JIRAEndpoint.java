@@ -29,6 +29,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
+ * The jira component interacts with the JIRA issue tracker.
+ *
  * The endpoint encapsulates portions of the JIRA API, relying on the jira-rest-java-client SDK.
  * Available endpoint URIs include:
  * 

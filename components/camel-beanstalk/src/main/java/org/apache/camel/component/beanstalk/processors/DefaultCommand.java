@@ -24,7 +24,7 @@ import org.apache.camel.util.ExchangeHelper;
 abstract class DefaultCommand implements Command {
     protected final BeanstalkEndpoint endpoint;
 
-    public DefaultCommand(BeanstalkEndpoint endpoint) {
+    DefaultCommand(BeanstalkEndpoint endpoint) {
         this.endpoint = endpoint;
     }
 

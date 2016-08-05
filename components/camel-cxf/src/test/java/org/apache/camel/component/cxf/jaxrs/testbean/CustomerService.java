@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -32,7 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
-
+import org.apache.cxf.common.util.StringUtils;
 
 /**
  *
@@ -91,6 +90,10 @@ public class CustomerService {
     @POST
     @Path("/customers/")
     public Response addCustomer(Customer customer) {
+        if (StringUtils.isEmpty(customer.getName())) {
+            return Response.status(422).build();
+        }
+
         customer.setId(currentId.incrementAndGet());
 
         customers.put(customer.getId(), customer);

@@ -34,23 +34,32 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-parent</artifactId>
+        <version>${camel-version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
 
     <!-- Camel Dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-      <version>${camel-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
-      <version>${camel-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-servlet</artifactId>
-      <version>${camel-version}</version>
     </dependency>
 
     <!-- Spring Web -->
@@ -64,24 +73,20 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>${slf4j-version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j-version}</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>${log4j-version}</version>
     </dependency>
 
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
-      <version>${camel-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -95,8 +100,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin-version}</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
@@ -108,23 +113,15 @@
         </configuration>
       </plugin>
 
-      <!-- plugin so you can run mvn jetty:run -->
+      <!-- allows running this example with mvn jetty:run -->
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty-plugin-version}</version>
+        <version>${jetty9-version}</version>
         <configuration>
-          <webAppConfig>
+          <webApp>
             <contextPath>/${project.artifactId}</contextPath>
-          </webAppConfig>
-          <systemProperties>
-            <!-- enable easy JMX connection to JConsole -->
-            <systemProperty>
-              <name>com.sun.management.jmxremote</name>
-              <value/>
-            </systemProperty>
-          </systemProperties>
-          <scanIntervalSeconds>10</scanIntervalSeconds>
+          </webApp>
         </configuration>
       </plugin>
 

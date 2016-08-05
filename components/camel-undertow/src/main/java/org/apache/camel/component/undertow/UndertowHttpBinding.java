@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.undertow;
 
+import java.io.IOException;
 import java.util.Map;
 
 import io.undertow.client.ClientExchange;
@@ -39,10 +40,12 @@ public interface UndertowHttpBinding {
 
     void populateCamelHeaders(ClientResponse response, Map<String, Object> headerMap, Exchange exchange) throws Exception;
 
-    Object toHttpResponse(HttpServerExchange httpExchange, Message message);
+    Object toHttpResponse(HttpServerExchange httpExchange, Message message) throws IOException;
 
     Object toHttpRequest(ClientRequest clientRequest, Message message);
 
     void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy);
+    
+    void setTransferException(Boolean transferException);
 
 }

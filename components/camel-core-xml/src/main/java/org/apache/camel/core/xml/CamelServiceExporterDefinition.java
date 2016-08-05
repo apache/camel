@@ -28,13 +28,48 @@ import org.apache.camel.model.IdentifiedType;
 */
 @XmlRootElement(name = "export")
 public class CamelServiceExporterDefinition extends IdentifiedType {
+
     @XmlAttribute
     private String uri;
+
     @XmlAttribute
     private String serviceRef;
+
     @XmlAttribute
     private Class<?> serviceInterface;
+
     @XmlAttribute
     private String camelContextId;
-    
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public String getServiceRef() {
+        return serviceRef;
+    }
+
+    public void setServiceRef(String serviceRef) {
+        this.serviceRef = serviceRef;
+    }
+
+    public Class<?> getServiceInterface() {
+        return serviceInterface;
+    }
+
+    public void setServiceInterface(Class<?> serviceInterface) {
+        this.serviceInterface = serviceInterface;
+    }
+
+    public String getCamelContextId() {
+        return camelContextId;
+    }
+
+    public void setCamelContextId(String camelContextId) {
+        this.camelContextId = camelContextId;
+    }
 }

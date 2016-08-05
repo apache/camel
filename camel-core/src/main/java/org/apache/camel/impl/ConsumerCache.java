@@ -344,6 +344,16 @@ public class ConsumerCache extends ServiceSupport {
         }
     }
 
+    /**
+     * Cleanup the cache (purging stale entries)
+     */
+    public void cleanUp() {
+        if (consumers instanceof LRUCache) {
+            LRUCache<String, PollingConsumer> cache = (LRUCache<String, PollingConsumer>)consumers;
+            cache.cleanUp();
+        }
+    }
+
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
         return statistics;
     }

@@ -17,6 +17,8 @@
 package org.apache.camel.tools.apt;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -42,31 +44,44 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.tools.apt.helper.EndpointHelper;
+import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
+import org.apache.camel.tools.apt.helper.Strings;
+import org.apache.camel.tools.apt.model.ComponentModel;
+import org.apache.camel.tools.apt.model.ComponentOption;
+import org.apache.camel.tools.apt.model.EndpointOption;
+import org.apache.camel.tools.apt.model.EndpointPath;
 
-import static org.apache.camel.tools.apt.JsonSchemaHelper.sanitizeDescription;
-import static org.apache.camel.tools.apt.Strings.canonicalClassName;
-import static org.apache.camel.tools.apt.Strings.getOrElse;
-import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
-import static org.apache.camel.tools.apt.Strings.safeNull;
+import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.sanitizeDescription;
+import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
+import static org.apache.camel.tools.apt.helper.Strings.getOrElse;
+import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
+import static org.apache.camel.tools.apt.helper.Strings.safeNull;
 
 /**
  * Processes all Camel {@link UriEndpoint}s and generate json schema and html documentation for the endpoint/component.
  */
 @SupportedAnnotationTypes({"org.apache.camel.spi.*"})
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
+
+    // CHECKSTYLE:OFF
 
     private static final String HEADER_FILTER_STRATEGY_JAVADOC = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.";
 
     public boolean process(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-        if (roundEnv.processingOver()) {
-            return true;
-        }
-        Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(UriEndpoint.class);
-        for (Element element : elements) {
-            if (element instanceof TypeElement) {
-                processEndpointClass(roundEnv, (TypeElement) element);
+        try {
+            if (roundEnv.processingOver()) {
+                return true;
             }
+            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(UriEndpoint.class);
+            for (Element element : elements) {
+                if (element instanceof TypeElement) {
+                    processEndpointClass(roundEnv, (TypeElement) element);
+                }
+            }
+        } catch (Throwable e) {
+            dumpExceptionToErrorFile("camel-apt-error.log", "Error processing @UriEndpoint", e);
         }
         return true;
     }
@@ -95,7 +110,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     Func1<PrintWriter, Void> handler = new Func1<PrintWriter, Void>() {
                         @Override
                         public Void call(PrintWriter writer) {
-                            writeHtmlDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, label);
+                            writeHtmlDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label);
                             return null;
                         }
                     };
@@ -117,25 +132,37 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     protected void writeHtmlDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
-                                          String title, String scheme, String label) {
+                                          String title, String scheme, String extendsScheme, String label) {
+        // gather component information
+        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, extendsScheme, label);
+
+        String syntax = componentModel.getSyntax();
+        String alternativeSyntax = componentModel.getAlternativeSyntax();
+        String description = componentModel.getDescription();
+
         writer.println("<html>");
         writer.println("<header>");
         writer.println("<title>" + title  + "</title>");
         writer.println("</header>");
         writer.println("<body>");
         writer.println("<h1>" + title + "</h1>");
-        writer.println("<b>Scheme: " + scheme + "</b>");
-
-        if (label != null) {
-            String[] labels = label.split(",");
-            writer.println("<ul>");
-            for (String text : labels) {
-                writer.println("<li>" + text + "</li>");
-            }
-            writer.println("</ul>");
+        writer.println("<b>Scheme:</b> " + scheme + "<br/>");
+        writer.println("<b>Syntax:</b> " + syntax + "<br/>");
+        if (alternativeSyntax != null) {
+            writer.println("<b>Alternative Syntax:</b> " + alternativeSyntax + "<br/>");
         }
+        writer.println("<b>Description:</b> " + description + "<br/>");
+        writer.println("<b>Deprecated:</b>" + componentModel.isDeprecated() + "<br/>");
+        if (componentModel.isConsumerOnly()) {
+            writer.println("<b>ConsumerOnly:</b>" + "true" + "<br/>");
+        }
+        if (componentModel.isProducerOnly()) {
+            writer.println("<b>ProducerOnly:</b>" + "true" + "<br/>");
+        }
+        writer.println("<b>Async:</b>" + componentModel.isAsync() + "<br/>");
+        writer.println("<b>Maven:</b> " + componentModel.getGroupId() + "/" + componentModel.getArtifactId() + "/" + componentModel.getVersionId() + "<br/>");
 
-        showDocumentationAndFieldInjections(writer, roundEnv, classElement, "");
+        writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, classElement, "", uriEndpoint.excludeProperties());
 
         // This code is not my fault, it seems to honestly be the hacky way to find a class name in APT :)
         TypeMirror consumerType = null;
@@ -153,7 +180,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             TypeElement consumerElement = findTypeElement(roundEnv, consumerClassName);
             if (consumerElement != null) {
                 writer.println("<h2>" + scheme + " consumer" + "</h2>");
-                showDocumentationAndFieldInjections(writer, roundEnv, consumerElement, consumerPrefix);
+                writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, consumerElement, consumerPrefix, uriEndpoint.excludeProperties());
                 found = true;
             }
         }
@@ -165,9 +192,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
-                                                String title, String scheme, final String extendsScheme, String label) {
+                                                String title, String scheme, String extendsScheme, String label) {
         // gather component information
-        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, title, scheme, extendsScheme, label);
+        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, extendsScheme, label);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
         Set<EndpointPath> endpointPaths = new LinkedHashSet<EndpointPath>();
@@ -176,10 +203,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         TypeElement componentClassElement = findTypeElement(roundEnv, componentModel.getJavaType());
         if (componentClassElement != null) {
-            findComponentClassProperties(writer, roundEnv, componentOptions, componentClassElement, "");
+            findComponentClassProperties(writer, roundEnv, componentModel, componentOptions, componentClassElement, "");
         }
 
-        findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, classElement, "");
+        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, "", uriEndpoint.excludeProperties());
 
         String json = createParameterJsonSchema(componentModel, componentOptions, endpointPaths, endpointOptions);
         writer.println(json);
@@ -196,13 +223,21 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             buffer.append("\n    \"extendsScheme\": \"").append(componentModel.getExtendsScheme()).append("\",");
         }
         buffer.append("\n    \"syntax\": \"").append(componentModel.getSyntax()).append("\",");
+        if (componentModel.getAlternativeSyntax() != null) {
+            buffer.append("\n    \"alternativeSyntax\": \"").append(componentModel.getAlternativeSyntax()).append("\",");
+        }
         buffer.append("\n    \"title\": \"").append(componentModel.getTitle()).append("\",");
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
         buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\",");
+        buffer.append("\n    \"deprecated\": \"").append(componentModel.isDeprecated()).append("\",");
+        buffer.append("\n    \"async\": \"").append(componentModel.isAsync()).append("\",");
         if (componentModel.isConsumerOnly()) {
             buffer.append("\n    \"consumerOnly\": \"").append("true").append("\",");
         } else if (componentModel.isProducerOnly()) {
             buffer.append("\n    \"producerOnly\": \"").append("true").append("\",");
+        }
+        if (componentModel.isLenientProperties()) {
+            buffer.append("\n    \"lenientProperties\": \"").append("true").append("\",");
         }
         buffer.append("\n    \"javaType\": \"").append(componentModel.getJavaType()).append("\",");
         buffer.append("\n    \"groupId\": \"").append(componentModel.getGroupId()).append("\",");
@@ -229,21 +264,29 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
             String defaultValue = entry.getDefaultValue();
-            if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
-                // fallback as false for boolean types
-                defaultValue = "false";
-            }
+            // component option do not have default value for boolean (as we dont really known if its true or false)
+
+            // component options do not have prefix
+            String optionalPrefix = "";
+            String prefix = "";
+            boolean multiValue = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "property", required, entry.getType(), defaultValue, doc,
-                    entry.isDeprecated(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null));
+                    entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
+                    optionalPrefix, prefix, multiValue));
         }
         buffer.append("\n  },");
 
         buffer.append("\n  \"properties\": {");
         first = true;
 
+        // sort the endpoint options in the standard order we prefer
+        List<EndpointPath> paths = new ArrayList<EndpointPath>();
+        paths.addAll(endpointPaths);
+        Collections.sort(paths, EndpointHelper.createPathComparator(componentModel.getSyntax()));
+
         // include paths in the top
-        for (EndpointPath entry : endpointPaths) {
+        for (EndpointPath entry : paths) {
             String label = entry.getLabel();
             if (label != null) {
                 // skip options which are either consumer or producer labels but the component does not support them
@@ -274,12 +317,23 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 defaultValue = "false";
             }
 
+            // @UriPath options do not have prefix
+            String optionalPrefix = "";
+            String prefix = "";
+            boolean multiValue = false;
+
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "path", required, entry.getType(), defaultValue, doc,
-                    entry.isDeprecated(), label, entry.isEnumType(), entry.getEnums(), false, null));
+                    entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
+                    optionalPrefix, prefix, multiValue));
         }
 
+        // sort the endpoint options in the standard order we prefer
+        List<EndpointOption> options = new ArrayList<EndpointOption>();
+        options.addAll(endpointOptions);
+        Collections.sort(options, EndpointHelper.createGroupAndLabelComparator());
+
         // and then regular parameter options
-        for (EndpointOption entry : endpointOptions) {
+        for (EndpointOption entry : options) {
             String label = entry.getLabel();
             if (label != null) {
                 // skip options which are either consumer or producer labels but the component does not support them
@@ -309,9 +363,13 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 // fallback as false for boolean types
                 defaultValue = "false";
             }
+            String optionalPrefix = entry.getOptionalPrefix();
+            String prefix = entry.getPrefix();
+            boolean multiValue = entry.isMultiValue();
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", required, entry.getType(), defaultValue,
-                    doc, entry.isDeprecated(), label, entry.isEnumType(), entry.getEnums(), false, null));
+                    doc, entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
+                    optionalPrefix, prefix, multiValue));
         }
         buffer.append("\n  }");
 
@@ -319,7 +377,8 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         return buffer.toString();
     }
 
-    protected void showDocumentationAndFieldInjections(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, String prefix) {
+    protected void writeHtmlDocumentationAndFieldInjections(PrintWriter writer, RoundEnvironment roundEnv, ComponentModel componentModel,
+                                                            TypeElement classElement, String prefix, String excludeProperties) {
         String classDoc = processingEnv.getElementUtils().getDocComment(classElement);
         if (!isNullOrEmpty(classDoc)) {
             // remove dodgy @version that we may have in class javadoc
@@ -330,42 +389,52 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         Set<EndpointPath> endpointPaths = new LinkedHashSet<EndpointPath>();
         Set<EndpointOption> endpointOptions = new LinkedHashSet<EndpointOption>();
-        findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, classElement, prefix);
+        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, prefix, excludeProperties);
 
-        if (!endpointOptions.isEmpty() || !endpointPaths.isEmpty()) {
+        // sort the endpoint options in the standard order we prefer
+        List<EndpointPath> paths = new ArrayList<EndpointPath>();
+        paths.addAll(endpointPaths);
+        Collections.sort(paths, EndpointHelper.createPathComparator(componentModel.getSyntax()));
+
+        // sort the endpoint options in the standard order we prefer
+        List<EndpointOption> options = new ArrayList<EndpointOption>();
+        options.addAll(endpointOptions);
+        Collections.sort(options, EndpointHelper.createGroupAndLabelComparator());
+
+        if (!options.isEmpty() || !paths.isEmpty()) {
             writer.println("<table class='table'>");
             writer.println("  <tr>");
-            writer.println("    <th>Name</th>");
-            writer.println("    <th>Kind</th>");
-            writer.println("    <th>Type</th>");
-            writer.println("    <th>Required</th>");
-            writer.println("    <th>Deprecated</th>");
-            writer.println("    <th>Default Value</th>");
-            writer.println("    <th>Enum Values</th>");
-            writer.println("    <th>Description</th>");
+            writer.println("    <th align=\"left\">Name</th>");
+            writer.println("    <th align=\"left\">Kind</th>");
+            writer.println("    <th align=\"left\">Group</th>");
+            writer.println("    <th align=\"left\">Required</th>");
+            writer.println("    <th align=\"left\">Default</th>");
+            writer.println("    <th align=\"left\">Type</th>");
+            writer.println("    <th align=\"left\">Enum</th>");
+            writer.println("    <th align=\"left\">Description</th>");
             writer.println("  </tr>");
             // include paths in the top
-            for (EndpointPath path : endpointPaths) {
+            for (EndpointPath path : paths) {
                 writer.println("  <tr>");
                 writer.println("    <td>" + path.getName() + "</td>");
                 writer.println("    <td>" + "path" + "</td>");
-                writer.println("    <td>" + path.getType() + "</td>");
+                writer.println("    <td>" + path.getGroup() + "</td>");
                 writer.println("    <td>" + safeNull(path.getRequired()) + "</td>");
-                writer.println("    <td>" + path.isDeprecated() + "</td>");
                 writer.println("    <td>" + path.getDefaultValue() + "</td>");
+                writer.println("    <td>" + path.getType() + "</td>");
                 writer.println("    <td>" + path.getEnumValuesAsHtml() + "</td>");
                 writer.println("    <td>" + path.getDocumentation() + "</td>");
                 writer.println("  </tr>");
             }
             // and then regular parameter options
-            for (EndpointOption option : endpointOptions) {
+            for (EndpointOption option : options) {
                 writer.println("  <tr>");
                 writer.println("    <td>" + option.getName() + "</td>");
                 writer.println("    <td>" + "parameter" + "</td>");
-                writer.println("    <td>" + option.getType() + "</td>");
+                writer.println("    <td>" + option.getGroup() + "</td>");
                 writer.println("    <td>" + safeNull(option.getRequired()) + "</td>");
-                writer.println("    <td>" + option.isDeprecated() + "</td>");
                 writer.println("    <td>" + option.getDefaultValue() + "</td>");
+                writer.println("    <td>" + option.getType() + "</td>");
                 writer.println("    <td>" + option.getEnumValuesAsHtml() + "</td>");
                 writer.println("    <td>" + option.getDocumentationWithNotes() + "</td>");
                 writer.println("  </tr>");
@@ -374,12 +443,17 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         }
     }
 
-    protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, UriEndpoint uriEndpoint,
+    protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, UriEndpoint uriEndpoint, TypeElement endpointClassElement,
                                                      String title, String scheme, String extendsScheme, String label) {
         ComponentModel model = new ComponentModel(scheme);
 
         // if the scheme is an alias then replace the scheme name from the syntax with the alias
         String syntax = scheme + ":" + Strings.after(uriEndpoint.syntax(), ":");
+        // alternative syntax is optional
+        if (!Strings.isNullOrEmpty(uriEndpoint.alternativeSyntax())) {
+            String alternativeSyntax = scheme + ":" + Strings.after(uriEndpoint.alternativeSyntax(), ":");
+            model.setAlternativeSyntax(alternativeSyntax);
+        }
 
         model.setExtendsScheme(extendsScheme);
         model.setSyntax(syntax);
@@ -387,6 +461,8 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         model.setLabel(label);
         model.setConsumerOnly(uriEndpoint.consumerOnly());
         model.setProducerOnly(uriEndpoint.producerOnly());
+        model.setLenientProperties(uriEndpoint.lenientProperties());
+        model.setAsync(implementsInterface(roundEnv, endpointClassElement, "org.apache.camel.AsyncEndpoint"));
 
         String data = loadResource("META-INF/services/org/apache/camel/component", scheme);
         if (data != null) {
@@ -405,6 +481,16 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             } else {
                 model.setDescription("");
             }
+
+            // we can mark a component as deprecated by using the annotation or in the pom.xml
+            boolean deprecated = endpointClassElement.getAnnotation(Deprecated.class) != null;
+            if (!deprecated) {
+                String name = map.get("projectName");
+                // we may have marked a component as deprecated in the project name
+                deprecated = name != null && name.contains("(deprecated)");
+            }
+            model.setDeprecated(deprecated);
+
             if (map.containsKey("groupId")) {
                 model.setGroupId(map.get("groupId"));
             } else {
@@ -422,19 +508,17 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             }
         }
 
-        // favor to use class javadoc of component as description
-        if (model.getJavaType() != null) {
-            Elements elementUtils = processingEnv.getElementUtils();
-            TypeElement typeElement = findTypeElement(roundEnv, model.getJavaType());
-            if (typeElement != null) {
-                String doc = elementUtils.getDocComment(typeElement);
-                if (doc != null) {
-                    // need to sanitize the description first (we only want a summary)
-                    doc = sanitizeDescription(doc, true);
-                    // the javadoc may actually be empty, so only change the doc if we got something
-                    if (!Strings.isNullOrEmpty(doc)) {
-                        model.setDescription(doc);
-                    }
+        // favor to use endpoint class javadoc as description
+        Elements elementUtils = processingEnv.getElementUtils();
+        TypeElement typeElement = findTypeElement(roundEnv, endpointClassElement.getQualifiedName().toString());
+        if (typeElement != null) {
+            String doc = elementUtils.getDocComment(typeElement);
+            if (doc != null) {
+                // need to sanitize the description first (we only want a summary)
+                doc = sanitizeDescription(doc, true);
+                // the javadoc may actually be empty, so only change the doc if we got something
+                if (!Strings.isNullOrEmpty(doc)) {
+                    model.setDescription(doc);
                 }
             }
         }
@@ -442,7 +526,8 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         return model;
     }
 
-    protected void findComponentClassProperties(PrintWriter writer, RoundEnvironment roundEnv, Set<ComponentOption> componentOptions, TypeElement classElement, String prefix) {
+    protected void findComponentClassProperties(PrintWriter writer, RoundEnvironment roundEnv, ComponentModel componentModel,
+                                                Set<ComponentOption> componentOptions, TypeElement classElement, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
@@ -466,20 +551,27 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 String fieldName = methodName.substring(3);
                 fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
 
+                // we usually favor putting the @Metadata annotation on the field instead of the setter, so try to use it if its there
+                VariableElement field = findFieldElement(classElement, fieldName);
+                if (field != null && metadata == null) {
+                    metadata = field.getAnnotation(Metadata.class);
+                }
+
+                String required = metadata != null ? metadata.required() : null;
+                String label = metadata != null ? metadata.label() : null;
+                boolean secret = metadata != null ? metadata.secret() : false;
+
+                // we do not yet have default values / notes / as no annotation support yet
+                // String defaultValueNote = param.defaultValueNote();
+                String defaultValue = metadata != null ? metadata.defaultValue() : null;
+                String defaultValueNote = null;
+
                 ExecutableElement setter = method;
                 String name = fieldName;
                 name = prefix + name;
                 TypeMirror fieldType = setter.getParameters().get(0).asType();
                 String fieldTypeName = fieldType.toString();
                 TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
-
-                String required = metadata != null ? metadata.required() : null;
-                String label = metadata != null ? metadata.label() : null;
-
-                // we do not yet have default values / notes / as no annotation support yet
-                // String defaultValueNote = param.defaultValueNote();
-                String defaultValue = metadata != null ? metadata.defaultValue() : null;
-                String defaultValueNote = null;
 
                 String docComment = findJavaDoc(elementUtils, method, fieldName, name, classElement, false);
                 if (isNullOrEmpty(docComment)) {
@@ -509,8 +601,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     }
                 }
 
+                String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                 ComponentOption option = new ComponentOption(name, fieldTypeName, required, defaultValue, defaultValueNote,
-                        docComment.trim(), deprecated, label, isEnum, enums);
+                        docComment.trim(), deprecated, secret, group, label, isEnum, enums);
                 componentOptions.add(option);
             }
 
@@ -529,7 +622,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         }
     }
 
-    protected void findClassProperties(PrintWriter writer, RoundEnvironment roundEnv, Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions, TypeElement classElement, String prefix) {
+    protected void findClassProperties(PrintWriter writer, RoundEnvironment roundEnv, ComponentModel componentModel,
+                                       Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions,
+                                       TypeElement classElement, String prefix, String excludeProperties) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
@@ -537,6 +632,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
                 Metadata metadata = fieldElement.getAnnotation(Metadata.class);
                 boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+                Boolean secret = metadata != null ? metadata.secret() : null;
 
                 UriPath path = fieldElement.getAnnotation(UriPath.class);
                 String fieldName = fieldElement.getSimpleName().toString();
@@ -546,6 +642,11 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         name = fieldName;
                     }
                     name = prefix + name;
+
+                    // should we exclude the name?
+                    if (excludeProperty(excludeProperties, name)) {
+                        continue;
+                    }
 
                     String defaultValue = path.defaultValue();
                     if (defaultValue == null && metadata != null) {
@@ -592,7 +693,14 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         }
                     }
 
-                    EndpointPath ep = new EndpointPath(name, fieldTypeName, required, defaultValue, docComment, deprecated, label, isEnum, enums);
+                    // the field type may be overloaded by another type
+                    if (!Strings.isNullOrEmpty(path.javaType())) {
+                        fieldTypeName = path.javaType();
+                    }
+
+                    String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
+                    boolean isSecret = secret != null ? secret : false;
+                    EndpointPath ep = new EndpointPath(name, fieldTypeName, required, defaultValue, docComment, deprecated, isSecret, group, label, isEnum, enums);
                     endpointPaths.add(ep);
                 }
 
@@ -605,6 +713,14 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     }
                     name = prefix + name;
 
+                    // should we exclude the name?
+                    if (excludeProperty(excludeProperties, name)) {
+                        continue;
+                    }
+
+                    String paramOptionalPrefix = param.optionalPrefix();
+                    String paramPrefix = param.prefix();
+                    boolean multiValue = param.multiValue();
                     String defaultValue = param.defaultValue();
                     if (defaultValue == null && metadata != null) {
                         defaultValue = metadata.defaultValue();
@@ -630,7 +746,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         if (!isNullOrEmpty(extraPrefix)) {
                             nestedPrefix += extraPrefix;
                         }
-                        findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix);
+                        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix, excludeProperties);
                     } else {
                         String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, false);
                         if (isNullOrEmpty(docComment)) {
@@ -662,8 +778,15 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                             }
                         }
 
+                        // the field type may be overloaded by another type
+                        if (!Strings.isNullOrEmpty(param.javaType())) {
+                            fieldTypeName = param.javaType();
+                        }
+
+                        boolean isSecret = secret != null ? secret : param.secret();
+                        String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                         EndpointOption option = new EndpointOption(name, fieldTypeName, required, defaultValue, defaultValueNote,
-                                docComment.trim(), deprecated, label, isEnum, enums);
+                                docComment.trim(), paramOptionalPrefix, paramPrefix, multiValue, deprecated, isSecret, group, label, isEnum, enums);
                         endpointOptions.add(option);
                     }
                 }
@@ -684,441 +807,32 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         }
     }
 
-    protected Map<String, String> parseAsMap(String data) {
+    private static boolean excludeProperty(String excludeProperties, String name) {
+        String[] excludes = excludeProperties.split(",");
+        for (String exclude : excludes) {
+            if (name.equals(exclude)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected static Map<String, String> parseAsMap(String data) {
         Map<String, String> answer = new HashMap<String, String>();
         String[] lines = data.split("\n");
         for (String line : lines) {
-            int idx = line.indexOf('=');
-            String key = line.substring(0, idx);
-            String value = line.substring(idx + 1);
-            // remove ending line break for the values
-            value = value.trim().replaceAll("\n", "");
-            answer.put(key.trim(), value);
+            if (!line.isEmpty()) {
+                int idx = line.indexOf('=');
+                String key = line.substring(0, idx);
+                String value = line.substring(idx + 1);
+                // remove ending line break for the values
+                value = value.trim().replaceAll("\n", "");
+                answer.put(key.trim(), value);
+            }
         }
         return answer;
     }
 
-    private static final class ComponentModel {
-
-        private String scheme;
-        private String extendsScheme;
-        private String syntax;
-        private String javaType;
-        private String title;
-        private String description;
-        private String groupId;
-        private String artifactId;
-        private String versionId;
-        private String label;
-        private boolean consumerOnly;
-        private boolean producerOnly;
-
-        private ComponentModel(String scheme) {
-            this.scheme = scheme;
-        }
-
-        public String getScheme() {
-            return scheme;
-        }
-
-        public String getExtendsScheme() {
-            return extendsScheme;
-        }
-
-        public void setExtendsScheme(String extendsScheme) {
-            this.extendsScheme = extendsScheme;
-        }
-
-        public String getSyntax() {
-            return syntax;
-        }
-
-        public void setSyntax(String syntax) {
-            this.syntax = syntax;
-        }
-
-        public String getJavaType() {
-            return javaType;
-        }
-
-        public void setJavaType(String javaType) {
-            this.javaType = javaType;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public String getGroupId() {
-            return groupId;
-        }
-
-        public void setGroupId(String groupId) {
-            this.groupId = groupId;
-        }
-
-        public String getArtifactId() {
-            return artifactId;
-        }
-
-        public void setArtifactId(String artifactId) {
-            this.artifactId = artifactId;
-        }
-
-        public String getVersionId() {
-            return versionId;
-        }
-
-        public void setVersionId(String versionId) {
-            this.versionId = versionId;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public void setLabel(String label) {
-            this.label = label;
-        }
-
-        public boolean isConsumerOnly() {
-            return consumerOnly;
-        }
-
-        public void setConsumerOnly(boolean consumerOnly) {
-            this.consumerOnly = consumerOnly;
-        }
-
-        public boolean isProducerOnly() {
-            return producerOnly;
-        }
-
-        public void setProducerOnly(boolean producerOnly) {
-            this.producerOnly = producerOnly;
-        }
-    }
-
-    private static final class ComponentOption {
-
-        private String name;
-        private String type;
-        private String required;
-        private String defaultValue;
-        private String defaultValueNote;
-        private String documentation;
-        private boolean deprecated;
-        private String label;
-        private boolean enumType;
-        private Set<String> enums;
-
-        private ComponentOption(String name, String type, String required, String defaultValue, String defaultValueNote,
-                                String documentation, boolean deprecated, String label, boolean enumType, Set<String> enums) {
-            this.name = name;
-            this.type = type;
-            this.required = required;
-            this.defaultValue = defaultValue;
-            this.defaultValueNote = defaultValueNote;
-            this.documentation = documentation;
-            this.deprecated = deprecated;
-            this.label = label;
-            this.enumType = enumType;
-            this.enums = enums;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public String getRequired() {
-            return required;
-        }
-
-        public String getDefaultValue() {
-            return defaultValue;
-        }
-
-        public String getDocumentation() {
-            return documentation;
-        }
-
-        public boolean isDeprecated() {
-            return deprecated;
-        }
-
-        public String getEnumValuesAsHtml() {
-            CollectionStringBuffer csb = new CollectionStringBuffer("<br/>");
-            if (enums != null && enums.size() > 0) {
-                for (String e : enums) {
-                    csb.append(e);
-                }
-            }
-            return csb.toString();
-        }
-
-        public String getDocumentationWithNotes() {
-            StringBuilder sb = new StringBuilder();
-            sb.append(documentation);
-
-            if (!isNullOrEmpty(defaultValueNote)) {
-                sb.append(". Default value notice: ").append(defaultValueNote);
-            }
-
-            return sb.toString();
-        }
-
-        public boolean isEnumType() {
-            return enumType;
-        }
-
-        public Set<String> getEnums() {
-            return enums;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            ComponentOption that = (ComponentOption) o;
-
-            if (!name.equals(that.name)) {
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            return name.hashCode();
-        }
-    }
-
-    private static final class EndpointOption {
-
-        private String name;
-        private String type;
-        private String required;
-        private String defaultValue;
-        private String defaultValueNote;
-        private String documentation;
-        private boolean deprecated;
-        private String label;
-        private boolean enumType;
-        private Set<String> enums;
-
-        private EndpointOption(String name, String type, String required, String defaultValue, String defaultValueNote,
-                               String documentation, boolean deprecated, String label, boolean enumType, Set<String> enums) {
-            this.name = name;
-            this.type = type;
-            this.required = required;
-            this.defaultValue = defaultValue;
-            this.defaultValueNote = defaultValueNote;
-            this.documentation = documentation;
-            this.deprecated = deprecated;
-            this.label = label;
-            this.enumType = enumType;
-            this.enums = enums;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public String getRequired() {
-            return required;
-        }
-
-        public String getDefaultValue() {
-            return defaultValue;
-        }
-
-        public String getDocumentation() {
-            return documentation;
-        }
-
-        public boolean isDeprecated() {
-            return deprecated;
-        }
-
-        public String getEnumValuesAsHtml() {
-            CollectionStringBuffer csb = new CollectionStringBuffer("<br/>");
-            if (enums != null && enums.size() > 0) {
-                for (String e : enums) {
-                    csb.append(e);
-                }
-            }
-            return csb.toString();
-        }
-
-        public String getDocumentationWithNotes() {
-            StringBuilder sb = new StringBuilder();
-            sb.append(documentation);
-
-            if (!isNullOrEmpty(defaultValueNote)) {
-                sb.append(". Default value notice: ").append(defaultValueNote);
-            }
-
-            return sb.toString();
-        }
-
-        public boolean isEnumType() {
-            return enumType;
-        }
-
-        public Set<String> getEnums() {
-            return enums;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            EndpointOption that = (EndpointOption) o;
-
-            if (!name.equals(that.name)) {
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            return name.hashCode();
-        }
-    }
-
-    private static final class EndpointPath {
-
-        private String name;
-        private String type;
-        private String required;
-        private String defaultValue;
-        private String documentation;
-        private boolean deprecated;
-        private String label;
-        private boolean enumType;
-        private Set<String> enums;
-
-        private EndpointPath(String name, String type, String required, String defaultValue, String documentation, boolean deprecated,
-                             String label, boolean enumType, Set<String> enums) {
-            this.name = name;
-            this.type = type;
-            this.required = required;
-            this.defaultValue = defaultValue;
-            this.documentation = documentation;
-            this.deprecated = deprecated;
-            this.label = label;
-            this.enumType = enumType;
-            this.enums = enums;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public String getRequired() {
-            return required;
-        }
-
-        public String getDefaultValue() {
-            return defaultValue;
-        }
-
-        public String getDocumentation() {
-            return documentation;
-        }
-
-        public boolean isDeprecated() {
-            return deprecated;
-        }
-
-        public String getEnumValuesAsHtml() {
-            CollectionStringBuffer csb = new CollectionStringBuffer("<br/>");
-            if (enums != null && enums.size() > 0) {
-                for (String e : enums) {
-                    csb.append(e);
-                }
-            }
-            return csb.toString();
-        }
-
-        public boolean isEnumType() {
-            return enumType;
-        }
-
-        public Set<String> getEnums() {
-            return enums;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            EndpointPath that = (EndpointPath) o;
-
-            if (!name.equals(that.name)) {
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            return name.hashCode();
-        }
-    }
+    // CHECKSTYLE:ON
 
 }
