@@ -96,7 +96,9 @@ public class SmppConfiguration implements Cloneable {
     private long initialReconnectDelay = 5000;
     @UriParam(label = "common", defaultValue = "5000")
     private long reconnectDelay = 5000;
-    @UriParam(label = "producer")
+    @UriParam(label = "common", defaultValue = "2147483647")
+    private int maxReconnect = Integer.MAX_VALUE;
+	@UriParam(label = "producer")
     private boolean lazySessionCreation;
     @UriParam(label = "proxy")
     private String httpProxyHost;
@@ -530,17 +532,29 @@ public class SmppConfiguration implements Cloneable {
     public void setInitialReconnectDelay(long initialReconnectDelay) {
         this.initialReconnectDelay = initialReconnectDelay;
     }
-
+    
     public long getReconnectDelay() {
         return reconnectDelay;
     }
-
+    
     /**
      * Defines the interval in milliseconds between the reconnect attempts, if the connection to the SMSC was lost and the previous was not succeed.
      */
     public void setReconnectDelay(long reconnectDelay) {
         this.reconnectDelay = reconnectDelay;
     }
+    
+    /**
+     * CAMEL-6616
+     * Defines the maximum number of attempts to reconnect to the SMSC, if SMSC returns a negative bind response
+     */
+    public int getMaxReconnect() {
+		return maxReconnect;
+	}
+
+	public void setMaxReconnect(int maxReconnect) {
+		this.maxReconnect = maxReconnect;
+	}
     
     public boolean isLazySessionCreation() {
         return lazySessionCreation;
@@ -679,6 +693,7 @@ public class SmppConfiguration implements Cloneable {
             + ", numberingPlanIndicator=" + numberingPlanIndicator
             + ", initialReconnectDelay=" + initialReconnectDelay
             + ", reconnectDelay=" + reconnectDelay
+            + ", maxReconnect=" + maxReconnect
             + ", lazySessionCreation=" + lazySessionCreation
             + ", httpProxyHost=" + httpProxyHost
             + ", httpProxyPort=" + httpProxyPort
