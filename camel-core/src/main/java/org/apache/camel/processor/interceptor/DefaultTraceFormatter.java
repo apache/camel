@@ -145,19 +145,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
             // switch string buffer
             sb = answer;
         }
-        
-//        if (multiline) {
-//            sb.insert(0, "Exchange[");
-//            sb.append("]");
-//        } else {
-//            // get rid of the leading space comma if needed
-//            if (sb.length() > 0 && sb.charAt(0) == ',' && sb.charAt(1) == ' ') {
-//                sb.replace(0, 2, "");
-//            }
-//            sb.insert(0, "Exchange[");
-//            sb.append("]");
-//        }
-        
+
         return sb.toString();
     }
 
