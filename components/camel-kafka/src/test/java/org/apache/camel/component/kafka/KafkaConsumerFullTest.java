@@ -108,7 +108,7 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         context.stopRoute("foo");
 
         KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
-        kafkaEndpoint.setSeekToBeginning(true);
+        kafkaEndpoint.getConfiguration().setSeekToBeginning(true);
 
         context.startRoute("foo");
 

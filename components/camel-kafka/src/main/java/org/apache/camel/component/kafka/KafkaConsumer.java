@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.IOHelper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -49,10 +50,10 @@ public class KafkaConsumer extends DefaultConsumer {
         this.processor = processor;
         this.pollTimeoutMs = endpoint.getConfiguration().getPollTimeoutMs();
 
-        if (endpoint.getBrokers() == null) {
+        if (endpoint.getConfiguration().getBrokers() == null) {
             throw new IllegalArgumentException("BootStrap servers must be specified");
         }
-        if (endpoint.getGroupId() == null) {
+        if (endpoint.getConfiguration().getGroupId() == null) {
             throw new IllegalArgumentException("groupId must not be null");
         }
     }
@@ -60,8 +61,8 @@ public class KafkaConsumer extends DefaultConsumer {
     Properties getProps() {
         Properties props = endpoint.getConfiguration().createConsumerProperties();
         endpoint.updateClassProperties(props);
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, endpoint.getBrokers());
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, endpoint.getGroupId());
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, endpoint.getConfiguration().getBrokers());
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, endpoint.getConfiguration().getGroupId());
         return props;
     }
 
@@ -70,8 +71,8 @@ public class KafkaConsumer extends DefaultConsumer {
         super.doStart();
         LOG.info("Starting Kafka consumer");
         executor = endpoint.createExecutor();
-        for (int i = 0; i < endpoint.getConsumersCount(); i++) {
-            executor.submit(new KafkaFetchRecords(endpoint.getTopic(), i + "", getProps()));
+        for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
+            executor.submit(new KafkaFetchRecords(endpoint.getConfiguration().getTopic(), i + "", getProps()));
         }
     }
 
@@ -115,12 +116,11 @@ public class KafkaConsumer extends DefaultConsumer {
         @Override
         @SuppressWarnings("unchecked")
         public void run() {
-            int processed = 0;
             try {
                 LOG.debug("Subscribing {} to topic {}", threadId, topicName);
                 consumer.subscribe(Arrays.asList(topicName.split(",")));
 
-                if (endpoint.isSeekToBeginning()) {
+                if (endpoint.getConfiguration().isSeekToBeginning()) {
                     LOG.debug("{} is seeking to the beginning on topic {}", threadId, topicName);
                     // This poll to ensures we have an assigned partition otherwise seek won't work
                     consumer.poll(100);
@@ -143,8 +143,8 @@ public class KafkaConsumer extends DefaultConsumer {
                             }
                         }
                         // if autocommit is false
-                        if (endpoint.isAutoCommitEnable() != null
-                            && !endpoint.isAutoCommitEnable()) {
+                        if (endpoint.getConfiguration().isAutoCommitEnable() != null
+                            && !endpoint.getConfiguration().isAutoCommitEnable()) {
                             long partitionLastoffset = partitionRecords.get(partitionRecords.size() - 1).offset();
                             consumer.commitSync(Collections.singletonMap(
                                 partition, new OffsetAndMetadata(partitionLastoffset + 1)));
@@ -153,8 +153,6 @@ public class KafkaConsumer extends DefaultConsumer {
                 }
                 LOG.debug("Unsubscribing {} from topic {}", threadId, topicName);
                 consumer.unsubscribe();
-                LOG.debug("Closing {} ", threadId);
-                consumer.close();
             } catch (InterruptException e) {
                 getExceptionHandler().handleException("Interrupted while consuming " + threadId + " from kafka topic", e);
                 consumer.unsubscribe();
@@ -163,10 +161,9 @@ public class KafkaConsumer extends DefaultConsumer {
                 getExceptionHandler().handleException("Error consuming " + threadId + " from kafka topic", e);
             } finally {
                 LOG.debug("Closing {} ", threadId);
-                consumer.close();
+                IOHelper.close(consumer);
             }
         }
-
     }
 
 }
