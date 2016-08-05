@@ -27,7 +27,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class XmlRpcDataFormatConfiguration {
 
     /**
-     * Whether to unmarshal request or response Is by default false
+     * Whether to marshal/unmarshal request or response Is by default false
      */
     private Boolean request = false;
 

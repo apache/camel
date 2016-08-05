@@ -52,7 +52,7 @@ public class XmlRpcDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether to unmarshal request or response
+     * Whether to marshal/unmarshal request or response
      * <p/>
      * Is by default false
      */
