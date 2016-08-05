@@ -96,7 +96,7 @@
     <cdi-api-1.2-version>1.2</cdi-api-1.2-version>
     <cglib-bundle-version>3.2.2_1</cglib-bundle-version>
     <cglib-version>3.2.2</cglib-version>
-    <chronicle-bytes-version>1.7.6</chronicle-bytes-version>
+    <chronicle-bytes-version>1.7.8</chronicle-bytes-version>
     <chronicle-core-version>1.7.3</chronicle-core-version>
     <chronicle-engine-version>1.13.6</chronicle-engine-version>
     <chronicle-map-version>2.4.15</chronicle-map-version>
