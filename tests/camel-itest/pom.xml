@@ -218,11 +218,6 @@
       <version>${mina2-version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
 
     <!-- mocking ftp server -->
     <dependency>
@@ -347,11 +342,29 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <!-- logging -->
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-1.2-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
@@ -421,6 +434,9 @@
             <phase>generate-sources</phase>
             <configuration>
               <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
+              <additionalJvmArgs>
+                -Dlog4j.configurationFile=${project.basedir}/src/test/resources/log4j2.properties
+              </additionalJvmArgs>
               <wsdlOptions>
                 <wsdlOption>
                   <frontEnd>jaxws21</frontEnd>

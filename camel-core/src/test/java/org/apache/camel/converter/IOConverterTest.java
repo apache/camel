@@ -183,13 +183,13 @@ public class IOConverterTest extends ContextTestSupport {
     }
 
     public void testToInputStreamUrl() throws Exception {
-        URL url = ObjectHelper.loadResourceAsURL("log4j.properties");
+        URL url = ObjectHelper.loadResourceAsURL("log4j2.properties");
         InputStream is = IOConverter.toInputStream(url);
         assertIsInstanceOf(BufferedInputStream.class, is);
     }
 
     public void testStringUrl() throws Exception {
-        URL url = ObjectHelper.loadResourceAsURL("log4j.properties");
+        URL url = ObjectHelper.loadResourceAsURL("log4j2.properties");
         String s = IOConverter.toString(url, null);
         assertNotNull(s);
     }
@@ -225,10 +225,10 @@ public class IOConverterTest extends ContextTestSupport {
     }
 
     public void testToPropertiesFromFile() throws Exception {
-        Properties p = IOConverter.toProperties(new File("src/test/resources/log4j.properties"));
+        Properties p = IOConverter.toProperties(new File("src/test/resources/log4j2.properties"));
         assertNotNull(p);
         assertTrue("Should be 8 or more properties, was " + p.size(), p.size() >= 8);
-        String root = (String) p.get("log4j.rootLogger");
+        String root = (String) p.get("rootLogger.level");
         assertNotNull(root);
         assertTrue(root.contains("INFO"));
     }

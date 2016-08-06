@@ -20,10 +20,13 @@ import java.io.StringWriter;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
-import org.apache.log4j.WriterAppender;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.WriterAppender;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 
 public class LogBodyWithNewLineTest extends ContextTestSupport {
 
@@ -33,12 +36,24 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
         super.setUp();
         writer = new StringWriter();
 
-        WriterAppender appender = new WriterAppender(new SimpleLayout(), writer);
-        appender.setImmediateFlush(true);
+        final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        final Configuration config = ctx.getConfiguration();
 
-        Logger logger = Logger.getRootLogger();
-        logger.addAppender(appender);
-        logger.setLevel(Level.INFO);
+        Appender appender = WriterAppender.newBuilder()
+            .setLayout(PatternLayout.newBuilder()
+                .withPattern(PatternLayout.SIMPLE_CONVERSION_PATTERN)
+                .build())
+            .setTarget(writer)
+            .setName("Writer")
+            .build();
+
+        appender.start();
+
+        config.addAppender(appender);
+        config.getRootLogger().removeAppender("Writer");
+        config.getRootLogger().addAppender(appender, Level.INFO, null);
+
+        ctx.updateLoggers();
     }
 
     public void testNoSkip() throws Exception {
@@ -70,7 +85,6 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .to("log:logger_name?level=INFO&showAll=true&skipBodyLineSeparator=false");
-
                 from("direct:skip")
                     .to("log:logger_name?level=INFO&showAll=true&skipBodyLineSeparator=true");
             }

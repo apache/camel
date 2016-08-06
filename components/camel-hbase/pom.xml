@@ -228,7 +228,9 @@
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
             <scope>test</scope>
-        </dependency>
+        </dependency>    
+
+        <!-- hadoop-minicluster has hardcoded log4j deps -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
