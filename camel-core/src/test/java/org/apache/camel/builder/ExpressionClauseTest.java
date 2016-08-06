@@ -48,14 +48,14 @@ public class ExpressionClauseTest extends ContextTestSupport {
     public void testAttachments() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
-        mock.expectedBodiesReceivedInAnyOrder("log4j.properties", "jndi-example.properties");
+        mock.expectedBodiesReceivedInAnyOrder("log4j2.properties", "jndi-example.properties");
 
         template.send("direct:begin", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 Message m = exchange.getIn();
                 m.setBody("Hello World");
-                m.addAttachmentObject("log4j", new DefaultAttachment(new FileDataSource("src/test/resources/log4j.properties")));
+                m.addAttachmentObject("log4j", new DefaultAttachment(new FileDataSource("src/test/resources/log4j2.properties")));
                 m.addAttachment("jndi-example", new DataHandler(new FileDataSource("src/test/resources/jndi-example.properties")));
             }
         });

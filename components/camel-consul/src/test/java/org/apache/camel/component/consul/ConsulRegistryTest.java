@@ -23,9 +23,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.NoSuchBeanException;
-import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -38,7 +39,7 @@ public class ConsulRegistryTest implements Serializable {
 
     private static final long serialVersionUID = -3482971969351609265L;
     private static ConsulRegistry registry;
-    private static final Logger LOGGER = Logger.getLogger(ConsulRegistryTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulRegistryTest.class);
 
     public class ConsulTestClass implements Serializable {
         private static final long serialVersionUID = -4815945688487114891L;
