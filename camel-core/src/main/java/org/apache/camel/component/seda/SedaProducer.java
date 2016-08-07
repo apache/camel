@@ -186,7 +186,7 @@ public class SedaProducer extends DefaultAsyncProducer {
         // if handover we need to do special handover to avoid handing over
         // RestBindingMarshalOnCompletion as it should not be handed over with SEDA
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover, true,
-                synchronization -> !synchronization.getClass().getName().contains("RestBindingMarshalOnCompletion"));
+            synchronization -> !synchronization.getClass().getName().contains("RestBindingMarshalOnCompletion"));
         // set a new from endpoint to be the seda queue
         copy.setFromEndpoint(endpoint);
         return copy;
