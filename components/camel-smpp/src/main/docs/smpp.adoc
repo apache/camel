@@ -229,8 +229,9 @@ The SMPP component supports 36 options which are listed below.
 
 
 
+
 // endpoint options: START
-The SMPP component supports 39 endpoint options which are listed below:
+The SMPP component supports 40 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -239,6 +240,7 @@ The SMPP component supports 39 endpoint options which are listed below:
 | host | common | localhost | String | Hostname for the SMSC server to use.
 | port | common | 2775 | Integer | Port number for the SMSC server to use.
 | initialReconnectDelay | common | 5000 | long | Defines the initial delay in milliseconds after the consumer/producer tries to reconnect to the SMSC after the connection was lost.
+| maxReconnect | common | 2147483647 | int | Defines the maximum number of attempts to reconnect to the SMSC if SMSC returns a negative bind response
 | reconnectDelay | common | 5000 | long | Defines the interval in milliseconds between the reconnect attempts if the connection to the SMSC was lost and the previous was not succeed.
 | splittingPolicy | common | ALLOW | SmppSplittingPolicy | You can specify a policy for handling long messages: ALLOW - the default long messages are split to 140 bytes per message TRUNCATE - long messages are split and only the first fragment will be sent to the SMSC. Some carriers drop subsequent fragments so this reduces load on the SMPP connection sending parts of a message that will never be delivered. REJECT - if a message would need to be split it is rejected with an SMPP NegativeResponseException and the reason code signifying the message is too long.
 | systemType | common | cp | String | This parameter is used to categorize the type of ESME (External Short Message Entity) that is binding to the SMSC (max. 13 characters).
@@ -278,6 +280,7 @@ The SMPP component supports 39 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 You can have as many of these options as you like.

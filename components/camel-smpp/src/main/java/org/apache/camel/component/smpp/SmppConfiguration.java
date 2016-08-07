@@ -18,8 +18,8 @@ package org.apache.camel.component.smpp;
 
 import java.net.URI;
 import java.nio.charset.Charset;
-
 import java.util.Map;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -98,7 +98,7 @@ public class SmppConfiguration implements Cloneable {
     private long reconnectDelay = 5000;
     @UriParam(label = "common", defaultValue = "2147483647")
     private int maxReconnect = Integer.MAX_VALUE;
-	@UriParam(label = "producer")
+    @UriParam(label = "producer")
     private boolean lazySessionCreation;
     @UriParam(label = "proxy")
     private String httpProxyHost;
@@ -532,30 +532,29 @@ public class SmppConfiguration implements Cloneable {
     public void setInitialReconnectDelay(long initialReconnectDelay) {
         this.initialReconnectDelay = initialReconnectDelay;
     }
-    
+
     public long getReconnectDelay() {
         return reconnectDelay;
     }
-    
+
     /**
      * Defines the interval in milliseconds between the reconnect attempts, if the connection to the SMSC was lost and the previous was not succeed.
      */
     public void setReconnectDelay(long reconnectDelay) {
         this.reconnectDelay = reconnectDelay;
     }
-    
+
     /**
-     * CAMEL-6616
      * Defines the maximum number of attempts to reconnect to the SMSC, if SMSC returns a negative bind response
      */
     public int getMaxReconnect() {
-		return maxReconnect;
-	}
+        return maxReconnect;
+    }
 
-	public void setMaxReconnect(int maxReconnect) {
-		this.maxReconnect = maxReconnect;
-	}
-    
+    public void setMaxReconnect(int maxReconnect) {
+        this.maxReconnect = maxReconnect;
+    }
+
     public boolean isLazySessionCreation() {
         return lazySessionCreation;
     }
@@ -568,7 +567,7 @@ public class SmppConfiguration implements Cloneable {
     public void setLazySessionCreation(boolean lazySessionCreation) {
         this.lazySessionCreation = lazySessionCreation;
     }
-    
+
     public String getHttpProxyHost() {
         return httpProxyHost;
     }
@@ -579,7 +578,7 @@ public class SmppConfiguration implements Cloneable {
     public void setHttpProxyHost(String httpProxyHost) {
         this.httpProxyHost = httpProxyHost;
     }
-    
+
     public Integer getHttpProxyPort() {
         return httpProxyPort;
     }
@@ -590,7 +589,7 @@ public class SmppConfiguration implements Cloneable {
     public void setHttpProxyPort(Integer httpProxyPort) {
         this.httpProxyPort = httpProxyPort;
     }
-    
+
     public String getHttpProxyUsername() {
         return httpProxyUsername;
     }
@@ -601,7 +600,7 @@ public class SmppConfiguration implements Cloneable {
     public void setHttpProxyUsername(String httpProxyUsername) {
         this.httpProxyUsername = httpProxyUsername;
     }
-    
+
     public String getHttpProxyPassword() {
         return httpProxyPassword;
     }
@@ -612,7 +611,7 @@ public class SmppConfiguration implements Cloneable {
     public void setHttpProxyPassword(String httpProxyPassword) {
         this.httpProxyPassword = httpProxyPassword;
     }
-    
+
     public SessionStateListener getSessionStateListener() {
         return sessionStateListener;
     }
