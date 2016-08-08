@@ -237,7 +237,7 @@ public class JCacheConfiguration {
     }
 
     /**
-     * Events a consumer should filter
+     * Events a consumer should filter. If using filteredEvents option, then eventFilters one will be ignored
      */
     public List<EventType> getFilteredEvents() {
         return filteredEvents;
@@ -256,7 +256,7 @@ public class JCacheConfiguration {
     }
 
     /**
-     * The CacheEntryEventFilter
+     * The CacheEntryEventFilter. If using eventFilters option, then filteredEvents one will be ignored
      */
     public List<CacheEntryEventFilter> getEventFilters() {
         return eventFilters;
