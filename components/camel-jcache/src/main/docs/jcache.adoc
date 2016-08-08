@@ -4,21 +4,40 @@ JCache
 
 
 
+
 // endpoint options: START
-The JCache component supports 5 endpoint options which are listed below:
+The JCache component supports 22 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | cacheName | common |  | String | *Required* the cache name
+| managementEnabled | common | false | boolean | Whether management gathering is enabled
+| readThrough | common | false | boolean | If read-through caching should be used
+| statisticsEnabled | common | false | boolean | Whether statistics gathering is enabled
+| storeByValue | common | true | boolean | If cache should use store-by-value or store-by-reference semantics
+| writeThrough | common | false | boolean | If write-through caching should be used
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| filteredEvents | consumer |  | List | Events a consumer should filter. If using filteredEvents option then eventFilters one will be ignored
+| oldValueRequired | consumer | false | boolean | if the old value is required for events
+| synchronous | consumer | false | boolean | if the the event listener should block the thread causing the event
+| eventFilters | consumer (advanced) |  | List | The CacheEntryEventFilter. If using eventFilters option then filteredEvents one will be ignored
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| action | producer |  | String | To configure using a cache operation by default. If an operation in the message header then the operation from the header takes precedence.
+| cacheConfiguration | advanced |  | Configuration | A Configuration for the Cache
+| cacheConfigurationProperties | advanced |  | Properties | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager
+| cacheLoaderFactory | advanced |  | CacheLoader> | The CacheLoader factory
+| cacheWriterFactory | advanced |  | CacheWriter> | The CacheWriter factory
+| cachingProvider | advanced |  | String | *Required* The fully qualified class name of the javax.cache.spi.CachingProvider
+| configurationUri | advanced |  | String | An implementation specific URI for the CacheManager
+| createCacheIfNotExists | advanced | true | boolean | Configure if a cache need to be created if it does exist or can't be pre-configured.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| expiryPolicyFactory | advanced |  | ExpiryPolicy> | The ExpiryPolicy factory
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
