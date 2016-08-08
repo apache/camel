@@ -26,8 +26,10 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -46,8 +48,6 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.xml.sax.SAXException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -61,8 +61,10 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
+import org.xml.sax.SAXException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
@@ -101,6 +103,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     private JaxbXmlStreamWriterWrapper xmlStreamWriterWrapper;
     private TypeConverter typeConverter;
     private Schema cachedSchema;
+    private Map<String, Object> jaxbProviderPropertiesMap;
 
     public JaxbDataFormat() {
     }
@@ -146,7 +149,16 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             if (namespacePrefixMapper != null) {
                 marshaller.setProperty(namespacePrefixMapper.getRegistrationKey(), namespacePrefixMapper);
             }
-
+            // Inject any JAX-RI custom properties from the exchange or from the instance into the marshaller 
+            Map<String, Object> jaxbProviderPropertiesMap = exchange.getProperty(JaxbConstants.JAXB_PROVIDER_PROPERTIES, Map.class);
+            if(jaxbProviderPropertiesMap == null) {
+                jaxbProviderPropertiesMap = getJaxbProviderPropertiesMap();
+            }
+            if(jaxbProviderPropertiesMap != null) {
+                for(Entry<String, Object> property : jaxbProviderPropertiesMap.entrySet()) {
+                    marshaller.setProperty(property.getKey(), property.getValue());
+                }
+            }
             marshal(exchange, graph, stream, marshaller);
 
         } catch (Exception e) {
@@ -536,4 +548,13 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             SCHEMA_FACTORY_POOL.offer(factory);
         }
     }
+
+    public Map<String, Object> getJaxbProviderPropertiesMap() {
+        return jaxbProviderPropertiesMap;
+    }
+
+    public void setJaxbProviderPropertiesMap(Map<String, Object> jaxbProviderPropertiesMap) {
+        this.jaxbProviderPropertiesMap = jaxbProviderPropertiesMap;
+    }
+
 }
