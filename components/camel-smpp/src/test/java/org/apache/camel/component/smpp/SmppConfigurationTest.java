@@ -193,6 +193,7 @@ public class SmppConfigurationTest {
                 + "numberingPlanIndicator=0, "
                 + "initialReconnectDelay=5000, "
                 + "reconnectDelay=5000, "
+                + "maxReconnect=2147483647, "
                 + "lazySessionCreation=false, "
                 + "httpProxyHost=null, "
                 + "httpProxyPort=3128, "

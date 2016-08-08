@@ -51,8 +51,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
     Properties getProps() {
         Properties props = endpoint.getConfiguration().createProducerProperties();
         endpoint.updateClassProperties(props);
-        if (endpoint.getBrokers() != null) {
-            props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, endpoint.getBrokers());
+        if (endpoint.getConfiguration().getBrokers() != null) {
+            props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, endpoint.getConfiguration().getBrokers());
         }
         return props;
     }
@@ -113,7 +113,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
     @SuppressWarnings("unchecked")
     protected Iterator<ProducerRecord> createRecorder(Exchange exchange) throws CamelException {
-        String topic = endpoint.getTopic();
+        String topic = endpoint.getConfiguration().getTopic();
         if (!endpoint.isBridgeEndpoint()) {
             topic = exchange.getIn().getHeader(KafkaConstants.TOPIC, topic, String.class);
         }

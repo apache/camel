@@ -46,6 +46,7 @@ public class KafkaComponent extends UriEndpointComponent {
         // configure component options before endpoint properties which can override from params
         endpoint.getConfiguration().setWorkerPool(workerPool);
 
+        setProperties(endpoint.getConfiguration(), params);
         setProperties(endpoint, params);
         return endpoint;
     }
