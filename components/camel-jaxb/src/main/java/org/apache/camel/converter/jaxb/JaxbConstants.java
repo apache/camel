@@ -18,12 +18,12 @@ package org.apache.camel.converter.jaxb;
 
 /**
  * Constants used by Camel Jaxb module
- * 
- *
  */
 public interface JaxbConstants {
-    
-    /** Key to identify marshaller properties in the exchange specific to JAX-RI implementation */
-    String JAXB_PROVIDER_PROPERTIES  = "CamelJaxbProviderCustomProperties";
+
+    /**
+     * Key to identify custom marshaller properties in the exchange specific to JAX-RI implementation
+     */
+    String JAXB_PROVIDER_PROPERTIES = "CamelJaxbProviderProperties";
 
 }

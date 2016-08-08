@@ -48,6 +48,8 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.xml.sax.SAXException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -61,7 +63,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
-import org.xml.sax.SAXException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +105,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     private JaxbXmlStreamWriterWrapper xmlStreamWriterWrapper;
     private TypeConverter typeConverter;
     private Schema cachedSchema;
-    private Map<String, Object> jaxbProviderPropertiesMap;
+    private Map<String, Object> jaxbProviderProperties;
 
     public JaxbDataFormat() {
     }
@@ -149,13 +151,16 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             if (namespacePrefixMapper != null) {
                 marshaller.setProperty(namespacePrefixMapper.getRegistrationKey(), namespacePrefixMapper);
             }
-            // Inject any JAX-RI custom properties from the exchange or from the instance into the marshaller 
-            Map<String, Object> jaxbProviderPropertiesMap = exchange.getProperty(JaxbConstants.JAXB_PROVIDER_PROPERTIES, Map.class);
-            if(jaxbProviderPropertiesMap == null) {
-                jaxbProviderPropertiesMap = getJaxbProviderPropertiesMap();
+            // Inject any JAX-RI custom properties from the exchange or from the instance into the marshaller
+            Map<String, Object> customProperties = exchange.getProperty(JaxbConstants.JAXB_PROVIDER_PROPERTIES, Map.class);
+            if (customProperties == null) {
+                customProperties = getJaxbProviderProperties();
             }
-            if(jaxbProviderPropertiesMap != null) {
-                for(Entry<String, Object> property : jaxbProviderPropertiesMap.entrySet()) {
+            if (customProperties != null) {
+                for (Entry<String, Object> property : customProperties.entrySet()) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Using JAXB Provider Property {}={}", property.getKey(), property.getValue());
+                    }
                     marshaller.setProperty(property.getKey(), property.getValue());
                 }
             }
@@ -425,6 +430,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         this.noNamespaceSchemaLocation = schemaLocation;
     }
 
+    public Map<String, Object> getJaxbProviderProperties() {
+        return jaxbProviderProperties;
+    }
+
+    public void setJaxbProviderProperties(Map<String, Object> jaxbProviderProperties) {
+        this.jaxbProviderProperties = jaxbProviderProperties;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
@@ -547,14 +560,6 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         if (factory != schemaFactory) {
             SCHEMA_FACTORY_POOL.offer(factory);
         }
-    }
-
-    public Map<String, Object> getJaxbProviderPropertiesMap() {
-        return jaxbProviderPropertiesMap;
-    }
-
-    public void setJaxbProviderPropertiesMap(Map<String, Object> jaxbProviderPropertiesMap) {
-        this.jaxbProviderPropertiesMap = jaxbProviderPropertiesMap;
     }
 
 }

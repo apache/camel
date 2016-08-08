@@ -104,6 +104,11 @@ public class JaxbDataFormatConfiguration {
      * To define the location of the namespaceless schema
      */
     private String noNamespaceSchemaLocation;
+    /**
+     * Refers to a custom java.util.Map to lookup in the registry containing
+     * custom JAXB provider properties to be used with the JAXB marshaller.
+     */
+    private String jaxbProviderProperties;
 
     public String getContextPath() {
         return contextPath;
@@ -223,5 +228,13 @@ public class JaxbDataFormatConfiguration {
 
     public void setNoNamespaceSchemaLocation(String noNamespaceSchemaLocation) {
         this.noNamespaceSchemaLocation = noNamespaceSchemaLocation;
+    }
+
+    public String getJaxbProviderProperties() {
+        return jaxbProviderProperties;
+    }
+
+    public void setJaxbProviderProperties(String jaxbProviderProperties) {
+        this.jaxbProviderProperties = jaxbProviderProperties;
     }
 }
