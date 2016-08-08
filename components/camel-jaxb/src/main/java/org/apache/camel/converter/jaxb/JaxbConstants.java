@@ -19,12 +19,11 @@ package org.apache.camel.converter.jaxb;
 /**
  * Constants used by Camel Jaxb module
  * 
- * @author Siddharth Sharma
- * @since Aug 4, 2016
  *
  */
 public interface JaxbConstants {
     
-    String JAXB_ESCAPE_HANDLER  = "CamelJaxbCharacterEscapeHandler";
+    /** Key to identify marshaller properties in the exchange specific to JAX-RI implementation */
+    String JAXB_PROVIDER_PROPERTIES  = "CamelJaxbProviderCustomProperties";
 
 }
