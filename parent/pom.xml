@@ -446,8 +446,8 @@
     <olingo2-version>2.0.6</olingo2-version>
     <olingo-odata2-core-bundle-version>2.0.6_1</olingo-odata2-core-bundle-version>
     <olingo2-gson-version>2.4</olingo2-gson-version>
-    <ognl-version>3.1.7</ognl-version>
-    <ognl-bundle-version>3.1.7_1</ognl-bundle-version>
+    <ognl-version>3.1.10</ognl-version>
+    <ognl-bundle-version>3.1.10_1</ognl-bundle-version>
     <oncrpc-version>1.1.2</oncrpc-version>
     <openejb-version>4.7.4</openejb-version>
     <openhft-affinity-version>3.0.6</openhft-affinity-version>
