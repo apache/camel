@@ -489,6 +489,47 @@ The XML files should be Camel XML routes (not CamelContext) such as
     </routes>
 ---------------------------------------------------------
 
+[[SpringBoot-AddingREST]]
+Adding XML Rest-DSL
+^^^^^^^^^^^^^^^^^^^
+
+By default you can put Camel Rest-DSL XML routes in the classpath under the
+directory camel-rest, which camel-spring-boot will auto detect and include.
+You can configure the directory name or turn this off using the configuration option
+
+[source,java]
+-----------------------------------------------------------
+// turn off
+camel.springboot.xmlRests = false
+// scan in the com/foo/routes classpath
+camel.springboot.xmlRests = classpath:com/foo/rests/*.xml
+-----------------------------------------------------------
+
+The Rest-DSL XML files should be Camel XML rests (not CamelContext) such as
+
+[source,xml]
+---------------------------------------------------------
+   <rests xmlns="http://camel.apache.org/schema/spring">
+      <rest>
+         <post uri="/persons">
+            <to uri="direct:postPersons"/>
+         </post>
+         <get uri="/persons">
+            <to uri="direct:getPersons"/>
+         </get>
+         <get uri="/persons/{personId}">
+             <to uri="direct:getPersionId"/>
+         </get>
+         <put uri="/persons/{personId}">
+             <to uri="direct:putPersionId"/>
+         </put>
+         <delete uri="/persons/{personId}">
+             <to uri="direct:deletePersionId"/>
+         </delete>
+      </rest>
+    </rests>
+---------------------------------------------------------
+
 [[SpringBoot-SeeAlso]]
 See Also
 ^^^^^^^^
