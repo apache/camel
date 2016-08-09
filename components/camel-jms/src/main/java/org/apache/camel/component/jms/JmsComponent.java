@@ -148,19 +148,47 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
 
             // If we are being configured with spring...
             if (applicationContext != null) {
-                Map<String, ConnectionFactory> beansOfTypeConnectionFactory = applicationContext.getBeansOfType(ConnectionFactory.class);
-                if (!beansOfTypeConnectionFactory.isEmpty()) {
-                    ConnectionFactory cf = beansOfTypeConnectionFactory.values().iterator().next();
-                    configuration.setConnectionFactory(cf);
+
+                if( getAllowAutoWiredConnectionFactory() ) {
+                    Map<String, ConnectionFactory> beansOfTypeConnectionFactory = applicationContext.getBeansOfType(ConnectionFactory.class);
+                    if (!beansOfTypeConnectionFactory.isEmpty()) {
+                        ConnectionFactory cf = beansOfTypeConnectionFactory.values().iterator().next();
+                        configuration.setConnectionFactory(cf);
+                    }
                 }
-                Map<String, DestinationResolver> beansOfTypeDestinationResolver = applicationContext.getBeansOfType(DestinationResolver.class);
-                if (!beansOfTypeDestinationResolver.isEmpty()) {
-                    DestinationResolver destinationResolver = beansOfTypeDestinationResolver.values().iterator().next();
-                    configuration.setDestinationResolver(destinationResolver);
+
+                if( getAllowAutoWiredDestinationResolver() ) {
+                    Map<String, DestinationResolver> beansOfTypeDestinationResolver = applicationContext.getBeansOfType(DestinationResolver.class);
+                    if (!beansOfTypeDestinationResolver.isEmpty()) {
+                        DestinationResolver destinationResolver = beansOfTypeDestinationResolver.values().iterator().next();
+                        configuration.setDestinationResolver(destinationResolver);
+                    }
                 }
             }
         }
         return configuration;
+    }
+
+    /**
+     * Subclasses can override to prevent the jms configuration from being
+     * setup to use an auto-wired the connection factory that's found in the spring
+     * application context.
+     *
+     * @return true
+     */
+    public boolean getAllowAutoWiredConnectionFactory() {
+        return true;
+    }
+
+    /**
+     * Subclasses can override to prevent the jms configuration from being
+     * setup to use an auto-wired the destination resolved that's found in the spring
+     * application context.
+     *
+     * @return true
+     */
+    public boolean getAllowAutoWiredDestinationResolver() {
+        return true;
     }
 
     /**
