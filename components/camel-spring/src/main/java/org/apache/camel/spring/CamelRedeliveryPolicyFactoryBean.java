@@ -30,7 +30,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * A {@link org.springframework.beans.factory.FactoryBean} which instantiates {@link org.apache.camel.processor.RedeliveryPolicy} objects
+ * Configuration of redelivery policy.
  *
  * @version 
  */
