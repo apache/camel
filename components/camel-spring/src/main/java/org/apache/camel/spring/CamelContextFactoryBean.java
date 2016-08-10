@@ -63,6 +63,7 @@ import org.apache.camel.model.remote.KubernetesConfigurationDefinition;
 import org.apache.camel.model.remote.RibbonConfigurationDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer;
@@ -99,7 +100,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String dependsOn;
     @XmlAttribute
     private String trace;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private String messageHistory;
     @XmlAttribute
     private String logExhaustedMessageBody;
@@ -111,34 +112,34 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String handleFault;
     @XmlAttribute
     private String errorHandlerRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private String autoStartup;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private String shutdownEager;
     @XmlAttribute
     private String useMDCLogging;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private String useBreadcrumb;
     @XmlAttribute
     private String allowUseOriginalMessage;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private String runtimeEndpointRegistryEnabled;
     @XmlAttribute
     private String managementNamePattern;
     @XmlAttribute
     private String threadNamePattern;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "Default")
     private ShutdownRoute shutdownRoute;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "CompleteCurrentTaskOnly")
     private ShutdownRunningTask shutdownRunningTask;
     @XmlAttribute
     @Deprecated
     private Boolean lazyLoadTypeConverters;
     @XmlAttribute
     private Boolean typeConverterStatisticsEnabled;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "Override")
     private TypeConverterExists typeConverterExists;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "WARN")
     private LoggingLevel typeConverterExistsLoggingLevel;
     @XmlElement(name = "properties")
     private PropertiesDefinition properties;
