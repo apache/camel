@@ -305,6 +305,15 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
 
         boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
 
+        // special for id as its inherited from camel-core
+        if ("id".equals(name) && isNullOrEmpty(docComment)) {
+            if ("CamelContextFactoryBean".equals(originalClassType.getSimpleName().toString())) {
+                docComment = "Sets the id (name) of this CamelContext";
+            } else {
+                docComment = "Sets the id of this node";
+            }
+        }
+
         EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, false, null);
         eipOptions.add(ep);
 
