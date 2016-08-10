@@ -79,10 +79,11 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
     }
 
     protected void processModelClass(final RoundEnvironment roundEnv, final TypeElement classElement) {
-        // must be from org.apache.camel.model
+        // must be from camel-spring or camel-core-xml
         final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
         String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf("."));
-        if (!javaTypeName.startsWith("org.apache.camel.spring")) {
+        boolean valid = javaTypeName.startsWith("org.apache.camel.spring") || javaTypeName.startsWith("org.apache.camel.core.xml");
+        if (!valid) {
             return;
         }
 
@@ -381,9 +382,38 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
                 }
             }
 
+            // is it a definition/factory-bean type then its a oneOf
+            TreeSet oneOfTypes = new TreeSet<String>();
+            if (fieldTypeName.endsWith("Definition") || fieldTypeName.endsWith("FactoryBean")) {
+                TypeElement definitionClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                if (definitionClass != null) {
+                    XmlRootElement rootElement = definitionClass.getAnnotation(XmlRootElement.class);
+                    if (rootElement != null) {
+                        String childName = rootElement.name();
+                        if (childName != null) {
+                            oneOfTypes.add(childName);
+                        }
+                    }
+                }
+            } else if (fieldTypeName.endsWith("Definition>") || fieldTypeName.endsWith("FactoryBean>")) {
+                // its a list so we need to load the generic type
+                String typeName = Strings.between(fieldTypeName, "<", ">");
+                TypeElement definitionClass = findTypeElement(roundEnv, typeName);
+                if (definitionClass != null) {
+                    XmlRootElement rootElement = definitionClass.getAnnotation(XmlRootElement.class);
+                    if (rootElement != null) {
+                        String childName = rootElement.name();
+                        if (childName != null) {
+                            oneOfTypes.add(childName);
+                        }
+                    }
+                }
+            }
+            boolean oneOf = !oneOfTypes.isEmpty();
+
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
 
-            EipOption ep = new EipOption(name, kind, fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, false, null);
+            EipOption ep = new EipOption(name, kind, fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, oneOf, oneOfTypes);
             eipOptions.add(ep);
         }
     }

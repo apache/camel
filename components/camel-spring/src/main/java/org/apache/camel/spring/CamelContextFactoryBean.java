@@ -122,7 +122,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String useBreadcrumb;
     @XmlAttribute
     private String allowUseOriginalMessage;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
     private String runtimeEndpointRegistryEnabled;
     @XmlAttribute
     private String managementNamePattern;
