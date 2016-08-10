@@ -77,8 +77,8 @@ import freemarker.template.TemplateException;
 public class SpringBootStarterMojo extends AbstractMojo {
 
     // TO ADD?: "camel-chronicle", "camel-guava-eventbus" ?, "camel-johnzon", "camel-ribbon"
-    private static final String[] IGNORE_MODULES = {/* OSGi -> */ "camel-core-osgi", "camel-eventadmin", "camel-paxlogging",  /* deprecated -> */"camel-swagger", "camel-mina", /* others -> */
-            "camel-zipkin", "camel-zipkin-starter"};
+    private static final String[] IGNORE_MODULES = {/* OSGi -> */ "camel-core-osgi", "camel-eventadmin", "camel-paxlogging",  /* deprecated (and not working perfectly) -> */"camel-swagger", "camel-mina",
+            /* others (not managed) -> */ "camel-zipkin"};
 
     private static final boolean IGNORE_TEST_MODULES = true;
 
