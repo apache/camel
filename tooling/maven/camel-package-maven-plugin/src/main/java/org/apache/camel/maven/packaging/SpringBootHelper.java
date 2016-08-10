@@ -29,16 +29,16 @@ public final class SpringBootHelper {
     private SpringBootHelper() {
     }
 
-    public static File starterSrcDir(File baseDir) {
-        return new File(starterDir(baseDir), "src/main/java");
+    public static File starterSrcDir(File baseDir, String artifactId) {
+        return new File(starterDir(baseDir, artifactId), "src/main/java");
     }
 
-    public static File starterResourceDir(File baseDir) {
-        return new File(starterDir(baseDir), "src/main/resources");
+    public static File starterResourceDir(File baseDir, String artifactId) {
+        return new File(starterDir(baseDir, artifactId), "src/main/resources");
     }
 
-    public static File starterDir(File baseDir) {
-        String starterName = baseDir.getName() + STARTER_SUFFIX;
+    public static File starterDir(File baseDir, String artifactId) {
+        String starterName = artifactId + STARTER_SUFFIX;
 
         File allStartersDir = allStartersDir(baseDir);
         File starterDir = new File(allStartersDir, starterName);

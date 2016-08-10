@@ -50,7 +50,6 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
 import org.jboss.forge.roaster.model.util.Strings;
-import org.sonatype.plexus.build.incremental.BuildContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
@@ -68,7 +67,13 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  */
 public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
-    private static final boolean DELETE_FILES_ON_MAIN_ARTIFACTS = true;
+
+    /**
+     * Useful to move configuration towards starters.
+     * Warning: the spring.factories files sometimes are used also on the main artifacts.
+     * Make sure it is not the case before enabling this property.
+     */
+    private static final boolean DELETE_FILES_ON_MAIN_ARTIFACTS = false;
 
     /**
      * The maven project.
@@ -93,31 +98,17 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
      */
     protected File baseDir;
 
-    /**
-     * The source directory
-     *
-     * @parameter default-value="${basedir}/src/main/java"
-     */
-    protected File srcDir2222;
-
-    /**
-     * The resources directory
-     *
-     * @parameter default-value="${basedir}/src/main/resources"
-     */
-    protected File resourcesDir2222;
-
-    /**
-     * build context to check changed files and mark them for refresh (used for
-     * m2e compatibility)
-     *
-     * @component
-     * @readonly
-     */
-    private BuildContext buildContext;
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        // Spring-boot configuration has been moved on starters
+
+        File starterDir = SpringBootHelper.starterDir(baseDir, project.getArtifactId());
+        if (!starterDir.exists()) {
+            // If the starter does not exist, no configuration can be created
+            getLog().info("Component auto-configuration will not be created: the starter dir does not exist");
+            return;
+        }
+
         executeComponent();
         executeDataFormat();
         executeLanguage();
@@ -1087,7 +1078,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     private void writeSourceIfChanged(JavaClassSource source, String fileName) throws MojoFailureException {
 
-        File target = new File(SpringBootHelper.starterSrcDir(baseDir), fileName);
+        File target = new File(SpringBootHelper.starterSrcDir(baseDir, project.getArtifactId()), fileName);
 
         deleteFileOnMainArtifact(target);
 
@@ -1124,7 +1115,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append(lineToAdd);
 
         String fileName = "META-INF/spring.factories";
-        File target = new File(SpringBootHelper.starterResourceDir(baseDir), fileName);
+        File target = new File(SpringBootHelper.starterResourceDir(baseDir, project.getArtifactId()), fileName);
 
         deleteFileOnMainArtifact(target);
 
@@ -1192,7 +1183,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             return;
         }
 
-        String relativePath = SpringBootHelper.starterDir(baseDir).toPath().relativize(starterFile.toPath()).toString();
+        String relativePath = SpringBootHelper.starterDir(baseDir, project.getArtifactId()).toPath().relativize(starterFile.toPath()).toString();
         File mainArtifactFile = new File(baseDir, relativePath);
         if (mainArtifactFile.exists()) {
             boolean deleted = mainArtifactFile.delete();

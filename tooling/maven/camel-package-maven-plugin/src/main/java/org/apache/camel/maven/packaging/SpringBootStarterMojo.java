@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
@@ -62,7 +63,6 @@ import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.apache.maven.shared.dependency.tree.traversal.CollectingDependencyNodeVisitor;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 import freemarker.cache.URLTemplateLoader;
 import freemarker.template.Configuration;
@@ -78,7 +78,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
     // TO ADD?: "camel-chronicle", "camel-guava-eventbus" ?, "camel-johnzon", "camel-ribbon"
     private static final String[] IGNORE_MODULES = {/* OSGi -> */ "camel-core-osgi", "camel-eventadmin", "camel-paxlogging",  /* deprecated -> */"camel-swagger", "camel-mina", /* others -> */
-            "camel-spring-boot", "camel-spring-boot-starter", "camel-zipkin", "camel-zipkin-starter"};
+            "camel-zipkin", "camel-zipkin-starter"};
 
     private static final boolean IGNORE_TEST_MODULES = true;
 
@@ -100,41 +100,32 @@ public class SpringBootStarterMojo extends AbstractMojo {
     protected File baseDir;
 
     /**
-     * build context to check changed files and mark them for refresh (used for
-     * m2e compatibility)
-     *
      * @component
+     * @required
      * @readonly
      */
-    private BuildContext buildContext;
+    protected ArtifactFactory artifactFactory;
 
     /**
      * @component
      * @required
      * @readonly
      */
-    private ArtifactFactory artifactFactory;
+    protected ArtifactMetadataSource artifactMetadataSource;
 
     /**
      * @component
      * @required
      * @readonly
      */
-    private ArtifactMetadataSource artifactMetadataSource;
+    protected ArtifactCollector artifactCollector;
 
     /**
      * @component
      * @required
      * @readonly
      */
-    private ArtifactCollector artifactCollector;
-
-    /**
-     * @component
-     * @required
-     * @readonly
-     */
-    private DependencyTreeBuilder treeBuilder;
+    protected DependencyTreeBuilder treeBuilder;
 
     /**
      * @parameter default-value="${localRepository}"
@@ -171,7 +162,8 @@ public class SpringBootStarterMojo extends AbstractMojo {
             File pomFile = new File(starterDir, "pom.xml");
             writeXmlFormatted(pom, pomFile);
 
-            // write the spring.provides file
+            // write LICENSE, USAGE and spring.provides files
+            writeStaticFiles();
             writeSpringProvides();
 
             // synchronized all starters with their parent pom 'modules' section
@@ -184,7 +176,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
     }
 
     private File starterDir() throws IOException {
-        return SpringBootHelper.starterDir(baseDir);
+        return SpringBootHelper.starterDir(baseDir, project.getArtifactId());
     }
 
     private File allStartersDir() throws IOException {
@@ -240,6 +232,10 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
         loggingImpl.add("log4j:log4j");
         loggingImpl.add("log4j:apache-log4j-extras");
+
+        // removing also the default implementation
+        loggingImpl.add("ch.qos.logback:logback-core");
+        loggingImpl.add("ch.qos.logback:logback-classic");
 
         loggingImpl.add("org.apache.logging.log4j:log4j");
 
@@ -333,7 +329,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
     }
 
     private Document createBasePom() throws Exception {
-        Template pomTemplate = getTemplate("spring-boot-starter-template-pom.xml");
+        Template pomTemplate = getTemplate("spring-boot-starter-template-pom.template");
         Map<String, String> props = new HashMap<>();
         props.put("version", project.getVersion());
         props.put("componentId", getComponentId());
@@ -349,6 +345,17 @@ public class SpringBootStarterMojo extends AbstractMojo {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document pom = builder.parse(bin);
         return pom;
+    }
+
+    private void writeStaticFiles() throws IOException, TemplateException {
+        try (InputStream isNotice = getClass().getResourceAsStream("/spring-boot-starter-NOTICE.txt");
+             FileWriter outNotice = new FileWriter(new File(starterDir(), "src/main/resources/META-INF/NOTICE.txt"));
+             InputStream isLicense = getClass().getResourceAsStream("/spring-boot-starter-LICENSE.txt");
+             FileWriter outLicense = new FileWriter(new File(starterDir(), "src/main/resources/META-INF/LICENSE.txt"))
+        ) {
+            IOUtils.copy(isNotice, outNotice);
+            IOUtils.copy(isLicense, outLicense);
+        }
     }
 
     private void writeSpringProvides() throws IOException, TemplateException {
