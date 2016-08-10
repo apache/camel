@@ -21,6 +21,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
 
+/**
+ * Function to use with properties placeholder
+ */
 @XmlRootElement(name = "propertiesFunction")
 public class CamelPropertyPlaceholderFunctionDefinition extends IdentifiedType {
 
@@ -31,6 +34,9 @@ public class CamelPropertyPlaceholderFunctionDefinition extends IdentifiedType {
         return ref;
     }
 
+    /**
+     * Reference to the custom properties function to lookup in the registry
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }
