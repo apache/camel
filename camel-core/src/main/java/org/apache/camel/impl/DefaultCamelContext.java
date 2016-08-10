@@ -3823,7 +3823,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public ModelJAXBContextFactory getModelJAXBContextFactory() {
         if (modelJAXBContextFactory == null) {
-            modelJAXBContextFactory = new DefaultModelJAXBContextFactory();
+            modelJAXBContextFactory = createModelJAXBContextFactory();
         }
         return modelJAXBContextFactory;
     }
@@ -4137,6 +4137,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         } else {
             return new ActiveMQUuidGenerator();
         }
+    }
+
+    protected ModelJAXBContextFactory createModelJAXBContextFactory() {
+        return new DefaultModelJAXBContextFactory();
     }
 
     @Override
