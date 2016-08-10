@@ -5,8 +5,10 @@ JCache
 
 
 
+
+
 // endpoint options: START
-The JCache component supports 22 endpoint options which are listed below:
+The JCache component supports 23 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -34,9 +36,12 @@ The JCache component supports 22 endpoint options which are listed below:
 | createCacheIfNotExists | advanced | true | boolean | Configure if a cache need to be created if it does exist or can't be pre-configured.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | expiryPolicyFactory | advanced |  | ExpiryPolicy> | The ExpiryPolicy factory
+| lookupProviders | advanced | false | boolean | Configure if a camel-cache should try to find implementations of jcache api in runtimes like OSGi.
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
+
 
 
 

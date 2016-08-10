@@ -36,9 +36,9 @@ public class JCacheComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        JCacheConfiguration configuration = new JCacheConfiguration(getCamelContext());
+        JCacheConfiguration configuration = new JCacheConfiguration(getCamelContext(), remaining);
         setProperties(configuration, parameters);
 
-        return new JCacheEndpoint(uri, this, configuration, remaining);
+        return new JCacheEndpoint(uri, this, configuration);
     }
 }

@@ -38,16 +38,12 @@ public class JCacheEndpoint extends DefaultEndpoint {
     private final JCacheConfiguration cacheConfiguration;
     private final JCacheManager<Object, Object> cacheManager;
 
-    public JCacheEndpoint(String uri, JCacheComponent component, JCacheConfiguration configuration, String cacheName) {
+    public JCacheEndpoint(String uri, JCacheComponent component, JCacheConfiguration configuration) {
         super(uri, component);
 
-        this.cacheName = cacheName;
+        this.cacheName = configuration.getCacheName();
         this.cacheConfiguration = configuration;
-        this.cacheManager = new JCacheManager<>(
-            configuration,
-            cacheName,
-            component.getCamelContext().getApplicationContextClassLoader(),
-            component.getCamelContext());
+        this.cacheManager = JCacheHelper.createManager(configuration);
     }
 
     @Override

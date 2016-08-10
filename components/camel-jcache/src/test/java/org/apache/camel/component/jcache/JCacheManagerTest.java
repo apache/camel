@@ -23,8 +23,9 @@ public class JCacheManagerTest extends JCacheComponentTestSupport {
     @Test
     public void testCacheCreation() throws Exception {
         JCacheConfiguration conf = new JCacheConfiguration();
+        conf.setCacheName(randomString());
 
-        JCacheManager<Object, Object> manager = new JCacheManager<>(conf, randomString());
+        JCacheManager<Object, Object> manager = new JCacheManager<>(conf);
         assertNotNull(manager.getCache());
 
         manager.close();
@@ -33,9 +34,10 @@ public class JCacheManagerTest extends JCacheComponentTestSupport {
     @Test(expected = IllegalStateException.class)
     public void testCacheCreationFailure() throws Exception {
         JCacheConfiguration conf = new JCacheConfiguration();
+        conf.setCacheName(randomString());
         conf.setCreateCacheIfNotExists(false);
 
-        new JCacheManager<>(conf, randomString()).getCache();
+        new JCacheManager<>(conf).getCache();
 
         fail("Should have raised IllegalStateException");
     }

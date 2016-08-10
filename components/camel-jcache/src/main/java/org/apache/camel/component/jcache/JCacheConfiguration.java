@@ -93,14 +93,46 @@ public class JCacheConfiguration {
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean createCacheIfNotExists = true;
 
-    private final CamelContext camelContext;
+    @UriParam(label = "advanced")
+    private boolean lookupProviders;
+
+    private CamelContext camelContext;
+    private String cacheName;
+
 
     public JCacheConfiguration() {
-        this(null);
+        this(null, null);
     }
 
-    public JCacheConfiguration(CamelContext camelContext) {
+    public JCacheConfiguration(String cacheName) {
+        this(null, cacheName);
+    }
+
+    public JCacheConfiguration(CamelContext camelContext, String cacheName) {
         this.camelContext = camelContext;
+        this.cacheName = cacheName;
+    }
+
+    public CamelContext getCamelContext() {
+        return this.camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    public String getCacheName() {
+        return this.cacheName;
+    }
+
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
+    }
+
+    public ClassLoader getApplicationContextClassLoader() {
+        return this.camelContext != null
+            ? this.camelContext.getApplicationContextClassLoader()
+            : null;
     }
 
     /**
@@ -314,5 +346,17 @@ public class JCacheConfiguration {
      */
     public void setCreateCacheIfNotExists(boolean createCacheIfNotExists) {
         this.createCacheIfNotExists = createCacheIfNotExists;
+    }
+
+    public boolean isLookupProviders() {
+        return lookupProviders;
+    }
+
+    /**
+     * Configure if a camel-cache should try to find implementations of jcache
+     * api in runtimes like OSGi.
+     */
+    public void setLookupProviders(boolean lookupProviders) {
+        this.lookupProviders = lookupProviders;
     }
 }
