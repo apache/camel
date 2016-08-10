@@ -200,7 +200,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     }
 
     /**
-     * Sets whethre to allow core threads to timeout
+     * Sets whether to allow core threads to timeout
      *
      * @param allowCoreThreadTimeOut <tt>true</tt> to allow timeout
      */

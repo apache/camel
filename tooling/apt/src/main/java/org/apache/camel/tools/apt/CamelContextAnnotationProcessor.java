@@ -36,6 +36,7 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -237,6 +238,11 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
                     processElements(roundEnv, classElement, elements, fieldElement, eipOptions, prefix);
                 }
 
+                XmlElementRef elementRef = fieldElement.getAnnotation(XmlElementRef.class);
+                if (elementRef != null) {
+                    processElement(roundEnv, classElement, null, elementRef, fieldElement, eipOptions, prefix);
+                }
+
                 XmlElement element = fieldElement.getAnnotation(XmlElement.class);
                 if (element != null) {
                     if ("rests".equals(fieldName)) {
@@ -244,7 +250,7 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
                     } else if ("routes".equals(fieldName)) {
                         processRoutes(roundEnv, classElement, element, fieldElement, fieldName, eipOptions, prefix);
                     } else {
-                        processElement(roundEnv, classElement, element, fieldElement, eipOptions, prefix);
+                        processElement(roundEnv, classElement, element, null, fieldElement, eipOptions, prefix);
                     }
                 }
             }
@@ -284,6 +290,10 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
 
         String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
         String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
+        if (isNullOrEmpty(docComment)) {
+            Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+            docComment = metadata != null ? metadata.description() : null;
+        }
         boolean required = attribute.required();
         // metadata may overrule element required
         required = findRequired(fieldElement, required);
@@ -352,16 +362,16 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
         eipOptions.add(ep);
     }
 
-    private void processElement(RoundEnvironment roundEnv, TypeElement classElement, XmlElement element, VariableElement fieldElement,
+    private void processElement(RoundEnvironment roundEnv, TypeElement classElement, XmlElement element, XmlElementRef elementRef, VariableElement fieldElement,
                                 Set<EipOption> eipOptions, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
 
         String fieldName;
         fieldName = fieldElement.getSimpleName().toString();
-        if (element != null) {
+        if (element != null || elementRef != null) {
 
             String kind = "element";
-            String name = element.name();
+            String name = element != null ? element.name() : elementRef.name();
             if (isNullOrEmpty(name) || "##default".equals(name)) {
                 name = fieldName;
             }
@@ -372,7 +382,11 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
 
             String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
             String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
-            boolean required = element.required();
+            if (isNullOrEmpty(docComment)) {
+                Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+                docComment = metadata != null ? metadata.description() : null;
+            }
+            boolean required = element != null ? element.required() : elementRef.required();
             // metadata may overrule element required
             required = findRequired(fieldElement, required);
 
@@ -443,7 +457,10 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
 
             String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
             String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
-
+            if (isNullOrEmpty(docComment)) {
+                Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+                docComment = metadata != null ? metadata.description() : null;
+            }
             boolean required = false;
             required = findRequired(fieldElement, required);
 

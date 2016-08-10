@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.impl.DefaultConsumerTemplate;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -36,7 +37,7 @@ public abstract class AbstractCamelConsumerTemplateFactoryBean extends AbstractC
 
     @XmlTransient
     private ConsumerTemplate template;
-    @XmlAttribute
+    @XmlAttribute @Metadata(description = "Sets a custom maximum cache size to use in the backing cache pools.")
     private Integer maximumCacheSize;
 
     public ConsumerTemplate getObject() throws Exception {
