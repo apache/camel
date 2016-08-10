@@ -26,7 +26,7 @@ import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 
 /**
- * Used to configure the errorHandler type
+ * Used to configure the error handler type
  *
  * @version 
  */

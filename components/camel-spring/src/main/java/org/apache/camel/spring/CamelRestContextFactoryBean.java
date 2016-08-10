@@ -28,6 +28,8 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
+ * Configuration of REST services using rest-dsl using XML
+ *
  * @version 
  */
 @XmlRootElement(name = "restContext")

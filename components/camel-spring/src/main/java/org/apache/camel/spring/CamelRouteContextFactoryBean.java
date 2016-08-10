@@ -28,7 +28,9 @@ import org.apache.camel.model.RouteDefinition;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
- * @version 
+ * Configuration of routes using XML
+ *
+ * @version
  */
 @XmlRootElement(name = "routeContext")
 @XmlAccessorType(XmlAccessType.FIELD)

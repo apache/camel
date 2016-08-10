@@ -33,8 +33,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * A Spring {@link FactoryBean} for creating a new {@link org.apache.camel.ProducerTemplate}
- * instance with a minimum of XML
+ * Configures a {@link ProducerTemplate}
  * 
  * @version 
  */
