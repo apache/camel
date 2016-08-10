@@ -31,7 +31,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * A {@link FactoryBean} which instantiates {@link Endpoint} objects
+ * Camel endpoint configuration
  *
  * @version 
  */
