@@ -149,7 +149,7 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
             // If we are being configured with spring...
             if (applicationContext != null) {
 
-                if( getAllowAutoWiredConnectionFactory() ) {
+                if (isAllowAutoWiredConnectionFactory()) {
                     Map<String, ConnectionFactory> beansOfTypeConnectionFactory = applicationContext.getBeansOfType(ConnectionFactory.class);
                     if (!beansOfTypeConnectionFactory.isEmpty()) {
                         ConnectionFactory cf = beansOfTypeConnectionFactory.values().iterator().next();
@@ -157,7 +157,7 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
                     }
                 }
 
-                if( getAllowAutoWiredDestinationResolver() ) {
+                if (isAllowAutoWiredDestinationResolver()) {
                     Map<String, DestinationResolver> beansOfTypeDestinationResolver = applicationContext.getBeansOfType(DestinationResolver.class);
                     if (!beansOfTypeDestinationResolver.isEmpty()) {
                         DestinationResolver destinationResolver = beansOfTypeDestinationResolver.values().iterator().next();
@@ -174,9 +174,9 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
      * setup to use an auto-wired the connection factory that's found in the spring
      * application context.
      *
-     * @return true
+     * @return true by default
      */
-    public boolean getAllowAutoWiredConnectionFactory() {
+    public boolean isAllowAutoWiredConnectionFactory() {
         return true;
     }
 
@@ -185,9 +185,9 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
      * setup to use an auto-wired the destination resolved that's found in the spring
      * application context.
      *
-     * @return true
+     * @return true by default
      */
-    public boolean getAllowAutoWiredDestinationResolver() {
+    public boolean isAllowAutoWiredDestinationResolver() {
         return true;
     }
 
