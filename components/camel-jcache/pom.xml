@@ -52,6 +52,13 @@
       <version>${jcache-bundle-version}</version>
     </dependency>
 
+    <!-- osgi -->
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>

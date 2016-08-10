@@ -20,6 +20,7 @@ import javax.cache.Cache;
 
 import org.apache.camel.component.jcache.JCacheConfiguration;
 import org.apache.camel.component.jcache.JCacheManager;
+import org.apache.camel.component.jcache.JCacheHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
@@ -37,7 +38,7 @@ public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
 
     @Before
     public void setUp() throws Exception {
-        cacheManager = new JCacheManager<>(new JCacheConfiguration(), "idempotent-repository");
+        cacheManager = JCacheHelper.createManager(new JCacheConfiguration("idempotent-repository"));
         cache = cacheManager.getCache();
 
         repository = new JCacheIdempotentRepository();
