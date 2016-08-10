@@ -76,7 +76,7 @@
               org.apache.felix.gogo.commands;version="[0.6,1)",
               org.apache.karaf.shell.console;version="[2.2,4)",
               org.slf4j.*;version="[1.6,2)",
-              jline.*;version="[2.1,3)",
+              jline.*;version="[2.1,4)",
               *
             </Import-Package>
           </instructions>
