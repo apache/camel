@@ -142,6 +142,7 @@
     <module>platforms</module>
     <module>tests</module>
     <module>examples</module>
+    <module>components-starter</module>
   </modules>
 
   <scm>
