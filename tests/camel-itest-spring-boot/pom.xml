@@ -34,12 +34,24 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-boot-starter</artifactId>
+      <exclusions>
+        <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Dependency needed to incorporate classes in main jar -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-loader</artifactId>
+      <version>${spring-boot-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-log4j2</artifactId>
       <version>${spring-boot-version}</version>
     </dependency>
 
@@ -152,7 +164,6 @@
             <include>**/*Test.java</include>
           </includes>
           <systemProperties>
-
             <!-- Test configuration -->
             <!--
             It is better disabling unit testing in surefire, as some of them fail for various reasons

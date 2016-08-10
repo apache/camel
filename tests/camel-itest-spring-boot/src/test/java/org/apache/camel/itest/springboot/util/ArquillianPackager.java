@@ -102,7 +102,7 @@ public final class ArquillianPackager {
         }
 
         if (config.getUseCustomLog()) {
-            ark = ark.addAsResource("spring-logback.xml", CLASSES_FOLDER + "/spring-logback.xml");
+            ark = ark.addAsResource("log4j2-spring.xml", CLASSES_FOLDER + "/log4j2.xml");
         }
 
         for (Map.Entry<String, String> res : config.getResources().entrySet()) {
@@ -133,7 +133,6 @@ public final class ArquillianPackager {
         commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-log4j12"));
         commonExclusions.add(MavenDependencies.createExclusion("log4j", "log4j"));
         commonExclusions.add(MavenDependencies.createExclusion("log4j", "apache-log4j-extras"));
-        commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-simple"));
         commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-simple"));
         commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-jdk14"));
         commonExclusions.add(MavenDependencies.createExclusion("ch.qos.logback", "logback-classic"));
