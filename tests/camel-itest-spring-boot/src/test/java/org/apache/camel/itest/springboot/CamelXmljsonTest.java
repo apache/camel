@@ -36,7 +36,7 @@ public class CamelXmljsonTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelXmljsonTest.class))
-                .dependency(DependencyResolver.withVersion("xom:xom"))
+                //.dependency(DependencyResolver.withVersion("xom:xom"))
                 .build();
     }
 

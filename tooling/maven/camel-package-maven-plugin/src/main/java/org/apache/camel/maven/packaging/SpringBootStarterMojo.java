@@ -156,8 +156,8 @@ public class SpringBootStarterMojo extends AbstractMojo {
             Document pom = createBasePom();
 
             // Apply changes to the starter pom
-            fixLoggingDependencies(pom);
-            includeAdditionalDependencies(pom);
+            fixExcludedDependencies(pom);
+            fixAdditionalDependencies(pom);
 
             // Write the starter pom
             File pomFile = new File(starterDir, "pom.xml");
@@ -184,12 +184,23 @@ public class SpringBootStarterMojo extends AbstractMojo {
         return SpringBootHelper.allStartersDir(baseDir);
     }
 
-    private void includeAdditionalDependencies(Document pom) throws Exception {
+    private void fixAdditionalDependencies(Document pom) throws Exception {
 
         Properties properties = new Properties();
-        properties.load(getClass().getResourceAsStream("/spring-boot-additional-dependencies.properties"));
+        properties.load(getClass().getResourceAsStream("/spring-boot-fix-dependencies.properties"));
 
-        String deps = properties.getProperty(project.getArtifactId());
+        String artDeps = properties.getProperty(project.getArtifactId());
+        String globalDeps = properties.getProperty("global");
+
+        String deps = artDeps;
+        if (globalDeps != null && globalDeps.trim().length() > 0) {
+            if (deps != null && deps.trim().length() > 0) {
+                deps = deps + "," + globalDeps;
+            } else {
+                deps = globalDeps;
+            }
+        }
+
         if (deps != null && deps.trim().length() > 0) {
             getLog().debug("The following dependencies will be added to the starter: " + deps);
 
@@ -225,7 +236,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
     }
 
-    private void fixLoggingDependencies(Document pom) throws Exception {
+    private void fixExcludedDependencies(Document pom) throws Exception {
 
         Set<String> loggingImpl = new HashSet<>();
 
@@ -249,10 +260,26 @@ public class SpringBootStarterMojo extends AbstractMojo {
         loggingImpl.add("org.slf4j:slf4j-simple");
 
 
-        Set<String> includedLibs = filterIncludedArtifacts(loggingImpl);
+        // excluded dependencies
+        Set<String> configExclusions = new HashSet<>();
+        Properties properties = new Properties();
+        properties.load(getClass().getResourceAsStream("/spring-boot-fix-dependencies.properties"));
+        String artExcl = properties.getProperty("exclude_"  + project.getArtifactId());
+        getLog().debug("Configured exclusions: " + artExcl);
+        if (artExcl != null && artExcl.trim().length() > 0) {
+            for (String dep : artExcl.split(",")) {
+                getLog().debug("Adding configured exclusion: " + dep);
+                configExclusions.add(dep);
+            }
+        }
 
-        if (includedLibs.size() > 0) {
-            getLog().info("Spring-Boot-Starter: the following dependencies will be removed from the starter: " + includedLibs);
+        Set<String> libsToRemove = new TreeSet<>();
+        libsToRemove.addAll(loggingImpl);
+        libsToRemove.addAll(configExclusions);
+        libsToRemove = filterIncludedArtifacts(libsToRemove);
+
+        if (libsToRemove.size() > 0) {
+            getLog().info("Spring-Boot-Starter: the following dependencies will be removed from the starter: " + libsToRemove);
 
             XPath xpath = XPathFactory.newInstance().newXPath();
             Node dependency = ((NodeList) xpath.compile("/project/dependencies/dependency[artifactId/text() = '" + project.getArtifactId() + "']").evaluate(pom, XPathConstants.NODESET)).item(0);
@@ -261,7 +288,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
             dependency.appendChild(exclusions);
 
-            for (String lib : includedLibs) {
+            for (String lib : libsToRemove) {
                 String groupIdStr = lib.split("\\:")[0];
                 String artifactIdStr = lib.split("\\:")[1];
 
@@ -323,7 +350,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
             modules.removeChild(modules.getFirstChild());
         }
 
-        for (File starterDir : Arrays.asList(allStartersDir().listFiles((f, n) -> f.isDirectory() && n.endsWith(SpringBootHelper.STARTER_SUFFIX))).stream().sorted().collect(Collectors.toList())) {
+        for (File starterDir : Arrays.asList(allStartersDir().listFiles((f, n) -> (new File(f, n)).isDirectory() && n.endsWith(SpringBootHelper.STARTER_SUFFIX))).stream().sorted().collect(Collectors.toList())) {
             Node module = pom.createElement("module");
             module.setTextContent(starterDir.getName());
             modules.appendChild(module);
