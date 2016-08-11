@@ -31,6 +31,8 @@ import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 
+import static org.apache.camel.maven.XmlHelper.isNullOrEmpty;
+
 /**
  * Enriches xml document with documentation from json files.
  */
@@ -70,17 +72,25 @@ public class DocumentationEnricher {
     }
 
     private void addAttributeDocumentation(Element item, File jsonFile) throws IOException {
+        String descriptionText = null;
+        String defaultValueText = null;
+
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema(Constants.PROPERTIES_ATTRIBUTE_NAME, PackageHelper.fileToString(jsonFile), true);
         for (Map<String, String> row : rows) {
-            if (item.getAttribute(Constants.NAME_ATTRIBUTE_NAME)
-                    .equals(row.get(Constants.NAME_ATTRIBUTE_NAME))) {
-                String descriptionText = row.get(Constants.DESCRIPTION_ATTRIBUTE_NAME);
-                if (descriptionText != null) {
-                    addDocumentation(item, descriptionText);
-                    break;
-                }
+            if (item.getAttribute(Constants.NAME_ATTRIBUTE_NAME).equals(row.get(Constants.NAME_ATTRIBUTE_NAME))) {
+                descriptionText = row.get(Constants.DESCRIPTION_ATTRIBUTE_NAME);
+                defaultValueText = row.get(Constants.DEFAULT_VALUE_ATTRIBUTE_NAME);
             }
         }
+
+        if (!isNullOrEmpty(descriptionText)) {
+            String text = descriptionText;
+            if (!isNullOrEmpty(defaultValueText)) {
+                text += ". Default value: " + defaultValueText;
+            }
+            addDocumentation(item, text);
+        }
+
     }
 
     private void addDocumentation(Element item, String textContent) {
