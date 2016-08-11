@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
-public class CamelSpringBootStarterTest extends AbstractSpringBootTestSupport {
+public class CamelChronicleTest extends AbstractSpringBootTestSupport {
 
     @Deployment
     public static Archive<?> createSpringBootPackage() throws Exception {
@@ -34,13 +34,13 @@ public class CamelSpringBootStarterTest extends AbstractSpringBootTestSupport {
 
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
-                .module(inferModuleName(CamelSpringBootStarterTest.class))
+                .module(inferModuleName(CamelChronicleTest.class))
                 .build();
     }
 
     @Test
     public void componentTests() throws Exception {
-        // no component test
+        this.runComponentTest(config, "chronicle-engine");
         this.runModuleUnitTestsIfEnabled(config);
     }
 

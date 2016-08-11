@@ -36,7 +36,7 @@ public class CamelKubernetesTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelKubernetesTest.class))
-                .dependency(DependencyResolver.withVersion("org.hibernate:hibernate-validator"))
+                //.dependency(DependencyResolver.withVersion("org.hibernate:hibernate-validator"))
                 .build();
     }
 

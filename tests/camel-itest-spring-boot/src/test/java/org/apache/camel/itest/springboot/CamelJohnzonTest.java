@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
-public class CamelCoreOsgiTest extends AbstractSpringBootTestSupport {
+public class CamelJohnzonTest extends AbstractSpringBootTestSupport {
 
     @Deployment
     public static Archive<?> createSpringBootPackage() throws Exception {
@@ -34,13 +34,13 @@ public class CamelCoreOsgiTest extends AbstractSpringBootTestSupport {
 
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
-                .module(inferModuleName(CamelCoreOsgiTest.class))
+                .module(inferModuleName(CamelJohnzonTest.class))
                 .build();
     }
 
     @Test
     public void componentTests() throws Exception {
-        // no component test
+        this.runDataformatTest(config, "json-johnzon");
         this.runModuleUnitTestsIfEnabled(config);
     }
 

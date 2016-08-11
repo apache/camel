@@ -36,7 +36,7 @@ public class CamelJetty9Test extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelJetty9Test.class))
-                .dependency(DependencyResolver.withVersion("org.hibernate:hibernate-validator"))
+                //.dependency(DependencyResolver.withVersion("org.hibernate:hibernate-validator"))
                 .build();
     }
 

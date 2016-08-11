@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
-public class CamelZipkinStarterTest extends AbstractSpringBootTestSupport {
+public class CamelRibbonTest extends AbstractSpringBootTestSupport {
 
     @Deployment
     public static Archive<?> createSpringBootPackage() throws Exception {
@@ -34,14 +34,13 @@ public class CamelZipkinStarterTest extends AbstractSpringBootTestSupport {
 
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
-                .module(inferModuleName(CamelZipkinStarterTest.class))
-                .unitTestExpectedNumber(0)
+                .module(inferModuleName(CamelRibbonTest.class))
                 .build();
     }
 
     @Test
     public void componentTests() throws Exception {
-        // no component test
+        // no components
         this.runModuleUnitTestsIfEnabled(config);
     }
 
