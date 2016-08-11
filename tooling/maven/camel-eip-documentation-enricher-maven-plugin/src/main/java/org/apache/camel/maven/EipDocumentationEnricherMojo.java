@@ -178,7 +178,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         injectedTypes.add(type);
         NodeList attributeElements = domFinder.findAttributesElements(type);
         if (attributeElements.getLength() > 0) {
-            documentationEnricher.enrichTypeAttributesDocumentation(attributeElements, jsonFile);
+            documentationEnricher.enrichTypeAttributesDocumentation(getLog(), attributeElements, jsonFile);
         }
 
         String baseType = domFinder.findBaseType(type);
