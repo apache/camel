@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.hazelcast.springboot.HazelcastComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.hazelcast.springboot.HazelcastComponentAutoConfiguration

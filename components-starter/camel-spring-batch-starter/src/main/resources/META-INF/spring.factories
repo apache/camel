@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.spring.batch.springboot.SpringBatchComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.spring.batch.springboot.SpringBatchComponentAutoConfiguration

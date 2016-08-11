@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.elasticsearch.springboot.ElasticsearchComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.elasticsearch.springboot.ElasticsearchComponentAutoConfiguration

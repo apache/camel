@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.lumberjack.springboot.LumberjackComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.lumberjack.springboot.LumberjackComponentAutoConfiguration

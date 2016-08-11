@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.jclouds.springboot.JcloudsComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.jclouds.springboot.JcloudsComponentAutoConfiguration

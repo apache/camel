@@ -49,6 +49,21 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Putting these dependencies here until we understand why they are not in the parent bom (and zip) -->
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-coap</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-grape</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <!-- WARNING: do not edit the modules section, it is update automatically by the camel-package plugin -->
     <modules>
         <module>camel-ahc-starter</module>

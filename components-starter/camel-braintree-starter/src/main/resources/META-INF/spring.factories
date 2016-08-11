@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.braintree.springboot.BraintreeComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.braintree.springboot.BraintreeComponentAutoConfiguration

@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.elsql.springboot.ElsqlComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.elsql.springboot.ElsqlComponentAutoConfiguration

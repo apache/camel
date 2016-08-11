@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.twitter.springboot.TwitterComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.twitter.springboot.TwitterComponentAutoConfiguration

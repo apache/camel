@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.paho.springboot.PahoComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.paho.springboot.PahoComponentAutoConfiguration

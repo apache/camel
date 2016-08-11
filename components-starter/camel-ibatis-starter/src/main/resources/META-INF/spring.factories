@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.ibatis.springboot.IBatisComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.ibatis.springboot.IBatisComponentAutoConfiguration

@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.flink.springboot.FlinkComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.flink.springboot.FlinkComponentAutoConfiguration

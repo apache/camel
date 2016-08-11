@@ -18,11 +18,11 @@ package org.apache.camel.maven.packaging;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -76,8 +76,9 @@ import freemarker.template.TemplateException;
  */
 public class SpringBootStarterMojo extends AbstractMojo {
 
-    // TO ADD?: "camel-chronicle", "camel-guava-eventbus" ?, "camel-johnzon", "camel-ribbon"
-    private static final String[] IGNORE_MODULES = {/* OSGi -> */ "camel-core-osgi", "camel-eventadmin", "camel-paxlogging",  /* deprecated (and not working perfectly) -> */"camel-swagger", "camel-mina",
+
+    private static final String[] IGNORE_MODULES = {/* OSGi -> */ "camel-core-osgi", "camel-eventadmin", "camel-paxlogging",  /* deprecated (and not working perfectly) -> */"camel-swagger",
+            "camel-mina",
             /* others (not managed) -> */ "camel-zipkin"};
 
     private static final boolean IGNORE_TEST_MODULES = true;
@@ -348,14 +349,16 @@ public class SpringBootStarterMojo extends AbstractMojo {
     }
 
     private void writeStaticFiles() throws IOException, TemplateException {
+        String notice;
+        String license;
         try (InputStream isNotice = getClass().getResourceAsStream("/spring-boot-starter-NOTICE.txt");
-             FileWriter outNotice = new FileWriter(new File(starterDir(), "src/main/resources/META-INF/NOTICE.txt"));
-             InputStream isLicense = getClass().getResourceAsStream("/spring-boot-starter-LICENSE.txt");
-             FileWriter outLicense = new FileWriter(new File(starterDir(), "src/main/resources/META-INF/LICENSE.txt"))
-        ) {
-            IOUtils.copy(isNotice, outNotice);
-            IOUtils.copy(isLicense, outLicense);
+             InputStream isLicense = getClass().getResourceAsStream("/spring-boot-starter-LICENSE.txt")) {
+            notice = IOUtils.toString(isNotice);
+            license = IOUtils.toString(isLicense);
         }
+
+        writeIfChanged(notice, new File(starterDir(), "src/main/resources/META-INF/NOTICE.txt"));
+        writeIfChanged(license, new File(starterDir(), "src/main/resources/META-INF/LICENSE.txt"));
     }
 
     private void writeSpringProvides() throws IOException, TemplateException {
@@ -367,9 +370,11 @@ public class SpringBootStarterMojo extends AbstractMojo {
         outDir.mkdirs();
         File outFile = new File(outDir, "spring.provides");
 
-        try (FileWriter outWriter = new FileWriter(outFile)) {
-            fileTemplate.process(props, outWriter);
-        }
+        StringWriter sw = new StringWriter();
+        fileTemplate.process(props, sw);
+        sw.close();
+
+        writeIfChanged(sw.toString(), outFile);
     }
 
 
@@ -459,11 +464,22 @@ public class SpringBootStarterMojo extends AbstractMojo {
             }
         }
 
+        writeIfChanged(b.toString(), destination);
+    }
 
-        try (Writer out = new FileWriter(destination)) {
-            IOUtils.write(b.toString(), out);
+    private void writeIfChanged(String content, File file) throws IOException {
+        try (FileReader fr = new FileReader(file)) {
+            String oldContent = IOUtils.toString(fr);
+            if (!content.equals(oldContent)) {
+                getLog().info("Writing new file " + file.getAbsolutePath());
+                fr.close();
+                try (FileWriter fw = new FileWriter(file)) {
+                    IOUtils.write(content, fw);
+                }
+            } else {
+                getLog().info("File " + file.getAbsolutePath() + " has been left unchanged");
+            }
         }
-
     }
 
 }
