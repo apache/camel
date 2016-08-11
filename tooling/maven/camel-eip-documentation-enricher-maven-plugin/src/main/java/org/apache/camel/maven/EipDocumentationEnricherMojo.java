@@ -47,7 +47,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 /**
  * Injects EIP documentation to camel schema.
  */
-@Mojo(name = "eip-documentation-enricher", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
+@Mojo(name = "eip-documentation-enricher", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class EipDocumentationEnricherMojo extends AbstractMojo {
 
@@ -66,14 +66,26 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     /**
      * Path to camel core project root directory.
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../..//camel-core")
+    @Parameter(defaultValue = "${project.build.directory}/../../../camel-core")
     public File camelCoreDir;
+
+    /**
+     * Path to camel core project root directory.
+     */
+    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-spring")
+    public File camelSpringDir;
 
     /**
      * Sub path from camel core directory to model directory with generated json files for components.
      */
     @Parameter(defaultValue = "target/classes/org/apache/camel/model")
     public String pathToModelDir;
+
+    /**
+     * Sub path from camel spring directory to model directory with generated json files for components.
+     */
+    @Parameter(defaultValue = "target/classes/org/apache/camel/spring")
+    public String pathToSpringModelDir;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -83,7 +95,9 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         validateExists(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateIsFile(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateExists(camelCoreDir, "camelCoreDir");
+        validateExists(camelSpringDir, "camelSpringDir");
         validateIsDirectory(camelCoreDir, "camelCoreDir");
+        validateIsDirectory(camelSpringDir, "camelSpringDir");
         try {
             runPlugin();
         } catch (Exception e) {
@@ -92,12 +106,18 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     }
 
     private void runPlugin() throws Exception {
-        File rootDir = new File(camelCoreDir, pathToModelDir);
         Document document = XmlHelper.buildNamespaceAwareDocument(inputCamelSchemaFile);
         XPath xPath = XmlHelper.buildXPath(new CamelSpringNamespace());
         DomFinder domFinder = new DomFinder(document, xPath);
         DocumentationEnricher documentationEnricher = new DocumentationEnricher(document);
+
+        // include schema files from camel-core, and from camel-spring
+        File rootDir = new File(camelCoreDir, pathToModelDir);
         Map<String, File> jsonFiles = PackageHelper.findJsonFiles(rootDir);
+        File rootDir2 = new File(camelSpringDir, pathToSpringModelDir);
+        Map<String, File> jsonFiles2 = PackageHelper.findJsonFiles(rootDir2);
+        // merge the json files together
+        jsonFiles.putAll(jsonFiles2);
 
         NodeList elementsAndTypes = domFinder.findElementsAndTypes();
         documentationEnricher.enrichTopLevelElementsDocumentation(elementsAndTypes, jsonFiles);
