@@ -16,4 +16,6 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.dataformat.xstream.springboot.JsonDataFormatAutoConfiguration
+org.apache.camel.dataformat.xstream.springboot.JsonDataFormatAutoConfiguration,\
+org.apache.camel.dataformat.xstream.springboot.XStreamDataFormatAutoConfiguration
+

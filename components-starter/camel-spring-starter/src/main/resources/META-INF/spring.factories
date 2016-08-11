@@ -16,4 +16,6 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.language.spel.springboot.SpelLanguageAutoConfiguration
+org.apache.camel.language.spel.springboot.SpelLanguageAutoConfiguration,\
+org.apache.camel.component.event.springboot.EventComponentAutoConfiguration
+

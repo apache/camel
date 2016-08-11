@@ -16,4 +16,6 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.disruptor.vm.springboot.DisruptorVmComponentAutoConfiguration
+org.apache.camel.component.disruptor.vm.springboot.DisruptorVmComponentAutoConfiguration,\
+org.apache.camel.component.disruptor.springboot.DisruptorComponentAutoConfiguration
+

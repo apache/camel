@@ -16,4 +16,8 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.converter.crypto.springboot.CryptoDataFormatAutoConfiguration
+org.apache.camel.converter.crypto.springboot.CryptoDataFormatAutoConfiguration,\
+org.apache.camel.component.crypto.springboot.DigitalSignatureComponentAutoConfiguration,\
+org.apache.camel.converter.crypto.springboot.PGPDataFormatAutoConfiguration
+
+
