@@ -28,15 +28,14 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
@@ -52,9 +51,12 @@ import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
 /**
  * Abstract class for Camel apt plugins.
  */
-public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
+public final class AnnotationProcessorHelper {
 
-    protected String findJavaDoc(Elements elementUtils, Element element, String fieldName, String name, TypeElement classElement, boolean builderPattern) {
+    private AnnotationProcessorHelper() {
+    }
+
+    public static String findJavaDoc(Elements elementUtils, Element element, String fieldName, String name, TypeElement classElement, boolean builderPattern) {
         String answer = null;
         if (element != null) {
             answer = elementUtils.getDocComment(element);
@@ -135,7 +137,7 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
         return answer;
     }
 
-    protected ExecutableElement findSetter(String fieldName, TypeElement classElement) {
+    public static ExecutableElement findSetter(String fieldName, TypeElement classElement) {
         String setter = "set" + fieldName.substring(0, 1).toUpperCase();
         if (fieldName.length() > 1) {
             setter += fieldName.substring(1);
@@ -152,7 +154,7 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
         return null;
     }
 
-    protected ExecutableElement findGetter(String fieldName, TypeElement classElement) {
+    public static ExecutableElement findGetter(String fieldName, TypeElement classElement) {
         String getter1 = "get" + fieldName.substring(0, 1).toUpperCase();
         if (fieldName.length() > 1) {
             getter1 += fieldName.substring(1);
@@ -173,7 +175,7 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
         return null;
     }
 
-    protected VariableElement findFieldElement(TypeElement classElement, String fieldName) {
+    public static VariableElement findFieldElement(TypeElement classElement, String fieldName) {
         if (isNullOrEmpty(fieldName)) {
             return null;
         }
@@ -188,7 +190,7 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
         return null;
     }
 
-    protected TypeElement findTypeElement(RoundEnvironment roundEnv, String className) {
+    public static TypeElement findTypeElement(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, String className) {
         if (isNullOrEmpty(className) || "java.lang.Object".equals(className)) {
             return null;
         }
@@ -229,7 +231,7 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    private List<? extends Element> getEnclosedElements(PackageElement pe) {
+    public static List<? extends Element> getEnclosedElements(PackageElement pe) {
         // some components like hadoop/spark has bad classes that causes javac scanning issues
         try {
             return pe.getEnclosedElements();
@@ -239,7 +241,7 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
         return Collections.EMPTY_LIST;
     }
 
-    protected void findTypeElementChildren(RoundEnvironment roundEnv, Set<TypeElement> found, String superClassName) {
+    public static void findTypeElementChildren(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, Set<TypeElement> found, String superClassName) {
         Elements elementUtils = processingEnv.getElementUtils();
 
         int idx = superClassName.lastIndexOf('.');
@@ -261,7 +263,7 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
         }
     }
 
-    protected boolean hasSuperClass(RoundEnvironment roundEnv, TypeElement classElement, String superClassName) {
+    public static boolean hasSuperClass(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement classElement, String superClassName) {
         String aRootName = canonicalClassName(classElement.getQualifiedName().toString());
 
         // do not check the classes from JDK itself
@@ -274,15 +276,15 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
             return true;
         }
 
-        TypeElement aSuperClass = findTypeElement(roundEnv, aSuperClassName);
+        TypeElement aSuperClass = findTypeElement(processingEnv, roundEnv, aSuperClassName);
         if (aSuperClass != null) {
-            return hasSuperClass(roundEnv, aSuperClass, superClassName);
+            return hasSuperClass(processingEnv, roundEnv, aSuperClass, superClassName);
         } else {
             return false;
         }
     }
 
-    protected boolean implementsInterface(RoundEnvironment roundEnv, TypeElement classElement, String interfaceClassName) {
+    public static boolean implementsInterface(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement classElement, String interfaceClassName) {
         while (true) {
             // check if the class implements the interface
             List<? extends TypeMirror> list = classElement.getInterfaces();
@@ -302,7 +304,7 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
             TypeMirror superclass = classElement.getSuperclass();
             if (superclass != null) {
                 String superClassName = canonicalClassName(superclass.toString());
-                baseTypeElement = findTypeElement(roundEnv, superClassName);
+                baseTypeElement = findTypeElement(processingEnv, roundEnv, superClassName);
             }
             if (baseTypeElement != null) {
                 classElement = baseTypeElement;
@@ -317,7 +319,7 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
     /**
      * Helper method to produce class output text file using the given handler
      */
-    protected void processFile(String packageName, String fileName, Func1<PrintWriter, Void> handler) {
+    public static void processFile(ProcessingEnvironment processingEnv, String packageName, String fileName, Func1<PrintWriter, Void> handler) {
         PrintWriter writer = null;
         try {
             Writer out;
@@ -334,11 +336,11 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
                 try {
                     file = new File(uri.getPath());
                 } catch (Exception e) {
-                    warning("Could not convert output directory resource URI to a file " + e);
+                    warning(processingEnv, "Could not convert output directory resource URI to a file " + e);
                 }
             }
             if (file == null) {
-                warning("No class output directory could be found!");
+                warning(processingEnv, "No class output directory could be found!");
             } else {
                 file.getParentFile().mkdirs();
                 out = new FileWriter(file);
@@ -346,7 +348,7 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
                 handler.call(writer);
             }
         } catch (IOException e) {
-            log(e);
+            log(processingEnv, e);
         } finally {
             if (writer != null) {
                 writer.close();
@@ -354,19 +356,19 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
         }
     }
 
-    protected void log(String message) {
+    public static void log(ProcessingEnvironment processingEnv, String message) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message);
     }
 
-    protected void warning(String message) {
+    public static void warning(ProcessingEnvironment processingEnv, String message) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, message);
     }
 
-    protected void error(String message) {
+    public static void error(ProcessingEnvironment processingEnv, String message) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
     }
 
-    protected void log(Throwable e) {
+    public static void log(ProcessingEnvironment processingEnv, Throwable e) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
         StringWriter buffer = new StringWriter();
         PrintWriter writer = new PrintWriter(buffer);
@@ -375,7 +377,7 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, buffer.toString());
     }
 
-    protected String loadResource(String packageName, String fileName) {
+    public static String loadResource(ProcessingEnvironment processingEnv, String packageName, String fileName) {
         Filer filer = processingEnv.getFiler();
 
         FileObject resource;
@@ -393,13 +395,13 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
             InputStream is = resource.openInputStream();
             return loadText(is, true);
         } catch (Exception e) {
-            warning("Could not load file");
+            warning(processingEnv, "Cannot load file");
         }
 
         return null;
     }
 
-    protected void dumpExceptionToErrorFile(String fileName, String message, Throwable e) {
+    public static void dumpExceptionToErrorFile(String fileName, String message, Throwable e) {
         File file = new File(fileName);
         try {
             FileOutputStream fos = new FileOutputStream(file);

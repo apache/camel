@@ -22,11 +22,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
@@ -45,6 +45,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
 import org.apache.camel.tools.apt.helper.Strings;
 
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findJavaDoc;
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElement;
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.processFile;
 import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
@@ -55,49 +58,15 @@ import static org.apache.camel.tools.apt.helper.Strings.safeNull;
  */
 @SupportedAnnotationTypes({"javax.xml.bind.annotation.*", "org.apache.camel.spi.Label"})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor {
+public class SpringAnnotationProcessor {
 
-    private static final String ONE_OF_TYPE_NAME = "";
-    private boolean skipUnwanted = true;
-
-    @Override
-    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        try {
-            if (roundEnv.processingOver()) {
-                return true;
-            }
-
-            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(XmlRootElement.class);
-            for (Element element : elements) {
-                if (element instanceof TypeElement) {
-                    processModelClass(roundEnv, (TypeElement) element);
-                }
-            }
-        } catch (Throwable e) {
-            dumpExceptionToErrorFile("camel-apt-error.log", "Error processing CamelContext model", e);
-        }
-        return true;
-    }
-
-    protected void processModelClass(final RoundEnvironment roundEnv, final TypeElement classElement) {
-        // must be from camel-spring or camel-core-xml
+    protected void processModelClass(final ProcessingEnvironment processingEnv, final RoundEnvironment roundEnv, final TypeElement classElement) {
         final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
         String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf("."));
-        boolean valid = javaTypeName.startsWith("org.apache.camel.spring") || javaTypeName.startsWith("org.apache.camel.core.xml");
-        if (!valid) {
-            return;
-        }
 
         // skip abstract classes
         if (classElement.getModifiers().contains(Modifier.ABSTRACT)) {
             return;
-        }
-
-        // skip unwanted classes which are "abstract" holders
-        if (skipUnwanted) {
-            if (classElement.getQualifiedName().toString().equals(ONE_OF_TYPE_NAME)) {
-                return;
-            }
         }
 
         final XmlRootElement rootElement = classElement.getAnnotation(XmlRootElement.class);
@@ -124,21 +93,22 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
         Func1<PrintWriter, Void> handler = new Func1<PrintWriter, Void>() {
             @Override
             public Void call(PrintWriter writer) {
-                writeJSonSchemeDocumentation(writer, roundEnv, classElement, rootElement, javaTypeName, name);
+                writeJSonSchemeDocumentation(processingEnv, writer, roundEnv, classElement, rootElement, javaTypeName, name);
                 return null;
             }
         };
-        processFile(packageName, fileName, handler);
+        processFile(processingEnv, packageName, fileName, handler);
     }
 
-    protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, XmlRootElement rootElement,
+    protected void writeJSonSchemeDocumentation(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv,
+                                                TypeElement classElement, XmlRootElement rootElement,
                                                 String javaTypeName, String modelName) {
         // gather eip information
-        EipModel eipModel = findEipModelProperties(roundEnv, classElement, javaTypeName, modelName);
+        EipModel eipModel = findEipModelProperties(processingEnv, roundEnv, classElement, javaTypeName, modelName);
 
         // collect eip information
         Set<EipOption> eipOptions = new TreeSet<EipOption>(new EipOptionComparator(eipModel));
-        findClassProperties(writer, roundEnv, eipOptions, classElement, classElement, "", modelName);
+        findClassProperties(processingEnv, writer, roundEnv, eipOptions, classElement, classElement, "", modelName);
 
         String json = createParameterJsonSchema(eipModel, eipOptions);
         writer.println(json);
@@ -182,7 +152,7 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
         return buffer.toString();
     }
 
-    protected EipModel findEipModelProperties(RoundEnvironment roundEnv, TypeElement classElement, String javaTypeName, String name) {
+    protected EipModel findEipModelProperties(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement classElement, String javaTypeName, String name) {
         EipModel model = new EipModel();
         model.setJavaType(javaTypeName);
         model.setName(name);
@@ -200,7 +170,7 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
         // favor to use class javadoc of component as description
         if (model.getJavaType() != null) {
             Elements elementUtils = processingEnv.getElementUtils();
-            TypeElement typeElement = findTypeElement(roundEnv, model.getJavaType());
+            TypeElement typeElement = findTypeElement(processingEnv, roundEnv, model.getJavaType());
             if (typeElement != null) {
                 String doc = elementUtils.getDocComment(typeElement);
                 if (doc != null) {
@@ -217,7 +187,7 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
         return model;
     }
 
-    protected void findClassProperties(PrintWriter writer, RoundEnvironment roundEnv, Set<EipOption> eipOptions,
+    protected void findClassProperties(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, Set<EipOption> eipOptions,
                                        TypeElement originalClassType, TypeElement classElement, String prefix, String modelName) {
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
@@ -227,7 +197,7 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
 
                 XmlAttribute attribute = fieldElement.getAnnotation(XmlAttribute.class);
                 if (attribute != null) {
-                    boolean skip = processAttribute(roundEnv, originalClassType, classElement, fieldElement, fieldName, attribute, eipOptions, prefix, modelName);
+                    boolean skip = processAttribute(processingEnv, roundEnv, originalClassType, classElement, fieldElement, fieldName, attribute, eipOptions, prefix, modelName);
                     if (skip) {
                         continue;
                     }
@@ -235,12 +205,12 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
 
                 XmlElements elements = fieldElement.getAnnotation(XmlElements.class);
                 if (elements != null) {
-                    processElements(roundEnv, classElement, elements, fieldElement, eipOptions, prefix);
+                    processElements(processingEnv, roundEnv, classElement, elements, fieldElement, eipOptions, prefix);
                 }
 
                 XmlElementRef elementRef = fieldElement.getAnnotation(XmlElementRef.class);
                 if (elementRef != null) {
-                    processElement(roundEnv, classElement, null, elementRef, fieldElement, eipOptions, prefix);
+                    processElement(processingEnv, roundEnv, classElement, null, elementRef, fieldElement, eipOptions, prefix);
                 }
 
                 XmlElement element = fieldElement.getAnnotation(XmlElement.class);
@@ -250,7 +220,7 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
                     } else if ("routes".equals(fieldName)) {
                         processRoutes(roundEnv, classElement, element, fieldElement, fieldName, eipOptions, prefix);
                     } else {
-                        processElement(roundEnv, classElement, element, null, fieldElement, eipOptions, prefix);
+                        processElement(processingEnv, roundEnv, classElement, element, null, fieldElement, eipOptions, prefix);
                     }
                 }
             }
@@ -260,7 +230,7 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
             TypeMirror superclass = classElement.getSuperclass();
             if (superclass != null) {
                 String superClassName = canonicalClassName(superclass.toString());
-                baseTypeElement = findTypeElement(roundEnv, superClassName);
+                baseTypeElement = findTypeElement(processingEnv, roundEnv, superClassName);
             }
             if (baseTypeElement != null) {
                 classElement = baseTypeElement;
@@ -270,7 +240,8 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
         }
     }
 
-    private boolean processAttribute(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement, VariableElement fieldElement,
+    private boolean processAttribute(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement originalClassType,
+                                     TypeElement classElement, VariableElement fieldElement,
                                      String fieldName, XmlAttribute attribute, Set<EipOption> eipOptions, String prefix, String modelName) {
         Elements elementUtils = processingEnv.getElementUtils();
 
@@ -279,14 +250,10 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
             name = fieldName;
         }
 
-        // lets skip some unwanted attributes
-        if (skipUnwanted) {
-        }
-
         name = prefix + name;
         TypeMirror fieldType = fieldElement.asType();
         String fieldTypeName = fieldType.toString();
-        TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
+        TypeElement fieldTypeElement = findTypeElement(processingEnv, roundEnv, fieldTypeName);
 
         String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
         String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
@@ -302,7 +269,7 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
         Set<String> enums = new TreeSet<String>();
         boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
         if (isEnum) {
-            TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+            TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
             // find all the enum constants which has the possible enum value that can be used
             List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
             for (VariableElement var : fields) {
@@ -362,7 +329,8 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
         eipOptions.add(ep);
     }
 
-    private void processElement(RoundEnvironment roundEnv, TypeElement classElement, XmlElement element, XmlElementRef elementRef, VariableElement fieldElement,
+    private void processElement(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv,
+                                TypeElement classElement, XmlElement element, XmlElementRef elementRef, VariableElement fieldElement,
                                 Set<EipOption> eipOptions, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
 
@@ -378,7 +346,7 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
             name = prefix + name;
             TypeMirror fieldType = fieldElement.asType();
             String fieldTypeName = fieldType.toString();
-            TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
+            TypeElement fieldTypeElement = findTypeElement(processingEnv, roundEnv, fieldTypeName);
 
             String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
             String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
@@ -394,7 +362,7 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
             Set<String> enums = new LinkedHashSet<String>();
             boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
             if (isEnum) {
-                TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
                 // find all the enum constants which has the possible enum value that can be used
                 List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
                 for (VariableElement var : fields) {
@@ -408,7 +376,7 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
             // is it a definition/factory-bean type then its a oneOf
             TreeSet oneOfTypes = new TreeSet<String>();
             if (fieldTypeName.endsWith("Definition") || fieldTypeName.endsWith("FactoryBean")) {
-                TypeElement definitionClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                TypeElement definitionClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
                 if (definitionClass != null) {
                     XmlRootElement rootElement = definitionClass.getAnnotation(XmlRootElement.class);
                     if (rootElement != null) {
@@ -421,7 +389,7 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
             } else if (fieldTypeName.endsWith("Definition>") || fieldTypeName.endsWith("FactoryBean>")) {
                 // its a list so we need to load the generic type
                 String typeName = Strings.between(fieldTypeName, "<", ">");
-                TypeElement definitionClass = findTypeElement(roundEnv, typeName);
+                TypeElement definitionClass = findTypeElement(processingEnv, roundEnv, typeName);
                 if (definitionClass != null) {
                     XmlRootElement rootElement = definitionClass.getAnnotation(XmlRootElement.class);
                     if (rootElement != null) {
@@ -441,7 +409,8 @@ public class CamelContextAnnotationProcessor extends AbstractAnnotationProcessor
         }
     }
 
-    private void processElements(RoundEnvironment roundEnv, TypeElement classElement, XmlElements elements, VariableElement fieldElement,
+    private void processElements(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv,
+                                 TypeElement classElement, XmlElements elements, VariableElement fieldElement,
                                  Set<EipOption> eipOptions, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
 
