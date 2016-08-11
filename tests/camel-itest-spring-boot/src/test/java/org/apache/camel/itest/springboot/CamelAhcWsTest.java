@@ -37,8 +37,8 @@ public class CamelAhcWsTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelAhcWsTest.class))
-                .dependency(DependencyResolver.withVersion("org.glassfish.grizzly:grizzly-websockets"))
-                .dependency(DependencyResolver.withVersion("org.glassfish.grizzly:connection-pool"))
+                //.dependency(DependencyResolver.withVersion("org.glassfish.grizzly:grizzly-websockets"))
+                //.dependency(DependencyResolver.withVersion("org.glassfish.grizzly:connection-pool"))
                 .build();
     }
 

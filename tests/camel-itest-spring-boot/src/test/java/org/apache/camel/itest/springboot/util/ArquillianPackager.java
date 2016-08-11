@@ -17,8 +17,10 @@
 package org.apache.camel.itest.springboot.util;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Arrays;
@@ -30,12 +32,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.itest.springboot.ITestConfig;
 import org.apache.camel.itest.springboot.ITestConfigBuilder;
 import org.apache.camel.itest.springboot.arquillian.SpringBootZipExporterImpl;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.se.api.ClassPath;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
@@ -148,9 +153,11 @@ public final class ArquillianPackager {
         // Module dependencies
         List<MavenDependency> moduleDependencies = new LinkedList<>();
 
-        MavenCoordinate mainJar = MavenCoordinates.createCoordinate(config.getMavenGroup(), config.getModuleName(), version, PackagingType.JAR, null);
-        MavenDependency mainDep = MavenDependencies.createDependency(mainJar, ScopeType.COMPILE, false, commonExclutionArray);
-        moduleDependencies.add(mainDep);
+//        String mainArtifactId = config.getModuleName() + "-starter";
+//        MavenCoordinate mainJar = MavenCoordinates.createCoordinate(config.getMavenGroup(), mainArtifactId, version, PackagingType.JAR, null);
+//        // Add exclusions only when not using the starters
+//        MavenDependency mainDep = MavenDependencies.createDependency(mainJar, ScopeType.COMPILE, false);
+//        moduleDependencies.add(mainDep);
 
         for (String canonicalForm : config.getAdditionalDependencies()) {
             MavenCoordinate coord = MavenCoordinates.createCoordinate(canonicalForm);
@@ -168,10 +175,21 @@ public final class ArquillianPackager {
                 scopes.add(ScopeType.PROVIDED);
             }
 
-            List<MavenResolvedArtifact> moduleArtifacts = Arrays.asList(resolver(config)
-                    .loadPomFromFile(config.getModuleBasePath() + "/pom.xml")
-                    .importDependencies(scopes.toArray(new ScopeType[]{}))
-                    .resolve().withoutTransitivity().asResolvedArtifact());
+            boolean failIfNoDependencies = false;
+            List<MavenResolvedArtifact> moduleArtifacts;
+            try {
+                moduleArtifacts = Arrays.asList(resolver(config)
+                        .loadPomFromFile(config.getModuleBasePath() + "/pom.xml")
+                        .importDependencies(scopes.toArray(new ScopeType[]{}))
+                        .resolve().withoutTransitivity().asResolvedArtifact());
+            } catch(IllegalArgumentException e) {
+                if(failIfNoDependencies) {
+                    throw e;
+                }
+
+                debug("Error while getting dependencies for scopes: " + scopes + ". Message=" + e.getMessage());
+                moduleArtifacts = new LinkedList<>();
+            }
 
 
             for (MavenResolvedArtifact art : moduleArtifacts) {
@@ -199,9 +217,11 @@ public final class ArquillianPackager {
             }
         }
 
+        File moduleSpringBootPom = createUserPom(config);
+
         List<File> dependencies = new LinkedList<>();
         dependencies.addAll(Arrays.asList(resolver(config)
-                .loadPomFromFile("pom.xml")
+                .loadPomFromFile(moduleSpringBootPom)
                 .importRuntimeDependencies()
                 .addDependencies(moduleDependencies)
                 .resolve()
@@ -209,26 +229,8 @@ public final class ArquillianPackager {
                 .asFile()));
 
 
-        boolean needsSpringTest = excludeDependencyRegex(dependencies, "^camel-test-spring3-.*");
-        if (needsSpringTest) {
-            // Adding spring4 version of the test library
-            MavenDependency dep = MavenDependencies.createDependency("org.apache.camel:camel-test-spring:" + version, ScopeType.RUNTIME, false);
-
-            dependencies = new LinkedList<>();
-            dependencies.addAll(Arrays.asList(resolver(config)
-                    .loadPomFromFile("pom.xml")
-                    .importRuntimeDependencies()
-                    .addDependencies(moduleDependencies)
-                    .addDependencies(dep)
-                    .resolve()
-                    .withTransitivity()
-                    .asFile()));
-        }
-
         // The spring boot-loader dependency will be added to the main jar, so it should be excluded from the embedded ones
         excludeDependencyRegex(dependencies, "^spring-boot-loader-[0-9].*");
-        excludeDependencyRegex(dependencies, "^camel-test-spring3-.*");
-
 
         // Add all dependencies as spring-boot nested jars
         ark = addDependencies(ark, dependencies);
@@ -272,6 +274,36 @@ public final class ArquillianPackager {
         }
 
         return external.build();
+    }
+
+    private static File createUserPom(ITestConfig config) throws Exception {
+
+        String pom;
+        try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream("/application-pom.xml")) {
+            pom = IOUtils.toString(pomTemplate);
+        }
+
+        Map<String, String> resolvedProperties = new TreeMap<>();
+        Pattern propPattern = Pattern.compile("(\\$\\{[^}]*\\})");
+        Matcher m = propPattern.matcher(pom);
+        while (m.find()) {
+            String property = m.group();
+            String resolved = DependencyResolver.resolveParentProperty(property);
+            resolvedProperties.put(property, resolved);
+        }
+
+        for (String property : resolvedProperties.keySet()) {
+            pom = pom.replace(property, resolvedProperties.get(property));
+        }
+
+        pom = pom.replace("#{module}", config.getModuleName());
+
+        File pomFile = new File(config.getModuleBasePath() + "/target/itest-spring-boot-pom.xml");
+        try (FileWriter fw = new FileWriter(pomFile)) {
+            IOUtils.write(pom, fw);
+        }
+
+        return pomFile;
     }
 
     private static ConfigurableMavenResolverSystem resolver(ITestConfig config) {
@@ -344,7 +376,7 @@ public final class ArquillianPackager {
     private static boolean excludeDependencyRegex(List<File> dependencies, String regex) {
         Pattern pattern = Pattern.compile(regex);
         int count = 0;
-        for (Iterator<File> it = dependencies.iterator(); it.hasNext();) {
+        for (Iterator<File> it = dependencies.iterator(); it.hasNext(); ) {
             File f = it.next();
             if (pattern.matcher(f.getName()).matches()) {
                 it.remove();

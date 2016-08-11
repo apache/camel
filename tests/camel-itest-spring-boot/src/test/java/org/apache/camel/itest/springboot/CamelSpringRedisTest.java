@@ -36,7 +36,7 @@ public class CamelSpringRedisTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelSpringRedisTest.class))
-                .dependency(DependencyResolver.withVersion("org.springframework.data:spring-data-redis"))
+                //.dependency(DependencyResolver.withVersion("org.springframework.data:spring-data-redis"))
                 .build();
     }
 

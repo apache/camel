@@ -36,7 +36,7 @@ public class CamelNettyTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelNettyTest.class))
-                .dependency(DependencyResolver.withVersion("org.hibernate:hibernate-validator"))
+                //.dependency(DependencyResolver.withVersion("org.hibernate:hibernate-validator"))
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BaseNettyTest$)")
                 .build();
     }

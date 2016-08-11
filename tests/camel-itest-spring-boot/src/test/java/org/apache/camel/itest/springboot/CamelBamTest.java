@@ -17,6 +17,7 @@
 package org.apache.camel.itest.springboot;
 
 import org.apache.camel.itest.springboot.util.ArquillianPackager;
+import org.apache.camel.itest.springboot.util.DependencyResolver;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -37,6 +38,8 @@ public class CamelBamTest extends AbstractSpringBootTestSupport {
                 .module(inferModuleName(CamelBamTest.class))
                 .resource("components/bam-persistence.xml", "META-INF/persistence.xml")
                 .resource("components/bam-spring.xml", "META-INF/spring/spring.xml")
+                .dependency(DependencyResolver.withVersion("version_bam_", "org.hibernate:hibernate-entitymanager"))
+                .dependency(DependencyResolver.withVersion("org.apache.geronimo.specs:geronimo-jta_1.1_spec"))
                 .build();
     }
 

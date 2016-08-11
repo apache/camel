@@ -36,7 +36,7 @@ public class CamelRestletTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelRestletTest.class))
-                .dependency(DependencyResolver.withVersion("org.hibernate:hibernate-validator"))
+                //.dependency(DependencyResolver.withVersion("org.hibernate:hibernate-validator"))
                 .build();
     }
 
