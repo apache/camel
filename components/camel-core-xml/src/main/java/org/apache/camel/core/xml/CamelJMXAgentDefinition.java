@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * The JAXB type class for the configuration of jmxAgent
+ * JMX configuration.
  */
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "jmxAgent")
