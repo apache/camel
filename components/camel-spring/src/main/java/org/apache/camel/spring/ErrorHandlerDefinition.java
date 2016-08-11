@@ -32,6 +32,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
+@Metadata(label = "spring,configuration,error")
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ErrorHandlerDefinition extends IdentifiedType {

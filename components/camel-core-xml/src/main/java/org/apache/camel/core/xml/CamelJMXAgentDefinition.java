@@ -28,6 +28,7 @@ import org.apache.camel.util.CollectionStringBuffer;
 /**
  * The JAXB type class for the configuration of jmxAgent
  */
+@Metadata(label = "spring,configuration")
 @XmlRootElement(name = "jmxAgent")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelJMXAgentDefinition extends IdentifiedType {

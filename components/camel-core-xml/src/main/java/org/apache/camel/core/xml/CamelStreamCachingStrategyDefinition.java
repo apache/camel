@@ -29,6 +29,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
+@Metadata(label = "spring,configuration")
 @XmlRootElement(name = "streamCaching")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelStreamCachingStrategyDefinition extends IdentifiedType {

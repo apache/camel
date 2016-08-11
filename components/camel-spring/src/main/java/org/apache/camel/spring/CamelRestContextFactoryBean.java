@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.spi.Metadata;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.FactoryBean;
  *
  * @version 
  */
+@Metadata(label = "spring,configuration,rest")
 @XmlRootElement(name = "restContext")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelRestContextFactoryBean extends IdentifiedType implements FactoryBean<List<RestDefinition>> {

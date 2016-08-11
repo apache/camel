@@ -23,6 +23,7 @@ import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 
 /**
@@ -30,6 +31,7 @@ import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
  *
  * @version 
  */
+@Metadata(label = "spring,configuration,error")
 @XmlType
 @XmlEnum(String.class)
 public enum ErrorHandlerType {
