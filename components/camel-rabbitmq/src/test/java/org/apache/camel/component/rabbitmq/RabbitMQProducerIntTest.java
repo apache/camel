@@ -29,6 +29,7 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
@@ -42,6 +43,9 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
     private static final String BASIC_URI = String.format(BASIC_URI_FORMAT, EXCHANGE, ROUTE);
     private static final String PUBLISHER_ACKNOWLEDGES_URI = BASIC_URI + "&mandatory=true&publisherAcknowledgements=true";
     private static final String PUBLISHER_ACKNOWLEDGES_BAD_ROUTE_URI = String.format(BASIC_URI_FORMAT, EXCHANGE, "route2") + "&publisherAcknowledgements=true";
+    private static final String GUARANTEED_DELIVERY_URI = BASIC_URI + "&mandatory=true&guaranteedDeliveries=true";
+    private static final String GUARANTEED_DELIVERY_BAD_ROUTE_NOT_MANDATORY_URI = String.format(BASIC_URI_FORMAT, EXCHANGE, "route2") + "&guaranteedDeliveries=true";
+    private static final String GUARANTEED_DELIVERY_BAD_ROUTE_URI = String.format(BASIC_URI_FORMAT, EXCHANGE, "route2") + "&mandatory=true&guaranteedDeliveries=true";
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
@@ -51,6 +55,15 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
 
     @Produce(uri = "direct:start-with-confirms-bad-route")
     protected ProducerTemplate templateWithConfirmsAndBadRoute;
+
+    @Produce(uri = "direct:start-with-guaranteed-delivery")
+    protected ProducerTemplate templateWithGuranteedDelivery;
+
+    @Produce(uri = "direct:start-with-guaranteed-delivery-bad-route")
+    protected ProducerTemplate templateWithGuranteedDeliveryAndBadRoute;
+
+    @Produce(uri = "direct:start-with-guaranteed-delivery-bad-route-but-not-mandatory")
+    protected ProducerTemplate templateWithGuranteedDeliveryBadRouteButNotMandatory;
 
     private Connection connection;
     private Channel channel;
@@ -64,6 +77,9 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
                 from("direct:start").to(BASIC_URI);
                 from("direct:start-with-confirms").to(PUBLISHER_ACKNOWLEDGES_URI);
                 from("direct:start-with-confirms-bad-route").to(PUBLISHER_ACKNOWLEDGES_BAD_ROUTE_URI);
+                from("direct:start-with-guaranteed-delivery").to(GUARANTEED_DELIVERY_URI);
+                from("direct:start-with-guaranteed-delivery-bad-route").to(GUARANTEED_DELIVERY_BAD_ROUTE_URI);
+                from("direct:start-with-guaranteed-delivery-bad-route-but-not-mandatory").to(GUARANTEED_DELIVERY_BAD_ROUTE_NOT_MANDATORY_URI);
             }
         };
     }
@@ -121,6 +137,31 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
         assertThatBodiesReceivedIn(received);
     }
 
+    @Test
+    public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedAndMessageIsMarkedAsMandatory() throws InterruptedException, IOException, TimeoutException {
+        final List<String> received = new ArrayList<>();
+        channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
+
+        templateWithGuranteedDelivery.sendBodyAndHeader("publisher ack message", RabbitMQConstants.EXCHANGE_NAME, "ex1");
+
+        assertThatBodiesReceivedIn(received, "publisher ack message");
+    }
+
+    @Test(expected = RuntimeCamelException.class)
+    public void shouldFailIfMessageIsMarkedAsMandatoryAndGuaranteedDeliveryIsActiveButNoQueueIsBound() {
+        templateWithGuranteedDeliveryAndBadRoute.sendBody("publish with ack and return message");
+    }
+
+    @Test
+    public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedOnABadRouteButMessageIsNotMandatory() throws InterruptedException, IOException, TimeoutException {
+        final List<String> received = new ArrayList<>();
+        channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
+
+        templateWithGuranteedDeliveryBadRouteButNotMandatory.sendBodyAndHeader("publisher ack message", RabbitMQConstants.EXCHANGE_NAME, "ex1");
+
+        assertThatBodiesReceivedIn(received);
+    }
+
     private Connection createTestConnection() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
@@ -148,4 +189,3 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
         }
     }
 }
-
