@@ -191,7 +191,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
         String deps = properties.getProperty(project.getArtifactId());
         if (deps != null && deps.trim().length() > 0) {
-            getLog().info("Spring-Boot-Starter: the following dependencies will be added to the starter: " + deps);
+            getLog().debug("The following dependencies will be added to the starter: " + deps);
 
             XPath xpath = XPathFactory.newInstance().newXPath();
             Node dependencies = ((NodeList) xpath.compile("/project/dependencies").evaluate(pom, XPathConstants.NODESET)).item(0);
@@ -239,6 +239,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
         loggingImpl.add("ch.qos.logback:logback-classic");
 
         loggingImpl.add("org.apache.logging.log4j:log4j");
+        loggingImpl.add("org.apache.logging.log4j:log4j-slf4j-impl");
 
         loggingImpl.add("org.slf4j:slf4j-jcl");
         loggingImpl.add("org.slf4j:slf4j-jdk14");
@@ -293,12 +294,14 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
         List<DependencyNode> nodes = visitor.getNodes();
         for (DependencyNode dependencyNode : nodes) {
-            int state = dependencyNode.getState();
             Artifact artifact = dependencyNode.getArtifact();
 
-            if (state == DependencyNode.INCLUDED && !Artifact.SCOPE_TEST.equals(artifact.getScope())) {
+            getLog().debug("Found dependency node: " + artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion() + " - scope=" + artifact.getScope());
+
+            if (!Artifact.SCOPE_TEST.equals(artifact.getScope()) && !Artifact.SCOPE_PROVIDED.equals(artifact.getScope())) {
                 String canonicalName = artifact.getGroupId() + ":" + artifact.getArtifactId();
                 if (artifacts.contains(canonicalName)) {
+                    getLog().debug(canonicalName + " marked for exclusion");
                     included.add(canonicalName);
                 }
             }
@@ -398,18 +401,18 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
         for (String ignored : IGNORE_MODULES) {
             if (ignored.equals(project.getArtifactId())) {
-                getLog().info("Spring-Boot-Starter: component inside ignore list");
+                getLog().debug("Component inside ignore list");
                 return false;
             }
         }
 
         if (IGNORE_TEST_MODULES && project.getArtifactId().startsWith("camel-test-")) {
-            getLog().info("Spring-Boot-Starter: test components are ignored");
+            getLog().debug("Test components are ignored");
             return false;
         }
 
         if (project.getPackaging() != null && !project.getPackaging().equals("jar")) {
-            getLog().info("Spring-Boot-Starter: ignored for wrong packaging");
+            getLog().debug("Ignored for wrong packaging");
             return false;
         }
 
@@ -423,7 +426,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
             return true;
         }
 
-        getLog().info("Spring-Boot-Starter: component directory mismatch");
+        getLog().debug("Component directory mismatch");
         return false;
     }
 
@@ -471,13 +474,13 @@ public class SpringBootStarterMojo extends AbstractMojo {
         try (FileReader fr = new FileReader(file)) {
             String oldContent = IOUtils.toString(fr);
             if (!content.equals(oldContent)) {
-                getLog().info("Writing new file " + file.getAbsolutePath());
+                getLog().debug("Writing new file " + file.getAbsolutePath());
                 fr.close();
                 try (FileWriter fw = new FileWriter(file)) {
                     IOUtils.write(content, fw);
                 }
             } else {
-                getLog().info("File " + file.getAbsolutePath() + " has been left unchanged");
+                getLog().debug("File " + file.getAbsolutePath() + " has been left unchanged");
             }
         }
     }

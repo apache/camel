@@ -16,4 +16,6 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.dataformat.xmlsecurity.springboot.XMLSecurityDataFormatAutoConfiguration
+org.apache.camel.dataformat.xmlsecurity.springboot.XMLSecurityDataFormatAutoConfiguration,\
+org.apache.camel.component.xmlsecurity.springboot.XmlSignatureComponentAutoConfiguration
+
