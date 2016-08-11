@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.guava.eventbus.springboot.GuavaEventBusComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.guava.eventbus.springboot.GuavaEventBusComponentAutoConfiguration

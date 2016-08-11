@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.cometd.springboot.CometdComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.cometd.springboot.CometdComponentAutoConfiguration

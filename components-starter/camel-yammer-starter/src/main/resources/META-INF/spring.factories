@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.yammer.springboot.YammerComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.yammer.springboot.YammerComponentAutoConfiguration

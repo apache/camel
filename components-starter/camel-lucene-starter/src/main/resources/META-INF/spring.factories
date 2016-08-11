@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.lucene.springboot.LuceneComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.lucene.springboot.LuceneComponentAutoConfiguration

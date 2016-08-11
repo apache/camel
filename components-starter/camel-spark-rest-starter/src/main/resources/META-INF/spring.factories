@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.sparkrest.springboot.SparkComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.sparkrest.springboot.SparkComponentAutoConfiguration

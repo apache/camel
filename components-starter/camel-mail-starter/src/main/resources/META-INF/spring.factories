@@ -16,6 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.mail.springboot.MailComponentAutoConfigurationAutoConfiguration,\
 org.apache.camel.dataformat.mime.multipart.springboot.MimeMultipartDataFormatAutoConfiguration
-

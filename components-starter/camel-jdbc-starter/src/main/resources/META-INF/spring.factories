@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.jdbc.springboot.JdbcComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.jdbc.springboot.JdbcComponentAutoConfiguration

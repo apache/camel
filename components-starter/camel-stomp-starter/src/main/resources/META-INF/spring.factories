@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.stomp.springboot.StompComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.stomp.springboot.StompComponentAutoConfiguration

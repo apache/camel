@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.apns.springboot.ApnsComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.apns.springboot.ApnsComponentAutoConfiguration

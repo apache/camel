@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.validator.msv.springboot.MsvComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.validator.msv.springboot.MsvComponentAutoConfiguration

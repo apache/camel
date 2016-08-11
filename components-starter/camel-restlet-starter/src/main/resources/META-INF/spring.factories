@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.restlet.springboot.RestletComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.restlet.springboot.RestletComponentAutoConfiguration

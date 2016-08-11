@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.vertx.springboot.VertxComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.vertx.springboot.VertxComponentAutoConfiguration
