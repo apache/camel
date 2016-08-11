@@ -31,6 +31,7 @@ import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.LoadPropertiesException;
 import org.osgi.framework.BundleContext;
@@ -69,8 +70,12 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         setLanguageResolver(new BlueprintLanguageResolver(bundleContext));
         setDataFormatResolver(new BlueprintDataFormatResolver(bundleContext));
         setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
+    }
+
+    @Override
+    protected ModelJAXBContextFactory createModelJAXBContextFactory() {
         // must use classloader of the namespace handler
-        setModelJAXBContextFactory(new BlueprintModelJAXBContextFactory(CamelNamespaceHandler.class.getClassLoader()));
+        return new BlueprintModelJAXBContextFactory(CamelNamespaceHandler.class.getClassLoader());
     }
 
     public BundleContext getBundleContext() {
