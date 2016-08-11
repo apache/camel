@@ -25,7 +25,6 @@ import java.time.ZonedDateTime
 
 class DateTimeUtilsTest extends Specification {
     @Unroll
-    @Ignore
     def "Date #zonedDateTime should render as #result"() {
         expect:
         DateTimeUtils.formatDateTime(zonedDateTime) == result
@@ -39,7 +38,6 @@ class DateTimeUtilsTest extends Specification {
     }
 
     @Unroll
-    @Ignore
     def "Date #dateAsString should parse to #result"() {
         expect:
         DateTimeUtils.parseDateTime(dateAsString) == result
