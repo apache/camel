@@ -406,6 +406,8 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
+            fos.write(message.getBytes());
+            fos.write("\n\n".getBytes());
             fos.write(sw.toString().getBytes());
             pw.close();
             sw.close();

@@ -752,6 +752,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         if (isNullOrEmpty(docComment)) {
                             docComment = param.description();
                         }
+                        if (isNullOrEmpty(docComment)) {
+                            docComment = "";
+                        }
 
                         // gather enums
                         Set<String> enums = new LinkedHashSet<String>();
