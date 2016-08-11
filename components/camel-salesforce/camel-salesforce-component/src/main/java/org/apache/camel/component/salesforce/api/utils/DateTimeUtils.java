@@ -21,6 +21,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.regex.Pattern;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
@@ -33,11 +34,12 @@ public abstract class DateTimeUtils {
     private static final Pattern BAD_TZ_PATTERN = Pattern.compile("[+-][0-9]{4}+$");
 
     private static final DateTimeFormatter ISO_8601_FORMATTER = new DateTimeFormatterBuilder()
-        .parseCaseInsensitive()
-        .append(ISO_LOCAL_DATE_TIME)
-        .appendPattern("[.S][,S]")
-        .appendOffsetId()
-        .toFormatter();
+            .parseCaseInsensitive()
+            .appendPattern("yyyy-MM-dd")
+            .appendLiteral('T')
+            .appendPattern("HH:mm:ss[.SSS]")
+            .appendOffset("+HH:MM", "Z")
+            .toFormatter();
 
     public static String formatDateTime(ZonedDateTime dateTime) throws DateTimeException {
         return ISO_8601_FORMATTER.format(dateTime);
