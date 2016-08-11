@@ -31,6 +31,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
+@Metadata(label = "spring,configuration")
 @XmlRootElement(name = "propertyPlaceholder")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelPropertyPlaceholderDefinition extends IdentifiedType {

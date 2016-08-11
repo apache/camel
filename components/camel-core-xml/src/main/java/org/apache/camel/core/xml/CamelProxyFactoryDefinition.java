@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
  * To proxy a service call using a interface
  *
  * @version 
-*/ // to fudge the XSD generation
+ */
+@Metadata(label = "spring,configuration")
 @XmlRootElement(name = "proxy")
 public class CamelProxyFactoryDefinition extends IdentifiedType {
 

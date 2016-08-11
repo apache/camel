@@ -20,10 +20,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Function to use with properties placeholder
  */
+@Metadata(label = "spring,configuration")
 @XmlRootElement(name = "propertiesFunction")
 public class CamelPropertyPlaceholderFunctionDefinition extends IdentifiedType {
 

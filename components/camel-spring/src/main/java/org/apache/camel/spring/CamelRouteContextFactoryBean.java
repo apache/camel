@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.Metadata;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.FactoryBean;
  *
  * @version
  */
+@Metadata(label = "spring,configuration,routing")
 @XmlRootElement(name = "routeContext")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelRouteContextFactoryBean extends IdentifiedType implements FactoryBean<List<RouteDefinition>> {

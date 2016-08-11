@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.core.xml.AbstractCamelFluentProducerTemplateFactoryBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
@@ -37,6 +38,7 @@ import org.springframework.context.ApplicationContextAware;
  * 
  * @version 
  */
+@Metadata(label = "spring,configuration")
 @XmlRootElement(name = "fluentTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelFluentProducerTemplateFactoryBean extends AbstractCamelFluentProducerTemplateFactoryBean implements FactoryBean<FluentProducerTemplate>, InitializingBean, DisposableBean, ApplicationContextAware {
