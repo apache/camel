@@ -153,17 +153,18 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class)
     private CamelJMXAgentDefinition camelJMXAgent;
     @XmlElements({
-            @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class, required = false),
-            @XmlElement(name = "consulConfiguration", type = ConsulConfigurationDefinition.class, required = false),
-            @XmlElement(name = "dnsConfiguration", type = DnsConfigurationDefinition.class, required = false),
-            @XmlElement(name = "etcdConfiguration", type = EtcdConfigurationDefinition.class, required = false),
-            @XmlElement(name = "kubernetesConfiguration", type = KubernetesConfigurationDefinition.class, required = false),
-            @XmlElement(name = "ribbonConfiguration", type = RibbonConfigurationDefinition.class, required = false),
-            @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
-            @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
-            @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),
-            @XmlElement(name = "export", type = CamelServiceExporterDefinition.class, required = false),
-            @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class, required = false)})
+            @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class),
+            @XmlElement(name = "consulConfiguration", type = ConsulConfigurationDefinition.class),
+            @XmlElement(name = "dnsConfiguration", type = DnsConfigurationDefinition.class),
+            @XmlElement(name = "etcdConfiguration", type = EtcdConfigurationDefinition.class),
+            @XmlElement(name = "kubernetesConfiguration", type = KubernetesConfigurationDefinition.class),
+            @XmlElement(name = "ribbonConfiguration", type = RibbonConfigurationDefinition.class),
+            @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class),
+            @XmlElement(name = "fluentTemplate", type = CamelFluentProducerTemplateFactoryBean.class),
+            @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class),
+            @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class),
+            @XmlElement(name = "export", type = CamelServiceExporterDefinition.class),
+            @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class)})
     private List<?> beans;
     @XmlElement(name = "routeBuilder")
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();

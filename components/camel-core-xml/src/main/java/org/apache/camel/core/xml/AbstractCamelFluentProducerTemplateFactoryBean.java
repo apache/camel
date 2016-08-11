@@ -23,37 +23,38 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.DefaultProducerTemplate;
+import org.apache.camel.FluentProducerTemplate;
+import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * A factory for creating a new {@link org.apache.camel.ProducerTemplate}
+ * A factory for creating a new {@link org.apache.camel.FluentProducerTemplate}
  * instance with a minimum of XML
  *
- * @version 
+ * @version
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractCamelProducerTemplateFactoryBean extends AbstractCamelFactoryBean<ProducerTemplate> {
+public abstract class AbstractCamelFluentProducerTemplateFactoryBean extends AbstractCamelFactoryBean<FluentProducerTemplate> {
     @XmlTransient
-    private ProducerTemplate template;
+    private FluentProducerTemplate template;
     @XmlAttribute @Metadata(description = "Sets the default endpoint URI used by default for sending message exchanges")
     private String defaultEndpoint;
     @XmlAttribute @Metadata(description = "Sets a custom maximum cache size to use in the backing cache pools.")
     private Integer maximumCacheSize;
 
-    public ProducerTemplate getObject() throws Exception {
+    public FluentProducerTemplate getObject() throws Exception {
         CamelContext context = getCamelContext();
         if (defaultEndpoint != null) {
             Endpoint endpoint = context.getEndpoint(defaultEndpoint);
             if (endpoint == null) {
                 throw new IllegalArgumentException("No endpoint found for URI: " + defaultEndpoint);
             } else {
-                template = new DefaultProducerTemplate(context, endpoint);
+                template = new DefaultFluentProducerTemplate(context);
+                template.setDefaultEndpoint(endpoint);
             }
         } else {
-            template = new DefaultProducerTemplate(context);
+            template = new DefaultFluentProducerTemplate(context);
         }
 
         // set custom cache size if provided
@@ -66,8 +67,8 @@ public abstract class AbstractCamelProducerTemplateFactoryBean extends AbstractC
         return template;
     }
 
-    public Class<DefaultProducerTemplate> getObjectType() {
-        return DefaultProducerTemplate.class;
+    public Class<DefaultFluentProducerTemplate> getObjectType() {
+        return DefaultFluentProducerTemplate.class;
     }
 
     public void destroy() throws Exception {
