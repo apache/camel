@@ -140,6 +140,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File coreDir;
 
     /**
+     * The directory where the camel-spring XML models are
+     *
+     * @parameter default-value="${project.build.directory}/../../../components/camel-spring"
+     */
+    protected File springDir;
+
+    /**
      * The archetypes directory where all the Apache Camel Maven archetypes are
      *
      * @parameter default-value="${project.build.directory}/../../../tooling/archetypes"
@@ -200,6 +207,14 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (coreDir != null && coreDir.isDirectory()) {
             File target = new File(coreDir, "target/classes/org/apache/camel/model");
             PackageHelper.findJsonFiles(target, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+        }
+
+        // find all json files in camel-spring
+        if (springDir != null && springDir.isDirectory()) {
+            File target = new File(springDir, "target/classes/org/apache/camel/spring");
+            PackageHelper.findJsonFiles(target, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+            File target2 = new File(springDir, "target/classes/org/apache/camel/core/xml");
+            PackageHelper.findJsonFiles(target2, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
         }
 
         getLog().info("Found " + jsonFiles.size() + " model json files");

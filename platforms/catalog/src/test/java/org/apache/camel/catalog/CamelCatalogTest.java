@@ -770,4 +770,17 @@ public class CamelCatalogTest {
         assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 22"));
     }
 
+    @Test
+    public void testSpringCamelContext() throws Exception {
+        String json = catalog.modelJSonSchema("camelContext");
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+
+        assertTrue(json.contains("CamelContext using XML configuration"));
+    }
+
 }
