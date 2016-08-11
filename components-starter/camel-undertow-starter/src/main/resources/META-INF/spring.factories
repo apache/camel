@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.undertow.springboot.UndertowComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.undertow.springboot.UndertowComponentAutoConfiguration

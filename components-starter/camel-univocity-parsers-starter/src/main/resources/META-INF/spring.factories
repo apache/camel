@@ -16,8 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.dataformat.univocity.springboot.UniVocityCsvDataFormatAutoConfiguration,\
-org.apache.camel.dataformat.univocity.springboot.UniVocityFixedWidthDataFormatAutoConfiguration,\
 org.apache.camel.dataformat.univocity.springboot.UniVocityTsvDataFormatAutoConfiguration
-
-

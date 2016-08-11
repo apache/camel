@@ -16,8 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.dataformat.bindy.csv.springboot.BindyCsvDataFormatAutoConfiguration,\
-org.apache.camel.dataformat.bindy.fixed.springboot.BindyFixedLengthDataFormatAutoConfiguration,\
 org.apache.camel.dataformat.bindy.kvp.springboot.BindyKeyValuePairDataFormatAutoConfiguration
-
-

@@ -16,6 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.xquery.springboot.XQueryComponentAutoConfigurationAutoConfiguration,\
 org.apache.camel.language.xquery.springboot.XQueryLanguageAutoConfiguration
-

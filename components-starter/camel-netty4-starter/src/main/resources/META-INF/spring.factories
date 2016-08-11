@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.netty4.springboot.NettyComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.netty4.springboot.NettyComponentAutoConfiguration

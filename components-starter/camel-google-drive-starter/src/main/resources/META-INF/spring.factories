@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.google.drive.springboot.GoogleDriveComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.google.drive.springboot.GoogleDriveComponentAutoConfiguration

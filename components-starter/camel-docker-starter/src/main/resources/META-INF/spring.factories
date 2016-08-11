@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.docker.springboot.DockerComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.docker.springboot.DockerComponentAutoConfiguration

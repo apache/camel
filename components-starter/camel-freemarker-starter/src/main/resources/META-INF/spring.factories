@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.freemarker.springboot.FreemarkerComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.freemarker.springboot.FreemarkerComponentAutoConfiguration

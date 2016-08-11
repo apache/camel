@@ -693,9 +693,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private void createComponentSpringFactorySource(String packageName, ComponentModel model) throws MojoFailureException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("org.springframework.boot.autoconfigure.EnableAutoConfiguration=\\\n");
-
         int pos = model.getJavaType().lastIndexOf(".");
         String name = model.getJavaType().substring(pos + 1);
         name = name.replace("Component", "ComponentAutoConfiguration");
@@ -704,9 +701,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private void createDataFormatSpringFactorySource(String packageName, DataFormatModel model) throws MojoFailureException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("org.springframework.boot.autoconfigure.EnableAutoConfiguration=\\\n");
-
         int pos = model.getJavaType().lastIndexOf(".");
         String name = model.getJavaType().substring(pos + 1);
         name = name.replace("DataFormat", "DataFormatAutoConfiguration");
@@ -715,9 +709,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private void createLanguageSpringFactorySource(String packageName, LanguageModel model) throws MojoFailureException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("org.springframework.boot.autoconfigure.EnableAutoConfiguration=\\\n");
-
         int pos = model.getJavaType().lastIndexOf(".");
         String name = model.getJavaType().substring(pos + 1);
         name = name.replace("Language", "LanguageAutoConfiguration");
@@ -1110,7 +1101,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         StringBuilder sb = new StringBuilder();
         sb.append("org.springframework.boot.autoconfigure.EnableAutoConfiguration=\\\n");
 
-        name = name.replace("Component", "ComponentAutoConfiguration");
         String lineToAdd = packageName + "." + name + "\n";
         sb.append(lineToAdd);
 

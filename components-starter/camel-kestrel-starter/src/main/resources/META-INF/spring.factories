@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.kestrel.springboot.KestrelComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.kestrel.springboot.KestrelComponentAutoConfiguration

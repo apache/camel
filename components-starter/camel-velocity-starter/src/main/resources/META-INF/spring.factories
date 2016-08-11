@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.velocity.springboot.VelocityComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.velocity.springboot.VelocityComponentAutoConfiguration

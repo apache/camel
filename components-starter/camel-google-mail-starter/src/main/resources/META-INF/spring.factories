@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.google.mail.springboot.GoogleMailComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.google.mail.springboot.GoogleMailComponentAutoConfiguration

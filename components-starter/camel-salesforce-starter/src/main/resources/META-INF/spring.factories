@@ -16,4 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.salesforce.springboot.SalesforceComponentAutoConfigurationAutoConfiguration
+org.apache.camel.component.salesforce.springboot.SalesforceComponentAutoConfiguration

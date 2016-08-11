@@ -16,6 +16,4 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.sql.stored.springboot.SqlStoredComponentAutoConfigurationAutoConfiguration,\
-org.apache.camel.component.sql.springboot.SqlComponentAutoConfigurationAutoConfiguration
-
+org.apache.camel.component.sql.springboot.SqlComponentAutoConfiguration
