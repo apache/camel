@@ -264,7 +264,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
         Set<String> configExclusions = new HashSet<>();
         Properties properties = new Properties();
         properties.load(getClass().getResourceAsStream("/spring-boot-fix-dependencies.properties"));
-        String artExcl = properties.getProperty("exclude_"  + project.getArtifactId());
+        String artExcl = properties.getProperty("exclude_" + project.getArtifactId());
         getLog().debug("Configured exclusions: " + artExcl);
         if (artExcl != null && artExcl.trim().length() > 0) {
             for (String dep : artExcl.split(",")) {
@@ -350,7 +350,8 @@ public class SpringBootStarterMojo extends AbstractMojo {
             modules.removeChild(modules.getFirstChild());
         }
 
-        for (File starterDir : Arrays.asList(allStartersDir().listFiles((f, n) -> (new File(f, n)).isDirectory() && n.endsWith(SpringBootHelper.STARTER_SUFFIX))).stream().sorted().collect(Collectors.toList())) {
+        for (File starterDir : Arrays.asList(allStartersDir().listFiles((f, n) -> (new File(f, n)).isDirectory() && n.endsWith(SpringBootHelper.STARTER_SUFFIX))).stream().sorted().collect
+                (Collectors.toList())) {
             Node module = pom.createElement("module");
             module.setTextContent(starterDir.getName());
             modules.appendChild(module);
@@ -498,16 +499,28 @@ public class SpringBootStarterMojo extends AbstractMojo {
     }
 
     private void writeIfChanged(String content, File file) throws IOException {
-        try (FileReader fr = new FileReader(file)) {
-            String oldContent = IOUtils.toString(fr);
-            if (!content.equals(oldContent)) {
-                getLog().debug("Writing new file " + file.getAbsolutePath());
-                fr.close();
-                try (FileWriter fw = new FileWriter(file)) {
-                    IOUtils.write(content, fw);
+        boolean write = true;
+
+        if (file.exists()) {
+            try (FileReader fr = new FileReader(file)) {
+                String oldContent = IOUtils.toString(fr);
+                if (!content.equals(oldContent)) {
+                    getLog().debug("Writing new file " + file.getAbsolutePath());
+                    fr.close();
+                } else {
+                    getLog().debug("File " + file.getAbsolutePath() + " has been left unchanged");
+                    write = false;
                 }
-            } else {
-                getLog().debug("File " + file.getAbsolutePath() + " has been left unchanged");
+            }
+        } else {
+            // Create the structure
+            File parent = file.getParentFile();
+            parent.mkdirs();
+        }
+
+        if (write) {
+            try (FileWriter fw = new FileWriter(file)) {
+                IOUtils.write(content, fw);
             }
         }
     }
