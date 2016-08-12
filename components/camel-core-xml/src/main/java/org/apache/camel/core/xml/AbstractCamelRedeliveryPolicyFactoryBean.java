@@ -41,9 +41,9 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     @Metadata(defaultValue = "1000", description = "Sets the maximum redelivery delay. Use -1 if you wish to have no maximum")
     private String redeliveryDelay;
     @XmlAttribute
-    @Metadata(defaultValue = "false", description = "Sets whether asynchronous delayed redelivery is allowed. This is disabled by default. When enabled it allows Camel to schedule a future task for delayed"
-        + " redelivery which prevents current thread from blocking while waiting. Exchange which is transacted will however always use synchronous delayed redelivery because"
-        + " the transaction must execute in the same thread context.")
+    @Metadata(defaultValue = "false", description = "Sets whether asynchronous delayed redelivery is allowed. This is disabled by default. "
+        + "When enabled it allows Camel to schedule a future task for delayed redelivery which prevents current thread from blocking while waiting. "
+        + "Exchange which is transacted will however always use synchronous delayed redelivery because the transaction must execute in the same thread context.")
     private String asyncDelayedRedelivery;
     @XmlAttribute
     @Metadata(defaultValue = "2", description = "Sets the multiplier used to increase the delay between redeliveries if useExponentialBackOff is enabled")
