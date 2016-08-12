@@ -41,6 +41,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jing</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
     </dependencies>
 </project>
 
