@@ -189,25 +189,33 @@ public class SpringBootStarterMojo extends AbstractMojo {
         Properties properties = new Properties();
         properties.load(getClass().getResourceAsStream("/spring-boot-fix-dependencies.properties"));
 
-        String artDeps = properties.getProperty(project.getArtifactId());
-        String globalDeps = properties.getProperty("global");
+        Set<String> deps = new TreeSet<>();
+        deps.addAll(csvToSet(properties.getProperty(project.getArtifactId())));
 
-        String deps = artDeps;
-        if (globalDeps != null && globalDeps.trim().length() > 0) {
-            if (deps != null && deps.trim().length() > 0) {
-                deps = deps + "," + globalDeps;
-            } else {
-                deps = globalDeps;
+
+        Set<String> globalProps = csvToSet(properties.getProperty("global"));
+        boolean inGlobal = false;
+        for (String gp : globalProps) {
+            String[] comps = gp.split("\\:");
+            String stdName = (comps[0] + ":" + comps[1]).replace("-starter", "");
+            if (stdName.equals(project.getGroupId() + ":" + project.getArtifactId())) {
+                inGlobal = true;
+                break;
             }
         }
 
-        if (deps != null && deps.trim().length() > 0) {
+        if (!inGlobal) {
+            // add global properties for all modules not in global properties
+            deps.addAll(globalProps);
+        }
+
+        if (deps.size() > 0) {
             getLog().debug("The following dependencies will be added to the starter: " + deps);
 
             XPath xpath = XPathFactory.newInstance().newXPath();
             Node dependencies = ((NodeList) xpath.compile("/project/dependencies").evaluate(pom, XPathConstants.NODESET)).item(0);
 
-            for (String dep : deps.split(",")) {
+            for (String dep : deps) {
                 Element dependency = pom.createElement("dependency");
                 dependencies.appendChild(dependency);
 
@@ -234,6 +242,18 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
         }
 
+    }
+
+    private Set<String> csvToSet(String csv) {
+        if (csv == null || csv.trim().length() == 0) {
+            return new TreeSet<>();
+        }
+
+        Set<String> set = new TreeSet<>();
+        for (String s : csv.split(",")) {
+            set.add(s.trim());
+        }
+        return set;
     }
 
     private void fixExcludedDependencies(Document pom) throws Exception {

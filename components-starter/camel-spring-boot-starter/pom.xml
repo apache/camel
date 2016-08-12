@@ -49,11 +49,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring-boot</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
+            <artifactId>camel-core-starter</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>
