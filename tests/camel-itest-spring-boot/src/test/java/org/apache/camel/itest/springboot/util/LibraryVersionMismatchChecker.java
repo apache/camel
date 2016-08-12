@@ -23,7 +23,7 @@ import org.junit.Test;
 /**
  * Prints information about the libraries required by the module and what it gets at runtime in a spring-boot deployment.
  */
-public class LibraryVersionMismatchTest {
+public class LibraryVersionMismatchChecker {
 
     @Test
     public void testAllComponents() throws Exception {
