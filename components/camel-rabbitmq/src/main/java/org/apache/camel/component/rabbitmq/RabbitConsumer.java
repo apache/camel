@@ -17,6 +17,7 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
@@ -41,6 +42,8 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
     /** Consumer tag for this consumer. */
     private volatile String consumerTag;
     private volatile boolean stopping;
+    
+    private final Semaphore lock = new Semaphore(1);
 
     /**
      * Constructs a new instance and records its association to the passed-in
@@ -59,9 +62,26 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
             log.warn("Unable to open channel for RabbitMQConsumer. Continuing and will try again", e);
         }
     }
-
     @Override
     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+    	try {
+            if (!consumer.getEndpoint().isAutoAck()) {
+            	lock.acquire();
+            }
+            doHandleDelivery(consumerTag, envelope, properties, body);
+            if (!consumer.getEndpoint().isAutoAck()) {
+            	lock.release();
+            }
+    		
+    	} catch (InterruptedException e) {
+        	log.error("Thread Interrupted!");
+    		
+    	}
+        
+			
+    }
+
+    public void doHandleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
         Exchange exchange = consumer.getEndpoint().createRabbitExchange(envelope, properties, body);
         consumer.getEndpoint().getMessageConverter().mergeAmqpProperties(exchange, properties);
 
@@ -163,12 +183,16 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
             channel.basicCancel(tag);
         }
         try {
+			lock.acquire();
             if (isChannelOpen()) {
                 channel.close();
             }
-        } catch (TimeoutException e) {
+            lock.release();
+		} catch (TimeoutException e) {
             log.error("Timeout occured");
             throw e;
+        } catch (InterruptedException e1) {
+        	log.error("Thread Interrupted!");
         }
     }
 
