@@ -73,7 +73,7 @@ public class ConsumingAppender extends AbstractAppender {
             },
             null,
             config,
-            null );
+            null);
 
         loggerConfig.addAppender(appender, null, null);
         config.addLogger(loggerName, loggerConfig);
