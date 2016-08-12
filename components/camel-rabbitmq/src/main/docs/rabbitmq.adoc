@@ -49,8 +49,9 @@ The RabbitMQ component has no options.
 
 
 
+
 // endpoint options: START
-The RabbitMQ component supports 54 endpoint options which are listed below:
+The RabbitMQ component supports 55 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -86,6 +87,7 @@ The RabbitMQ component supports 54 endpoint options which are listed below:
 | bridgeEndpoint | producer | false | boolean | If the bridgeEndpoint is true the producer will ignore the message header of rabbitmq.EXCHANGE_NAME and rabbitmq.ROUTING_KEY
 | channelPoolMaxSize | producer | 10 | int | Get maximum number of opened channel in pool
 | channelPoolMaxWait | producer | 1000 | long | Set the maximum number of milliseconds to wait for a channel from the pool
+| guaranteedDeliveries | producer | false | boolean | When true an exception will be thrown when the message cannot be delivered (basic.return) and the message is marked as mandatory. PublisherAcknowledgement will also be activated in this case See also publisher acknowledgements - When will messages be confirmed
 | immediate | producer | false | boolean | This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this flag is set the server will return an undeliverable message with a Return method. If this flag is zero the server will queue the message but with no guarantee that it will ever be consumed. If the header is present rabbitmq.IMMEDIATE it will override this option.
 | mandatory | producer | false | boolean | This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set the server will return an unroutable message with a Return method. If this flag is zero the server silently drops the message. If the header is present rabbitmq.MANDATORY it will override this option.
 | publisherAcknowledgements | producer | false | boolean | When true the message will be published with publisher acknowledgements turned on
@@ -113,6 +115,7 @@ The RabbitMQ component supports 54 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
