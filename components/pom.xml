@@ -31,22 +31,6 @@
   <description>Camel Components</description>
   <packaging>pom</packaging>
 
-  <!-- to support spring-boot auto configuration in the Camel components -->
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot</artifactId>
-      <version>${spring-boot-version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-autoconfigure</artifactId>
-      <version>${spring-boot-version}</version>
-      <scope>provided</scope>
-    </dependency>
- </dependencies>
-
   <modules>
     <!-- we want to test these modules first to catch any errors early as possible -->
     <module>camel-test</module>
