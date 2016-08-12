@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.InputStream;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -57,6 +58,9 @@ public class SchematronEndpoint extends DefaultEndpoint {
     private boolean abort;
     @UriParam
     private Templates rules;
+
+    @UriParam
+    private URIResolver uriResolver;
 
     public SchematronEndpoint() {
     }
@@ -112,6 +116,11 @@ public class SchematronEndpoint extends DefaultEndpoint {
         this.rules = rules;
     }
 
+    public void setUriResolver(URIResolver uriResolver) { this.uriResolver = uriResolver; }
+
+    public URIResolver getUriResolver() { return uriResolver; }
+
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -148,7 +157,7 @@ public class SchematronEndpoint extends DefaultEndpoint {
 
         LOG.debug("Using TransformerFactoryClass {}", factoryClass);
         transformerFactory = getCamelContext().getInjector().newInstance(factoryClass);
-        transformerFactory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR));
+        transformerFactory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR, this.uriResolver));
         transformerFactory.setAttribute(LINE_NUMBERING, true);
     }
 
