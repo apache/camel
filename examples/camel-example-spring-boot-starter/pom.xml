@@ -69,7 +69,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-stream</artifactId>
+      <artifactId>camel-stream-starter</artifactId>
     </dependency>
 
     <!-- test -->
