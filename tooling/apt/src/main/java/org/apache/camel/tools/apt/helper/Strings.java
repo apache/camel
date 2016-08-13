@@ -100,4 +100,19 @@ public final class Strings {
         return quote + text + quote;
     }
 
+    /**
+     * Clips the text between the start and end markers
+     */
+    public static String between(String text, String start, String end) {
+        int pos = text.indexOf(start);
+        if (pos > 0) {
+            text = text.substring(pos + 1);
+        }
+        int pos2 = text.lastIndexOf(end);
+        if (pos2 > 0) {
+            text = text.substring(0, pos2);
+        }
+        return text;
+    }
+
 }

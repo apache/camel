@@ -25,7 +25,6 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldNamingPolicy;

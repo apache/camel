@@ -20,24 +20,23 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.spi.Metadata;
 
 /**
- * The &lt;export&gt; tag element.
+ * Used for export a service using Spring Remoting to hide the network call using an interface.
  *
  * @version 
 */
+@Metadata(label = "spring,configuration")
 @XmlRootElement(name = "export")
 public class CamelServiceExporterDefinition extends IdentifiedType {
 
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String uri;
-
     @XmlAttribute
     private String serviceRef;
-
     @XmlAttribute
     private Class<?> serviceInterface;
-
     @XmlAttribute
     private String camelContextId;
 
@@ -45,6 +44,9 @@ public class CamelServiceExporterDefinition extends IdentifiedType {
         return uri;
     }
 
+    /**
+     * Camel endpoint uri to use a remote transport when calling the service
+     */
     public void setUri(String uri) {
         this.uri = uri;
     }
@@ -53,6 +55,9 @@ public class CamelServiceExporterDefinition extends IdentifiedType {
         return serviceRef;
     }
 
+    /**
+     * Reference to the service name to lookup in the registry.
+     */
     public void setServiceRef(String serviceRef) {
         this.serviceRef = serviceRef;
     }
@@ -61,6 +66,9 @@ public class CamelServiceExporterDefinition extends IdentifiedType {
         return serviceInterface;
     }
 
+    /**
+     * Java interfaces to use as facade for the service to be exported
+     */
     public void setServiceInterface(Class<?> serviceInterface) {
         this.serviceInterface = serviceInterface;
     }
@@ -69,6 +77,9 @@ public class CamelServiceExporterDefinition extends IdentifiedType {
         return camelContextId;
     }
 
+    /**
+     * The id of the CamelContext to use, if there is multiple CamelContext in the same JVM.
+     */
     public void setCamelContextId(String camelContextId) {
         this.camelContextId = camelContextId;
     }

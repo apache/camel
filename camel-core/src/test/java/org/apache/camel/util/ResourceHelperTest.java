@@ -37,7 +37,7 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "file:src/test/resources/log4j.properties");
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "file:src/test/resources/log4j2.properties");
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
@@ -53,9 +53,9 @@ public class ResourceHelperTest extends TestSupport {
         context.start();
 
         createDirectory("target/my space");
-        FileUtil.copyFile(new File("src/test/resources/log4j.properties"), new File("target/my space/log4j.properties"));
+        FileUtil.copyFile(new File("src/test/resources/log4j2.properties"), new File("target/my space/log4j2.properties"));
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "file:target/my%20space/log4j.properties");
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "file:target/my%20space/log4j2.properties");
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
@@ -70,7 +70,7 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "classpath:log4j.properties");
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "classpath:log4j2.properties");
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
@@ -102,7 +102,7 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "log4j.properties");
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "log4j2.properties");
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
@@ -145,7 +145,7 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(context.getClassResolver(), "file:src/test/resources/log4j.properties");
+        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(context.getClassResolver(), "file:src/test/resources/log4j2.properties");
         assertNotNull(url);
 
         String text = context.getTypeConverter().convertTo(String.class, url);
@@ -159,7 +159,7 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(context.getClassResolver(), "classpath:log4j.properties");
+        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(context.getClassResolver(), "classpath:log4j2.properties");
         assertNotNull(url);
 
         String text = context.getTypeConverter().convertTo(String.class, url);

@@ -49,8 +49,12 @@ public class EIPDocumentationMojoTest {
     @Before
     public void setUp() throws Exception {
         eipDocumentationEnricherMojo.camelCoreDir = ResourceUtils.getResourceAsFile("integration/camel-core-integration");
+        eipDocumentationEnricherMojo.camelCoreXmlDir = ResourceUtils.getResourceAsFile("integration/camel-core-integration");
+        eipDocumentationEnricherMojo.camelSpringDir = ResourceUtils.getResourceAsFile("integration/camel-core-integration");
         eipDocumentationEnricherMojo.inputCamelSchemaFile = ResourceUtils.getResourceAsFile("integration/camel-spring.xsd");
         eipDocumentationEnricherMojo.pathToModelDir = "trgt/classes/org/apache/camel/model";
+        eipDocumentationEnricherMojo.pathToCoreXmlModelDir = "trgt/classes/org/apache/camel/model";
+        eipDocumentationEnricherMojo.pathToSpringModelDir = "trgt/classes/org/apache/camel/model";
         xPath.setNamespaceContext(new CamelSpringNamespace());
         tempFile = File.createTempFile("outputXml", ".xml");
         tempFile.deleteOnExit();

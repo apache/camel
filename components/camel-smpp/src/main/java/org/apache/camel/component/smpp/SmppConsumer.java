@@ -157,11 +157,12 @@ public class SmppConsumer extends DefaultConsumer {
                         while (!(isStopping() || isStopped()) && (session == null || session.getSessionState().equals(SessionState.CLOSED))
                         		&& attempt < configuration.getMaxReconnect()) {
                             try {
-                                LOG.info("Trying to reconnect to " + getEndpoint().getConnectionString() + " - attempt #" + (++attempt) + "...");
+                                attempt++;
+                                LOG.info("Trying to reconnect to {} - attempt #", getEndpoint().getConnectionString(), attempt);
                                 session = createSession();
                                 reconnected = true;
                             } catch (IOException e) {
-                                LOG.info("Failed to reconnect to " + getEndpoint().getConnectionString());
+                                LOG.warn("Failed to reconnect to {}", getEndpoint().getConnectionString());
                                 closeSession();
                                 try {
                                     Thread.sleep(configuration.getReconnectDelay());

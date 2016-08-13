@@ -18,7 +18,6 @@ package org.apache.camel.cdi.test;
 
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
-
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,14 +30,12 @@ import org.apache.camel.cdi.ImportResource;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.cdi.rule.LogEventVerifier;
 import org.apache.camel.component.mock.MockEndpoint;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TestRule;

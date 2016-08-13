@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model.dataformat;
 
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -68,6 +70,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
     private String schemaLocation;
     @XmlAttribute
     private String noNamespaceSchemaLocation;
+    @XmlAttribute
+    private String jaxbProviderProperties;
 
     public JaxbDataFormat() {
         super("jaxb");
@@ -259,6 +263,18 @@ public class JaxbDataFormat extends DataFormatDefinition {
         this.noNamespaceSchemaLocation = schemaLocation;
     }
 
+    public String getJaxbProviderProperties() {
+        return jaxbProviderProperties;
+    }
+
+    /**
+     * Refers to a custom java.util.Map to lookup in the registry containing custom JAXB provider properties
+     * to be used with the JAXB marshaller.
+     */
+    public void setJaxbProviderProperties(String jaxbProviderProperties) {
+        this.jaxbProviderProperties = jaxbProviderProperties;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
@@ -297,6 +313,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
         } else { // the default value is false
             setProperty(camelContext, dataFormat, "fragment", Boolean.FALSE);
         }
+
+        setProperty(camelContext, dataFormat, "contextPath", contextPath);
         if (partClass != null) {
             setProperty(camelContext, dataFormat, "partClass", partClass);
         }
@@ -309,7 +327,6 @@ public class JaxbDataFormat extends DataFormatDefinition {
         if (namespacePrefixRef != null) {
             setProperty(camelContext, dataFormat, "namespacePrefixRef", namespacePrefixRef);
         }
-        setProperty(camelContext, dataFormat, "contextPath", contextPath);
         if (schema != null) {
             setProperty(camelContext, dataFormat, "schema", schema);
         }
@@ -321,6 +338,10 @@ public class JaxbDataFormat extends DataFormatDefinition {
         }
         if (noNamespaceSchemaLocation != null) {
             setProperty(camelContext, dataFormat, "noNamespaceSchemaLocation", noNamespaceSchemaLocation);
+        }
+        if (jaxbProviderProperties != null) {
+            Map map = CamelContextHelper.mandatoryLookup(camelContext, jaxbProviderProperties, Map.class);
+            setProperty(camelContext, dataFormat, "jaxbProviderProperties", map);
         }
     }
 }

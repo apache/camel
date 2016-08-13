@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
@@ -52,6 +53,14 @@ import org.apache.camel.tools.apt.model.ComponentOption;
 import org.apache.camel.tools.apt.model.EndpointOption;
 import org.apache.camel.tools.apt.model.EndpointPath;
 
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.dumpExceptionToErrorFile;
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findFieldElement;
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findJavaDoc;
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElement;
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.implementsInterface;
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.loadResource;
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.processFile;
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.warning;
 import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.helper.Strings.getOrElse;
@@ -63,7 +72,7 @@ import static org.apache.camel.tools.apt.helper.Strings.safeNull;
  */
 @SupportedAnnotationTypes({"org.apache.camel.spi.*"})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
+public class EndpointAnnotationProcessor extends AbstractProcessor {
 
     // CHECKSTYLE:OFF
 
@@ -114,7 +123,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                             return null;
                         }
                     };
-                    processFile(packageName, fileName, handler);
+                    processFile(processingEnv, packageName, fileName, handler);
 
                     // write json schema
                     fileName = alias + ".json";
@@ -125,7 +134,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                             return null;
                         }
                     };
-                    processFile(packageName, fileName, handler);
+                    processFile(processingEnv, packageName, fileName, handler);
                 }
             }
         }
@@ -177,7 +186,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         String consumerPrefix = getOrElse(uriEndpoint.consumerPrefix(), "");
         if (consumerType != null) {
             consumerClassName = consumerType.toString();
-            TypeElement consumerElement = findTypeElement(roundEnv, consumerClassName);
+            TypeElement consumerElement = findTypeElement(processingEnv, roundEnv, consumerClassName);
             if (consumerElement != null) {
                 writer.println("<h2>" + scheme + " consumer" + "</h2>");
                 writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, consumerElement, consumerPrefix, uriEndpoint.excludeProperties());
@@ -185,7 +194,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             }
         }
         if (!found && consumerClassName != null) {
-            warning("APT could not find consumer class " + consumerClassName);
+            warning(processingEnv, "APT could not find consumer class " + consumerClassName);
         }
         writer.println("</body>");
         writer.println("</html>");
@@ -201,7 +210,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         Set<EndpointOption> endpointOptions = new LinkedHashSet<EndpointOption>();
         Set<ComponentOption> componentOptions = new LinkedHashSet<ComponentOption>();
 
-        TypeElement componentClassElement = findTypeElement(roundEnv, componentModel.getJavaType());
+        TypeElement componentClassElement = findTypeElement(processingEnv, roundEnv, componentModel.getJavaType());
         if (componentClassElement != null) {
             findComponentClassProperties(writer, roundEnv, componentModel, componentOptions, componentClassElement, "");
         }
@@ -462,15 +471,15 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         model.setConsumerOnly(uriEndpoint.consumerOnly());
         model.setProducerOnly(uriEndpoint.producerOnly());
         model.setLenientProperties(uriEndpoint.lenientProperties());
-        model.setAsync(implementsInterface(roundEnv, endpointClassElement, "org.apache.camel.AsyncEndpoint"));
+        model.setAsync(implementsInterface(processingEnv, roundEnv, endpointClassElement, "org.apache.camel.AsyncEndpoint"));
 
-        String data = loadResource("META-INF/services/org/apache/camel/component", scheme);
+        String data = loadResource(processingEnv, "META-INF/services/org/apache/camel/component", scheme);
         if (data != null) {
             Map<String, String> map = parseAsMap(data);
             model.setJavaType(map.get("class"));
         }
 
-        data = loadResource("META-INF/services/org/apache/camel", "component.properties");
+        data = loadResource(processingEnv, "META-INF/services/org/apache/camel", "component.properties");
         if (data != null) {
             Map<String, String> map = parseAsMap(data);
             // now we have a lot more data, so we need to load it as key/value
@@ -510,7 +519,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         // favor to use endpoint class javadoc as description
         Elements elementUtils = processingEnv.getElementUtils();
-        TypeElement typeElement = findTypeElement(roundEnv, endpointClassElement.getQualifiedName().toString());
+        TypeElement typeElement = findTypeElement(processingEnv, roundEnv, endpointClassElement.getQualifiedName().toString());
         if (typeElement != null) {
             String doc = elementUtils.getDocComment(typeElement);
             if (doc != null) {
@@ -571,7 +580,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 name = prefix + name;
                 TypeMirror fieldType = setter.getParameters().get(0).asType();
                 String fieldTypeName = fieldType.toString();
-                TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
+                TypeElement fieldTypeElement = findTypeElement(processingEnv, roundEnv, fieldTypeName);
 
                 String docComment = findJavaDoc(elementUtils, method, fieldName, name, classElement, false);
                 if (isNullOrEmpty(docComment)) {
@@ -590,7 +599,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 Set<String> enums = new LinkedHashSet<String>();
                 boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
                 if (isEnum) {
-                    TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                    TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
                     // find all the enum constants which has the possible enum value that can be used
                     List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
                     for (VariableElement var : fields) {
@@ -612,7 +621,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             TypeMirror superclass = classElement.getSuperclass();
             if (superclass != null) {
                 String superClassName = canonicalClassName(superclass.toString());
-                baseTypeElement = findTypeElement(roundEnv, superClassName);
+                baseTypeElement = findTypeElement(processingEnv, roundEnv, superClassName);
             }
             if (baseTypeElement != null) {
                 classElement = baseTypeElement;
@@ -661,7 +670,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
                     TypeMirror fieldType = fieldElement.asType();
                     String fieldTypeName = fieldType.toString();
-                    TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
+                    TypeElement fieldTypeElement = findTypeElement(processingEnv, roundEnv, fieldTypeName);
 
                     String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, false);
                     if (isNullOrEmpty(docComment)) {
@@ -681,7 +690,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     } else {
                         isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
                         if (isEnum) {
-                            TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                            TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
                             // find all the enum constants which has the possible enum value that can be used
                             List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
                             for (VariableElement var : fields) {
@@ -735,7 +744,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     // if the field type is a nested parameter then iterate through its fields
                     TypeMirror fieldType = fieldElement.asType();
                     String fieldTypeName = fieldType.toString();
-                    TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
+                    TypeElement fieldTypeElement = findTypeElement(processingEnv, roundEnv, fieldTypeName);
                     UriParams fieldParams = null;
                     if (fieldTypeElement != null) {
                         fieldParams = fieldTypeElement.getAnnotation(UriParams.class);
@@ -752,6 +761,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         if (isNullOrEmpty(docComment)) {
                             docComment = param.description();
                         }
+                        if (isNullOrEmpty(docComment)) {
+                            docComment = "";
+                        }
 
                         // gather enums
                         Set<String> enums = new LinkedHashSet<String>();
@@ -766,7 +778,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         } else {
                             isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
                             if (isEnum) {
-                                TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                                TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
                                 // find all the enum constants which has the possible enum value that can be used
                                 List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
                                 for (VariableElement var : fields) {
@@ -797,7 +809,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             TypeMirror superclass = classElement.getSuperclass();
             if (superclass != null) {
                 String superClassName = canonicalClassName(superclass.toString());
-                baseTypeElement = findTypeElement(roundEnv, superClassName);
+                baseTypeElement = findTypeElement(processingEnv, roundEnv, superClassName);
             }
             if (baseTypeElement != null) {
                 classElement = baseTypeElement;

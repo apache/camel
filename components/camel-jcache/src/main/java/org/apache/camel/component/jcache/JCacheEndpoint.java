@@ -22,6 +22,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
@@ -32,19 +33,17 @@ public class JCacheEndpoint extends DefaultEndpoint {
     @UriPath(description = "the cache name")
     @Metadata(required = "true")
     private final String cacheName;
+    
+    @UriParam
     private final JCacheConfiguration cacheConfiguration;
     private final JCacheManager<Object, Object> cacheManager;
 
-    public JCacheEndpoint(String uri, JCacheComponent component, JCacheConfiguration configuration, String cacheName) {
+    public JCacheEndpoint(String uri, JCacheComponent component, JCacheConfiguration configuration) {
         super(uri, component);
 
-        this.cacheName = cacheName;
+        this.cacheName = configuration.getCacheName();
         this.cacheConfiguration = configuration;
-        this.cacheManager = new JCacheManager<>(
-            configuration,
-            cacheName,
-            component.getCamelContext().getApplicationContextClassLoader(),
-            component.getCamelContext());
+        this.cacheManager = JCacheHelper.createManager(configuration);
     }
 
     @Override

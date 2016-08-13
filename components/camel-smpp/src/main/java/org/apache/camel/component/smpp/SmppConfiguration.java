@@ -18,8 +18,8 @@ package org.apache.camel.component.smpp;
 
 import java.net.URI;
 import java.nio.charset.Charset;
-
 import java.util.Map;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -543,6 +543,7 @@ public class SmppConfiguration implements Cloneable {
     public void setReconnectDelay(long reconnectDelay) {
         this.reconnectDelay = reconnectDelay;
     }
+<<<<<<< HEAD
     
     /**
      * CAMEL-6616
@@ -556,6 +557,20 @@ public class SmppConfiguration implements Cloneable {
 		this.maxReconnect = maxReconnect;
 	}
     
+=======
+
+    /**
+     * Defines the maximum number of attempts to reconnect to the SMSC, if SMSC returns a negative bind response
+     */
+    public int getMaxReconnect() {
+        return maxReconnect;
+    }
+
+    public void setMaxReconnect(int maxReconnect) {
+        this.maxReconnect = maxReconnect;
+    }
+
+>>>>>>> a9d34dc87003acc05f07c7dc51c8760f07f45de1
     public boolean isLazySessionCreation() {
         return lazySessionCreation;
     }
@@ -568,7 +583,7 @@ public class SmppConfiguration implements Cloneable {
     public void setLazySessionCreation(boolean lazySessionCreation) {
         this.lazySessionCreation = lazySessionCreation;
     }
-    
+
     public String getHttpProxyHost() {
         return httpProxyHost;
     }
@@ -579,7 +594,7 @@ public class SmppConfiguration implements Cloneable {
     public void setHttpProxyHost(String httpProxyHost) {
         this.httpProxyHost = httpProxyHost;
     }
-    
+
     public Integer getHttpProxyPort() {
         return httpProxyPort;
     }
@@ -590,7 +605,7 @@ public class SmppConfiguration implements Cloneable {
     public void setHttpProxyPort(Integer httpProxyPort) {
         this.httpProxyPort = httpProxyPort;
     }
-    
+
     public String getHttpProxyUsername() {
         return httpProxyUsername;
     }
@@ -601,7 +616,7 @@ public class SmppConfiguration implements Cloneable {
     public void setHttpProxyUsername(String httpProxyUsername) {
         this.httpProxyUsername = httpProxyUsername;
     }
-    
+
     public String getHttpProxyPassword() {
         return httpProxyPassword;
     }
@@ -612,7 +627,7 @@ public class SmppConfiguration implements Cloneable {
     public void setHttpProxyPassword(String httpProxyPassword) {
         this.httpProxyPassword = httpProxyPassword;
     }
-    
+
     public SessionStateListener getSessionStateListener() {
         return sessionStateListener;
     }
