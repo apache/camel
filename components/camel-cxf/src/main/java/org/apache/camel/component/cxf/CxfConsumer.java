@@ -26,6 +26,7 @@ import org.w3c.dom.Element;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultConsumer;
@@ -148,29 +149,35 @@ public class CxfConsumer extends DefaultConsumer {
 
                     // The continuation could be called before the suspend is called
                     continuation.suspend(cxfEndpoint.getContinuationTimeout());
+                    
+                    continuation.setObject(camelExchange);
 
                     // use the asynchronous API to process the exchange
                     getAsyncProcessor().process(camelExchange, new AsyncCallback() {
                         public void done(boolean doneSync) {
                             // make sure the continuation resume will not be called before the suspend method in other thread
                             synchronized (continuation) {
-                                LOG.trace("Resuming continuation of exchangeId: {}", camelExchange.getExchangeId());
-                                // resume processing after both, sync and async callbacks
-                                continuation.setObject(camelExchange);
+                        		LOG.trace("Resuming continuation of exchangeId: {}", camelExchange.getExchangeId());
+                        		// resume processing after both, sync and async callbacks
                                 continuation.resume();
                             }
                         }
                     });
 
-                } else if (continuation.isResumed()) {
+                } else if (continuation.isResumed() || continuation.isExpired()) {
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
                     try {
-                        setResponseBack(cxfExchange, camelExchange);
+                    	if(continuation.isExpired()) {
+                    		camelExchange.setException(new ExchangeTimedOutException(camelExchange, cxfEndpoint.getContinuationTimeout());
+                    	}
+                    	
+                    	setResponseBack(cxfExchange, camelExchange);
                     } finally {
                         CxfConsumer.this.doneUoW(camelExchange);
                     }
 
                 }
+                
             }
             return null;
         }
