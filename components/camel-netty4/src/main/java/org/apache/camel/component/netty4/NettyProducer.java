@@ -62,7 +62,7 @@ public class NettyProducer extends DefaultAsyncProducer {
     private ClientInitializerFactory pipelineFactory;
     private CamelLogger noReplyLogger;
     private EventLoopGroup workerGroup;
-    private ObjectPool<Channel> pool;
+    private ObjectPool<ChannelFuture> pool;
     private Map<Channel, NettyCamelState> nettyCamelStatesMap = new ConcurrentHashMap<Channel, NettyCamelState>();
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
@@ -115,14 +115,14 @@ public class NettyProducer extends DefaultAsyncProducer {
             config.timeBetweenEvictionRunsMillis = 30 * 1000L;
             config.minEvictableIdleTimeMillis = configuration.getProducerPoolMinEvictableIdle();
             config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
-            pool = new GenericObjectPool<Channel>(new NettyProducerPoolableObjectFactory(), config);
+            pool = new GenericObjectPool<ChannelFuture>(new NettyProducerPoolableObjectFactory(), config);
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Created NettyProducer pool[maxActive={}, minIdle={}, maxIdle={}, minEvictableIdleTimeMillis={}] -> {}",
                         new Object[]{config.maxActive, config.minIdle, config.maxIdle, config.minEvictableIdleTimeMillis, pool});
             }
         } else {
-            pool = new SharedSingletonObjectPool<Channel>(new NettyProducerPoolableObjectFactory());
+            pool = new SharedSingletonObjectPool<ChannelFuture>(new NettyProducerPoolableObjectFactory());
             if (LOG.isDebugEnabled()) {
                 LOG.info("Created NettyProducer shared singleton pool -> {}", pool);
             }
@@ -138,8 +138,9 @@ public class NettyProducer extends DefaultAsyncProducer {
 
         if (!configuration.isLazyChannelCreation()) {
             // ensure the connection can be established when we start up
-            Channel channel = pool.borrowObject();
-            pool.returnObject(channel);
+            ChannelFuture channelFuture = pool.borrowObject();
+            channelFuture.get();
+            pool.returnObject(channelFuture);
         }
     }
 
@@ -201,16 +202,19 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         // get a channel from the pool
-        Channel existing = null;
+        ChannelFuture channelFuture = null;
+        Channel channel = null;
         try {
             if (getConfiguration().isReuseChannel()) {
-                existing = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
+                channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
             }
-            if (existing == null) {
-                existing = pool.borrowObject();
-                if (existing != null) {
-                    LOG.trace("Got channel from pool {}", existing);
+            if (channel == null) {
+                channelFuture = pool.borrowObject();
+                if (channelFuture != null) {
+                    LOG.trace("Got channel request from pool {}", channelFuture);
                 }
+            } else {
+                channelFuture = channel.newSucceededFuture();
             }
         } catch (Exception e) {
             exchange.setException(e);
@@ -219,16 +223,22 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         // we must have a channel
-        if (existing == null) {
+        if (channelFuture == null) {
             exchange.setException(new CamelExchangeException("Cannot get channel from pool", exchange));
             callback.done(true);
             return true;
         }
 
+        channelFuture.addListener(new ChannelConnectedListener(exchange, callback, body));
+        return false;
+    }
+
+    public void processWithConnectedChannel(final Exchange exchange, AsyncCallback callback, ChannelFuture channelFuture, 
+            Object body) {
         // remember channel so we can reuse it
+        final Channel channel = channelFuture.channel();
         if (getConfiguration().isReuseChannel() && exchange.getProperty(NettyConstants.NETTY_CHANNEL) == null) {
-            final Channel channel = existing;
-            exchange.setProperty(NettyConstants.NETTY_CHANNEL, existing);
+            exchange.setProperty(NettyConstants.NETTY_CHANNEL, channel);
             // and defer closing the channel until we are done routing the exchange
             exchange.addOnCompletion(new SynchronizationAdapter() {
                 @Override
@@ -252,36 +262,22 @@ public class NettyProducer extends DefaultAsyncProducer {
                         NettyHelper.close(channel);
                     }
 
-                    try {
-                        // Only put the connected channel back to the pool
-                        if (channel.isActive()) {
-                            LOG.trace("Putting channel back to pool {}", channel);
-                            pool.returnObject(channel);
-                        } else {
-                            // and if its not active then invalidate it
-                            LOG.trace("Invalidating channel from pool {}", channel);
-                            pool.invalidateObject(channel);
-                        }
-                    } catch (Exception e) {
-                        LOG.warn("Error returning channel to pool " + channel + ". This exception will be ignored.", e);
-                    }
+                    releaseChannel(channelFuture);
                 }
             });
         }
 
         if (exchange.getIn().getHeader(NettyConstants.NETTY_REQUEST_TIMEOUT) != null) {
             long timeoutInMs = exchange.getIn().getHeader(NettyConstants.NETTY_REQUEST_TIMEOUT, Long.class);
-            ChannelHandler oldHandler = existing.pipeline().get("timeout");
+            ChannelHandler oldHandler = channel.pipeline().get("timeout");
             ReadTimeoutHandler newHandler = new ReadTimeoutHandler(timeoutInMs, TimeUnit.MILLISECONDS);
             if (oldHandler == null) {
-                existing.pipeline().addBefore("handler", "timeout", newHandler);
+                channel.pipeline().addBefore("handler", "timeout", newHandler);
             } else {
-                existing.pipeline().replace(oldHandler, "timeout", newHandler);
+                channel.pipeline().replace(oldHandler, "timeout", newHandler);
             }
         }
         
-        // need to declare as final
-        final Channel channel = existing;
         final AsyncCallback producerCallback;
 
         if (configuration.isReuseChannel()) {
@@ -289,7 +285,7 @@ public class NettyProducer extends DefaultAsyncProducer {
             // as when reuse channel is enabled it will put the channel back in the pool when exchange is done using on completion
             producerCallback = callback;
         } else {
-            producerCallback = new NettyProducerCallback(channel, callback);
+            producerCallback = new NettyProducerCallback(channelFuture, callback);
         }
 
         // setup state as attachment on the channel, so we can access the state later when needed
@@ -341,8 +337,6 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
         });
 
-        // continue routing asynchronously
-        return false;
     }
 
     /**
@@ -478,30 +472,38 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
     }
 
-    protected Channel openChannel(ChannelFuture channelFuture) throws Exception {
+    protected void notifyChannelOpen(ChannelFuture channelFuture) throws Exception {
         // blocking for channel to be done
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for operation to complete {} for {} millis", channelFuture, configuration.getConnectTimeout());
+            LOG.trace("Channel open finished with {}", channelFuture);
         }
 
-        // wait for the channel to be open (see io.netty.channel.ChannelFuture javadoc for example/recommendation)
-        channelFuture.awaitUninterruptibly();
+        if (channelFuture.isSuccess()) {
+            Channel answer = channelFuture.channel();
+            // to keep track of all channels in use
+            allChannels.add(answer);
 
-        if (!channelFuture.isDone() || !channelFuture.isSuccess()) {
-            ConnectException cause = new ConnectException("Cannot connect to " + configuration.getAddress());
-            if (channelFuture.cause() != null) {
-                cause.initCause(channelFuture.cause());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating connector to address: {}", configuration.getAddress());
             }
-            throw cause;
         }
-        Channel answer = channelFuture.channel();
-        // to keep track of all channels in use
-        allChannels.add(answer);
+    }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating connector to address: {}", configuration.getAddress());
+    protected void releaseChannel(ChannelFuture channelFuture) {
+        Channel channel = channelFuture.channel();
+        try {
+            // Only put the connected channel back to the pool
+            if (channel.isActive()) {
+                LOG.trace("Putting channel back to pool {}", channel);
+                pool.returnObject(channelFuture);
+            } else {
+                // and if its not active then invalidate it
+                LOG.trace("Invalidating channel from pool {}", channel);
+                pool.invalidateObject(channelFuture);
+            }
+        } catch (Exception e) {
+            LOG.warn("Error returning channel to pool " + channel + ". This exception will be ignored.", e);
         }
-        return answer;
     }
 
     public NettyConfiguration getConfiguration() {
@@ -522,11 +524,11 @@ public class NettyProducer extends DefaultAsyncProducer {
      */
     private final class NettyProducerCallback implements AsyncCallback {
 
-        private final Channel channel;
+        private final ChannelFuture channelFuture;
         private final AsyncCallback callback;
 
-        private NettyProducerCallback(Channel channel, AsyncCallback callback) {
-            this.channel = channel;
+        private NettyProducerCallback(ChannelFuture channelFuture, AsyncCallback callback) {
+            this.channelFuture = channelFuture;
             this.callback = callback;
         }
 
@@ -534,17 +536,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         public void done(boolean doneSync) {
             // put back in pool
             try {
-                // Only put the connected channel back to the pool
-                if (channel.isActive()) {
-                    LOG.trace("Putting channel back to pool {}", channel);
-                    pool.returnObject(channel);
-                } else {
-                    // and if its not active then invalidate it
-                    LOG.trace("Invalidating channel from pool {}", channel);
-                    pool.invalidateObject(channel);
-                }
-            } catch (Exception e) {
-                LOG.warn("Error returning channel to pool " + channel + ". This exception will be ignored.", e);
+                releaseChannel(channelFuture);
             } finally {
                 // ensure we call the delegated callback
                 callback.done(doneSync);
@@ -555,44 +547,97 @@ public class NettyProducer extends DefaultAsyncProducer {
     /**
      * Object factory to create {@link Channel} used by the pool.
      */
-    private final class NettyProducerPoolableObjectFactory implements PoolableObjectFactory<Channel> {
+    private final class NettyProducerPoolableObjectFactory implements PoolableObjectFactory<ChannelFuture> {
 
         @Override
-        public Channel makeObject() throws Exception {
-            ChannelFuture channelFuture = openConnection();
-            Channel answer = openChannel(channelFuture);
-            LOG.trace("Created channel: {}", answer);
-            return answer;
+        public ChannelFuture makeObject() throws Exception {
+            ChannelFuture channelFuture = openConnection().addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    notifyChannelOpen(future);
+                }
+            });
+            LOG.trace("Requested channel: {}", channelFuture);
+            return channelFuture;
         }
 
         @Override
-        public void destroyObject(Channel channel) throws Exception {
-            LOG.trace("Destroying channel: {}", channel);
-            if (channel.isOpen()) {
-                NettyHelper.close(channel);
+        public void destroyObject(ChannelFuture channelFuture) throws Exception {
+            LOG.trace("Destroying channel request: {}", channelFuture);
+            channelFuture.addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    Channel channel = future.channel();
+                    if (channel.isOpen()) {
+                        NettyHelper.close(channel);
+                    }
+                    allChannels.remove(channel);
+                }
+            });
+            channelFuture.cancel(false);
+        }
+
+        @Override
+        public boolean validateObject(ChannelFuture channelFuture) {
+            // we need a connecting or connected channel to be valid
+            if (!channelFuture.isDone()) {
+                LOG.trace("Validating connecting channel request: {} -> {}", channelFuture, true);
+                return true;
             }
-            allChannels.remove(channel);
-        }
-
-        @Override
-        public boolean validateObject(Channel channel) {
-            // we need a connected channel to be valid
+            if (!channelFuture.isSuccess()) {
+                LOG.trace("Validating unsuccessful channel request: {} -> {}", channelFuture, false);
+                return false;
+            }
+            Channel channel = channelFuture.channel();
             boolean answer = channel.isActive();
             LOG.trace("Validating channel: {} -> {}", channel, answer);
             return answer;
         }
 
         @Override
-        public void activateObject(Channel channel) throws Exception {
+        public void activateObject(ChannelFuture channelFuture) throws Exception {
             // noop
-            LOG.trace("activateObject channel: {} -> {}", channel);
+            LOG.trace("activateObject channel request: {} -> {}", channelFuture);
         }
 
         @Override
-        public void passivateObject(Channel channel) throws Exception {
+        public void passivateObject(ChannelFuture channelFuture) throws Exception {
             // noop
-            LOG.trace("passivateObject channel: {} -> {}", channel);
+            LOG.trace("passivateObject channel request: {} -> {}", channelFuture);
         }
     }
 
+    /**
+     * Listener waiting for connection finished while processing exchange
+     */
+    private class ChannelConnectedListener implements ChannelFutureListener {
+        private final Exchange exchange;
+        private final AsyncCallback callback;
+        private final Object body;
+
+        public ChannelConnectedListener(Exchange exchange, AsyncCallback callback, Object body) {
+            this.exchange = exchange;
+            this.callback = callback;
+            this.body = body;
+        }
+
+        @Override
+        public void operationComplete(ChannelFuture future) {
+            if (!future.isDone() || !future.isSuccess()) {
+                ConnectException cause = new ConnectException("Cannot connect to " + configuration.getAddress());
+                if (future.cause() != null) {
+                    cause.initCause(future.cause());
+                }
+                exchange.setException(cause);
+                callback.done(false);
+
+            }
+            try {
+                processWithConnectedChannel(exchange, callback, future, body);
+            } catch (Throwable e) {
+                exchange.setException(e);
+                callback.done(false);
+            }
+        }
+    }
 }
