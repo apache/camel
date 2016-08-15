@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.schematron.processor;
 
-import javax.xml.transform.*;
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.TransformerFactoryImpl;
@@ -58,7 +62,7 @@ public class SchematronProcessorTest {
         // validate
         String result = getProcessor("sch/schematron-3.sch", new ClientUriResolver()).validate(payload);
         logger.info("Schematron Report: {}", result);
-        assertEquals("A title should be at least two characters", Utils.evaluate("//svrl:failed-assert/svrl:text",result));
+        assertEquals("A title should be at least two characters", Utils.evaluate("//svrl:failed-assert/svrl:text", result));
         assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:successful-report)", result)).intValue());
     }
 
@@ -93,7 +97,7 @@ public class SchematronProcessorTest {
     class ClientUriResolver implements URIResolver {
         @Override
         public Source resolve(String href, String base) throws TransformerException {
-           return new StreamSource(ClientUriResolver.class.getClassLoader().getResourceAsStream("custom-resolver/".concat(href)));
+            return new StreamSource(ClientUriResolver.class.getClassLoader().getResourceAsStream("custom-resolver/".concat(href)));
         }
     }
 }

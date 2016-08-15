@@ -44,8 +44,7 @@ public class ClassPathURIResolver implements URIResolver {
     public Source resolve(String href, String base) throws TransformerException {
         InputStream stream = ClassPathURIResolver.class.getClassLoader()
                 .getResourceAsStream(rulesDir.concat(File.separator).concat(href));
-
-        if (null != stream) {
+        if (stream != null) {
             return new StreamSource(stream);
         } else {
             if (null != clientUriResolver) {
@@ -54,8 +53,5 @@ public class ClassPathURIResolver implements URIResolver {
                 return new StreamSource(stream);
             }
         }
-
-
-
     }
 }
