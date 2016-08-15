@@ -116,6 +116,9 @@ public class SchematronEndpoint extends DefaultEndpoint {
         this.rules = rules;
     }
 
+    /**
+     * Set the {@link URIResolver} to be used for resolving schematron includes in the rules file.
+     */
     public void setUriResolver(URIResolver uriResolver) { this.uriResolver = uriResolver; }
 
     public URIResolver getUriResolver() { return uriResolver; }
