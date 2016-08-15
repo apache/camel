@@ -155,7 +155,7 @@ public class SmppConsumer extends DefaultConsumer {
 
                         int attempt = 0;
                         while (!(isStopping() || isStopped()) && (session == null || session.getSessionState().equals(SessionState.CLOSED))
-                                && attempt < configuration.getMaxReconnect()) {
+                        		&& attempt < configuration.getMaxReconnect()) {
                             try {
                                 attempt++;
                                 LOG.info("Trying to reconnect to {} - attempt #", getEndpoint().getConnectionString(), attempt);
