@@ -59,8 +59,7 @@ public class SchematronEndpoint extends DefaultEndpoint {
     private boolean abort;
     @UriParam
     private Templates rules;
-
-    @UriParam
+    @UriParam(label = "advanced")
     private URIResolver uriResolver;
 
     public SchematronEndpoint() {
