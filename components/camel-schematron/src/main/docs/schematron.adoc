@@ -39,8 +39,9 @@ The Schematron component has no options.
 
 
 
+
 // endpoint options: START
-The Schematron component supports 5 endpoint options which are listed below:
+The Schematron component supports 6 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -49,11 +50,13 @@ The Schematron component supports 5 endpoint options which are listed below:
 | path | producer |  | String | *Required* The path to the schematron rules file. Can either be in class path or location in the file system.
 | abort | producer | false | boolean | Flag to abort the route and throw a schematron validation exception.
 | rules | producer |  | Templates | To use the given schematron rules instead of loading from the path
+| uriResolver | producer |  | URIResolver | Set the URIResolver to be used for resolving schematron includes in the rules file.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 [[Schematron-Headers]]
