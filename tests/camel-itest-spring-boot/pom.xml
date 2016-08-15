@@ -185,8 +185,17 @@
               <value>false</value>
             </property>
 
+            <!-- Test dependencies required by modules -->
+            <property>
+              <name>version_bam_org.hibernate:hibernate-entitymanager</name>
+              <value>5.0.9.Final</value>
+            </property>
+            <property>
+              <name>version_org.apache.geronimo.specs:geronimo-jta_1.1_spec</name>
+              <value>${geronimo-jta-spec-version}</value>
+            </property>
 
-            <!-- Additional dependencies required by modules -->
+            <!-- Other dependencies needed before starters -->
             <property>
               <name>version_org.apache.camel:camel-core</name>
               <value>${project.version}</value>

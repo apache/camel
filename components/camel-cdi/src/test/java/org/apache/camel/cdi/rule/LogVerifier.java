@@ -64,7 +64,7 @@ public class LogVerifier extends Verifier {
     }
 
     private class LogAppender extends AbstractAppender {
-        public LogAppender(String name) {
+        LogAppender(String name) {
             super(
                 name,
                 null,
