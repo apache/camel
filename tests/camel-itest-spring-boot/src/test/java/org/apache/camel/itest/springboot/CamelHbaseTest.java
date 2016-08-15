@@ -36,7 +36,7 @@ public class CamelHbaseTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelHbaseTest.class))
-                .dependency(DependencyResolver.withVersion("org.apache.hadoop:hadoop-hdfs"))
+                //.dependency(DependencyResolver.withVersion("org.apache.hadoop:hadoop-hdfs"))
                 .build();
     }
 

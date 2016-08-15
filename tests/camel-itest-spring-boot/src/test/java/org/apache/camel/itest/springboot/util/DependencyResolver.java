@@ -133,6 +133,10 @@ public final class DependencyResolver {
         return groupArtifact + ":" + version;
     }
 
+    public static String resolveParentProperty(String property) throws Exception {
+        return resolveProperty("../../parent/pom.xml", property, 0);
+    }
+
     private static String resolveSurefireProperty(String property) throws Exception {
         property = getSurefirePropertyFromPom("pom.xml", property);
         if (property != null && !isResolved(property)) {

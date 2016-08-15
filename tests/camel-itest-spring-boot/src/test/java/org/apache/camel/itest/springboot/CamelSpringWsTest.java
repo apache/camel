@@ -36,8 +36,8 @@ public class CamelSpringWsTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelSpringWsTest.class))
-                .dependency(DependencyResolver.withVersion("org.springframework.boot:spring-boot-starter-web"))
-                .dependency(DependencyResolver.withVersion("org.springframework:spring-webmvc"))
+                //.dependency(DependencyResolver.withVersion("org.springframework.boot:spring-boot-starter-web"))
+                //.dependency(DependencyResolver.withVersion("org.springframework:spring-webmvc"))
                 .build();
     }
 

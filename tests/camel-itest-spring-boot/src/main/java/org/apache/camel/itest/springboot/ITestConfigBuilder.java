@@ -177,7 +177,7 @@ public class ITestConfigBuilder {
         }
 
         if (config.getIncludeProvidedDependencies() == null) {
-            config.setIncludeProvidedDependencies(booleanPropertyOr("includeProvidedDependencies", true));
+            config.setIncludeProvidedDependencies(booleanPropertyOr("includeProvidedDependencies", false));
         }
 
         if (config.getModulesPath() == null) {

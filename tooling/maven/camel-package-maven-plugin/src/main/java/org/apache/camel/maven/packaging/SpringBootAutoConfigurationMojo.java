@@ -50,7 +50,6 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
 import org.jboss.forge.roaster.model.util.Strings;
-import org.sonatype.plexus.build.incremental.BuildContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
@@ -67,6 +66,14 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  * @goal prepare-spring-boot-auto-configuration
  */
 public class SpringBootAutoConfigurationMojo extends AbstractMojo {
+
+
+    /**
+     * Useful to move configuration towards starters.
+     * Warning: the spring.factories files sometimes are used also on the main artifacts.
+     * Make sure it is not the case before enabling this property.
+     */
+    private static final boolean DELETE_FILES_ON_MAIN_ARTIFACTS = false;
 
     /**
      * The maven project.
@@ -85,30 +92,23 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     protected File buildDir;
 
     /**
-     * The source directory
+     * The base directory
      *
-     * @parameter default-value="${basedir}/src/main/java"
+     * @parameter default-value="${basedir}"
      */
-    protected File srcDir;
-
-    /**
-     * The resources directory
-     *
-     * @parameter default-value="${basedir}/src/main/resources"
-     */
-    protected File resourcesDir;
-
-    /**
-     * build context to check changed files and mark them for refresh (used for
-     * m2e compatibility)
-     *
-     * @component
-     * @readonly
-     */
-    private BuildContext buildContext;
+    protected File baseDir;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        // Spring-boot configuration has been moved on starters
+
+        File starterDir = SpringBootHelper.starterDir(baseDir, project.getArtifactId());
+        if (!starterDir.exists()) {
+            // If the starter does not exist, no configuration can be created
+            getLog().info("Component auto-configuration will not be created: the starter dir does not exist");
+            return;
+        }
+
         executeComponent();
         executeDataFormat();
         executeLanguage();
@@ -334,41 +334,19 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sortImports(javaClass);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
-        File target = new File(srcDir, fileName);
 
-        try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt");
-            String header = loadText(is);
-            String code = sourceToString(javaClass);
-            code = header + code;
-            getLog().debug("Source code generated:\n" + code);
-
-            if (target.exists()) {
-                String existing = FileUtils.readFileToString(target);
-                if (!code.equals(existing)) {
-                    FileUtils.write(target, code, false);
-                    getLog().info("Updated existing file: " + target);
-                } else {
-                    getLog().debug("No changes to existing file: " + target);
-                }
-            } else {
-                FileUtils.write(target, code);
-                getLog().info("Created file: " + target);
-            }
-        } catch (Exception e) {
-            throw new MojoFailureException("IOError with file " + target, e);
-        }
+        writeSourceIfChanged(javaClass, fileName);
     }
 
     // CHECKSTYLE:OFF
     private static boolean skipComponentOption(ComponentModel model, ComponentOptionModel option) {
         if ("netty4-http".equals(model.getScheme()) || "netty-http".equals(model.getScheme())) {
             String name = option.getName();
-            if (name.equals("textline") || name.equals("delimiter") ||  name.equals("autoAppendDelimiter") || name.equals("decoderMaxLineLength")
-                || name.equals("encoding") || name.equals("allowDefaultCodec") ||  name.equals("udpConnectionlessSending") || name.equals("networkInterface")
-                || name.equals("clientMode") || name.equals("reconnect") ||  name.equals("reconnectInterval") || name.equals("useByteBuf")
-                || name.equals("udpByteArrayCodec") || name.equals("broadcast")) {
-                    return true;
+            if (name.equals("textline") || name.equals("delimiter") || name.equals("autoAppendDelimiter") || name.equals("decoderMaxLineLength")
+                    || name.equals("encoding") || name.equals("allowDefaultCodec") || name.equals("udpConnectionlessSending") || name.equals("networkInterface")
+                    || name.equals("clientMode") || name.equals("reconnect") || name.equals("reconnectInterval") || name.equals("useByteBuf")
+                    || name.equals("udpByteArrayCodec") || name.equals("broadcast")) {
+                return true;
             }
         }
         return false;
@@ -444,30 +422,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sortImports(javaClass);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
-        File target = new File(srcDir, fileName);
 
-        try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt");
-            String header = loadText(is);
-            String code = sourceToString(javaClass);
-            code = header + code;
-            getLog().debug("Source code generated:\n" + code);
-
-            if (target.exists()) {
-                String existing = FileUtils.readFileToString(target);
-                if (!code.equals(existing)) {
-                    FileUtils.write(target, code, false);
-                    getLog().info("Updated existing file: " + target);
-                } else {
-                    getLog().debug("No changes to existing file: " + target);
-                }
-            } else {
-                FileUtils.write(target, code);
-                getLog().info("Created file: " + target);
-            }
-        } catch (Exception e) {
-            throw new MojoFailureException("IOError with file " + target, e);
-        }
+        writeSourceIfChanged(javaClass, fileName);
     }
 
     private void createLanguageConfigurationSource(String packageName, LanguageModel model, String overrideLanguageName) throws MojoFailureException {
@@ -570,30 +526,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sortImports(javaClass);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
-        File target = new File(srcDir, fileName);
 
-        try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt");
-            String header = loadText(is);
-            String code = sourceToString(javaClass);
-            code = header + code;
-            getLog().debug("Source code generated:\n" + code);
-
-            if (target.exists()) {
-                String existing = FileUtils.readFileToString(target);
-                if (!code.equals(existing)) {
-                    FileUtils.write(target, code, false);
-                    getLog().info("Updated existing file: " + target);
-                } else {
-                    getLog().debug("No changes to existing file: " + target);
-                }
-            } else {
-                FileUtils.write(target, code);
-                getLog().info("Created file: " + target);
-            }
-        } catch (Exception e) {
-            throw new MojoFailureException("IOError with file " + target, e);
-        }
+        writeSourceIfChanged(javaClass, fileName);
     }
 
     private void createComponentAutoConfigurationSource(String packageName, ComponentModel model, List<String> componentAliases) throws MojoFailureException {
@@ -644,30 +578,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sortImports(javaClass);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
-        File target = new File(srcDir, fileName);
 
-        try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt");
-            String header = loadText(is);
-            String code = sourceToString(javaClass);
-            code = header + code;
-            getLog().debug("Source code generated:\n" + code);
-
-            if (target.exists()) {
-                String existing = FileUtils.readFileToString(target);
-                if (!code.equals(existing)) {
-                    FileUtils.write(target, code, false);
-                    getLog().info("Updated existing file: " + target);
-                } else {
-                    getLog().debug("No changes to existing file: " + target);
-                }
-            } else {
-                FileUtils.write(target, code);
-                getLog().info("Created file: " + target);
-            }
-        } catch (Exception e) {
-            throw new MojoFailureException("IOError with file " + target, e);
-        }
+        writeSourceIfChanged(javaClass, fileName);
     }
 
     private void createDataFormatAutoConfigurationSource(String packageName, DataFormatModel model, List<String> dataFormatAliases) throws MojoFailureException {
@@ -721,30 +633,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sortImports(javaClass);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
-        File target = new File(srcDir, fileName);
 
-        try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt");
-            String header = loadText(is);
-            String code = sourceToString(javaClass);
-            code = header + code;
-            getLog().debug("Source code generated:\n" + code);
-
-            if (target.exists()) {
-                String existing = FileUtils.readFileToString(target);
-                if (!code.equals(existing)) {
-                    FileUtils.write(target, code, false);
-                    getLog().info("Updated existing file: " + target);
-                } else {
-                    getLog().debug("No changes to existing file: " + target);
-                }
-            } else {
-                FileUtils.write(target, code);
-                getLog().info("Created file: " + target);
-            }
-        } catch (Exception e) {
-            throw new MojoFailureException("IOError with file " + target, e);
-        }
+        writeSourceIfChanged(javaClass, fileName);
     }
 
     private void createLanguageAutoConfigurationSource(String packageName, LanguageModel model, List<String> languageAliases) throws MojoFailureException {
@@ -798,246 +688,32 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sortImports(javaClass);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
-        File target = new File(srcDir, fileName);
 
-        try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt");
-            String header = loadText(is);
-            String code = sourceToString(javaClass);
-            code = header + code;
-            getLog().debug("Source code generated:\n" + code);
-
-            if (target.exists()) {
-                String existing = FileUtils.readFileToString(target);
-                if (!code.equals(existing)) {
-                    FileUtils.write(target, code, false);
-                    getLog().info("Updated existing file: " + target);
-                } else {
-                    getLog().debug("No changes to existing file: " + target);
-                }
-            } else {
-                FileUtils.write(target, code);
-                getLog().info("Created file: " + target);
-            }
-        } catch (Exception e) {
-            throw new MojoFailureException("IOError with file " + target, e);
-        }
+        writeSourceIfChanged(javaClass, fileName);
     }
 
     private void createComponentSpringFactorySource(String packageName, ComponentModel model) throws MojoFailureException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("org.springframework.boot.autoconfigure.EnableAutoConfiguration=\\\n");
-
         int pos = model.getJavaType().lastIndexOf(".");
         String name = model.getJavaType().substring(pos + 1);
         name = name.replace("Component", "ComponentAutoConfiguration");
-        String lineToAdd = packageName + "." + name + "\n";
-        sb.append(lineToAdd);
 
-        String fileName = "META-INF/spring.factories";
-        File target = new File(resourcesDir, fileName);
-
-        if (target.exists()) {
-            try {
-                // is the auto configuration already in the file
-                boolean found = false;
-                List<String> lines = FileUtils.readLines(target);
-                for (String line : lines) {
-                    if (line.contains(name)) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found) {
-                    getLog().debug("No changes to existing file: " + target);
-                } else {
-                    // find last non empty line, so we can add our new line after that
-                    int lastLine = 0;
-                    for (int i = lines.size() - 1; i >= 0; i--) {
-                        String line = lines.get(i);
-                        if (!line.trim().isEmpty()) {
-                            // adjust existing line so its being continued
-                            line = line + ",\\";
-                            lines.set(i, line);
-                            lastLine = i;
-                            break;
-                        }
-                    }
-                    lines.add(lastLine + 1, lineToAdd);
-
-                    StringBuilder code = new StringBuilder();
-                    for (String line : lines) {
-                        code.append(line).append("\n");
-                    }
-
-                    // update
-                    FileUtils.write(target, code.toString(), false);
-                    getLog().info("Updated existing file: " + target);
-                }
-            } catch (Exception e) {
-                throw new MojoFailureException("IOError with file " + target, e);
-            }
-        } else {
-            // create new file
-            try {
-                InputStream is = getClass().getClassLoader().getResourceAsStream("license-header.txt");
-                String header = loadText(is);
-                String code = sb.toString();
-                // add empty new line after header
-                code = header + "\n" + code;
-                getLog().debug("Source code generated:\n" + code);
-
-                FileUtils.write(target, code);
-                getLog().info("Created file: " + target);
-            } catch (Exception e) {
-                throw new MojoFailureException("IOError with file " + target, e);
-            }
-        }
+        writeComponentSpringFactorySource(packageName, name);
     }
 
     private void createDataFormatSpringFactorySource(String packageName, DataFormatModel model) throws MojoFailureException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("org.springframework.boot.autoconfigure.EnableAutoConfiguration=\\\n");
-
         int pos = model.getJavaType().lastIndexOf(".");
         String name = model.getJavaType().substring(pos + 1);
         name = name.replace("DataFormat", "DataFormatAutoConfiguration");
-        String lineToAdd = packageName + "." + name + "\n";
-        sb.append(lineToAdd);
 
-        String fileName = "META-INF/spring.factories";
-        File target = new File(resourcesDir, fileName);
-
-        if (target.exists()) {
-            try {
-                // is the auto configuration already in the file
-                boolean found = false;
-                List<String> lines = FileUtils.readLines(target);
-                for (String line : lines) {
-                    if (line.contains(name)) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found) {
-                    getLog().debug("No changes to existing file: " + target);
-                } else {
-                    // find last non empty line, so we can add our new line after that
-                    int lastLine = 0;
-                    for (int i = lines.size() - 1; i >= 0; i--) {
-                        String line = lines.get(i);
-                        if (!line.trim().isEmpty()) {
-                            // adjust existing line so its being continued
-                            line = line + ",\\";
-                            lines.set(i, line);
-                            lastLine = i;
-                            break;
-                        }
-                    }
-                    lines.add(lastLine + 1, lineToAdd);
-
-                    StringBuilder code = new StringBuilder();
-                    for (String line : lines) {
-                        code.append(line).append("\n");
-                    }
-
-                    // update
-                    FileUtils.write(target, code.toString(), false);
-                    getLog().info("Updated existing file: " + target);
-                }
-            } catch (Exception e) {
-                throw new MojoFailureException("IOError with file " + target, e);
-            }
-        } else {
-            // create new file
-            try {
-                InputStream is = getClass().getClassLoader().getResourceAsStream("license-header.txt");
-                String header = loadText(is);
-                String code = sb.toString();
-                // add empty new line after header
-                code = header + "\n" + code;
-                getLog().debug("Source code generated:\n" + code);
-
-                FileUtils.write(target, code);
-                getLog().info("Created file: " + target);
-            } catch (Exception e) {
-                throw new MojoFailureException("IOError with file " + target, e);
-            }
-        }
+        writeComponentSpringFactorySource(packageName, name);
     }
 
     private void createLanguageSpringFactorySource(String packageName, LanguageModel model) throws MojoFailureException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("org.springframework.boot.autoconfigure.EnableAutoConfiguration=\\\n");
-
         int pos = model.getJavaType().lastIndexOf(".");
         String name = model.getJavaType().substring(pos + 1);
         name = name.replace("Language", "LanguageAutoConfiguration");
-        String lineToAdd = packageName + "." + name + "\n";
-        sb.append(lineToAdd);
 
-        String fileName = "META-INF/spring.factories";
-        File target = new File(resourcesDir, fileName);
-
-        if (target.exists()) {
-            try {
-                // is the auto configuration already in the file
-                boolean found = false;
-                List<String> lines = FileUtils.readLines(target);
-                for (String line : lines) {
-                    if (line.contains(name)) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found) {
-                    getLog().debug("No changes to existing file: " + target);
-                } else {
-                    // find last non empty line, so we can add our new line after that
-                    int lastLine = 0;
-                    for (int i = lines.size() - 1; i >= 0; i--) {
-                        String line = lines.get(i);
-                        if (!line.trim().isEmpty()) {
-                            // adjust existing line so its being continued
-                            line = line + ",\\";
-                            lines.set(i, line);
-                            lastLine = i;
-                            break;
-                        }
-                    }
-                    lines.add(lastLine + 1, lineToAdd);
-
-                    StringBuilder code = new StringBuilder();
-                    for (String line : lines) {
-                        code.append(line).append("\n");
-                    }
-
-                    // update
-                    FileUtils.write(target, code.toString(), false);
-                    getLog().info("Updated existing file: " + target);
-                }
-            } catch (Exception e) {
-                throw new MojoFailureException("IOError with file " + target, e);
-            }
-        } else {
-            // create new file
-            try {
-                InputStream is = getClass().getClassLoader().getResourceAsStream("license-header.txt");
-                String header = loadText(is);
-                String code = sb.toString();
-                // add empty new line after header
-                code = header + "\n" + code;
-                getLog().debug("Source code generated:\n" + code);
-
-                FileUtils.write(target, code);
-                getLog().info("Created file: " + target);
-            } catch (Exception e) {
-                throw new MojoFailureException("IOError with file " + target, e);
-            }
-        }
+        writeComponentSpringFactorySource(packageName, name);
     }
 
     private static String createComponentBody(String shortJavaType) {
@@ -1389,6 +1065,122 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             }
         }
         return languageNames;
+    }
+
+    private void writeSourceIfChanged(JavaClassSource source, String fileName) throws MojoFailureException {
+
+        File target = new File(SpringBootHelper.starterSrcDir(baseDir, project.getArtifactId()), fileName);
+
+        deleteFileOnMainArtifact(target);
+
+        try {
+            InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt");
+            String header = loadText(is);
+            String code = sourceToString(source);
+            code = header + code;
+            getLog().debug("Source code generated:\n" + code);
+
+            if (target.exists()) {
+                String existing = FileUtils.readFileToString(target);
+                if (!code.equals(existing)) {
+                    FileUtils.write(target, code, false);
+                    getLog().info("Updated existing file: " + target);
+                } else {
+                    getLog().debug("No changes to existing file: " + target);
+                }
+            } else {
+                FileUtils.write(target, code);
+                getLog().info("Created file: " + target);
+            }
+        } catch (Exception e) {
+            throw new MojoFailureException("IOError with file " + target, e);
+        }
+    }
+
+    private void writeComponentSpringFactorySource(String packageName, String name) throws MojoFailureException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("org.springframework.boot.autoconfigure.EnableAutoConfiguration=\\\n");
+
+        String lineToAdd = packageName + "." + name + "\n";
+        sb.append(lineToAdd);
+
+        String fileName = "META-INF/spring.factories";
+        File target = new File(SpringBootHelper.starterResourceDir(baseDir, project.getArtifactId()), fileName);
+
+        deleteFileOnMainArtifact(target);
+
+        if (target.exists()) {
+            try {
+                // is the auto configuration already in the file
+                boolean found = false;
+                List<String> lines = FileUtils.readLines(target);
+                for (String line : lines) {
+                    if (line.contains(name)) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (found) {
+                    getLog().debug("No changes to existing file: " + target);
+                } else {
+                    // find last non empty line, so we can add our new line after that
+                    int lastLine = 0;
+                    for (int i = lines.size() - 1; i >= 0; i--) {
+                        String line = lines.get(i);
+                        if (!line.trim().isEmpty()) {
+                            // adjust existing line so its being continued
+                            line = line + ",\\";
+                            lines.set(i, line);
+                            lastLine = i;
+                            break;
+                        }
+                    }
+                    lines.add(lastLine + 1, lineToAdd);
+
+                    StringBuilder code = new StringBuilder();
+                    for (String line : lines) {
+                        code.append(line).append("\n");
+                    }
+
+                    // update
+                    FileUtils.write(target, code.toString(), false);
+                    getLog().info("Updated existing file: " + target);
+                }
+            } catch (Exception e) {
+                throw new MojoFailureException("IOError with file " + target, e);
+            }
+        } else {
+            // create new file
+            try {
+                InputStream is = getClass().getClassLoader().getResourceAsStream("license-header.txt");
+                String header = loadText(is);
+                String code = sb.toString();
+                // add empty new line after header
+                code = header + "\n" + code;
+                getLog().debug("Source code generated:\n" + code);
+
+                FileUtils.write(target, code);
+                getLog().info("Created file: " + target);
+            } catch (Exception e) {
+                throw new MojoFailureException("IOError with file " + target, e);
+            }
+        }
+    }
+
+    private void deleteFileOnMainArtifact(File starterFile) {
+        if (!DELETE_FILES_ON_MAIN_ARTIFACTS) {
+            return;
+        }
+
+        String relativePath = SpringBootHelper.starterDir(baseDir, project.getArtifactId()).toPath().relativize(starterFile.toPath()).toString();
+        File mainArtifactFile = new File(baseDir, relativePath);
+        if (mainArtifactFile.exists()) {
+            boolean deleted = mainArtifactFile.delete();
+            if (!deleted) {
+                throw new IllegalStateException("Cannot delete file " + mainArtifactFile);
+            }
+        }
     }
 
 }
