@@ -240,8 +240,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         return false;
     }
 
-    public void processWithConnectedChannel(final Exchange exchange, AsyncCallback callback, ChannelFuture channelFuture, 
-            Object body) {
+    public void processWithConnectedChannel(final Exchange exchange, AsyncCallback callback, ChannelFuture channelFuture, Object body) {
         // remember channel so we can reuse it
         final Channel channel = channelFuture.channel();
         if (getConfiguration().isReuseChannel() && exchange.getProperty(NettyConstants.NETTY_CHANNEL) == null) {
@@ -622,7 +621,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         private final AsyncCallback callback;
         private final Object body;
 
-        public ChannelConnectedListener(Exchange exchange, AsyncCallback callback, Object body) {
+        ChannelConnectedListener(Exchange exchange, AsyncCallback callback, Object body) {
             this.exchange = exchange;
             this.callback = callback;
             this.body = body;
@@ -637,8 +636,8 @@ public class NettyProducer extends DefaultAsyncProducer {
                 }
                 exchange.setException(cause);
                 callback.done(false);
-
             }
+
             try {
                 processWithConnectedChannel(exchange, callback, future, body);
             } catch (Throwable e) {
