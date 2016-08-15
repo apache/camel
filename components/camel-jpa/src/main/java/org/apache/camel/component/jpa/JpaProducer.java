@@ -124,8 +124,10 @@ public class JpaProducer extends DefaultProducer {
                  */
                 private Object remove(final Object entity) {
                     LOG.debug("remove: {}", entity);
-                    entityManager.remove(entity);
-                    return entity;
+
+                    Object managedEntity = entityManager.contains(entity) ? entity : entityManager.merge(entity);
+                    entityManager.remove(managedEntity);
+                    return managedEntity;
                 }
             });
         }
