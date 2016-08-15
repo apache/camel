@@ -17,7 +17,10 @@
 package org.apache.camel.component.sip.listener;
 
 import java.text.ParseException;
+import java.util.NoSuchElementException;
+import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.LinkedBlockingDeque;
 
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
@@ -34,6 +37,7 @@ import javax.sip.address.SipURI;
 import javax.sip.header.EventHeader;
 import javax.sip.header.SubscriptionStateHeader;
 import javax.sip.header.ToHeader;
+import javax.sip.message.MessageFactory;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
 
@@ -46,22 +50,26 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
     protected Dialog dialog;
     protected int notifyCount;
     private SipPresenceAgent sipPresenceAgent;
+    private Queue<String> messageQueue;
 
     public SipPresenceAgentListener(SipPresenceAgent sipPresenceAgent) {
         this.sipPresenceAgent = sipPresenceAgent;
+        messageQueue = new LinkedBlockingDeque<>();
     }
 
     public void processRequest(RequestEvent requestEvent) {
         Request request = requestEvent.getRequest();
         ServerTransaction serverTransactionId = requestEvent.getServerTransaction();
 
-        LOG.debug("Request: {}", request.getMethod()); 
+        LOG.debug("Request: {}", request.getMethod());
         LOG.debug("Server Transaction Id: {}", serverTransactionId);
 
         if (request.getMethod().equals(Request.SUBSCRIBE)) {
             processSubscribe(requestEvent, serverTransactionId);
         } else if (request.getMethod().equals(Request.PUBLISH)) {
             processPublish(requestEvent, serverTransactionId);
+        } else if(request.getMethod().equals(Request.MESSAGE)){
+            processMessage(requestEvent, serverTransactionId);
         } else {
             LOG.debug("Received expected request with method: {}. No further processing done", request.getMethod());
         }
@@ -85,21 +93,21 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
         ((SipURI)sipPresenceAgent.getConfiguration().getContactHeader().getAddress().getURI()).setParameter(
                 sipPresenceAgent.getConfiguration().getFromUser(), sipPresenceAgent.getConfiguration().getFromHost());
 
-        SubscriptionStateHeader sstate;
+        SubscriptionStateHeader state;
         if (isInitial) {
             // Initial state is pending, second time we assume terminated (Expires==0)
-            sstate = 
+            state =
                 sipPresenceAgent.getConfiguration().getHeaderFactory().createSubscriptionStateHeader(isInitial ? SubscriptionStateHeader.PENDING : SubscriptionStateHeader.TERMINATED);
     
             // Need a reason for terminated
-            if (sstate.getState().equalsIgnoreCase("terminated")) {
-                sstate.setReasonCode("deactivated");
+            if (state.getState().equalsIgnoreCase("terminated")) {
+                state.setReasonCode("deactivated");
             }
         } else {
-            sstate = sipPresenceAgent.getConfiguration().getHeaderFactory().createSubscriptionStateHeader(SubscriptionStateHeader.ACTIVE);
+            state = sipPresenceAgent.getConfiguration().getHeaderFactory().createSubscriptionStateHeader(SubscriptionStateHeader.ACTIVE);
         }
 
-        notifyRequest.addHeader(sstate);
+        notifyRequest.addHeader(state);
         notifyRequest.setHeader(eventHeader);
         notifyRequest.setHeader(sipPresenceAgent.getConfiguration().getContactHeader());
         notifyRequest.setContent(body, sipPresenceAgent.getConfiguration().getContentTypeHeader());
@@ -177,6 +185,64 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
         } catch (Throwable e) {
             LOG.error("Exception thrown during Notify processing in the SipPresenceAgentListener.", e);
         }
+    }
+
+    public void processMessage(RequestEvent requestEvent, ServerTransaction serverTransactionId) {
+        Request request = requestEvent.getRequest();
+        try
+        {
+            LOG.debug("SipPresenceAgentListener: Received an MESSAGE request");
+            LOG.debug("SipPresenceAgentListener retrieved MESSAGE: {}", requestEvent.getRequest());
+
+            Response response = null;
+            MessageFactory messageFactory = sipPresenceAgent.getConfiguration().getMessageFactory();
+            boolean contentTypeSupported = false;
+
+            SipProvider sipProvider = (SipProvider) requestEvent.getSource();
+            String contentType = request.getHeader("Content-Type").toString();
+
+            if(contentType == null)
+            {
+                response = messageFactory.createResponse(400, request); // bad request
+                sipProvider.sendResponse(response);
+                return;
+            }
+            else if(contentType.contains("text/plain"))
+            {
+                contentTypeSupported = true;
+                messageQueue.add((String) request.getContent());
+            }
+
+            //send OK or unsupported based the retrieved content type
+            if(!contentTypeSupported)
+            {
+                response = messageFactory.createResponse(415, request); // unsupported media type
+            }
+            else
+            {
+                response = messageFactory.createResponse(200, request); // OK
+            }
+            sipProvider.sendResponse(response);
+        }
+        catch( Exception e)
+        {
+            LOG.debug("Exception thrown during processing Message request in SipPresenceAgentListener");
+        }
+    }
+
+    public boolean hasRetrievedMessage()
+    {
+        return !messageQueue.isEmpty();
+    }
+
+    public String getRetrievedMessage() throws NoSuchElementException
+    {
+        String toReturn = messageQueue.remove();
+        if(toReturn == null)
+        {
+            throw new NoSuchElementException("Message Queue is empty");
+        }
+        return toReturn;
     }
 
     public synchronized void processResponse(ResponseEvent responseReceivedEvent) {

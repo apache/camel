@@ -59,7 +59,7 @@ public class PublishSubscribeTest extends CamelTestSupport {
                 from("sip://agent@localhost:5252?stackName=PresenceAgent&presenceAgent=true&eventHeaderName=evtHdrName&eventId=evtid")
                     .to("mock:neverland");
                 
-                from("sip://johndoe@localhost:5254?stackName=Subscriber&toUser=agent&toHost=localhost&toPort=5252&eventHeaderName=evtHdrName&eventId=evtid")
+                from("sip://johndoe@localhost:5254?stackName=Subscriber&subscribing=true&toUser=agent&toHost=localhost&toPort=5252&eventHeaderName=evtHdrName&eventId=evtid")
                     .to("log:ReceivedEvent")
                     .to("mock:notification");
             }

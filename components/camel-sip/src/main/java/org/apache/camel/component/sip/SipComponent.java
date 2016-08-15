@@ -21,15 +21,42 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ *  SipComponent is a factory for the SipEndpoint. This class gets created at the start of a route building.
+ *  When you're building this route for example:
+ *      from(sip://johndoe@asipserver.com:5252)
+ *       .to(x)
+ *
+ *  Camel will create a SipComponent instance and call the createEndpoint() method with the sip uri
+ *  "johndoe@asipserver.com:5252"
+ *
+ */
 public class SipComponent extends UriEndpointComponent {
 
+    /**
+     * The logger for this class. It will log the parameters given when creating an sip endpoint
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(SipComponent.class);
+
+    /**
+     * Default constructor for an UriEndPointComponent. The UriEndPointComponent extends the defaultComponent.
+     *
+     */
     public SipComponent() {
         super(SipEndpoint.class);
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        String parametersString = "";
+        for(String s : parameters.keySet())
+        {
+            parametersString += String.format("%s=%s;",s, parameters.get(s).toString());
+        }
+        LOG.debug("Creating endpoint with uri: {} remaining: {} parameters: {}", uri, remaining, parametersString);
         SipConfiguration config = new SipConfiguration();
         config.initialize(new URI(uri), parameters, this);
         
@@ -37,4 +64,5 @@ public class SipComponent extends UriEndpointComponent {
         setProperties(sipEndpoint.getConfiguration(), parameters);
         return sipEndpoint;
     }
+
 }

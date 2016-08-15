@@ -80,8 +80,13 @@ The SIP component has no options.
 
 
 
+
+
+
+
+
 // endpoint options: START
-The SIP component supports 45 endpoint options which are listed below:
+The SIP component supports 46 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -105,6 +110,7 @@ The SIP component supports 45 endpoint options which are listed below:
 | transport | common | tcp | String | Setting for choice of transport protocol. Valid choices are tcp or udp.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | consumer | consumer | false | boolean | This setting is used to determine whether the kind of header (FromHeaderToHeader etc) that needs to be created for this endpoint
+| subscribing | consumer | false | boolean | Whether the sip consumer will subscribe to the given address or only listen for incoming MESSAGE requests
 | presenceAgent | consumer | false | boolean | This setting is used to distinguish between a Presence Agent & a consumer. This is due to the fact that the SIP Camel component ships with a basic Presence Agent (for testing purposes only). Consumers have to set this flag to true.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | addressFactory | advanced |  | AddressFactory | To use a custom AddressFactory
@@ -139,6 +145,7 @@ The SIP component supports 45 endpoint options which are listed below:
 [[Sip-SendingMessagestofromaSIPendpoint]]
 Sending Messages to/from a SIP endpoint
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 
 [[Sip-CreatingaCamelSIPPublisher]]
 Creating a Camel SIP Publisher
@@ -179,26 +186,27 @@ publications sent to  +
 * using a registry based eventHeader called evtHdrName. The evtHdrName
 contains the Event which is se to "Event_A"
 * using a registry based eventId called evtId
+* setting subscribing to true
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
-@Override  
-protected RouteBuilder createRouteBuilder() throws Exception {  
-    return new RouteBuilder() {  
-        @Override  
-        public void configure() throws Exception {    
-            // Create PresenceAgent  
-            from("sip://agent@localhost:5152?stackName=PresenceAgent&presenceAgent=true&eventHeaderName=evtHdrName&eventId=evtid")  
-                .to("mock:neverland");  
-                  
-            // Create Sip Consumer(Event Subscriber)  
-            from("sip://johndoe@localhost:5154?stackName=Subscriber&toUser=agent&toHost=localhost&toPort=5152&eventHeaderName=evtHdrName&eventId=evtid")  
-                .to("log:ReceivedEvent?level=DEBUG")  
-                .to("mock:notification");  
-                  
-        }  
-    };  
-}  
+ @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // Create PresenceAgent
+                from("sip://agent@localhost:5252?stackName=PresenceAgent&presenceAgent=true" +
+                     "&eventHeaderName=evtHdrName&eventId=evtid")
+                    .to("mock:neverland");
+
+                from("sip://johndoe@localhost:5254?stackName=Subscriber&subscribing=true" +
+                    "&toUser=agent&toHost=localhost&toPort=5252&eventHeaderName=evtHdrName&eventId=evtid")
+                    .to("log:ReceivedEvent")
+                    .to("mock:notification");
+            }
+        };
+    }
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *The Camel SIP component also ships with a Presence Agent that is meant
@@ -211,3 +219,53 @@ Subscriber. It has a separate SIP stackName distinct from Publisher as
 well as Subscriber. While it is set up as a Camel Consumer, it does not
 actually send any messages along the route to the endpoint
 "mock:neverland".
+
+[[Sip-SendingMessagesWithProducer]]
+Sending messages to a sip uri
+++++++++++++++++++++++++++++++
+In the example below, a SIP producer is created to send messages from an activeMQ queue to a given SIP uri:
+[source,java]
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+String sendingSipURI =
+                "sip://listener@localhost:5156"+
+                "?stackName=Retriever" +
+                "&fromUser=sending" +
+                "&fromHost= localhost" +
+                "&fromPort=5155" +
+                "&eventHeaderName=sendingFromQueue" +
+                "&eventId=sourceJSMqueue";
+
+Processor headerAdder = new Processor()
+        {
+            @Override
+            public void process(Exchange exchange) throws Exception
+            {
+                exchange.getIn().setHeader("REQUEST_METHOD", Request.MESSAGE);
+            }
+        };
+
+from("activemq:sip-messages")
+        .process(headerAdder).to(sendingSipURI);  //send message to given SIP uri
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The sip URI takes the address it needs to send the message to, along with the sip stackname, the address it uses to
+send the messages, and an eventHeader and ID.
+
+The processor is necessary to give the appropriate SIP method to the producer.
+
+[[Sip-RetrievingMessagesWithConsumer]]
+Retrieving SIP messages
++++++++++++++++++++++++
+
+In the sample below, a SIP consumer processes messages send to listener@localhost:5154
+and puts them into a activeMQ queue as well as logging them:
+
+[source,java]
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+from("sip://listener@localhost:5154?stackName=Listener&eventHeaderName=retrievedFromSIP&eventId=SIP")
+        .to("log:ReceivedMessage")
+        .to("activemq:sip-messages");
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+Note that there are no parameter "toUser", "toHost" and toPort in the SIP URI as is only consumer messages. If it was
+a subscribing consumer, it would need the parameter "subscribing=true" and the "to" parameters to know where to
+subscribe to.

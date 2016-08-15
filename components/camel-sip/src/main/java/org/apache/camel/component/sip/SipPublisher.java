@@ -23,6 +23,7 @@ import javax.sip.SipProvider;
 import javax.sip.SipStack;
 import javax.sip.message.Request;
 
+import gov.nist.javax.sip.message.SIPMessage;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ServicePoolAware;
@@ -46,19 +47,19 @@ public class SipPublisher extends DefaultProducer implements ServicePoolAware {
         super.doStart();
         Properties properties = configuration.createInitialProperties();
         setSipStack(configuration.getSipFactory().createSipStack(properties));
-        
+
         configuration.parseURI();
         if (sipPublishListener == null) {
             sipPublishListener = new SipPublishListener(this);
         }
-        
+
         configuration.setListeningPoint(
                 sipStack.createListeningPoint(configuration.getFromHost(), Integer.valueOf(configuration.getFromPort()).intValue(), configuration.getTransport()));
-        
+
         boolean found = false;
         if (provider != null) {
             for (ListeningPoint listeningPoint : provider.getListeningPoints()) {
-                if (listeningPoint.getIPAddress().equalsIgnoreCase(configuration.getListeningPoint().getIPAddress()) 
+                if (listeningPoint.getIPAddress().equalsIgnoreCase(configuration.getListeningPoint().getIPAddress())
                     && (listeningPoint.getPort() == configuration.getListeningPoint().getPort())) {
                     found = true;
                 }
@@ -80,10 +81,10 @@ public class SipPublisher extends DefaultProducer implements ServicePoolAware {
         getSipStack().stop();
     }
     
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) throws Exception { //// TODO: 30/06/16 fix
         String requestMethod = exchange.getIn().getHeader("REQUEST_METHOD", String.class);
         if (requestMethod == null) {
-            throw new CamelExchangeException("Missing mandatory Header: REQUEST_HEADER", exchange);
+           throw new CamelExchangeException("Missing mandatory Header: REQUEST_HEADER", exchange);
         }
         Object body = exchange.getIn().getBody();
         
