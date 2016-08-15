@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.netty4;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -26,9 +29,6 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.FileInputStream;
-import java.io.InputStream;
 
 /**
  * In this test we are checking that same netty endpoint can be safely called twice
