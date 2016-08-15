@@ -44,7 +44,6 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -103,7 +102,6 @@ public class SpringBatchJobRegistryTest extends AbstractJUnit4SpringContextTests
         }
     }
 
-    @EnableAutoConfiguration
     @EnableBatchProcessing(modular = true)
     public static class BatchConfig {
 
