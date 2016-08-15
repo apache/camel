@@ -47,7 +47,7 @@ public class ClassPathURIResolver implements URIResolver {
         if (stream != null) {
             return new StreamSource(stream);
         } else {
-            if (null != clientUriResolver) {
+            if (clientUriResolver != null) {
                 return clientUriResolver.resolve(href, base);
             } else {
                 return new StreamSource(stream);
