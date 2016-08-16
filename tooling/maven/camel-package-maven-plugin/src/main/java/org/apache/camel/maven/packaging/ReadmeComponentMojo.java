@@ -30,6 +30,8 @@ import org.apache.camel.maven.packaging.model.ComponentOptionModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
 import org.apache.camel.maven.packaging.model.DataFormatOptionModel;
 import org.apache.camel.maven.packaging.model.EndpointOptionModel;
+import org.apache.camel.maven.packaging.model.LanguageModel;
+import org.apache.camel.maven.packaging.model.LanguageOptionModel;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -85,6 +87,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         executeComponent();
         executeDataFormat();
+        executeLanguage();
     }
 
     private void executeComponent() throws MojoExecutionException, MojoFailureException {
@@ -156,6 +159,42 @@ public class ReadmeComponentMojo extends AbstractMojo {
                         getLog().debug("No changes to doc file: " + file);
                     } else {
                         getLog().warn("No dataformat doc file: " + file);
+                    }
+                }
+            }
+        }
+    }
+
+    private void executeLanguage() throws MojoExecutionException, MojoFailureException {
+        // find the language names
+        List<String> languageNames = findLanguageNames();
+
+        final Set<File> jsonFiles = new TreeSet<File>();
+        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+
+        // only if there is language we should update the documentation files
+        if (!languageNames.isEmpty()) {
+            getLog().debug("Found " + languageNames.size() + " languages");
+            for (String languageName : languageNames) {
+                String json = loadLanguageJson(jsonFiles, languageName);
+                if (json != null) {
+                    File file = new File(docDir, languageName + "-language.adoc");
+
+                    LanguageModel model = generateLanguageModel(languageName, json);
+
+                    boolean exists = file.exists();
+                    boolean updated = false;
+                    if (model.getLanguageOptions() != null) {
+                        String options = templateLanguageOptions(model);
+                        updated |= updateLanguageOptions(file, options);
+                    }
+
+                    if (updated) {
+                        getLog().info("Updated doc file: " + file);
+                    } else if (exists) {
+                        getLog().debug("No changes to doc file: " + file);
+                    } else {
+                        getLog().warn("No language doc file: " + file);
                     }
                 }
             }
@@ -264,6 +303,40 @@ public class ReadmeComponentMojo extends AbstractMojo {
         }
     }
 
+    private boolean updateLanguageOptions(File file, String changed) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            String existing = StringHelper.between(text, "// language options: START", "// language options: END");
+            if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                changed = changed.trim();
+                if (existing.equals(changed)) {
+                    return false;
+                } else {
+                    String before = StringHelper.before(text, "// language options: START");
+                    String after = StringHelper.after(text, "// language options: END");
+                    text = before + "\n// language options: START\n" + changed + "\n// language options: END\n" + after;
+                    writeText(file, text);
+                    return true;
+                }
+            } else {
+                getLog().warn("Cannot find markers in file " + file);
+                getLog().warn("Add the following markers");
+                getLog().warn("\t// language options: START");
+                getLog().warn("\t// language options: END");
+                return false;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
     private String loadComponentJson(Set<File> jsonFiles, String componentName) {
         try {
             for (File file : jsonFiles) {
@@ -288,6 +361,23 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     String json = loadText(new FileInputStream(file));
                     boolean isDataFormat = json.contains("\"kind\": \"dataformat\"");
                     if (isDataFormat) {
+                        return json;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    private String loadLanguageJson(Set<File> jsonFiles, String languageName) {
+        try {
+            for (File file : jsonFiles) {
+                if (file.getName().equals(languageName + ".json")) {
+                    String json = loadText(new FileInputStream(file));
+                    boolean isLanguage = json.contains("\"kind\": \"language\"");
+                    if (isLanguage) {
                         return json;
                     }
                 }
@@ -391,6 +481,43 @@ public class ReadmeComponentMojo extends AbstractMojo {
         return dataFormat;
     }
 
+    private LanguageModel generateLanguageModel(String languageName, String json) {
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
+
+        LanguageModel language = new LanguageModel();
+        language.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
+        language.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
+        language.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
+        language.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
+        language.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        language.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
+        language.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
+        language.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
+        language.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
+
+        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        for (Map<String, String> row : rows) {
+            LanguageOptionModel option = new LanguageOptionModel();
+            option.setName(getSafeValue("name", row));
+            option.setKind(getSafeValue("kind", row));
+            option.setType(getSafeValue("type", row));
+            option.setJavaType(getSafeValue("javaType", row));
+            option.setDeprecated(getSafeValue("deprecated", row));
+            option.setEnumValues(getSafeValue("enum", row));
+            option.setDefaultValue(getSafeValue("defaultValue", row));
+            option.setDescription(getSafeValue("description", row));
+
+            // skip option named id/expression
+            if ("id".equals(option.getName()) || "expression".equals(option.getName())) {
+                getLog().debug("Skipping option: " + option.getName());
+            } else {
+                language.addLanguageOption(option);
+            }
+        }
+
+        return language;
+    }
+
     private String templateComponentHeader(ComponentModel model) throws MojoExecutionException {
         try {
             String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("component-header.mvel"));
@@ -424,6 +551,16 @@ public class ReadmeComponentMojo extends AbstractMojo {
     private String templateDataFormatOptions(DataFormatModel model) throws MojoExecutionException {
         try {
             String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("dataformat-options.mvel"));
+            String out = (String) TemplateRuntime.eval(template, model);
+            return out;
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
+        }
+    }
+
+    private String templateLanguageOptions(LanguageModel model) throws MojoExecutionException {
+        try {
+            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("language-options.mvel"));
             String out = (String) TemplateRuntime.eval(template, model);
             return out;
         } catch (Exception e) {
@@ -485,6 +622,34 @@ public class ReadmeComponentMojo extends AbstractMojo {
             }
         }
         return dataFormatNames;
+    }
+
+    private List<String> findLanguageNames() {
+        List<String> languageNames = new ArrayList<String>();
+        for (Resource r : project.getBuild().getResources()) {
+            File f = new File(r.getDirectory());
+            if (!f.exists()) {
+                f = new File(project.getBasedir(), r.getDirectory());
+            }
+            f = new File(f, "META-INF/services/org/apache/camel/language");
+
+            if (f.exists() && f.isDirectory()) {
+                File[] files = f.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        // skip directories as there may be a sub .resolver directory
+                        if (file.isDirectory()) {
+                            continue;
+                        }
+                        String name = file.getName();
+                        if (name.charAt(0) != '.') {
+                            languageNames.add(name);
+                        }
+                    }
+                }
+            }
+        }
+        return languageNames;
     }
 
 }
