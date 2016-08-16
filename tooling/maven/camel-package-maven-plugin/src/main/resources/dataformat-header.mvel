@@ -1,0 +1,15 @@
+# @{title}
+
+@{description}
+
+### Maven Dependency
+
+Maven users would need to add dependency:
+
+```xml
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>${artifactId}</artifactId>
+      <version>${version}</version>
+    </dependency>
+```
