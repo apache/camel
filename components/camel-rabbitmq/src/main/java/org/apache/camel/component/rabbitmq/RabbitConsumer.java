@@ -68,10 +68,16 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
             if (!consumer.getEndpoint().isAutoAck()) {
             	lock.acquire();
             }
-            doHandleDelivery(consumerTag, envelope, properties, body);
-            if (!consumer.getEndpoint().isAutoAck()) {
-            	lock.release();
-            }
+            //Channel might be open because while we were waiting for the lock, stop() has been succesfully called.
+            if (!channel.isOpen()) return;
+            
+            try {
+                doHandleDelivery(consumerTag, envelope, properties, body);
+            } finally {
+                if (!consumer.getEndpoint().isAutoAck()) {
+                	lock.release();
+                }
+			}
     		
     	} catch (InterruptedException e) {
         	log.error("Thread Interrupted!");
@@ -187,13 +193,15 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
             if (isChannelOpen()) {
                 channel.close();
             }
-            lock.release();
 		} catch (TimeoutException e) {
             log.error("Timeout occured");
             throw e;
         } catch (InterruptedException e1) {
         	log.error("Thread Interrupted!");
-        }
+        } finally {
+            lock.release();
+			
+		}
     }
 
     /**
