@@ -29,6 +29,39 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
+[[JacksonXML-Options]]
+JacksonXML Options
+^^^^^^^^^^^^^^^^^^
+
+
+
+// dataformat options: START
+The JacksonXML dataformat supports 13 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| xmlMapper |  | String | Lookup and use the existing XmlMapper with the given id.
+| prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
+| unmarshalTypeName |  | String | Class name of the java type to use when unarmshalling
+| jsonView |  | Class<?> | When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations
+| include |  | String | If you want to marshal a pojo to JSON and the pojo has some fields with null values. And you want to skip these null values you can set this option to NOT_NULL
+| allowJmsType | false | Boolean | Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.
+| collectionTypeName |  | String | Refers to a custom collection type to lookup in the registry to use. This option should rarely be used but allows to use different collection types than java.util.Collection based as default.
+| useList | false | Boolean | To unarmshal to a List of Map or a List of Pojo.
+| enableJaxbAnnotationModule | false | Boolean | Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be used by Jackson.
+| moduleClassNames |  | String | To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma.
+| moduleRefs |  | String | To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.
+| enableFeatures |  | String | Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature com.fasterxml.jackson.databind.DeserializationFeature or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
+| disableFeatures |  | String | Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature com.fasterxml.jackson.databind.DeserializationFeature or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
+|=======================================================================
+{% endraw %}
+// dataformat options: END
+
+
 [[JacksonXML-UsingJacksonXMLinSpringDSL]]
 Using Jackson XML in Spring DSL
 +++++++++++++++++++++++++++++++

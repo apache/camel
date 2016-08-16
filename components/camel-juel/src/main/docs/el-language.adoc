@@ -41,6 +41,28 @@ link:message-filter.html[Message Filter] or as an
 link:expression.html[Expression] for a
 link:recipient-list.html[Recipient List]
 
+[[EL-Options]]
+EL Options
+^^^^^^^^^^
+
+
+
+// language options: START
+The EL language supports 1 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
+|=======================================================================
+{% endraw %}
+// language options: END
+
+
+
 [[EL-Variables]]
 Variables
 ^^^^^^^^^

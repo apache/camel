@@ -39,11 +39,30 @@ You can append query options to the URI in the following format,
 Options
 ^^^^^^^
 
+
 // component options: START
+The String Template component has no options.
 // component options: END
 
+
+
 // endpoint options: START
+The String Template component supports 6 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| resourceUri | producer |  | String | *Required* Path to the resource or a reference to lookup a bean in the Registry to use as the resource
+| contentCache | producer | false | boolean | Sets whether to use resource content cache or not
+| delimiterStart | producer | < | char | The variable start delimiter
+| delimiterStop | producer | > | char | The variable end delimiter
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
 // endpoint options: END
+
 
 [[StringTemplate-Headers]]
 Headers
