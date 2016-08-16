@@ -31,6 +31,10 @@ public class TidyMarkupDataFormatConfiguration {
      * java.lang.String. Is by default org.w3c.dom.Node
      */
     private String dataObjectType;
+    /**
+     * When returning a String do we omit the XML declaration in the top.
+     */
+    private Boolean omitXmlDeclaration = false;
 
     public String getDataObjectType() {
         return dataObjectType;
@@ -38,5 +42,13 @@ public class TidyMarkupDataFormatConfiguration {
 
     public void setDataObjectType(String dataObjectType) {
         this.dataObjectType = dataObjectType;
+    }
+
+    public Boolean getOmitXmlDeclaration() {
+        return omitXmlDeclaration;
+    }
+
+    public void setOmitXmlDeclaration(Boolean omitXmlDeclaration) {
+        this.omitXmlDeclaration = omitXmlDeclaration;
     }
 }
