@@ -93,7 +93,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
             for (String componentName : componentNames) {
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
-                    File file = new File(docDir, componentName + ".adoc");
+                    File file = new File(docDir, componentName + "-component.adoc");
                     ComponentModel model = generateComponentModel(componentName, json);
 
                     boolean exists = file.exists();
