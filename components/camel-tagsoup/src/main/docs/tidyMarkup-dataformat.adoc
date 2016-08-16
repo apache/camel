@@ -22,8 +22,9 @@ TidyMarkup Options
 ^^^^^^^^^^^^^^^
 
 
+
 // dataformat options: START
-The TidyMarkup dataformat supports 1 options which are listed below.
+The TidyMarkup dataformat supports 2 options which are listed below.
 
 
 
@@ -31,10 +32,12 @@ The TidyMarkup dataformat supports 1 options which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
-| dataObjectType |  | String | What data type to unmarshal as can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node
+| dataObjectType | org.w3c.dom.Node | String | What data type to unmarshal as can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node
+| omitXmlDeclaration | false | Boolean | When returning a String do we omit the XML declaration in the top.
 |=======================================================================
 {% endraw %}
 // dataformat options: END
+
 
 
 
