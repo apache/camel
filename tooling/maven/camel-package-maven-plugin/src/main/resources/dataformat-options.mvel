@@ -1,0 +1,15 @@
+@if{dataFormatOptions.isEmpty()}
+The @{title} dataformat has no options.
+@else{}
+The @{title} dataformat supports @{dataFormatOptions.size()} options which are listed below.
+@end{}
+
+@if{!dataFormatOptions.isEmpty()}
+{% raw %}
+[width="100%",cols="2s,1m,8",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+@foreach{row : dataFormatOptions}| @{row.name} | @{row.shortJavaType} | @{row.description}
+@end{}|=======================================================================
+{% endraw %}
+@end{}

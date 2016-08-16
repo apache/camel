@@ -12,6 +12,30 @@ simple
 and https://github.com/RichardHightower/json-parsers-benchmark[fast
 parser] than other common parsers currently used.
 
+[[Boon-Options]]
+Options
+^^^^^^^
+
+
+
+// dataformat options: START
+The Boon dataformat supports 2 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,8",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| unmarshalTypeName | String | Class name of the java type to use when unarmshalling
+| useList | Boolean | To unarmshal to a List of Map or a List of Pojo.
+|=======================================================================
+{% endraw %}
+// dataformat options: END
+
+
+
+
 [[Boon-UsingtheJavaDSL]]
 Using the Java DSL
 ^^^^^^^^^^^^^^^^^^

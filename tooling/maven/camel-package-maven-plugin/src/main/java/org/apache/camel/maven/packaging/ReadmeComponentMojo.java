@@ -27,6 +27,8 @@ import java.util.TreeSet;
 
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
+import org.apache.camel.maven.packaging.model.DataFormatModel;
+import org.apache.camel.maven.packaging.model.DataFormatOptionModel;
 import org.apache.camel.maven.packaging.model.EndpointOptionModel;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -41,7 +43,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 
 /**
- * Generate or updates the component readme.md file in the project root directory.
+ * Generate or updates the component/dataformat/language readme.md file in the project root directory.
  *
  * @goal update-readme
  */
@@ -81,6 +83,11 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        executeComponent();
+        executeDataFormat();
+    }
+
+    private void executeComponent() throws MojoExecutionException, MojoFailureException {
         // find the component names
         List<String> componentNames = findComponentNames();
 
@@ -113,6 +120,41 @@ public class ReadmeComponentMojo extends AbstractMojo {
                         getLog().debug("No changes to doc file: " + file);
                     } else {
                         getLog().warn("No component doc file: " + file);
+                    }
+                }
+            }
+        }
+    }
+
+    private void executeDataFormat() throws MojoExecutionException, MojoFailureException {
+        // find the dataformat names
+        List<String> dataFormatNames = findDataFormatNames();
+
+        final Set<File> jsonFiles = new TreeSet<File>();
+        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+
+        // only if there is dataformat we should update the documentation files
+        if (!dataFormatNames.isEmpty()) {
+            getLog().debug("Found " + dataFormatNames.size() + " dataformats");
+            for (String dataFormatName : dataFormatNames) {
+                String json = loadDataFormatJson(jsonFiles, dataFormatName);
+                if (json != null) {
+                    File file = new File(docDir, dataFormatName + "-dataformat.adoc");
+                    DataFormatModel model = generateDataFormatModel(dataFormatName, json);
+
+                    boolean exists = file.exists();
+                    boolean updated = false;
+                    if (model.getDataFormatOptions() != null) {
+                        String options = templateDataFormatOptions(model);
+                        updated |= updateDataFormatOptions(file, options);
+                    }
+
+                    if (updated) {
+                        getLog().info("Updated doc file: " + file);
+                    } else if (exists) {
+                        getLog().debug("No changes to doc file: " + file);
+                    } else {
+                        getLog().warn("No dataformat doc file: " + file);
                     }
                 }
             }
@@ -187,6 +229,40 @@ public class ReadmeComponentMojo extends AbstractMojo {
         }
     }
 
+    private boolean updateDataFormatOptions(File file, String changed) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            String existing = StringHelper.between(text, "// dataformat options: START", "// dataformat options: END");
+            if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                changed = changed.trim();
+                if (existing.equals(changed)) {
+                    return false;
+                } else {
+                    String before = StringHelper.before(text, "// dataformat options: START");
+                    String after = StringHelper.after(text, "// dataformat options: END");
+                    text = before + "\n// dataformat options: START\n" + changed + "\n// dataformat options: END\n" + after;
+                    writeText(file, text);
+                    return true;
+                }
+            } else {
+                getLog().warn("Cannot find markers in file " + file);
+                getLog().warn("Add the following markers");
+                getLog().warn("\t// dataformat options: START");
+                getLog().warn("\t// dataformat options: END");
+                return false;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
     private String loadComponentJson(Set<File> jsonFiles, String componentName) {
         try {
             for (File file : jsonFiles) {
@@ -194,6 +270,23 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     String json = loadText(new FileInputStream(file));
                     boolean isComponent = json.contains("\"kind\": \"component\"");
                     if (isComponent) {
+                        return json;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    private String loadDataFormatJson(Set<File> jsonFiles, String dataFormatName) {
+        try {
+            for (File file : jsonFiles) {
+                if (file.getName().equals(dataFormatName + ".json")) {
+                    String json = loadText(new FileInputStream(file));
+                    boolean isDataFormat = json.contains("\"kind\": \"dataformat\"");
+                    if (isDataFormat) {
                         return json;
                     }
                 }
@@ -260,6 +353,43 @@ public class ReadmeComponentMojo extends AbstractMojo {
         return component;
     }
 
+    private DataFormatModel generateDataFormatModel(String dataFormatName, String json) {
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
+
+        DataFormatModel dataFormat = new DataFormatModel();
+        dataFormat.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
+        dataFormat.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
+        dataFormat.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
+        dataFormat.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
+        dataFormat.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        dataFormat.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
+        dataFormat.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
+        dataFormat.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
+        dataFormat.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
+
+        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        for (Map<String, String> row : rows) {
+            DataFormatOptionModel option = new DataFormatOptionModel();
+            option.setName(getSafeValue("name", row));
+            option.setKind(getSafeValue("kind", row));
+            option.setType(getSafeValue("type", row));
+            option.setJavaType(getSafeValue("javaType", row));
+            option.setDeprecated(getSafeValue("deprecated", row));
+            option.setEnumValues(getSafeValue("enum", row));
+            option.setDefaultValue(getSafeValue("defaultValue", row));
+            option.setDescription(getSafeValue("description", row));
+
+            // skip option named id
+            if ("id".equals(option.getName())) {
+                getLog().debug("Skipping option: " + option.getName());
+            } else {
+                dataFormat.addDataFormatOption(option);
+            }
+        }
+
+        return dataFormat;
+    }
+
     private String templateComponentHeader(ComponentModel model) throws MojoExecutionException {
         try {
             String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("component-header.mvel"));
@@ -283,6 +413,16 @@ public class ReadmeComponentMojo extends AbstractMojo {
     private String templateEndpointOptions(ComponentModel model) throws MojoExecutionException {
         try {
             String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("endpoint-options.mvel"));
+            String out = (String) TemplateRuntime.eval(template, model);
+            return out;
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
+        }
+    }
+
+    private String templateDataFormatOptions(DataFormatModel model) throws MojoExecutionException {
+        try {
+            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("dataformat-options.mvel"));
             String out = (String) TemplateRuntime.eval(template, model);
             return out;
         } catch (Exception e) {
@@ -316,6 +456,34 @@ public class ReadmeComponentMojo extends AbstractMojo {
             }
         }
         return componentNames;
+    }
+
+    private List<String> findDataFormatNames() {
+        List<String> dataFormatNames = new ArrayList<String>();
+        for (Resource r : project.getBuild().getResources()) {
+            File f = new File(r.getDirectory());
+            if (!f.exists()) {
+                f = new File(project.getBasedir(), r.getDirectory());
+            }
+            f = new File(f, "META-INF/services/org/apache/camel/dataformat");
+
+            if (f.exists() && f.isDirectory()) {
+                File[] files = f.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        // skip directories as there may be a sub .resolver directory
+                        if (file.isDirectory()) {
+                            continue;
+                        }
+                        String name = file.getName();
+                        if (name.charAt(0) != '.') {
+                            dataFormatNames.add(name);
+                        }
+                    }
+                }
+            }
+        }
+        return dataFormatNames;
     }
 
 }
