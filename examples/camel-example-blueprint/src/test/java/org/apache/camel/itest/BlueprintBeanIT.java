@@ -31,12 +31,14 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.util.Filter;
 import org.ops4j.pax.swissbox.tinybundles.dp.Constants;
 
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.streamBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
 
 @RunWith(PaxExam.class)
@@ -54,6 +56,7 @@ public class BlueprintBeanIT extends CamelKarafTestSupport {
     public Option[] configure() throws Exception {
         return combine(
                 configure("camel-core-osgi", "camel-blueprint", "camel-test"),
+                logLevel(LogLevelOption.LogLevel.WARN),
                 mavenBundle().groupId("org.apache.camel").artifactId("camel-core-osgi").versionAsInProject(),
                 streamBundle(
                         bundle()
