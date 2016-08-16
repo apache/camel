@@ -158,6 +158,30 @@ public interface CamelCatalog {
     String modelJSonSchema(String name);
 
     /**
+     * Returns the component documentation as Ascii doc format.
+     *
+     * @param name the component name
+     * @return component documentation in ascii doc format.
+     */
+    String componentAsciiDoc(String name);
+
+    /**
+     * Returns the data format documentation as Ascii doc format.
+     *
+     * @param name the data format name
+     * @return data format documentation in ascii doc format.
+     */
+    String dataFormatAsciiDoc(String name);
+
+    /**
+     * Returns the language documentation as Ascii doc format.
+     *
+     * @param name the language name
+     * @return language documentation in ascii doc format.
+     */
+    String languageAsciiDoc(String name);
+
+    /**
      * Find all the unique label names all the components are using.
      *
      * @return a set of all the labels.

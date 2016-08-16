@@ -31,6 +31,7 @@ import static org.apache.camel.catalog.CatalogHelper.loadText;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class CamelCatalogTest {
@@ -781,6 +782,34 @@ public class CamelCatalogTest {
         assertNotNull(tree);
 
         assertTrue(json.contains("CamelContext using XML configuration"));
+    }
+
+    @Test
+    public void testComponentAsciiDoc() throws Exception {
+        String doc = catalog.componentAsciiDoc("mock");
+        assertNotNull(doc);
+        assertTrue(doc.contains("mock:someName"));
+
+        doc = catalog.componentAsciiDoc("geocoder");
+        assertNotNull(doc);
+        assertTrue(doc.contains("looking up geocodes"));
+
+        doc = catalog.componentAsciiDoc("unknown");
+        assertNull(doc);
+    }
+
+    @Test
+    public void testDataFormatAsciiDoc() throws Exception {
+        String doc = catalog.dataFormatAsciiDoc("json-jackson");
+        assertNotNull(doc);
+        assertTrue(doc.contains("Jackson dataformat"));
+    }
+
+    @Test
+    public void testLanguageAsciiDoc() throws Exception {
+        String doc = catalog.languageAsciiDoc("jsonpath");
+        assertNotNull(doc);
+        assertTrue(doc.contains("JSonPath language"));
     }
 
 }
