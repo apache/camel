@@ -18,20 +18,22 @@ Options
 
 
 
+
 // dataformat options: START
 The Boon dataformat supports 2 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| unmarshalTypeName | String | Class name of the java type to use when unarmshalling
-| useList | Boolean | To unarmshal to a List of Map or a List of Pojo.
+| Name | Default | Java Type | Description
+| unmarshalTypeName |  | String | Class name of the java type to use when unarmshalling
+| useList | false | Boolean | To unarmshal to a List of Map or a List of Pojo.
 |=======================================================================
 {% endraw %}
 // dataformat options: END
+
 
 
 

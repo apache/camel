@@ -44,13 +44,14 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The Direct VM component supports 4 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | block | boolean | If sending a message to a direct endpoint which has no active consumer then we can tell the producer to block and wait for the consumer to become active.
@@ -60,6 +61,7 @@ The Direct VM component supports 4 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

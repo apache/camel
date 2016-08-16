@@ -125,13 +125,14 @@ Paho Options
 ^^^^^^^^^^^^
 
 
+
 // component options: START
 The Paho component supports 3 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | brokerUrl | String | The URL of the MQTT broker.
@@ -140,6 +141,7 @@ The Paho component supports 3 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

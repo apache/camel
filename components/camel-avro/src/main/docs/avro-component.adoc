@@ -179,13 +179,14 @@ Avro RPC URI Options
 
 
 
+
 // component options: START
 The Avro component supports 11 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | configuration | AvroConfiguration | To use a shared AvroConfiguration to configure options once. Properties of the shared configuration can also be set individually.
@@ -202,6 +203,7 @@ The Avro component supports 11 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

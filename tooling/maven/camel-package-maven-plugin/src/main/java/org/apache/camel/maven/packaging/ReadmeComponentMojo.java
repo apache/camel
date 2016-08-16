@@ -140,6 +140,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 String json = loadDataFormatJson(jsonFiles, dataFormatName);
                 if (json != null) {
                     File file = new File(docDir, dataFormatName + "-dataformat.adoc");
+
                     DataFormatModel model = generateDataFormatModel(dataFormatName, json);
 
                     boolean exists = file.exists();

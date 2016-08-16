@@ -55,19 +55,21 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The APNS component supports 1 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | apnsService | ApnsService | To use a custom link ApnsService
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

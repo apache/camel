@@ -102,13 +102,14 @@ Component Options and Configurations
 
 
 
+
 // component options: START
 The Simple JMS component supports 9 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | connectionFactory | ConnectionFactory | A ConnectionFactory is required to enable the SjmsComponent. It can be set directly or set set as part of a ConnectionResource.
@@ -123,6 +124,7 @@ The Simple JMS component supports 9 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

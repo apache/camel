@@ -80,13 +80,14 @@ options related to UDP transport.
 
 
 
+
 // component options: START
 The Netty HTTP component supports 68 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | nettyHttpBinding | NettyHttpBinding | To use a custom org.apache.camel.component.netty.http.NettyHttpBinding for binding to/from Netty and Camel Message API.
@@ -160,6 +161,7 @@ The Netty HTTP component supports 68 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

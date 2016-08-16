@@ -6,7 +6,7 @@ The @{title} component supports @{componentOptions.size()} options which are lis
 
 @if{!componentOptions.isEmpty()}
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 @foreach{row : componentOptions}| @{row.name} | @{row.shortJavaType} | @{row.description}

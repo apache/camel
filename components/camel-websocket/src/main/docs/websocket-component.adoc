@@ -36,13 +36,14 @@ Websocket Options
 
 
 
+
 // component options: START
 The Jetty Websocket component supports 12 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | staticResources | String | Set a resource path for static resources (such as .html files etc). The resources can be loaded from classpath if you prefix with classpath: otherwise the resources is loaded from file system or from JAR files. For example to load from root classpath use classpath:. or classpath:WEB-INF/static If not configured (eg null) then no static resource is in use.
@@ -60,6 +61,7 @@ The Jetty Websocket component supports 12 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

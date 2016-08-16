@@ -34,13 +34,14 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The Stub component supports 3 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | queueSize | int | Sets the default maximum capacity of the SEDA queue (i.e. the number of messages it can hold).
@@ -49,6 +50,7 @@ The Stub component supports 3 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

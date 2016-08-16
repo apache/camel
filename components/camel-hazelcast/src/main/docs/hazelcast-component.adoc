@@ -50,19 +50,21 @@ Options
 
 
 
+
 // component options: START
 The Hazelcast component supports 1 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | hazelcastInstance | HazelcastInstance | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference camel use the default hazelcast instance from the camel-hazelcast instance.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 
