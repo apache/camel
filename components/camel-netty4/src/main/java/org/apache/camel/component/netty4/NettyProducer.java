@@ -229,7 +229,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         return false;
     }
 
-    public void processWithConnectedChannel(final Exchange exchange, AsyncCallback callback, ChannelFuture channelFuture, Object body) {
+    public void processWithConnectedChannel(final Exchange exchange, final AsyncCallback callback, final ChannelFuture channelFuture, final Object body) {
         // remember channel so we can reuse it
         final Channel channel = channelFuture.channel();
         if (getConfiguration().isReuseChannel() && exchange.getProperty(NettyConstants.NETTY_CHANNEL) == null) {
