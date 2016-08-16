@@ -17,6 +17,27 @@ link:tidymarkup.html[TidyMarkup] only supports the *unmarshal* operation
 as we really don't want to turn well formed HTML into ugly HTML
 image:https://cwiki.apache.org/confluence/s/en_GB/5982/f2b47fb3d636c8bc9fd0b11c0ec6d0ae18646be7.1/_/images/icons/emoticons/smile.png[(smile)]
 
+[[TidyMarkup-Options]]
+TidyMarkup Options
+^^^^^^^^^^^^^^^
+
+
+// dataformat options: START
+The TidyMarkup dataformat supports 1 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| dataObjectType |  | String | What data type to unmarshal as can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node
+|=======================================================================
+{% endraw %}
+// dataformat options: END
+
+
+
 [[TidyMarkup-JavaDSLExample]]
 Java DSL Example
 ^^^^^^^^^^^^^^^^
