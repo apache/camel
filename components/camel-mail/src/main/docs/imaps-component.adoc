@@ -6,13 +6,14 @@ Mail Component IMAPs
 
 
 
+
 // component options: START
 The IMAPS component supports 38 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | configuration | MailConfiguration | Sets the Mail configuration. Properties of the shared configuration can also be set individually.
@@ -56,6 +57,7 @@ The IMAPS component supports 38 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

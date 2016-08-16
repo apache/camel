@@ -64,13 +64,14 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The Restlet component supports 20 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | controllerDaemon | Boolean | Indicates if the controller thread should be a daemon (not blocking JVM exit).
@@ -96,6 +97,7 @@ The Restlet component supports 20 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

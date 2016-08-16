@@ -49,13 +49,14 @@ Options
 
 
 
+
 // component options: START
 The Guava EventBus component supports 2 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | eventBus | EventBus | To use the given Guava EventBus instance
@@ -63,6 +64,7 @@ The Guava EventBus component supports 2 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

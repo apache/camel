@@ -45,13 +45,14 @@ As the AHC-WS component is based on the AHC component, you can use the
 various configuration options of the AHC component.
 
 
+
 // component options: START
 The AHC Websocket component supports 6 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | client | AsyncHttpClient | To use a custom AsyncHttpClient
@@ -63,6 +64,7 @@ The AHC Websocket component supports 6 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

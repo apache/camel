@@ -57,13 +57,14 @@ Options
 
 
 
+
 // component options: START
 The Netty4 component supports 69 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | maximumPoolSize | int | The thread pool size for the EventExecutorGroup if its in use. The default value is 16.
@@ -138,6 +139,7 @@ The Netty4 component supports 69 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

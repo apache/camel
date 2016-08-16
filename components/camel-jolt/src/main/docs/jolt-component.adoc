@@ -45,19 +45,21 @@ Options
 
 
 
+
 // component options: START
 The JOLT component supports 1 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | transform | Transform | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

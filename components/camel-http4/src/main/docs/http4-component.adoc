@@ -55,13 +55,14 @@ Http4 Component Options
 
 
 
+
 // component options: START
 The HTTP4 component supports 13 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | httpClientConfigurer | HttpClientConfigurer | To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.
@@ -80,6 +81,7 @@ The HTTP4 component supports 13 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

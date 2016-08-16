@@ -43,19 +43,21 @@ JT400 options
 
 
 
+
 // component options: START
 The JT400 component supports 1 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | connectionPool | AS400ConnectionPool | Returns the default connection pool used by this component.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

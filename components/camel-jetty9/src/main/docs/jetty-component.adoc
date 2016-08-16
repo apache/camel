@@ -52,13 +52,14 @@ Options
 
 
 
+
 // component options: START
 The Jetty 9 component supports 30 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | sslKeyPassword | String | The key password which is used to access the certificate's key entry in the keystore (this is the same password that is supplied to the keystore command's -keypass option).
@@ -94,6 +95,7 @@ The Jetty 9 component supports 30 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

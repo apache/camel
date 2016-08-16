@@ -56,13 +56,14 @@ LinkedInComponent
 
 
 
+
 // component options: START
 The Linkedin component supports 12 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | configuration | LinkedInConfiguration | To use the shared configuration
@@ -80,6 +81,7 @@ The Linkedin component supports 12 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

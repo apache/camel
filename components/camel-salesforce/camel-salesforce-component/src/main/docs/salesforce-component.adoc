@@ -203,13 +203,14 @@ Options
 
 
 
+
 // component options: START
 The Salesforce component supports 55 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | loginConfig | SalesforceLoginConfig | To use the shared SalesforceLoginConfig as login configuration. Properties of the shared configuration can also be set individually.
@@ -270,6 +271,7 @@ The Salesforce component supports 55 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

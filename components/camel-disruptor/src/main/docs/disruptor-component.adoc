@@ -98,13 +98,14 @@ All the following options are valid for both the **disruptor:** and
 **disruptor-vm:** components.
 
 
+
 // component options: START
 The Disruptor component supports 7 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | defaultConcurrentConsumers | int | To configure the default number of concurrent consumers
@@ -117,6 +118,7 @@ The Disruptor component supports 7 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

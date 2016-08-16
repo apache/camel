@@ -44,19 +44,21 @@ Options
 
 {% raw %}
 
+
 // component options: START
 The Mustache component supports 1 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | mustacheFactory | MustacheFactory | To use a custom MustacheFactory
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

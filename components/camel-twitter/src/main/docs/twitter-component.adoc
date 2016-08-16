@@ -56,13 +56,14 @@ settings which is mandatory to configure before using.
 
 
 
+
 // component options: START
 The Twitter component supports 8 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | accessToken | String | The access token
@@ -76,6 +77,7 @@ The Twitter component supports 8 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

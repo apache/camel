@@ -36,13 +36,14 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The EJB component supports 2 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | context | Context | The Context to use for looking up the EJBs
@@ -50,6 +51,7 @@ The EJB component supports 2 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 

@@ -51,13 +51,14 @@ Options
 ^^^^^^^
 
 
+
 // component options: START
 The Quartz2 component supports 9 options which are listed below.
 
 
 
 {% raw %}
-[width="100%",cols="2s,1m,8",options="header"]
+[width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | autoStartScheduler | boolean | Whether or not the scheduler should be auto started. This options is default true
@@ -72,6 +73,7 @@ The Quartz2 component supports 9 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
+
 
 
 
