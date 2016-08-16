@@ -117,8 +117,9 @@ The FTP component has no options.
 
 
 
+
 // endpoint options: START
-The FTP component supports 103 endpoint options which are listed below:
+The FTP component supports 104 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -167,6 +168,7 @@ The FTP component supports 103 endpoint options which are listed below:
 | eagerDeleteTargetFile | producer (advanced) | true | boolean | Whether or not to eagerly delete any existing target file. This option only applies when you use fileExists=Override and the tempFileName option as well. You can use this to disable (set it to false) deleting the target file before the temp file is written. For example you may write big files and want the target file to exists during the temp file is being written. This ensure the target file is only deleted until the very last moment just before the temp file is being renamed to the target filename. This option is also used to control whether to delete any existing files when fileExist=Move is enabled and an existing file exists. If this option copyAndDeleteOnRenameFails false then an exception will be thrown if an existing file existed if its true then the existing file is deleted before the move operation.
 | keepLastModified | producer (advanced) | false | boolean | Will keep the last modified timestamp from the source file (if any). Will use the Exchange.FILE_LAST_MODIFIED header to located the timestamp. This header can contain either a java.util.Date or long with the timestamp. If the timestamp exists and the option is enabled it will set this timestamp on the written file. Note: This option only applies to the file producer. You cannot use this option with any of the ftp producers.
 | sendNoop | producer (advanced) | true | boolean | Whether to send a noop command as a pre-write check before uploading files to the FTP server. This is enabled by default as a validation of the connection is still valid which allows to silently re-connect to be able to upload the file. However if this causes problems you can turn this option off.
+| activePortRange | advanced |  | String | Set the client side port range in active mode. The syntax is: minPort-maxPort Both port numbers are inclusive eg 10000-19999 to include all 1xxxx ports.
 | autoCreate | advanced | true | boolean | Automatically create missing directories in the file's pathname. For the file consumer that means creating the starting directory. For the file producer it means the directory the files should be written to.
 | bufferSize | advanced | 131072 | int | Write buffer sized in bytes.
 | connectTimeout | advanced | 10000 | int | Sets the connect timeout for waiting for a connection to be established Used by both FTPClient and JSCH
@@ -230,6 +232,7 @@ The FTP component supports 103 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 

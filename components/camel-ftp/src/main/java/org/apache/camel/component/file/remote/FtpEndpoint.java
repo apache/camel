@@ -28,6 +28,7 @@ import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSepara
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PlatformHelper;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
@@ -105,6 +106,18 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
             soTimeout = getConfiguration().getSoTimeout();
         }
         dataTimeout = getConfiguration().getTimeout();
+
+        if (getConfiguration().getActivePortRange() != null) {
+            // parse it as min-max
+            String[] parts = getConfiguration().getActivePortRange().split("-");
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("The option activePortRange should have syntax: min-max");
+            }
+            int min = getCamelContext().getTypeConverter().mandatoryConvertTo(int.class, parts[0]);
+            int max = getCamelContext().getTypeConverter().mandatoryConvertTo(int.class, parts[1]);
+            log.debug("Using active port range: {}-{}", min, max);
+            client.setActivePortRange(min, max);
+        }
 
         // then lookup ftp client parameters and set those
         if (ftpClientParameters != null) {
