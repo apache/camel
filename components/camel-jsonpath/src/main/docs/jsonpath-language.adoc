@@ -20,6 +20,30 @@ from("queue:books.new")
       .to("jms:queue:book.expensive")
 -----------------------------------------------------
 
+[[JSonPath-Options]]
+JSonPath Options
+^^^^^^^^^^^^^^^^
+
+
+// language options: START
+The JSonPath language supports 4 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| resultType |  | String | Sets the class name of the result type (type from output)
+| suppressExceptions | false | Boolean | Whether to suppress exceptions such as PathNotFoundException.
+| allowSimple | true | Boolean | Whether to allow in inlined simple exceptions in the json path expression
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
+|=======================================================================
+{% endraw %}
+// language options: END
+
+
+
 [[JSonPath-UsingXMLconfiguration]]
 Using XML configuration
 ^^^^^^^^^^^^^^^^^^^^^^^
