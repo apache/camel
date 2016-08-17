@@ -45,6 +45,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.tools.apt.helper.CollectionStringBuffer;
 import org.apache.camel.tools.apt.helper.EndpointHelper;
 import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
 import org.apache.camel.tools.apt.helper.Strings;
@@ -119,7 +120,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     Func1<PrintWriter, Void> handler = new Func1<PrintWriter, Void>() {
                         @Override
                         public Void call(PrintWriter writer) {
-                            writeHtmlDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label);
+                            writeHtmlDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label, schemes);
                             return null;
                         }
                     };
@@ -130,7 +131,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     handler = new Func1<PrintWriter, Void>() {
                         @Override
                         public Void call(PrintWriter writer) {
-                            writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label);
+                            writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label, schemes);
                             return null;
                         }
                     };
@@ -141,7 +142,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
     }
 
     protected void writeHtmlDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
-                                          String title, String scheme, String extendsScheme, String label) {
+                                          String title, String scheme, String extendsScheme, String label, String[] schemes) {
         // gather component information
         ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, extendsScheme, label);
 
@@ -159,6 +160,14 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         writer.println("<b>Syntax:</b> " + syntax + "<br/>");
         if (alternativeSyntax != null) {
             writer.println("<b>Alternative Syntax:</b> " + alternativeSyntax + "<br/>");
+        }
+        // the first scheme is the regular so only output if there is alternatives
+        if (schemes != null && schemes.length > 1) {
+            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+            for (String altScheme : schemes) {
+                csb.append(altScheme);
+            }
+            writer.println("<b>Alternative Schemes:</b> " + csb.toString() + "<br/>");
         }
         writer.println("<b>Description:</b> " + description + "<br/>");
         writer.println("<b>Deprecated:</b>" + componentModel.isDeprecated() + "<br/>");
@@ -201,7 +210,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
     }
 
     protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
-                                                String title, String scheme, String extendsScheme, String label) {
+                                                String title, String scheme, String extendsScheme, String label, String[] schemes) {
         // gather component information
         ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, extendsScheme, label);
 
@@ -217,12 +226,12 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
         findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, "", uriEndpoint.excludeProperties());
 
-        String json = createParameterJsonSchema(componentModel, componentOptions, endpointPaths, endpointOptions);
+        String json = createParameterJsonSchema(componentModel, componentOptions, endpointPaths, endpointOptions, schemes);
         writer.println(json);
     }
 
     public String createParameterJsonSchema(ComponentModel componentModel, Set<ComponentOption> componentOptions,
-                                            Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions) {
+                                            Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions, String[] schemes) {
         StringBuilder buffer = new StringBuilder("{");
         // component model
         buffer.append("\n \"component\": {");
@@ -230,6 +239,14 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         buffer.append("\n    \"scheme\": \"").append(componentModel.getScheme()).append("\",");
         if (!Strings.isNullOrEmpty(componentModel.getExtendsScheme())) {
             buffer.append("\n    \"extendsScheme\": \"").append(componentModel.getExtendsScheme()).append("\",");
+        }
+        // the first scheme is the regular so only output if there is alternatives
+        if (schemes != null && schemes.length > 1) {
+            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+            for (String altScheme : schemes) {
+                csb.append(altScheme);
+            }
+            buffer.append("\n    \"alternativeSchemes\": \"").append(csb.toString()).append("\",");
         }
         buffer.append("\n    \"syntax\": \"").append(componentModel.getSyntax()).append("\",");
         if (componentModel.getAlternativeSyntax() != null) {
