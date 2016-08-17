@@ -28,18 +28,18 @@ public final class JCacheHelper {
     }
 
     public static <K, V> JCacheManager<K, V> createManager(JCacheConfiguration configuration) {
-        try {
-            // Check if we are in an osgi container
-            Class.forName("org.osgi.framework.FrameworkUtil");
-            Class<?> type = Class.forName("org.apache.camel.component.jcache.osgi.OSGiCacheManager");
-            Constructor<?> ctor = type.getConstructor(JCacheConfiguration.class);
+        if (isOSGi()) {
+            try {
+                Class<?> type = Class.forName("org.apache.camel.component.jcache.osgi.OSGiCacheManager");
+                Constructor<?> ctor = type.getConstructor(JCacheConfiguration.class);
 
-            return (JCacheManager<K, V>)ctor.newInstance(configuration);
-        } catch (ClassNotFoundException e) {
-            return new JCacheManager<>(configuration);
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+                return (JCacheManager<K, V>)ctor.newInstance(configuration);
+            } catch (Exception e) {
+                throw new RuntimeCamelException(e);
+            }
         }
+
+        return new JCacheManager<>(configuration);
     }
 
     @SuppressWarnings("uncheked")
@@ -59,5 +59,23 @@ public final class JCacheHelper {
                 }
             }
         );
+    }
+
+    public static boolean isOSGi() {
+        try {
+            // Check if we are in an osgi container
+            Class<?> fu = Class.forName("org.osgi.framework.FrameworkUtil");
+            if (fu != null) {
+                Method method = fu.getMethod("getBundle", Class.class);
+                if (method != null) {
+                    return method.invoke(null, JCacheHelper.class) != null;
+                }
+            }
+        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
+
+        return false;
     }
 }
