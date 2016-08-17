@@ -43,6 +43,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
+import static org.apache.camel.maven.packaging.StringHelper.isEmpty;
 
 /**
  * Generate or updates the component/dataformat/language readme.md file in the project root directory.
@@ -105,6 +106,14 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 if (json != null) {
                     File file = new File(docDir, componentName + "-component.adoc");
                     ComponentModel model = generateComponentModel(componentName, json);
+
+                    // we only want the first scheme as the alternatives do not have their own readme file
+                    if (!isEmpty(model.getAlternativeSchemes())) {
+                        String first = model.getAlternativeSchemes().split(",")[0];
+                        if (!model.getScheme().equals(first)) {
+                            continue;
+                        }
+                    }
 
                     boolean exists = file.exists();
                     boolean updated = false;
@@ -395,6 +404,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
         component.setScheme(JSonSchemaHelper.getSafeValue("scheme", rows));
         component.setSyntax(JSonSchemaHelper.getSafeValue("syntax", rows));
         component.setAlternativeSyntax(JSonSchemaHelper.getSafeValue("alternativeSyntax", rows));
+        component.setAlternativeSchemes(JSonSchemaHelper.getSafeValue("alternativeSchemes", rows));
         component.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
         component.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
         component.setLabel(JSonSchemaHelper.getSafeValue("label", rows));

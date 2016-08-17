@@ -25,6 +25,7 @@ public class ComponentModel {
     private String scheme;
     private String syntax;
     private String alternativeSyntax;
+    private String alternativeSchemes;
     private String title;
     private String description;
     private String label;
@@ -68,6 +69,14 @@ public class ComponentModel {
 
     public void setAlternativeSyntax(String alternativeSyntax) {
         this.alternativeSyntax = alternativeSyntax;
+    }
+
+    public String getAlternativeSchemes() {
+        return alternativeSchemes;
+    }
+
+    public void setAlternativeSchemes(String alternativeSchemes) {
+        this.alternativeSchemes = alternativeSchemes;
     }
 
     public String getTitle() {

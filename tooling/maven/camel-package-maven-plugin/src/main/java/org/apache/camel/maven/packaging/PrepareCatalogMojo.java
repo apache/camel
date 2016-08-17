@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -376,6 +377,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // make sure to create out dir
         componentsOutDir.mkdirs();
 
+        Set<String> alternativeSchemes = new HashSet<>();
+
         for (File file : jsonFiles) {
             File to = new File(componentsOutDir, file.getName());
             if (to.exists()) {
@@ -425,7 +428,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 rows = JSonSchemaHelper.parseJsonSchema("properties", text, true);
                 for (Map<String, String> row : rows) {
                     String label = row.get("label");
-
                     if (label != null && !label.isEmpty()) {
                         String[] parts = label.split(",");
                         for (String part : parts) {
@@ -440,12 +442,26 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     unlabeledOptions.add(name);
                 }
 
+                // remember alternative schemes
+                rows = JSonSchemaHelper.parseJsonSchema("component", text, false);
+                for (Map<String, String> row : rows) {
+                    String alternativeScheme = row.get("alternativeSchemes");
+                    if (alternativeScheme != null && !alternativeScheme.isEmpty()) {
+                        String[] parts = alternativeScheme.split(",");
+                        for (int i = 1; i < parts.length; i++) {
+                            // skip first as that is the regular scheme
+                            String part = parts[i];
+                            alternativeSchemes.add(part);
+                        }
+                    }
+                }
+
             } catch (IOException e) {
                 // ignore
             }
         }
 
-        Set<String> answer = new LinkedHashSet<>();
+        Set<String> componentNames = new LinkedHashSet<>();
 
         File all = new File(componentsOutDir, "../components.properties");
         try {
@@ -468,7 +484,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 fos.write("\n".getBytes());
 
                 // remember component name
-                answer.add(name);
+                componentNames.add(name);
             }
 
             fos.close();
@@ -478,6 +494,14 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
 
         printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, usedComponentLabels, usedOptionLabels, unlabeledOptions);
+
+        // filter out duplicate component names that are alternative scheme names
+        Set<String> answer = new LinkedHashSet<>();
+        for (String componentName : componentNames) {
+            if (!alternativeSchemes.contains(componentName)) {
+                answer.add(componentName);
+            }
+        }
 
         return answer;
     }
