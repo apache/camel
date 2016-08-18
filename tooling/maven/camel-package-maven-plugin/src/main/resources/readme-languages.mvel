@@ -4,7 +4,7 @@
 |=======================================================================
 | Language | Description
 @foreach{row : languages}
-| link:@{row.artifactId}[@{row.title}] (@{row.artifactId}) | @{row.description}
+| link:@{row.artifactId}/src/main/docs[@{row.title}] (@{row.artifactId}) | @{row.description}
 @end{}|=======================================================================
 
 @end{}

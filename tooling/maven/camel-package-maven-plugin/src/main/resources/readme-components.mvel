@@ -4,7 +4,7 @@
 |=======================================================================
 | Component | Description
 @foreach{row : components}
-| link:@{row.artifactId}[@{row.title}] (@{row.artifactId}) +
+| link:@{row.artifactId}/src/main/docs[@{row.title}] (@{row.artifactId}) +
 `@{row.syntax}` | @{row.description}
 @end{}
 |=======================================================================
