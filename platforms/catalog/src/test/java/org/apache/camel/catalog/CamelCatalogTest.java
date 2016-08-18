@@ -794,6 +794,10 @@ public class CamelCatalogTest {
         assertNotNull(doc);
         assertTrue(doc.contains("looking up geocodes"));
 
+        doc = catalog.componentAsciiDoc("smtp");
+        assertNotNull(doc);
+        assertTrue(doc.contains("The mail component"));
+
         doc = catalog.componentAsciiDoc("unknown");
         assertNull(doc);
     }
