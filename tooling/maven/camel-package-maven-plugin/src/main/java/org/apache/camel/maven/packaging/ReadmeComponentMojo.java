@@ -151,9 +151,17 @@ public class ReadmeComponentMojo extends AbstractMojo {
             for (String dataFormatName : dataFormatNames) {
                 String json = loadDataFormatJson(jsonFiles, dataFormatName);
                 if (json != null) {
+                    // special for some data formats
+                    dataFormatName = asDataFormatName(dataFormatName);
+
                     File file = new File(docDir, dataFormatName + "-dataformat.adoc");
 
                     DataFormatModel model = generateDataFormatModel(dataFormatName, json);
+
+                    // special to reuse same title
+                    if (model.getName().startsWith("bindy")) {
+                        model.setTitle("Bindy");
+                    }
 
                     boolean exists = file.exists();
                     boolean updated = false;
@@ -171,6 +179,15 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     }
                 }
             }
+        }
+    }
+
+    private static String asDataFormatName(String name) {
+        // special for some dataformats which share the same readme file
+        if (name.startsWith("bindy")) {
+            return "bindy";
+        } else {
+            return name;
         }
     }
 

@@ -52,6 +52,40 @@ From *Camel 2.16* onwards this is no longer the case, as you can safely
 have multiple models in the same package, as you configure bindy using
 class names instead of package names now.
 
+[[Bindy-Options]]
+Options
+^^^^^^^
+
+
+
+
+
+
+
+// dataformat options: START
+The Bindy dataformat supports 3 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| type | KeyValue | BindyType | Whether to use csv fixed or key value pairs mode.
+| classType |  | String | Name of model class to use.
+| locale |  | String | To configure a default locale to use such as us for united states. To use the JVM platform default locale then use the name default
+|=======================================================================
+{% endraw %}
+// dataformat options: END
+
+
+
+
+
+
+
+
+
 [[Bindy-Annotations]]
 Annotations
 ~~~~~~~~~~~
