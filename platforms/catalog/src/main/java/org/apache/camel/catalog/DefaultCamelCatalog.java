@@ -552,6 +552,36 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public String componentAsciiDoc(String name) {
+        String answer = doComponentAsciiDoc(name);
+        if (answer == null) {
+            // maybe the name is an alternative scheme name, and then we need to find the component that
+            // has the name as alternative, and use the first scheme as the name to find the documentation
+            List<String> names = findComponentNames();
+            for (String alternative : names) {
+                String schemes = getAlternativeComponentName(alternative);
+                if (schemes != null && schemes.contains(name)) {
+                    String first = schemes.split(",")[0];
+                    return componentAsciiDoc(first);
+                }
+            }
+        }
+        return answer;
+    }
+
+    private String getAlternativeComponentName(String componentName) {
+        String json = componentJSonSchema(componentName);
+        if (json != null) {
+            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+            for (Map<String, String> row : rows) {
+                if (row.containsKey("alternativeSchemes")) {
+                    return row.get("alternativeSchemes");
+                }
+            }
+        }
+        return null;
+    }
+
+    private String doComponentAsciiDoc(String name) {
         String file = DOC_DIR + "/" + name + "-component.adoc";
 
         String answer = null;

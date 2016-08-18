@@ -799,6 +799,17 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testAlternativeComponentAsciiDoc() throws Exception {
+        String doc = catalog.componentAsciiDoc("solr");
+        assertNotNull(doc);
+        assertTrue(doc.contains("Solr Component"));
+
+        String doc2 = catalog.componentAsciiDoc("solrCloud");
+        assertNotNull(doc2);
+        assertEquals(doc, doc2);
+    }
+
+    @Test
     public void testDataFormatAsciiDoc() throws Exception {
         String doc = catalog.dataFormatAsciiDoc("json-jackson");
         assertNotNull(doc);
