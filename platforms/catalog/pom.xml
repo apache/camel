@@ -90,8 +90,10 @@
         <version>${project.version}</version>
         <executions>
           <execution>
+            <!-- prepare the catalog before the user guide -->
             <goals>
               <goal>prepare-catalog</goal>
+              <goal>prepare-user-guide</goal>
             </goals>
             <phase>process-resources</phase>
           </execution>
