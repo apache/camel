@@ -3,8 +3,16 @@
 [width="100%",cols="4,6",options="header"]
 |=======================================================================
 | Component | Description
-@foreach{row : components}| link:@{row.artifactId}[@{row.title}] (@{row.artifactId})
-++@{row.syntax}++ | @{row.description}
-@end{}|=======================================================================
+
+@foreach{row : components}
+
+| link:@{row.artifactId}[@{row.title}] (@{row.artifactId})
+| @{row.description}
+
+| `@{row.syntax}}`
+|
+
+@end{}
+|=======================================================================
 
 @end{}
