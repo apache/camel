@@ -4,7 +4,7 @@
 |=======================================================================
 | Data Format | Description
 @foreach{row : dataformats}
-| link:@{row.artifactId}/src/main/docs[@{row.title}] (@{row.artifactId}) | @{row.description}
+| link:@{row.artifactId}/src/main/docs/${row.name}-dataformat.adoc[@{row.title}] (@{row.artifactId}) | @{row.description}
 @end{}|=======================================================================
 
 @end{}
