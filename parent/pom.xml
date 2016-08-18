@@ -52,8 +52,6 @@
     <aries-util-version>1.1.1</aries-util-version>
     <arquillian-container-se-managed-version>1.0.0.Final</arquillian-container-se-managed-version>
     <arquillian-version>1.1.11.Final</arquillian-version>
-    <!-- To be removed when Weld 1.x is dropped -->
-    <arquillian-weld-se-embedded-version>1.0.0.CR9</arquillian-weld-se-embedded-version>
     <arquillian-weld-embedded-version>2.0.0.Beta2</arquillian-weld-embedded-version>
     <asm-bundle-version>3.3.1_1</asm-bundle-version>
     <asm-version>3.3.1</asm-version>
