@@ -1,0 +1,10 @@
+@if{!dataformats.isEmpty()}
+
+[width="100%",cols="4,6",options="header"]
+|=======================================================================
+| DataFormat | Description
+@foreach{row : dataformats}
+| link:@{row.artifactId}[@{row.title}] (@{row.artifactId}) | @{row.description}
+@end{}|=======================================================================
+
+@end{}
