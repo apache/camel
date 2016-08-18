@@ -38,6 +38,7 @@ final class CamelCdiDeployment implements TestRule {
             // TODO: check parallel execution
             .containerId("camel-context-cdi")
             .property(ConfigurationKey.RELAXED_CONSTRUCTION.get(), true)
+            .property(Weld.SHUTDOWN_HOOK_SYSTEM_PROPERTY, false)
             .enableDiscovery()
             .beanClasses(test.getJavaClass().getDeclaredClasses())
             .addBeanClass(test.getJavaClass())
@@ -49,6 +50,8 @@ final class CamelCdiDeployment implements TestRule {
             Beans beans = test.getJavaClass().getAnnotation(Beans.class);
             weld.addExtension(new CamelCdiTestExtension(beans));
             for (Class<?> alternative : beans.alternatives()) {
+                // It is not necessary to add the alternative class with WELD-2218
+                // anymore, though it's kept for previous versions
                 weld.addBeanClass(alternative)
                     .addAlternative(alternative);
             }
