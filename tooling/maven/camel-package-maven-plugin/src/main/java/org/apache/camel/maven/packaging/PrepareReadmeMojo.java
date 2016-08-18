@@ -109,12 +109,17 @@ public class PrepareReadmeMojo extends AbstractMojo {
      * @throws MojoFailureException   something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        executeComponentsReadme();
-        executeDataFormatsReadme();
-        executeLanguagesReadme();
+        // update readme file in camel-core
+        executeComponentsReadme(true);
+        executeDataFormatsReadme(true);
+        executeLanguagesReadme(true);
+        // update readme file in components
+        executeComponentsReadme(false);
+        executeDataFormatsReadme(false);
+        executeLanguagesReadme(false);
     }
 
-    protected void executeComponentsReadme() throws MojoExecutionException, MojoFailureException {
+    protected void executeComponentsReadme(boolean core) throws MojoExecutionException, MojoFailureException {
         Set<File> componentFiles = new TreeSet<>();
 
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -146,16 +151,23 @@ public class PrepareReadmeMojo extends AbstractMojo {
             // sor the models
             Collections.sort(models, new ComponentComparator());
 
-            // filter out camel-core
+            // filter out unwanted components
             List<ComponentModel> components = new ArrayList<>();
             for (ComponentModel model : models) {
-                if (!"camel-core".equals(model.getArtifactId())) {
+                if (core && "camel-core".equals(model.getArtifactId())) {
+                    components.add(model);
+                } else if (!core && !"camel-core".equals(model.getArtifactId())) {
                     components.add(model);
                 }
             }
 
-            // update the big readme file in the components dir
-            File file = new File(readmeComponentsDir, "readme.adoc");
+            // update the big readme file in the core/components dir
+            File file;
+            if (core) {
+                file = new File(readmeCoreDir, "readme.adoc");
+            } else {
+                file = new File(readmeComponentsDir, "readme.adoc");
+            }
 
             // update regular components
             boolean exists = file.exists();
@@ -163,11 +175,11 @@ public class PrepareReadmeMojo extends AbstractMojo {
             boolean updated = updateComponents(file, changed);
 
             if (updated) {
-                getLog().info("Updated components/readme.adoc file: " + file);
+                getLog().info("Updated readme.adoc file: " + file);
             } else if (exists) {
-                getLog().debug("No changes to components/readme.adoc file: " + file);
+                getLog().debug("No changes to readme.adoc file: " + file);
             } else {
-                getLog().warn("No components/readme.adoc file: " + file);
+                getLog().warn("No readme.adoc file: " + file);
             }
 
         } catch (IOException e) {
@@ -175,7 +187,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    protected void executeDataFormatsReadme() throws MojoExecutionException, MojoFailureException {
+    protected void executeDataFormatsReadme(boolean core) throws MojoExecutionException, MojoFailureException {
         Set<File> dataFormatFiles = new TreeSet<>();
 
         if (dataFormatsDir != null && dataFormatsDir.isDirectory()) {
@@ -199,13 +211,20 @@ public class PrepareReadmeMojo extends AbstractMojo {
             // filter out camel-core
             List<DataFormatModel> dataFormats = new ArrayList<>();
             for (DataFormatModel model : models) {
-                if (!"camel-core".equals(model.getArtifactId())) {
+                if (core && "camel-core".equals(model.getArtifactId())) {
+                    dataFormats.add(model);
+                } else if (!core && !"camel-core".equals(model.getArtifactId())) {
                     dataFormats.add(model);
                 }
             }
 
-            // update the big readme file in the components dir
-            File file = new File(readmeComponentsDir, "readme.adoc");
+            // update the big readme file in the core/components dir
+            File file;
+            if (core) {
+                file = new File(readmeCoreDir, "readme.adoc");
+            } else {
+                file = new File(readmeComponentsDir, "readme.adoc");
+            }
 
             // update regular data formats
             boolean exists = file.exists();
@@ -213,11 +232,11 @@ public class PrepareReadmeMojo extends AbstractMojo {
             boolean updated = updateDataFormats(file, changed);
 
             if (updated) {
-                getLog().info("Updated components/readme.adoc file: " + file);
+                getLog().info("Updated readme.adoc file: " + file);
             } else if (exists) {
-                getLog().debug("No changes to components/readme.adoc file: " + file);
+                getLog().debug("No changes to readme.adoc file: " + file);
             } else {
-                getLog().warn("No components/readme.adoc file: " + file);
+                getLog().warn("No readme.adoc file: " + file);
             }
 
         } catch (IOException e) {
@@ -225,7 +244,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    protected void executeLanguagesReadme() throws MojoExecutionException, MojoFailureException {
+    protected void executeLanguagesReadme(boolean core) throws MojoExecutionException, MojoFailureException {
         Set<File> languageFiles = new TreeSet<>();
 
         if (languagesDir != null && languagesDir.isDirectory()) {
@@ -249,13 +268,20 @@ public class PrepareReadmeMojo extends AbstractMojo {
             // filter out camel-core
             List<LanguageModel> languages = new ArrayList<>();
             for (LanguageModel model : models) {
-                if (!"camel-core".equals(model.getArtifactId())) {
+                if (core && "camel-core".equals(model.getArtifactId())) {
+                    languages.add(model);
+                } else if (!core && !"camel-core".equals(model.getArtifactId())) {
                     languages.add(model);
                 }
             }
 
-            // update the big readme file in the components dir
-            File file = new File(readmeComponentsDir, "readme.adoc");
+            // update the big readme file in the core/components dir
+            File file;
+            if (core) {
+                file = new File(readmeCoreDir, "readme.adoc");
+            } else {
+                file = new File(readmeComponentsDir, "readme.adoc");
+            }
 
             // update regular data formats
             boolean exists = file.exists();
@@ -263,11 +289,11 @@ public class PrepareReadmeMojo extends AbstractMojo {
             boolean updated = updateLanguages(file, changed);
 
             if (updated) {
-                getLog().info("Updated components/readme.adoc file: " + file);
+                getLog().info("Updated readme.adoc file: " + file);
             } else if (exists) {
-                getLog().debug("No changes to components/readme.adoc file: " + file);
+                getLog().debug("No changes to readme.adoc file: " + file);
             } else {
-                getLog().warn("No components/readme.adoc file: " + file);
+                getLog().warn("No readme.adoc file: " + file);
             }
 
         } catch (IOException e) {
