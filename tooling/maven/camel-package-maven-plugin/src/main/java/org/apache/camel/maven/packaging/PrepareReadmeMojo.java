@@ -31,13 +31,11 @@ import java.util.TreeSet;
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
-import org.apache.camel.maven.packaging.model.LanguageModel;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.mvel2.conversion.ObjectCH;
 import org.mvel2.templates.TemplateRuntime;
 
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
@@ -111,6 +109,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         executeComponentsReadme();
+        executeDataFormatsReadme();
     }
 
     protected void executeComponentsReadme() throws MojoExecutionException, MojoFailureException {
@@ -153,12 +152,12 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 }
             }
 
-            // the summary file has the TOC
+            // update the big readme file in the components dir
             File file = new File(readmeComponentsDir, "readme.adoc");
 
             // update regular components
             boolean exists = file.exists();
-            String changed = templateComponentOptions(components);
+            String changed = templateComponents(components);
             boolean updated = updateComponents(file, changed);
 
             if (updated) {
@@ -174,11 +173,73 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    private String templateComponentOptions(List<ComponentModel> models) throws MojoExecutionException {
+    protected void executeDataFormatsReadme() throws MojoExecutionException, MojoFailureException {
+        Set<File> dataFormatFiles = new TreeSet<>();
+
+        if (dataFormatsDir != null && dataFormatsDir.isDirectory()) {
+            File[] files = dataFormatsDir.listFiles();
+            if (files != null) {
+                dataFormatFiles.addAll(Arrays.asList(files));
+            }
+        }
+
+        try {
+            List<DataFormatModel> models = new ArrayList<>();
+            for (File file : dataFormatFiles) {
+                String json = loadText(new FileInputStream(file));
+                DataFormatModel model = generateDataFormatModel(json);
+                models.add(model);
+            }
+
+            // sor the models
+            Collections.sort(models, new DataFormatComparator());
+
+            // filter out camel-core
+            List<DataFormatModel> dataFormats = new ArrayList<>();
+            for (DataFormatModel model : models) {
+                if (!"camel-core".equals(model.getArtifactId())) {
+                    dataFormats.add(model);
+                }
+            }
+
+            // update the big readme file in the components dir
+            File file = new File(readmeComponentsDir, "readme.adoc");
+
+            // update regular data formats
+            boolean exists = file.exists();
+            String changed = templateDataFormats(dataFormats);
+            boolean updated = updateDataFormats(file, changed);
+
+            if (updated) {
+                getLog().info("Updated components/readme.adoc file: " + file);
+            } else if (exists) {
+                getLog().debug("No changes to components/readme.adoc file: " + file);
+            } else {
+                getLog().warn("No components/readme.adoc file: " + file);
+            }
+
+        } catch (IOException e) {
+            throw new MojoFailureException("Error due " + e.getMessage(), e);
+        }
+    }
+
+    private String templateComponents(List<ComponentModel> models) throws MojoExecutionException {
         try {
             String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-components.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("components", models);
+            String out = (String) TemplateRuntime.eval(template, map);
+            return out;
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
+        }
+    }
+
+    private String templateDataFormats(List<DataFormatModel> models) throws MojoExecutionException {
+        try {
+            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-dataformats.mvel"));
+            Map<String, Object> map = new HashMap<>();
+            map.put("dataformats", models);
             String out = (String) TemplateRuntime.eval(template, map);
             return out;
         } catch (Exception e) {
@@ -220,6 +281,40 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
+    private boolean updateDataFormats(File file, String changed) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            String existing = StringHelper.between(text, "// dataformats: START" , "// dataformats: END");
+            if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                changed = changed.trim();
+                if (existing.equals(changed)) {
+                    return false;
+                } else {
+                    String before = StringHelper.before(text, "// dataformats: START");
+                    String after = StringHelper.after(text, "// dataformats: END");
+                    text = before + "\n// dataformats: START\n" + changed + "\n// dataformats: END\n" + after;
+                    writeText(file, text);
+                    return true;
+                }
+            } else {
+                getLog().warn("Cannot find markers in file " + file);
+                getLog().warn("Add the following markers");
+                getLog().warn("\t// dataformats: START");
+                getLog().warn("\t// dataformats: END");
+                return false;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
     private static String link(ComponentModel model) {
 
         return "[" + model.getTitle() + "](" + model.getScheme() + "-component.adoc)";
@@ -229,6 +324,15 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
         @Override
         public int compare(ComponentModel o1, ComponentModel o2) {
+            // lets sort by title
+            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
+        }
+    }
+
+    private static class DataFormatComparator implements Comparator<DataFormatModel> {
+
+        @Override
+        public int compare(DataFormatModel o1, DataFormatModel o2) {
             // lets sort by title
             return o1.getTitle().compareToIgnoreCase(o2.getTitle());
         }
@@ -254,6 +358,24 @@ public class PrepareReadmeMojo extends AbstractMojo {
         component.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
 
         return component;
+    }
+
+    private DataFormatModel generateDataFormatModel(String json) {
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
+
+        DataFormatModel dataFormat = new DataFormatModel();
+        dataFormat.setName(JSonSchemaHelper.getSafeValue("name", rows));
+        dataFormat.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
+        dataFormat.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
+        dataFormat.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
+        dataFormat.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
+        dataFormat.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        dataFormat.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
+        dataFormat.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
+        dataFormat.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
+        dataFormat.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
+
+        return dataFormat;
     }
 
 }

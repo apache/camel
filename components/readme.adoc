@@ -1,18 +1,6 @@
 Components
 ^^^^^^^^^^
 
-
-
-
-
-
-
-
-
-
-
-
-
 // components: START
 [width="100%",cols="4,6",options="header"]
 |=======================================================================
@@ -553,14 +541,98 @@ Components
 // components: END
 
 
+Data Formats
+^^^^^^^^^^^^
 
 
 
+// dataformats: START
+[width="100%",cols="4,6",options="header"]
+|=======================================================================
+| DataFormat | Description
 
+| link:camel-avro[Avro] (camel-avro) | Camel Avro data format
 
+| link:camel-barcode[Barcode] (camel-barcode) | Camel Barcode (e.g. QRcode, PDF417, DataMatrix) support
 
+| link:camel-base64[Base64] (camel-base64) | Camel Base64 data format support
 
+| link:camel-beanio[BeanIO] (camel-beanio) | Camel BeanIO data format support
 
+| link:camel-bindy[Bindy CSV] (camel-bindy) | Camel Bindy data format support
 
+| link:camel-bindy[Bindy Fixed Length] (camel-bindy) | Camel Bindy data format support
+
+| link:camel-bindy[Bindy Key Value Pair] (camel-bindy) | Camel Bindy data format support
+
+| link:camel-boon[Boon] (camel-boon) | Camel Boon support
+
+| link:camel-castor[Castor] (camel-castor) | Camel Castor data format support
+
+| link:camel-crypto[Crypto (Java Cryptographic Extension)] (camel-crypto) | Camel Cryptographic Support
+
+| link:camel-csv[CSV] (camel-csv) | Camel CSV data format support
+
+| link:camel-flatpack[Flatpack] (camel-flatpack) | Camel FlatPack support
+
+| link:camel-hessian[Hessian] (camel-hessian) | Hessian serialization support
+
+| link:camel-hl7[HL7] (camel-hl7) | Camel HL7 support
+
+| link:camel-ical[iCal] (camel-ical) | Camel iCal component
+
+| link:camel-jacksonxml[JacksonXML] (camel-jacksonxml) | Camel Jackson XML support
+
+| link:camel-jaxb[JAXB] (camel-jaxb) | Camel JAXB support
+
+| link:camel-jibx[JiBX] (camel-jibx) | Camel Jibx support
+
+| link:camel-gson[JSon GSon] (camel-gson) | Camel Gson support
+
+| link:camel-jackson[JSon Jackson] (camel-jackson) | Camel Jackson support
+
+| link:camel-johnzon[JSon Johnzon] (camel-johnzon) | Camel Johnzon support
+
+| link:camel-xstream[JSon XStream] (camel-xstream) | Camel XStream support
+
+| link:camel-lzf[LZF Deflate Compression] (camel-lzf) | Camel LZF support
+
+| link:camel-mail[MIME Multipart] (camel-mail) | Camel Mail support
+
+| link:camel-crypto[PGP] (camel-crypto) | Camel Cryptographic Support
+
+| link:camel-protobuf[Protobuf] (camel-protobuf) | Camel Components
+
+| link:camel-rss[RSS] (camel-rss) | Camel RSS support
+
+| link:camel-soap[SOAP] (camel-soap) | Camel SOAP support
+
+| link:camel-syslog[Syslog] (camel-syslog) | Camel Syslog support
+
+| link:camel-tarfile[Tar File] (camel-tarfile) | Camel Tar file support
+
+| link:camel-tagsoup[TidyMarkup] (camel-tagsoup) | Camel TagSoup support
+
+| link:camel-univocity-parsers[uniVocity CSV] (camel-univocity-parsers) | Camel UniVocity parsers data format support
+
+| link:camel-univocity-parsers[uniVocity Fixed Length] (camel-univocity-parsers) | Camel UniVocity parsers data format support
+
+| link:camel-univocity-parsers[uniVocity TSV] (camel-univocity-parsers) | Camel UniVocity parsers data format support
+
+| link:camel-xmlbeans[XML Beans] (camel-xmlbeans) | Camel XMLBeans support
+
+| link:camel-xmljson[XML JSon] (camel-xmljson) | Camel XML JSON Data Format
+
+| link:camel-xmlrpc[XML RPC] (camel-xmlrpc) | Camel XML RPC support
+
+| link:camel-xmlsecurity[XML Security] (camel-xmlsecurity) | Camel Partial XML Encryption/Decryption and XML Signature support
+
+| link:camel-xstream[XStream] (camel-xstream) | Camel XStream support
+
+| link:camel-snakeyaml[YAML SnakeYAML] (camel-snakeyaml) | Camel SnakeYAML support
+
+| link:camel-zipfile[Zip File] (camel-zipfile) | Camel Zip file support
+|=======================================================================
+// dataformats: END
 
 
