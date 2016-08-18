@@ -1,11 +1,8 @@
-Components
-^^^^^^^^^^
-
 @if{!components.isEmpty()}
 {% raw %}
-[width="100%",cols="2s,1m, 1m,6",options="header"]
+[width="100%",cols="2,1m,1,6",options="header"]
 |=======================================================================
-| Title | Synax | Artifact | Description
+| Title | Syntax | Artifact | Description
 @foreach{row : components}| @{row.title} | @{row.syntax} | @{row.artifactId} | @{row.description}
 @end{}|=======================================================================
 {% endraw %}
