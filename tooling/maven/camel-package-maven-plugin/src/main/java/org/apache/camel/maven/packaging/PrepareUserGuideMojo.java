@@ -27,14 +27,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.xml.crypto.Data;
+
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.camel.maven.packaging.model.ComponentModel;
+import org.apache.camel.maven.packaging.model.DataFormatModel;
+import org.apache.camel.maven.packaging.model.DataFormatOptionModel;
+import org.apache.camel.maven.packaging.model.LanguageModel;
+import org.apache.camel.maven.packaging.model.LanguageOptionModel;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 
@@ -62,6 +69,20 @@ public class PrepareUserGuideMojo extends AbstractMojo {
     protected File componentsDir;
 
     /**
+     * The directory for data formats catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/dataformats"
+     */
+    protected File dataFormatsDir;
+
+    /**
+     * The directory for languages catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/languages"
+     */
+    protected File languagesDir;
+
+    /**
      * The directory for the user guide
      *
      * @parameter default-value="${project.directory}/../../../docs/user-manual/en"
@@ -85,10 +106,12 @@ public class PrepareUserGuideMojo extends AbstractMojo {
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         executeComponents();
+        executeDataFormats();
+        executeLanguages();
     }
 
     protected void executeComponents() throws MojoExecutionException, MojoFailureException {
-        Set<File> componentFiles = new TreeSet<File>();
+        Set<File> componentFiles = new TreeSet<>();
 
         if (componentsDir != null && componentsDir.isDirectory()) {
             File[] files = componentsDir.listFiles();
@@ -99,8 +122,8 @@ public class PrepareUserGuideMojo extends AbstractMojo {
 
         try {
             List<ComponentModel> models = new ArrayList<>();
-            for (File core : componentFiles) {
-                String json = loadText(new FileInputStream(core));
+            for (File file : componentFiles) {
+                String json = loadText(new FileInputStream(file));
                 ComponentModel model = generateComponentModel(json);
 
                 // filter out alternative schemas which reuses documentation
@@ -143,6 +166,96 @@ public class PrepareUserGuideMojo extends AbstractMojo {
                 }
             }
             updated |= updateComponents(file, regular.toString());
+
+            if (updated) {
+                getLog().info("Updated user guide file: " + file);
+            } else {
+                getLog().debug("No changes to user guide file: " + file);
+            }
+
+        } catch (IOException e) {
+            throw new MojoFailureException("Error due " + e.getMessage(), e);
+        }
+    }
+
+    protected void executeDataFormats() throws MojoExecutionException, MojoFailureException {
+        Set<File> dataFormatFiles = new TreeSet<>();
+
+        if (dataFormatsDir != null && dataFormatsDir.isDirectory()) {
+            File[] files = dataFormatsDir.listFiles();
+            if (files != null) {
+                dataFormatFiles.addAll(Arrays.asList(files));
+            }
+        }
+
+        try {
+            List<DataFormatModel> models = new ArrayList<>();
+            for (File file : dataFormatFiles) {
+                String json = loadText(new FileInputStream(file));
+                DataFormatModel model = generateDataFormatModel(json);
+                models.add(model);
+            }
+
+            // sor the models
+            Collections.sort(models, new DataFormatComparator());
+
+            // the summary file has the TOC
+            File file = new File(userGuideDir, "SUMMARY.md");
+
+            // TODO: some dataformats reuse docs, such as bindy etc.
+
+            // update data formats
+            StringBuilder dataFormats = new StringBuilder();
+            dataFormats.append("* Data Formats\n");
+            for (DataFormatModel model : models) {
+                String line = "\t* " + link(model) + "\n";
+                dataFormats.append(line);
+            }
+            boolean updated = updateDataFormats(file, dataFormats.toString());
+
+            if (updated) {
+                getLog().info("Updated user guide file: " + file);
+            } else {
+                getLog().debug("No changes to user guide file: " + file);
+            }
+
+        } catch (IOException e) {
+            throw new MojoFailureException("Error due " + e.getMessage(), e);
+        }
+    }
+
+    protected void executeLanguages() throws MojoExecutionException, MojoFailureException {
+        Set<File> languageFiles = new TreeSet<>();
+
+        if (languagesDir != null && languagesDir.isDirectory()) {
+            File[] files = languagesDir.listFiles();
+            if (files != null) {
+                languageFiles.addAll(Arrays.asList(files));
+            }
+        }
+
+        try {
+            List<LanguageModel> models = new ArrayList<>();
+            for (File file : languageFiles) {
+                String json = loadText(new FileInputStream(file));
+                LanguageModel model = generateLanguageModel(json);
+                models.add(model);
+            }
+
+            // sor the models
+            Collections.sort(models, new LanguageComparator());
+
+            // the summary file has the TOC
+            File file = new File(userGuideDir, "SUMMARY.md");
+
+            // update languages
+            StringBuilder languages = new StringBuilder();
+            languages.append("* Expression Languages\n");
+            for (LanguageModel model : models) {
+                String line = "\t* " + link(model) + "\n";
+                languages.append(line);
+            }
+            boolean updated = updateLanguages(file, languages.toString());
 
             if (updated) {
                 getLog().info("Updated user guide file: " + file);
@@ -223,15 +336,109 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         }
     }
 
+    private boolean updateDataFormats(File file, String changed) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            String existing = StringHelper.between(text, "<!-- dataformats: START -->" , "<!-- dataformats: END -->");
+            if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                changed = changed.trim();
+                if (existing.equals(changed)) {
+                    return false;
+                } else {
+                    String before = StringHelper.before(text, "<!-- dataformats: START -->");
+                    String after = StringHelper.after(text, "<!-- dataformats: END -->");
+                    text = before + "\n<!-- dataformats: START -->\n" + changed + "\n<!-- dataformats: END -->\n" + after;
+                    writeText(file, text);
+                    return true;
+                }
+            } else {
+                getLog().warn("Cannot find markers in file " + file);
+                getLog().warn("Add the following markers");
+                getLog().warn("\t<!-- dataformats: START -->");
+                getLog().warn("\t<!-- dataformats: END -->");
+                return false;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
+    private boolean updateLanguages(File file, String changed) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            String existing = StringHelper.between(text, "<!-- languages: START -->" , "<!-- languages: END -->");
+            if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                changed = changed.trim();
+                if (existing.equals(changed)) {
+                    return false;
+                } else {
+                    String before = StringHelper.before(text, "<!-- languages: START -->");
+                    String after = StringHelper.after(text, "<!-- languages: END -->");
+                    text = before + "\n<!-- languages: START -->\n" + changed + "\n<!-- languages: END -->\n" + after;
+                    writeText(file, text);
+                    return true;
+                }
+            } else {
+                getLog().warn("Cannot find markers in file " + file);
+                getLog().warn("Add the following markers");
+                getLog().warn("\t<!-- languages: START -->");
+                getLog().warn("\t<!-- languages: END -->");
+                return false;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
     private static String link(ComponentModel model) {
         return "[" + model.getTitle() + "](" + model.getScheme() + "-component.adoc)";
+    }
+
+    private static String link(DataFormatModel model) {
+        return "[" + model.getTitle() + "](" + model.getName() + "-dataformat.adoc)";
+    }
+
+    private static String link(LanguageModel model) {
+        return "[" + model.getTitle() + "](" + model.getName() + "-language.adoc)";
     }
 
     private static class ComponentComparator implements Comparator<ComponentModel> {
 
         @Override
         public int compare(ComponentModel o1, ComponentModel o2) {
-            // lets sory by title
+            // lets sort by title
+            return o1.getTitle().compareTo(o2.getTitle());
+        }
+    }
+
+    private static class DataFormatComparator implements Comparator<DataFormatModel> {
+
+        @Override
+        public int compare(DataFormatModel o1, DataFormatModel o2) {
+            // lets sort by title
+            return o1.getTitle().compareTo(o2.getTitle());
+        }
+    }
+
+    private static class LanguageComparator implements Comparator<LanguageModel> {
+
+        @Override
+        public int compare(LanguageModel o1, LanguageModel o2) {
+            // lets sort by title
             return o1.getTitle().compareTo(o2.getTitle());
         }
     }
@@ -257,5 +464,42 @@ public class PrepareUserGuideMojo extends AbstractMojo {
 
         return component;
     }
+
+    private DataFormatModel generateDataFormatModel(String json) {
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
+
+        DataFormatModel dataFormat = new DataFormatModel();
+        dataFormat.setName(JSonSchemaHelper.getSafeValue("name", rows));
+        dataFormat.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
+        dataFormat.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
+        dataFormat.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
+        dataFormat.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
+        dataFormat.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        dataFormat.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
+        dataFormat.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
+        dataFormat.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
+        dataFormat.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
+
+        return dataFormat;
+    }
+
+    private LanguageModel generateLanguageModel(String json) {
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
+
+        LanguageModel language = new LanguageModel();
+        language.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
+        language.setName(JSonSchemaHelper.getSafeValue("name", rows));
+        language.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
+        language.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
+        language.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
+        language.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        language.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
+        language.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
+        language.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
+        language.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
+
+        return language;
+    }
+
 
 }
