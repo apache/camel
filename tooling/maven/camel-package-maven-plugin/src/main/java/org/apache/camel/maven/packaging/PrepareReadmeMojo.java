@@ -1,0 +1,259 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.maven.packaging;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import edu.emory.mathcs.backport.java.util.Collections;
+import org.apache.camel.maven.packaging.model.ComponentModel;
+import org.apache.camel.maven.packaging.model.DataFormatModel;
+import org.apache.camel.maven.packaging.model.LanguageModel;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.mvel2.conversion.ObjectCH;
+import org.mvel2.templates.TemplateRuntime;
+
+import static org.apache.camel.maven.packaging.PackageHelper.loadText;
+import static org.apache.camel.maven.packaging.PackageHelper.writeText;
+
+/**
+ * Prepares the readme.md files content up to date with the components, data formats, and languages.
+ *
+ * @goal prepare-readme
+ */
+public class PrepareReadmeMojo extends AbstractMojo {
+
+    /**
+     * The maven project.
+     *
+     * @parameter property="project"
+     * @required
+     * @readonly
+     */
+    protected MavenProject project;
+
+    /**
+     * The directory for components catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/components"
+     */
+    protected File componentsDir;
+
+    /**
+     * The directory for data formats catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/dataformats"
+     */
+    protected File dataFormatsDir;
+
+    /**
+     * The directory for languages catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/languages"
+     */
+    protected File languagesDir;
+
+    /**
+     * The directory for camel-core
+     *
+     * @parameter default-value="${project.directory}/../../../camel-core"
+     */
+    protected File readmeCoreDir;
+
+    /**
+     * The directory for components
+     *
+     * @parameter default-value="${project.directory}/../../../components"
+     */
+    protected File readmeComponentsDir;
+
+    /**
+     * Maven ProjectHelper.
+     *
+     * @component
+     * @readonly
+     */
+    private MavenProjectHelper projectHelper;
+
+    /**
+     * Execute goal.
+     *
+     * @throws MojoExecutionException execution of the main class or one of the
+     *                                                        threads it generated failed.
+     * @throws MojoFailureException   something bad happened...
+     */
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        executeComponentsReadme();
+    }
+
+    protected void executeComponentsReadme() throws MojoExecutionException, MojoFailureException {
+        Set<File> componentFiles = new TreeSet<>();
+
+        if (componentsDir != null && componentsDir.isDirectory()) {
+            File[] files = componentsDir.listFiles();
+            if (files != null) {
+                componentFiles.addAll(Arrays.asList(files));
+            }
+        }
+
+        try {
+            List<ComponentModel> models = new ArrayList<>();
+            for (File file : componentFiles) {
+                String json = loadText(new FileInputStream(file));
+                ComponentModel model = generateComponentModel(json);
+
+                // filter out alternative schemas which reuses documentation
+                boolean add = true;
+                if (!model.getAlternativeSchemes().isEmpty()) {
+                    String first = model.getAlternativeSchemes().split(",")[0];
+                    if (!model.getScheme().equals(first)) {
+                        add = false;
+                    }
+                }
+                if (add) {
+                    models.add(model);
+                }
+            }
+
+            // sor the models
+            Collections.sort(models, new ComponentComparator());
+
+            // filter out camel-core
+            List<ComponentModel> components = new ArrayList<>();
+            for (ComponentModel model : models) {
+                if (!"camel-core".equals(model.getArtifactId())) {
+                    components.add(model);
+                }
+            }
+
+            // the summary file has the TOC
+            File file = new File(readmeComponentsDir, "readme.adoc");
+
+            // update regular components
+            boolean exists = file.exists();
+            String changed = templateComponentOptions(components);
+            boolean updated = updateComponents(file, changed);
+
+            if (updated) {
+                getLog().info("Updated components/readme.adoc file: " + file);
+            } else if (exists) {
+                getLog().debug("No changes to components/readme.adoc file: " + file);
+            } else {
+                getLog().warn("No components/readme.adoc file: " + file);
+            }
+
+        } catch (IOException e) {
+            throw new MojoFailureException("Error due " + e.getMessage(), e);
+        }
+    }
+
+    private String templateComponentOptions(List<ComponentModel> models) throws MojoExecutionException {
+        try {
+            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-components.mvel"));
+            Map<String, Object> map = new HashMap<>();
+            map.put("components", models);
+            String out = (String) TemplateRuntime.eval(template, map);
+            return out;
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
+        }
+    }
+
+    private boolean updateComponents(File file, String changed) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            String existing = StringHelper.between(text, "// components: START" , "// components: END");
+            if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                changed = changed.trim();
+                if (existing.equals(changed)) {
+                    return false;
+                } else {
+                    String before = StringHelper.before(text, "// components: START");
+                    String after = StringHelper.after(text, "// components: END");
+                    text = before + "\n// components: START\n" + changed + "\n// components: END\n" + after;
+                    writeText(file, text);
+                    return true;
+                }
+            } else {
+                getLog().warn("Cannot find markers in file " + file);
+                getLog().warn("Add the following markers");
+                getLog().warn("\t// components: START");
+                getLog().warn("\t// components: END");
+                return false;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
+    private static String link(ComponentModel model) {
+
+        return "[" + model.getTitle() + "](" + model.getScheme() + "-component.adoc)";
+    }
+
+    private static class ComponentComparator implements Comparator<ComponentModel> {
+
+        @Override
+        public int compare(ComponentModel o1, ComponentModel o2) {
+            // lets sort by title
+            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
+        }
+    }
+
+    private ComponentModel generateComponentModel(String json) {
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+
+        ComponentModel component = new ComponentModel();
+        component.setScheme(JSonSchemaHelper.getSafeValue("scheme", rows));
+        component.setSyntax(JSonSchemaHelper.getSafeValue("syntax", rows));
+        component.setAlternativeSyntax(JSonSchemaHelper.getSafeValue("alternativeSyntax", rows));
+        component.setAlternativeSchemes(JSonSchemaHelper.getSafeValue("alternativeSchemes", rows));
+        component.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
+        component.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
+        component.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
+        component.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        component.setConsumerOnly(JSonSchemaHelper.getSafeValue("consumerOnly", rows));
+        component.setProducerOnly(JSonSchemaHelper.getSafeValue("producerOnly", rows));
+        component.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
+        component.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
+        component.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
+        component.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
+
+        return component;
+    }
+
+}
