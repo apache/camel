@@ -10,366 +10,1432 @@ Components
 
 
 
+
 // components: START
 [width="100%",cols="4,6",options="header"]
 |=======================================================================
 | Component | Description
+
+
+
 | link:camel-ahc[AHC] (camel-ahc)
-++ahc:httpUri++ | To call external HTTP services using Async Http Client.
+| To call external HTTP services using Async Http Client.
+
+| `ahc:httpUri}`
+|
+
+
+
 | link:camel-ahc-ws[AHC Websocket] (camel-ahc-ws)
-++ahc-ws:httpUri++ | To exchange data with external Websocket servers using Async Http Client.
+| To exchange data with external Websocket servers using Async Http Client.
+
+| `ahc-ws:httpUri}`
+|
+
+
+
 | link:camel-amqp[AMQP] (camel-amqp)
-++amqp:destinationType:destinationName++ | Messaging with AMQP protocol using Apache QPid Client.
+| Messaging with AMQP protocol using Apache QPid Client.
+
+| `amqp:destinationType:destinationName}`
+|
+
+
+
 | link:camel-flink[Apache Flink] (camel-flink)
-++flink:endpointType++ | The flink component can be used to send DataSet jobs to Apache Flink cluster.
+| The flink component can be used to send DataSet jobs to Apache Flink cluster.
+
+| `flink:endpointType}`
+|
+
+
+
 | link:camel-spark[Apache Spark] (camel-spark)
-++spark:endpointType++ | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
+| The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
+
+| `spark:endpointType}`
+|
+
+
+
 | link:camel-apns[APNS] (camel-apns)
-++apns:name++ | For sending notifications to Apple iOS devices.
+| For sending notifications to Apple iOS devices.
+
+| `apns:name}`
+|
+
+
+
 | link:camel-atmos[Atmos] (camel-atmos)
-++atmos:name/operation++ | The atmos component is used for integrating with EMC's Atomos Storage.
+| The atmos component is used for integrating with EMC's Atomos Storage.
+
+| `atmos:name/operation}`
+|
+
+
+
 | link:camel-atmosphere-websocket[Atmosphere Websocket] (camel-atmosphere-websocket)
-++atmosphere-websocket:servicePath++ | To exchange data with external Websocket clients using Atmosphere.
+| To exchange data with external Websocket clients using Atmosphere.
+
+| `atmosphere-websocket:servicePath}`
+|
+
+
+
 | link:camel-atom[Atom] (camel-atom)
-++atom:feedUri++ | The atom component is used for consuming Atom RSS feeds.
+| The atom component is used for consuming Atom RSS feeds.
+
+| `atom:feedUri}`
+|
+
+
+
 | link:camel-avro[Avro] (camel-avro)
-++avro:transport:host:port/messageName++ | Working with Apache Avro for data serialization.
+| Working with Apache Avro for data serialization.
+
+| `avro:transport:host:port/messageName}`
+|
+
+
+
 | link:camel-aws[AWS CloudWatch] (camel-aws)
-++aws-cw:namespace++ | The aws-cw component is used for sending metrics to an Amazon CloudWatch.
+| The aws-cw component is used for sending metrics to an Amazon CloudWatch.
+
+| `aws-cw:namespace}`
+|
+
+
+
 | link:camel-aws[AWS DynamoDB] (camel-aws)
-++aws-ddb:tableName++ | The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
+| The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
+
+| `aws-ddb:tableName}`
+|
+
+
+
 | link:camel-aws[AWS DynamoDB Streams] (camel-aws)
-++aws-ddbstream:tableName++ | The aws-ddbstream component is used for working with Amazon DynamoDB Streams.
+| The aws-ddbstream component is used for working with Amazon DynamoDB Streams.
+
+| `aws-ddbstream:tableName}`
+|
+
+
+
 | link:camel-aws[AWS EC2] (camel-aws)
-++aws-ec2:label++ | The aws-ec2 is used for managing Amazon EC2 instances.
+| The aws-ec2 is used for managing Amazon EC2 instances.
+
+| `aws-ec2:label}`
+|
+
+
+
 | link:camel-aws[AWS Kinesis] (camel-aws)
-++aws-kinesis:streamName++ | The aws-kinesis component is for consuming records from Amazon Kinesis Streams.
+| The aws-kinesis component is for consuming records from Amazon Kinesis Streams.
+
+| `aws-kinesis:streamName}`
+|
+
+
+
 | link:camel-aws[AWS S3 Storage Service] (camel-aws)
-++aws-s3:bucketNameOrArn++ | The aws-s3 component is used for storing and retrieving objecct from Amazon S3 Storage Service.
+| The aws-s3 component is used for storing and retrieving objecct from Amazon S3 Storage Service.
+
+| `aws-s3:bucketNameOrArn}`
+|
+
+
+
 | link:camel-aws[AWS Simple Email Service] (camel-aws)
-++aws-ses:from++ | The aws-ses component is used for sending emails with Amazon's SES service.
+| The aws-ses component is used for sending emails with Amazon's SES service.
+
+| `aws-ses:from}`
+|
+
+
+
 | link:camel-aws[AWS Simple Notification System] (camel-aws)
-++aws-sns:topicNameOrArn++ | The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
+| The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
+
+| `aws-sns:topicNameOrArn}`
+|
+
+
+
 | link:camel-aws[AWS Simple Queue Service] (camel-aws)
-++aws-sqs:queueNameOrArn++ | The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
+| The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
+
+| `aws-sqs:queueNameOrArn}`
+|
+
+
+
 | link:camel-aws[AWS Simple Workflow] (camel-aws)
-++aws-swf:type++ | The aws-swf component is used for managing workflows from Amazon Simple Workflow.
+| The aws-swf component is used for managing workflows from Amazon Simple Workflow.
+
+| `aws-swf:type}`
+|
+
+
+
 | link:camel-aws[AWS SimpleDB] (camel-aws)
-++aws-sdb:domainName++ | The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
+| The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
+
+| `aws-sdb:domainName}`
+|
+
+
+
 | link:camel-bean-validator[Bean Validator] (camel-bean-validator)
-++bean-validator:label++ | The Validator component performs bean validation of the message body using the Java Bean Validation API.
+| The Validator component performs bean validation of the message body using the Java Bean Validation API.
+
+| `bean-validator:label}`
+|
+
+
+
 | link:camel-beanstalk[Beanstalk] (camel-beanstalk)
-++beanstalk:connectionSettings++ | The beanstalk component is used for job retrieval and post-processing of Beanstalk jobs.
+| The beanstalk component is used for job retrieval and post-processing of Beanstalk jobs.
+
+| `beanstalk:connectionSettings}`
+|
+
+
+
 | link:camel-box[Box] (camel-box)
-++box:apiName/methodName++ | For uploading downloading and managing files folders groups collaborations etc on box DOT com.
+| For uploading downloading and managing files folders groups collaborations etc on box DOT com.
+
+| `box:apiName/methodName}`
+|
+
+
+
 | link:camel-braintree[Braintree] (camel-braintree)
-++braintree:apiName/methodName++ | The braintree component is used for integrating with the Braintree Payment System.
+| The braintree component is used for integrating with the Braintree Payment System.
+
+| `braintree:apiName/methodName}`
+|
+
+
+
 | link:camel-context[Camel Context] (camel-context)
-++context:contextId:localEndpointUrl++ | The context component allows to send/receive messages between Camel routes in a black box way.
+| The context component allows to send/receive messages between Camel routes in a black box way.
+
+| `context:contextId:localEndpointUrl}`
+|
+
+
+
 | link:camel-cassandraql[Cassandra CQL] (camel-cassandraql)
-++cql:beanRef:hosts:port/keyspace++ | The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API).
+| The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API).
+
+| `cql:beanRef:hosts:port/keyspace}`
+|
+
+
+
 | link:camel-chronicle[Chronicle Engine] (camel-chronicle)
-++chronicle-engine:addresses/path++ | Camel Chronicle support
+| Camel Chronicle support
+
+| `chronicle-engine:addresses/path}`
+|
+
+
+
 | link:camel-chunk[Chunk] (camel-chunk)
-++chunk:resourceUri++ | Transforms the message using a Chunk template.
+| Transforms the message using a Chunk template.
+
+| `chunk:resourceUri}`
+|
+
+
+
 | link:camel-cm-sms[CM SMS Gateway] (camel-cm-sms)
-++cm-sms:host++ | Camel CM SMS Gateway Component
+| Camel CM SMS Gateway Component
+
+| `cm-sms:host}`
+|
+
+
+
 | link:camel-cmis[CMIS] (camel-cmis)
-++cmis:url++ | The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
+| The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
+
+| `cmis:url}`
+|
+
+
+
 | link:camel-coap[CoAP] (camel-coap)
-++coap:uri++ | The coap component is used for sending and receiving messages from COAP capable devices.
+| The coap component is used for sending and receiving messages from COAP capable devices.
+
+| `coap:uri}`
+|
+
+
+
 | link:camel-cometd[CometD] (camel-cometd)
-++cometd:host:port/channelName++ | The cometd component is a transport for working with the Jetty implementation of the cometd/bayeux protocol.
+| The cometd component is a transport for working with the Jetty implementation of the cometd/bayeux protocol.
+
+| `cometd:host:port/channelName}`
+|
+
+
+
 | link:camel-consul[Consul] (camel-consul)
-++consul://apiEndpoint++ | Camel Consul support
+| Camel Consul support
+
+| `consul://apiEndpoint}`
+|
+
+
+
 | link:camel-couchdb[CouchDB] (camel-couchdb)
-++couchdb:protocol:hostname:port/database++ | The couchdb component is used for integrate with CouchDB databases.
+| The couchdb component is used for integrate with CouchDB databases.
+
+| `couchdb:protocol:hostname:port/database}`
+|
+
+
+
 | link:camel-crypto[Crypto (JCE)] (camel-crypto)
-++crypto:cryptoOperation:name++ | The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
+| The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
+
+| `crypto:cryptoOperation:name}`
+|
+
+
+
 | link:camel-cxf[CXF] (camel-cxf)
-++cxf:beanId:address++ | The cxf component is used for SOAP WebServices using Apache CXF.
+| The cxf component is used for SOAP WebServices using Apache CXF.
+
+| `cxf:beanId:address}`
+|
+
+
+
 | link:camel-cxf[CXF-RS] (camel-cxf)
-++cxfrs:beanId:address++ | The cxfrs component is used for JAX-RS REST services using Apache CXF.
+| The cxfrs component is used for JAX-RS REST services using Apache CXF.
+
+| `cxfrs:beanId:address}`
+|
+
+
+
 | link:camel-disruptor[Disruptor] (camel-disruptor)
-++disruptor:name++ | The disruptor component provides asynchronous SEDA behavior using LMAX Disruptor.
+| The disruptor component provides asynchronous SEDA behavior using LMAX Disruptor.
+
+| `disruptor:name}`
+|
+
+
+
 | link:camel-dns[DNS] (camel-dns)
-++dns:dnsType++ | To lookup domain information and run DNS queries using DNSJava.
+| To lookup domain information and run DNS queries using DNSJava.
+
+| `dns:dnsType}`
+|
+
+
+
 | link:camel-docker[Docker] (camel-docker)
-++docker:operation++ | The docker component is used for managing Docker containers.
+| The docker component is used for managing Docker containers.
+
+| `docker:operation}`
+|
+
+
+
 | link:camel-dozer[Dozer] (camel-dozer)
-++dozer:name++ | The dozer component provides the ability to map between Java beans using the Dozer mapping library.
+| The dozer component provides the ability to map between Java beans using the Dozer mapping library.
+
+| `dozer:name}`
+|
+
+
+
 | link:camel-dropbox[Dropbox] (camel-dropbox)
-++dropbox:operation++ | For uploading downloading and managing files folders groups collaborations etc on dropbox DOT com.
+| For uploading downloading and managing files folders groups collaborations etc on dropbox DOT com.
+
+| `dropbox:operation}`
+|
+
+
+
 | link:camel-cache[EHCache] (camel-cache)
-++cache:cacheName++ | The cache component enables you to perform caching operations using EHCache as the Cache Implementation.
+| The cache component enables you to perform caching operations using EHCache as the Cache Implementation.
+
+| `cache:cacheName}`
+|
+
+
+
 | link:camel-ehcache[Ehcache] (camel-ehcache)
-++ehcache:cacheName++ | Camel Ehcache support
+| Camel Ehcache support
+
+| `ehcache:cacheName}`
+|
+
+
+
 | link:camel-ejb[EJB] (camel-ejb)
-++ejb:beanName++ | The ejb component is for invoking EJB Java beans from Camel.
+| The ejb component is for invoking EJB Java beans from Camel.
+
+| `ejb:beanName}`
+|
+
+
+
 | link:camel-elasticsearch[Elasticsearch] (camel-elasticsearch)
-++elasticsearch:clusterName++ | The elasticsearch component is used for interfacing with ElasticSearch server.
+| The elasticsearch component is used for interfacing with ElasticSearch server.
+
+| `elasticsearch:clusterName}`
+|
+
+
+
 | link:camel-elsql[ElSQL] (camel-elsql)
-++elsql:elsqlName:resourceUri++ | The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
+| The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
+
+| `elsql:elsqlName:resourceUri}`
+|
+
+
+
 | link:camel-etcd[etcd] (camel-etcd)
-++etcd:namespace/path++ | Represents a etcd endpoint.
+| Represents a etcd endpoint.
+
+| `etcd:namespace/path}`
+|
+
+
+
 | link:camel-exec[Exec] (camel-exec)
-++exec:executable++ | The exec component can be used to execute OS system commands.
+| The exec component can be used to execute OS system commands.
+
+| `exec:executable}`
+|
+
+
+
 | link:camel-facebook[Facebook] (camel-facebook)
-++facebook:methodName++ | The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.
+| The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.
+
+| `facebook:methodName}`
+|
+
+
+
 | link:camel-flatpack[Flatpack] (camel-flatpack)
-++flatpack:type:resourceUri++ | The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
+| The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
+
+| `flatpack:type:resourceUri}`
+|
+
+
+
 | link:camel-fop[FOP] (camel-fop)
-++fop:outputType++ | The fop component allows you to render a message into different output formats using Apache FOP.
+| The fop component allows you to render a message into different output formats using Apache FOP.
+
+| `fop:outputType}`
+|
+
+
+
 | link:camel-freemarker[Freemarker] (camel-freemarker)
-++freemarker:resourceUri++ | Transforms the message using a FreeMarker template.
+| Transforms the message using a FreeMarker template.
+
+| `freemarker:resourceUri}`
+|
+
+
+
 | link:camel-ftp[FTP] (camel-ftp)
-++ftp:host:port/directoryName++ | The ftp component is used for uploading or downloading files from FTP servers.
+| The ftp component is used for uploading or downloading files from FTP servers.
+
+| `ftp:host:port/directoryName}`
+|
+
+
+
 | link:camel-ftp[FTPS] (camel-ftp)
-++ftps:host:port/directoryName++ | The ftps (FTP secure SSL/TLS) component is used for uploading or downloading files from FTP servers.
+| The ftps (FTP secure SSL/TLS) component is used for uploading or downloading files from FTP servers.
+
+| `ftps:host:port/directoryName}`
+|
+
+
+
 | link:camel-ganglia[Ganglia] (camel-ganglia)
-++ganglia:host:port++ | The ganglia component is used for sending metrics to the Ganglia monitoring system.
+| The ganglia component is used for sending metrics to the Ganglia monitoring system.
+
+| `ganglia:host:port}`
+|
+
+
+
 | link:camel-geocoder[Geocoder] (camel-geocoder)
-++geocoder:address:latlng++ | The geocoder component is used for looking up geocodes (latitude and longitude) for a given address or reverse lookup.
+| The geocoder component is used for looking up geocodes (latitude and longitude) for a given address or reverse lookup.
+
+| `geocoder:address:latlng}`
+|
+
+
+
 | link:camel-git[Git] (camel-git)
-++git:localPath++ | The git component is used for working with git repositories.
+| The git component is used for working with git repositories.
+
+| `git:localPath}`
+|
+
+
+
 | link:camel-github[GitHub] (camel-github)
-++github:type/branchName++ | The github component is used for integrating Camel with github.
+| The github component is used for integrating Camel with github.
+
+| `github:type/branchName}`
+|
+
+
+
 | link:camel-google-calendar[Google Calendar] (camel-google-calendar)
-++google-calendar:apiName/methodName++ | The google-calendar component provides access to Google Calendar.
+| The google-calendar component provides access to Google Calendar.
+
+| `google-calendar:apiName/methodName}`
+|
+
+
+
 | link:camel-google-drive[Google Drive] (camel-google-drive)
-++google-drive:apiName/methodName++ | The google-drive component provides access to Google Drive file storage service.
+| The google-drive component provides access to Google Drive file storage service.
+
+| `google-drive:apiName/methodName}`
+|
+
+
+
 | link:camel-google-mail[Google Mail] (camel-google-mail)
-++google-mail:apiName/methodName++ | The google-mail component provides access to Google Mail.
+| The google-mail component provides access to Google Mail.
+
+| `google-mail:apiName/methodName}`
+|
+
+
+
 | link:camel-gora[Gora] (camel-gora)
-++gora:name++ | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
+| The gora component allows you to work with NoSQL databases using the Apache Gora framework.
+
+| `gora:name}`
+|
+
+
+
 | link:camel-grape[Grape] (camel-grape)
-++grape:defaultCoordinates++ | Grape component allows you to fetch, load and manage additional jars when CamelContext is running.
+| Grape component allows you to fetch, load and manage additional jars when CamelContext is running.
+
+| `grape:defaultCoordinates}`
+|
+
+
+
 | link:camel-guava-eventbus[Guava EventBus] (camel-guava-eventbus)
-++guava-eventbus:eventBusRef++ | The guava-eventbus component provides integration bridge between Camel and Google Guava EventBus.
+| The guava-eventbus component provides integration bridge between Camel and Google Guava EventBus.
+
+| `guava-eventbus:eventBusRef}`
+|
+
+
+
 | link:camel-hazelcast[Hazelcast] (camel-hazelcast)
-++hazelcast:command:cacheName++ | The hazelcast component allows you to work with the Hazelcast distributed data grid / cache.
+| The hazelcast component allows you to work with the Hazelcast distributed data grid / cache.
+
+| `hazelcast:command:cacheName}`
+|
+
+
+
 | link:camel-hbase[HBase] (camel-hbase)
-++hbase:tableName++ | For reading/writing from/to an HBase store (Hadoop database).
+| For reading/writing from/to an HBase store (Hadoop database).
+
+| `hbase:tableName}`
+|
+
+
+
 | link:camel-hdfs[HDFS] (camel-hdfs)
-++hdfs:hostName:port/path++ | For reading/writing from/to an HDFS filesystem using Hadoop 1.x.
+| For reading/writing from/to an HDFS filesystem using Hadoop 1.x.
+
+| `hdfs:hostName:port/path}`
+|
+
+
+
 | link:camel-hdfs2[HDFS2] (camel-hdfs2)
-++hdfs2:hostName:port/path++ | For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
+| For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
+
+| `hdfs2:hostName:port/path}`
+|
+
+
+
 | link:camel-hipchat[Hipchat] (camel-hipchat)
-++hipchat:protocol:host:port++ | The hipchat component supports producing and consuming messages from/to Hipchat service.
+| The hipchat component supports producing and consuming messages from/to Hipchat service.
+
+| `hipchat:protocol:host:port}`
+|
+
+
+
 | link:camel-http[HTTP] (camel-http)
-++http:httpUri++ | For calling out to external HTTP servers using Apache HTTP Client 3.x.
+| For calling out to external HTTP servers using Apache HTTP Client 3.x.
+
+| `http:httpUri}`
+|
+
+
+
 | link:camel-http4[HTTP4] (camel-http4)
-++http4:httpUri++ | For calling out to external HTTP servers using Apache HTTP Client 4.x.
+| For calling out to external HTTP servers using Apache HTTP Client 4.x.
+
+| `http4:httpUri}`
+|
+
+
+
 | link:camel-ibatis[iBatis] (camel-ibatis)
-++ibatis:statement++ | Performs a query poll insert update or delete in a relational database using Apache iBATIS.
+| Performs a query poll insert update or delete in a relational database using Apache iBATIS.
+
+| `ibatis:statement}`
+|
+
+
+
 | link:camel-mail[IMAP] (camel-mail)
-++imap:host:port++ | To send or receive emails using imap/pop3 or stmp protocols.
+| To send or receive emails using imap/pop3 or stmp protocols.
+
+| `imap:host:port}`
+|
+
+
+
 | link:camel-infinispan[Infinispan] (camel-infinispan)
-++infinispan:host++ | For reading/writing from/to Infinispan distributed key/value store and data grid.
+| For reading/writing from/to Infinispan distributed key/value store and data grid.
+
+| `infinispan:host}`
+|
+
+
+
 | link:camel-influxdb[InfluxDB] (camel-influxdb)
-++influxdb:connectionBean++ | Camel InfluxDB component
+| Camel InfluxDB component
+
+| `influxdb:connectionBean}`
+|
+
+
+
 | link:camel-irc[IRC] (camel-irc)
-++irc:hostname:port++ | For IRC chat communication.
+| For IRC chat communication.
+
+| `irc:hostname:port}`
+|
+
+
+
 | link:camel-ironmq[ironmq] (camel-ironmq)
-++ironmq:queueName++ | Represents a IronMQ endpoint.
+| Represents a IronMQ endpoint.
+
+| `ironmq:queueName}`
+|
+
+
+
 | link:camel-javaspace[JavaSpace] (camel-javaspace)
-++javaspace:url++ | Sending and receiving messages through JavaSpace.
+| Sending and receiving messages through JavaSpace.
+
+| `javaspace:url}`
+|
+
+
+
 | link:camel-jbpm[JBPM] (camel-jbpm)
-++jbpm:connectionURL++ | The jbpm component provides integration with jBPM (Business Process Management).
+| The jbpm component provides integration with jBPM (Business Process Management).
+
+| `jbpm:connectionURL}`
+|
+
+
+
 | link:camel-jcache[JCache] (camel-jcache)
-++jcache:cacheName++ | Represents a JCache endpoint.
+| Represents a JCache endpoint.
+
+| `jcache:cacheName}`
+|
+
+
+
 | link:camel-jclouds[JClouds] (camel-jclouds)
-++jclouds:command:providerId++ | For interacting with cloud compute & blobstore service via jclouds.
+| For interacting with cloud compute & blobstore service via jclouds.
+
+| `jclouds:command:providerId}`
+|
+
+
+
 | link:camel-jcr[JCR] (camel-jcr)
-++jcr:host/base++ | The jcr component allows you to add/read nodes to/from a JCR compliant content repository.
+| The jcr component allows you to add/read nodes to/from a JCR compliant content repository.
+
+| `jcr:host/base}`
+|
+
+
+
 | link:camel-jdbc[JDBC] (camel-jdbc)
-++jdbc:dataSourceName++ | The jdbc component enables you to access databases through JDBC where SQL queries are sent in the message body.
+| The jdbc component enables you to access databases through JDBC where SQL queries are sent in the message body.
+
+| `jdbc:dataSourceName}`
+|
+
+
+
 | link:camel-jetty9[Jetty 9] (camel-jetty9)
-++jetty:httpUri++ | The jetty component provides HTTP-based endpoints for consuming and producing HTTP requests.
+| The jetty component provides HTTP-based endpoints for consuming and producing HTTP requests.
+
+| `jetty:httpUri}`
+|
+
+
+
 | link:camel-websocket[Jetty Websocket] (camel-websocket)
-++websocket:host:port/resourceUri++ | The websocket component provides websocket endpoints for communicating with clients using websocket.
+| The websocket component provides websocket endpoints for communicating with clients using websocket.
+
+| `websocket:host:port/resourceUri}`
+|
+
+
+
 | link:camel-jgroups[JGroups] (camel-jgroups)
-++jgroups:clusterName++ | The jgroups component provides exchange of messages between Camel and JGroups clusters.
+| The jgroups component provides exchange of messages between Camel and JGroups clusters.
+
+| `jgroups:clusterName}`
+|
+
+
+
 | link:camel-jing[Jing] (camel-jing)
-++jing:resourceUri++ | Validates the payload of a message using RelaxNG Syntax using Jing library.
+| Validates the payload of a message using RelaxNG Syntax using Jing library.
+
+| `jing:resourceUri}`
+|
+
+
+
 | link:camel-jira[JIRA] (camel-jira)
-++jira:type++ | The jira component interacts with the JIRA issue tracker.
+| The jira component interacts with the JIRA issue tracker.
+
+| `jira:type}`
+|
+
+
+
 | link:camel-jms[JMS] (camel-jms)
-++jms:destinationType:destinationName++ | The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
+| The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
+
+| `jms:destinationType:destinationName}`
+|
+
+
+
 | link:camel-jmx[JMX] (camel-jmx)
-++jmx:serverURL++ | The jmx component allows to receive JMX notifications.
+| The jmx component allows to receive JMX notifications.
+
+| `jmx:serverURL}`
+|
+
+
+
 | link:camel-jolt[JOLT] (camel-jolt)
-++jolt:resourceUri++ | The jolt component allows you to process a JSON messages using an JOLT specification (such as JSON-JSON transformation).
+| The jolt component allows you to process a JSON messages using an JOLT specification (such as JSON-JSON transformation).
+
+| `jolt:resourceUri}`
+|
+
+
+
 | link:camel-jpa[JPA] (camel-jpa)
-++jpa:entityType++ | The jpa component enables you to store and retrieve Java objects from databases using JPA.
+| The jpa component enables you to store and retrieve Java objects from databases using JPA.
+
+| `jpa:entityType}`
+|
+
+
+
 | link:camel-jt400[JT400] (camel-jt400)
-++jt400:userID:password/systemName/objectPath.type++ | The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
+| The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
+
+| `jt400:userID:password/systemName/objectPath.type}`
+|
+
+
+
 | link:camel-kafka[Kafka] (camel-kafka)
-++kafka:brokers++ | The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
+| The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
+
+| `kafka:brokers}`
+|
+
+
+
 | link:camel-kestrel[Kestrel] (camel-kestrel)
-++kestrel:addresses/queue++ | The kestrel component allows messages to be sent to (or consumed from) Kestrel brokers.
+| The kestrel component allows messages to be sent to (or consumed from) Kestrel brokers.
+
+| `kestrel:addresses/queue}`
+|
+
+
+
 | link:camel-krati[Krati] (camel-krati)
-++krati:path++ | The krati allows the use krati datastores and datasets inside Camel.
+| The krati allows the use krati datastores and datasets inside Camel.
+
+| `krati:path}`
+|
+
+
+
 | link:camel-kubernetes[Kubernetes] (camel-kubernetes)
-++kubernetes:masterUrl++ | The kubernetes component allows to work with Kubernetes PaaS.
+| The kubernetes component allows to work with Kubernetes PaaS.
+
+| `kubernetes:masterUrl}`
+|
+
+
+
 | link:camel-ldap[LDAP] (camel-ldap)
-++ldap:dirContextName++ | The ldap component allows you to perform searches in LDAP servers using filters as the message payload.
+| The ldap component allows you to perform searches in LDAP servers using filters as the message payload.
+
+| `ldap:dirContextName}`
+|
+
+
+
 | link:camel-linkedin[Linkedin] (camel-linkedin)
-++linkedin:apiName/methodName++ | The linkedin component is uses for retrieving LinkedIn user profiles connections companies groups posts etc.
+| The linkedin component is uses for retrieving LinkedIn user profiles connections companies groups posts etc.
+
+| `linkedin:apiName/methodName}`
+|
+
+
+
 | link:camel-lucene[Lucene] (camel-lucene)
-++lucene:host:operation++ | To insert or query from Apache Lucene databases.
+| To insert or query from Apache Lucene databases.
+
+| `lucene:host:operation}`
+|
+
+
+
 | link:camel-lumberjack[Lumberjack] (camel-lumberjack)
-++lumberjack:host:port++ | Camel Lumberjack log streaming component
+| Camel Lumberjack log streaming component
+
+| `lumberjack:host:port}`
+|
+
+
+
 | link:camel-metrics[Metrics] (camel-metrics)
-++metrics:metricsType:metricsName++ | To collect various metrics directly from Camel routes using the DropWizard metrics library.
+| To collect various metrics directly from Camel routes using the DropWizard metrics library.
+
+| `metrics:metricsType:metricsName}`
+|
+
+
+
 | link:camel-mina[Mina] (camel-mina)
-++mina:protocol:host:port++ | Socket level networking using TCP or UDP with the Apache Mina 1.x library.
+| Socket level networking using TCP or UDP with the Apache Mina 1.x library.
+
+| `mina:protocol:host:port}`
+|
+
+
+
 | link:camel-mina2[Mina2] (camel-mina2)
-++mina2:protocol:host:port++ | Socket level networking using TCP or UDP with the Apache Mina 2.x library.
+| Socket level networking using TCP or UDP with the Apache Mina 2.x library.
+
+| `mina2:protocol:host:port}`
+|
+
+
+
 | link:camel-mllp[mllp] (camel-mllp)
-++mllp:hostname:port++ | Represents a MLLP endpoint.
+| Represents a MLLP endpoint.
+
+| `mllp:hostname:port}`
+|
+
+
+
 | link:camel-mongodb[MongoDB] (camel-mongodb)
-++mongodb:connectionBean++ | Component for working with documents stored in MongoDB database.
+| Component for working with documents stored in MongoDB database.
+
+| `mongodb:connectionBean}`
+|
+
+
+
 | link:camel-mongodb-gridfs[MongoDBGridFS] (camel-mongodb-gridfs)
-++gridfs:connectionBean++ | Camel MongoDB GridFS component
+| Camel MongoDB GridFS component
+
+| `gridfs:connectionBean}`
+|
+
+
+
 | link:camel-mqtt[MQTT] (camel-mqtt)
-++mqtt:name++ | Component for communicating with MQTT M2M message brokers using FuseSource MQTT Client.
+| Component for communicating with MQTT M2M message brokers using FuseSource MQTT Client.
+
+| `mqtt:name}`
+|
+
+
+
 | link:camel-msv[MSV] (camel-msv)
-++msv:resourceUri++ | Validates the payload of a message using the MSV Library.
+| Validates the payload of a message using the MSV Library.
+
+| `msv:resourceUri}`
+|
+
+
+
 | link:camel-mustache[Mustache] (camel-mustache)
-++mustache:resourceUri++ | Transforms the message using a Mustache template.
+| Transforms the message using a Mustache template.
+
+| `mustache:resourceUri}`
+|
+
+
+
 | link:camel-mvel[MVEL] (camel-mvel)
-++mvel:resourceUri++ | Transforms the message using a MVEL template.
+| Transforms the message using a MVEL template.
+
+| `mvel:resourceUri}`
+|
+
+
+
 | link:camel-mybatis[MyBatis] (camel-mybatis)
-++mybatis:statement++ | Performs a query poll insert update or delete in a relational database using MyBatis.
+| Performs a query poll insert update or delete in a relational database using MyBatis.
+
+| `mybatis:statement}`
+|
+
+
+
 | link:camel-nagios[Nagios] (camel-nagios)
-++nagios:host:port++ | To send passive checks to Nagios using JSendNSCA.
+| To send passive checks to Nagios using JSendNSCA.
+
+| `nagios:host:port}`
+|
+
+
+
 | link:camel-nats[Nats] (camel-nats)
-++nats:servers++ | Camel Components
+| Camel Components
+
+| `nats:servers}`
+|
+
+
+
 | link:camel-netty[Netty] (camel-netty)
-++netty:protocol:host:port++ | Socket level networking using TCP or UDP with the Netty 3.x library.
+| Socket level networking using TCP or UDP with the Netty 3.x library.
+
+| `netty:protocol:host:port}`
+|
+
+
+
 | link:camel-netty-http[Netty HTTP] (camel-netty-http)
-++netty-http:protocol:host:port/path++ | Netty HTTP server and client using the Netty 3.x library.
+| Netty HTTP server and client using the Netty 3.x library.
+
+| `netty-http:protocol:host:port/path}`
+|
+
+
+
 | link:camel-netty4[Netty4] (camel-netty4)
-++netty4:protocol:host:port++ | Socket level networking using TCP or UDP with the Netty 4.x library.
+| Socket level networking using TCP or UDP with the Netty 4.x library.
+
+| `netty4:protocol:host:port}`
+|
+
+
+
 | link:camel-netty4-http[Netty4 HTTP] (camel-netty4-http)
-++netty4-http:protocol:host:port/path++ | Netty HTTP server and client using the Netty 4.x library.
+| Netty HTTP server and client using the Netty 4.x library.
+
+| `netty4-http:protocol:host:port/path}`
+|
+
+
+
 | link:camel-openshift[OpenShift] (camel-openshift)
-++openshift:clientId++ | To manage your Openshift 2.x applications.
+| To manage your Openshift 2.x applications.
+
+| `openshift:clientId}`
+|
+
+
+
 | link:camel-optaplanner[OptaPlanner] (camel-optaplanner)
-++optaplanner:configFile++ | Solves the planning problem contained in a message with OptaPlanner.
+| Solves the planning problem contained in a message with OptaPlanner.
+
+| `optaplanner:configFile}`
+|
+
+
+
 | link:camel-eventadmin[OSGi EventAdmin] (camel-eventadmin)
-++eventadmin:topic++ | The eventadmin component can be used in an OSGi environment to receive OSGi EventAdmin events and process them.
+| The eventadmin component can be used in an OSGi environment to receive OSGi EventAdmin events and process them.
+
+| `eventadmin:topic}`
+|
+
+
+
 | link:camel-paxlogging[OSGi PAX Logging] (camel-paxlogging)
-++paxlogging:appender++ | The paxlogging component can be used in an OSGi environment to receive PaxLogging events and process them.
+| The paxlogging component can be used in an OSGi environment to receive PaxLogging events and process them.
+
+| `paxlogging:appender}`
+|
+
+
+
 | link:camel-paho[Paho] (camel-paho)
-++paho:topic++ | Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
+| Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
+
+| `paho:topic}`
+|
+
+
+
 | link:camel-pdf[PDF] (camel-pdf)
-++pdf:operation++ | The pdf components provides the ability to create modify or extract content from PDF documents.
+| The pdf components provides the ability to create modify or extract content from PDF documents.
+
+| `pdf:operation}`
+|
+
+
+
 | link:camel-pgevent[PostgresSQL Event] (camel-pgevent)
-++pgevent:host:port/database/channel++ | The pgevent component allows for producing/consuming PostgreSQL events related to the LISTEN/NOTIFY commands.
+| The pgevent component allows for producing/consuming PostgreSQL events related to the LISTEN/NOTIFY commands.
+
+| `pgevent:host:port/database/channel}`
+|
+
+
+
 | link:camel-printer[Printer] (camel-printer)
-++lpr:hostname:port/printername++ | The printer component is used for sending messages to printers as print jobs.
+| The printer component is used for sending messages to printers as print jobs.
+
+| `lpr:hostname:port/printername}`
+|
+
+
+
 | link:camel-quartz[Quartz] (camel-quartz)
-++quartz:groupName/timerName++ | Provides a scheduled delivery of messages using the Quartz 1.x scheduler.
+| Provides a scheduled delivery of messages using the Quartz 1.x scheduler.
+
+| `quartz:groupName/timerName}`
+|
+
+
+
 | link:camel-quartz2[Quartz2] (camel-quartz2)
-++quartz2:groupName/triggerName++ | Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
+| Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
+
+| `quartz2:groupName/triggerName}`
+|
+
+
+
 | link:camel-quickfix[QuickFix] (camel-quickfix)
-++quickfix:configurationName++ | The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.
+| The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.
+
+| `quickfix:configurationName}`
+|
+
+
+
 | link:camel-rabbitmq[RabbitMQ] (camel-rabbitmq)
-++rabbitmq:hostname:portNumber/exchangeName++ | Camel RabbitMQ Component
+| Camel RabbitMQ Component
+
+| `rabbitmq:hostname:portNumber/exchangeName}`
+|
+
+
+
 | link:camel-restlet[Restlet] (camel-restlet)
-++restlet:protocol:host:port/uriPattern++ | Component for consuming and producing Restful resources using Restlet.
+| Component for consuming and producing Restful resources using Restlet.
+
+| `restlet:protocol:host:port/uriPattern}`
+|
+
+
+
 | link:camel-rmi[RMI] (camel-rmi)
-++rmi:hostname:port/name++ | The rmi component is for invoking Java RMI beans from Camel.
+| The rmi component is for invoking Java RMI beans from Camel.
+
+| `rmi:hostname:port/name}`
+|
+
+
+
 | link:camel-routebox[RouteBox] (camel-routebox)
-++routebox:routeboxName++ | The routebox component allows to send/receive messages between Camel routes in a black box way.
+| The routebox component allows to send/receive messages between Camel routes in a black box way.
+
+| `routebox:routeboxName}`
+|
+
+
+
 | link:camel-rss[RSS] (camel-rss)
-++rss:feedUri++ | The rss component is used for consuming RSS feeds.
+| The rss component is used for consuming RSS feeds.
+
+| `rss:feedUri}`
+|
+
+
+
 | link:camel-salesforce[Salesforce] (camel-salesforce)
-++salesforce:operationName:topicName++ | The salesforce component is used for integrating Camel with the massive Salesforce API.
+| The salesforce component is used for integrating Camel with the massive Salesforce API.
+
+| `salesforce:operationName:topicName}`
+|
+
+
+
 | link:camel-sap-netweaver[SAP NetWeaver] (camel-sap-netweaver)
-++sap-netweaver:url++ | The sap-netweaver component integrates with the SAP NetWeaver Gateway using HTTP transports.
+| The sap-netweaver component integrates with the SAP NetWeaver Gateway using HTTP transports.
+
+| `sap-netweaver:url}`
+|
+
+
+
 | link:camel-schematron[Schematron] (camel-schematron)
-++schematron:path++ | Validates the payload of a message using the Schematron Library.
+| Validates the payload of a message using the Schematron Library.
+
+| `schematron:path}`
+|
+
+
+
 | link:camel-jsch[SCP] (camel-jsch)
-++scp:host:port/directoryName++ | To copy files using the secure copy protocol (SCP).
+| To copy files using the secure copy protocol (SCP).
+
+| `scp:host:port/directoryName}`
+|
+
+
+
 | link:camel-servicenow[ServiceNow] (camel-servicenow)
-++servicenow:instanceName++ | Represents a ServiceNow endpoint.
+| Represents a ServiceNow endpoint.
+
+| `servicenow:instanceName}`
+|
+
+
+
 | link:camel-servlet[Servlet] (camel-servlet)
-++servlet:contextPath++ | To use a HTTP Servlet as entry for Camel routes when running in a servlet container.
+| To use a HTTP Servlet as entry for Camel routes when running in a servlet container.
+
+| `servlet:contextPath}`
+|
+
+
+
 | link:camel-ftp[SFTP] (camel-ftp)
-++sftp:host:port/directoryName++ | The sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
+| The sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
+
+| `sftp:host:port/directoryName}`
+|
+
+
+
 | link:camel-sjms[Simple JMS] (camel-sjms)
-++sjms:destinationType:destinationName++ | The sjms component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic.
+| The sjms component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic.
+
+| `sjms:destinationType:destinationName}`
+|
+
+
+
 | link:camel-sjms[Simple JMS Batch] (camel-sjms)
-++sjms-batch:destinationName++ | The sjms-batch component is a specialized for highly performant transactional batch consumption from a JMS queue.
+| The sjms-batch component is a specialized for highly performant transactional batch consumption from a JMS queue.
+
+| `sjms-batch:destinationName}`
+|
+
+
+
 | link:camel-sip[SIP] (camel-sip)
-++sip:uri++ | To send and receive messages using the SIP protocol (used in telco and mobile).
+| To send and receive messages using the SIP protocol (used in telco and mobile).
+
+| `sip:uri}`
+|
+
+
+
 | link:camel-slack[Slack] (camel-slack)
-++slack:channel++ | The slack component allows you to send messages to Slack.
+| The slack component allows you to send messages to Slack.
+
+| `slack:channel}`
+|
+
+
+
 | link:camel-smpp[SMPP] (camel-smpp)
-++smpp:host:port++ | To send and receive SMS using a SMSC (Short Message Service Center).
+| To send and receive SMS using a SMSC (Short Message Service Center).
+
+| `smpp:host:port}`
+|
+
+
+
 | link:camel-snmp[SNMP] (camel-snmp)
-++snmp:host:port++ | The snmp component gives you the ability to poll SNMP capable devices or receiving traps.
+| The snmp component gives you the ability to poll SNMP capable devices or receiving traps.
+
+| `snmp:host:port}`
+|
+
+
+
 | link:camel-solr[Solr] (camel-solr)
-++solr:url++ | The solr component allows you to interface with an Apache Lucene Solr server.
+| The solr component allows you to interface with an Apache Lucene Solr server.
+
+| `solr:url}`
+|
+
+
+
 | link:camel-spark-rest[Spark Rest] (camel-spark-rest)
-++spark-rest:verb:path++ | The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
+| The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
+
+| `spark-rest:verb:path}`
+|
+
+
+
 | link:camel-splunk[Splunk] (camel-splunk)
-++splunk:name++ | The splunk component allows to publish or search for events in Splunk.
+| The splunk component allows to publish or search for events in Splunk.
+
+| `splunk:name}`
+|
+
+
+
 | link:camel-spring-batch[Spring Batch] (camel-spring-batch)
-++spring-batch:jobName++ | The spring-batch component allows to send messages to Spring Batch for further processing.
+| The spring-batch component allows to send messages to Spring Batch for further processing.
+
+| `spring-batch:jobName}`
+|
+
+
+
 | link:camel-spring[Spring Event] (camel-spring)
-++spring-event:name++ | The spring-event component allows to listen for Spring Application Events.
+| The spring-event component allows to listen for Spring Application Events.
+
+| `spring-event:name}`
+|
+
+
+
 | link:camel-spring-integration[Spring Integration] (camel-spring-integration)
-++spring-integration:defaultChannel++ | Bridges Camel with Spring Integration.
+| Bridges Camel with Spring Integration.
+
+| `spring-integration:defaultChannel}`
+|
+
+
+
 | link:camel-spring-ldap[Spring LDAP] (camel-spring-ldap)
-++spring-ldap:templateName++ | The spring-ldap component allows you to perform searches in LDAP servers using filters as the message payload.
+| The spring-ldap component allows you to perform searches in LDAP servers using filters as the message payload.
+
+| `spring-ldap:templateName}`
+|
+
+
+
 | link:camel-spring-redis[Spring Redis] (camel-spring-redis)
-++spring-redis:host:port++ | The spring-redis component allows sending and receiving messages from Redis.
+| The spring-redis component allows sending and receiving messages from Redis.
+
+| `spring-redis:host:port}`
+|
+
+
+
 | link:camel-spring-ws[Spring WebService] (camel-spring-ws)
-++spring-ws:type:lookupKey:webServiceEndpointUri++ | The spring-ws component is used for SOAP WebServices using Spring WebServices.
+| The spring-ws component is used for SOAP WebServices using Spring WebServices.
+
+| `spring-ws:type:lookupKey:webServiceEndpointUri}`
+|
+
+
+
 | link:camel-sql[SQL] (camel-sql)
-++sql:query++ | The sql component can be used to perform SQL query to a database.
+| The sql component can be used to perform SQL query to a database.
+
+| `sql:query}`
+|
+
+
+
 | link:camel-sql[SQL StoredProcedure] (camel-sql)
-++sql-stored:template++ | Camel SQL support
+| Camel SQL support
+
+| `sql-stored:template}`
+|
+
+
+
 | link:camel-ssh[SSH] (camel-ssh)
-++ssh:host:port++ | The ssh component enables access to SSH servers such that you can send an SSH command and process the response.
+| The ssh component enables access to SSH servers such that you can send an SSH command and process the response.
+
+| `ssh:host:port}`
+|
+
+
+
 | link:camel-stax[StAX] (camel-stax)
-++stax:contentHandlerClass++ | The stax component allows messages to be process through a SAX ContentHandler.
+| The stax component allows messages to be process through a SAX ContentHandler.
+
+| `stax:contentHandlerClass}`
+|
+
+
+
 | link:camel-stomp[Stomp] (camel-stomp)
-++stomp:destination++ | The stomp component is used for communicating with Stomp compliant message brokers.
+| The stomp component is used for communicating with Stomp compliant message brokers.
+
+| `stomp:destination}`
+|
+
+
+
 | link:camel-stream[Stream] (camel-stream)
-++stream:url++ | The stream: component provides access to the system-in system-out and system-err streams as well as allowing streaming of file and URL.
+| The stream: component provides access to the system-in system-out and system-err streams as well as allowing streaming of file and URL.
+
+| `stream:url}`
+|
+
+
+
 | link:camel-stringtemplate[String Template] (camel-stringtemplate)
-++string-template:resourceUri++ | Transforms the message using a String template.
+| Transforms the message using a String template.
+
+| `string-template:resourceUri}`
+|
+
+
+
 | link:camel-telegram[Telegram] (camel-telegram)
-++telegram:type/authorizationToken++ | The Camel endpoint for a telegram bot.
+| The Camel endpoint for a telegram bot.
+
+| `telegram:type/authorizationToken}`
+|
+
+
+
 | link:camel-twitter[Twitter] (camel-twitter)
-++twitter:kind++ | This component integrates with Twitter to send tweets or search for tweets and more.
+| This component integrates with Twitter to send tweets or search for tweets and more.
+
+| `twitter:kind}`
+|
+
+
+
 | link:camel-undertow[Undertow] (camel-undertow)
-++undertow:httpURI++ | The undertow component provides HTTP-based endpoints for consuming and producing HTTP requests.
+| The undertow component provides HTTP-based endpoints for consuming and producing HTTP requests.
+
+| `undertow:httpURI}`
+|
+
+
+
 | link:camel-velocity[Velocity] (camel-velocity)
-++velocity:resourceUri++ | Transforms the message using a Velocity template.
+| Transforms the message using a Velocity template.
+
+| `velocity:resourceUri}`
+|
+
+
+
 | link:camel-vertx[Vert.x] (camel-vertx)
-++vertx:address++ | The vertx component is used for sending and receive messages from a vertx event bus.
+| The vertx component is used for sending and receive messages from a vertx event bus.
+
+| `vertx:address}`
+|
+
+
+
 | link:camel-weather[Weather] (camel-weather)
-++weather:name++ | Polls the weather information from Open Weather Map.
+| Polls the weather information from Open Weather Map.
+
+| `weather:name}`
+|
+
+
+
 | link:camel-xmlrpc[XML RPC] (camel-xmlrpc)
-++xmlrpc:address++ | The xmlrpc component is used for sending messages to a XML RPC service.
+| The xmlrpc component is used for sending messages to a XML RPC service.
+
+| `xmlrpc:address}`
+|
+
+
+
 | link:camel-xmlsecurity[XML Security] (camel-xmlsecurity)
-++xmlsecurity:command:name++ | Used to sign and verify exchanges using the XML signature specification.
+| Used to sign and verify exchanges using the XML signature specification.
+
+| `xmlsecurity:command:name}`
+|
+
+
+
 | link:camel-xmpp[XMPP] (camel-xmpp)
-++xmpp:host:port/participant++ | To send and receive messages from a XMPP (chat) server.
+| To send and receive messages from a XMPP (chat) server.
+
+| `xmpp:host:port/participant}`
+|
+
+
+
 | link:camel-saxon[XQuery] (camel-saxon)
-++xquery:resourceUri++ | Transforms the message using a XQuery template using Saxon.
+| Transforms the message using a XQuery template using Saxon.
+
+| `xquery:resourceUri}`
+|
+
+
+
 | link:camel-yammer[Yammer] (camel-yammer)
-++yammer:function++ | The yammer component allows you to interact with the Yammer enterprise social network.
+| The yammer component allows you to interact with the Yammer enterprise social network.
+
+| `yammer:function}`
+|
+
+
+
 | link:camel-zookeeper[ZooKeeper] (camel-zookeeper)
-++zookeeper:serverUrls/path++ | The zookeeper component allows interaction with a ZooKeeper cluster.
+| The zookeeper component allows interaction with a ZooKeeper cluster.
+
+| `zookeeper:serverUrls/path}`
+|
+
+
 |=======================================================================
 // components: END
+
 
 
 
