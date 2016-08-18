@@ -1,9 +1,9 @@
 @if{!components.isEmpty()}
-{% raw %}
-[width="100%",cols="2,1m,1,6",options="header"]
+
+[width="100%",cols="1,2,1,6",options="header"]
 |=======================================================================
 | Title | Syntax | Artifact | Description
-@foreach{row : components}| @{row.title} | @{row.syntax} | @{row.artifactId} | @{row.description}
+@foreach{row : components}| link:@{row.artifactId}[@{row.title}] | @{row.syntax} | @{row.artifactId} | @{row.description}
 @end{}|=======================================================================
-{% endraw %}
+
 @end{}
