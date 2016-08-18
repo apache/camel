@@ -505,5 +505,4 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         return language;
     }
 
-
 }

@@ -31,6 +31,7 @@ import java.util.TreeSet;
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
+import org.apache.camel.maven.packaging.model.LanguageModel;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -110,6 +111,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         executeComponentsReadme();
         executeDataFormatsReadme();
+        executeLanguagesReadme();
     }
 
     protected void executeComponentsReadme() throws MojoExecutionException, MojoFailureException {
@@ -223,6 +225,56 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
+    protected void executeLanguagesReadme() throws MojoExecutionException, MojoFailureException {
+        Set<File> languageFiles = new TreeSet<>();
+
+        if (languagesDir != null && languagesDir.isDirectory()) {
+            File[] files = languagesDir.listFiles();
+            if (files != null) {
+                languageFiles.addAll(Arrays.asList(files));
+            }
+        }
+
+        try {
+            List<LanguageModel> models = new ArrayList<>();
+            for (File file : languageFiles) {
+                String json = loadText(new FileInputStream(file));
+                LanguageModel model = generateLanguageModel(json);
+                models.add(model);
+            }
+
+            // sor the models
+            Collections.sort(models, new LanguageComparator());
+
+            // filter out camel-core
+            List<LanguageModel> languages = new ArrayList<>();
+            for (LanguageModel model : models) {
+                if (!"camel-core".equals(model.getArtifactId())) {
+                    languages.add(model);
+                }
+            }
+
+            // update the big readme file in the components dir
+            File file = new File(readmeComponentsDir, "readme.adoc");
+
+            // update regular data formats
+            boolean exists = file.exists();
+            String changed = templateLanguages(languages);
+            boolean updated = updateLanguages(file, changed);
+
+            if (updated) {
+                getLog().info("Updated components/readme.adoc file: " + file);
+            } else if (exists) {
+                getLog().debug("No changes to components/readme.adoc file: " + file);
+            } else {
+                getLog().warn("No components/readme.adoc file: " + file);
+            }
+
+        } catch (IOException e) {
+            throw new MojoFailureException("Error due " + e.getMessage(), e);
+        }
+    }
+
     private String templateComponents(List<ComponentModel> models) throws MojoExecutionException {
         try {
             String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-components.mvel"));
@@ -240,6 +292,18 @@ public class PrepareReadmeMojo extends AbstractMojo {
             String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-dataformats.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("dataformats", models);
+            String out = (String) TemplateRuntime.eval(template, map);
+            return out;
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
+        }
+    }
+
+    private String templateLanguages(List<LanguageModel> models) throws MojoExecutionException {
+        try {
+            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-languages.mvel"));
+            Map<String, Object> map = new HashMap<>();
+            map.put("languages", models);
             String out = (String) TemplateRuntime.eval(template, map);
             return out;
         } catch (Exception e) {
@@ -315,9 +379,38 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    private static String link(ComponentModel model) {
+    private boolean updateLanguages(File file, String changed) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
 
-        return "[" + model.getTitle() + "](" + model.getScheme() + "-component.adoc)";
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            String existing = StringHelper.between(text, "// languages: START" , "// languages: END");
+            if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                changed = changed.trim();
+                if (existing.equals(changed)) {
+                    return false;
+                } else {
+                    String before = StringHelper.before(text, "// languages: START");
+                    String after = StringHelper.after(text, "// languages: END");
+                    text = before + "\n// languages: START\n" + changed + "\n// languages: END\n" + after;
+                    writeText(file, text);
+                    return true;
+                }
+            } else {
+                getLog().warn("Cannot find markers in file " + file);
+                getLog().warn("Add the following markers");
+                getLog().warn("\t// languages: START");
+                getLog().warn("\t// languages: END");
+                return false;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
     }
 
     private static class ComponentComparator implements Comparator<ComponentModel> {
@@ -333,6 +426,15 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
         @Override
         public int compare(DataFormatModel o1, DataFormatModel o2) {
+            // lets sort by title
+            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
+        }
+    }
+
+    private static class LanguageComparator implements Comparator<LanguageModel> {
+
+        @Override
+        public int compare(LanguageModel o1, LanguageModel o2) {
             // lets sort by title
             return o1.getTitle().compareToIgnoreCase(o2.getTitle());
         }
@@ -376,6 +478,24 @@ public class PrepareReadmeMojo extends AbstractMojo {
         dataFormat.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
 
         return dataFormat;
+    }
+
+    private LanguageModel generateLanguageModel(String json) {
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
+
+        LanguageModel language = new LanguageModel();
+        language.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
+        language.setName(JSonSchemaHelper.getSafeValue("name", rows));
+        language.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
+        language.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
+        language.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
+        language.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        language.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
+        language.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
+        language.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
+        language.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
+
+        return language;
     }
 
 }
