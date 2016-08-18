@@ -4,15 +4,13 @@ Components
 
 
 
+
+
 // components: START
-Components
-^^^^^^^^^^
-
-
 {% raw %}
-[width="100%",cols="2s,1m, 1m,6",options="header"]
+[width="100%",cols="2,1m,1,6",options="header"]
 |=======================================================================
-| Title | Synax | Artifact | Description
+| Title | Syntax | Artifact | Description
 | AHC | ahc:httpUri | camel-ahc | To call external HTTP services using Async Http Client.
 | AHC Websocket | ahc-ws:httpUri | camel-ahc-ws | To exchange data with external Websocket servers using Async Http Client.
 | AMQP | amqp:destinationType:destinationName | camel-amqp | Messaging with AMQP protocol using Apache QPid Client.
@@ -193,6 +191,8 @@ Components
 |=======================================================================
 {% endraw %}
 // components: END
+
+
 
 
 
