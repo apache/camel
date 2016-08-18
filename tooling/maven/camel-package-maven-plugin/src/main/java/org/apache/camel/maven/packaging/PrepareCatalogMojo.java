@@ -856,6 +856,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         List<String> missing = new ArrayList<>();
         for (String component : components) {
+            // special for mail
+            if (component.equals("imap") || component.equals("imaps") || component.equals("pop3") || component.equals("pop3s") || component.equals("smtp") || component.equals("smtps")) {
+                component = "mail";
+            }
             String name = component + "-component";
             if (!docs.contains(name)) {
                 missing.add(name);

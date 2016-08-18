@@ -582,6 +582,11 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     private String doComponentAsciiDoc(String name) {
+        // special for mail component
+        if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp") || name.equals("smtps")) {
+            name = "mail";
+        }
+
         String file = DOC_DIR + "/" + name + "-component.adoc";
 
         String answer = null;

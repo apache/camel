@@ -104,8 +104,14 @@ public class ReadmeComponentMojo extends AbstractMojo {
             for (String componentName : componentNames) {
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
+                    // special for some components
+                    componentName = asComponentName(componentName);
+
                     File file = new File(docDir, componentName + "-component.adoc");
+
                     ComponentModel model = generateComponentModel(componentName, json);
+                    String title = asComponentTitle(model.getScheme(), model.getTitle());
+                    model.setTitle(title);
 
                     // we only want the first scheme as the alternatives do not have their own readme file
                     if (!isEmpty(model.getAlternativeSchemes())) {
@@ -157,11 +163,8 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     File file = new File(docDir, dataFormatName + "-dataformat.adoc");
 
                     DataFormatModel model = generateDataFormatModel(dataFormatName, json);
-
-                    // special to reuse same title
-                    if (model.getName().startsWith("bindy")) {
-                        model.setTitle("Bindy");
-                    }
+                    String title = asDataFormatTitle(model.getName(), model.getTitle());
+                    model.setTitle(title);
 
                     boolean exists = file.exists();
                     boolean updated = false;
@@ -182,12 +185,39 @@ public class ReadmeComponentMojo extends AbstractMojo {
         }
     }
 
+    private static String asComponentName(String name) {
+        // special for some components which share the same readme file
+        if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp") || name.equals("smtps")) {
+            return "mail";
+        } else {
+            return name;
+        }
+    }
+
+    private static String asComponentTitle(String name, String title) {
+        // special for some components which share the same readme file
+        if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp") || name.equals("smtps")) {
+            return "Mail";
+        } else {
+            return title;
+        }
+    }
+
     private static String asDataFormatName(String name) {
         // special for some dataformats which share the same readme file
         if (name.startsWith("bindy")) {
             return "bindy";
         } else {
             return name;
+        }
+    }
+
+    private static String asDataFormatTitle(String name, String title) {
+        // special for some dataformats which share the same readme file
+        if (name.startsWith("bindy")) {
+            return "Bindy";
+        } else {
+            return title;
         }
     }
 
