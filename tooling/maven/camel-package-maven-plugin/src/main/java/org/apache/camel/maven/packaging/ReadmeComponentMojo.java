@@ -460,6 +460,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
         DataFormatModel dataFormat = new DataFormatModel();
         dataFormat.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
         dataFormat.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
+        dataFormat.setName(JSonSchemaHelper.getSafeValue("name", rows));
         dataFormat.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
         dataFormat.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         dataFormat.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
@@ -497,6 +498,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
         LanguageModel language = new LanguageModel();
         language.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
         language.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
+        language.setName(JSonSchemaHelper.getSafeValue("name", rows));
         language.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
         language.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         language.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
