@@ -1,9 +1,9 @@
 @if{!components.isEmpty()}
 
-[width="100%",cols="1,2,1,6",options="header"]
+[width="100%",cols="4,6",options="header"]
 |=======================================================================
-| Title | Syntax | Artifact | Description
-@foreach{row : components}| link:@{row.artifactId}[@{row.title}] | @{row.syntax} | @{row.artifactId} | @{row.description}
+| Component | Description
+@foreach{row : components}| link:@{row.artifactId}[@{row.title}] (@{row.artifactId}) + ++@{row.syntax}++ | @{row.description}
 @end{}|=======================================================================
 
 @end{}
