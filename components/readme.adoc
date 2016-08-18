@@ -546,10 +546,11 @@ Data Formats
 
 
 
+
 // dataformats: START
 [width="100%",cols="4,6",options="header"]
 |=======================================================================
-| DataFormat | Description
+| Data Format | Description
 
 | link:camel-avro[Avro] (camel-avro) | Camel Avro data format
 
@@ -634,5 +635,47 @@ Data Formats
 | link:camel-zipfile[Zip File] (camel-zipfile) | Camel Zip file support
 |=======================================================================
 // dataformats: END
+
+
+
+Expression Languages
+^^^^^^^^^^^^^^^^^^^^
+
+
+// languages: START
+[width="100%",cols="4,6",options="header"]
+|=======================================================================
+| Language | Description
+
+| link:camel-juel[EL] (camel-juel) | For EL expressions and predicates
+
+| link:camel-groovy[Groovy] (camel-groovy) | For Groovy expressions and predicates
+
+| link:camel-hl7[HL7 Terser] (camel-hl7) | For HL7 terser expressions and predicates
+
+| link:camel-script[JavaScript] (camel-script) | For JavaScript expressions and predicates
+
+| link:camel-jsonpath[JSonPath] (camel-jsonpath) | For JSonPath expressions and predicates
+
+| link:camel-jxpath[JXPath] (camel-jxpath) | For JXPath expressions and predicates
+
+| link:camel-mvel[MVEL] (camel-mvel) | For MVEL expressions and predicates
+
+| link:camel-ognl[OGNL] (camel-ognl) | For OGNL expressions and predicates
+
+| link:camel-script[PHP] (camel-script) | For PHP expressions and predicates
+
+| link:camel-script[Python] (camel-script) | For Python expressions and predicates
+
+| link:camel-script[Ruby] (camel-script) | For Ruby expressions and predicates
+
+| link:camel-spring[SpEL] (camel-spring) | For Spring Expression Language (SpEL) expressions and predicates
+
+| link:camel-josql[SQL] (camel-josql) | For SQL expressions and predicates
+
+| link:camel-saxon[XQuery] (camel-saxon) | For XQuery expressions and predicates
+|=======================================================================
+// languages: END
+
 
 

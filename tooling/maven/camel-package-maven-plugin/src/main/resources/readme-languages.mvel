@@ -1,9 +1,9 @@
-@if{!dataformats.isEmpty()}
+@if{!languages.isEmpty()}
 
 [width="100%",cols="4,6",options="header"]
 |=======================================================================
-| Data Format | Description
-@foreach{row : dataformats}
+| Language | Description
+@foreach{row : languages}
 | link:@{row.artifactId}[@{row.title}] (@{row.artifactId}) | @{row.description}
 @end{}|=======================================================================
 
