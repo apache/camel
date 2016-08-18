@@ -425,7 +425,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         @Override
         public int compare(ComponentModel o1, ComponentModel o2) {
             // lets sort by title
-            return o1.getTitle().compareTo(o2.getTitle());
+            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
         }
     }
 
@@ -434,7 +434,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         @Override
         public int compare(DataFormatModel o1, DataFormatModel o2) {
             // lets sort by title
-            return o1.getTitle().compareTo(o2.getTitle());
+            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
         }
     }
 
@@ -443,7 +443,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         @Override
         public int compare(LanguageModel o1, LanguageModel o2) {
             // lets sort by title
-            return o1.getTitle().compareTo(o2.getTitle());
+            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
         }
     }
 
