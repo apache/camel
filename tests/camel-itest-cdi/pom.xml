@@ -93,8 +93,15 @@
         </dependency>
         <dependency>
           <groupId>org.jboss.arquillian.container</groupId>
-          <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
-          <version>${arquillian-weld-se-embedded-version}</version>
+          <artifactId>arquillian-weld-embedded</artifactId>
+          <version>${arquillian-weld-embedded-version}</version>
+          <scope>test</scope>
+        </dependency>
+        <!-- FIXME: The Weld embedded Arquillian adapter requires JTA
+                    see https://issues.jboss.org/browse/ARQ-2040 -->
+        <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jta_1.1_spec</artifactId>
           <scope>test</scope>
         </dependency>
       </dependencies>
