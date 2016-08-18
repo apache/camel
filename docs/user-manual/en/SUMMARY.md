@@ -303,15 +303,18 @@
 
 
 
+
+
+
 <!-- dataformats: START -->
 * Data Formats
 	* [Avro](avro-dataformat.adoc)
 	* [Barcode](barcode-dataformat.adoc)
 	* [Base64](base64-dataformat.adoc)
 	* [BeanIO](beanio-dataformat.adoc)
-	* [Bindy CSV](bindy-csv-dataformat.adoc)
-	* [Bindy Fixed Length](bindy-fixed-dataformat.adoc)
-	* [Bindy Key Value Pair](bindy-kvp-dataformat.adoc)
+	* [Bindy CSV](bindy-dataformat.adoc)
+	* [Bindy Fixed Length](bindy-dataformat.adoc)
+	* [Bindy Key Value Pair](bindy-dataformat.adoc)
 	* [Boon](boon-dataformat.adoc)
 	* [CSV](csv-dataformat.adoc)
 	* [Castor](castor-dataformat.adoc)
@@ -351,6 +354,9 @@
 	* [uniVocity Fixed Length](univocity-fixed-dataformat.adoc)
 	* [uniVocity TSV](univocity-tsv-dataformat.adoc)
 <!-- dataformats: END -->
+
+
+
 
 
 

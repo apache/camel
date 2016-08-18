@@ -43,131 +43,41 @@ page].
 The 3 data formats share common options and have dedicated ones, this
 section presents them all.
 
-[[uniVocity-parsersformats-Commonoptionssharedbyallthedataformats]]
-Common options, shared by all the data formats
-++++++++++++++++++++++++++++++++++++++++++++++
+[[uniVocity-Options]]
+Options
+^^^^^^^
 
-[width="100%",cols="10%,10%,80%",options="header",]
+
+// dataformat options: START
+The uniVocity Fixed Length dataformat supports 16 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
-|Parameter name |Type |Description
-
-|`nullValue` |`String` |The string representation of a `null` value.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `null`.
-
-|`skipEmptyLines` |`Boolean` |Whether or not the empty lines must be ignored.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `true`.
-
-|`ignoreTrailingWhitespaces` |`Boolean` |Whether or not the trailing white spaces must ignored.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `true`.
-
-|`ignoreLeadingWhitespaces` |`Boolean` |Whether or not the leading white spaces must be ignored.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `true`.
-
-|`headersDisabled` |`boolean` |Whether or not the headers are disabled. When defined, this option
-explicitly sets the headers as `null` which indicates that there is no
-header. This option is `false` by default.
-
-|`headers` |`String[]` |The headers to use. 
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `null`.
-
-|`headersExtractionEnabled` |`Boolean` |Whether or not the header must be read in the first line of the test
-document. This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `false`.
-
-|`numberOfRecordsToRead` |`Integer` |The maximum number of record to read.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `-1`.
-
-|`emptyValue` |`String` |The String representation of an empty value.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `""`.
-
-|`lineSeparator` |`String` |The line separator of the files.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is the platform line separator.
-
-|`normalizedLineSeparator` |`Character` |The normalized line separator of the files.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `"\n"`.
-
-|`comment` |`Character` |The comment symbol.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `'#'`.
-
-|`lazyLoad` |`boolean` |Whether the unmarshalling should produce an iterator that reads the
-lines on the fly or if all the lines must be read at one.
-This option is `false` by default.
-
-|`asMap` |`boolean` |Whether the unmarshalling should produce maps for the lines values
-instead of lists. It requires to have header (either defined or
-collected). This options is `false` by default.
+| Name | Default | Java Type | Description
+| skipTrailingCharsUntilNewline | false | Boolean | Whether or not the trailing characters until new line must be ignored. The default value is false
+| recordEndsOnNewline | false | Boolean | Whether or not the record ends on new line. The default value is false
+| padding |  | String | The padding character. The default value is a space
+| nullValue |  | String | The string representation of a null value. The default value is null
+| skipEmptyLines | true | Boolean | Whether or not the empty lines must be ignored. The default value is true
+| ignoreTrailingWhitespaces | true | Boolean | Whether or not the trailing white spaces must ignored. The default value is true
+| ignoreLeadingWhitespaces | true | Boolean | Whether or not the leading white spaces must be ignored. The default value is true
+| headersDisabled | false | Boolean | Whether or not the headers are disabled. When defined this option explicitly sets the headers as null which indicates that there is no header. The default value is false
+| headerExtractionEnabled | false | Boolean | Whether or not the header must be read in the first line of the test document The default value is false
+| numberOfRecordsToRead |  | Integer | The maximum number of record to read.
+| emptyValue |  | String | The String representation of an empty value
+| lineSeparator |  | String | The line separator of the files The default value is to use the JVM platform line separator
+| normalizedLineSeparator | \n | String | The normalized line separator of the files The default value is \n
+| comment | # | String | The comment symbol. The default value is
+| lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one. The default value is false
+| asMap | false | Boolean | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected). The default value is false
 |=======================================================================
+{% endraw %}
+// dataformat options: END
 
-[[uniVocity-parsersformats-CSVformatoptions]]
-CSV format options
-++++++++++++++++++
 
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Parameter name |Type |Description
-
-|`quoteAllFields` |`Boolean` |Whether or not all values must be quoted when writing them.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `false`.
-
-|`quote` |`Character` |The quote symbol.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is '"'.
-
-|`quoteEscape` |`Character` |The quote escape symbol.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `'"'`.
-
-|`delimiter` |`Character` |The delimiter of values.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `','`.
-|=======================================================================
-
-[[uniVocity-parsersformats-Fixed-widthformatoptions]]
-Fixed-width format options
-++++++++++++++++++++++++++
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Parameter name |Type |Description
-
-|`fieldLengths` |`int[]` |This options is required and defines the length of each values
-
-|`skipTrailingCharsUntilNewline` |`Boolean` |Whether or not the trailing characters until new line must be ignored.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `false`.
-
-|`recordEndsOnNewLine` |`Boolean` |Whether or not the record ends on new line.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `false`.
-
-|`padding` |`Character` |The padding character.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `' '` (space).
-|=======================================================================
-
-[[uniVocity-parsersformats-TSVformatoptions]]
-TSV format options
-++++++++++++++++++
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Parameter name |Type |Description
-
-|`escapeChar` |`Character` |The escape character.
-This option is `null` by default. When `null`, it uses the default
-uniVocity-parser value which is `'\'`.
-|=======================================================================
 
 [[uniVocity-parsersformats-Marshallingusages]]
 Marshalling usages

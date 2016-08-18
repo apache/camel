@@ -871,6 +871,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         missing.clear();
 
         for (String dataformat : dataformats) {
+            // special for bindy
+            if (dataformat.startsWith("bindy")) {
+                dataformat = "bindy";
+            }
             String name = dataformat + "-dataformat";
             if (!docs.contains(name)) {
                 missing.add(name);

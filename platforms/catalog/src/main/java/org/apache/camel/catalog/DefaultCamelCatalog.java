@@ -624,6 +624,13 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public String dataFormatAsciiDoc(String name) {
+        // special for some name data formats
+        if (name.startsWith("bindy")) {
+            name = "bindy";
+        } else if (name.startsWith("univocity")) {
+            name = "univocity";
+        }
+
         String file = DOC_DIR + "/" + name + "-dataformat.adoc";
 
         String answer = null;

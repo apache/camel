@@ -814,6 +814,10 @@ public class CamelCatalogTest {
         String doc = catalog.dataFormatAsciiDoc("json-jackson");
         assertNotNull(doc);
         assertTrue(doc.contains("Jackson dataformat"));
+
+        doc = catalog.dataFormatAsciiDoc("bindy-csv");
+        assertNotNull(doc);
+        assertTrue(doc.contains("CsvRecord"));
     }
 
     @Test

@@ -27,21 +27,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.xml.crypto.Data;
-
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
-import org.apache.camel.maven.packaging.model.DataFormatOptionModel;
 import org.apache.camel.maven.packaging.model.LanguageModel;
-import org.apache.camel.maven.packaging.model.LanguageOptionModel;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
-import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 
@@ -201,8 +196,6 @@ public class PrepareUserGuideMojo extends AbstractMojo {
 
             // the summary file has the TOC
             File file = new File(userGuideDir, "SUMMARY.md");
-
-            // TODO: some dataformats reuse docs, such as bindy etc.
 
             // update data formats
             StringBuilder dataFormats = new StringBuilder();
@@ -409,11 +402,22 @@ public class PrepareUserGuideMojo extends AbstractMojo {
     }
 
     private static String link(DataFormatModel model) {
-        return "[" + model.getTitle() + "](" + model.getName() + "-dataformat.adoc)";
+        // special for some data formats
+        String name = asDataFormatName(model.getName());
+        return "[" + model.getTitle() + "](" + name + "-dataformat.adoc)";
     }
 
     private static String link(LanguageModel model) {
         return "[" + model.getTitle() + "](" + model.getName() + "-language.adoc)";
+    }
+
+    private static String asDataFormatName(String name) {
+        // special for some dataformats which share the same readme file
+        if (name.startsWith("bindy")) {
+            return "bindy";
+        } else {
+            return name;
+        }
     }
 
     private static class ComponentComparator implements Comparator<ComponentModel> {
