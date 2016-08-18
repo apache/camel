@@ -12,6 +12,7 @@ Components
 
 
 
+
 // components: START
 [width="100%",cols="4,6",options="header"]
 |=======================================================================
@@ -335,7 +336,7 @@ Components
 | link:camel-mina2[Mina2] (camel-mina2) +
 `mina2:protocol:host:port` | Socket level networking using TCP or UDP with the Apache Mina 2.x library.
 
-| link:camel-mllp[mllp] (camel-mllp) +
+| link:camel-mllp[MLLP] (camel-mllp) +
 `mllp:hostname:port` | Represents a MLLP endpoint.
 
 | link:camel-mongodb[MongoDB] (camel-mongodb) +
@@ -550,6 +551,7 @@ Components
 
 |=======================================================================
 // components: END
+
 
 
 

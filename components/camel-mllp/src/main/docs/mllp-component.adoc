@@ -42,8 +42,9 @@ MLLP Options
 ~~~~~~~~~~~~
 
 
+
 // component options: START
-The mllp component has no options.
+The MLLP component has no options.
 // component options: END
 
 
@@ -51,8 +52,10 @@ The mllp component has no options.
 
 
 
+
+
 // endpoint options: START
-The mllp component supports 19 endpoint options which are listed below:
+The MLLP component supports 19 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
@@ -80,6 +83,7 @@ The mllp component supports 19 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
+
 
 
 
