@@ -46,19 +46,25 @@ public final class SpringBootHelper {
     }
 
     public static File allStartersDir(File baseDir) {
-        File allStartersDir = new File(camelProjectRoot(baseDir), "components-starter");
+        File allStartersDir = new File(camelProjectRoot(baseDir, "components-starter"), "components-starter");
         return allStartersDir;
     }
 
-    public static File camelProjectRoot(File baseDir) {
+    public static File camelProjectRoot(File baseDir, String expectedDirName) {
+        // another solution could be to look for pom.xml file and see if that pom.xml is the camel root pom
+        // however looking for a dir named components-starter should be fine also (there is only 1 with such name)
         try {
             File root = baseDir.getCanonicalFile();
-            while (root != null && !root.getName().equals("camel")) {
+            while (root != null) {
+                File[] names = root.listFiles(pathname -> pathname.getName().equals(expectedDirName));
+                if (names != null && names.length == 1) {
+                    break;
+                }
                 root = root.getParentFile();
             }
 
             if (root == null) {
-                throw new IllegalStateException("Cannot find project root");
+                throw new IllegalStateException("Cannot find Apache Camel project root directory");
             }
             return root;
         } catch (IOException e) {
