@@ -1,8 +1,6 @@
 Components
 ^^^^^^^^^^
 
-
-
 // components: START
 [width="100%",cols="4,6",options="header"]
 |=======================================================================
@@ -543,16 +541,50 @@ Components
 // components: END
 
 
+Other Components
+^^^^^^^^^^^^^^^^
+[width="100%",cols="4,6",options="header"]
+|=======================================================================
+| Component | Description
+| BAM (camel-bam) | *deprecated* Business Activity Monitoring
+| Blueprint (camel-blueprint) | Using Camel with OSGi Blueprint
+| Core OSGi (camel-core-osgi) | Using Camel with OSGi
+| CDI (camel-cdi) | Using Camel with CDI
+| Eclipse (camel-eclipse) | Camel classpath scanning support for running in Eclipse Desktop Applications
+| Grape (camel-grape) | Using Grape to download and install Camel components into existing running Camel application
+| Guice (camel-guice) | Using Camel with Guice
+| HawtDB (camel-hawtdb) | *deprecated* Using HawtDB as persistent EIP store
+| Hystrix (camel-hystrix) | Circuit Breaker EIP using Hystrix
+| LevelDB (camel-leveldb) | Using LevelDB as persistent EIP store
+| Jasypt (camel-jasypt) | Security using Jasypt
+| Kura (camel-kura) | Using Camel with Eclipse Kura (OSGi)
+| Ribbon (camel-ribbon) | Using Netflixx Ribbon for client side load balancing
+| RX (camel-rx) | Camel Reactive using RxJava library
+| Scala (camel-scala) | Camel Scala DSL
+| SCR (camel-scr) | Camel with OSGi SCR (Declarative Services)
+| Servlet Listener (camel-servletlistener) | Bootstrapping Camel using Servet Listener
+| Shiro (camel-shiro) | Security using Shiro
+| Spring (camel-spring) | Camel Spring XML DSL
+| Spring Boot (camel-spring-boot) | Using Camel with Spring Boot
+| Spring DM (camel-spring-dm) | *deprecated* Camel SpringDM (OSGi) XML DSL
+| Spring Java Config (camel-spring-javaconfig) | Using Camel with Spring Java Configuration
+| Spring Security (camel-spring-security) | Security using Spring
+| Swagger (camel-swagger) | *deprecated* Rest-dsl support for using swagger api-doc
+| Swagger Java (camel-swagger) | Rest-dsl support for using swagger api-doc
+| Test (camel-test) | Camel unit testing
+| Test Blueprint (camel-test-blueprint) | Camel unit testing with OSGi Blueprint
+| Test CDI (camel-test-cdi) | Camel unit testing with CDI
+| Test Karaf (camel-test-karaf) | Camel integration testing with Apache Karaf
+| Test Spring (camel-test-spring) | Camel unit testing with Spring
+| TestNG (camel-testng) | Camel unit testing with TestNG
+| UrlRewrite (camel-urlrewrite) | URL rewrite support for HTTP components
+| Zipkin (camel-zipkin) | Distributed message tracing using Zipkin
+|=======================================================================
+
 
 
 Data Formats
 ^^^^^^^^^^^^
-
-
-
-
-
-
 
 // dataformats: START
 [width="100%",cols="4,6",options="header"]
@@ -644,15 +676,8 @@ Data Formats
 // dataformats: END
 
 
-
-
-
-
 Expression Languages
 ^^^^^^^^^^^^^^^^^^^^
-
-
-
 
 // languages: START
 [width="100%",cols="4,6",options="header"]
@@ -688,8 +713,4 @@ Expression Languages
 | link:camel-saxon/src/main/docs/xquery-language.adoc[XQuery] (camel-saxon) | For XQuery expressions and predicates
 |=======================================================================
 // languages: END
-
-
-
-
 
