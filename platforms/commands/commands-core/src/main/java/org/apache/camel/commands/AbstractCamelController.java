@@ -489,4 +489,18 @@ public abstract class AbstractCamelController implements CamelController {
         return answer;
     }
 
+    @Override
+    public String catalogComponentAsciiDoc(String name) throws Exception {
+        return catalog.componentAsciiDoc(name);
+    }
+
+    @Override
+    public String catalogDataFormatAsciiDoc(String name) throws Exception {
+        return catalog.dataFormatAsciiDoc(name);
+    }
+
+    @Override
+    public String catalogLanguageAsciiDoc(String name) throws Exception {
+        return catalog.languageAsciiDoc(name);
+    }
 }
