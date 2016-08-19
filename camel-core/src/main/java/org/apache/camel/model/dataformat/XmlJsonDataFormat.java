@@ -31,7 +31,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * xml-json data format
+ * XML-JSon data format
  *
  * @version 
  */

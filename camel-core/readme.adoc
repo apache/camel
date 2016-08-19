@@ -105,13 +105,13 @@ Data Formats
 |=======================================================================
 | Data Format | Description
 
-| link:camel-core/src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | The Core Camel Java DSL based router
+| link:camel-core/src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | GZip compression data format
 
-| link:camel-core/src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | The Core Camel Java DSL based router
+| link:camel-core/src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | Java Object Serialization data format
 
-| link:camel-core/src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | The Core Camel Java DSL based router
+| link:camel-core/src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | String (text based) data format
 
-| link:camel-core/src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | The Core Camel Java DSL based router
+| link:camel-core/src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | Zip compression data format (not for zip files)
 |=======================================================================
 // dataformats: END
 

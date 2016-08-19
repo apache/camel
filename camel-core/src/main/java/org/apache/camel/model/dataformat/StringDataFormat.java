@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents the String (text based) {@link DataFormat}
+ * String (text based) data format
  *
  * @version 
  */
