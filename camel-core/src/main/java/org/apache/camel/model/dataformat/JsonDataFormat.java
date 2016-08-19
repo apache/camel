@@ -31,7 +31,7 @@ import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Json data format
+ * JSon data format
  *
  * @version 
  */

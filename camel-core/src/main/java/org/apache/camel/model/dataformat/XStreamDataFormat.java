@@ -42,7 +42,7 @@ import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * xstream data format
+ * XStream data format
  *
  * @version 
  */

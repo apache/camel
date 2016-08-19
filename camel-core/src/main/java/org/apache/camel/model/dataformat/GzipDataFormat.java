@@ -24,7 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * GZip data format
+ * GZip compression data format
  *
  * @version 
  */

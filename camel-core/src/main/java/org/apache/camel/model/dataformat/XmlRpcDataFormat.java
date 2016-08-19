@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * xml-rpc data format
+ * XML-RPC data format
  */
 @Metadata(label = "dataformat,transformation,xml", title = "XML RPC")
 @XmlRootElement(name = "xmlrpc")
