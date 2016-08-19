@@ -145,4 +145,13 @@ public class DataFormatModel {
             return javaType;
         }
     }
+
+    public String getDocLink() {
+        if ("camel-core".equals(artifactId)) {
+            return "src/main/docs";
+        } else {
+            return artifactId + "/src/main/docs";
+        }
+    }
+
 }
