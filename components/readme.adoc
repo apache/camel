@@ -82,7 +82,7 @@ Components
 `braintree:apiName/methodName` | The braintree component is used for integrating with the Braintree Payment System.
 
 | link:camel-context/src/main/docs/context-component.adoc[Camel Context] (camel-context) +
-`context:contextId:localEndpointUrl` | The context component allows to send/receive messages between Camel routes in a black box way.
+`context:contextId:localEndpointUrl` | *deprecated* The context component allows to send/receive messages between Camel routes in a black box way.
 
 | link:camel-cassandraql/src/main/docs/cql-component.adoc[Cassandra CQL] (camel-cassandraql) +
 `cql:beanRef:hosts:port/keyspace` | The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API).
@@ -211,7 +211,7 @@ Components
 `hbase:tableName` | For reading/writing from/to an HBase store (Hadoop database).
 
 | link:camel-hdfs/src/main/docs/hdfs-component.adoc[HDFS] (camel-hdfs) +
-`hdfs:hostName:port/path` | For reading/writing from/to an HDFS filesystem using Hadoop 1.x.
+`hdfs:hostName:port/path` | *deprecated* For reading/writing from/to an HDFS filesystem using Hadoop 1.x.
 
 | link:camel-hdfs2/src/main/docs/hdfs2-component.adoc[HDFS2] (camel-hdfs2) +
 `hdfs2:hostName:port/path` | For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
@@ -226,7 +226,7 @@ Components
 `http4:httpUri` | For calling out to external HTTP servers using Apache HTTP Client 4.x.
 
 | link:camel-ibatis/src/main/docs/ibatis-component.adoc[iBatis] (camel-ibatis) +
-`ibatis:statement` | Performs a query poll insert update or delete in a relational database using Apache iBATIS.
+`ibatis:statement` | *deprecated* Performs a query poll insert update or delete in a relational database using Apache iBATIS.
 
 | link:camel-mail/src/main/docs/imap-component.adoc[IMAP] (camel-mail) +
 `imap:host:port` | To send or receive emails using imap/pop3 or stmp protocols.
@@ -244,7 +244,7 @@ Components
 `ironmq:queueName` | Represents a IronMQ endpoint.
 
 | link:camel-javaspace/src/main/docs/javaspace-component.adoc[JavaSpace] (camel-javaspace) +
-`javaspace:url` | Sending and receiving messages through JavaSpace.
+`javaspace:url` | *deprecated* Sending and receiving messages through JavaSpace.
 
 | link:camel-jbpm/src/main/docs/jbpm-component.adoc[JBPM] (camel-jbpm) +
 `jbpm:connectionURL` | The jbpm component provides integration with jBPM (Business Process Management).
@@ -295,7 +295,7 @@ Components
 `kafka:brokers` | The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
 
 | link:camel-kestrel/src/main/docs/kestrel-component.adoc[Kestrel] (camel-kestrel) +
-`kestrel:addresses/queue` | The kestrel component allows messages to be sent to (or consumed from) Kestrel brokers.
+`kestrel:addresses/queue` | *deprecated* The kestrel component allows messages to be sent to (or consumed from) Kestrel brokers.
 
 | link:camel-krati/src/main/docs/krati-component.adoc[Krati] (camel-krati) +
 `krati:path` | The krati allows the use krati datastores and datasets inside Camel.
@@ -319,7 +319,7 @@ Components
 `metrics:metricsType:metricsName` | To collect various metrics directly from Camel routes using the DropWizard metrics library.
 
 | link:camel-mina/src/main/docs/mina-component.adoc[Mina] (camel-mina) +
-`mina:protocol:host:port` | Socket level networking using TCP or UDP with the Apache Mina 1.x library.
+`mina:protocol:host:port` | *deprecated* Socket level networking using TCP or UDP with the Apache Mina 1.x library.
 
 | link:camel-mina2/src/main/docs/mina2-component.adoc[Mina2] (camel-mina2) +
 `mina2:protocol:host:port` | Socket level networking using TCP or UDP with the Apache Mina 2.x library.
@@ -355,10 +355,10 @@ Components
 `nats:servers` | Camel Components
 
 | link:camel-netty/src/main/docs/netty-component.adoc[Netty] (camel-netty) +
-`netty:protocol:host:port` | Socket level networking using TCP or UDP with the Netty 3.x library.
+`netty:protocol:host:port` | *deprecated* Socket level networking using TCP or UDP with the Netty 3.x library.
 
 | link:camel-netty-http/src/main/docs/netty-http-component.adoc[Netty HTTP] (camel-netty-http) +
-`netty-http:protocol:host:port/path` | Netty HTTP server and client using the Netty 3.x library.
+`netty-http:protocol:host:port/path` | *deprecated* Netty HTTP server and client using the Netty 3.x library.
 
 | link:camel-netty4/src/main/docs/netty4-component.adoc[Netty4] (camel-netty4) +
 `netty4:protocol:host:port` | Socket level networking using TCP or UDP with the Netty 4.x library.
@@ -367,7 +367,7 @@ Components
 `netty4-http:protocol:host:port/path` | Netty HTTP server and client using the Netty 4.x library.
 
 | link:camel-openshift/src/main/docs/openshift-component.adoc[OpenShift] (camel-openshift) +
-`openshift:clientId` | To manage your Openshift 2.x applications.
+`openshift:clientId` | *deprecated* To manage your Openshift 2.x applications.
 
 | link:camel-optaplanner/src/main/docs/optaplanner-component.adoc[OptaPlanner] (camel-optaplanner) +
 `optaplanner:configFile` | Solves the planning problem contained in a message with OptaPlanner.
@@ -391,7 +391,7 @@ Components
 `lpr:hostname:port/printername` | The printer component is used for sending messages to printers as print jobs.
 
 | link:camel-quartz/src/main/docs/quartz-component.adoc[Quartz] (camel-quartz) +
-`quartz:groupName/timerName` | Provides a scheduled delivery of messages using the Quartz 1.x scheduler.
+`quartz:groupName/timerName` | *deprecated* Provides a scheduled delivery of messages using the Quartz 1.x scheduler.
 
 | link:camel-quartz2/src/main/docs/quartz2-component.adoc[Quartz2] (camel-quartz2) +
 `quartz2:groupName/triggerName` | Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
@@ -409,7 +409,7 @@ Components
 `rmi:hostname:port/name` | The rmi component is for invoking Java RMI beans from Camel.
 
 | link:camel-routebox/src/main/docs/routebox-component.adoc[RouteBox] (camel-routebox) +
-`routebox:routeboxName` | The routebox component allows to send/receive messages between Camel routes in a black box way.
+`routebox:routeboxName` | *deprecated* The routebox component allows to send/receive messages between Camel routes in a black box way.
 
 | link:camel-rss/src/main/docs/rss-component.adoc[RSS] (camel-rss) +
 `rss:feedUri` | The rss component is used for consuming RSS feeds.

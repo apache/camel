@@ -4,7 +4,7 @@
 |=======================================================================
 | Language | Description
 @foreach{row : languages}
-| link:@{row.artifactId}/src/main/docs/${row.name}-language.adoc[@{row.title}] (@{row.artifactId}) | @{row.description}
+| link:@{row.artifactId}/src/main/docs/${row.name}-language.adoc[@{row.title}] (@{row.artifactId}) | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description}
 @end{}|=======================================================================
 
 @end{}
