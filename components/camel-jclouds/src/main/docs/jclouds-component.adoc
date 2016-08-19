@@ -115,7 +115,7 @@ The JClouds component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | blobStores | List | To use the given BlobStore which must be configured when using blobstore.
@@ -133,7 +133,7 @@ The JClouds component supports 2 options which are listed below.
 The JClouds component supports 17 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | command | common |  | JcloudsCommand | *Required* What command to execute such as blobstore or compute.

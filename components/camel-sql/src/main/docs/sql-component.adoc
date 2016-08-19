@@ -116,7 +116,7 @@ The SQL component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | dataSource | DataSource | Sets the DataSource to use to communicate with the database.
@@ -132,7 +132,7 @@ The SQL component supports 2 options which are listed below.
 The SQL component supports 46 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | query | common |  | String | *Required* Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.

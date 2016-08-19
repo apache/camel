@@ -61,7 +61,7 @@ The Validator component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | resourceResolverFactory | ValidatorResourceResolverFactory | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI
@@ -74,7 +74,7 @@ The Validator component supports 1 options which are listed below.
 The Validator component supports 13 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | resourceUri | producer |  | String | *Required* URL to a local resource on the classpathor a reference to lookup a bean in the Registry or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.

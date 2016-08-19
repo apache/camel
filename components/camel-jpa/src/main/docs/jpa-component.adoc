@@ -97,7 +97,7 @@ The JPA component supports 4 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | entityManagerFactory | EntityManagerFactory | To use the EntityManagerFactory. This is strongly recommended to configure.
@@ -119,7 +119,7 @@ The JPA component supports 4 options which are listed below.
 The JPA component supports 42 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | entityType | common |  | Class<?> | *Required* The JPA annotated class to use as entity.

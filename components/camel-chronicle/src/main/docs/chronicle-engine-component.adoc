@@ -9,7 +9,7 @@ The Chronicle Engine component has no options.
 The Chronicle Engine component supports 5 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | path | common |  | String | *Required* engine path

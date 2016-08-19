@@ -58,7 +58,7 @@ The Weather component has no options.
 The Weather component supports 44 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | name | common |  | String | *Required* The name value is not used.

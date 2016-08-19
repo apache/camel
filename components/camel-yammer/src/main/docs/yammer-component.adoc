@@ -52,7 +52,7 @@ The Yammer component supports 4 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | consumerKey | String | The consumer key
@@ -78,7 +78,7 @@ Endpoint options
 The Yammer component supports 29 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | function | common |  | YammerFunctionType | *Required* The function to use

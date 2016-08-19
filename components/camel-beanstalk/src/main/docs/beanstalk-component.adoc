@@ -70,7 +70,7 @@ The Beanstalk component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | connectionSettingsFactory | ConnectionSettingsFactory | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings)
@@ -85,7 +85,7 @@ The Beanstalk component supports 1 options which are listed below.
 The Beanstalk component supports 27 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | connectionSettings | common |  | String | Connection settings host:port/tube

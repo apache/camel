@@ -79,7 +79,7 @@ The FOP component has no options.
 The FOP component supports 5 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | outputType | producer |  | FopOutputType | *Required* The primary output format is PDF but other output formats are also supported.

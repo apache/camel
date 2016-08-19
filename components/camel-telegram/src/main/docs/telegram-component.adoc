@@ -58,7 +58,7 @@ The Telegram component has no options.
 The Telegram component supports 24 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | type | common |  | String | *Required* The endpoint type. Currently only the 'bots' type is supported.

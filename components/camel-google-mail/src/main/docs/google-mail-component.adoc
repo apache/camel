@@ -70,7 +70,7 @@ The Google Mail component supports 10 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | configuration | GoogleMailConfiguration | To use the shared configuration. Properties of the shared configuration can also be set individually.
@@ -97,7 +97,7 @@ The Google Mail component supports 10 options which are listed below.
 The Google Mail component supports 13 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | apiName | common |  | GoogleMailApiName | *Required* What kind of operation to perform

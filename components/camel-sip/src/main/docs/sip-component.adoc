@@ -84,7 +84,7 @@ The SIP component has no options.
 The SIP component supports 45 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | uri | common |  | URI | *Required* URI of the SIP server to connect to (the username and password can be included such as: john:secretmyserver:9999)

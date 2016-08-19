@@ -47,7 +47,7 @@ The Nats component has no options.
 The Nats component supports 18 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | servers | common |  | String | *Required* URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.

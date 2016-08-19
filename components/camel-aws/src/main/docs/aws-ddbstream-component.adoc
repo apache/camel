@@ -44,7 +44,7 @@ The AWS DynamoDB Streams component has no options.
 The AWS DynamoDB Streams component supports 24 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | tableName | consumer |  | String | *Required* Name of the dynamodb table

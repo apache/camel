@@ -48,7 +48,7 @@ The PostgresSQL Event component has no options.
 The PostgresSQL Event component supports 11 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | host | common | localhost | String | To connect using hostname and port to the database.

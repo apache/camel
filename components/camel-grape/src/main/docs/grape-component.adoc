@@ -24,7 +24,7 @@ The Grape component has no options.
 The Grape component supports 3 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | defaultCoordinates |  |  | String | *Required* Maven coordinates to use as default to grab if the message body is empty.

@@ -59,7 +59,7 @@ Options
 The ZooKeeper component supports 14 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | serverUrls | common |  | String | *Required* The zookeeper server hosts (multiple servers can be separated by comma)

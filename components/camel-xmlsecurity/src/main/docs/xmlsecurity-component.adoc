@@ -240,7 +240,7 @@ The XML Security component supports 43 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | signerConfiguration | XmlSignerConfiguration | To use a shared XmlSignerConfiguration configuration to use as base for configuring endpoints. Properties of the shared configuration can also be set individually.
@@ -304,7 +304,7 @@ Endpoint Options
 The XML Security component supports 38 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | command | producer |  | XmlCommand | *Required* Whether to sign or verify.

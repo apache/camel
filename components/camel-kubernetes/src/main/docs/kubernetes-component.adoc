@@ -52,7 +52,7 @@ The Kubernetes component has no options.
 The Kubernetes component supports 28 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | masterUrl | common |  | String | *Required* Kubernetes Master url

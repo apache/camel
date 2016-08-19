@@ -41,7 +41,7 @@ The AWS Simple Workflow component has no options.
 The AWS Simple Workflow component supports 30 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | type | common |  | String | *Required* Activity or workflow

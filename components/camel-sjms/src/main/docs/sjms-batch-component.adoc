@@ -122,7 +122,7 @@ The Simple JMS Batch component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | connectionFactory | ConnectionFactory | A ConnectionFactory is required to enable the SjmsBatchComponent.
@@ -142,7 +142,7 @@ The Simple JMS Batch component supports 1 options which are listed below.
 The Simple JMS Batch component supports 21 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | destinationName | consumer |  | String | *Required* The destination name. Only queues are supported names may be prefixed by 'queue:'.

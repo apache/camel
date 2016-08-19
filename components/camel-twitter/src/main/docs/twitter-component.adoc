@@ -63,7 +63,7 @@ The Twitter component supports 8 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | accessToken | String | The access token
@@ -155,7 +155,7 @@ URI options
 The Twitter component supports 43 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | kind | common |  | String | *Required* What polling mode to use direct polling or event based. The event mode is only supported when the endpoint kind is event based.

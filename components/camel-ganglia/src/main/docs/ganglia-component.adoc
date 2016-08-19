@@ -63,7 +63,7 @@ The Ganglia component supports 15 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | configuration | GangliaConfiguration | To use the shared configuration. Properties of the shared configuration can also be set individually.
@@ -94,7 +94,7 @@ The Ganglia component supports 15 options which are listed below.
 The Ganglia component supports 16 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | host | producer | 239.2.11.71 | String | Host name for Ganglia server

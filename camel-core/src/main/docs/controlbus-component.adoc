@@ -76,7 +76,7 @@ The Control Bus component has no options.
 The Control Bus component supports 8 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | command | producer |  | String | *Required* Command can be either route or language
