@@ -62,6 +62,9 @@ Options
 
 
 
+
+
+
 // dataformat options: START
 The Bindy dataformat supports 3 options which are listed below.
 
@@ -77,6 +80,9 @@ The Bindy dataformat supports 3 options which are listed below.
 |=======================================================================
 {% endraw %}
 // dataformat options: END
+
+
+
 
 
 

@@ -553,6 +553,7 @@ Data Formats
 
 
 
+
 // dataformats: START
 [width="100%",cols="4,6",options="header"]
 |=======================================================================
@@ -566,11 +567,11 @@ Data Formats
 
 | link:camel-beanio/src/main/docs/beanio-dataformat.adoc[BeanIO] (camel-beanio) | Camel BeanIO data format support
 
-| link:camel-bindy/src/main/docs/bindy-csv-dataformat.adoc[Bindy CSV] (camel-bindy) | Camel Bindy data format support
+| link:camel-bindy/src/main/docs/bindy-dataformat.adoc[Bindy CSV] (camel-bindy) | Camel Bindy data format support
 
-| link:camel-bindy/src/main/docs/bindy-fixed-dataformat.adoc[Bindy Fixed Length] (camel-bindy) | Camel Bindy data format support
+| link:camel-bindy/src/main/docs/bindy-dataformat.adoc[Bindy Fixed Length] (camel-bindy) | Camel Bindy data format support
 
-| link:camel-bindy/src/main/docs/bindy-kvp-dataformat.adoc[Bindy Key Value Pair] (camel-bindy) | Camel Bindy data format support
+| link:camel-bindy/src/main/docs/bindy-dataformat.adoc[Bindy Key Value Pair] (camel-bindy) | Camel Bindy data format support
 
 | link:camel-boon/src/main/docs/boon-dataformat.adoc[Boon] (camel-boon) | Camel Boon support
 
@@ -641,6 +642,7 @@ Data Formats
 | link:camel-zipfile/src/main/docs/zipfile-dataformat.adoc[Zip File] (camel-zipfile) | Camel Zip file support
 |=======================================================================
 // dataformats: END
+
 
 
 
