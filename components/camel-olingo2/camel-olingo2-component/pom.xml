@@ -38,6 +38,7 @@
 
     <camel.osgi.export.pkg>${componentPackage}</camel.osgi.export.pkg>
     <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
+    <maven.exe.file.extension></maven.exe.file.extension>
   </properties>
 
   <dependencies>
@@ -277,6 +278,17 @@
 
   <profiles>
     <profile>
+      <id>Windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <maven.exe.file.extension>.cmd</maven.exe.file.extension>
+      </properties>
+    </profile>
+    <profile>
       <!-- REVISIT as of now, the olingo odata2 sample service that is used in the tests 
            is not available in nexus and needs to be generated and built using its architype plugin.
            If the sample service jar becomes available, we can use it directly -->
@@ -310,7 +322,7 @@
               </execution>
             </executions>
             <configuration>
-              <executable>mvn</executable>
+              <executable>mvn${maven.exe.file.extension}</executable>
               <workingDirectory>${basedir}/target</workingDirectory>
               <arguments>
                 <argument>archetype:generate</argument>
