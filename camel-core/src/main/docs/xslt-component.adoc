@@ -73,6 +73,8 @@ Options
 // component options: START
 The XSLT component supports 5 options which are listed below.
 
+
+
 {% raw %}
 [width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================

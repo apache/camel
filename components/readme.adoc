@@ -641,7 +641,7 @@ Data Formats
 
 | link:camel-crypto/src/main/docs/pgp-dataformat.adoc[PGP] (camel-crypto) | Camel Cryptographic Support
 
-| link:camel-protobuf/src/main/docs/protobuf-dataformat.adoc[Protobuf] (camel-protobuf) | Camel Components
+| link:camel-protobuf/src/main/docs/protobuf-dataformat.adoc[Protobuf] (camel-protobuf) | Camel Google Protobuf data format support
 
 | link:camel-rss/src/main/docs/rss-dataformat.adoc[RSS] (camel-rss) | Camel RSS support
 

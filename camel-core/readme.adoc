@@ -147,9 +147,9 @@ Expression Languages
 
 | link:src/main/docs/simple-language.adoc[Simple] (camel-core) | For expressions and predicates using the simple language
 
-| link:src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | For expressions and predicates using a body or header tokenizer.
+| link:src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | For expressions and predicates using a body or header tokenizer
 
-| link:src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-core) | For expressions and predicates using a body or header tokenizer.
+| link:src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-core) | For expressions and predicates using a body or header tokenizer
 
 | link:src/main/docs/xpath-language.adoc[XPath] (camel-core) | For XPath expressions and predicates
 |=======================================================================
