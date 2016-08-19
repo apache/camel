@@ -21,12 +21,9 @@ URI format
 URI Options
 ^^^^^^^^^^^
 
-
 // component options: START
 The REST component has no options.
 // component options: END
-
-
 
 // endpoint options: START
 The REST component supports 14 endpoint options which are listed below:

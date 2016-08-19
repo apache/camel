@@ -36,12 +36,8 @@ You can append query options to the URI in the following format,
 Options
 ^^^^^^^
 
-
-
 // component options: START
 The Scheduler component supports 1 options which are listed below.
-
-
 
 {% raw %}
 [width="100%",cols="2s,1m,7",options="header"]
@@ -51,8 +47,6 @@ The Scheduler component supports 1 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
-
-
 
 
 // endpoint options: START

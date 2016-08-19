@@ -33,12 +33,8 @@ Where *`someUri`* can be any URI with any query parameters.
 Options
 ^^^^^^^
 
-
-
 // component options: START
 The Stub component supports 3 options which are listed below.
-
-
 
 {% raw %}
 [width="100%",cols="2s,1m,7",options="header"]
@@ -50,8 +46,6 @@ The Stub component supports 3 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
-
-
 
 
 // endpoint options: START
@@ -81,7 +75,6 @@ The Stub component supports 17 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
-
 
 
 [[Stub-Examples]]

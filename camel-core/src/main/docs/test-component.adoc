@@ -56,11 +56,9 @@ pulled from before starting the test.
 URI Options
 ^^^^^^^^^^^
 
-
 // component options: START
 The Test component has no options.
 // component options: END
-
 
 
 // endpoint options: START
