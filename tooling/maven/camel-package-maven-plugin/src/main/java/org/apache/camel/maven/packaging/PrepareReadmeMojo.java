@@ -202,6 +202,12 @@ public class PrepareReadmeMojo extends AbstractMojo {
             for (File file : dataFormatFiles) {
                 String json = loadText(new FileInputStream(file));
                 DataFormatModel model = generateDataFormatModel(json);
+
+                // special for bindy as we have one common file
+                if (model.getName().startsWith("bindy")) {
+                    model.setName("bindy");
+                }
+
                 models.add(model);
             }
 
