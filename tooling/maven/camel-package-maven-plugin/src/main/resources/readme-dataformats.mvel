@@ -4,7 +4,7 @@
 |=======================================================================
 | Data Format | Description
 @foreach{row : dataformats}
-| link:@{row.artifactId}/src/main/docs/${row.name}-dataformat.adoc[@{row.title}] (@{row.artifactId}) | @{row.description}
+| link:@{row.artifactId}/src/main/docs/${row.name}-dataformat.adoc[@{row.title}] (@{row.artifactId}) | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description}
 @end{}|=======================================================================
 
 @end{}

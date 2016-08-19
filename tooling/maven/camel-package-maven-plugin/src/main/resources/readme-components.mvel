@@ -5,7 +5,7 @@
 | Component | Description
 @foreach{row : components}
 | link:@{row.artifactId}/src/main/docs/${row.scheme}-component.adoc[@{row.title}] (@{row.artifactId}) +
-`@{row.syntax}` | @{row.description}
+`@{row.syntax}` | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description}
 @end{}
 |=======================================================================
 
