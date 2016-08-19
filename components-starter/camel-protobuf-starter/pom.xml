@@ -26,7 +26,7 @@
     <artifactId>camel-protobuf-starter</artifactId>
     <packaging>jar</packaging>
     <name>Spring-Boot Starter :: Camel :: Protobuf</name>
-    <description>Spring-Boot Starter for Camel Components</description>
+    <description>Spring-Boot Starter for Camel Google Protobuf data format support</description>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -58,6 +58,8 @@ Options
 // component options: START
 The Validator component supports 1 options which are listed below.
 
+
+
 {% raw %}
 [width="100%",cols="2s,1m,7",options="header"]
 |=======================================================================
