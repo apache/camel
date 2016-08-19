@@ -279,7 +279,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
                 } else {
                     String before = StringHelper.before(text, "<!-- core components: START -->");
                     String after = StringHelper.after(text, "<!-- core components: END -->");
-                    text = before + "\n<!-- core components: START -->\n" + changed + "\n<!-- core components: END -->\n" + after;
+                    text = before + "<!-- core components: START -->\n" + changed + "\n<!-- core components: END -->" + after;
                     writeText(file, text);
                     return true;
                 }
@@ -313,7 +313,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
                 } else {
                     String before = StringHelper.before(text, "<!-- components: START -->");
                     String after = StringHelper.after(text, "<!-- components: END -->");
-                    text = before + "\n<!-- components: START -->\n" + changed + "\n<!-- components: END -->\n" + after;
+                    text = before + "<!-- components: START -->\n" + changed + "\n<!-- components: END -->" + after;
                     writeText(file, text);
                     return true;
                 }
@@ -347,7 +347,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
                 } else {
                     String before = StringHelper.before(text, "<!-- dataformats: START -->");
                     String after = StringHelper.after(text, "<!-- dataformats: END -->");
-                    text = before + "\n<!-- dataformats: START -->\n" + changed + "\n<!-- dataformats: END -->\n" + after;
+                    text = before + "<!-- dataformats: START -->\n" + changed + "\n<!-- dataformats: END -->" + after;
                     writeText(file, text);
                     return true;
                 }
@@ -381,7 +381,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
                 } else {
                     String before = StringHelper.before(text, "<!-- languages: START -->");
                     String after = StringHelper.after(text, "<!-- languages: END -->");
-                    text = before + "\n<!-- languages: START -->\n" + changed + "\n<!-- languages: END -->\n" + after;
+                    text = before + "<!-- languages: START -->\n" + changed + "\n<!-- languages: END -->" + after;
                     writeText(file, text);
                     return true;
                 }

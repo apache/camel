@@ -275,7 +275,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 } else {
                     String before = StringHelper.before(text, "// component options: START");
                     String after = StringHelper.after(text, "// component options: END");
-                    text = before + "\n// component options: START\n" + changed + "\n// component options: END\n" + after;
+                    text = before + "// component options: START\n" + changed + "\n// component options: END" + after;
                     writeText(file, text);
                     return true;
                 }
@@ -309,7 +309,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 } else {
                     String before = StringHelper.before(text, "// endpoint options: START");
                     String after = StringHelper.after(text, "// endpoint options: END");
-                    text = before + "\n// endpoint options: START\n" + changed + "\n// endpoint options: END\n" + after;
+                    text = before + "// endpoint options: START\n" + changed + "\n// endpoint options: END" + after;
                     writeText(file, text);
                     return true;
                 }
@@ -343,7 +343,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 } else {
                     String before = StringHelper.before(text, "// dataformat options: START");
                     String after = StringHelper.after(text, "// dataformat options: END");
-                    text = before + "\n// dataformat options: START\n" + changed + "\n// dataformat options: END\n" + after;
+                    text = before + "// dataformat options: START\n" + changed + "\n// dataformat options: END" + after;
                     writeText(file, text);
                     return true;
                 }
@@ -377,7 +377,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 } else {
                     String before = StringHelper.before(text, "// language options: START");
                     String after = StringHelper.after(text, "// language options: END");
-                    text = before + "\n// language options: START\n" + changed + "\n// language options: END\n" + after;
+                    text = before + "// language options: START\n" + changed + "\n// language options: END" + after;
                     writeText(file, text);
                     return true;
                 }
