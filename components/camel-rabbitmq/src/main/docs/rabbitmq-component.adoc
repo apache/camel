@@ -54,7 +54,7 @@ The RabbitMQ component has no options.
 The RabbitMQ component supports 55 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | hostname | common |  | String | *Required* The hostname of the running rabbitmq instance or cluster.

@@ -50,7 +50,7 @@ The SNMP component has no options.
 The SNMP component supports 36 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | host | consumer |  | String | *Required* Hostname of the SNMP enabled device

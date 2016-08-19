@@ -22,7 +22,7 @@ The XQuery component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | moduleURIResolver | ModuleURIResolver | To use the custom ModuleURIResolver
@@ -37,7 +37,7 @@ The XQuery component supports 1 options which are listed below.
 The XQuery component supports 31 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | resourceUri | common |  | String | *Required* The name of the template to load from classpath or file system

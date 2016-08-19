@@ -53,7 +53,7 @@ The Slack component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | webhookUrl | String | The incoming webhook URL
@@ -68,7 +68,7 @@ The Slack component supports 1 options which are listed below.
 The Slack component supports 7 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | channel | producer |  | String | *Required* The channel name (syntax name) or slackuser (syntax userName) to send a message directly to an user.

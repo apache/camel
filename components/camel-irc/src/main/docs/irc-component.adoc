@@ -51,7 +51,7 @@ The IRC component has no options.
 The IRC component supports 26 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | hostname | common |  | String | *Required* Hostname for the IRC chat server

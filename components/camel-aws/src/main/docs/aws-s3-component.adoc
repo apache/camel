@@ -49,7 +49,7 @@ The AWS S3 Storage Service component has no options.
 The AWS S3 Storage Service component supports 40 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | bucketNameOrArn | common |  | String | *Required* Bucket name or ARN

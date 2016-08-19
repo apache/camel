@@ -41,7 +41,7 @@ The SSH component supports 11 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | configuration | SshConfiguration | To use the shared SSH configuration
@@ -66,7 +66,7 @@ The SSH component supports 11 options which are listed below.
 The SSH component supports 27 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | host | common |  | String | *Required* Sets the hostname of the remote SSH server.

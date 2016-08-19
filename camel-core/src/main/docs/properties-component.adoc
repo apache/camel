@@ -25,7 +25,7 @@ The Properties component supports 15 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | locations | String[] | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option.
@@ -52,7 +52,7 @@ The Properties component supports 15 options which are listed below.
 The Properties component supports 7 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | key | common |  | String | *Required* Property key to use as placeholder

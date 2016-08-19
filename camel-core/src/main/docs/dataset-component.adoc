@@ -57,7 +57,7 @@ The Dataset component has no options.
 The Dataset component supports 20 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | name | common |  | DataSet | *Required* Name of DataSet to lookup in the registry

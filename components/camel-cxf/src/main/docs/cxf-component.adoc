@@ -129,7 +129,7 @@ The CXF component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | allowStreaming | Boolean | This option controls whether the CXF component when running in PAYLOAD mode will DOM parse the incoming messages into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming in some cases.
@@ -146,7 +146,7 @@ The CXF component supports 2 options which are listed below.
 The CXF component supports 35 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | beanId | common |  | String | To lookup an existing configured CxfEndpoint. Must used bean: as prefix.

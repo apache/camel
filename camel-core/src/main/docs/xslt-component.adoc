@@ -76,7 +76,7 @@ The XSLT component supports 5 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | xmlConverter | XmlConverter | To use a custom implementation of org.apache.camel.converter.jaxp.XmlConverter
@@ -93,7 +93,7 @@ The XSLT component supports 5 options which are listed below.
 The XSLT component supports 18 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | resourceUri | producer |  | String | *Required* The name of the template to load from classpath or file system

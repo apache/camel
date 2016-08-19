@@ -46,7 +46,7 @@ The AWS Simple Queue Service component has no options.
 The AWS Simple Queue Service component supports 45 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | queueNameOrArn | common |  | String | *Required* Queue name or ARN

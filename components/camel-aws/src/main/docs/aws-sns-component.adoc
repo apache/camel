@@ -45,7 +45,7 @@ The AWS Simple Notification System component has no options.
 The AWS Simple Notification System component supports 12 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | topicNameOrArn | producer |  | String | *Required* Topic name or ARN

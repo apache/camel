@@ -46,7 +46,7 @@ The MQTT component supports 3 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | host | String | The URI of the MQTT broker to connect too - this component also supports SSL - e.g. ssl://127.0.0.1:8883
@@ -65,7 +65,7 @@ The MQTT component supports 3 options which are listed below.
 The MQTT component supports 39 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | name | common |  | String | *Required* A logical name to use which is not the topic name.

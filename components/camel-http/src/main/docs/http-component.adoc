@@ -125,7 +125,7 @@ The HTTP component supports 6 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,7",options="header"]
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | httpClientConfigurer | HttpClientConfigurer | To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.
@@ -150,7 +150,7 @@ The HTTP component supports 6 options which are listed below.
 The HTTP component supports 26 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | httpUri | producer |  | URI | *Required* The url of the HTTP endpoint to call.

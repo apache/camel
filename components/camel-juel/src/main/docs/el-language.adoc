@@ -53,7 +53,7 @@ The EL language supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2s,1m,1m,6",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks

@@ -69,7 +69,7 @@ The File component has no options.
 The File component supports 81 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | directoryName | common |  | File | *Required* The starting directory

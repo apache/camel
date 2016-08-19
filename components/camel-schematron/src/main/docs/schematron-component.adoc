@@ -45,7 +45,7 @@ The Schematron component has no options.
 The Schematron component supports 6 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | path | producer |  | String | *Required* The path to the schematron rules file. Can either be in class path or location in the file system.

@@ -60,7 +60,7 @@ The Stream component has no options.
 The Stream component supports 18 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="2s,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | url | common |  | String | *Required* When using the stream:url URI format this option specifies the URL to stream to/from. The input/output stream will be opened using the JDK URLConnection facility.
