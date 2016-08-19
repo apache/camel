@@ -7,7 +7,7 @@ constant strings as a type of expression.
 
 [[Constant-Options]]
 Constant Options
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
 
 
 // language options: START

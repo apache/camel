@@ -23,11 +23,9 @@ bean ID of an endpoint in the Spring registry.
 Ref Options
 ^^^^^^^^^^^
 
-
 // component options: START
 The Ref component has no options.
 // component options: END
-
 
 
 // endpoint options: START

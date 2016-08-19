@@ -38,11 +38,9 @@ friendly syntax].
 Options
 ^^^^^^^
 
-
 // component options: START
 The Timer component has no options.
 // component options: END
-
 
 
 // endpoint options: START

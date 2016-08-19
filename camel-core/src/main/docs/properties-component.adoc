@@ -19,15 +19,8 @@ Where *key* is the key for the property to lookup
 Options
 ^^^^^^^
 
-
-
-
-
-
 // component options: START
 The Properties component supports 15 options which are listed below.
-
-
 
 {% raw %}
 [width="100%",cols="2s,1m,7",options="header"]
@@ -53,12 +46,6 @@ The Properties component supports 15 options which are listed below.
 // component options: END
 
 
-
-
-
-
-
-
 // endpoint options: START
 The Properties component supports 7 endpoint options which are listed below:
 
@@ -76,7 +63,6 @@ The Properties component supports 7 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
-
 
 
 [TIP]
