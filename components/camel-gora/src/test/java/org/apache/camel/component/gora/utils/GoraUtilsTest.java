@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.gora.utils;
 
 import org.apache.camel.component.gora.GoraAttribute;
@@ -26,27 +25,23 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * GORA Utils Tests
- *
  */
 public class GoraUtilsTest {
 
     @Test
     public void configurationExistShouldSucceedtIfMethodExist() throws Exception {
-
         final GoraConfiguration conf = new GoraConfiguration();
         assertTrue(GoraUtils.configurationExist(GoraAttribute.GORA_QUERY_LIMIT, conf));
     }
 
     @Test(expected = NoSuchMethodException.class)
     public void configurationExistShouldThrowExceptionIfMethodDoesNotExist() throws Exception {
-
         final GoraConfiguration conf = new GoraConfiguration();
         GoraUtils.configurationExist(GoraAttribute.GORA_KEY, conf);
     }
 
     @Test
     public void getAttributeAsLongShouldSReturnTheCorrectValue() throws Exception {
-
         final GoraConfiguration conf = new GoraConfiguration();
         conf.setLimit(3L);
         assertEquals(new Long(3), GoraUtils.getAttributeAsLong(GoraAttribute.GORA_QUERY_LIMIT, conf));
