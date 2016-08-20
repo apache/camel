@@ -576,7 +576,7 @@ Other Components
 | Test CDI (camel-test-cdi) | Camel unit testing with CDI
 | Test Karaf (camel-test-karaf) | Camel integration testing with Apache Karaf
 | Test Spring (camel-test-spring) | Camel unit testing with Spring
-| TestNG (camel-testng) | Camel unit testing with TestNG
+| TestNG (camel-testng) | *deprecated* Camel unit testing with TestNG
 | UrlRewrite (camel-urlrewrite) | URL rewrite support for HTTP components
 | Zipkin (camel-zipkin) | Distributed message tracing using Zipkin
 |=======================================================================
