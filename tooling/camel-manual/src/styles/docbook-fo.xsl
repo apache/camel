@@ -70,7 +70,7 @@
 						<fo:table-cell text-align="center">
 							<fo:block font-family="Helvetica" font-size="12pt" 
 								padding="10mm">
-								<xsl:text>Copyright &copyright; 2004-2015, 
+								<xsl:text>Copyright &copyright; 2004-2016, 
 									Apache Software Foundation</xsl:text>
 							</fo:block>
 							<!--<fo:block>-->
