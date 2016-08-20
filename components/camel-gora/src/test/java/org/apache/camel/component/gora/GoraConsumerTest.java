@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.gora;
 
 import java.lang.reflect.InvocationTargetException;
@@ -33,7 +32,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * GORA Consumer Tests
- *
  */
 public class GoraConsumerTest extends GoraTestSupport {
 
@@ -67,28 +65,22 @@ public class GoraConsumerTest extends GoraTestSupport {
      */
     private Processor mockGoraProcessor;
     
-
     @Before
     public void setUp()  {
-
         //setup mocks
         mockCamelExchange = mock(Exchange.class);
         mockGoraEndpoint = mock(GoraEndpoint.class);
         mockGoraConfiguration = mock(GoraConfiguration.class);
         mockCamelMessage = mock(Message.class);
         mockDatastore = mock(DataStore.class);
-        
 
         //setup default conditions
         when(mockCamelExchange.getIn()).thenReturn(mockCamelMessage);
         when(mockCamelExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
     }
 
-
     @Test
     public void consumerInstantiationWithMocksShouldSucceed() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-
-
         final Query mockQuery = mock(Query.class);
         when(mockDatastore.newQuery()).thenReturn(mockQuery);
         GoraConsumer goraConsumer = new GoraConsumer(mockGoraEndpoint, mockGoraProcessor, mockGoraConfiguration, mockDatastore);
