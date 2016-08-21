@@ -25,7 +25,7 @@
     </parent>
     <artifactId>camel-testng-starter</artifactId>
     <packaging>jar</packaging>
-    <name>Spring-Boot Starter :: Camel :: TestNG</name>
+    <name>Spring-Boot Starter :: Camel :: TestNG (deprecated)</name>
     <description>Spring-Boot Starter for Camel Testing Library using TestNG</description>
     <dependencies>
         <dependency>
