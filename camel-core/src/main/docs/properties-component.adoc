@@ -523,6 +523,7 @@ convention over configuration, so all you have to do is to define the
 OSGi Blueprint property placeholder in the XML file as shown below:
 
 [source]
+{% raw %}
 ----
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -549,6 +550,7 @@ OSGi Blueprint property placeholder in the XML file as shown below:
     </camelContext>
 </blueprint>
 ----
+{% endraw %}
 
 *Using OSGi blueprint property placeholders in Camel routes*
 
@@ -577,6 +579,7 @@ placeholder by its id. For that you need to use the Camel's
 `<propertyPlaceholder>` as shown in the example below:
 
 [source]
+{% raw %}
 ----
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -607,6 +610,7 @@ placeholder by its id. For that you need to use the Camel's
     </camelContext>
 </blueprint>
 ----
+{% endraw %}
 
 *Explicit referring to a OSGi blueprint placeholder in Camel*
 
