@@ -51,19 +51,6 @@
       <artifactId>camel-kubernetes</artifactId>
     </dependency>
 
-    <!-- DeltaSpike -->
-    <dependency>
-      <groupId>org.apache.deltaspike.core</groupId>
-      <artifactId>deltaspike-core-api</artifactId>
-      <version>${deltaspike-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.deltaspike.core</groupId>
-      <artifactId>deltaspike-core-impl</artifactId>
-      <version>${deltaspike-version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
