@@ -50,7 +50,6 @@ public class CacheComponent extends UriEndpointComponent {
         ObjectHelper.notNull(configuration, "configuration");
 
         CacheConfiguration config = configuration.copy();
-        setProperties(this, parameters);
         setProperties(config, parameters);
         config.setCacheName(remaining);
 
@@ -82,7 +81,7 @@ public class CacheComponent extends UriEndpointComponent {
      * @param configuration the configuration to use by default for endpoints
      */
     public void setConfiguration(CacheConfiguration configuration) {
-        this.configuration = configuration;
+        this.configuration = configuration.copy();
     }
 
     public String getConfigurationFile() {
