@@ -31,6 +31,7 @@ import java.util.TreeSet;
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
+import org.apache.camel.maven.packaging.model.EipModel;
 import org.apache.camel.maven.packaging.model.LanguageModel;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -57,6 +58,13 @@ public class PrepareReadmeMojo extends AbstractMojo {
      * @readonly
      */
     protected MavenProject project;
+
+    /**
+     * The directory for EIPs (model) catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/models"
+     */
+    protected File eipsDir;
 
     /**
      * The directory for components catalog
@@ -110,6 +118,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         // update readme file in camel-core
+        executeEipsReadme();
         executeComponentsReadme(true);
         executeDataFormatsReadme(true);
         executeLanguagesReadme(true);
@@ -117,6 +126,54 @@ public class PrepareReadmeMojo extends AbstractMojo {
         executeComponentsReadme(false);
         executeDataFormatsReadme(false);
         executeLanguagesReadme(false);
+    }
+
+    protected void executeEipsReadme() throws MojoExecutionException, MojoFailureException {
+        Set<File> eipFiles = new TreeSet<>();
+
+        if (eipsDir != null && eipsDir.isDirectory()) {
+            File[] files = eipsDir.listFiles();
+            if (files != null) {
+                eipFiles.addAll(Arrays.asList(files));
+            }
+        }
+
+        try {
+            List<EipModel> models = new ArrayList<>();
+            for (File file : eipFiles) {
+                String json = loadText(new FileInputStream(file));
+                EipModel model = generateEipModel(json);
+
+                // we only want actual EIPs from the models
+                if (model.getLabel().startsWith("eip")) {
+                    models.add(model);
+                }
+            }
+
+            // re-order the EIPs so we have them in different categories
+
+            // sort the models
+            Collections.sort(models, new EipComparator());
+
+            // update the big readme file in the core dir
+            File file = new File(readmeCoreDir, "readme-eip.adoc");
+
+            // update regular components
+            boolean exists = file.exists();
+            String changed = templateEips(models);
+            boolean updated = updateEips(file, changed);
+
+            if (updated) {
+                getLog().info("Updated readme-eip.adoc file: " + file);
+            } else if (exists) {
+                getLog().debug("No changes to readme-eip.adoc file: " + file);
+            } else {
+                getLog().warn("No readme-eip.adoc file: " + file);
+            }
+
+        } catch (IOException e) {
+            throw new MojoFailureException("Error due " + e.getMessage(), e);
+        }
     }
 
     protected void executeComponentsReadme(boolean core) throws MojoExecutionException, MojoFailureException {
@@ -148,7 +205,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 }
             }
 
-            // sor the models
+            // sort the models
             Collections.sort(models, new ComponentComparator());
 
             // filter out unwanted components
@@ -211,7 +268,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 models.add(model);
             }
 
-            // sor the models
+            // sort the models
             Collections.sort(models, new DataFormatComparator());
 
             // filter out camel-core
@@ -268,7 +325,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 models.add(model);
             }
 
-            // sor the models
+            // sort the models
             Collections.sort(models, new LanguageComparator());
 
             // filter out camel-core
@@ -307,6 +364,18 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
+    private String templateEips(List<EipModel> models) throws MojoExecutionException {
+        try {
+            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-eips.mvel"));
+            Map<String, Object> map = new HashMap<>();
+            map.put("eips", models);
+            String out = (String) TemplateRuntime.eval(template, map);
+            return out;
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
+        }
+    }
+
     private String templateComponents(List<ComponentModel> models) throws MojoExecutionException {
         try {
             String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-components.mvel"));
@@ -340,6 +409,40 @@ public class PrepareReadmeMojo extends AbstractMojo {
             return out;
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
+        }
+    }
+
+    private boolean updateEips(File file, String changed) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            String existing = StringHelper.between(text, "// eips: START" , "// eips: END");
+            if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                changed = changed.trim();
+                if (existing.equals(changed)) {
+                    return false;
+                } else {
+                    String before = StringHelper.before(text, "// eips: START");
+                    String after = StringHelper.after(text, "// eips: END");
+                    text = before + "// eips: START\n" + changed + "\n// eips: END" + after;
+                    writeText(file, text);
+                    return true;
+                }
+            } else {
+                getLog().warn("Cannot find markers in file " + file);
+                getLog().warn("Add the following markers");
+                getLog().warn("\t// eips: START");
+                getLog().warn("\t// eips: END");
+                return false;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
         }
     }
 
@@ -445,6 +548,15 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
+    private static class EipComparator implements Comparator<EipModel> {
+
+        @Override
+        public int compare(EipModel o1, EipModel o2) {
+            // lets sort by title
+            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
+        }
+    }
+
     private static class ComponentComparator implements Comparator<ComponentModel> {
 
         @Override
@@ -470,6 +582,22 @@ public class PrepareReadmeMojo extends AbstractMojo {
             // lets sort by title
             return o1.getTitle().compareToIgnoreCase(o2.getTitle());
         }
+    }
+
+    private EipModel generateEipModel(String json) {
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
+
+        EipModel eip = new EipModel();
+        eip.setName(JSonSchemaHelper.getSafeValue("name", rows));
+        eip.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
+        eip.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
+        eip.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
+        eip.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
+        eip.setDeprecated("true".equals(JSonSchemaHelper.getSafeValue("deprecated", rows)));
+        eip.setInput("true".equals(JSonSchemaHelper.getSafeValue("input", rows)));
+        eip.setOutput("true".equals(JSonSchemaHelper.getSafeValue("output", rows)));
+
+        return eip;
     }
 
     private ComponentModel generateComponentModel(String json) {
