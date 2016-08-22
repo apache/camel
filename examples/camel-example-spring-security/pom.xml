@@ -80,24 +80,4 @@
 
   </dependencies>
 
-  <build>
-    <plugins>
-      <!-- so we can run mvn jetty:run -->
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty-plugin-version}</version>
-        <configuration>
-          <connectors>
-            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-              <port>8080</port>
-              <maxIdleTime>60000</maxIdleTime>
-            </connector>
-          </connectors>
-        </configuration>
-      </plugin>
-    </plugins>
-
-  </build>
-
 </project>
