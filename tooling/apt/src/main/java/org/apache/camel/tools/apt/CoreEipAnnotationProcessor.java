@@ -169,6 +169,7 @@ public class CoreEipAnnotationProcessor {
         buffer.append("\n    \"description\": \"").append(safeNull(eipModel.getDescription())).append("\",");
         buffer.append("\n    \"javaType\": \"").append(eipModel.getJavaType()).append("\",");
         buffer.append("\n    \"label\": \"").append(safeNull(eipModel.getLabel())).append("\",");
+        buffer.append("\n    \"deprecated\": \"").append(eipModel.isDeprecated()).append("\",");
         buffer.append("\n    \"input\": \"").append(eipModel.getInput()).append("\",");
         buffer.append("\n    \"output\": \"").append(eipModel.getOutput()).append("\"");
         buffer.append("\n  },");
@@ -198,6 +199,9 @@ public class CoreEipAnnotationProcessor {
         EipModel model = new EipModel();
         model.setJavaType(javaTypeName);
         model.setName(name);
+
+        boolean deprecated = classElement.getAnnotation(Deprecated.class) != null;
+        model.setDeprecated(deprecated);
 
         Metadata metadata = classElement.getAnnotation(Metadata.class);
         if (metadata != null) {
@@ -915,6 +919,7 @@ public class CoreEipAnnotationProcessor {
         private String javaType;
         private String label;
         private String description;
+        private boolean deprecated;
         private boolean input;
         private boolean output;
 
@@ -956,6 +961,14 @@ public class CoreEipAnnotationProcessor {
 
         public void setDescription(String description) {
             this.description = description;
+        }
+
+        public boolean isDeprecated() {
+            return deprecated;
+        }
+
+        public void setDeprecated(boolean deprecated) {
+            this.deprecated = deprecated;
         }
 
         public boolean isInput() {
