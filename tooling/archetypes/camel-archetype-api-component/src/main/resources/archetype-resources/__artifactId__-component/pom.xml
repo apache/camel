@@ -171,8 +171,8 @@
                   <!-- Use substitutions to manipulate parameter names and avoid name clashes
                   <substitutions>
                     <substitution>
-                      <method>^.+$</method>
-                      <argName>^.+$</argName>
+                      <method>^(.+)$</method>
+                      <argName>^(.+)$</argName>
                       <argType>java.lang.String</argType>
                       <replacement>$1Param</replacement>
                       <replaceWithType>false</replaceWithType>
