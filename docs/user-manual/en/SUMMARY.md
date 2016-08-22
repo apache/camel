@@ -274,8 +274,6 @@
 	* [SMPP](smpp-component.adoc)
 	* [SNMP](snmp-component.adoc)
 	* [Solr](solr-component.adoc)
-	* [Solr](solrCloud-component.adoc)
-	* [Solr](solrs-component.adoc)
 	* [Spark Rest](spark-rest-component.adoc)
 	* [Splunk](splunk-component.adoc)
 	* [Spring Batch](spring-batch-component.adoc)

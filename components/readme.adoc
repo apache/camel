@@ -456,12 +456,6 @@ Components
 | link:camel-solr/src/main/docs/solr-component.adoc[Solr] (camel-solr) +
 `solr:url` | The solr component allows you to interface with an Apache Lucene Solr server.
 
-| link:camel-solr/src/main/docs/solrCloud-component.adoc[Solr] (camel-solr) +
-`solrCloud:url` | The solr component allows you to interface with an Apache Lucene Solr server.
-
-| link:camel-solr/src/main/docs/solrs-component.adoc[Solr] (camel-solr) +
-`solrs:url` | The solr component allows you to interface with an Apache Lucene Solr server.
-
 | link:camel-spark-rest/src/main/docs/spark-rest-component.adoc[Spark Rest] (camel-spark-rest) +
 `spark-rest:verb:path` | The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
 
