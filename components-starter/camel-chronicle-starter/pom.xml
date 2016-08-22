@@ -25,7 +25,7 @@
     </parent>
     <artifactId>camel-chronicle-starter</artifactId>
     <packaging>jar</packaging>
-    <name>Spring-Boot Starter :: Camel : Chronicle</name>
+    <name>Spring-Boot Starter :: Camel :: Chronicle</name>
     <description>Spring-Boot Starter for Camel Chronicle support</description>
     <dependencies>
         <dependency>
