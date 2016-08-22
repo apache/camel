@@ -1,6 +1,7 @@
 # Camel Spring Security Example
 
 ### Introduction
+
 This example shows how to leverage the Spring Security to secure the camel endpoint.
 
 
@@ -10,11 +11,7 @@ You will need to compile this example first:
 	mvn clean install
 
 ### Run
-To run the example, you need to start up the server by typing
-
-	mvn jetty:run
-
-To stop the server hit <kbd>ctrl</kbd>+<kbd>c</kbd>
+To run the example, you need to start up the server and copy the .war to the application server
 
 The example consumes messages from a servlet endpoint which is secured by Spring Security
 with http basic authentication, there are two service:
