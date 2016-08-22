@@ -59,6 +59,7 @@
     <atmos-client-version>2.2.2</atmos-client-version>
     <atmosphere-version>2.4.5</atmosphere-version>
     <atmosphere-version-range>[2.4,3.0)</atmosphere-version-range>
+    <automaton-bundle-version>1.11-8_1</automaton-bundle-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
     <avalon-version>4.3.1</avalon-version>
     <avro-version>1.8.1</avro-version>
@@ -193,6 +194,7 @@
     <ftpserver-version>1.0.6</ftpserver-version>
     <freemarker-bundle-version>2.3.23_1</freemarker-bundle-version>
     <freemarker-version>2.3.23</freemarker-version>
+    <generex-bundle-version>1.0.1_2</generex-bundle-version>
     <gentlyweb-bundle-version>1.5_1</gentlyweb-bundle-version>
     <geocoder-java-version>0.16</geocoder-java-version>
     <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
@@ -444,6 +446,7 @@
     <openwebbeans-version>1.6.3</openwebbeans-version>
     <oauth-provider-bundle-version>20100527_1</oauth-provider-bundle-version>
     <okclient-version>3.4.1</okclient-version>
+    <okclient-bundle-version>3.4.1_1</okclient-bundle-version>
     <olingo2-version>2.0.6</olingo2-version>
     <olingo-odata2-core-bundle-version>2.0.6_1</olingo-odata2-core-bundle-version>
     <olingo2-gson-version>2.4</olingo2-gson-version>
