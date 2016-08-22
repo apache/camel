@@ -48,6 +48,12 @@
       ${camel.osgi.import.defaults},
       *
     </camel.osgi.import>
+    <camel.osgi.export>
+      org.apache.camel.spring.*;${camel.osgi.version},
+      org.apache.camel.util.spring.*;${camel.osgi.version},
+      org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
+      org.apache.camel.language.spel;${camel.osgi.split.pkg};${camel.osgi.version}
+    </camel.osgi.export>
     <camel.osgi.activator>
       org.apache.camel.osgi.Activator
     </camel.osgi.activator>
