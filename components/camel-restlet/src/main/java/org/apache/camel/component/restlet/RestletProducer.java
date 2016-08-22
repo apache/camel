@@ -52,8 +52,12 @@ public class RestletProducer extends DefaultAsyncProducer {
         client.getContext().getParameters().add("socketTimeout", String.valueOf(endpoint.getSocketTimeout()));
         client.getContext().getParameters().add("socketConnectTimeoutMs", String.valueOf(endpoint.getSocketTimeout()));
         RestletComponent component = (RestletComponent)endpoint.getComponent();
-        client.getContext().getParameters().add("maxConnectionsPerHost", String.valueOf(component.getMaxConnectionsPerHost()));
-        client.getContext().getParameters().add("maxTotalConnections", String.valueOf(component.getMaxTotalConnections()));
+        if(component.getMaxConnectionsPerHost() != null && component.getMaxConnectionsPerHost() > 0) {
+            client.getContext().getParameters().add("maxConnectionsPerHost", String.valueOf(component.getMaxConnectionsPerHost()));
+        }
+        if(component.getMaxTotalConnections() != null && component.getMaxTotalConnections() > 0) {
+            client.getContext().getParameters().add("maxTotalConnections", String.valueOf(component.getMaxTotalConnections()));
+        }
     
     }
 
