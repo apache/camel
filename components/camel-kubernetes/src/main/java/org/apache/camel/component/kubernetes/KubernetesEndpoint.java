@@ -193,7 +193,8 @@ public class KubernetesEndpoint extends DefaultEndpoint {
                 && ObjectHelper.isEmpty(configuration.getOauthToken())) {
             builder.withUsername(configuration.getUsername());
             builder.withPassword(configuration.getPassword());
-        } else {
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getOauthToken())) {
             builder.withOauthToken(configuration.getOauthToken());
         }
         if (ObjectHelper.isNotEmpty(configuration.getCaCertData())) {
