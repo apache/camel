@@ -342,13 +342,13 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 String key = holder.getKey();
                 Message message = holder.getValue();
 
-                if(LOG.isTraceEnabled()) {
-                    LOG.trace("Mail #{} is of type: {} - {}", new Object[] {i, ObjectHelper.classCanonicalName(message), message});
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Mail #{} is of type: {} - {}", new Object[]{i, ObjectHelper.classCanonicalName(message), message});
                 }
 
-                if(!message.getFlags().contains(Flags.Flag.DELETED)) {
+                if (!message.getFlags().contains(Flags.Flag.DELETED)) {
                     Exchange exchange = getEndpoint().createExchange(message);
-                    if(getEndpoint().getConfiguration().isMapMailMessage()) {
+                    if (getEndpoint().getConfiguration().isMapMailMessage()) {
                         // ensure the mail message is mapped, which can be ensured by touching the body/header/attachment
                         LOG.trace("Mapping #{} from javax.mail.Message to Camel MailMessage", i);
                         exchange.getIn().getBody();
@@ -363,7 +363,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
                     answer.add(exchange);
                 } else {
-                    if(LOG.isDebugEnabled()) {
+                    if (LOG.isDebugEnabled()) {
                         LOG.debug("Skipping message as it was flagged as deleted: {}", MailUtils.dumpMessage(message));
                     }
                 }
