@@ -14,7 +14,7 @@ The example is implemented in Java with CDI dependency injection. It uses JBoss 
 as the minimal CDI container to run the application, though you can run the application
 in any CDI compliant container.
 
-The `camel-cdi`, `camel-core` and `camel-metrics` components are used in this example.
+The `camel-cdi` and `camel-metrics` components are used in this example.
 The `camel-test-cdi` module is used for the JUnit test runner.
 Besides, the Metrics CDI extension is used so that metrics can be injected
 and custom metrics registered via CDI. For instance, a ratio gauge is registered
@@ -23,10 +23,10 @@ of generated events.
 
 ### Build
 
-You will need to build this example first:
+You can build this example using:
 
 ```sh
-$ mvn install
+$ mvn package
 ```
 
 ### Run
@@ -34,7 +34,7 @@ $ mvn install
 You can run this example using:
 
 ```sh
-$ mvn compile camel:run
+$ mvn camel:run
 ```
 
 When the Camel application runs, you should see the calls to the 'unreliable-service' being logged to the console, e.g.:
