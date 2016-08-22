@@ -27,7 +27,7 @@
 
     <artifactId>camel-cache</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Cache</name>
+    <name>Camel :: Cache (deprecated)</name>
     <description>Camel Cache support based on ehCache</description>
 
     <properties>
