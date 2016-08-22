@@ -20,6 +20,29 @@ link:message.html[Message] Exchange to the method parameters; so you can
 annotate the bean to extract headers or other expressions such as
 link:xpath.html[XPath] or link:xquery.html[XQuery] from the message.
 
+[[Bean-Options]]
+Bean Options
+^^^^^^^^^^^^
+
+// language options: START
+The Bean method language supports 5 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| bean |  | String | Either a reference or a class name of the bean to use
+| ref |  | String | Reference to bean to lookup in the registry
+| method |  | String | Name of method to call
+| beanType |  | String | Class name of the bean to use
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
+|=======================================================================
+{% endraw %}
+// language options: END
+
+
 [[BeanLanguage-UsingBeanExpressionsfromtheJavaDSL]]
 Using Bean Expressions from the Java DSL
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
