@@ -1018,6 +1018,9 @@ Camel project:
 |Illustrates how to work with Camel using CDI to configure components,
 endpoints and beans
 
+|camel-example-cdi-kubernetes
+|Illustrates the integration between Camel, CDI and Kubernetes
+
 |camel-example-cdi-metrics
 |Illustrates the integration between Camel, Dropwizard Metrics and CDI
 
