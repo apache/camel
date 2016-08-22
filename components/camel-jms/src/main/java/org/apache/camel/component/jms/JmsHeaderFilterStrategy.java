@@ -36,16 +36,14 @@ public class JmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     protected void initialize() {
         // ignore provider specified JMS extension headers see page 39 of JMS 1.1 specification
         // added "JMSXRecvTimestamp" as a workaround for an Oracle bug/typo in AqjmsMessage
-        getInFilter().add("JMSXUserID");
-        getInFilter().add("JMSXGroupID");
-        getInFilter().add("JMSXAppID");
-        getInFilter().add("JMSXDeliveryCount");
-        getInFilter().add("JMSXProducerTXID");
-        getInFilter().add("JMSXConsumerTXID");
-        getInFilter().add("JMSXRcvTimestamp");
-        getInFilter().add("JMSXRecvTimestamp");
-        getInFilter().add("JMSXState");
-        getInFilter().add("JMSXGroupSeq");
+        getOutFilter().add("JMSXUserID");
+        getOutFilter().add("JMSXAppID");
+        getOutFilter().add("JMSXDeliveryCount");
+        getOutFilter().add("JMSXProducerTXID");
+        getOutFilter().add("JMSXConsumerTXID");
+        getOutFilter().add("JMSXRcvTimestamp");
+        getOutFilter().add("JMSXRecvTimestamp");
+        getOutFilter().add("JMSXState");
     }
 
 }
