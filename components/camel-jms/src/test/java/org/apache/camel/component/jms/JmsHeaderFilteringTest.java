@@ -52,7 +52,7 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
         MockEndpoint errors = this.resolveMandatoryEndpoint(assertionReceiver, MockEndpoint.class);
         errors.expectedMessageCount(0);
 
-        template.send(testQueueEndpointA + "?includeAllJMSXProperties=false", ExchangePattern.InOnly, new Processor() {
+        template.send(testQueueEndpointA, ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader("org.apache.camel.jms", 10000);
                 exchange.getIn().setHeader("org.apache.camel.test.jms", 20000);
@@ -119,7 +119,7 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
             assertEquals(20000, message.getJmsMessage().getObjectProperty("org_DOT_apache_DOT_camel_DOT_test_DOT_jms"));
 
             // should be filtered by default
-            assertNotNull(message.getJmsMessage().getStringProperty("JMSXAppID"));
+            assertNull(message.getJmsMessage().getStringProperty("JMSXAppID"));
 
             latch.countDown();
         }
