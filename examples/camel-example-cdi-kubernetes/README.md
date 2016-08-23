@@ -19,6 +19,16 @@ login token and namespace by parsing the users `~/.kube/config` file.
 However, you can edit the `application.properties` file to override the default
 and provide the Kubernetes master URL and OAuth token for your environment.
 
+To retrieve the tokens in your kubeconfig file, you can execute the following command:
+```sh
+$ kubectl config view -o jsonpath='{range .users[?(@.user.token != "")]}{.name}{":\t"}{.user.token}{"\n"}{end}'
+```
+
+Alternatively, if you're using OpenShift, you can retrieve the token for the current user with:
+```sh
+$ oc whoami -t
+```
+
 ### Build
 
 You can build this example using:
