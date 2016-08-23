@@ -49,7 +49,7 @@ public class LibraryVersionMismatchChecker {
 
         MavenResolverSystem resolver = Maven.resolver();
 
-        MavenResolvedArtifact[] original = resolver.resolve("org.apache.camel:" + moduleName + ":2.18-SNAPSHOT").withTransitivity().asResolvedArtifact();
+        MavenResolvedArtifact[] original = resolver.resolve("org.apache.camel:" + moduleName + ":2.18.0-SNAPSHOT").withTransitivity().asResolvedArtifact();
         Map<String, String> originalMap = versionMap(original);
 
         File userPom = createUserPom(moduleName);
