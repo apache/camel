@@ -528,6 +528,13 @@ public class ReadmeComponentMojo extends AbstractMojo {
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setDescription(getSafeValue("description", row));
 
+            // special for bindy as we reuse one readme file
+            if (dataFormatName.startsWith("bindy") && option.getName().equals("type")) {
+                option.setDefaultValue("");
+                String doc = option.getDescription() + " The default value is either Csv or KeyValue depending on chosen dataformat.";
+                option.setDescription(doc);
+            }
+
             // skip option named id
             if ("id".equals(option.getName())) {
                 getLog().debug("Skipping option: " + option.getName());
