@@ -1,3 +1,7 @@
+[[BarcodeDataFormat]]
+Barcode Dataformat
+~~~~~~~~~~~~~~~~~~
+
 *Available as of Camel 2.14*
 
 The barcode data format is based on the
