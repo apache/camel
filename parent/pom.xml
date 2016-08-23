@@ -1950,6 +1950,11 @@
         <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>spi-annotations</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <!-- camel starters -->
 

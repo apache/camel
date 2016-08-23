@@ -25,7 +25,7 @@
     </parent>
     <artifactId>camel-cache-starter</artifactId>
     <packaging>jar</packaging>
-    <name>Spring-Boot Starter :: Camel :: Cache</name>
+    <name>Spring-Boot Starter :: Camel :: Cache (deprecated)</name>
     <description>Spring-Boot Starter for Camel Cache support based on ehCache</description>
     <dependencies>
         <dependency>
