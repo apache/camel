@@ -44,13 +44,13 @@ being logged to the console, e.g.:
 ```
 2016-04-26 17:08:49,021 [cdi.Main.main()] INFO  Version                        - WELD-000900: 2.3.4 (Final)
 2016-04-26 17:08:51,805 [cdi.Main.main()] INFO  CdiCamelExtension              - Camel CDI is starting Camel context [cdi-camel-xml]
-2016-04-26 17:08:51,806 [cdi.Main.main()] INFO  DefaultCamelContext            - Apache Camel 2.18-SNAPSHOT (CamelContext: cdi-camel-xml) is starting
+2016-04-26 17:08:51,806 [cdi.Main.main()] INFO  DefaultCamelContext            - Apache Camel 2.18.0 (CamelContext: cdi-camel-xml) is starting
 2016-04-26 17:08:52,322 [cdi.Main.main()] INFO  SedaEndpoint                   - Endpoint Endpoint[seda://rescue?multipleConsumers=true] is using shared queue: seda://rescue with size: 2147483647
 2016-04-26 17:08:52,356 [cdi.Main.main()] INFO  DefaultCamelContext            - Route: terminal started and consuming from: Endpoint[stream://in?delay=1000&promptMessage=Which+pill+%28red%7Cblue%29%3F%3A+]
 2016-04-26 17:08:52,360 [cdi.Main.main()] INFO  DefaultCamelContext            - Route: matrix started and consuming from: Endpoint[direct://neo]
 2016-04-26 17:08:52,361 [cdi.Main.main()] INFO  DefaultCamelContext            - Route: unplug started and consuming from: Endpoint[direct://unplug]
 2016-04-26 17:08:52,362 [cdi.Main.main()] INFO  DefaultCamelContext            - Total 3 routes, of which 3 are started.
-2016-04-26 17:08:52,363 [cdi.Main.main()] INFO  DefaultCamelContext            - Apache Camel 2.18-SNAPSHOT (CamelContext: cdi-camel-xml) started in 0.556 seconds
+2016-04-26 17:08:52,363 [cdi.Main.main()] INFO  DefaultCamelContext            - Apache Camel 2.18.0 (CamelContext: cdi-camel-xml) started in 0.556 seconds
 2016-04-26 17:08:52,434 [cdi.Main.main()] INFO  Bootstrap                      - WELD-ENV-002003: Weld SE container STATIC_INSTANCE initialized
 ████████╗██╗  ██╗███████╗    ███╗   ███╗ █████╗ ████████╗██████╗ ██╗██╗  ██╗
 ╚══██╔══╝██║  ██║██╔════╝    ████╗ ████║██╔══██╗╚══██╔══╝██╔══██╗██║╚██╗██╔╝
@@ -87,15 +87,15 @@ The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in th
 ```
 2016-04-26 17:16:50,172 [Thread-5       ] INFO  MainSupport$HangupInterceptor  - Received hang up - stopping the main instance.
 2016-04-26 17:16:50,179 [Thread-5       ] INFO  CamelContextProducer           - Camel CDI is stopping Camel context [cdi-camel-xml]
-2016-04-26 17:16:50,180 [Thread-5       ] INFO  DefaultCamelContext            - Apache Camel 2.18-SNAPSHOT (CamelContext: cdi-camel-xml) is shutting down
+2016-04-26 17:16:50,180 [Thread-5       ] INFO  DefaultCamelContext            - Apache Camel 2.18.0 (CamelContext: cdi-camel-xml) is shutting down
 2016-04-26 17:16:50,180 [Thread-5       ] INFO  DefaultShutdownStrategy        - Starting to graceful shutdown 3 routes (timeout 300 seconds)
 2016-04-26 17:16:50,191 [ - ShutdownTask] INFO  DefaultShutdownStrategy        - Route: terminal shutdown complete, was consuming from: Endpoint[stream://in?delay=1000&promptMessage=Which+pill+%28red%7Cblue%29%3F%3A+]
 2016-04-26 17:16:50,192 [ - ShutdownTask] INFO  DefaultShutdownStrategy        - Route: unplug shutdown complete, was consuming from: Endpoint[direct://unplug]
 2016-04-26 17:16:50,192 [ - ShutdownTask] INFO  DefaultShutdownStrategy        - Route: matrix shutdown complete, was consuming from: Endpoint[direct://neo]
 2016-04-26 17:16:50,192 [Thread-5       ] INFO  DefaultShutdownStrategy        - Graceful shutdown of 3 routes completed in 0 seconds
 2016-04-26 17:16:50,236 [Thread-5       ] INFO  MainLifecycleStrategy          - CamelContext: cdi-camel-xml has been shutdown, triggering shutdown of the JVM.
-2016-04-26 17:16:50,259 [Thread-5       ] INFO  DefaultCamelContext            - Apache Camel 2.18-SNAPSHOT (CamelContext: cdi-camel-xml) uptime 7 minutes
-2016-04-26 17:16:50,259 [Thread-5       ] INFO  DefaultCamelContext            - Apache Camel 2.18-SNAPSHOT (CamelContext: cdi-camel-xml) is shutdown in 0.079 seconds
+2016-04-26 17:16:50,259 [Thread-5       ] INFO  DefaultCamelContext            - Apache Camel 2.18.0 (CamelContext: cdi-camel-xml) uptime 7 minutes
+2016-04-26 17:16:50,259 [Thread-5       ] INFO  DefaultCamelContext            - Apache Camel 2.18.0 (CamelContext: cdi-camel-xml) is shutdown in 0.079 seconds
  _____ _       _     _                     
 |   __| |_ _ _| |_ _| |___ _ _ _ ___       
 |__   |   | | |  _| . | . | | | |   |_ _ _ 

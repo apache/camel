@@ -103,7 +103,7 @@ INFO: Computed the following DeltaSpike ProjectStage: Production
 2016-07-24 15:33:51,491 [cdi.Main.main()] WARN  Validator                      - WELD-001478: Interceptor class org.apache.deltaspike.core.impl.lock.LockedInterceptor is enabled for the application and for the bean archive /home/oscerd/.m2/repository/org/apache/deltaspike/core/deltaspike-core-impl/1.7.1/deltaspike-core-impl-1.7.1.jar. It will only be invoked in the @Priority part of the chain.
 2016-07-24 15:33:51,491 [cdi.Main.main()] WARN  Validator                      - WELD-001478: Interceptor class org.apache.deltaspike.core.impl.future.FutureableInterceptor is enabled for the application and for the bean archive /home/oscerd/.m2/repository/org/apache/deltaspike/core/deltaspike-core-impl/1.7.1/deltaspike-core-impl-1.7.1.jar. It will only be invoked in the @Priority part of the chain.
 2016-07-24 15:33:52,244 [cdi.Main.main()] INFO  CdiCamelExtension              - Camel CDI is starting Camel context [camel-example-cassandraql-cdi]
-2016-07-24 15:33:52,245 [cdi.Main.main()] INFO  DefaultCamelContext            - Apache Camel 2.18-SNAPSHOT (CamelContext: camel-example-cassandraql-cdi) is starting
+2016-07-24 15:33:52,245 [cdi.Main.main()] INFO  DefaultCamelContext            - Apache Camel 2.18.0 (CamelContext: camel-example-cassandraql-cdi) is starting
 2016-07-24 15:33:52,246 [cdi.Main.main()] INFO  ManagedManagementStrategy      - JMX is enabled
 2016-07-24 15:33:52,352 [cdi.Main.main()] INFO  DefaultTypeConverter           - Loaded 189 type converters
 2016-07-24 15:33:52,367 [cdi.Main.main()] INFO  DefaultRuntimeEndpointRegistry - Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: 1000)
@@ -119,7 +119,7 @@ INFO: Computed the following DeltaSpike ProjectStage: Production
 2016-07-24 15:33:52,914 [cdi.Main.main()] INFO  Cluster                        - New Cassandra host /172.17.0.4:9042 added
 2016-07-24 15:33:52,985 [cdi.Main.main()] INFO  DefaultCamelContext            - Route: route1 started and consuming from: timer://stream?repeatCount=1
 2016-07-24 15:33:52,986 [cdi.Main.main()] INFO  DefaultCamelContext            - Total 1 routes, of which 1 are started.
-2016-07-24 15:33:52,987 [cdi.Main.main()] INFO  DefaultCamelContext            - Apache Camel 2.18-SNAPSHOT (CamelContext: camel-example-cassandraql-cdi) started in 0.742 seconds
+2016-07-24 15:33:52,987 [cdi.Main.main()] INFO  DefaultCamelContext            - Apache Camel 2.18.0 (CamelContext: camel-example-cassandraql-cdi) started in 0.742 seconds
 2016-07-24 15:33:53,018 [cdi.Main.main()] INFO  Bootstrap                      - WELD-ENV-002003: Weld SE container STATIC_INSTANCE initialized
 2016-07-24 15:33:54,041 [ timer://stream] INFO  route1                         - Result from query [Row[1, oscerd]]
 
