@@ -16,32 +16,73 @@ the original plaintext. This data format implements only symmetric
 [[Crypto-Options]]
 Options
 ^^^^^^^
-[width="70%",cols="10%,10%,10%,70%",options="header",]
+
+// component options: START
+The Crypto (JCE) component supports 21 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
-|Name |Type |Default |Description
-
-|`algorithm` |`String` |`DES/CBC/PKCS5Padding` |The JCE algorithm name indicating the cryptographic algorithm that will
-be used.
-
-|`algorithmParameterSpec` |`java.security.spec.AlgorithmParameterSpec` |`null` |A JCE AlgorithmParameterSpec used to initialize the Cipher.
-
-|`bufferSize` |`Integer` |`4096` |the size of the buffer used in the signature process.
-
-|`cryptoProvider` |`String` |`null` |The name of the JCE Security Provider that should be used.
-
-|`initializationVector` |`byte[]` |`null` |A byte array containing the Initialization Vector that will be used to
-initialize the Cipher.
-
-|`inline` |`boolean` |`false` |Flag indicating that the configured IV should be inlined into the
-encrypted data stream.
-
-|`macAlgorithm` |`String` |`null` |The JCE algorithm name indicating the Message Authentication algorithm.
-
-|`shouldAppendHMAC` |`boolean` |`null`
+| Name | Java Type | Description
+| configuration | DigitalSignatureConfiguration | To use the shared DigitalSignatureConfiguration as configuration. Properties of the shared configuration can also be set individually.
+| name | String | The logical name of this operation.
+| algorithm | String | Sets the JCE name of the Algorithm that should be used for the signer.
+| alias | String | Sets the alias used to query the KeyStore for keys and link Certificate Certificates to be used in signing and verifying exchanges. This value can be provided at runtime via the message header link DigitalSignatureConstantsKEYSTORE_ALIAS
+| privateKey | PrivateKey | Set the PrivateKey that should be used to sign the exchange
+| privateKeyName | String | Sets the reference name for a PrivateKey that can be fond in the registry.
+| publicKey | PublicKey | Set the PublicKey that should be used to verify the signature in the exchange.
+| publicKeyName | String | Sets the reference name for a publicKey that can be fond in the registry.
+| certificate | Certificate | Set the Certificate that should be used to verify the signature in the exchange based on its payload.
+| certificateName | String | Sets the reference name for a PrivateKey that can be fond in the registry.
+| keystore | KeyStore | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A KeyStore is typically used with an alias either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore then this single entry will be used.
+| keystoreName | String | Sets the reference name for a Keystore that can be fond in the registry.
+| password | char[] | Sets the password used to access an aliased PrivateKey in the KeyStore.
+| keyStoreParameters | KeyStoreParameters | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges based on the given KeyStoreParameters. A KeyStore is typically used with an alias either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore then this single entry will be used.
+| secureRandomName | String | Sets the reference name for a SecureRandom that can be fond in the registry.
+| secureRandom | SecureRandom | Set the SecureRandom used to initialize the Signature service
+| bufferSize | Integer | Set the size of the buffer used to read in the Exchange payload data.
+| provider | String | Set the id of the security provider that provides the configured Signature algorithm.
+| signatureHeaderName | String | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature'
+| clearHeaders | boolean | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset.
+| cryptoOperation | String | Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto:sign sets sign as the operation.
 |=======================================================================
+{% endraw %}
+// component options: END
 
-Flag indicating that a Message Authentication Code should be calculated
-and appended to the encrypted data.
+// endpoint options: START
+The Crypto (JCE) component supports 22 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| cryptoOperation | producer |  | CryptoOperation | *Required* Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto:sign sets sign as the operation.
+| name | producer |  | String | *Required* The logical name of this operation.
+| algorithm | producer | SHA1WithDSA | String | Sets the JCE name of the Algorithm that should be used for the signer.
+| alias | producer |  | String | Sets the alias used to query the KeyStore for keys and link java.security.cert.Certificate Certificates to be used in signing and verifying exchanges. This value can be provided at runtime via the message header link org.apache.camel.component.crypto.DigitalSignatureConstantsKEYSTORE_ALIAS
+| bufferSize | producer | 2048 | Integer | Set the size of the buffer used to read in the Exchange payload data.
+| certificate | producer |  | Certificate | Set the Certificate that should be used to verify the signature in the exchange based on its payload.
+| certificateName | producer |  | String | Sets the reference name for a PrivateKey that can be fond in the registry.
+| clearHeaders | producer | true | boolean | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset.
+| keystore | producer |  | KeyStore | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A KeyStore is typically used with an alias either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore then this single entry will be used.
+| keystoreName | producer |  | String | Sets the reference name for a Keystore that can be fond in the registry.
+| keyStoreParameters | producer |  | KeyStoreParameters | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges based on the given KeyStoreParameters. A KeyStore is typically used with an alias either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore then this single entry will be used.
+| password | producer |  | String | Sets the password used to access an aliased PrivateKey in the KeyStore.
+| privateKey | producer |  | PrivateKey | Set the PrivateKey that should be used to sign the exchange
+| privateKeyName | producer |  | String | Sets the reference name for a PrivateKey that can be fond in the registry.
+| provider | producer |  | String | Set the id of the security provider that provides the configured Signature algorithm.
+| publicKey | producer |  | PublicKey | Set the PublicKey that should be used to verify the signature in the exchange.
+| publicKeyName | producer |  | String | references that should be resolved when the context changes
+| secureRandom | producer |  | SecureRandom | Set the SecureRandom used to initialize the Signature service
+| secureRandomName | producer |  | String | Sets the reference name for a SecureRandom that can be fond in the registry.
+| signatureHeaderName | producer |  | String | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature'
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
+// endpoint options: END
 
 [[Crypto-BasicUsage]]
 Basic Usage
