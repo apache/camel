@@ -354,7 +354,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
             group = host;
             name = path;
         } else {
-            String camelContextName = getCamelContext().getManagementName();
+            String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
             group = camelContextName == null ? "Camel" : "Camel_" + camelContextName;
             name = host;
         }
