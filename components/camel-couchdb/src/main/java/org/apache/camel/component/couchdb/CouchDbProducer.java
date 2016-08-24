@@ -51,18 +51,18 @@ public class CouchDbProducer extends DefaultProducer {
             exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, save.getRev());
             exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, save.getId());
         } else {
-        	if (operation.equalsIgnoreCase("DELETE")) {
-        	Response delete = deleteJsonElement(json);
-            if (delete == null) {
-                throw new CouchDbException("Could not delete document [unknown reason]", exchange);
-            }
+            if (operation.equalsIgnoreCase("DELETE")) {
+                Response delete = deleteJsonElement(json);
+                if (delete == null) {
+                    throw new CouchDbException("Could not delete document [unknown reason]", exchange);
+                }
 
-            if (log.isTraceEnabled()) {
-                log.trace("Document saved [_id={}, _rev={}]", delete.getId(), delete.getRev());
+                if (log.isTraceEnabled()) {
+                    log.trace("Document saved [_id={}, _rev={}]", delete.getId(), delete.getRev());
+                }
+                exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, delete.getRev());
+                exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, delete.getId());
             }
-            exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, delete.getRev());
-            exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, delete.getId());
-        	}
         }
     }
 
@@ -102,8 +102,8 @@ public class CouchDbProducer extends DefaultProducer {
             JsonObject obj = (JsonObject) json;
             delete = couchClient.remove(obj);
         } else {
-        	delete = couchClient.remove(json);
+            delete = couchClient.remove(json);
         }
-        return delete;    	
+        return delete;
     }
 }
