@@ -40,6 +40,10 @@ public class CouchDbClientWrapper {
     public Response save(Object doc) {
         return client.save(doc);
     }
+    
+    public Response remove(Object doc) {
+        return client.remove(doc);
+    }
 
     public Changes changes() {
         return client.changes();
