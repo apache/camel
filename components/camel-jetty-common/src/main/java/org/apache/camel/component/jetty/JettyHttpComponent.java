@@ -1158,6 +1158,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         // avoid leading slash
         basePath = FileUtil.stripLeadingSeparator(basePath);
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
+        resolvedUriTemplate = FileUtil.stripLeadingSeparator(resolvedUriTemplate);
 
         // does the uri template use path parameters?
         if (uriTemplate.contains("{") && resolvedUriTemplate != null) {
@@ -1165,13 +1166,14 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             String overrideUri = String.format("%s://%s/%s/%s", scheme, host, basePath, resolvedUriTemplate);
             exchange.getIn().setHeader(Exchange.HTTP_URI, overrideUri);
         }
+        if (queryParameters != null) {
+            // use a header for the query parameters
+            exchange.getIn().setHeader(Exchange.HTTP_QUERY, queryParameters);
+        }
 
         // get the endpoint
         String url = "jetty:%s://%s/%s/%s";
         url = String.format(url, scheme, host, basePath, uriTemplate);
-        if (queryParameters != null) {
-            url = url + "&" + queryParameters;
-        }
 
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {

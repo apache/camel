@@ -54,6 +54,8 @@ public class SwaggerEndpoint extends DefaultEndpoint {
     private String componentName;
     @UriParam
     private String host;
+    @UriParam(multiValue = true)
+    private String queryParameters;
 
     public SwaggerEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -69,6 +71,11 @@ public class SwaggerEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported");
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return true;
     }
 
     @Override
@@ -107,6 +114,17 @@ public class SwaggerEndpoint extends DefaultEndpoint {
      */
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getQueryParameters() {
+        return queryParameters;
+    }
+
+    /**
+     * Query parameters for the HTTP service to call
+     */
+    public void setQueryParameters(String queryParameters) {
+        this.queryParameters = queryParameters;
     }
 
     public String getComponentName() {

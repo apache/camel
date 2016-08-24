@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.util.ObjectHelper;
 
 public class DummyRestProducerFactory implements RestProducerFactory {
 
@@ -40,8 +41,12 @@ public class DummyRestProducerFactory implements RestProducerFactory {
             public void process(Exchange exchange) throws Exception {
                 // for testing purpose, check if we have {name} in template
                 if (uriTemplate.contains("{name}")) {
-                    String name = exchange.getIn().getHeader("name", String.class);
+                    int pos = resolvedUriTemplate.lastIndexOf('/');
+                    String name = resolvedUriTemplate.substring(pos + 1);
                     exchange.getIn().setBody("Hello " + name);
+                } else if (queryParameters.contains("name=")) {
+                    String name = ObjectHelper.after(queryParameters, "name=");
+                    exchange.getIn().setBody("Bye " + name);
                 }
             }
         };
