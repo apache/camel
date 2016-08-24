@@ -108,6 +108,9 @@ Components
 | link:camel-consul/src/main/docs/consul-component.adoc[Consul] (camel-consul) +
 `consul://apiEndpoint` | Camel Consul support
 
+| link:camel-couchdb/src/main/docs/couchdb-component.adoc[CouchDB] (camel-couchdb) +
+`couchdb:protocol:hostname:port/database` | The couchdb component is used for integrate with CouchDB databases.
+
 | link:camel-crypto/src/main/docs/crypto-component.adoc[Crypto (JCE)] (camel-crypto) +
 `crypto:cryptoOperation:name` | The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
 
