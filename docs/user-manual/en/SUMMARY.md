@@ -158,7 +158,6 @@
 	* [CoAP](coap-component.adoc)
 	* [CometD](cometd-component.adoc)
 	* [Consul](consul-component.adoc)
-	* [CouchDB](couchdb-component.adoc)
 	* [Crypto (JCE)](crypto-component.adoc)
 	* [CXF](cxf-component.adoc)
 	* [CXF-RS](cxfrs-component.adoc)
