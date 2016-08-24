@@ -190,7 +190,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private EndpointRegistry<EndpointKey> endpoints;
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
-    private final Map<String, Component> components = new HashMap<String, Component>();
+    private final Map<String, Component> components = new ConcurrentHashMap<String, Component>();
     private final Set<Route> routes = new LinkedHashSet<Route>();
     private final List<Service> servicesToStop = new CopyOnWriteArrayList<Service>();
     private final List<StartupListener> startupListeners = new CopyOnWriteArrayList<StartupListener>();
@@ -405,32 +405,36 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Component getComponent(String name, boolean autoCreateComponents, boolean autoStart) {
-        // synchronize the look up and auto create so that 2 threads can't
-        // concurrently auto create the same component.
-        synchronized (components) {
-            Component component = components.get(name);
-            if (component == null && autoCreateComponents) {
-                try {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Using ComponentResolver: {} to resolve component with name: {}", getComponentResolver(), name);
-                    }
-                    component = getComponentResolver().resolveComponent(name, this);
-                    if (component != null) {
-                        addComponent(name, component);
-                        if (autoStart && (isStarted() || isStarting())) {
-                            // If the component is looked up after the context is started, lets start it up.
-                            if (component instanceof Service) {
-                                startService((Service)component);
+        Component component = components.get(name);
+        if (component == null && autoCreateComponents) {
+            // synchronize the look up and auto create so that 2 threads can't
+            // concurrently auto create the same component. 
+            // CAMEL-10269 : Use DCL idiom for better performance
+            synchronized (components) {
+                component = components.get(name);
+                if (component == null) {
+                    try {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Using ComponentResolver: {} to resolve component with name: {}", getComponentResolver(), name);
+                        }
+                        component = getComponentResolver().resolveComponent(name, this);
+                        if (component != null) {
+                            addComponent(name, component);
+                            if (autoStart && (isStarted() || isStarting())) {
+                                // If the component is looked up after the context is started, lets start it up.
+                                if (component instanceof Service) {
+                                    startService((Service)component);
+                                }
                             }
                         }
+                    } catch (Exception e) {
+                        throw new RuntimeCamelException("Cannot auto create component: " + name, e);
                     }
-                } catch (Exception e) {
-                    throw new RuntimeCamelException("Cannot auto create component: " + name, e);
                 }
             }
-            log.trace("getComponent({}) -> {}", name, component);
-            return component;
         }
+        log.trace("getComponent({}) -> {}", name, component);
+        return component;
     }
 
     public <T extends Component> T getComponent(String name, Class<T> componentType) {
