@@ -110,7 +110,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             response.headers().set("Allow", s);
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
-            messageEvent.getChannel().write(response);
+            messageEvent.getChannel().write(response).syncUninterruptibly();
+            messageEvent.getChannel().close();
             return;
         }
         if (consumer.getEndpoint().getHttpMethodRestrict() != null
