@@ -29,7 +29,7 @@ public class DummyRestProducerFactory implements RestProducerFactory {
 
     @Override
     public Producer createProducer(CamelContext camelContext, Exchange exchange, String scheme, String host,
-                            String verb, String basePath, final String uriTemplate, final String queryParameters,
+                            String verb, String basePath, final String uriTemplate, final String resolvedUriTemplate, final String queryParameters,
                             String consumes, String produces, Map<String, Object> parameters) throws Exception {
 
         // use a dummy endpoint

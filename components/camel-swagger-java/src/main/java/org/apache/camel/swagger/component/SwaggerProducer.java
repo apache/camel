@@ -38,6 +38,7 @@ import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,36 +71,12 @@ public class SwaggerProducer extends DefaultAsyncProducer {
         }
 
         try {
-            Map<String, Object> query = new LinkedHashMap<>();
-            for (Parameter param : operation.getParameters()) {
-                if ("query".equals(param.getIn())) {
-                    String name = param.getName();
-                    if (name != null) {
-                        String value = exchange.getIn().getHeader(name, String.class);
-                        if (value != null) {
-                            query.put(name, value);
-                        } else if (param.getRequired()) {
-                            // the parameter is required but there is no header with the value
-                            exchange.setException(new NoSuchHeaderException(exchange, name, String.class));
-                            callback.done(true);
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            // build as query string
-            String options = null;
-            if (!query.isEmpty()) {
-                options = URISupport.createQueryString(query);
-            }
-
             // TODO: bind to consumes context-type
             // TODO: if binding is turned on/off/auto etc
             // TODO: build dynamic uri for component (toD, headers)
             // create http producer to use for calling the remote HTTP service
             // TODO: create the producer once and reuse (create HTTP_XXX headers for dynamic values)
-            Producer producer = createHttpProducer(exchange, operation, verb, path, options);
+            Producer producer = createHttpProducer(exchange, operation, verb, path);
             if (producer != null) {
                 ServiceHelper.startService(producer);
                 AsyncProcessor async = AsyncProcessorConverterHelper.convert(producer);
@@ -149,7 +126,7 @@ public class SwaggerProducer extends DefaultAsyncProducer {
         this.swagger = swagger;
     }
 
-    protected Producer createHttpProducer(Exchange exchange, Operation operation, String verb, String path, String queryParameters) throws Exception {
+    protected Producer createHttpProducer(Exchange exchange, Operation operation, String verb, String path) throws Exception {
         RestProducerFactory factory = null;
         String cname = null;
         if (getEndpoint().getComponentName() != null) {
@@ -222,8 +199,40 @@ public class SwaggerProducer extends DefaultAsyncProducer {
             String basePath = swagger.getBasePath();
             String uriTemplate = path;
 
-            return factory.createProducer(getEndpoint().getCamelContext(), exchange, scheme, host, verb, basePath, uriTemplate, queryParameters,
-                    (consumes.isEmpty() ? "" : consumes.toString()), (produces.isEmpty() ? "" : produces.toString()), null);
+            // uri template with path parameters resolved
+            String resolvedUriTemplate = uriTemplate;
+            // for query parameters
+            Map<String, Object> query = new LinkedHashMap<>();
+            for (Parameter param : operation.getParameters()) {
+                if ("query".equals(param.getIn())) {
+                    String name = param.getName();
+                    if (name != null) {
+                        String value = exchange.getIn().getHeader(name, String.class);
+                        if (value != null) {
+                            query.put(name, value);
+                        } else if (param.getRequired()) {
+                            throw new NoSuchHeaderException(exchange, name, String.class);
+                        }
+                    }
+                } else if ("path".equals(param.getIn())) {
+                    String value = exchange.getIn().getHeader(param.getName(), String.class);
+                    if (value != null) {
+                        String token = "{" + param.getName() + "}";
+                        resolvedUriTemplate = StringHelper.replaceAll(resolvedUriTemplate, token, value);
+                    } else if (param.getRequired()) {
+                        // the parameter is required but we do not have a header
+                        throw new NoSuchHeaderException(exchange, param.getName(), String.class);
+                    }
+                }
+            }
+            // build as query string
+            String queryParameters = null;
+            if (!query.isEmpty()) {
+                queryParameters = URISupport.createQueryString(query);
+            }
+
+            return factory.createProducer(getEndpoint().getCamelContext(), exchange, scheme, host, verb, basePath, uriTemplate, resolvedUriTemplate,
+                    queryParameters, (consumes.isEmpty() ? "" : consumes.toString()), (produces.isEmpty() ? "" : produces.toString()), null);
 
         } else {
             throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");
