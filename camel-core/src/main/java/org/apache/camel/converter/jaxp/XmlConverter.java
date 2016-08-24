@@ -289,7 +289,7 @@ public class XmlConverter {
      */
     @Deprecated
     public DOMSource toDOMSource(Source source) throws ParserConfigurationException, IOException, SAXException, TransformerException {
-        return toDOMSource(source, (Exchange)null);
+        return toDOMSource(source, null);
     }
     
     /**
@@ -880,7 +880,7 @@ public class XmlConverter {
      */
     @Deprecated
     public Document toDOMDocument(InputSource in) throws IOException, SAXException, ParserConfigurationException {
-        return toDOMDocument(in, (Exchange)null);
+        return toDOMDocument(in, null);
     }
     
     /**
