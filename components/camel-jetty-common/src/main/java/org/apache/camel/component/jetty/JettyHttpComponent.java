@@ -38,7 +38,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.http.common.HttpBinding;
@@ -55,11 +57,12 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
-import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -95,7 +98,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public abstract class JettyHttpComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory {
+public abstract class JettyHttpComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory {
     public static final String TMP_DIR = "CamelJettyTempDir";
     
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
@@ -1145,6 +1148,39 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         }
 
         return consumer;
+    }
+
+    @Override
+    public Producer createProducer(CamelContext camelContext, Exchange exchange, String scheme, String host,
+                                   String verb, String basePath, String uriTemplate, String queryParameters,
+                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+
+        // avoid leading slash
+        basePath = FileUtil.stripLeadingSeparator(basePath);
+        uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
+
+        // does the uri template use placeholders?
+        if (uriTemplate.contains("{")) {
+            // us a header for the dynamic uri template so we reuse same endpoint
+            // TODO: fix me later
+            String path = StringHelper.replaceAll(uriTemplate, "{name}", "Donald Duck");
+            String overrideUri = String.format("%s://%s/%s/%s", scheme, host, basePath, path);
+            exchange.getIn().setHeader(Exchange.HTTP_URI, overrideUri);
+        }
+
+        // get the endpoint
+        String url = "jetty:%s://%s/%s/%s";
+        url = String.format(url, scheme, host, basePath, uriTemplate);
+        if (queryParameters != null) {
+            url = url + "&" + queryParameters;
+        }
+
+        JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
+        if (parameters != null && !parameters.isEmpty()) {
+            setProperties(camelContext, endpoint, parameters);
+        }
+
+        return endpoint.createProducer();
     }
 
     protected CamelServlet createServletForConnector(Server server, Connector connector,
