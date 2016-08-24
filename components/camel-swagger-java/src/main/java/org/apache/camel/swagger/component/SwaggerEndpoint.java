@@ -44,7 +44,7 @@ public class SwaggerEndpoint extends DefaultEndpoint {
 
     private transient Swagger swagger;
 
-    @UriPath
+    @UriPath(enums = "http,https")
     private String schema;
     @UriPath(enums = "get,put,post,head,delete,patch,options") @Metadata(required = "true")
     private String verb;
@@ -52,6 +52,8 @@ public class SwaggerEndpoint extends DefaultEndpoint {
     private String path;
     @UriParam
     private String componentName;
+    @UriParam
+    private String host;
 
     public SwaggerEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -78,6 +80,9 @@ public class SwaggerEndpoint extends DefaultEndpoint {
         return schema;
     }
 
+    /**
+     * Scheme to use when calling the REST service such as http or https
+     */
     public void setSchema(String schema) {
         this.schema = schema;
     }
@@ -86,6 +91,9 @@ public class SwaggerEndpoint extends DefaultEndpoint {
         return verb;
     }
 
+    /**
+     * Verb of the HTTP service such as get,post,put etc.
+     */
     public void setVerb(String verb) {
         this.verb = verb;
     }
@@ -94,6 +102,9 @@ public class SwaggerEndpoint extends DefaultEndpoint {
         return path;
     }
 
+    /**
+     * Uri template (context-path) of HTTP service to call
+     */
     public void setPath(String path) {
         this.path = path;
     }
@@ -108,6 +119,17 @@ public class SwaggerEndpoint extends DefaultEndpoint {
      */
     public void setComponentName(String componentName) {
         this.componentName = componentName;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * Host and port of HTTP service to use (override host in swagger schema)
+     */
+    public void setHost(String host) {
+        this.host = host;
     }
 
     @Override

@@ -18,10 +18,18 @@ package org.apache.camel.swagger.component;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class SwaggerGetTest extends CamelTestSupport {
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("dummy", new DummyRestProducerFactory());
+        return jndi;
+    }
 
     @Test
     public void testSwaggerGet() throws Exception {
@@ -37,6 +45,11 @@ public class SwaggerGetTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                SwaggerComponent sc = new SwaggerComponent();
+                sc.setComponentName("dummy");
+
+                context.addComponent("swagger", sc);
+
                 from("direct:start")
                     .to("swagger:hello-api.json:get:hello/hi/{name}")
                     .to("mock:result");

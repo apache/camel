@@ -25,6 +25,7 @@ public class SwaggerComponent extends UriEndpointComponent {
 
     private String componentName = "http";
     private String schema;
+    private String host;
 
     public SwaggerComponent() {
         super(SwaggerEndpoint.class);
@@ -59,10 +60,6 @@ public class SwaggerComponent extends UriEndpointComponent {
         }
         endpoint.setPath(path);
 
-        setProperties(endpoint, parameters);
-        // any leftover parameters should be kept as additional uri parameters
-
-
         return endpoint;
     }
 
@@ -89,5 +86,16 @@ public class SwaggerComponent extends UriEndpointComponent {
      */
     public void setComponentName(String componentName) {
         this.componentName = componentName;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * Host and port of HTTP service to use (override host in swagger schema)
+     */
+    public void setHost(String host) {
+        this.host = host;
     }
 }

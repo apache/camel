@@ -17,17 +17,26 @@
 package org.apache.camel.swagger.component;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.Parameter;
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.NoSuchHeaderException;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.util.StringHelper;
+import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +44,6 @@ import org.slf4j.LoggerFactory;
 public class SwaggerProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SwaggerProducer.class);
-
-    // TODO: delegate to actual producer
 
     private Swagger swagger;
 
@@ -54,59 +61,54 @@ public class SwaggerProducer extends DefaultAsyncProducer {
         String verb = getEndpoint().getVerb();
         String path = getEndpoint().getPath();
 
-        Operation op = getSwaggerOperation(verb, path);
-        if (op == null) {
+        Operation operation = getSwaggerOperation(verb, path);
+        if (operation == null) {
             exchange.setException(new IllegalArgumentException("Swagger schema does not contain operation for " + verb + ":" + path));
             callback.done(true);
             return true;
         }
 
         try {
-            // build context path to use for actual HTTP call
-            // replace path parameters with value from header
-            String contextPath = path;
             Map<String, Object> query = new LinkedHashMap<>();
-            for (Parameter param : op.getParameters()) {
-                if ("path".equals(param.getIn())) {
-                    String name = param.getName();
-                    if (name != null) {
-                        String value = exchange.getIn().getHeader(name, String.class);
-                        if (value != null) {
-                            String key = "{" + name + "}";
-                            contextPath = StringHelper.replaceAll(contextPath, key, value);
-                        }
-                    }
-                } else if ("query".equals(param.getIn())) {
+            for (Parameter param : operation.getParameters()) {
+                if ("query".equals(param.getIn())) {
                     String name = param.getName();
                     if (name != null) {
                         String value = exchange.getIn().getHeader(name, String.class);
                         if (value != null) {
                             query.put(name, value);
+                        } else if (param.getRequired()) {
+                            // the parameter is required but there is no header with the value
+                            exchange.setException(new NoSuchHeaderException(exchange, name, String.class));
+                            callback.done(true);
+                            return true;
                         }
                     }
                 }
             }
+
+            // build as query string
+            String options = null;
             if (!query.isEmpty()) {
-                String options = URISupport.createQueryString(query);
-                contextPath = contextPath + "?" + options;
+                options = URISupport.createQueryString(query);
             }
 
-            LOG.debug("Using context-path: {}", contextPath);
+            // TODO: bind to consumes context-type
+            // TODO: if binding is turned on/off/auto etc
+            // TODO: build dynamic uri for component (toD, headers)
+            // create http producer to use for calling the remote HTTP service
+            // TODO: create the producer once and reuse (create HTTP_XXX headers for dynamic values)
+            Producer producer = createHttpProducer(exchange, operation, verb, path, options);
+            if (producer != null) {
+                AsyncProcessor async = AsyncProcessorConverterHelper.convert(producer);
+                return async.process(exchange, callback);
+            }
 
         } catch (Throwable e) {
             exchange.setException(e);
-            callback.done(true);
-            return true;
         }
 
-        // TODO: bind to consumes context-type
-        // TODO: if binding is turned on/off/auto etc
-        // TODO: use the component and build uri with verb/path
-        // TODO: build dynamic uri for component (toD, headers)
-
-        exchange.getIn().setBody("Hello Donald Duck");
-
-        // do some binding first
+        // some error or there was no producer, so we are done
         callback.done(true);
         return true;
     }
@@ -143,5 +145,86 @@ public class SwaggerProducer extends DefaultAsyncProducer {
 
     public void setSwagger(Swagger swagger) {
         this.swagger = swagger;
+    }
+
+    protected Producer createHttpProducer(Exchange exchange, Operation operation, String verb, String path, String queryParameters) throws Exception {
+        RestProducerFactory factory = null;
+        String cname = null;
+        if (getEndpoint().getComponentName() != null) {
+            Object comp = getEndpoint().getCamelContext().getRegistry().lookupByName(getEndpoint().getComponentName());
+            if (comp != null && comp instanceof RestProducerFactory) {
+                factory = (RestProducerFactory) comp;
+            } else {
+                comp = getEndpoint().getCamelContext().getComponent(getEndpoint().getComponentName());
+                if (comp != null && comp instanceof RestProducerFactory) {
+                    factory = (RestProducerFactory) comp;
+                }
+            }
+
+            if (factory == null) {
+                if (comp != null) {
+                    throw new IllegalArgumentException("Component " + getEndpoint().getComponentName() + " is not a RestProducerFactory");
+                } else {
+                    throw new NoSuchBeanException(getEndpoint().getComponentName(), RestProducerFactory.class.getName());
+                }
+            }
+            cname = getEndpoint().getComponentName();
+        }
+
+        // try all components
+        if (factory == null) {
+            for (String name : getEndpoint().getCamelContext().getComponentNames()) {
+                Component comp = getEndpoint().getCamelContext().getComponent(name);
+                if (comp != null && comp instanceof RestProducerFactory) {
+                    factory = (RestProducerFactory) comp;
+                    cname = name;
+                    break;
+                }
+            }
+        }
+
+        // lookup in registry
+        if (factory == null) {
+            Set<RestProducerFactory> factories = getEndpoint().getCamelContext().getRegistry().findByType(RestProducerFactory.class);
+            if (factories != null && factories.size() == 1) {
+                factory = factories.iterator().next();
+            }
+        }
+
+        if (factory != null) {
+
+            CollectionStringBuffer produces = new CollectionStringBuffer(",");
+            List<String> list = operation.getProduces();
+            if (list == null) {
+                list = swagger.getProduces();
+            }
+            if (list != null) {
+                for (String s : list) {
+                    produces.append(s);
+                }
+            }
+            CollectionStringBuffer consumes = new CollectionStringBuffer(",");
+            list = operation.getConsumes();
+            if (list == null) {
+                list = swagger.getConsumes();
+            }
+            if (list != null) {
+                for (String s : list) {
+                    consumes.append(s);
+                }
+            }
+
+            // TODO: allow to chose scheme if there is multiple
+            String scheme = swagger.getSchemes() != null && swagger.getSchemes().size() == 1 ? swagger.getSchemes().get(0).toValue() : "http";
+            String host = getEndpoint().getHost() != null ? getEndpoint().getHost() : swagger.getHost();
+            String basePath = swagger.getBasePath();
+            String uriTemplate = path;
+
+            return factory.createProducer(getEndpoint().getCamelContext(), exchange, scheme, host, verb, basePath, uriTemplate, queryParameters,
+                    (consumes.isEmpty() ? "" : consumes.toString()), (produces.isEmpty() ? "" : produces.toString()), null);
+
+        } else {
+            throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");
+        }
     }
 }
