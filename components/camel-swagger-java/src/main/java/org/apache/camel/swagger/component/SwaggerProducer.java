@@ -37,6 +37,7 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -209,6 +210,9 @@ public class SwaggerProducer extends DefaultAsyncProducer {
                     if (name != null) {
                         String value = exchange.getIn().getHeader(name, String.class);
                         if (value != null) {
+                            // we need to remove the header as they are sent as query instead
+                            // TODO: we could use a header filter strategy to skip these headers
+                            exchange.getIn().removeHeader(param.getName());
                             query.put(name, value);
                         } else if (param.getRequired()) {
                             throw new NoSuchHeaderException(exchange, name, String.class);
@@ -217,6 +221,9 @@ public class SwaggerProducer extends DefaultAsyncProducer {
                 } else if ("path".equals(param.getIn())) {
                     String value = exchange.getIn().getHeader(param.getName(), String.class);
                     if (value != null) {
+                        // we need to remove the header as they are sent as path instead
+                        // TODO: we could use a header filter strategy to skip these headers
+                        exchange.getIn().removeHeader(param.getName());
                         String token = "{" + param.getName() + "}";
                         resolvedUriTemplate = StringHelper.replaceAll(resolvedUriTemplate, token, value);
                     } else if (param.getRequired()) {

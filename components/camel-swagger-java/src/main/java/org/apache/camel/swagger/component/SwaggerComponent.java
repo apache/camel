@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.URISupport;
 
 public class SwaggerComponent extends UriEndpointComponent {
 
@@ -59,6 +60,12 @@ public class SwaggerComponent extends UriEndpointComponent {
             path = "/" + path;
         }
         endpoint.setPath(path);
+
+        setProperties(endpoint, parameters);
+
+        // the rest is URI parameters on path
+        String query = URISupport.createQueryString(parameters);
+        endpoint.setQueryParameters(query);
 
         return endpoint;
     }
