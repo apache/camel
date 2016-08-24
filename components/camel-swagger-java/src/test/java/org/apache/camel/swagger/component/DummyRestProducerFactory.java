@@ -19,6 +19,7 @@ package org.apache.camel.swagger.component;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
@@ -31,7 +32,10 @@ public class DummyRestProducerFactory implements RestProducerFactory {
                             String verb, String basePath, final String uriTemplate, final String queryParameters,
                             String consumes, String produces, Map<String, Object> parameters) throws Exception {
 
-        return new DefaultProducer(null) {
+        // use a dummy endpoint
+        Endpoint endpoint = camelContext.getEndpoint("stub:dummy");
+
+        return new DefaultProducer(endpoint) {
             @Override
             public void process(Exchange exchange) throws Exception {
                 // for testing purpose, check if we have {name} in template

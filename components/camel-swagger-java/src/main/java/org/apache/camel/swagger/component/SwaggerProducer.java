@@ -37,6 +37,7 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,6 +101,7 @@ public class SwaggerProducer extends DefaultAsyncProducer {
             // TODO: create the producer once and reuse (create HTTP_XXX headers for dynamic values)
             Producer producer = createHttpProducer(exchange, operation, verb, path, options);
             if (producer != null) {
+                ServiceHelper.startService(producer);
                 AsyncProcessor async = AsyncProcessorConverterHelper.convert(producer);
                 return async.process(exchange, callback);
             }
