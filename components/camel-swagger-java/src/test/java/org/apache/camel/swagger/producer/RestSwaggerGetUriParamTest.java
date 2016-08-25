@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.swagger.component;
+package org.apache.camel.swagger.producer;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
-public class RestSwaggerGetTest extends CamelTestSupport {
+public class RestSwaggerGetUriParamTest extends CamelTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -34,7 +33,7 @@ public class RestSwaggerGetTest extends CamelTestSupport {
 
     @Test
     public void testSwaggerGet() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello Donald Duck");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye Donald+Duck");
 
         template.sendBodyAndHeader("direct:start", null, "name", "Donald Duck");
 
@@ -49,7 +48,7 @@ public class RestSwaggerGetTest extends CamelTestSupport {
                 restConfiguration().producerComponent("dummy");
 
                 from("direct:start")
-                    .to("rest:get:hello/hi/{name}?apiDoc=hello-api.json")
+                    .to("rest:get:bye?name={name}&apiDoc=hello-api.json")
                     .to("mock:result");
             }
         };
