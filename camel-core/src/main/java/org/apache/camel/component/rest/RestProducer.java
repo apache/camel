@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.rest;
 
+import java.net.URLDecoder;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
@@ -81,9 +82,8 @@ public class RestProducer extends DefaultAsyncProducer {
                     if (value != null) {
                         hasPath = true;
                         // we need to remove the header as they are sent as path instead
-                        // TODO: we could use a header filter strategy to skip these headers
                         exchange.getIn().removeHeader(key);
-                        csb.append(key + "=" + value);
+                        csb.append(value);
                     } else {
                         csb.append(a);
                     }
@@ -102,11 +102,15 @@ public class RestProducer extends DefaultAsyncProducer {
                 Object v = entry.getValue();
                 if (v != null) {
                     String a = v.toString();
+                    // decode the key as { may be decoded to %NN
+                    a = URLDecoder.decode(a, "UTF-8");
                     if (a.startsWith("{") && a.endsWith("}")) {
                         String key = a.substring(1, a.length() - 1);
                         String value = exchange.getIn().getHeader(key, String.class);
                         if (value != null) {
-                            params.put(entry.getKey(), value);
+                            // we need to remove the header as they are sent in query parameter instead
+                            exchange.getIn().removeHeader(key);
+                            params.put(key, value);
                         } else {
                             params.put(entry.getKey(), entry.getValue());
                         }

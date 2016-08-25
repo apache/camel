@@ -25,10 +25,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Ignore;
 
-@Deprecated
-@Ignore
 public class DummyRestProducerFactory implements RestProducerFactory {
 
     @Override
