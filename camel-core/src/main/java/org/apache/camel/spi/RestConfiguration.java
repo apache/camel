@@ -39,6 +39,7 @@ public class RestConfiguration {
 
     private String component;
     private String apiComponent;
+    private String producerComponent;
     private String scheme;
     private String host;
     private int port;
@@ -94,6 +95,24 @@ public class RestConfiguration {
      */
     public void setApiComponent(String apiComponent) {
         this.apiComponent = apiComponent;
+    }
+
+    /**
+     * Gets the name of the Camel component to use as the REST producer
+     *
+     * @return the component name, or <tt>null</tt> to let Camel search the {@link Registry} to find suitable implementation
+     */
+    public String getProducerComponent() {
+        return producerComponent;
+    }
+
+    /**
+     * Sets the name of the Camel component to use as the REST producer
+     *
+     * @param componentName the name of the component (such as restlet, jetty, etc.)
+     */
+    public void setProducerComponent(String componentName) {
+        this.producerComponent = componentName;
     }
 
     /**

@@ -46,6 +46,9 @@ public class RestConfigurationDefinition {
     private String apiComponent;
 
     @XmlAttribute
+    private String producerComponent;
+
+    @XmlAttribute
     private String scheme;
 
     @XmlAttribute
@@ -110,7 +113,7 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * The Camel Rest component to use for the REST transport, such as restlet, spark-rest.
+     * The Camel Rest component to use for the REST transport (consumer), such as restlet, spark-rest.
      * If no component has been explicit configured, then Camel will lookup if there is a Camel component
      * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry.
      * If either one is found, then that is being used.
@@ -128,6 +131,17 @@ public class RestConfigurationDefinition {
      */
     public void setApiComponent(String apiComponent) {
         this.apiComponent = apiComponent;
+    }
+
+    public String getProducerComponent() {
+        return producerComponent;
+    }
+
+    /**
+     * Sets the name of the Camel component to use as the REST producer
+     */
+    public void setProducerComponent(String producerComponent) {
+        this.producerComponent = producerComponent;
     }
 
     public String getScheme() {
@@ -402,7 +416,7 @@ public class RestConfigurationDefinition {
     //-------------------------------------------------------------------------
 
     /**
-     * To use a specific Camel rest component
+     * To use a specific Camel rest component (consumer)
      */
     public RestConfigurationDefinition component(String componentId) {
         setComponent(componentId);
@@ -414,6 +428,14 @@ public class RestConfigurationDefinition {
      */
     public RestConfigurationDefinition apiComponent(String componentId) {
         setApiComponent(componentId);
+        return this;
+    }
+
+    /**
+     * To use a specific Camel rest component (producer)
+     */
+    public RestConfigurationDefinition producerComponent(String componentId) {
+        setProducerComponent(componentId);
         return this;
     }
 
@@ -646,6 +668,9 @@ public class RestConfigurationDefinition {
         }
         if (apiComponent != null) {
             answer.setApiComponent(CamelContextHelper.parseText(context, apiComponent));
+        }
+        if (producerComponent != null) {
+            answer.setProducerComponent(CamelContextHelper.parseText(context, producerComponent));
         }
         if (scheme != null) {
             answer.setScheme(CamelContextHelper.parseText(context, scheme));

@@ -39,7 +39,7 @@ public class JettyRestProducerGetRestConfigurationTest extends BaseJettyTest {
             public void configure() throws Exception {
                 String host = "localhost:" + getPort();
 
-                restConfiguration().host(host).component("jetty");
+                restConfiguration().producerComponent("jetty").host(host);
 
                 from("direct:start")
                         .to("rest:get:api:hello/hi/{name}")
