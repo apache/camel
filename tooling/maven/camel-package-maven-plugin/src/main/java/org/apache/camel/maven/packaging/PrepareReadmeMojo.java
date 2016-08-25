@@ -420,7 +420,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         try {
             String text = loadText(new FileInputStream(file));
 
-            String existing = StringHelper.between(text, "// eips: START" , "// eips: END");
+            String existing = StringHelper.between(text, "// eips: START", "// eips: END");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -454,7 +454,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         try {
             String text = loadText(new FileInputStream(file));
 
-            String existing = StringHelper.between(text, "// components: START" , "// components: END");
+            String existing = StringHelper.between(text, "// components: START", "// components: END");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -488,7 +488,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         try {
             String text = loadText(new FileInputStream(file));
 
-            String existing = StringHelper.between(text, "// dataformats: START" , "// dataformats: END");
+            String existing = StringHelper.between(text, "// dataformats: START", "// dataformats: END");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -522,7 +522,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         try {
             String text = loadText(new FileInputStream(file));
 
-            String existing = StringHelper.between(text, "// languages: START" , "// languages: END");
+            String existing = StringHelper.between(text, "// languages: START", "// languages: END");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
