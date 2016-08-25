@@ -201,6 +201,11 @@
                     </alias>
                   </aliases>
                   -->
+                  <!-- for some methods, null can be a valid input
+                  <nullableOptions>
+                    <nullableOption>option-name</nullableOption>
+                  </nullableOptions>
+                  -->
                 </api>
                 <api>
                   <apiName>hello-javadoc</apiName>
@@ -209,6 +214,7 @@
                     <!-- Use exclude patterns to limit what gets exposed in component endpoint
                     <excludePackages>package-name-patterns</excludePackages>
                     <excludeClasses>class-name-patterns</excludeClasses>
+                    <includeMethods>method-name-patterns</includeMethods>
                     <excludeMethods>method-name-patterns</excludeMethods>
                     <includeStaticMethods>use 'true' to include static methods, false by default<includeStaticMethods>
                     -->
@@ -219,9 +225,10 @@
               <substitutions/>
               <excludeConfigNames/>
               <excludeConfigTypes/>
-              <extraOptions>
+              <extraOptions/>
               <fromJavadoc/>
               <aliases/>
+              <nullableOptions/>
               -->
             </configuration>
           </execution>
