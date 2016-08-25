@@ -289,7 +289,6 @@
 	* [Stomp](stomp-component.adoc)
 	* [Stream](stream-component.adoc)
 	* [String Template](string-template-component.adoc)
-	* [Swagger](swagger-component.adoc)
 	* [Telegram](telegram-component.adoc)
 	* [Twitter](twitter-component.adoc)
 	* [Undertow](undertow-component.adoc)
