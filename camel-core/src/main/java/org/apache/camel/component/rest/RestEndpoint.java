@@ -22,11 +22,14 @@ import java.util.Set;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestApiProcessorFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
@@ -35,12 +38,16 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).
  */
 @UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", label = "core,rest", lenientProperties = true)
 public class RestEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestEndpoint.class);
 
     public static final String DEFAULT_API_COMPONENT_NAME = "swagger";
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/rest/";
@@ -246,8 +253,25 @@ public class RestEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         RestProducerFactory factory = null;
+
+        if (apiDoc != null) {
+            LOG.debug("Discovering camel-swagger-java on classpath for using api-doc: {}", apiDoc);
+            // lookup on classpath using factory finder to automatic find it (just add camel-swagger-java to classpath etc)
+            try {
+                FactoryFinder finder = getCamelContext().getFactoryFinder(RESOURCE_PATH);
+                Object instance = finder.newInstance(DEFAULT_API_COMPONENT_NAME);
+                if (instance instanceof RestProducerFactory) {
+                    // this factory from camel-swagger-java will facade the http component in use
+                    factory = (RestProducerFactory) instance;
+                }
+                parameters.put("apiDoc", apiDoc);
+            } catch (NoFactoryAvailableException e) {
+                throw new IllegalStateException("Cannot find camel-swagger-java on classpath to use with api-doc: " + apiDoc);
+            }
+        }
+
         String cname = null;
-        if (getComponentName() != null) {
+        if (factory == null && getComponentName() != null) {
             Object comp = getCamelContext().getRegistry().lookupByName(getComponentName());
             if (comp != null && comp instanceof RestProducerFactory) {
                 factory = (RestProducerFactory) comp;
@@ -280,6 +304,8 @@ public class RestEndpoint extends DefaultEndpoint {
             }
         }
 
+        parameters.put("componentName", cname);
+
         // lookup in registry
         if (factory == null) {
             Set<RestProducerFactory> factories = getCamelContext().getRegistry().findByType(RestProducerFactory.class);
@@ -288,10 +314,8 @@ public class RestEndpoint extends DefaultEndpoint {
             }
         }
 
-        // TODO: if api-doc is enabled then lookup that swagger factory and use it to create the producer using the factory
-        // so we can lookup the operation and find its consumes/producers/and other details
-
         if (factory != null) {
+            LOG.debug("Using RestProducerFactory: {}", factory);
             String uriTemplate = path;
             Producer producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, consumes, produces, parameters);
             return new RestProducer(this, producer);
