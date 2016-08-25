@@ -37,7 +37,7 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -49,6 +49,8 @@ public class SwaggerProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(SwaggerProducer.class);
 
     private Swagger swagger;
+    private Operation operation;
+    private AsyncProcessor producer;
 
     public SwaggerProducer(Endpoint endpoint) {
         super(endpoint);
@@ -61,29 +63,14 @@ public class SwaggerProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        String verb = getEndpoint().getVerb();
-        String path = getEndpoint().getPath();
-
-        Operation operation = getSwaggerOperation(verb, path);
-        if (operation == null) {
-            exchange.setException(new IllegalArgumentException("Swagger schema does not contain operation for " + verb + ":" + path));
-            callback.done(true);
-            return true;
-        }
+        // TODO: bind to consumes context-type
+        // TODO: if binding is turned on/off/auto etc
 
         try {
-            // TODO: bind to consumes context-type
-            // TODO: if binding is turned on/off/auto etc
-            // TODO: build dynamic uri for component (toD, headers)
-            // create http producer to use for calling the remote HTTP service
-            // TODO: create the producer once and reuse (create HTTP_XXX headers for dynamic values)
-            Producer producer = createHttpProducer(exchange, operation, verb, path);
             if (producer != null) {
-                ServiceHelper.startService(producer);
-                AsyncProcessor async = AsyncProcessorConverterHelper.convert(producer);
-                return async.process(exchange, callback);
+                prepareExchange(exchange);
+                return producer.process(exchange, callback);
             }
-
         } catch (Throwable e) {
             exchange.setException(e);
         }
@@ -91,6 +78,96 @@ public class SwaggerProducer extends DefaultAsyncProducer {
         // some error or there was no producer, so we are done
         callback.done(true);
         return true;
+    }
+
+    protected void prepareExchange(Exchange exchange) throws Exception {
+        boolean hasPath = false;
+        boolean hasQuery = false;
+
+        // uri template with path parameters resolved
+        String resolvedUriTemplate = getEndpoint().getPath();
+        // for query parameters
+        Map<String, Object> query = new LinkedHashMap<>();
+        for (Parameter param : operation.getParameters()) {
+            if ("query".equals(param.getIn())) {
+                String name = param.getName();
+                if (name != null) {
+                    String value = exchange.getIn().getHeader(name, String.class);
+                    if (value != null) {
+                        hasQuery = true;
+                        // we need to remove the header as they are sent as query instead
+                        // TODO: we could use a header filter strategy to skip these headers
+                        exchange.getIn().removeHeader(param.getName());
+                        query.put(name, value);
+                    } else if (param.getRequired()) {
+                        throw new NoSuchHeaderException(exchange, name, String.class);
+                    }
+                }
+            } else if ("path".equals(param.getIn())) {
+                String value = exchange.getIn().getHeader(param.getName(), String.class);
+                if (value != null) {
+                    hasPath = true;
+                    // we need to remove the header as they are sent as path instead
+                    // TODO: we could use a header filter strategy to skip these headers
+                    exchange.getIn().removeHeader(param.getName());
+                    String token = "{" + param.getName() + "}";
+                    resolvedUriTemplate = StringHelper.replaceAll(resolvedUriTemplate, token, value);
+                } else if (param.getRequired()) {
+                    // the parameter is required but we do not have a header
+                    throw new NoSuchHeaderException(exchange, param.getName(), String.class);
+                }
+            }
+        }
+
+        if (hasQuery) {
+            String queryParameters = URISupport.createQueryString(query);
+            exchange.getIn().setHeader(Exchange.HTTP_QUERY, queryParameters);
+        }
+
+        if (hasPath) {
+            String scheme = swagger.getSchemes() != null && swagger.getSchemes().size() == 1 ? swagger.getSchemes().get(0).toValue() : "http";
+            String host = getEndpoint().getHost() != null ? getEndpoint().getHost() : swagger.getHost();
+            String basePath = swagger.getBasePath();
+            basePath = FileUtil.stripLeadingSeparator(basePath);
+            resolvedUriTemplate = FileUtil.stripLeadingSeparator(resolvedUriTemplate);
+            // if so us a header for the dynamic uri template so we reuse same endpoint but the header overrides the actual url to use
+            String overrideUri = String.format("%s://%s/%s/%s", scheme, host, basePath, resolvedUriTemplate);
+            exchange.getIn().setHeader(Exchange.HTTP_URI, overrideUri);
+        }
+    }
+
+    public Swagger getSwagger() {
+        return swagger;
+    }
+
+    public void setSwagger(Swagger swagger) {
+        this.swagger = swagger;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        String verb = getEndpoint().getVerb();
+        String path = getEndpoint().getPath();
+
+        operation = getSwaggerOperation(verb, path);
+        if (operation == null) {
+            throw new IllegalArgumentException("Swagger schema does not contain operation for " + verb + ":" + path);
+        }
+
+        Producer processor = createHttpProducer(operation, verb, path);
+        if (processor != null) {
+            producer = AsyncProcessorConverterHelper.convert(processor);
+        }
+        ServiceHelper.startService(producer);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        ServiceHelper.stopService(producer);
     }
 
     private Operation getSwaggerOperation(String verb, String path) {
@@ -119,15 +196,10 @@ public class SwaggerProducer extends DefaultAsyncProducer {
         return op;
     }
 
-    public Swagger getSwagger() {
-        return swagger;
-    }
+    private Producer createHttpProducer(Operation operation, String verb, String path) throws Exception {
 
-    public void setSwagger(Swagger swagger) {
-        this.swagger = swagger;
-    }
+        LOG.debug("Using Swagger operation: {} with {} {}", operation, verb, path);
 
-    protected Producer createHttpProducer(Exchange exchange, Operation operation, String verb, String path) throws Exception {
         RestProducerFactory factory = null;
         String cname = null;
         if (getEndpoint().getComponentName() != null) {
@@ -172,6 +244,7 @@ public class SwaggerProducer extends DefaultAsyncProducer {
         }
 
         if (factory != null) {
+            LOG.debug("Using RestProducerFactory: {}", factory);
 
             CollectionStringBuffer produces = new CollectionStringBuffer(",");
             List<String> list = operation.getProduces();
@@ -200,46 +273,8 @@ public class SwaggerProducer extends DefaultAsyncProducer {
             String basePath = swagger.getBasePath();
             String uriTemplate = path;
 
-            // uri template with path parameters resolved
-            String resolvedUriTemplate = uriTemplate;
-            // for query parameters
-            Map<String, Object> query = new LinkedHashMap<>();
-            for (Parameter param : operation.getParameters()) {
-                if ("query".equals(param.getIn())) {
-                    String name = param.getName();
-                    if (name != null) {
-                        String value = exchange.getIn().getHeader(name, String.class);
-                        if (value != null) {
-                            // we need to remove the header as they are sent as query instead
-                            // TODO: we could use a header filter strategy to skip these headers
-                            exchange.getIn().removeHeader(param.getName());
-                            query.put(name, value);
-                        } else if (param.getRequired()) {
-                            throw new NoSuchHeaderException(exchange, name, String.class);
-                        }
-                    }
-                } else if ("path".equals(param.getIn())) {
-                    String value = exchange.getIn().getHeader(param.getName(), String.class);
-                    if (value != null) {
-                        // we need to remove the header as they are sent as path instead
-                        // TODO: we could use a header filter strategy to skip these headers
-                        exchange.getIn().removeHeader(param.getName());
-                        String token = "{" + param.getName() + "}";
-                        resolvedUriTemplate = StringHelper.replaceAll(resolvedUriTemplate, token, value);
-                    } else if (param.getRequired()) {
-                        // the parameter is required but we do not have a header
-                        throw new NoSuchHeaderException(exchange, param.getName(), String.class);
-                    }
-                }
-            }
-            // build as query string
-            String queryParameters = null;
-            if (!query.isEmpty()) {
-                queryParameters = URISupport.createQueryString(query);
-            }
-
-            return factory.createProducer(getEndpoint().getCamelContext(), exchange, scheme, host, verb, basePath, uriTemplate, resolvedUriTemplate,
-                    queryParameters, (consumes.isEmpty() ? "" : consumes.toString()), (produces.isEmpty() ? "" : produces.toString()), null);
+            return factory.createProducer(getEndpoint().getCamelContext(), scheme, host, verb, basePath, uriTemplate,
+                    (consumes.isEmpty() ? "" : consumes.toString()), (produces.isEmpty() ? "" : produces.toString()), null);
 
         } else {
             throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");
