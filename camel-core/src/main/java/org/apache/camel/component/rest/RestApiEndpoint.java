@@ -45,7 +45,7 @@ import org.apache.camel.util.ObjectHelper;
 public class RestApiEndpoint extends DefaultEndpoint {
 
     public static final String DEFAULT_API_COMPONENT_NAME = "swagger";
-    public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/rest/";
+    public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/restapi/";
 
     @UriPath
     @Metadata(required = "true")

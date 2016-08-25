@@ -42,6 +42,9 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", label = "core,rest", lenientProperties = true)
 public class RestEndpoint extends DefaultEndpoint {
 
+    public static final String DEFAULT_API_COMPONENT_NAME = "swagger";
+    public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/rest/";
+
     @UriPath(label = "common", enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = "true")
     private String method;
     @UriPath(label = "common") @Metadata(required = "true")
