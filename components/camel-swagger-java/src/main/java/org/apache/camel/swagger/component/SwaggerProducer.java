@@ -44,6 +44,7 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class SwaggerProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SwaggerProducer.class);
@@ -267,13 +268,11 @@ public class SwaggerProducer extends DefaultAsyncProducer {
                 }
             }
 
-            // TODO: allow to chose scheme if there is multiple
-            String scheme = swagger.getSchemes() != null && swagger.getSchemes().size() == 1 ? swagger.getSchemes().get(0).toValue() : "http";
             String host = getEndpoint().getHost() != null ? getEndpoint().getHost() : swagger.getHost();
             String basePath = swagger.getBasePath();
             String uriTemplate = path;
 
-            return factory.createProducer(getEndpoint().getCamelContext(), scheme, host, verb, basePath, uriTemplate,
+            return factory.createProducer(getEndpoint().getCamelContext(), host, verb, basePath, uriTemplate,
                     (consumes.isEmpty() ? "" : consumes.toString()), (produces.isEmpty() ? "" : produces.toString()), null);
 
         } else {

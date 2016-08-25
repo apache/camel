@@ -32,8 +32,7 @@ public interface RestProducerFactory {
      * Creates a new REST producer.
      *
      * @param camelContext        the camel context
-     * @param scheme              scheme to use such as http or https
-     * @param host                host (incl port) of the REST service
+     * @param host                host in the syntax scheme:hostname:port, such as http:myserver:8080
      * @param verb                HTTP verb such as GET, POST
      * @param basePath            base path
      * @param uriTemplate         uri template
@@ -43,6 +42,6 @@ public interface RestProducerFactory {
      * @return a newly created REST producer
      * @throws Exception can be thrown
      */
-    Producer createProducer(CamelContext camelContext, String scheme, String host,
+    Producer createProducer(CamelContext camelContext, String host,
                             String verb, String basePath, String uriTemplate, String consumes, String produces, Map<String, Object> parameters) throws Exception;
 }

@@ -20,13 +20,16 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.swagger.component.SwaggerComponent;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class JettyRestProducerGetQueryParamTest extends BaseJettyTest {
+@Ignore
+@Deprecated
+public class JettySwaggerRestProducerGetTest extends BaseJettyTest {
 
     @Test
     public void testSwaggerGet() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye Donald Duck");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello Donald Duck");
 
         template.sendBodyAndHeader("direct:start", null, "name", "Donald Duck");
 
@@ -38,18 +41,20 @@ public class JettyRestProducerGetQueryParamTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                SwaggerComponent sc = new SwaggerComponent();
-                sc.setComponentName("jetty");
-                context.addComponent("swagger", sc);
-
                 String host = "localhost:" + getPort();
 
+                SwaggerComponent sc = new SwaggerComponent();
+                sc.setComponentName("jetty");
+                sc.setHost(host);
+                sc.setApiDoc("hello-api.json");
+                context.addComponent("swagger", sc);
+
                 from("direct:start")
-                        .toF("swagger:get:bye?host=%s&apiDoc=%s", host, "hello-api.json")
+                        .to("swagger:get:hello/hi/{name}")
                         .to("mock:result");
 
-                from("jetty:http://localhost:{{port}}/api/bye/?matchOnUriPrefix=true")
-                    .transform().simple("Bye ${header.name}");
+                from("jetty:http://localhost:{{port}}/api/hello/hi/?matchOnUriPrefix=true")
+                    .transform().constant("Hello Donald Duck");
             }
         };
     }

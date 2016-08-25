@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ResourceHelper.resolveMandatoryResourceAsInputStream;
 
+@Deprecated
 @UriEndpoint(scheme = "swagger", title = "Swagger", syntax = "swagger:verb:path",
         producerOnly = true, label = "rest", lenientProperties = true)
 public class SwaggerEndpoint extends DefaultEndpoint {

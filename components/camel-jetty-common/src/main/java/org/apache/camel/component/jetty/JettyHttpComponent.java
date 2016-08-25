@@ -1151,7 +1151,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     }
 
     @Override
-    public Producer createProducer(CamelContext camelContext, String scheme, String host,
+    public Producer createProducer(CamelContext camelContext, String host,
                                    String verb, String basePath, String uriTemplate,
                                    String consumes, String produces, Map<String, Object> parameters) throws Exception {
 
@@ -1160,8 +1160,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
 
         // get the endpoint
-        String url = "jetty:%s://%s/%s/%s";
-        url = String.format(url, scheme, host, basePath, uriTemplate);
+        String url = "jetty:%s/%s/%s";
+        url = String.format(url, host, basePath, uriTemplate);
 
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {

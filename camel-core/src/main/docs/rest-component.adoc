@@ -22,7 +22,19 @@ URI Options
 ^^^^^^^^^^^
 
 // component options: START
-The REST component has no options.
+The REST component supports 3 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2,1m,7",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| componentName | String | The Camel Rest component to use for the REST transport such as restlet spark-rest. If no component has been explicit configured then Camel will lookup if there is a Camel component that integrates with the Rest DSL or if a org.apache.camel.spi.RestConsumerFactory (consumer) or org.apache.camel.spi.RestProducerFactory (producer) is registered in the registry. If either one is found then that is being used.
+| apiDoc | String | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format.
+| host | String | Host and port of HTTP service to use (override host in swagger schema)
+|=======================================================================
+{% endraw %}
 // component options: END
 
 // endpoint options: START
@@ -32,16 +44,16 @@ The REST component supports 14 endpoint options which are listed below:
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| method | consumer |  | String | *Required* HTTP method to use.
-| path | consumer |  | String | *Required* The base path
-| uriTemplate | consumer |  | String | The uri template
+| method | common |  | String | *Required* HTTP method to use.
+| path | common |  | String | *Required* The base path
+| uriTemplate | common |  | String | The uri template
+| componentName | common |  | String | The Camel Rest component to use for the REST transport such as restlet spark-rest. If no component has been explicit configured then Camel will lookup if there is a Camel component that integrates with the Rest DSL or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found then that is being used.
+| consumes | common |  | String | Media type such as: 'text/xml' or 'application/json' this REST service accepts. By default we accept all kinds of types.
+| inType | common |  | String | To declare the incoming POJO binding type as a FQN class name
+| outType | common |  | String | To declare the outgoing POJO binding type as a FQN class name
+| produces | common |  | String | Media type such as: 'text/xml' or 'application/json' this REST service returns.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| componentName | consumer |  | String | The Camel Rest component to use for the REST transport such as restlet spark-rest. If no component has been explicit configured then Camel will lookup if there is a Camel component that integrates with the Rest DSL or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found then that is being used.
-| consumes | consumer |  | String | Media type such as: 'text/xml' or 'application/json' this REST service accepts. By default we accept all kinds of types.
 | description | consumer |  | String | Human description to document this REST service
-| inType | consumer |  | String | To declare the incoming POJO binding type as a FQN class name
-| outType | consumer |  | String | To declare the outgoing POJO binding type as a FQN class name
-| produces | consumer |  | String | Media type such as: 'text/xml' or 'application/json' this REST service returns.
 | routeId | consumer |  | String | Name of the route this REST services creates
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange.
