@@ -29,8 +29,8 @@ import org.apache.camel.util.ObjectHelper;
 public class DummyRestProducerFactory implements RestProducerFactory {
 
     @Override
-    public Producer createProducer(CamelContext camelContext, Exchange exchange, String scheme, String host,
-                            String verb, String basePath, final String uriTemplate, final String resolvedUriTemplate, final String queryParameters,
+    public Producer createProducer(CamelContext camelContext, String scheme, String host,
+                            String verb, String basePath, final String uriTemplate,
                             String consumes, String produces, Map<String, Object> parameters) throws Exception {
 
         // use a dummy endpoint
@@ -39,14 +39,16 @@ public class DummyRestProducerFactory implements RestProducerFactory {
         return new DefaultProducer(endpoint) {
             @Override
             public void process(Exchange exchange) throws Exception {
-                // for testing purpose, check if we have {name} in template
-                if (uriTemplate.contains("{name}")) {
-                    int pos = resolvedUriTemplate.lastIndexOf('/');
-                    String name = resolvedUriTemplate.substring(pos + 1);
-                    exchange.getIn().setBody("Hello " + name);
-                } else if (queryParameters.contains("name=")) {
-                    String name = ObjectHelper.after(queryParameters, "name=");
+                String query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+                if (query != null) {
+                    String name = ObjectHelper.after(query, "name=");
                     exchange.getIn().setBody("Bye " + name);
+                }
+                String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+                if (uri != null) {
+                    int pos = uri.lastIndexOf('/');
+                    String name = uri.substring(pos + 1);
+                    exchange.getIn().setBody("Hello " + name);
                 }
             }
         };

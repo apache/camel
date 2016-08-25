@@ -1151,25 +1151,13 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     }
 
     @Override
-    public Producer createProducer(CamelContext camelContext, Exchange exchange, String scheme, String host,
-                                   String verb, String basePath, String uriTemplate, String resolvedUriTemplate, String queryParameters,
+    public Producer createProducer(CamelContext camelContext, String scheme, String host,
+                                   String verb, String basePath, String uriTemplate,
                                    String consumes, String produces, Map<String, Object> parameters) throws Exception {
 
         // avoid leading slash
         basePath = FileUtil.stripLeadingSeparator(basePath);
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
-        resolvedUriTemplate = FileUtil.stripLeadingSeparator(resolvedUriTemplate);
-
-        // does the uri template use path parameters?
-        if (uriTemplate.contains("{") && resolvedUriTemplate != null) {
-            // if so us a header for the dynamic uri template so we reuse same endpoint but the header overrides the actual url to use
-            String overrideUri = String.format("%s://%s/%s/%s", scheme, host, basePath, resolvedUriTemplate);
-            exchange.getIn().setHeader(Exchange.HTTP_URI, overrideUri);
-        }
-        if (queryParameters != null) {
-            // use a header for the query parameters
-            exchange.getIn().setHeader(Exchange.HTTP_QUERY, queryParameters);
-        }
 
         // get the endpoint
         String url = "jetty:%s://%s/%s/%s";
