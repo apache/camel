@@ -45,7 +45,7 @@ public class RestSwaggerGetUriParamTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().setComponent("dummy");
+                restConfiguration().producerComponent("dummy");
 
                 from("direct:start")
                     .to("rest:get:bye?name={name}&apiDoc=hello-api.json")

@@ -89,7 +89,12 @@ public class RestComponent extends UriEndpointComponent {
 
         // if no explicit component name was given, then fallback and use default configured component name
         if (answer.getComponentName() == null && getCamelContext().getRestConfiguration() != null) {
-            answer.setComponentName(getCamelContext().getRestConfiguration().getComponent());
+            String name = getCamelContext().getRestConfiguration().getProducerComponent();
+            if (name == null) {
+                // fallback and use the consumer name
+                name = getCamelContext().getRestConfiguration().getComponent();
+            }
+            answer.setComponentName(name);
         }
 
         return answer;
