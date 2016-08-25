@@ -47,7 +47,7 @@ public class SwaggerComponentGetTest extends CamelTestSupport {
             public void configure() throws Exception {
                 SwaggerComponent sc = new SwaggerComponent();
                 sc.setComponentName("dummy");
-                sc.setSchema("hello-api.json");
+                sc.setApiDoc("hello-api.json");
 
                 context.addComponent("swagger", sc);
 

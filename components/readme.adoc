@@ -501,6 +501,9 @@ Components
 | link:camel-stringtemplate/src/main/docs/string-template-component.adoc[String Template] (camel-stringtemplate) +
 `string-template:resourceUri` | Transforms the message using a String template.
 
+| link:camel-swagger-java/src/main/docs/swagger-component.adoc[Swagger] (camel-swagger-java) +
+`swagger:verb:path` | Camel Swagger Java support
+
 | link:camel-telegram/src/main/docs/telegram-component.adoc[Telegram] (camel-telegram) +
 `telegram:type/authorizationToken` | The Camel endpoint for a telegram bot.
 

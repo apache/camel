@@ -51,7 +51,7 @@ public class SwaggerGetTest extends CamelTestSupport {
                 context.addComponent("swagger", sc);
 
                 from("direct:start")
-                    .to("swagger:hello-api.json:get:hello/hi/{name}")
+                    .to("swagger:get:hello/hi/{name}?apiDoc=hello-api.json")
                     .to("mock:result");
             }
         };

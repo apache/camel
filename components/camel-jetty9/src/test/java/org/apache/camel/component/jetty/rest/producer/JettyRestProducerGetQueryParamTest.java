@@ -45,7 +45,7 @@ public class JettyRestProducerGetQueryParamTest extends BaseJettyTest {
                 String host = "localhost:" + getPort();
 
                 from("direct:start")
-                        .to("swagger:hello-api.json:get:bye?host=" + host)
+                        .toF("swagger:get:bye?host=%s&apiDoc=%s", host, "hello-api.json")
                         .to("mock:result");
 
                 from("jetty:http://localhost:{{port}}/api/bye/?matchOnUriPrefix=true")

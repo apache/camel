@@ -25,8 +25,12 @@ import org.apache.camel.util.URISupport;
 public class SwaggerComponent extends UriEndpointComponent {
 
     private String componentName = "http";
-    private String schema;
+    private String apiDoc;
     private String host;
+
+    // TODO: we could move this to rest component in camel-core
+    // and have its producer support using a swagger schema and use a factory to lookup
+    // the code in this component that creates the producer
 
     public SwaggerComponent() {
         super(SwaggerEndpoint.class);
@@ -36,24 +40,19 @@ public class SwaggerComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SwaggerEndpoint endpoint = new SwaggerEndpoint(uri, this);
         endpoint.setComponentName(componentName);
+        endpoint.setApiDoc(apiDoc);
+        endpoint.setHost(host);
 
-        String schema;
         String verb;
         String path;
         String[] parts = remaining.split(":");
         if (parts.length == 2) {
-            schema = this.schema;
             verb = parts[0];
             path = parts[1];
-        } else if (parts.length == 3) {
-            schema = parts[0];
-            verb = parts[1];
-            path = parts[2];
         } else {
-            throw new IllegalArgumentException("Invalid syntax. Expected swagger:schema:verb:path?options");
+            throw new IllegalArgumentException("Invalid syntax. Expected swagger:verb:path?options");
         }
 
-        endpoint.setSchema(schema);
         endpoint.setVerb(verb);
         // path must start with leading slash
         if (!path.startsWith("/")) {
@@ -70,19 +69,6 @@ public class SwaggerComponent extends UriEndpointComponent {
         return endpoint;
     }
 
-    public String getSchema() {
-        return schema;
-    }
-
-    /**
-     * The swagger schema to use in json format.
-     * <p/>
-     * The schema is loaded as a resource from the classpath or file system.
-     */
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-
     public String getComponentName() {
         return componentName;
     }
@@ -93,6 +79,18 @@ public class SwaggerComponent extends UriEndpointComponent {
      */
     public void setComponentName(String componentName) {
         this.componentName = componentName;
+    }
+
+    public String getApiDoc() {
+        return apiDoc;
+    }
+
+    /**
+     * The swagger api doc resource to use.
+     * The resource is loaded from classpath by default and must be in JSon format.
+     */
+    public void setApiDoc(String apiDoc) {
+        this.apiDoc = apiDoc;
     }
 
     public String getHost() {

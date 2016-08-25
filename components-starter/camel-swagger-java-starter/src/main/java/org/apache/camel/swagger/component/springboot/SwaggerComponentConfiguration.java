@@ -27,27 +27,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SwaggerComponentConfiguration {
 
     /**
-     * The swagger schema to use in json format. The schema is loaded as a
-     * resource from the classpath or file system.
-     */
-    private String schema;
-    /**
      * The camel component to use as HTTP client for calling the REST service.
      * The default value is: http
      */
     private String componentName;
     /**
+     * The swagger api doc resource to use. The resource is loaded from
+     * classpath by default and must be in JSon format.
+     */
+    private String apiDoc;
+    /**
      * Host and port of HTTP service to use (override host in swagger schema)
      */
     private String host;
-
-    public String getSchema() {
-        return schema;
-    }
-
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
 
     public String getComponentName() {
         return componentName;
@@ -55,6 +47,14 @@ public class SwaggerComponentConfiguration {
 
     public void setComponentName(String componentName) {
         this.componentName = componentName;
+    }
+
+    public String getApiDoc() {
+        return apiDoc;
+    }
+
+    public void setApiDoc(String apiDoc) {
+        this.apiDoc = apiDoc;
     }
 
     public String getHost() {
