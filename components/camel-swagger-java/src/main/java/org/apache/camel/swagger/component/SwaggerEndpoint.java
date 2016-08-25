@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ResourceHelper.resolveMandatoryResourceAsInputStream;
 
-@UriEndpoint(scheme = "swagger", title = "Swagger", syntax = "swagger:schema:verb:path",
+@UriEndpoint(scheme = "swagger", title = "Swagger", syntax = "swagger:verb:path",
         producerOnly = true, label = "rest", lenientProperties = true)
 public class SwaggerEndpoint extends DefaultEndpoint {
 
@@ -44,14 +44,14 @@ public class SwaggerEndpoint extends DefaultEndpoint {
 
     private transient Swagger swagger;
 
-    @UriPath(enums = "http,https")
-    private String schema;
     @UriPath(enums = "get,put,post,head,delete,patch,options") @Metadata(required = "true")
     private String verb;
     @UriPath @Metadata(required = "true")
     private String path;
     @UriParam
     private String componentName;
+    @UriParam
+    private String apiDoc;
     @UriParam
     private String host;
     @UriParam(multiValue = true)
@@ -81,17 +81,6 @@ public class SwaggerEndpoint extends DefaultEndpoint {
     @Override
     public boolean isSingleton() {
         return true;
-    }
-
-    public String getSchema() {
-        return schema;
-    }
-
-    /**
-     * Scheme to use when calling the REST service such as http or https
-     */
-    public void setSchema(String schema) {
-        this.schema = schema;
     }
 
     public String getVerb() {
@@ -139,12 +128,24 @@ public class SwaggerEndpoint extends DefaultEndpoint {
         this.componentName = componentName;
     }
 
+    public String getApiDoc() {
+        return apiDoc;
+    }
+
+    /**
+     * The swagger api doc resource to use.
+     * The resource is loaded from classpath by default and must be in JSon format.
+     */
+    public void setApiDoc(String apiDoc) {
+        this.apiDoc = apiDoc;
+    }
+
     public String getHost() {
         return host;
     }
 
     /**
-     * Host and port of HTTP service to use (override host in swagger schema)
+     * Host and port of HTTP service to use (override host in swagger api-doc)
      */
     public void setHost(String host) {
         this.host = host;
@@ -155,13 +156,15 @@ public class SwaggerEndpoint extends DefaultEndpoint {
         super.doStart();
 
         // load json model
-        ObjectHelper.notEmpty(schema, "schema");
+        if (apiDoc == null) {
+            throw new IllegalArgumentException("The swagger api-doc must be configured using the apiDoc option");
+        }
 
-        InputStream is = resolveMandatoryResourceAsInputStream(getCamelContext(), schema);
+        InputStream is = resolveMandatoryResourceAsInputStream(getCamelContext(), apiDoc);
         try {
             SwaggerParser parser = new SwaggerParser();
             String json = getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, is);
-            LOG.debug("Loaded swagger schema:\n{}", json);
+            LOG.debug("Loaded swagger api-doc:\n{}", json);
             swagger = parser.parse(json);
         } finally {
             IOHelper.close(is);

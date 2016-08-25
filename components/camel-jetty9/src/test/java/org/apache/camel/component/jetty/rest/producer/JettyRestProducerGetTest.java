@@ -38,14 +38,16 @@ public class JettyRestProducerGetTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                SwaggerComponent sc = new SwaggerComponent();
-                sc.setComponentName("jetty");
-                context.addComponent("swagger", sc);
-
                 String host = "localhost:" + getPort();
 
+                SwaggerComponent sc = new SwaggerComponent();
+                sc.setComponentName("jetty");
+                sc.setHost(host);
+                sc.setApiDoc("hello-api.json");
+                context.addComponent("swagger", sc);
+
                 from("direct:start")
-                        .to("swagger:hello-api.json:get:hello/hi/{name}?host=" + host)
+                        .to("swagger:get:hello/hi/{name}")
                         .to("mock:result");
 
                 from("jetty:http://localhost:{{port}}/api/hello/hi/?matchOnUriPrefix=true")

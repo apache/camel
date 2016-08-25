@@ -51,7 +51,7 @@ public class SwaggerGetUriParamTest extends CamelTestSupport {
                 context.addComponent("swagger", sc);
 
                 from("direct:start")
-                    .to("swagger:hello-api.json:get:bye?name={name}")
+                    .to("swagger:get:bye?name={name}&apiDoc=hello-api.json")
                     .to("mock:result");
             }
         };
