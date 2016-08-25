@@ -200,6 +200,12 @@
                   <argType>com.google.api.services.gmail.model.ModifyMessageRequest</argType>
                   <replacement>modifyMessageRequest</replacement>
                 </substitution>                    
+                <substitution>
+                  <method>^.+$</method>
+                  <argName>content</argName>
+                  <argType>com.google.api.services.gmail.model.BatchDeleteMessagesRequest</argType>
+                  <replacement>batchDeleteMessagesRequest</replacement>
+                </substitution>
               </substitutions>
             </configuration>
           </execution>
