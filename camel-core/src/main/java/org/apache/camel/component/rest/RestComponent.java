@@ -22,11 +22,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * REST-DSL component.
  */
 public class RestComponent extends UriEndpointComponent {
+
+    private String componentName;
+    private String apiDoc;
+    private String host;
 
     public RestComponent() {
         super(RestEndpoint.class);
@@ -35,8 +40,27 @@ public class RestComponent extends UriEndpointComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         RestEndpoint answer = new RestEndpoint(uri, this);
+        answer.setComponentName(componentName);
+        answer.setApiDoc(apiDoc);
+
+        // if no explicit host was given, then fallback and use default configured host
+        String h = resolveAndRemoveReferenceParameter(parameters, "host", String.class, host);
+        if (h == null && getCamelContext().getRestConfiguration() != null) {
+            h = getCamelContext().getRestConfiguration().getHost();
+        }
+        // host must start with http:// or https://
+        if (h != null && !(h.startsWith("http://") || h.startsWith("https://"))) {
+            h = "http://" + h;
+        }
+        answer.setHost(h);
+
         setProperties(answer, parameters);
         answer.setParameters(parameters);
+        // the rest is URI parameters on path
+        String query = URISupport.createQueryString(parameters);
+        if (ObjectHelper.isNotEmpty(query)) {
+            answer.setQueryParameters(query);
+        }
 
         if (!remaining.contains(":")) {
             throw new IllegalArgumentException("Invalid syntax. Must be rest:method:path[:uriTemplate] where uriTemplate is optional");
@@ -69,6 +93,44 @@ public class RestComponent extends UriEndpointComponent {
         }
 
         return answer;
+    }
+
+    public String getComponentName() {
+        return componentName;
+    }
+
+    /**
+     * The Camel Rest component to use for the REST transport, such as restlet, spark-rest.
+     * If no component has been explicit configured, then Camel will lookup if there is a Camel component
+     * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory (consumer)
+     * or org.apache.camel.spi.RestProducerFactory (producer) is registered in the registry.
+     * If either one is found, then that is being used.
+     */
+    public void setComponentName(String componentName) {
+        this.componentName = componentName;
+    }
+
+    public String getApiDoc() {
+        return apiDoc;
+    }
+
+    /**
+     * The swagger api doc resource to use.
+     * The resource is loaded from classpath by default and must be in JSon format.
+     */
+    public void setApiDoc(String apiDoc) {
+        this.apiDoc = apiDoc;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * Host and port of HTTP service to use (override host in swagger schema)
+     */
+    public void setHost(String host) {
+        this.host = host;
     }
 
 }

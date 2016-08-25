@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.URISupport;
 
+@Deprecated
 public class SwaggerComponent extends UriEndpointComponent {
 
     private String componentName = "http";

@@ -19,13 +19,13 @@ package org.apache.camel.component.jetty.rest.producer;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.apache.camel.swagger.component.SwaggerComponent;
+import org.apache.camel.component.rest.RestComponent;
 import org.junit.Test;
 
 public class JettyRestProducerGetTest extends BaseJettyTest {
 
     @Test
-    public void testSwaggerGet() throws Exception {
+    public void testRestGet() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello Donald Duck");
 
         template.sendBodyAndHeader("direct:start", null, "name", "Donald Duck");
@@ -38,16 +38,15 @@ public class JettyRestProducerGetTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String host = "localhost:" + getPort();
+                String host = "http://localhost:" + getPort();
 
-                SwaggerComponent sc = new SwaggerComponent();
+                RestComponent sc = new RestComponent();
                 sc.setComponentName("jetty");
                 sc.setHost(host);
-                sc.setApiDoc("hello-api.json");
-                context.addComponent("swagger", sc);
+                context.addComponent("rest", sc);
 
                 from("direct:start")
-                        .to("swagger:get:hello/hi/{name}")
+                        .to("rest:get:api:hello/hi/{name}")
                         .to("mock:result");
 
                 from("jetty:http://localhost:{{port}}/api/hello/hi/?matchOnUriPrefix=true")

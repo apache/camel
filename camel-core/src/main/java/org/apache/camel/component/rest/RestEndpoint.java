@@ -29,6 +29,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -41,26 +42,32 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", consumerOnly = true, label = "core,rest", lenientProperties = true)
 public class RestEndpoint extends DefaultEndpoint {
 
-    @UriPath(enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = "true")
+    @UriPath(label = "common", enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = "true")
     private String method;
-    @UriPath @Metadata(required = "true")
+    @UriPath(label = "common") @Metadata(required = "true")
     private String path;
-    @UriPath
+    @UriPath(label = "common")
     private String uriTemplate;
-    @UriParam
+    @UriParam(label = "common")
     private String consumes;
-    @UriParam
+    @UriParam(label = "common")
     private String produces;
-    @UriParam
+    @UriParam(label = "common")
     private String componentName;
-    @UriParam
+    @UriParam(label = "common")
     private String inType;
-    @UriParam
+    @UriParam(label = "common")
     private String outType;
-    @UriParam
+    @UriParam(label = "consumer")
     private String routeId;
-    @UriParam
+    @UriParam(label = "consumer")
     private String description;
+    @UriParam(label = "producer")
+    private String apiDoc;
+    @UriParam(label = "producer")
+    private String host;
+    @UriParam(label = "producer", multiValue = true)
+    private String queryParameters;
 
     private Map<String, Object> parameters;
 
@@ -199,9 +206,95 @@ public class RestEndpoint extends DefaultEndpoint {
         this.parameters = parameters;
     }
 
+    public String getApiDoc() {
+        return apiDoc;
+    }
+
+    /**
+     * The swagger api doc resource to use.
+     * The resource is loaded from classpath by default and must be in JSon format.
+     */
+    public void setApiDoc(String apiDoc) {
+        this.apiDoc = apiDoc;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * Host and port of HTTP service to use (override host in swagger schema)
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getQueryParameters() {
+        return queryParameters;
+    }
+
+    /**
+     * Query parameters for the HTTP service to call
+     */
+    public void setQueryParameters(String queryParameters) {
+        this.queryParameters = queryParameters;
+    }
+
     @Override
     public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("Producer not supported");
+        RestProducerFactory factory = null;
+        String cname = null;
+        if (getComponentName() != null) {
+            Object comp = getCamelContext().getRegistry().lookupByName(getComponentName());
+            if (comp != null && comp instanceof RestProducerFactory) {
+                factory = (RestProducerFactory) comp;
+            } else {
+                comp = getCamelContext().getComponent(getComponentName());
+                if (comp != null && comp instanceof RestProducerFactory) {
+                    factory = (RestProducerFactory) comp;
+                }
+            }
+
+            if (factory == null) {
+                if (comp != null) {
+                    throw new IllegalArgumentException("Component " + getComponentName() + " is not a RestProducerFactory");
+                } else {
+                    throw new NoSuchBeanException(getComponentName(), RestProducerFactory.class.getName());
+                }
+            }
+            cname = getComponentName();
+        }
+
+        // try all components
+        if (factory == null) {
+            for (String name : getCamelContext().getComponentNames()) {
+                Component comp = getCamelContext().getComponent(name);
+                if (comp != null && comp instanceof RestProducerFactory) {
+                    factory = (RestProducerFactory) comp;
+                    cname = name;
+                    break;
+                }
+            }
+        }
+
+        // lookup in registry
+        if (factory == null) {
+            Set<RestProducerFactory> factories = getCamelContext().getRegistry().findByType(RestProducerFactory.class);
+            if (factories != null && factories.size() == 1) {
+                factory = factories.iterator().next();
+            }
+        }
+
+        // TODO: if api-doc is enabled then lookup that swagger factory and use it to create the producer using the factory
+        // so we can lookup the operation and find its consumes/producers/and other details
+
+        if (factory != null) {
+            String uriTemplate = path;
+            Producer producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, consumes, produces, parameters);
+            return new RestProducer(this, producer);
+        } else {
+            throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");
+        }
     }
 
     @Override

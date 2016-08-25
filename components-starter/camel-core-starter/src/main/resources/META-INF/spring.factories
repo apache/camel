@@ -39,7 +39,9 @@ org.apache.camel.language.xpath.springboot.XPathLanguageAutoConfiguration,\
 org.apache.camel.language.simple.springboot.FileLanguageAutoConfiguration,\
 org.apache.camel.language.property.springboot.ExchangePropertyLanguageAutoConfiguration,\
 org.apache.camel.language.tokenizer.springboot.TokenizeLanguageAutoConfiguration,\
-org.apache.camel.language.tokenizer.springboot.XMLTokenizeLanguageAutoConfiguration
+org.apache.camel.language.tokenizer.springboot.XMLTokenizeLanguageAutoConfiguration,\
+org.apache.camel.component.rest.springboot.RestComponentAutoConfiguration
+
 
 
 
