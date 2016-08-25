@@ -37,9 +37,9 @@ import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The rest component is used for hosting REST services which has been defined using the rest-dsl in Camel.
+ * The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).
  */
-@UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", consumerOnly = true, label = "core,rest", lenientProperties = true)
+@UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", label = "core,rest", lenientProperties = true)
 public class RestEndpoint extends DefaultEndpoint {
 
     @UriPath(label = "common", enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = "true")
