@@ -30,6 +30,8 @@ import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.api.Result;
 import org.eclipse.jetty.client.util.BufferingResponseListener;
+import org.eclipse.jetty.http.HttpField;
+import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
@@ -208,24 +210,36 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
             if (copy) {
                 newRequest = httpClient.copyRequest(request, request.getURI());
                 newRequest.method(request.getMethod());
+                HttpFields headers = newRequest.getHeaders();
+                // copy cookies and host for subscriptions to avoid '403::Unknown Client' errors
+                for (HttpField field : request.getHeaders()) {
+                    HttpHeader header = field.getHeader();
+                    if (HttpHeader.COOKIE.equals(header) || HttpHeader.HOST.equals(header)) {
+                        headers.add(header, field.getValue());
+                    }
+                }
             } else {
                 newRequest = request;
             }
 
             conversation.setAttribute(AUTHENTICATION_RETRIES_ATTRIBUTE, ++retries);
 
-            LOG.debug("Retry attempt {} on authentication error for {}", retries, request);
+            Object originalRequest = conversation.getAttribute(AUTHENTICATION_REQUEST_ATTRIBUTE);
+            LOG.debug("Retry attempt {} on authentication error for {}", retries, originalRequest != null ? originalRequest : newRequest);
 
-            // update currentToken
-            String currentToken = session.getAccessToken();
-            if (client != null) {
-                // update client cache for this and future requests
-                client.setAccessToken(currentToken);
-                client.setInstanceUrl(session.getInstanceUrl());
-                client.setAccessToken(newRequest);
-            } else {
-                // plain request not made by an AbstractClientBase
-                newRequest.header(HttpHeader.AUTHORIZATION, "OAuth " + currentToken);
+            // update currentToken for original request
+            if (originalRequest == null) {
+
+                String currentToken = session.getAccessToken();
+                if (client != null) {
+                    // update client cache for this and future requests
+                    client.setAccessToken(currentToken);
+                    client.setInstanceUrl(session.getInstanceUrl());
+                    client.setAccessToken(newRequest);
+                } else {
+                    // plain request not made by an AbstractClientBase
+                    newRequest.header(HttpHeader.AUTHORIZATION, "OAuth " + currentToken);
+                }
             }
 
             // send new async request with a new delegate
