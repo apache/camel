@@ -25,7 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * REST-DSL component.
+ * Rest component.
  */
 public class RestComponent extends UriEndpointComponent {
 

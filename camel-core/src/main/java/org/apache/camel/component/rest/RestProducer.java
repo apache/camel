@@ -30,8 +30,12 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 
+/**
+ * Rest producer for calling remote REST services.
+ */
 public class RestProducer extends DefaultAsyncProducer {
 
+    // the producer of the Camel component that is used as the HTTP client to call the REST service
     private AsyncProcessor producer;
 
     public RestProducer(Endpoint endpoint, Producer producer) {
