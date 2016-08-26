@@ -832,6 +832,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             setProperties(camelContext, endpoint, parameters);
         }
 
+        // the endpoint must be started before creating the producer
+        ServiceHelper.startService(endpoint);
+
         return endpoint.createProducer();
     }
 
