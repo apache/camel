@@ -859,7 +859,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
             // special for mail
             if (component.equals("imap") || component.equals("imaps") || component.equals("pop3") || component.equals("pop3s") || component.equals("smtp") || component.equals("smtps")) {
                 component = "mail";
-            }
+            } else if (component.equals("ftp") || component.equals("sftp") || component.equals("ftps")) {
+                component = "ftp";
+            } 
             String name = component + "-component";
             if (!docs.contains(name)) {
                 missing.add(name);
