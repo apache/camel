@@ -45,7 +45,10 @@ public final class UndertowHelper {
      * @return the URL to invoke
      */
     public static String createURL(Exchange exchange, UndertowEndpoint endpoint) {
-        String uri = uri = endpoint.getHttpURI().toASCIIString();
+        String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+        if (uri == null) {
+            uri = endpoint.getHttpURI().toASCIIString();
+        }
 
         // resolve placeholders in uri
         try {
