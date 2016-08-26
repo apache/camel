@@ -62,6 +62,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -1146,6 +1147,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
             setProperties(camelContext, consumer, config.getConsumerProperties());
         }
+
+        // the endpoint must be started before creating the producer
+        ServiceHelper.startService(endpoint);
 
         return consumer;
     }
