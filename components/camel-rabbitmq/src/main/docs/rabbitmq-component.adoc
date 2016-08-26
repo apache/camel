@@ -51,7 +51,7 @@ The RabbitMQ component has no options.
 
 
 // endpoint options: START
-The RabbitMQ component supports 55 endpoint options which are listed below:
+The RabbitMQ component supports 56 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -69,6 +69,7 @@ The RabbitMQ component supports 55 endpoint options which are listed below:
 | declare | common | true | boolean | If the option is true camel declare the exchange and queue name and bind them together. If the option is false camel won't declare the exchange and queue name on the server.
 | durable | common | true | boolean | If we are declaring a durable exchange (the exchange will survive a server restart)
 | exchangeType | common | direct | String | The exchange type such as direct or topic.
+| exclusive | common | false | boolean | Exclusive queues may only be accessed by the current connection and are deleted when that connection closes.
 | queue | common |  | String | The queue to receive messages from
 | routingKey | common |  | String | The routing key to use when binding a consumer queue to the exchange. For producer routing keys you set the header rabbitmq.ROUTING_KEY.
 | skipExchangeDeclare | common | false | boolean | This can be used if we need to declare the queue but not the exchange
