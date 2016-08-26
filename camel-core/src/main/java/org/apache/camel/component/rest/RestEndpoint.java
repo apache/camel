@@ -252,6 +252,7 @@ public class RestEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
+        RestProducerFactory apiDocFactory = null;
         RestProducerFactory factory = null;
 
         if (apiDoc != null) {
@@ -262,7 +263,7 @@ public class RestEndpoint extends DefaultEndpoint {
                 Object instance = finder.newInstance(DEFAULT_API_COMPONENT_NAME);
                 if (instance instanceof RestProducerFactory) {
                     // this factory from camel-swagger-java will facade the http component in use
-                    factory = (RestProducerFactory) instance;
+                    apiDocFactory = (RestProducerFactory) instance;
                 }
                 parameters.put("apiDoc", apiDoc);
             } catch (NoFactoryAvailableException e) {
@@ -270,8 +271,8 @@ public class RestEndpoint extends DefaultEndpoint {
             }
         }
 
-        String cname = null;
-        if (factory == null && getComponentName() != null) {
+        String cname = getComponentName();
+        if (cname != null) {
             Object comp = getCamelContext().getRegistry().lookupByName(getComponentName());
             if (comp != null && comp instanceof RestProducerFactory) {
                 factory = (RestProducerFactory) comp;
@@ -316,7 +317,15 @@ public class RestEndpoint extends DefaultEndpoint {
 
         if (factory != null) {
             LOG.debug("Using RestProducerFactory: {}", factory);
-            Producer producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, produces, parameters);
+
+            Producer producer;
+            if (apiDocFactory != null) {
+                // wrap the factory using the api doc factory which will use the factory
+                parameters.put("restProducerFactory", factory);
+                producer = apiDocFactory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, produces, parameters);
+            } else {
+                producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, produces, parameters);
+            }
             return new RestProducer(this, producer);
         } else {
             throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");
