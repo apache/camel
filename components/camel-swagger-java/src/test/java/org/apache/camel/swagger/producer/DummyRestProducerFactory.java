@@ -30,7 +30,7 @@ public class DummyRestProducerFactory implements RestProducerFactory {
 
     @Override
     public Producer createProducer(CamelContext camelContext, String host,
-                            String verb, String basePath, final String uriTemplate,
+                            String verb, String basePath, final String uriTemplate, String queryParameters,
                             String consumes, String produces, Map<String, Object> parameters) throws Exception {
 
         // use a dummy endpoint
@@ -39,12 +39,12 @@ public class DummyRestProducerFactory implements RestProducerFactory {
         return new DefaultProducer(endpoint) {
             @Override
             public void process(Exchange exchange) throws Exception {
-                String query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+                String query = exchange.getIn().getHeader(Exchange.REST_HTTP_QUERY, String.class);
                 if (query != null) {
                     String name = ObjectHelper.after(query, "name=");
                     exchange.getIn().setBody("Bye " + name);
                 }
-                String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+                String uri = exchange.getIn().getHeader(Exchange.REST_HTTP_URI, String.class);
                 if (uri != null) {
                     int pos = uri.lastIndexOf('/');
                     String name = uri.substring(pos + 1);

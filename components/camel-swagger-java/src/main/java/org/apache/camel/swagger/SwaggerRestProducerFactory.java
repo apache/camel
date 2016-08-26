@@ -19,15 +19,13 @@ package org.apache.camel.swagger;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
+import io.swagger.models.parameters.Parameter;
 import io.swagger.parser.SwaggerParser;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -43,7 +41,7 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
 
     @Override
     public Producer createProducer(CamelContext camelContext, String host,
-                                   String verb, String basePath, String uriTemplate,
+                                   String verb, String basePath, String uriTemplate, String queryParameters,
                                    String consumes, String produces, Map<String, Object> parameters) throws Exception {
 
         String apiDoc = (String) parameters.get("apiDoc");
@@ -64,9 +62,25 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
             throw new IllegalArgumentException("Swagger api-doc does not contain operation for " + verb + ":" + path);
         }
 
+        // validate if we have the query parameters also
+        if (queryParameters != null) {
+            for (Parameter param : operation.getParameters()) {
+                if ("query".equals(param.getIn()) && param.getRequired()) {
+                    // check if we have the required query parameter defined
+                    String key = param.getName();
+                    String token = key + "=";
+                    boolean hasQuery = queryParameters.contains(token);
+                    if (!hasQuery) {
+                        throw new IllegalArgumentException("Swagger api-doc does not contain query parameter " + key + " for " + verb + ":" + path);
+                    }
+                }
+            }
+        }
+
         String componentName = (String) parameters.get("componentName");
 
-        Producer producer = createHttpProducer(camelContext, swagger, operation, host, verb, path, produces, consumes, componentName, parameters);
+        Producer producer = createHttpProducer(camelContext, swagger, operation, host, verb, path, queryParameters,
+                produces, consumes, componentName, parameters);
         return producer;
     }
 
@@ -83,6 +97,12 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
     }
 
     private Operation getSwaggerOperation(Swagger swagger, String verb, String path) {
+        // path may include base path so skip that
+        String basePath = swagger.getBasePath();
+        if (basePath != null && path.startsWith(basePath)) {
+            path = path.substring(basePath.length());
+        }
+
         Path modelPath = swagger.getPath(path);
         if (modelPath == null) {
             return null;
@@ -109,53 +129,13 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
     }
 
     private Producer createHttpProducer(CamelContext camelContext, Swagger swagger, Operation operation,
-                                        String host, String verb, String path, String consumes, String produces,
+                                        String host, String verb, String path, String queryParameters,
+                                        String consumes, String produces,
                                         String componentName, Map<String, Object> parameters) throws Exception {
 
         LOG.debug("Using Swagger operation: {} with {} {}", operation, verb, path);
 
-        RestProducerFactory factory = null;
-        String cname = null;
-        if (componentName != null) {
-            Object comp = camelContext.getRegistry().lookupByName(componentName);
-            if (comp != null && comp instanceof RestProducerFactory) {
-                factory = (RestProducerFactory) comp;
-            } else {
-                comp = camelContext.getComponent(componentName);
-                if (comp != null && comp instanceof RestProducerFactory) {
-                    factory = (RestProducerFactory) comp;
-                }
-            }
-
-            if (factory == null) {
-                if (comp != null) {
-                    throw new IllegalArgumentException("Component " + componentName + " is not a RestProducerFactory");
-                } else {
-                    throw new NoSuchBeanException(componentName, RestProducerFactory.class.getName());
-                }
-            }
-            cname = componentName;
-        }
-
-        // try all components
-        if (factory == null) {
-            for (String name : camelContext.getComponentNames()) {
-                Component comp = camelContext.getComponent(name);
-                if (comp != null && comp instanceof RestProducerFactory) {
-                    factory = (RestProducerFactory) comp;
-                    cname = name;
-                    break;
-                }
-            }
-        }
-
-        // lookup in registry
-        if (factory == null) {
-            Set<RestProducerFactory> factories = camelContext.getRegistry().findByType(RestProducerFactory.class);
-            if (factories != null && factories.size() == 1) {
-                factory = factories.iterator().next();
-            }
-        }
+        RestProducerFactory factory = (RestProducerFactory) parameters.remove("restProducerFactory");
 
         if (factory != null) {
             LOG.debug("Using RestProducerFactory: {}", factory);
@@ -200,7 +180,7 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
                 uriTemplate = null;
             }
 
-            return factory.createProducer(camelContext, host, verb, basePath, uriTemplate, consumes, produces, parameters);
+            return factory.createProducer(camelContext, host, verb, basePath, uriTemplate, queryParameters, consumes, produces, parameters);
 
         } else {
             throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");
