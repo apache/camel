@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty.rest.producer;
+package org.apache.camel.component.netty4.http.rest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.component.netty4.http.BaseNettyTest;
 import org.junit.Test;
 
-public class JettyRestProducerGetTest extends BaseJettyTest {
+public class RestNettyProducerGetUriParameterTest extends BaseNettyTest {
 
     @Test
-    public void testJettyProducerGet() throws Exception {
+    public void testNettyProducerGet() throws Exception {
         String out = fluentTemplate.withHeader("id", "123").to("direct:start").request(String.class);
+        assertNotNull(out);
         assertEquals("123;Donald Duck", out);
     }
 
@@ -36,15 +36,15 @@ public class JettyRestProducerGetTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // configure to use localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort());
+                // configure to use netty on localhost with the given port
+                restConfiguration().component("netty4-http").host("localhost").port(getPort());
 
                 from("direct:start")
-                        .to("rest:get:users/{id}/basic");
+                        .to("rest:get:users/basic/?id={id}");
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("{id}/basic")
+                        .get("basic/?id={id}")
                         .route()
                         .to("mock:input")
                         .process(new Processor() {

@@ -59,13 +59,13 @@ public class RestComponent extends UriEndpointComponent {
         }
         answer.setHost(h);
 
-        setProperties(answer, parameters);
-        answer.setParameters(parameters);
-        // the rest is URI parameters on path
-        String query = URISupport.createQueryString(parameters);
-        if (ObjectHelper.isNotEmpty(query)) {
+        String query = ObjectHelper.after(uri, "?");
+        if (query != null) {
             answer.setQueryParameters(query);
         }
+
+        setProperties(answer, parameters);
+        answer.setParameters(parameters);
 
         if (!remaining.contains(":")) {
             throw new IllegalArgumentException("Invalid syntax. Must be rest:method:path[:uriTemplate] where uriTemplate is optional");
