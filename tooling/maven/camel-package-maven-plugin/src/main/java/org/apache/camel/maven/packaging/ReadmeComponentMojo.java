@@ -189,6 +189,8 @@ public class ReadmeComponentMojo extends AbstractMojo {
         // special for some components which share the same readme file
         if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp") || name.equals("smtps")) {
             return "mail";
+        } else if (name.equals("ftp") || name.equals("sftp") || name.equals("ftps")) {
+            return "ftp";
         } else {
             return name;
         }
@@ -198,6 +200,8 @@ public class ReadmeComponentMojo extends AbstractMojo {
         // special for some components which share the same readme file
         if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp") || name.equals("smtps")) {
             return "Mail";
+        } else if (name.equals("ftp") || name.equals("sftp") || name.equals("ftps")) {
+            return "ftp";
         } else {
             return title;
         }
