@@ -809,7 +809,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
     @Override
     public Producer createProducer(CamelContext camelContext, String host,
-                                   String verb, String basePath, String uriTemplate,
+                                   String verb, String basePath, String uriTemplate, String queryParameters,
                                    String consumes, String produces, Map<String, Object> parameters) throws Exception {
 
         // avoid leading slash

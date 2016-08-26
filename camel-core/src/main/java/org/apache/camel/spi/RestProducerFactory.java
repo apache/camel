@@ -36,6 +36,7 @@ public interface RestProducerFactory {
      * @param verb                HTTP verb such as GET, POST
      * @param basePath            base path
      * @param uriTemplate         uri template
+     * @param queryParameters     uri query parameters
      * @param consumes            media-types for what the REST service consume as input (accept-type), is <tt>null</tt> or <tt>&#42;/&#42;</tt> for anything
      * @param produces            media-types for what the REST service produces as output, can be <tt>null</tt>
      * @param parameters          additional parameters
@@ -43,5 +44,6 @@ public interface RestProducerFactory {
      * @throws Exception can be thrown
      */
     Producer createProducer(CamelContext camelContext, String host,
-                            String verb, String basePath, String uriTemplate, String consumes, String produces, Map<String, Object> parameters) throws Exception;
+                            String verb, String basePath, String uriTemplate, String queryParameters,
+                            String consumes, String produces, Map<String, Object> parameters) throws Exception;
 }

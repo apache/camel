@@ -316,7 +316,7 @@ public class RestEndpoint extends DefaultEndpoint {
 
         if (factory != null) {
             LOG.debug("Using RestProducerFactory: {}", factory);
-            Producer producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, consumes, produces, parameters);
+            Producer producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, produces, parameters);
             return new RestProducer(this, producer);
         } else {
             throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");

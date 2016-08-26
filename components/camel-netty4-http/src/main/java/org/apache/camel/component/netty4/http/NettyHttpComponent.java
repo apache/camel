@@ -381,28 +381,28 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
     @Override
     public Producer createProducer(CamelContext camelContext, String host,
-                                   String verb, String basePath, String uriTemplate,
+                                   String verb, String basePath, String uriTemplate, String queryParameters,
                                    String consumes, String produces, Map<String, Object> parameters) throws Exception {
 
         // avoid leading slash
         basePath = FileUtil.stripLeadingSeparator(basePath);
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
 
-        // restlet method must be in upper-case
-        String restletMethod = verb.toUpperCase(Locale.US);
-
         // get the endpoint
         String url;
         if (uriTemplate != null) {
-            url = String.format("netty4-http:%s/%s/%s?restletMethods=%s", host, basePath, uriTemplate, restletMethod);
+            url = String.format("netty4-http:%s/%s/%s", host, basePath, uriTemplate);
         } else {
-            url = String.format("netty4-http:%s/%s?restletMethods=%s", host, basePath, restletMethod);
+            url = String.format("netty4-http:%s/%s", host, basePath);
         }
+
 
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {
             setProperties(camelContext, endpoint, parameters);
         }
+        String path = uriTemplate != null ? uriTemplate : basePath;
+        endpoint.setHeaderFilterStrategy(new NettyHttpRestHeaderFilterStrategy(path, queryParameters));
 
         // the endpoint must be started before creating the producer
         ServiceHelper.startService(endpoint);

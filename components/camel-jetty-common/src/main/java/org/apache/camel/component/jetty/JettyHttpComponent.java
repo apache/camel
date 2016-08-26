@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
@@ -48,6 +47,7 @@ import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.http.common.HttpConsumer;
+import org.apache.camel.http.common.HttpRestHeaderFilterStrategy;
 import org.apache.camel.http.common.HttpRestServletResolveConsumerStrategy;
 import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -63,7 +63,6 @@ import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -1156,7 +1155,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
     @Override
     public Producer createProducer(CamelContext camelContext, String host,
-                                   String verb, String basePath, String uriTemplate,
+                                   String verb, String basePath, String uriTemplate, String queryParameters,
                                    String consumes, String produces, Map<String, Object> parameters) throws Exception {
 
         // avoid leading slash
@@ -1164,13 +1163,19 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
 
         // get the endpoint
-        String url = "jetty:%s/%s/%s";
-        url = String.format(url, host, basePath, uriTemplate);
+        String url;
+        if (uriTemplate != null) {
+            url = String.format("jetty:%s/%s/%s", host, basePath, uriTemplate);
+        } else {
+            url = String.format("jetty:%s/%s", host, basePath);
+        }
 
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {
             setProperties(camelContext, endpoint, parameters);
         }
+        String path = uriTemplate != null ? uriTemplate : basePath;
+        endpoint.setHeaderFilterStrategy(new HttpRestHeaderFilterStrategy(path, queryParameters));
 
         return endpoint.createProducer();
     }
