@@ -47,6 +47,11 @@ public class RestComponent extends UriEndpointComponent {
         String h = resolveAndRemoveReferenceParameter(parameters, "host", String.class, host);
         if (h == null && getCamelContext().getRestConfiguration() != null) {
             h = getCamelContext().getRestConfiguration().getHost();
+            int port = getCamelContext().getRestConfiguration().getPort();
+            // is there a custom port number
+            if (port > 0 && port != 80 && port != 443) {
+                h += ":" + port;
+            }
         }
         // host must start with http:// or https://
         if (h != null && !(h.startsWith("http://") || h.startsWith("https://"))) {

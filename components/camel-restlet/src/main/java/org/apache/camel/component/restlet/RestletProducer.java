@@ -209,7 +209,6 @@ public class RestletProducer extends DefaultAsyncProducer {
             }
         }
         return answer.toString();
-
     }
 
     protected RestletOperationException populateRestletProducerException(Exchange exchange, Response response, int responseCode) {
@@ -245,7 +244,6 @@ public class RestletProducer extends DefaultAsyncProducer {
     }
 
     protected Map<String, String> parseResponseHeaders(Object response, Exchange camelExchange) {
-
         Map<String, String> answer = new HashMap<String, String>();
         if (response instanceof Response) {
 
