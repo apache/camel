@@ -863,7 +863,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 component = "ftp";
             } 
             String name = component + "-component";
-            if (!docs.contains(name)) {
+            if (!docs.contains(name) && (!component.equalsIgnoreCase("linkedin") && !component.equalsIgnoreCase("salesforce"))) {
                 missing.add(name);
             }
         }
