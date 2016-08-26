@@ -129,6 +129,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected Integer responseHeaderSize;
     protected String proxyHost;
     protected ErrorHandler errorHandler;
+    protected boolean useXForwardedForHeader;
     private Integer proxyPort;
     private boolean sendServerVersion = true;
 
@@ -992,6 +993,22 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
     public boolean isSendServerVersion() {
         return sendServerVersion;
+    }
+    
+    /**
+     * To use the X-Fowarded-For header in HttpServletRequest.getRemoteAddr.
+     */
+    @Metadata(description = "To use the X-Fowarded-For header in HttpServletRequest.getRemoteAddr.")
+    public boolean isUseXForwardedForHeader() {
+        return useXForwardedForHeader;
+    }
+
+    /**
+     * To use a http proxy to configure the port number.
+     */
+    @Metadata(description = "To use the X-Fowarded-For header in HttpServletRequest.getRemoteAddr.")
+    public void setUseXForwardedForHeader(boolean useXForwardedForHeader) {
+        this.useXForwardedForHeader = useXForwardedForHeader;
     }
 
     /**
