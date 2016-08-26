@@ -70,6 +70,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean autoDelete = true;
     @UriParam(label = "common", defaultValue = "true")
     private boolean durable = true;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean exclusive = false;
     @UriParam(label = "producer")
     private boolean bridgeEndpoint;
     @UriParam(label = "common")
@@ -831,4 +833,14 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         return replyTo;
     }
 
+    public boolean isExclusive() {
+         return exclusive;
+    }
+
+    /**
+     * Exclusive queues may only be accessed by the current connection, and are deleted when that connection closes.
+     */
+    public void setExclusive(boolean exclusive) {
+        this.exclusive = exclusive;
+    }
 }

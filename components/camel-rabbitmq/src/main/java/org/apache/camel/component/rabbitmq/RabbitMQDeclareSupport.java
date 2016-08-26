@@ -99,7 +99,7 @@ public class RabbitMQDeclareSupport {
 
     private void declareAndBindQueue(final Channel channel, final String queue, final String exchange, final String routingKey, final Map<String, Object> arguments)
             throws IOException {
-        channel.queueDeclare(queue, endpoint.isDurable(), false, endpoint.isAutoDelete(), arguments);
+        channel.queueDeclare(queue, endpoint.isDurable(), endpoint.isExclusive(), endpoint.isAutoDelete(), arguments);
         channel.queueBind(queue, exchange, emptyIfNull(routingKey));
     }
 
