@@ -154,7 +154,12 @@ public class RestletProducer extends DefaultAsyncProducer {
     }
 
     private static String buildUri(RestletEndpoint endpoint, Exchange exchange) throws CamelExchangeException {
-        String uri = endpoint.getProtocol() + "://" + endpoint.getHost() + ":" + endpoint.getPort() + endpoint.getUriPattern();
+        // rest producer may provide an override url to be used which we should discard if using (hence the remove)
+        String uri = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_URI);
+
+        if (uri == null) {
+            uri = endpoint.getProtocol() + "://" + endpoint.getHost() + ":" + endpoint.getPort() + endpoint.getUriPattern();
+        }
 
         // substitute { } placeholders in uri and use mandatory headers
         LOG.trace("Substituting '(value)' placeholders in uri: {}", uri);
@@ -176,7 +181,11 @@ public class RestletProducer extends DefaultAsyncProducer {
             matcher.reset(uri);
         }
 
-        String query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        // rest producer may provide an override query string to be used which we should discard if using (hence the remove)
+        String query = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_QUERY);
+        if (query == null) {
+            query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        }
         if (query != null) {
             LOG.trace("Adding query: {} to uri: {}", query, uri);
             uri = addQueryToUri(uri, query);

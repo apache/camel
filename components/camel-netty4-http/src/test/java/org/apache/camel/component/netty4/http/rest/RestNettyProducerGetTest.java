@@ -28,7 +28,7 @@ public class RestNettyProducerGetTest extends BaseNettyTest {
     public void testNettyProducerGet() throws Exception {
         String out = fluentTemplate.withHeader("id", "123").to("direct:start").request(String.class);
         assertNotNull(out);
-        // TODO: [123, {id}];Donald Duck
+        // TODO: [123, 123];Donald Duck
         // assertEquals("123;Donald Duck", out);
     }
 

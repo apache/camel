@@ -136,7 +136,8 @@ public class RestProducer extends DefaultAsyncProducer {
         }
 
         if (query != null) {
-            exchange.getIn().setHeader(Exchange.HTTP_QUERY, query);
+            // the query parameters for the rest call to be used
+            exchange.getIn().setHeader(Exchange.REST_HTTP_QUERY, query);
         }
 
         if (hasPath) {
@@ -151,7 +152,8 @@ public class RestProducer extends DefaultAsyncProducer {
             } else {
                 overrideUri = String.format("%s/%s", host, resolvedUriTemplate);
             }
-            exchange.getIn().setHeader(Exchange.HTTP_URI, overrideUri);
+            // the http uri for the rest call to be used
+            exchange.getIn().setHeader(Exchange.REST_HTTP_URI, overrideUri);
         }
     }
 
