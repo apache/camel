@@ -107,7 +107,7 @@ link:file2.html[File] is inherited.
 ====
 
 // component options: START
-The ftp component has no options.
+The FTP component has no options.
 // component options: END
 
 
@@ -119,7 +119,7 @@ The ftp component has no options.
 
 
 // endpoint options: START
-The ftp component supports 112 endpoint options which are listed below:
+The FTP component supports 104 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -128,6 +128,7 @@ The ftp component supports 112 endpoint options which are listed below:
 | host | common |  | String | *Required* Hostname of the FTP server
 | port | common |  | int | Port of the FTP server
 | directoryName | common |  | String | The starting directory
+| binary | common | false | boolean | Specifies the file transfer mode BINARY or ASCII. Default is ASCII (false).
 | charset | common |  | String | This option is used to specify the encoding of the file. You can use this on the consumer to specify the encodings of the files which allow Camel to know the charset it should load the file content in case the file content is being accessed. Likewise when writing a file you can use this option to specify which charset to write the file as well.
 | disconnect | common | false | boolean | Whether or not to disconnect from remote FTP server right after use. Disconnect will only disconnect the current connection to the FTP server. If you have a consumer which you want to stop then you need to stop the consumer/route instead.
 | disconnectOnBatchComplete | common | false | boolean | Whether or not to disconnect from remote FTP server right after a Batch is complete. disconnectOnBatchComplete will only disconnect the current connection to the FTP server. If you have a consumer which you want to stop then you need to stop the consumer/route instead.
@@ -135,8 +136,8 @@ The ftp component supports 112 endpoint options which are listed below:
 | download | common | false | boolean | Whether the FTP consumer should download the file. If this option is set to false then the message body will be null but the consumer will still trigger a Camel Exchange that has details about the file such as file name file size etc. It's just that the file will not be downloaded.
 | fastExistsCheck | common | false | boolean | If set this option to be true camel-ftp will use the list file directly to check if the file exists. Since some FTP server may not support to list the file directly if the option is false camel-ftp will use the old way to list the directory and check if the file exists. This option also influences readLock=changed to control whether it performs a fast check to update file information or not. This can be used to speed up the process if the FTP server has a lot of files.
 | fileName | common |  | String | Use Expression such as File Language to dynamically set the filename. For consumers it's used as a filename filter. For producers it's used to evaluate the filename to write. If an expression is set it take precedence over the CamelFileName header. (Note: The header itself can also be an Expression). The expression options support both String and Expression types. If the expression is a String type it is always evaluated using the File Language. If the expression is an Expression type the specified Expression type is used - this allows you for instance to use OGNL expressions. For the consumer you can use it to filter filenames so you can for instance consume today's file using the File Language syntax: mydata-$date:now:yyyyMMdd.txt. The producers support the CamelOverruleFileName header which takes precedence over any existing CamelFileName header; the CamelOverruleFileName is a header that is used only once and makes it easier as this avoids to temporary store CamelFileName and have to restore it afterwards.
-| jschLoggingLevel | common | WARN | LoggingLevel | The logging level to use for JSCH activity logging. As JSCH is verbose at by default at INFO level the threshold is WARN by default.
 | maximumReconnectAttempts | common |  | int | Specifies the maximum reconnect attempts Camel performs when it tries to connect to the remote FTP server. Use 0 to disable this behavior.
+| passiveMode | common | false | boolean | Sets passive mode connections. Default is active mode connections.
 | reconnectDelay | common |  | long | Delay in millis Camel will wait before performing a reconnect attempt.
 | separator | common | UNIX | PathSeparator | Sets the path separator to be used. UNIX = Uses unix style path separator Windows = Uses windows style path separator Auto = (is default) Use existing path separator in file name
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
@@ -155,26 +156,28 @@ The ftp component supports 112 endpoint options which are listed below:
 | onCompletionExceptionHandler | consumer (advanced) |  | ExceptionHandler | To use a custom org.apache.camel.spi.ExceptionHandler to handle any thrown exceptions that happens during the file on completion process where the consumer does either a commit or rollback. The default implementation will log any exception at WARN level and ignore.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | processStrategy | consumer (advanced) |  | GenericFileProcessStrategy<T> | A pluggable org.apache.camel.component.file.GenericFileProcessStrategy allowing you to implement your own readLock option or similar. Can also be used when special conditions must be met before a file can be consumed such as a special ready file exists. If this option is set then the readLock option does not apply.
+| receiveBufferSize | consumer (advanced) | 32768 | int | The receive (download) buffer size Used only by FTPClient
 | startingDirectoryMustExist | consumer (advanced) | false | boolean | Whether the starting directory must exist. Mind that the autoCreate option is default enabled which means the starting directory is normally auto created if it doesn't exist. You can disable autoCreate and enable this to ensure the starting directory must exist. Will thrown an exception if the directory doesn't exist.
+| useList | consumer (advanced) | true | boolean | Whether to allow using LIST command when downloading a file. Default is true. In some use cases you may want to download a specific file and are not allowed to use the LIST command and therefore you can set this option to false.
 | fileExist | producer | Override | GenericFileExist | What to do if a file already exists with the same name. Override which is the default replaces the existing file. Append - adds content to the existing file. Fail - throws a GenericFileOperationException indicating that there is already an existing file. Ignore - silently ignores the problem and does not override the existing file but assumes everything is okay. Move - option requires to use the moveExisting option to be configured as well. The option eagerDeleteTargetFile can be used to control what to do if an moving the file and there exists already an existing file otherwise causing the move operation to fail. The Move option will move any existing files before writing the target file. TryRename Camel is only applicable if tempFileName option is in use. This allows to try renaming the file from the temporary name to the actual name without doing any exists check.This check may be faster on some file systems and especially FTP servers.
 | flatten | producer | false | boolean | Flatten is used to flatten the file name path to strip any leading paths so it's just the file name. This allows you to consume recursively into sub-directories but when you eg write the files to another directory they will be written in a single directory. Setting this to true on the producer enforces that any file name in CamelFileName header will be stripped for any leading paths.
 | moveExisting | producer |  | String | Expression (such as File Language) used to compute file name to use when fileExist=Move is configured. To move files into a backup subdirectory just enter backup. This option only supports the following File Language tokens: file:name file:name.ext file:name.noext file:onlyname file:onlyname.noext file:ext and file:parent. Notice the file:parent is not supported by the FTP component as the FTP component can only move any existing files to a relative directory based on current dir as base.
 | tempFileName | producer |  | String | The same as tempPrefix option but offering a more fine grained control on the naming of the temporary filename as it uses the File Language.
 | tempPrefix | producer |  | String | This option is used to write the file using a temporary name and then after the write is complete rename it to the real name. Can be used to identify files being written and also avoid consumers (not using exclusive read locks) reading in progress files. Is often used by FTP when uploading big files.
 | allowNullBody | producer (advanced) | false | boolean | Used to specify if a null body is allowed during file writing. If set to true then an empty file will be created when set to false and attempting to send a null body to the file component a GenericFileWriteException of 'Cannot write null body to file.' will be thrown. If the fileExist option is set to 'Override' then the file will be truncated and if set to append the file will remain unchanged.
-| chmod | producer (advanced) |  | String | Allows you to set chmod on the stored file. For example chmod=640.
 | eagerDeleteTargetFile | producer (advanced) | true | boolean | Whether or not to eagerly delete any existing target file. This option only applies when you use fileExists=Override and the tempFileName option as well. You can use this to disable (set it to false) deleting the target file before the temp file is written. For example you may write big files and want the target file to exists during the temp file is being written. This ensure the target file is only deleted until the very last moment just before the temp file is being renamed to the target filename. This option is also used to control whether to delete any existing files when fileExist=Move is enabled and an existing file exists. If this option copyAndDeleteOnRenameFails false then an exception will be thrown if an existing file existed if its true then the existing file is deleted before the move operation.
 | keepLastModified | producer (advanced) | false | boolean | Will keep the last modified timestamp from the source file (if any). Will use the Exchange.FILE_LAST_MODIFIED header to located the timestamp. This header can contain either a java.util.Date or long with the timestamp. If the timestamp exists and the option is enabled it will set this timestamp on the written file. Note: This option only applies to the file producer. You cannot use this option with any of the ftp producers.
 | sendNoop | producer (advanced) | true | boolean | Whether to send a noop command as a pre-write check before uploading files to the FTP server. This is enabled by default as a validation of the connection is still valid which allows to silently re-connect to be able to upload the file. However if this causes problems you can turn this option off.
+| activePortRange | advanced |  | String | Set the client side port range in active mode. The syntax is: minPort-maxPort Both port numbers are inclusive eg 10000-19999 to include all 1xxxx ports.
 | autoCreate | advanced | true | boolean | Automatically create missing directories in the file's pathname. For the file consumer that means creating the starting directory. For the file producer it means the directory the files should be written to.
 | bufferSize | advanced | 131072 | int | Write buffer sized in bytes.
-| bulkRequests | advanced |  | Integer | Specifies how many requests may be outstanding at any one time. Increasing this value may slightly improve file transfer speed but will increase memory usage.
-| compression | advanced |  | int | To use compression. Specify a level from 1 to 10. Important: You must manually add the needed JSCH zlib JAR to the classpath for compression support.
 | connectTimeout | advanced | 10000 | int | Sets the connect timeout for waiting for a connection to be established Used by both FTPClient and JSCH
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
-| proxy | advanced |  | Proxy | To use a custom configured com.jcraft.jsch.Proxy. This proxy is used to consume/send messages from the target SFTP host.
-| serverAliveCountMax | advanced | 1 | int | Allows you to set the serverAliveCountMax of the sftp session
-| serverAliveInterval | advanced |  | int | Allows you to set the serverAliveInterval of the sftp session
+| ftpClient | advanced |  | FTPClient | To use a custom instance of FTPClient
+| ftpClientConfig | advanced |  | FTPClientConfig | To use a custom instance of FTPClientConfig to configure the FTP client the endpoint should use.
+| ftpClientConfigParameters | advanced |  | Map | Used by FtpComponent to provide additional parameters for the FTPClientConfig
+| ftpClientParameters | advanced |  | Map | Used by FtpComponent to provide additional parameters for the FTPClient
+| siteCommand | advanced |  | String | Sets optional site command(s) to be executed after successful login. Multiple site commands can be separated using a new line character (\n).
 | soTimeout | advanced | 300000 | int | Sets the so timeout Used only by FTPClient
 | stepwise | advanced | true | boolean | Sets whether we should stepwise change directories while traversing file structures when downloading files or as well when uploading a file to a directory. You can disable this if you for example are in a situation where you cannot change directory on the FTP server due security reasons.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
@@ -223,20 +226,9 @@ The ftp component supports 112 endpoint options which are listed below:
 | shuffle | sort | false | boolean | To shuffle the list of files (sort in random order)
 | sortBy | sort |  | String | Built-in sort by using the File Language. Supports nested sorts so you can have a sort by file name and as a 2nd group sort by modified date.
 | sorter | sort |  | GenericFile<T>> | Pluggable sorter as a java.util.Comparator class.
-| ciphers | security |  | String | Set a comma separated list of ciphers that will be used in order of preference. Possible cipher names are defined by JCraft JSCH. Some examples include: aes128-ctraes128-cbc3des-ctr3des-cbcblowfish-cbcaes192-cbcaes256-cbc. If not specified the default list from JSCH will be used.
-| keyPair | security |  | KeyPair | Sets a key pair of the public and private key so to that the SFTP endpoint can do public/private key verification.
-| knownHosts | security |  | byte[] | Sets the known_hosts from the byte array so that the SFTP endpoint can do host key verification.
-| knownHostsFile | security |  | String | Sets the known_hosts file so that the SFTP endpoint can do host key verification.
-| knownHostsUri | security |  | String | Sets the known_hosts file (loaded from classpath by default) so that the SFTP endpoint can do host key verification.
+| account | security |  | String | Account to use for login
 | password | security |  | String | Password to use for login
-| preferredAuthentications | security |  | String | Set the preferred authentications which SFTP endpoint will used. Some example include:passwordpublickey. If not specified the default list from JSCH will be used.
-| privateKey | security |  | byte[] | Set the private key as byte so that the SFTP endpoint can do private key verification.
-| privateKeyFile | security |  | String | Set the private key file so that the SFTP endpoint can do private key verification.
-| privateKeyPassphrase | security |  | String | Set the private key file passphrase so that the SFTP endpoint can do private key verification.
-| privateKeyUri | security |  | String | Set the private key file (loaded from classpath by default) so that the SFTP endpoint can do private key verification.
-| strictHostKeyChecking | security | no | String | Sets whether to use strict host key checking.
 | username | security |  | String | Username to use for login
-| useUserKnownHostsFile | security | true | boolean | If knownHostFile has not been explicit configured then use the host file from System.getProperty(user.home)/.ssh/known_hosts
 |=======================================================================
 {% endraw %}
 // endpoint options: END
