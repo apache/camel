@@ -4,9 +4,11 @@ Rest Component
 
 *Available as of Camel 2.14*
 
-The rest component allows to define REST endpoints using the
+The rest component allows to define REST endpoints (consumer) using the
 link:rest-dsl.html[Rest DSL] and plugin to other Camel components as the
 REST transport.
+
+From Camel 2.18 onwards the rest component can also be used as a client (producer) to call REST services.
 
 [[Rest-URIformat]]
 URI format
@@ -98,8 +100,6 @@ header with the key "me".
 The following examples have configured a base path as "hello" and then
 have two REST services configured using uriTemplates.
 
- 
-
 [source,java]
 ------------------------------------------------
   from("rest:get:hello:/{me}")
@@ -108,6 +108,59 @@ have two REST services configured using uriTemplates.
   from("rest:get:hello:/french/{me}")
     .transform().simple("Bonjour ${header.me}");
 ------------------------------------------------
+
+[[Rest-Producer]]
+Rest producer examples
+^^^^^^^^^^^^^^^^^^^^^^
+
+You can use the rest component to call REST services like any other Camel component.
+
+For example to call a REST service on using `hello/{me}` you can do
+
+[source,java]
+--------------------------------------------
+  from("direct:start")
+    .to("rest:get:hello/{me}");
+--------------------------------------------
+
+And then the dynamic value `{me}` is mapped to Camel message with the same name.
+So to call this REST service you can send an empty message body and a header as shown:
+
+[source,java]
+--------------------------------------------
+  template.sendBodyAndHeader("direct:start", null, "me", "Donald Duck");
+--------------------------------------------
+
+The Rest producer needs to know the hostname and port of the REST service, which you can configure
+using the host option as shown:
+
+[source,java]
+--------------------------------------------
+  from("direct:start")
+    .to("rest:get:hello/{me}?host=myserver:8080/foo");
+--------------------------------------------
+
+Instead of using the host option, you can configure the host on the `restConfiguration` as shown:
+
+[source,java]
+--------------------------------------------
+  restConfiguration().host("myserver:8080/foo");
+
+  from("direct:start")
+    .to("rest:get:hello/{me}");
+--------------------------------------------
+
+You can use the `producerComponent` to select which Camel component to use as the HTTP client, for example
+to use http4 you can do:
+
+[source,java]
+--------------------------------------------
+  restConfiguration().host("myserver:8080/foo").producerComponent("http4");
+
+  from("direct:start")
+    .to("rest:get:hello/{me}");
+--------------------------------------------
+
 
 [[Rest-Moreexamples]]
 More examples
