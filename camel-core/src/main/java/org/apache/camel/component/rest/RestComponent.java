@@ -101,6 +101,10 @@ public class RestComponent extends UriEndpointComponent {
             }
             answer.setComponentName(name);
         }
+        // if no explicit producer api was given, then fallback and use default configured
+        if (answer.getApiDoc() == null && getCamelContext().getRestConfiguration() != null) {
+            answer.setApiDoc(getCamelContext().getRestConfiguration().getProducerApiDoc());
+        }
 
         return answer;
     }
