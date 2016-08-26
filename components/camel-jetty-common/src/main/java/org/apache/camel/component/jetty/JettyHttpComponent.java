@@ -1174,6 +1174,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                     
                 } else {
                     s = new Server();
+                    if (isEnableJmx()) {
+                        enableJmx(s);
+                    }
                     Server.class.getMethod("setThreadPool", ThreadPool.class).invoke(s, tp);
                 }
             } catch (Exception e) {
