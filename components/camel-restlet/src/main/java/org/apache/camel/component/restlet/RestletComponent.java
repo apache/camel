@@ -33,13 +33,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -62,7 +65,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version
  */
-public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory, RestApiConsumerFactory {
+public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
     private static final Object LOCK = new Object();
 
@@ -802,6 +805,34 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
                                       RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
         // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
         return createConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters);
+    }
+
+    @Override
+    public Producer createProducer(CamelContext camelContext, String host,
+                                   String verb, String basePath, String uriTemplate,
+                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+
+        // avoid leading slash
+        basePath = FileUtil.stripLeadingSeparator(basePath);
+        uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
+
+        // restlet method must be in upper-case
+        String restletMethod = verb.toUpperCase(Locale.US);
+
+        // get the endpoint
+        String url;
+        if (uriTemplate != null) {
+            url = String.format("restlet:%s/%s/%s?restletMethods=%s", host, basePath, uriTemplate, restletMethod);
+        } else {
+            url = String.format("restlet:%s/%s?restletMethods=%s", host, basePath, restletMethod);
+        }
+
+        RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
+        if (parameters != null && !parameters.isEmpty()) {
+            setProperties(camelContext, endpoint, parameters);
+        }
+
+        return endpoint.createProducer();
     }
 
     protected static void cleanupConverters(List<String> converters) {

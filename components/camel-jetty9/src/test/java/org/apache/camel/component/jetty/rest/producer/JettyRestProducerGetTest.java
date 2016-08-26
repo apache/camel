@@ -37,9 +37,7 @@ public class JettyRestProducerGetTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String host = "http://localhost:" + getPort();
-
-                restConfiguration().producerComponent("jetty").host(host);
+                restConfiguration().producerComponent("jetty").host("localhost").port(getPort());
 
                 from("direct:start")
                         .to("rest:get:api:hello/hi/{name}")

@@ -316,7 +316,6 @@ public class RestEndpoint extends DefaultEndpoint {
 
         if (factory != null) {
             LOG.debug("Using RestProducerFactory: {}", factory);
-            String uriTemplate = path;
             Producer producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, consumes, produces, parameters);
             return new RestProducer(this, producer);
         } else {

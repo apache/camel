@@ -39,6 +39,8 @@ public class RestProducer extends DefaultAsyncProducer {
     // the producer of the Camel component that is used as the HTTP client to call the REST service
     private AsyncProcessor producer;
 
+    private boolean preapreUriTemplate = true;
+
     public RestProducer(Endpoint endpoint, Producer producer) {
         super(endpoint);
         this.producer = AsyncProcessorConverterHelper.convert(producer);
@@ -46,8 +48,9 @@ public class RestProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // TODO: bind to consumes context-type
-        // TODO: if binding is turned on/off/auto etc
+        // TODO: request bind to consumes context-type
+        // TODO: response bind to content-type returned in response
+        // TODO: binding
         try {
             prepareExchange(exchange);
             return producer.process(exchange, callback);
@@ -63,6 +66,18 @@ public class RestProducer extends DefaultAsyncProducer {
         return (RestEndpoint) super.getEndpoint();
     }
 
+    public boolean isPreapreUriTemplate() {
+        return preapreUriTemplate;
+    }
+
+    /**
+     * Whether to prepare the uri template and replace {key} with values from the exchange, and set
+     * as {@link Exchange#HTTP_URI} header with the resolved uri to use instead of uri from endpoint.
+     */
+    public void setPreapreUriTemplate(boolean preapreUriTemplate) {
+        this.preapreUriTemplate = preapreUriTemplate;
+    }
+
     protected void prepareExchange(Exchange exchange) throws Exception {
         boolean hasPath = false;
 
@@ -70,28 +85,28 @@ public class RestProducer extends DefaultAsyncProducer {
         // uri template may be optional and the user have entered the uri template in the path instead
         String resolvedUriTemplate = getEndpoint().getUriTemplate() != null ? getEndpoint().getUriTemplate() : getEndpoint().getPath();
 
-        if (resolvedUriTemplate.contains("{")) {
-            // resolve template and replace {key} with the values form the exchange
-            // each {} is a parameter (url templating)
-            String[] arr = resolvedUriTemplate.split("\\/");
-            CollectionStringBuffer csb = new CollectionStringBuffer("/");
-            for (String a : arr) {
-                if (a.startsWith("{") && a.endsWith("}")) {
-                    String key = a.substring(1, a.length() - 1);
-                    String value = exchange.getIn().getHeader(key, String.class);
-                    if (value != null) {
-                        hasPath = true;
-                        // we need to remove the header as they are sent as path instead
-                        exchange.getIn().removeHeader(key);
-                        csb.append(value);
+        if (preapreUriTemplate) {
+            if (resolvedUriTemplate.contains("{")) {
+                // resolve template and replace {key} with the values form the exchange
+                // each {} is a parameter (url templating)
+                String[] arr = resolvedUriTemplate.split("\\/");
+                CollectionStringBuffer csb = new CollectionStringBuffer("/");
+                for (String a : arr) {
+                    if (a.startsWith("{") && a.endsWith("}")) {
+                        String key = a.substring(1, a.length() - 1);
+                        String value = exchange.getIn().getHeader(key, String.class);
+                        if (value != null) {
+                            hasPath = true;
+                            csb.append(value);
+                        } else {
+                            csb.append(a);
+                        }
                     } else {
                         csb.append(a);
                     }
-                } else {
-                    csb.append(a);
                 }
+                resolvedUriTemplate = csb.toString();
             }
-            resolvedUriTemplate = csb.toString();
         }
 
         // resolve uri parameters
@@ -108,8 +123,6 @@ public class RestProducer extends DefaultAsyncProducer {
                         String key = a.substring(1, a.length() - 1);
                         String value = exchange.getIn().getHeader(key, String.class);
                         if (value != null) {
-                            // we need to remove the header as they are sent in query parameter instead
-                            exchange.getIn().removeHeader(key);
                             params.put(key, value);
                         } else {
                             params.put(entry.getKey(), entry.getValue());
