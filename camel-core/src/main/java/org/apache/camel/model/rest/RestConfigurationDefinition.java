@@ -42,10 +42,10 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     private String component;
 
-    @XmlAttribute @Metadata(defaultValue = "swagger")
+    @XmlAttribute @Metadata(label = "consumer", defaultValue = "swagger")
     private String apiComponent;
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "producer")
     private String producerComponent;
 
     @XmlAttribute
@@ -57,22 +57,25 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     private String port;
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "producer")
+    private String producerApiDoc;
+
+    @XmlAttribute @Metadata(label = "consumer")
     private String contextPath;
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "consumer")
     private String apiContextPath;
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "consumer")
     private String apiContextRouteId;
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "consumer")
     private String apiContextIdPattern;
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "consumer")
     private Boolean apiContextListing;
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "consumer")
     private RestHostNameResolver hostNameResolver;
 
     @XmlAttribute @Metadata(defaultValue = "off")
@@ -81,7 +84,7 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     private Boolean skipBindingOnErrorCode;
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "consumer")
     private Boolean enableCORS;
 
     @XmlAttribute
@@ -96,16 +99,16 @@ public class RestConfigurationDefinition {
     @XmlElement(name = "endpointProperty")
     private List<RestPropertyDefinition> endpointProperties = new ArrayList<RestPropertyDefinition>();
 
-    @XmlElement(name = "consumerProperty")
+    @XmlElement(name = "consumerProperty") @Metadata(label = "consumer")
     private List<RestPropertyDefinition> consumerProperties = new ArrayList<RestPropertyDefinition>();
 
     @XmlElement(name = "dataFormatProperty")
     private List<RestPropertyDefinition> dataFormatProperties = new ArrayList<RestPropertyDefinition>();
 
-    @XmlElement(name = "apiProperty")
+    @XmlElement(name = "apiProperty") @Metadata(label = "consumer")
     private List<RestPropertyDefinition> apiProperties = new ArrayList<RestPropertyDefinition>();
 
-    @XmlElement(name = "corsHeaders")
+    @XmlElement(name = "corsHeaders") @Metadata(label = "consumer")
     private List<RestPropertyDefinition> corsHeaders = new ArrayList<RestPropertyDefinition>();
 
     public String getComponent() {
@@ -183,6 +186,23 @@ public class RestConfigurationDefinition {
      */
     public void setPort(String port) {
         this.port = port;
+    }
+
+    public String getProducerApiDoc() {
+        return producerApiDoc;
+    }
+
+    /**
+     * Sets the location of the api document (swagger api) the REST producer will use
+     * to validate the REST uri and query parameters are valid accordingly to the api document.
+     * This requires adding camel-swagger-java to the classpath, and any miss configuration
+     * will let Camel fail on startup and report the error(s).
+     * <p/>
+     * The location of the api document is loaded from classpath by default, but you can use
+     * <tt>file:</tt> or <tt>http:</tt> to refer to resources to load from file or http url.
+     */
+    public void setProducerApiDoc(String producerApiDoc) {
+        this.producerApiDoc = producerApiDoc;
     }
 
     public String getContextPath() {
@@ -472,6 +492,20 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * Sets the location of the api document (swagger api) the REST producer will use
+     * to validate the REST uri and query parameters are valid accordingly to the api document.
+     * This requires adding camel-swagger-java to the classpath, and any miss configuration
+     * will let Camel fail on startup and report the error(s).
+     * <p/>
+     * The location of the api document is loaded from classpath by default, but you can use
+     * <tt>file:</tt> or <tt>http:</tt> to refer to resources to load from file or http url.
+     */
+    public RestConfigurationDefinition producerApiDoc(String apiDoc) {
+        setProducerApiDoc(apiDoc);
+        return this;
+    }
+
+    /**
      * Sets a leading context-path the REST services will be using.
      * <p/>
      * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
@@ -680,6 +714,9 @@ public class RestConfigurationDefinition {
         }
         if (port != null) {
             answer.setPort(CamelContextHelper.parseInteger(context, port));
+        }
+        if (producerApiDoc != null) {
+            answer.setProducerApiDoc(CamelContextHelper.parseText(context, producerApiDoc));
         }
         if (apiContextPath != null) {
             answer.setApiContextPath(CamelContextHelper.parseText(context, apiContextPath));

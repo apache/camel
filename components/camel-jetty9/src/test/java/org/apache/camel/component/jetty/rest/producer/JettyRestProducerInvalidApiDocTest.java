@@ -55,10 +55,10 @@ public class JettyRestProducerInvalidApiDocTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // configure to use localhost with the given port
-                restConfiguration().component("jetty").host("localhost");
+                restConfiguration().component("jetty").host("localhost").producerApiDoc("hello-api.json");
 
                 from("direct:start")
-                        .to("rest:get:api/bye/?unknown={name}&apiDoc=hello-api.json");
+                        .to("rest:get:api/bye/?unknown={name}");
 
             }
         });
