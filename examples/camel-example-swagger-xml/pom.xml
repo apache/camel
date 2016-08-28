@@ -32,8 +32,7 @@
   <packaging>war</packaging>
 
   <properties>
-    <swagger-ui.version>2.1.5</swagger-ui.version>
-    <logback-version>1.1.7</logback-version>
+    <swagger-ui.version>2.2.2</swagger-ui.version>
     <swagger.url>https://github.com/swagger-api/swagger-ui/archive</swagger.url>
     <destDir>target/swagger-ui</destDir>
   </properties>
