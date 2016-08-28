@@ -27,7 +27,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
@@ -37,7 +37,7 @@ import org.apache.camel.util.URISupport;
  * The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
  */
 @UriEndpoint(scheme = "jt400", title = "JT400", syntax = "jt400:userID:password/systemName/objectPath.type", consumerClass = Jt400DataQueueConsumer.class, label = "messaging")
-public class Jt400Endpoint extends DefaultPollingEndpoint {
+public class Jt400Endpoint extends DefaultEndpoint {
 
     public static final String KEY = "KEY";
     public static final String SENDER_INFORMATION = "SENDER_INFORMATION";
