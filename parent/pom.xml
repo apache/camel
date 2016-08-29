@@ -3389,6 +3389,11 @@
         <artifactId>log4j-jul</artifactId>
         <version>${log4j2-version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-web</artifactId>
+        <version>${log4j2-version}</version>
+      </dependency>
       <!-- commons-logging needed by Spring -->
       <dependency>
         <groupId>commons-logging</groupId>
