@@ -22,7 +22,6 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-@Ignore("OSGi bundle not released yet")
 public class CamelConsulTest extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelConsulTest.class);
