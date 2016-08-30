@@ -269,6 +269,16 @@ public class SalesforceComponentConfiguration {
      * Replay IDs to start from per channel name.
      */
     private Map<String, Integer> initialReplayIdMap;
+    /**
+     * Backoff interval increment for Streaming connection restart attempts for
+     * failures beyond CometD auto-reconnect.
+     */
+    private long backoffIncrement;
+    /**
+     * Maximum backoff interval for Streaming connection restart attempts for
+     * failures beyond CometD auto-reconnect.
+     */
+    private long maxBackoff;
 
     public SalesforceLoginConfig getLoginConfig() {
         return loginConfig;
@@ -712,5 +722,21 @@ public class SalesforceComponentConfiguration {
 
     public void setInitialReplayIdMap(Map<String, Integer> initialReplayIdMap) {
         this.initialReplayIdMap = initialReplayIdMap;
+    }
+
+    public long getBackoffIncrement() {
+        return backoffIncrement;
+    }
+
+    public void setBackoffIncrement(long backoffIncrement) {
+        this.backoffIncrement = backoffIncrement;
+    }
+
+    public long getMaxBackoff() {
+        return maxBackoff;
+    }
+
+    public void setMaxBackoff(long maxBackoff) {
+        this.maxBackoff = maxBackoff;
     }
 }
