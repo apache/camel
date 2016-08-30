@@ -66,6 +66,7 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Converter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.PropertyInject;
@@ -176,6 +177,10 @@ public class CdiCamelExtension implements Extension {
     }
 
     private void producerTemplateBeans(@Observes ProcessProducerMethod<ProducerTemplate, CdiCamelFactory> ppm) {
+        producerBeans.put(ppm.getAnnotatedProducerMethod().getJavaMember(), ppm.getBean());
+    }
+
+    private void fluentProducerTemplateBeans(@Observes ProcessProducerMethod<FluentProducerTemplate, CdiCamelFactory> ppm) {
         producerBeans.put(ppm.getAnnotatedProducerMethod().getJavaMember(), ppm.getBean());
     }
 

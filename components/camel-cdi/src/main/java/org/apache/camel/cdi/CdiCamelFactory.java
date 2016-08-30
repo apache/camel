@@ -36,6 +36,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -86,6 +87,38 @@ final class CdiCamelFactory {
             return context.createProducerTemplate();
         } catch (Exception cause) {
             throw new InjectionException("Error injecting producer template into " + ip, cause);
+        }
+    }
+
+    @Produces
+    @Default @Uri("")
+    // Qualifiers are dynamically added in CdiCamelExtension
+    private static FluentProducerTemplate fluentProducerTemplate(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
+        return getQualifierByType(ip, Uri.class)
+            .map(uri -> fluentProducerTemplateFromUri(ip, instance, extension, uri))
+            .orElseGet(() -> defaultFluentProducerTemplate(ip, instance, extension));
+    }
+
+    private static FluentProducerTemplate fluentProducerTemplateFromUri(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension, Uri uri) {
+        try {
+            CamelContext context = uri.context().isEmpty()
+                ? selectContext(ip, instance, extension)
+                : selectContext(uri.context(), instance);
+            FluentProducerTemplate producerTemplate = context.createFluentProducerTemplate();
+            Endpoint endpoint = context.getEndpoint(uri.value(), Endpoint.class);
+            producerTemplate.setDefaultEndpoint(endpoint);
+            return producerTemplate;
+        } catch (Exception cause) {
+            throw new InjectionException("Error injecting fluent producer template annotated with " + uri + " into " + ip, cause);
+        }
+    }
+
+    private static FluentProducerTemplate defaultFluentProducerTemplate(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
+        try {
+            CamelContext context = selectContext(ip, instance, extension);
+            return context.createFluentProducerTemplate();
+        } catch (Exception cause) {
+            throw new InjectionException("Error injecting fluent producer template into " + ip, cause);
         }
     }
 

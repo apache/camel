@@ -14,7 +14,7 @@ The Camel CDI component provides auto-configuration for Apache Camel
 using CDI as dependency injection framework based
 on _convention-over-configuration_. It auto-detects Camel routes
 available in the application and provides beans for common Camel
-primitives like `Endpoint`, `ProducerTemplate` or `TypeConverter`. It
+primitives like `Endpoint`, `FluentProducerTemplate`, `ProducerTemplate` or `TypeConverter`. It
 implements standard link:bean-integration.html[Camel bean integration]
 so that Camel annotations like `@Consume`, `@Produce`
 and `@PropertyInject` can be used seamlessly in CDI beans. Besides, it
@@ -90,6 +90,10 @@ injected in any CDI beans, e.g.:
 @Inject
 @Uri("direct:inbound")
 ProducerTemplate producerTemplate;
+
+@Inject
+@Uri("direct:inbound")
+FluentProducerTemplate fluentProducerTemplate;
 
 @Inject
 MockEndpoint outbound; // URI defaults to the member name, i.e. mock:outbound
@@ -286,6 +290,11 @@ bind the corresponding Camel primitives, e.g.:
 ProducerTemplate producerTemplate;
 
 @Inject
+@ContextName("foo")
+@Uri("direct:inbound")
+FluentProducerTemplate fluentProducerTemplate;
+
+@Inject
 @BarContextQualifier
 MockEndpoint outbound; // URI defaults to the member name, i.e. mock:outbound
 
@@ -412,6 +421,10 @@ See link:cdi.html[configuration properties] for more details.
 ----
 @Produce(uri = "mock:outbound")
 ProducerTemplate producer;
+
+// or using fluent template
+@Produce(uri = "mock:outbound")
+FluentProducerTemplate producer;
 ----
 
  a|
@@ -420,6 +433,10 @@ ProducerTemplate producer;
 @Inject
 @Uri("direct:outbound")
 ProducerTemplate producer;
+
+// or using fluent template
+@Produce(uri = "direct:outbound")
+FluentProducerTemplate producer;
 ----
 
 |Endpoint injection (default Camel context) a|
