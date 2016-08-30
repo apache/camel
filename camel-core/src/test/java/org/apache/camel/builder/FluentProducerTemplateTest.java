@@ -29,6 +29,24 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FluentProducerTemplateTest extends ContextTestSupport {
 
+    public void testNoEndpoint() throws Exception {
+        FluentProducerTemplate fluent = context.createFluentProducerTemplate();
+
+        try {
+            fluent.withBody("Hello World").send();
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+
+        try {
+            fluent.withBody("Hello World").request();
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
     public void testFromCamelContext() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
