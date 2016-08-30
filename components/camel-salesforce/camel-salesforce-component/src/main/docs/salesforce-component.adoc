@@ -205,7 +205,7 @@ Options
 
 
 // component options: START
-The Salesforce component supports 55 options which are listed below.
+The Salesforce component supports 57 options which are listed below.
 
 
 
@@ -268,6 +268,8 @@ The Salesforce component supports 55 options which are listed below.
 | objectMapper | ObjectMapper | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects.
 | defaultReplayId | Integer | Default replayId setting if no value is found in link initialReplayIdMap
 | initialReplayIdMap | Map | Replay IDs to start from per channel name.
+| backoffIncrement | long | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
+| maxBackoff | long | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -282,7 +284,7 @@ The Salesforce component supports 55 options which are listed below.
 
 
 // endpoint options: START
-The Salesforce component supports 39 endpoint options which are listed below:
+The Salesforce component supports 41 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -294,6 +296,7 @@ The Salesforce component supports 39 endpoint options which are listed below:
 | apexQueryParams | common |  | Map | Query params for APEX method
 | apexUrl | common |  | String | APEX method URL
 | apiVersion | common |  | String | Salesforce API version defaults to SalesforceEndpointConfig.DEFAULT_VERSION
+| backoffIncrement | common |  | long | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
 | batchId | common |  | String | Bulk API Batch ID
 | contentType | common |  | ContentType | Bulk API content type one of XML CSV ZIP_XML ZIP_CSV
 | defaultReplayId | common |  | Integer | Default replayId setting if no value is found in link initialReplayIdMap
@@ -303,6 +306,7 @@ The Salesforce component supports 39 endpoint options which are listed below:
 | initialReplayIdMap | common |  | Map | Replay IDs to start from per channel name.
 | instanceId | common |  | String | Salesforce1 Analytics report execution instance ID
 | jobId | common |  | String | Bulk API Job ID
+| maxBackoff | common |  | long | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
 | notifyForFields | common |  | NotifyForFieldsEnum | Notify for fields options are ALL REFERENCED SELECT WHERE
 | notifyForOperationCreate | common |  | Boolean | Notify for create operation defaults to false (API version = 29.0)
 | notifyForOperationDelete | common |  | Boolean | Notify for delete operation defaults to false (API version = 29.0)
