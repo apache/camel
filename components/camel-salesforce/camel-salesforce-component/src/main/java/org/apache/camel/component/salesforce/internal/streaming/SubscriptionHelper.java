@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -70,6 +71,8 @@ public class SubscriptionHelper extends ServiceSupport {
     private final long timeout = 60 * 1000L;
 
     private final Map<SalesforceConsumer, ClientSessionChannel.MessageListener> listenerMap;
+    private final long maxBackoff;
+    private final long backoffIncrement;
 
     private ClientSessionChannel.MessageListener handshakeListener;
     private ClientSessionChannel.MessageListener connectListener;
@@ -81,6 +84,7 @@ public class SubscriptionHelper extends ServiceSupport {
     private volatile Exception connectException;
 
     private volatile boolean reconnecting;
+    private final AtomicLong restartBackoff;
 
     public SubscriptionHelper(SalesforceComponent component, String topicName) throws Exception {
         this.component = component;
@@ -90,6 +94,10 @@ public class SubscriptionHelper extends ServiceSupport {
 
         // create CometD client
         this.client = createClient(topicName);
+
+        restartBackoff = new AtomicLong(0);
+        backoffIncrement = component.getConfig().getBackoffIncrement();
+        maxBackoff = component.getConfig().getMaxBackoff();
     }
 
     @Override
@@ -112,6 +120,10 @@ public class SubscriptionHelper extends ServiceSupport {
                         LOG.warn("Handshake failure: {}", message);
                         handshakeError = (String) message.get(ERROR_FIELD);
                         handshakeException = getFailure(message);
+
+                        // restart if handshake fails for any reason
+                        restartClient();
+
                     } else if (!listenerMap.isEmpty()) {
                         reconnecting = true;
                     }
@@ -133,12 +145,12 @@ public class SubscriptionHelper extends ServiceSupport {
                         connectException = getFailure(message);
 
                         if (connectError != null) {
-                            // refresh oauth token, if it's a 401 error
-                            if (connectError.startsWith("401::")) {
+                            // refresh oauth token, if it's a 403 error
+                            if (connectError.startsWith("403::")) {
                                 try {
                                     session.login(null);
                                 } catch (SalesforceException e) {
-                                    LOG.error("Error renewing OAuth token on Connect 401: {} ", e.getMessage(), e);
+                                    LOG.error("Error renewing OAuth token on Connect 403: " + e.getMessage(), e);
                                 }
                             }
                         }
@@ -170,74 +182,7 @@ public class SubscriptionHelper extends ServiceSupport {
             disconnectListener = new ClientSessionChannel.MessageListener() {
                 @Override
                 public void onMessage(ClientSessionChannel clientSessionChannel, Message message) {
-
-                    // launch an async task to reconnect
-                    final SalesforceHttpClient httpClient = component.getConfig().getHttpClient();
-
-                    httpClient.getExecutor().execute(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            boolean abort = false;
-                            // wait for disconnect
-                            while (!client.isDisconnected()) {
-                                try {
-                                    Thread.sleep(DISCONNECT_INTERVAL);
-                                } catch (InterruptedException e) {
-                                    LOG.error("Aborting reconnect on interrupt!");
-                                    abort = true;
-                                }
-                            }
-
-                            if (!abort) {
-
-                                LOG.info("Reconnecting on unexpected disconnect from Salesforce...");
-                                final long backoffIncrement = client.getBackoffIncrement();
-                                final long maxBackoff = client.getMaxBackoff();
-
-                                long backoff = backoffIncrement;
-                                String msg = String.format("Failed to reconnect, exceeded maximum backoff %s msecs", maxBackoff);
-                                Exception lastError = new SalesforceException(msg, null);
-
-                                // retry until interrupted, or handshook or connect backoff exceeded
-                                while (!abort && !client.isHandshook() && backoff < maxBackoff) {
-
-                                    try {
-                                        // reset client
-                                        doStop();
-
-                                        // register listeners and restart
-                                        doStart();
-
-                                    } catch (Exception e) {
-                                        LOG.error("Error reconnecting to Salesforce: {}", e.getMessage(), e);
-                                        lastError = e;
-                                    }
-
-                                    if (!client.isHandshook()) {
-                                        LOG.debug("Pausing for {} msecs after reconnect failure", backoff);
-                                        try {
-                                            Thread.sleep(backoff);
-                                        } catch (InterruptedException e) {
-                                            LOG.error("Aborting reconnect on interrupt!");
-                                            abort = true;
-                                        }
-                                        backoff += backoffIncrement;
-                                    }
-                                }
-
-                                if (client.isHandshook()) {
-                                    LOG.info("Successfully reconnected to Salesforce!");
-                                } else if (!abort) {
-                                    // notify all consumers
-                                    String abortMsg = "Aborting Salesforce reconnect due to: " + lastError.getMessage();
-                                    for (SalesforceConsumer consumer : listenerMap.keySet()) {
-                                        consumer.handleException(abortMsg, new SalesforceException(abortMsg, lastError));
-                                    }
-                                }
-                            }
-                        }
-                    });
+                    restartClient();
                 }
             };
         }
@@ -265,6 +210,84 @@ public class SubscriptionHelper extends ServiceSupport {
                         String.format("Handshake request timeout after %s seconds", CONNECT_TIMEOUT));
             }
         }
+    }
+
+    // launch an async task to restart
+    private void restartClient() {
+
+        // launch a new restart command
+        final SalesforceHttpClient httpClient = component.getConfig().getHttpClient();
+        httpClient.getExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+
+                LOG.info("Restarting on unexpected disconnect from Salesforce...");
+                boolean abort = false;
+
+                // wait for disconnect
+                LOG.debug("Waiting to disconnect...");
+                while (!client.isDisconnected()) {
+                    try {
+                        Thread.sleep(DISCONNECT_INTERVAL);
+                    } catch (InterruptedException e) {
+                        LOG.error("Aborting restart on interrupt!");
+                        abort = true;
+                    }
+                }
+
+                if (!abort) {
+
+                    // update restart attempt backoff
+                    final long backoff = restartBackoff.getAndAdd(backoffIncrement);
+                    if (backoff > maxBackoff) {
+                        LOG.error("Restart aborted after exceeding {} msecs backoff", maxBackoff);
+                        abort = true;
+                    } else {
+
+                        // pause before restart attempt
+                        LOG.debug("Pausing for {} msecs before restart attempt", backoff);
+                        try {
+                            Thread.sleep(backoff);
+                        } catch (InterruptedException e) {
+                            LOG.error("Aborting restart on interrupt!");
+                            abort = true;
+                        }
+                    }
+
+                    if (!abort) {
+                        Exception lastError = new SalesforceException("Unknown error", null);
+                        try {
+                            // reset client
+                            doStop();
+
+                            // register listeners and restart
+                            doStart();
+
+                        } catch (Exception e) {
+                            LOG.error("Error restarting: " + e.getMessage(), e);
+                            lastError = e;
+                        }
+
+                        if (client.isHandshook()) {
+                            LOG.info("Successfully restarted!");
+                            // reset backoff interval
+                            restartBackoff.set(client.getBackoffIncrement());
+                        } else {
+                            LOG.error("Failed to restart after pausing for {} msecs", backoff);
+                            if ((backoff + backoffIncrement) > maxBackoff) {
+                                // notify all consumers
+                                String abortMsg = "Aborting restart attempt due to: " + lastError.getMessage();
+                                SalesforceException ex = new SalesforceException(abortMsg, lastError);
+                                for (SalesforceConsumer consumer : listenerMap.keySet()) {
+                                    consumer.handleException(abortMsg, ex);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
