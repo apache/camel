@@ -219,6 +219,10 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     public <T> T request(Class<T> type) throws CamelExecutionException {
         T result;
         Endpoint target = endpoint != null ? endpoint : defaultEndpoint;
+        // we must have an endpoint to send to
+        if (target == null) {
+            throw new IllegalArgumentException("No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
+        }
 
         if (type == Exchange.class) {
             result = (T)template().request(target, processorSupplier.get());
@@ -250,6 +254,12 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     @Override
     public <T> Future<T> asyncRequest(Class<T> type) {
         Endpoint target = endpoint != null ? endpoint : defaultEndpoint;
+
+        // we must have an endpoint to send to
+        if (target == null) {
+            throw new IllegalArgumentException("No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
+        }
+
         Future<T> result;
         if (headers != null) {
             result = template().asyncRequestBodyAndHeaders(target, body, headers, type);
@@ -267,6 +277,12 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     @Override
     public Exchange send() throws CamelExecutionException {
         Endpoint target = endpoint != null ? endpoint : defaultEndpoint;
+
+        // we must have an endpoint to send to
+        if (target == null) {
+            throw new IllegalArgumentException("No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
+        }
+
         return exchangeSupplier != null
             ? template().send(target, exchangeSupplier.get())
             : template().send(target, processorSupplier.get());
@@ -275,6 +291,12 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     @Override
     public Future<Exchange> asyncSend() {
         Endpoint target = endpoint != null ? endpoint : defaultEndpoint;
+
+        // we must have an endpoint to send to
+        if (target == null) {
+            throw new IllegalArgumentException("No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
+        }
+
         return exchangeSupplier != null
             ? template().asyncSend(target, exchangeSupplier.get())
             : template().asyncSend(target, processorSupplier.get());
