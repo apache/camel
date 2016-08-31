@@ -169,7 +169,7 @@ public class JettyHttpComponentConfiguration9 {
      */
     private Integer proxyPort;
     /**
-     * To use the X-Fowarded-For header in HttpServletRequest.getRemoteAddr.
+     * To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr.
      */
     private Boolean useXForwardedForHeader;
     /**
