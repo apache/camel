@@ -999,17 +999,17 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     }
     
     /**
-     * To use the X-Fowarded-For header in HttpServletRequest.getRemoteAddr.
+     * To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr.
      */
-    @Metadata(description = "To use the X-Fowarded-For header in HttpServletRequest.getRemoteAddr.")
+    @Metadata(description = "To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr.")
     public boolean isUseXForwardedForHeader() {
         return useXForwardedForHeader;
     }
 
     /**
-     * To use a http proxy to configure the port number.
+     * To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr.
      */
-    @Metadata(description = "To use the X-Fowarded-For header in HttpServletRequest.getRemoteAddr.")
+    @Metadata(description = "To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr.")
     public void setUseXForwardedForHeader(boolean useXForwardedForHeader) {
         this.useXForwardedForHeader = useXForwardedForHeader;
     }
