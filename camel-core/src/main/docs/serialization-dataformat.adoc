@@ -1,0 +1,31 @@
+[[Serialization-Serialization]]
+Serialization
+~~~~~~~~~~~~~
+
+Serialization is a link:data-format.html[Data Format] which uses the
+standard Java Serialization mechanism to unmarshal a binary payload into
+Java objects or to marshal Java objects into a binary blob. +
+ For example the following uses Java serialization to unmarshal a binary
+file then send it as an ObjectMessage to link:activemq.html[ActiveMQ]
+
+[source,java]
+------------------------------
+from("file://foo/bar").
+  unmarshal().serialization().
+  to("activemq:Some.Queue");
+------------------------------
+
+[[Serialization-Options]]
+Options
+^^^^^^^
+
+// dataformat options: START
+The Java Object Serialization dataformat has no options.
+// dataformat options: END
+
+[[Serialization-Dependencies]]
+Dependencies
+^^^^^^^^^^^^
+
+This data format is provided in *camel-core* so no additional
+dependencies is needed.
