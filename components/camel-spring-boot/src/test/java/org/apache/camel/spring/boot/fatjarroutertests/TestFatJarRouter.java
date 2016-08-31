@@ -19,8 +19,10 @@ package org.apache.camel.spring.boot.fatjarroutertests;
 import org.apache.camel.spring.boot.FatJarRouter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ImportResource;
 
 @SpringBootApplication
+@ImportResource({"classpath:test-camel-context.xml"})
 public class TestFatJarRouter extends FatJarRouter {
 
     @Override
