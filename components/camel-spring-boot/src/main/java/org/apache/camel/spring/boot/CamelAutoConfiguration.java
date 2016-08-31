@@ -185,6 +185,7 @@ public class CamelAutoConfiguration {
 
     @Bean
     CamelSpringBootApplicationController applicationController(ApplicationContext applicationContext, CamelContext camelContext) {
+        SpringCamelContext.setNoStart(true);
         return new CamelSpringBootApplicationController(applicationContext, camelContext);
     }
 
