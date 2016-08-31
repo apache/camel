@@ -18,16 +18,24 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.model.ComponentModel;
@@ -37,6 +45,8 @@ import org.apache.camel.maven.packaging.model.DataFormatOptionModel;
 import org.apache.camel.maven.packaging.model.EndpointOptionModel;
 import org.apache.camel.maven.packaging.model.LanguageModel;
 import org.apache.camel.maven.packaging.model.LanguageOptionModel;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -44,7 +54,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.JavaEnum;
+import org.jboss.forge.roaster.model.JavaType;
+import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
+import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.Import;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -54,6 +68,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -64,6 +79,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  * Generate Spring Boot auto configuration files for Camel components and data formats.
  *
  * @goal prepare-spring-boot-auto-configuration
+ * @requiresDependencyResolution compile+runtime
  */
 public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
@@ -74,6 +90,31 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
      * Make sure it is not the case before enabling this property.
      */
     private static final boolean DELETE_FILES_ON_MAIN_ARTIFACTS = false;
+
+    /**
+     * Suffix used for generating inner classes for nested component properties, e.g. endpoint configuration.
+     */
+    private static final String INNER_TYPE_SUFFIX = "NestedConfiguration";
+
+    /**
+     * Classes to exclude when adding {@link NestedConfigurationProperty} annotations.
+     */
+    private static final Pattern EXCLUDE_CLASSES_PATTERN = Pattern.compile("^((java\\.)|(javax\\.)).*");
+
+    private static final Map<String, String> PRIMITIVEMAP;
+
+    static {
+        PRIMITIVEMAP = new HashMap<>();
+        PRIMITIVEMAP.put("boolean", "java.lang.Boolean");
+        PRIMITIVEMAP.put("char", "java.lang.Character");
+        PRIMITIVEMAP.put("long", "java.lang.Long");
+        PRIMITIVEMAP.put("int", "java.lang.Integer");
+        PRIMITIVEMAP.put("integer", "java.lang.Integer");
+        PRIMITIVEMAP.put("byte", "java.lang.Byte");
+        PRIMITIVEMAP.put("short", "java.lang.Short");
+        PRIMITIVEMAP.put("double", "java.lang.Double");
+        PRIMITIVEMAP.put("float", "java.lang.Float");
+    }
 
     /**
      * The maven project.
@@ -282,6 +323,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         prefix = prefix.toLowerCase(Locale.US);
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
+        Set<JavaClassSource> nestedTypes = new HashSet<>();
         for (ComponentOptionModel option : model.getComponentOptions()) {
 
             if (skipComponentOption(model, option)) {
@@ -289,25 +331,19 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 continue;
             }
 
-            // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
             String type = option.getJavaType();
-            type = type.replaceAll("\\<\\?\\>", "");
-            // use wrapper types for primitive types so a null mean that the option has not been configured
-            if ("boolean".equals(type)) {
-                type = "java.lang.Boolean";
-            } else if ("int".equals(type) || "integer".equals(type)) {
-                type = "java.lang.Integer";
-            } else if ("byte".equals(type)) {
-                type = "java.lang.Byte";
-            } else if ("short".equals(type)) {
-                type = "java.lang.Short";
-            } else if ("double".equals(type)) {
-                type = "java.lang.Double";
-            } else if ("float".equals(type)) {
-                type = "java.lang.Float";
+            type = getSimpleJavaType(type);
+
+            // generate inner class for non-primitive options
+            if (isNestedProperty(type, project, nestedTypes)) {
+                type = option.getShortJavaType() + INNER_TYPE_SUFFIX;
             }
 
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
+            if (!type.endsWith(INNER_TYPE_SUFFIX) && !EXCLUDE_CLASSES_PATTERN.matcher(type).matches() && Strings.isBlank(option.getEnumValues())) {
+                // add nested configuration annotation for complex properties
+                prop.getField().addAnnotation(NestedConfigurationProperty.class);
+            }
             if ("true".equals(option.getDeprecated())) {
                 prop.getField().addAnnotation(Deprecated.class);
                 prop.getAccessor().addAnnotation(Deprecated.class);
@@ -331,11 +367,149 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             }
         }
 
+        // add inner classes for nested AutoConfiguration options
+        ClassLoader projectClassLoader = getProjectClassLoader();
+        for (JavaClassSource nestedType : nestedTypes) {
+
+            final JavaClassSource innerClass = javaClass.addNestedType("public static class " + nestedType.getName() + INNER_TYPE_SUFFIX);
+            // add source class name as a static field
+            innerClass.addField()
+                .setPublic()
+                .setStatic(true)
+                .setFinal(true)
+                .setType(Class.class)
+                .setName("CAMEL_NESTED_CLASS")
+                .setLiteralInitializer(nestedType.getCanonicalName() + ".class");
+
+            // parse option type
+            for (PropertySource<JavaClassSource> sourceProp : nestedType.getProperties()) {
+
+                final Type<JavaClassSource> sourcePropType = sourceProp.getType();
+                final MethodSource<JavaClassSource> mutator = sourceProp.getMutator();
+                // NOTE: fields with no setters are skipped
+                if (mutator == null) {
+                    continue;
+                }
+
+                final String optionType = getSimpleJavaType(sourcePropType.getQualifiedNameWithGenerics());
+                final FieldSource<JavaClassSource> field = sourceProp.getField();
+
+
+                final PropertySource<JavaClassSource> prop = innerClass.addProperty(optionType, sourceProp.getName());
+                // add nested configuration annotation for complex properties
+                if (!EXCLUDE_CLASSES_PATTERN.matcher(optionType).matches() && !isEnum(projectClassLoader, optionType)) {
+                    prop.getField().addAnnotation(NestedConfigurationProperty.class);
+                }
+                if (sourceProp.hasAnnotation(Deprecated.class)) {
+                    prop.getField().addAnnotation(Deprecated.class);
+                    prop.getAccessor().addAnnotation(Deprecated.class);
+                    prop.getMutator().addAnnotation(Deprecated.class);
+                    // DeprecatedConfigurationProperty must be on getter when deprecated
+                    prop.getAccessor().addAnnotation(DeprecatedConfigurationProperty.class);
+                }
+
+                String description = null;
+                if (mutator.hasJavaDoc()) {
+                    description = mutator.getJavaDoc().getFullText();
+                } else if (field != null) {
+                    description = field.getJavaDoc().getFullText();
+                }
+                if (!Strings.isBlank(description)) {
+                    prop.getField().getJavaDoc().setFullText(description);
+                }
+
+                String defaultValue = null;
+                if (sourceProp.hasAnnotation(UriParam.class)) {
+                    defaultValue = sourceProp.getAnnotation(UriParam.class).getStringValue("defaultValue");
+                } else if (sourceProp.hasAnnotation(UriPath.class)) {
+                    defaultValue = sourceProp.getAnnotation(UriPath.class).getStringValue("defaultValue");
+                }
+                if (!Strings.isBlank(defaultValue)) {
+                    if ("java.lang.String".equals(optionType)) {
+                        prop.getField().setStringInitializer(defaultValue);
+                    } else if ("integer".equals(optionType) || "boolean".equals(optionType)) {
+                        prop.getField().setLiteralInitializer(defaultValue);
+                    } else if (isEnum(projectClassLoader, optionType)) {
+                        String enumShortName = optionType.substring(optionType.lastIndexOf(".") + 1);
+                        prop.getField().setLiteralInitializer(enumShortName + "." + defaultValue);
+                        javaClass.addImport(model.getJavaType());
+                    }
+                }
+            }
+        }
+
         sortImports(javaClass);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
 
         writeSourceIfChanged(javaClass, fileName);
+    }
+
+    private boolean isEnum(ClassLoader projectClassLoader, String optionType) throws MojoFailureException {
+        // remove array brackets
+        try {
+            return projectClassLoader.loadClass(optionType.replaceAll("[\\[\\]]", "")).isEnum();
+        } catch (ClassNotFoundException e) {
+            throw new MojoFailureException(e.getMessage(), e);
+        }
+    }
+
+    protected ClassLoader getProjectClassLoader() throws MojoFailureException {
+        final List classpathElements;
+        try {
+            classpathElements = project.getTestClasspathElements();
+        } catch (org.apache.maven.artifact.DependencyResolutionRequiredException e) {
+            throw new MojoFailureException(e.getMessage(), e);
+        }
+        final URL[] urls = new URL[classpathElements.size()];
+        int i = 0;
+        for (Iterator it = classpathElements.iterator(); it.hasNext(); i++) {
+            try {
+                urls[i] = new File((String) it.next()).toURI().toURL();
+            } catch (MalformedURLException e) {
+                throw new MojoFailureException(e.getMessage(), e);
+            }
+        }
+        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        return new URLClassLoader(urls, tccl != null ? tccl : getClass().getClassLoader());
+    }
+
+    private String getSimpleJavaType(String type) {
+        // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
+        type = type.replaceAll("\\<\\?\\>", "");
+        // use wrapper types for primitive types so a null mean that the option has not been configured
+        String primitive = type.replaceAll("[\\[\\]]", "");
+        String wrapper = PRIMITIVEMAP.get(primitive);
+        if (wrapper != null) {
+            type = type.replaceAll(primitive, wrapper);
+        }
+        return type;
+    }
+
+    // it's a nested property if the source exists in this project, e.g. endpoint configuration
+    private boolean isNestedProperty(String type, MavenProject project, Set<JavaClassSource> nestedTypes) {
+        boolean nested = false;
+        if (!type.startsWith("java.lang.")) {
+
+            final String fileName = type.replaceAll("[\\[\\]]", "").replaceAll("\\.", "\\/") + ".java";
+            for (Object sourceRoot : project.getCompileSourceRoots()) {
+
+                File sourceFile = new File(sourceRoot.toString(), fileName);
+                if (sourceFile.isFile()) {
+                    try {
+                        JavaType<?> classSource = Roaster.parse(sourceFile);
+                        if (classSource instanceof JavaClassSource) {
+                            nestedTypes.add((JavaClassSource) classSource);
+                            nested = true;
+                            break;
+                        }
+                    } catch (FileNotFoundException e) {
+                        throw new IllegalArgumentException("Missing source file " + type);
+                    }
+                }
+            }
+        }
+        return nested;
     }
 
     // CHECKSTYLE:OFF
@@ -377,23 +551,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             if ("id".equals(option.getName())) {
                 continue;
             }
-            // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
             String type = option.getJavaType();
-            type = type.replaceAll("\\<\\?\\>", "");
-            // use wrapper types for primitive types so a null mean that the option has not been configured
-            if ("boolean".equals(type)) {
-                type = "java.lang.Boolean";
-            } else if ("int".equals(type) || "integer".equals(type)) {
-                type = "java.lang.Integer";
-            } else if ("byte".equals(type)) {
-                type = "java.lang.Byte";
-            } else if ("short".equals(type)) {
-                type = "java.lang.Short";
-            } else if ("double".equals(type)) {
-                type = "java.lang.Double";
-            } else if ("float".equals(type)) {
-                type = "java.lang.Float";
-            }
+            type = getSimpleJavaType(type);
 
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
             if ("true".equals(option.getDeprecated())) {
@@ -480,24 +639,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 }
             }
             // CHECKSTYLE:ON
-
-            // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
             String type = option.getJavaType();
-            type = type.replaceAll("\\<\\?\\>", "");
-            // use wrapper types for primitive types so a null mean that the option has not been configured
-            if ("boolean".equals(type)) {
-                type = "java.lang.Boolean";
-            } else if ("int".equals(type) || "integer".equals(type)) {
-                type = "java.lang.Integer";
-            } else if ("byte".equals(type)) {
-                type = "java.lang.Byte";
-            } else if ("short".equals(type)) {
-                type = "java.lang.Short";
-            } else if ("double".equals(type)) {
-                type = "java.lang.Double";
-            } else if ("float".equals(type)) {
-                type = "java.lang.Float";
-            }
+            type = getSimpleJavaType(type);
 
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
             if ("true".equals(option.getDeprecated())) {
@@ -724,6 +867,23 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("Map<String, Object> parameters = new HashMap<>();\n");
         sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
         sb.append("\n");
+        sb.append("for (Map.Entry<String, Object> entry : parameters.entrySet()) {\n");
+        sb.append("    Object value = entry.getValue();\n");
+        sb.append("    Class<?> paramClass = value.getClass();\n");
+        sb.append("    if (paramClass.getName().endsWith(\"NestedConfiguration\")) {\n");
+        sb.append("        Class nestedClass = null;\n");
+        sb.append("        try {\n");
+        sb.append("            nestedClass = (Class) paramClass.getDeclaredField(\"CAMEL_NESTED_CLASS\").get(null);\n");
+        sb.append("            HashMap<String, Object> nestedParameters = new HashMap<>();\n");
+        sb.append("            IntrospectionSupport.getProperties(value, nestedParameters, null, false);\n");
+        sb.append("            Object nestedProperty = nestedClass.newInstance();\n");
+        sb.append("            IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), nestedProperty, nestedParameters);\n");
+        sb.append("            entry.setValue(nestedProperty);\n");
+        sb.append("        } catch (NoSuchFieldException e) {\n");
+        sb.append("            // ignore, class must not be a nested configuration class after all\n");
+        sb.append("        }\n");
+        sb.append("    }\n");
+        sb.append("}\n");
         sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), component, parameters);\n");
         sb.append("\n");
         sb.append("return component;");
