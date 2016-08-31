@@ -1753,7 +1753,7 @@
   </feature>
   <feature name='camel-syslog' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version='${project.version}'>camel-netty</feature>
+    <feature version='${project.version}'>camel-netty4</feature>
     <bundle>mvn:org.apache.camel/camel-syslog/${project.version}</bundle>
   </feature>
   <feature name='camel-tagsoup' version='${project.version}' resolver='(obr)' start-level='50'>
