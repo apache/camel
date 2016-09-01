@@ -106,7 +106,7 @@ public class LibraryVersionMismatchChecker {
         Matcher m = propPattern.matcher(pom);
         while (m.find()) {
             String property = m.group();
-            String resolved = DependencyResolver.resolveParentProperty(property);
+            String resolved = DependencyResolver.resolveSpringBootParentProperty(property);
             resolvedProperties.put(property, resolved);
         }
 
