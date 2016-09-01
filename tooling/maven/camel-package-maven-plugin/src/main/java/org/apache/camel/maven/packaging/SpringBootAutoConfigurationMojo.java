@@ -54,11 +54,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.JavaEnum;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
-import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.Import;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -99,7 +97,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     /**
      * Classes to exclude when adding {@link NestedConfigurationProperty} annotations.
      */
-    private static final Pattern EXCLUDE_CLASSES_PATTERN = Pattern.compile("^((java\\.)|(javax\\.)).*");
+    private static final Pattern EXCLUDE_INNER_PATTERN = Pattern.compile("^((java\\.)|(javax\\.)).*");
 
     private static final Map<String, String> PRIMITIVEMAP;
 
@@ -340,7 +338,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             }
 
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
-            if (!type.endsWith(INNER_TYPE_SUFFIX) && !EXCLUDE_CLASSES_PATTERN.matcher(type).matches() && Strings.isBlank(option.getEnumValues())) {
+            if (!(type.endsWith(INNER_TYPE_SUFFIX) || !(type.indexOf('[') == -1) || EXCLUDE_INNER_PATTERN.matcher(type).matches() || !Strings.isBlank(option.getEnumValues()))) {
                 // add nested configuration annotation for complex properties
                 prop.getField().addAnnotation(NestedConfigurationProperty.class);
             }
@@ -384,20 +382,28 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             // parse option type
             for (PropertySource<JavaClassSource> sourceProp : nestedType.getProperties()) {
 
-                final Type<JavaClassSource> sourcePropType = sourceProp.getType();
                 final MethodSource<JavaClassSource> mutator = sourceProp.getMutator();
                 // NOTE: fields with no setters are skipped
                 if (mutator == null) {
                     continue;
                 }
 
-                final String optionType = getSimpleJavaType(sourcePropType.getQualifiedNameWithGenerics());
-                final FieldSource<JavaClassSource> field = sourceProp.getField();
-
-
+                // strip array dimensions
+                Type<JavaClassSource> propType = sourceProp.getType();
+                final String optionType = getSimpleJavaType(resolveParamType(nestedType, propType.getName()));
                 final PropertySource<JavaClassSource> prop = innerClass.addProperty(optionType, sourceProp.getName());
+                boolean anEnum;
+                Class optionClass;
+                if (!propType.isArray()) {
+                    optionClass = loadClass(projectClassLoader, optionType);
+                    anEnum = optionClass.isEnum();
+                } else {
+                    optionClass = null;
+                    anEnum = false;
+                }
+
                 // add nested configuration annotation for complex properties
-                if (!EXCLUDE_CLASSES_PATTERN.matcher(optionType).matches() && !isEnum(projectClassLoader, optionType)) {
+                if (!EXCLUDE_INNER_PATTERN.matcher(optionType).matches() && !propType.isArray() && !anEnum) {
                     prop.getField().addAnnotation(NestedConfigurationProperty.class);
                 }
                 if (sourceProp.hasAnnotation(Deprecated.class)) {
@@ -411,8 +417,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 String description = null;
                 if (mutator.hasJavaDoc()) {
                     description = mutator.getJavaDoc().getFullText();
-                } else if (field != null) {
-                    description = field.getJavaDoc().getFullText();
+                } else if (sourceProp.hasField()) {
+                    description = sourceProp.getField().getJavaDoc().getFullText();
                 }
                 if (!Strings.isBlank(description)) {
                     prop.getField().getJavaDoc().setFullText(description);
@@ -429,8 +435,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                         prop.getField().setStringInitializer(defaultValue);
                     } else if ("integer".equals(optionType) || "boolean".equals(optionType)) {
                         prop.getField().setLiteralInitializer(defaultValue);
-                    } else if (isEnum(projectClassLoader, optionType)) {
-                        String enumShortName = optionType.substring(optionType.lastIndexOf(".") + 1);
+                    } else if (anEnum) {
+                        String enumShortName = optionClass.getSimpleName();
                         prop.getField().setLiteralInitializer(enumShortName + "." + defaultValue);
                         javaClass.addImport(model.getJavaType());
                     }
@@ -445,13 +451,36 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         writeSourceIfChanged(javaClass, fileName);
     }
 
-    private boolean isEnum(ClassLoader projectClassLoader, String optionType) throws MojoFailureException {
-        // remove array brackets
-        try {
-            return projectClassLoader.loadClass(optionType.replaceAll("[\\[\\]]", "")).isEnum();
-        } catch (ClassNotFoundException e) {
-            throw new MojoFailureException(e.getMessage(), e);
+    // try loading class, looking for inner classes if needed
+    private Class loadClass(ClassLoader projectClassLoader, String loadClassName) throws MojoFailureException {
+        Class optionClass;
+        while (true) {
+            try {
+                optionClass = projectClassLoader.loadClass(loadClassName);
+                break;
+            } catch (ClassNotFoundException e) {
+                int dotIndex = loadClassName.lastIndexOf('.');
+                if (dotIndex == -1) {
+                    throw new MojoFailureException(e.getMessage(), e);
+                } else {
+                    loadClassName = loadClassName.substring(0, dotIndex) + "$" + loadClassName.substring(dotIndex + 1);
+                }
+            }
         }
+        return optionClass;
+    }
+
+    // Roaster doesn't resolve inner classes correctly
+    private String resolveParamType(JavaClassSource nestedType, String type) {
+        String result;
+        int innerStart = type.indexOf('.');
+        int arrayStart = type.indexOf('[');
+        if (innerStart != -1) {
+            result = nestedType.resolveType(type.substring(0, innerStart)) + type.substring(innerStart);
+        } else {
+            result = nestedType.resolveType(type);
+        }
+        return arrayStart == -1 ? result : result + type.substring(arrayStart);
     }
 
     protected ClassLoader getProjectClassLoader() throws MojoFailureException {
@@ -478,10 +507,9 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         // remove <?> as generic type as Roaster (Eclipse JDT) cannot use that
         type = type.replaceAll("\\<\\?\\>", "");
         // use wrapper types for primitive types so a null mean that the option has not been configured
-        String primitive = type.replaceAll("[\\[\\]]", "");
-        String wrapper = PRIMITIVEMAP.get(primitive);
+        String wrapper = PRIMITIVEMAP.get(type);
         if (wrapper != null) {
-            type = type.replaceAll(primitive, wrapper);
+            type = wrapper;
         }
         return type;
     }
