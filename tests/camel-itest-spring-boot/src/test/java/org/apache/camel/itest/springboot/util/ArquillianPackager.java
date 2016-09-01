@@ -61,7 +61,6 @@ import org.jboss.shrinkwrap.impl.base.path.BasicPath;
 import org.jboss.shrinkwrap.resolver.api.maven.ConfigurableMavenResolverSystem;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenResolvedArtifact;
-import org.jboss.shrinkwrap.resolver.api.maven.PackagingType;
 import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
 import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenCoordinate;
 import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenCoordinates;
@@ -107,7 +106,7 @@ public final class ArquillianPackager {
         }
 
         if (config.getUseCustomLog()) {
-            ark = ark.addAsResource("log4j2-spring.xml", CLASSES_FOLDER + "/log4j2.xml");
+            ark = ark.addAsResource("spring-logback.xml", CLASSES_FOLDER + "/spring-logback.xml");
         }
 
         for (Map.Entry<String, String> res : config.getResources().entrySet()) {
@@ -137,6 +136,10 @@ public final class ArquillianPackager {
         List<MavenDependencyExclusion> commonExclusions = new LinkedList<>();
         commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-log4j12"));
         commonExclusions.add(MavenDependencies.createExclusion("log4j", "log4j"));
+        commonExclusions.add(MavenDependencies.createExclusion("log4j", "log4j-slf4j-impl"));
+        commonExclusions.add(MavenDependencies.createExclusion("org.apache.logging.log4j", "log4j"));
+        commonExclusions.add(MavenDependencies.createExclusion("org.apache.logging.log4j", "log4j-core"));
+        commonExclusions.add(MavenDependencies.createExclusion("org.apache.logging.log4j", "log4j-slf4j-impl"));
         commonExclusions.add(MavenDependencies.createExclusion("log4j", "apache-log4j-extras"));
         commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-simple"));
         commonExclusions.add(MavenDependencies.createExclusion("org.slf4j", "slf4j-jdk14"));
@@ -167,36 +170,59 @@ public final class ArquillianPackager {
 
         if (config.getIncludeProvidedDependencies() || config.getIncludeTestDependencies() || config.getUnitTestEnabled()) {
 
+            StringBuilder dependencies = new StringBuilder();
             List<ScopeType> scopes = new LinkedList<>();
             if (config.getIncludeTestDependencies() || config.getUnitTestEnabled()) {
+                dependencies.append(DependencyResolver.getDependencies(config.getModuleBasePath() + "/pom.xml", ScopeType.TEST.toString()));
                 scopes.add(ScopeType.TEST);
             }
             if (config.getIncludeProvidedDependencies()) {
+                dependencies.append(DependencyResolver.getDependencies(config.getModuleBasePath() + "/pom.xml", ScopeType.PROVIDED.toString()));
                 scopes.add(ScopeType.PROVIDED);
             }
+
+            File resolverFile = createResolverPom(config, dependencies.toString());
 
             boolean failIfNoDependencies = false;
             List<MavenResolvedArtifact> moduleArtifacts;
             try {
                 moduleArtifacts = Arrays.asList(resolver(config)
-                        .loadPomFromFile(config.getModuleBasePath() + "/pom.xml")
-                        .importDependencies(scopes.toArray(new ScopeType[]{}))
+                        .loadPomFromFile(resolverFile)
+                        .importDependencies(scopes.toArray(new ScopeType[0]))
                         .resolve().withoutTransitivity().asResolvedArtifact());
-            } catch(IllegalArgumentException e) {
-                if(failIfNoDependencies) {
+            } catch (IllegalArgumentException e) {
+                if (failIfNoDependencies) {
                     throw e;
                 }
 
-                debug("Error while getting dependencies for scopes: " + scopes + ". Message=" + e.getMessage());
+                debug("Error while getting dependencies for test or optional scopes. Message=" + e.getMessage());
                 moduleArtifacts = new LinkedList<>();
             }
 
+            List<MavenCoordinate> coordinates = new LinkedList<>();
 
+            // fill coordinates
             for (MavenResolvedArtifact art : moduleArtifacts) {
-                MavenCoordinate c = art.getCoordinate();
-                if (!validTestDependency(config, c)) {
+                MavenCoordinate coord = art.getCoordinate();
+
+//                Set<String> nonStarterModules = new HashSet<>();
+//                nonStarterModules.add("camel-test");
+//
+//                // redirect reference from camel modules to camel starters in test scope
+//                if (art.getScope() == ScopeType.TEST && art.getCoordinate().getGroupId().equals("org.apache.camel") && art.getCoordinate().getArtifactId().startsWith("camel-") && !nonStarterModules
+//                        .contains(art.getCoordinate().getArtifactId())) {
+//                    coord = MavenCoordinates.createCoordinate(art.getCoordinate().getGroupId(), art.getCoordinate().getArtifactId() + "-starter", art.getCoordinate().getVersion(), art.getCoordinate
+//                            ().getPackaging(), art.getCoordinate().getClassifier());
+//                }
+
+                if (!validTestDependency(config, coord)) {
                     continue;
                 }
+
+                coordinates.add(coord);
+            }
+
+            for (MavenCoordinate c : coordinates) {
 
                 // Re-adding exclusions, as Arquillian resolver ignores them
                 Set<String> pomExclusions = DependencyResolver.getExclusions(config.getModuleBasePath() + "/pom.xml", c.getGroupId(), c.getArtifactId());
@@ -242,9 +268,8 @@ public final class ArquillianPackager {
         ark = ark.addPackages(true, "org.apache.camel.itest.springboot");
         ark = addSpringbootPackage(ark, "org.apache.camel.itest.springboot");
 
-        // CAMEL-10060 is resolved since 2.18 but probably the package scanner should be adapted to Spring-boot 1.4.0.RELEASE new packaging structure
-//        ark = addSpringbootPackage(ark, "org.apache.camel.converter.myconverter"); // to overcome CAMEL-10060
-//        ark = addSpringbootPackage(ark, "org.apache.camel.osgi.test"); // to overcome CAMEL-10060
+        // CAMEL-10060 is resolved since 2.18 but some unit tests use custom (non spring-boot enabled) camel contexts
+        ark = ark.addPackages(true, "org.apache.camel.converter.myconverter");
 
         ark = ark.addPackages(true, "org.springframework.boot.loader");
 
@@ -288,7 +313,7 @@ public final class ArquillianPackager {
         Matcher m = propPattern.matcher(pom);
         while (m.find()) {
             String property = m.group();
-            String resolved = DependencyResolver.resolveParentProperty(property);
+            String resolved = DependencyResolver.resolveSpringBootParentProperty(property);
             resolvedProperties.put(property, resolved);
         }
 
@@ -299,6 +324,36 @@ public final class ArquillianPackager {
         pom = pom.replace("#{module}", config.getModuleName());
 
         File pomFile = new File(config.getModuleBasePath() + "/target/itest-spring-boot-pom.xml");
+        try (FileWriter fw = new FileWriter(pomFile)) {
+            IOUtils.write(pom, fw);
+        }
+
+        return pomFile;
+    }
+
+    private static File createResolverPom(ITestConfig config, String dependencies) throws Exception {
+
+        String pom;
+        try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream("/dependency-resolver-pom.xml")) {
+            pom = IOUtils.toString(pomTemplate);
+        }
+
+        pom = pom.replace("<!-- DEPENDENCIES -->", dependencies);
+
+        Map<String, String> resolvedProperties = new TreeMap<>();
+        Pattern propPattern = Pattern.compile("(\\$\\{[^}]*\\})");
+        Matcher m = propPattern.matcher(pom);
+        while (m.find()) {
+            String property = m.group();
+            String resolved = DependencyResolver.resolveParentProperty(property);
+            resolvedProperties.put(property, resolved);
+        }
+
+        for (String property : resolvedProperties.keySet()) {
+            pom = pom.replace(property, resolvedProperties.get(property));
+        }
+
+        File pomFile = new File(config.getModuleBasePath() + "/target/itest-spring-boot-dependency-resolver-pom.xml");
         try (FileWriter fw = new FileWriter(pomFile)) {
             IOUtils.write(pom, fw);
         }
@@ -347,6 +402,8 @@ public final class ArquillianPackager {
 
         Pattern[] patterns = new Pattern[]{
                 Pattern.compile("^log4j$"),
+                Pattern.compile("^log4j-slf4j-impl$"),
+                Pattern.compile("^log4j-core$"),
                 Pattern.compile("^slf4j-log4j12$"),
                 Pattern.compile("^slf4j-simple$"),
                 Pattern.compile("^slf4j-jdk14$"),

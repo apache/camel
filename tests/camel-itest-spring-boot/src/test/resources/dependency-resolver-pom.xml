@@ -21,11 +21,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.company</groupId>
-    <artifactId>spring-boot-application</artifactId>
+    <artifactId>spring-boot-dependency-resolver</artifactId>
     <version>1.0</version>
 
-    <name>Spring-Boot Application</name>
-    <description>This a the base pom of spring-boot applications launched by the users</description>
+    <name>Spring-Boot Dependency Resolver</name>
+    <description>This POM is used to resolve test and optional dependencies required in integration tests</description>
 
     <dependencyManagement>
         <dependencies>
@@ -39,21 +39,21 @@
                 <scope>import</scope>
             </dependency>
 
+            <dependency>
+                <!-- Added as fallback for test and optional dependencies -->
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-parent</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>#{module}-starter</artifactId>
-        </dependency>
-
-        <!-- Required by the integration tests to run -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
+        <!-- DEPENDENCIES -->
 
     </dependencies>
 
