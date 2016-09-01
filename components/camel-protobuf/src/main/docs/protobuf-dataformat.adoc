@@ -20,6 +20,24 @@ http://code.google.com/apis/protocolbuffers/[API Site] +
 http://code.google.com/apis/protocolbuffers/docs/javatutorial.html[Protobuf
 Java Tutorial]
 
+[[Protobuf-Options]]
+Protobuf Options
+^^^^^^^^^^^^^^^^
+
+// dataformat options: START
+The Protobuf dataformat supports 1 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| instanceClass |  | String | Name of class to use when unarmshalling
+|=======================================================================
+{% endraw %}
+// dataformat options: END
+
 [[Protobuf-Protobufoverview]]
 Protobuf overview
 ~~~~~~~~~~~~~~~~~
