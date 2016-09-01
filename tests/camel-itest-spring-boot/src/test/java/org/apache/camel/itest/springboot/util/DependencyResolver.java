@@ -16,11 +16,17 @@
  */
 package org.apache.camel.itest.springboot.util;
 
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -43,6 +49,33 @@ public final class DependencyResolver {
     private static XPathFactory xPathfactory = XPathFactory.newInstance();
 
     private DependencyResolver() {
+    }
+
+    /**
+     * Retrieves a list of dependencies of the given scope
+     */
+    public static String getDependencies(String pom, String scope) throws Exception {
+        String expression = "/project/dependencies/dependency[scope='" + scope + "']";
+
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(pom);
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile(expression);
+
+        StringBuilder res =  new StringBuilder();
+        NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        for(int i=0; i<nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            try(StringWriter writer = new StringWriter()) {
+                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+                transformer.transform(new DOMSource(node), new StreamResult(writer));
+                String xml = writer.toString();
+                res.append(xml + "\n");
+            }
+        }
+
+        return res.toString();
     }
 
     /**
@@ -133,7 +166,20 @@ public final class DependencyResolver {
         return groupArtifact + ":" + version;
     }
 
-    public static String resolveParentProperty(String property) throws Exception {
+    public static String resolveParentProperty(String property) {
+        property = resolveSpringBootParentProperty(property);
+        if (property != null && !isResolved(property)) {
+            property = resolveCamelParentProperty(property);
+        }
+
+        return property;
+    }
+
+    public static String resolveSpringBootParentProperty(String property) {
+        return resolveProperty("../../parent-spring-boot/pom.xml", property, 0);
+    }
+
+    public static String resolveCamelParentProperty(String property) {
         return resolveProperty("../../parent/pom.xml", property, 0);
     }
 
@@ -146,34 +192,38 @@ public final class DependencyResolver {
             property = resolveProperty("../pom.xml", property, 0);
         }
         if (property != null && !isResolved(property)) {
-            property = resolveProperty("../../parent/pom.xml", property, 0);
+            property = resolveProperty("../../parent-spring-boot/pom.xml", property, 0);
         }
 
         return property;
     }
 
-    private static String resolveProperty(String pom, String property, int depth) throws Exception {
-        property = property.trim();
-        if (!property.startsWith("${") || !property.endsWith("}")) {
-            throw new IllegalArgumentException("Wrong property reference: " + property);
-        }
-
-        String res;
-        if (property.equals("${project.version}")) {
-            res = getParentVersion(pom);
-        } else {
-            String p = property.substring(2);
-            p = p.substring(0, p.length() - 1);
-            res = getPropertyFromPom(pom, p);
-            if (res == null) {
-                return property;
+    private static String resolveProperty(String pom, String property, int depth) {
+        try {
+            property = property.trim();
+            if (!property.startsWith("${") || !property.endsWith("}")) {
+                throw new IllegalArgumentException("Wrong property reference: " + property);
             }
-        }
 
-        if (res != null && !isResolved(res) && depth < 5) {
-            res = resolveProperty(pom, res, depth + 1);
+            String res;
+            if (property.equals("${project.version}")) {
+                res = getParentVersion(pom);
+            } else {
+                String p = property.substring(2);
+                p = p.substring(0, p.length() - 1);
+                res = getPropertyFromPom(pom, p);
+                if (res == null) {
+                    return property;
+                }
+            }
+
+            if (res != null && !isResolved(res) && depth < 5) {
+                res = resolveProperty(pom, res, depth + 1);
+            }
+            return res;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return res;
     }
 
     private static String getSurefirePropertyFromPom(String pom, String property) throws Exception {

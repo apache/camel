@@ -40,7 +40,8 @@ public class CamelCassandraqlTest extends AbstractSpringBootTestSupport {
 //                .dependency(DependencyResolver.withVersion("io.dropwizard.metrics:metrics-core"))
 //                .exclusion("com.codahale.metrics:*")
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|CassandraComponentProducerTest$|CassandraComponentBeanRefTest$|CassandraComponentConsumerTest$)")
-                // excluded tests have been checked manually (they need to run on their own JDK)
+                //.unitTestInclusionPattern(".*NamedCassandraAggregationRepositoryTest$")
+                // excluded tests have been checked manually (they need to run on their own JVM)
                 .build();
     }
 

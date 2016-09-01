@@ -14,30 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.springboot.util;
+package org.apache.camel.converter.myconverter;
 
-import java.io.File;
+import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.FallbackConverter;
+import org.apache.camel.spi.TypeConverterRegistry;
 
-import org.apache.camel.itest.springboot.ITestConfigBuilder;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.impl.base.exporter.zip.ZipExporterImpl;
-import org.junit.Test;
+import java.util.TimeZone;
+
 
 /**
- * Utililty to export a spring-boot jar and check the content.
+ * Converter added here to overcome issue CAMEL-10060 in integration tests (Needed because some unit tests create new camel contexts from scratch).
  */
-public class JarExporter {
+@Converter
+public final class StaticDummyFallbackConverter {
 
-    @Test
-    public void exportJar() throws Exception {
-
-        Archive<?> archive = ArquillianPackager.springBootPackage(new ITestConfigBuilder()
-                .module("camel-hbase")
-                .build());
-
-        new ZipExporterImpl(archive).exportTo(new File("target/export.zip"), true);
-
+    private StaticDummyFallbackConverter() {
     }
 
+    @FallbackConverter
+    public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
+        if (TimeZone.class.isAssignableFrom(value.getClass())) {
+            return "Time talks";
+        }
+        return null;
+    }
 
 }

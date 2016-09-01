@@ -54,6 +54,7 @@
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jpa_2.0_spec</artifactId>
+            <version>${geronimo-jpa2-spec-version}</version>
         </dependency>
     </dependencies>
 </project>
