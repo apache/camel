@@ -184,6 +184,8 @@ public interface Exchange {
     String REDELIVERY_MAX_COUNTER  = "CamelRedeliveryMaxCounter";
     String REDELIVERY_EXHAUSTED    = "CamelRedeliveryExhausted";
     String REDELIVERY_DELAY        = "CamelRedeliveryDelay";
+    String REST_HTTP_URI           = "CamelRestHttpUri";
+    String REST_HTTP_QUERY         = "CamelRestHttpQuery";
     String ROLLBACK_ONLY           = "CamelRollbackOnly";
     String ROLLBACK_ONLY_LAST      = "CamelRollbackOnlyLast";
     String ROUTE_STOP              = "CamelRouteStop";

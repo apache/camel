@@ -56,7 +56,7 @@ Components
 `ref:name` | The ref component is used for lookup of existing endpoints bound in the Registry.
 
 | link:src/main/docs/rest-component.adoc[REST] (camel-core) +
-`rest:method:path:uriTemplate` | The rest component is used for hosting REST services which has been defined using the rest-dsl in Camel.
+`rest:method:path:uriTemplate` | The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).
 
 | link:src/main/docs/rest-api-component.adoc[REST API] (camel-core) +
 `rest-api:path/contextIdPattern` | The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.

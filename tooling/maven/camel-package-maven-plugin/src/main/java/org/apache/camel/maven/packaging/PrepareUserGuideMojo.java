@@ -269,7 +269,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         try {
             String text = loadText(new FileInputStream(file));
 
-            String existing = StringHelper.between(text, "<!-- core components: START -->" , "<!-- core components: END -->");
+            String existing = StringHelper.between(text, "<!-- core components: START -->", "<!-- core components: END -->");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -303,7 +303,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         try {
             String text = loadText(new FileInputStream(file));
 
-            String existing = StringHelper.between(text, "<!-- components: START -->" , "<!-- components: END -->");
+            String existing = StringHelper.between(text, "<!-- components: START -->", "<!-- components: END -->");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -337,7 +337,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         try {
             String text = loadText(new FileInputStream(file));
 
-            String existing = StringHelper.between(text, "<!-- dataformats: START -->" , "<!-- dataformats: END -->");
+            String existing = StringHelper.between(text, "<!-- dataformats: START -->", "<!-- dataformats: END -->");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -371,7 +371,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         try {
             String text = loadText(new FileInputStream(file));
 
-            String existing = StringHelper.between(text, "<!-- languages: START -->" , "<!-- languages: END -->");
+            String existing = StringHelper.between(text, "<!-- languages: START -->", "<!-- languages: END -->");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();

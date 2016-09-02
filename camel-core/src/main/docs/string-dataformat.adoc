@@ -1,0 +1,56 @@
+[[String-Dataformat]]
+String Dataformat
+~~~~~~~~~~~~~~~~~
+
+The String link:data-format.html[Data Format] is a textual based format
+that supports encoding.
+
+[[String-Options]]
+Options
+^^^^^^^
+
+// dataformat options: START
+The String Encoding dataformat supports 1 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| charset |  | String | Sets an encoding to use. Will by default use the JVM platform default charset.
+|=======================================================================
+{% endraw %}
+// dataformat options: END
+
+[[String-Marshal]]
+Marshal
+^^^^^^^
+
+In this example we marshal the file content to String object in UTF-8
+encoding.
+
+[source,java]
+----------------------------------------------------------------------
+from("file://data.csv").marshal().string("UTF-8").to("jms://myqueue");
+----------------------------------------------------------------------
+
+[[String-Unmarshal]]
+Unmarshal
+^^^^^^^^^
+
+In this example we unmarshal the payload from the JMS queue to a String
+object using UTF-8 encoding, before its processed by the newOrder
+processor.
+
+[source,java]
+-----------------------------------------------------------------------------
+from("jms://queue/order").unmarshal().string("UTF-8").processRef("newOrder");
+-----------------------------------------------------------------------------
+
+[[String-Dependencies]]
+Dependencies
+^^^^^^^^^^^^
+
+This data format is provided in *camel-core* so no additional
+dependencies is needed.

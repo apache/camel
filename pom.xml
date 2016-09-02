@@ -239,6 +239,14 @@
                 <exclude>**/component-header.mvel</exclude>
                 <exclude>**/component-options.mvel</exclude>
                 <exclude>**/endpoint-options.mvel</exclude>
+                <exclude>**/dataformat-options.mvel</exclude>
+                <exclude>**/language-options.mvel</exclude>
+                <exclude>**/readme-components.mvel</exclude>
+                <exclude>**/readme-components.mvel</exclude>
+                <exclude>**/readme-dataformats.mvel</exclude>
+                <exclude>**/readme-eips.mvel</exclude>
+                <exclude>**/readme-languages.mvel</exclude>
+                <exclude>**/spring-boot-starter-NOTICE.txt</exclude>
                 <!-- cxf does not handle comments here -->
                 <exclude>**/src/main/resources/META-INF/cxf/cxf.extension</exclude>
                 <exclude>**/src/main/resources/META-INF/cxf/bus-extensions.txt</exclude>

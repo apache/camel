@@ -22,11 +22,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
- * REST-DSL component.
+ * Rest component.
  */
 public class RestComponent extends UriEndpointComponent {
+
+    private String componentName;
+    private String apiDoc;
+    private String host;
 
     public RestComponent() {
         super(RestEndpoint.class);
@@ -35,6 +40,30 @@ public class RestComponent extends UriEndpointComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         RestEndpoint answer = new RestEndpoint(uri, this);
+        answer.setComponentName(componentName);
+        answer.setApiDoc(apiDoc);
+
+        // if no explicit host was given, then fallback and use default configured host
+        String h = resolveAndRemoveReferenceParameter(parameters, "host", String.class, host);
+        if (h == null && getCamelContext().getRestConfiguration() != null) {
+            h = getCamelContext().getRestConfiguration().getHost();
+            int port = getCamelContext().getRestConfiguration().getPort();
+            // is there a custom port number
+            if (port > 0 && port != 80 && port != 443) {
+                h += ":" + port;
+            }
+        }
+        // host must start with http:// or https://
+        if (h != null && !(h.startsWith("http://") || h.startsWith("https://"))) {
+            h = "http://" + h;
+        }
+        answer.setHost(h);
+
+        String query = ObjectHelper.after(uri, "?");
+        if (query != null) {
+            answer.setQueryParameters(query);
+        }
+
         setProperties(answer, parameters);
         answer.setParameters(parameters);
 
@@ -65,10 +94,57 @@ public class RestComponent extends UriEndpointComponent {
 
         // if no explicit component name was given, then fallback and use default configured component name
         if (answer.getComponentName() == null && getCamelContext().getRestConfiguration() != null) {
-            answer.setComponentName(getCamelContext().getRestConfiguration().getComponent());
+            String name = getCamelContext().getRestConfiguration().getProducerComponent();
+            if (name == null) {
+                // fallback and use the consumer name
+                name = getCamelContext().getRestConfiguration().getComponent();
+            }
+            answer.setComponentName(name);
+        }
+        // if no explicit producer api was given, then fallback and use default configured
+        if (answer.getApiDoc() == null && getCamelContext().getRestConfiguration() != null) {
+            answer.setApiDoc(getCamelContext().getRestConfiguration().getProducerApiDoc());
         }
 
         return answer;
+    }
+
+    public String getComponentName() {
+        return componentName;
+    }
+
+    /**
+     * The Camel Rest component to use for the REST transport, such as restlet, spark-rest.
+     * If no component has been explicit configured, then Camel will lookup if there is a Camel component
+     * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory (consumer)
+     * or org.apache.camel.spi.RestProducerFactory (producer) is registered in the registry.
+     * If either one is found, then that is being used.
+     */
+    public void setComponentName(String componentName) {
+        this.componentName = componentName;
+    }
+
+    public String getApiDoc() {
+        return apiDoc;
+    }
+
+    /**
+     * The swagger api doc resource to use.
+     * The resource is loaded from classpath by default and must be in JSon format.
+     */
+    public void setApiDoc(String apiDoc) {
+        this.apiDoc = apiDoc;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * Host and port of HTTP service to use (override host in swagger schema)
+     */
+    public void setHost(String host) {
+        this.host = host;
     }
 
 }

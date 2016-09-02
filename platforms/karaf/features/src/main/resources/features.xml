@@ -360,6 +360,8 @@
   <feature name='camel-consul' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.orbitz-consul-client/${consul-client-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-consul/${project.version}</bundle>
   </feature>
@@ -1751,7 +1753,7 @@
   </feature>
   <feature name='camel-syslog' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version='${project.version}'>camel-netty</feature>
+    <feature version='${project.version}'>camel-netty4</feature>
     <bundle>mvn:org.apache.camel/camel-syslog/${project.version}</bundle>
   </feature>
   <feature name='camel-tagsoup' version='${project.version}' resolver='(obr)' start-level='50'>

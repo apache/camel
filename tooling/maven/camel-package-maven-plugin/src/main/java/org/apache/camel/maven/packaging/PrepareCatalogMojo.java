@@ -859,9 +859,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
             // special for mail
             if (component.equals("imap") || component.equals("imaps") || component.equals("pop3") || component.equals("pop3s") || component.equals("smtp") || component.equals("smtps")) {
                 component = "mail";
-            }
+            } else if (component.equals("ftp") || component.equals("sftp") || component.equals("ftps")) {
+                component = "ftp";
+            } 
             String name = component + "-component";
-            if (!docs.contains(name)) {
+            if (!docs.contains(name) && (!component.equalsIgnoreCase("linkedin") && !component.equalsIgnoreCase("salesforce"))) {
                 missing.add(name);
             }
         }
@@ -878,6 +880,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
             // special for bindy
             if (dataformat.startsWith("bindy")) {
                 dataformat = "bindy";
+            } else if (dataformat.startsWith("crypto")) {
+                dataformat = "pgp";
             }
             String name = dataformat + "-dataformat";
             if (!docs.contains(name)) {

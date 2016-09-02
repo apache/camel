@@ -39,6 +39,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.http.common.HttpBinding;
@@ -46,6 +47,7 @@ import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.http.common.HttpConsumer;
+import org.apache.camel.http.common.HttpRestHeaderFilterStrategy;
 import org.apache.camel.http.common.HttpRestServletResolveConsumerStrategy;
 import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -55,11 +57,12 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
-import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -95,7 +98,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public abstract class JettyHttpComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory {
+public abstract class JettyHttpComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory {
     public static final String TMP_DIR = "CamelJettyTempDir";
     
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
@@ -129,6 +132,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected Integer responseHeaderSize;
     protected String proxyHost;
     protected ErrorHandler errorHandler;
+    protected boolean useXForwardedForHeader;
     private Integer proxyPort;
     private boolean sendServerVersion = true;
 
@@ -993,6 +997,22 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     public boolean isSendServerVersion() {
         return sendServerVersion;
     }
+    
+    /**
+     * To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr.
+     */
+    @Metadata(description = "To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr.")
+    public boolean isUseXForwardedForHeader() {
+        return useXForwardedForHeader;
+    }
+
+    /**
+     * To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr.
+     */
+    @Metadata(description = "To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr.")
+    public void setUseXForwardedForHeader(boolean useXForwardedForHeader) {
+        this.useXForwardedForHeader = useXForwardedForHeader;
+    }
 
     /**
      * If the option is true, jetty will send the server header with the jetty version information to the client which sends the request.
@@ -1127,7 +1147,37 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             setProperties(camelContext, consumer, config.getConsumerProperties());
         }
 
+        // the endpoint must be started before creating the producer
+        ServiceHelper.startService(endpoint);
+
         return consumer;
+    }
+
+    @Override
+    public Producer createProducer(CamelContext camelContext, String host,
+                                   String verb, String basePath, String uriTemplate, String queryParameters,
+                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+
+        // avoid leading slash
+        basePath = FileUtil.stripLeadingSeparator(basePath);
+        uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
+
+        // get the endpoint
+        String url;
+        if (uriTemplate != null) {
+            url = String.format("jetty:%s/%s/%s", host, basePath, uriTemplate);
+        } else {
+            url = String.format("jetty:%s/%s", host, basePath);
+        }
+
+        JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
+        if (parameters != null && !parameters.isEmpty()) {
+            setProperties(camelContext, endpoint, parameters);
+        }
+        String path = uriTemplate != null ? uriTemplate : basePath;
+        endpoint.setHeaderFilterStrategy(new HttpRestHeaderFilterStrategy(path, queryParameters));
+
+        return endpoint.createProducer();
     }
 
     protected CamelServlet createServletForConnector(Server server, Connector connector,
@@ -1197,6 +1247,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                     
                 } else {
                     s = new Server();
+                    if (isEnableJmx()) {
+                        enableJmx(s);
+                    }
                     Server.class.getMethod("setThreadPool", ThreadPool.class).invoke(s, tp);
                 }
             } catch (Exception e) {

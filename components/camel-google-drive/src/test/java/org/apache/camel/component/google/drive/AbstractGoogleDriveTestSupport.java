@@ -42,7 +42,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
     protected static String testFolderId;
     protected static String testFileId;
 
-    protected static final String TEST_UPLOAD_FILE = "src/test/resources/log4j.properties";
+    protected static final String TEST_UPLOAD_FILE = "src/test/resources/log4j2.properties";
     protected static final String TEST_UPLOAD_IMG = "src/test/resources/camel-box-small.png";
     protected static final java.io.File UPLOAD_FILE = new java.io.File(TEST_UPLOAD_FILE);
 

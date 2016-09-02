@@ -23,7 +23,6 @@ import com.ibm.as400.access.KeyedDataQueue;
 import com.ibm.as400.access.KeyedDataQueueEntry;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.PollingConsumerSupport;
 
 /**
@@ -107,8 +106,7 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
             entry = queue.read(-1);
         }
 
-        Exchange exchange = new DefaultExchange(endpoint.getCamelContext());
-        exchange.setFromEndpoint(endpoint);
+        Exchange exchange = getEndpoint().createExchange();
         if (entry != null) {
             exchange.getIn().setHeader(Jt400Endpoint.SENDER_INFORMATION, entry.getSenderInformation());
             if (endpoint.getFormat() == Jt400Configuration.Format.binary) {
@@ -134,8 +132,7 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
             entry = queue.read(key, -1, searchType);
         }
 
-        Exchange exchange = new DefaultExchange(endpoint.getCamelContext());
-        exchange.setFromEndpoint(endpoint);
+        Exchange exchange = getEndpoint().createExchange();
         if (entry != null) {
             exchange.getIn().setHeader(Jt400Endpoint.SENDER_INFORMATION, entry.getSenderInformation());
             if (endpoint.getFormat() == Jt400Configuration.Format.binary) {

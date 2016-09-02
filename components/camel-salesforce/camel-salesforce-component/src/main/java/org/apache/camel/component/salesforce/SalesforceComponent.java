@@ -1060,4 +1060,28 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
     public void setInitialReplayIdMap(Map<String, Integer> initialReplayIdMap) {
         getConfigOrCreate().setInitialReplayIdMap(initialReplayIdMap);
     }
+
+    public long getBackoffIncrement() {
+        return getConfigOrCreate().getBackoffIncrement();
+    }
+
+    /**
+     * Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
+     * @param backoffIncrement
+     */
+    public void setBackoffIncrement(long backoffIncrement) {
+        getConfigOrCreate().setBackoffIncrement(backoffIncrement);
+    }
+
+    public long getMaxBackoff() {
+        return getConfigOrCreate().getMaxBackoff();
+    }
+
+    /**
+     * Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
+     * @param maxBackoff
+     */
+    public void setMaxBackoff(long maxBackoff) {
+        getConfigOrCreate().setMaxBackoff(maxBackoff);
+    }
 }

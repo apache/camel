@@ -32,8 +32,7 @@
   <packaging>war</packaging>
 
   <properties>
-    <swagger-ui.version>2.1.5</swagger-ui.version>
-    <logback-version>1.1.7</logback-version>
+    <swagger-ui.version>2.2.2</swagger-ui.version>
     <swagger.url>https://github.com/swagger-api/swagger-ui/archive</swagger.url>
     <destDir>target/swagger-ui</destDir>
   </properties>
@@ -52,6 +51,12 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-servlet</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.tomcat.embed</groupId>
+          <artifactId>tomcat-embed-logging-juli</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- swagger api -->
@@ -86,6 +91,16 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-jcl</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-web</artifactId>
       <scope>runtime</scope>
     </dependency>
   </dependencies>

@@ -169,6 +169,10 @@ public class JettyHttpComponentConfiguration9 {
      */
     private Integer proxyPort;
     /**
+     * To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr.
+     */
+    private Boolean useXForwardedForHeader;
+    /**
      * If the option is true jetty server will send the date header to the
      * client which sends the request. NOTE please make sure there is no any
      * other camel-jetty endpoint is share the same port otherwise this option
@@ -407,6 +411,14 @@ public class JettyHttpComponentConfiguration9 {
 
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    public Boolean getUseXForwardedForHeader() {
+        return useXForwardedForHeader;
+    }
+
+    public void setUseXForwardedForHeader(Boolean useXForwardedForHeader) {
+        this.useXForwardedForHeader = useXForwardedForHeader;
     }
 
     public Boolean getSendServerVersion() {

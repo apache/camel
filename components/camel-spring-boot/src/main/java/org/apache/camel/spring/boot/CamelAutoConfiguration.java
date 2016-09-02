@@ -185,6 +185,11 @@ public class CamelAutoConfiguration {
 
     @Bean
     CamelSpringBootApplicationController applicationController(ApplicationContext applicationContext, CamelContext camelContext) {
+        // CAMEL-10279: We have to call setNoStart(true) here so that if a <camelContext> is imported via
+        // @ImportResource then it does not get started before the RoutesCollector gets a chance to add any
+        // routes found in RouteBuilders.  Even if no RouteBuilders are found, the RoutesCollector will handle
+        // starting the the Camel Context.
+        SpringCamelContext.setNoStart(true);
         return new CamelSpringBootApplicationController(applicationContext, camelContext);
     }
 
