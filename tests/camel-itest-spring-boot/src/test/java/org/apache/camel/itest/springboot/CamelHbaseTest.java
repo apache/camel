@@ -36,7 +36,11 @@ public class CamelHbaseTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelHbaseTest.class))
-                //.dependency(DependencyResolver.withVersion("org.apache.hadoop:hadoop-hdfs"))
+                // Because HBase uses Hadoop 2.5.1 in test scope
+                .dependency("org.apache.hadoop:hadoop-common:" + DependencyResolver.resolveParentProperty("${hadoop2-version}"))
+                .dependency("org.apache.hadoop:hadoop-auth:" + DependencyResolver.resolveParentProperty("${hadoop2-version}"))
+                .dependency("org.apache.hadoop:hadoop-mapreduce-client-core:" + DependencyResolver.resolveParentProperty("${hadoop2-version}"))
+                .dependency("org.apache.hadoop:hadoop-yarn-common:" + DependencyResolver.resolveParentProperty("${hadoop2-version}"))
                 .build();
     }
 

@@ -33,7 +33,7 @@
             <dependency>
                 <!-- Then use camel dependency management -->
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-parent-spring-boot</artifactId>
+                <artifactId>camel-spring-boot-bom</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -54,6 +54,8 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+
+        <!-- DEPENDENCIES -->
 
     </dependencies>
 
