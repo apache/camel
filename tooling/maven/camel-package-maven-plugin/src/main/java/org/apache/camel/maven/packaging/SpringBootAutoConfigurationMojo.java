@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -333,7 +334,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             type = getSimpleJavaType(type);
 
             // generate inner class for non-primitive options
-            if (isNestedProperty(type, project, nestedTypes)) {
+            if (isNestedProperty(type, nestedTypes)) {
                 type = option.getShortJavaType() + INNER_TYPE_SUFFIX;
             }
 
@@ -380,18 +381,14 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 .setLiteralInitializer(nestedType.getCanonicalName() + ".class");
 
             // parse option type
-            for (PropertySource<JavaClassSource> sourceProp : nestedType.getProperties()) {
+            for (ResolvedProperty resolvedProperty : getProperties(nestedType)) {
 
-                final MethodSource<JavaClassSource> mutator = sourceProp.getMutator();
-                // NOTE: fields with no setters are skipped
-                if (mutator == null) {
-                    continue;
-                }
+                String optionType = resolvedProperty.propertyType;
+                PropertySource<JavaClassSource> sourceProp = resolvedProperty.propertySource;
 
-                // strip array dimensions
                 Type<JavaClassSource> propType = sourceProp.getType();
-                final String optionType = getSimpleJavaType(resolveParamType(nestedType, propType.getName()));
                 final PropertySource<JavaClassSource> prop = innerClass.addProperty(optionType, sourceProp.getName());
+
                 boolean anEnum;
                 Class optionClass;
                 if (!propType.isArray()) {
@@ -415,6 +412,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 }
 
                 String description = null;
+                final MethodSource<JavaClassSource> mutator = sourceProp.getMutator();
                 if (mutator.hasJavaDoc()) {
                     description = mutator.getJavaDoc().getFullText();
                 } else if (sourceProp.hasField()) {
@@ -449,6 +447,34 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
 
         writeSourceIfChanged(javaClass, fileName);
+    }
+
+    // resolved property type name and property source, Roaster doesn't resolve inner classes correctly
+    private class ResolvedProperty {
+        private String propertyType;
+        private PropertySource<JavaClassSource> propertySource;
+
+        public ResolvedProperty(String propertyType, PropertySource<JavaClassSource> propertySource) {
+            this.propertyType = propertyType;
+            this.propertySource = propertySource;
+        }
+    }
+
+    // get properties for nested type and super types, only properties with setters are supported!!!
+    private List<ResolvedProperty> getProperties(JavaClassSource nestedType) {
+        final List<ResolvedProperty> properties = new ArrayList<>();
+        final Set<String> names = new HashSet<>();
+        do {
+            for (PropertySource<JavaClassSource> propertySource : nestedType.getProperties()) {
+                // NOTE: fields with no setters are skipped
+                if (propertySource.isMutable() && !names.contains(propertySource.getName())) {
+                    properties.add(new ResolvedProperty(getSimpleJavaType(resolveParamType(nestedType, propertySource.getType().getName())), propertySource));
+                    names.add(propertySource.getName());
+                }
+            }
+            nestedType = readJavaType(nestedType.getSuperType());
+        } while (nestedType != null);
+        return properties;
     }
 
     // try loading class, looking for inner classes if needed
@@ -514,9 +540,23 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         return type;
     }
 
-    // it's a nested property if the source exists in this project, e.g. endpoint configuration
-    private boolean isNestedProperty(String type, MavenProject project, Set<JavaClassSource> nestedTypes) {
-        boolean nested = false;
+    // it's a nested property if the source exists and it's not an abstract class in this project, e.g. endpoint configuration
+    private boolean isNestedProperty(String type, Set<JavaClassSource> nestedTypes) {
+        JavaClassSource nestedType = readJavaType(type);
+        if (nestedType != null) {
+            // nested type MUST have some properties of it's own, besides those from super class
+            if (!nestedType.isAbstract() && !nestedType.getProperties().isEmpty()) {
+                nestedTypes.add(nestedType);
+            } else {
+                nestedType = null;
+            }
+        }
+        return nestedType != null;
+    }
+
+    // read java type from project, returns null if not found
+    private JavaClassSource readJavaType(String type) {
+        JavaClassSource nestedType = null;
         if (!type.startsWith("java.lang.")) {
 
             final String fileName = type.replaceAll("[\\[\\]]", "").replaceAll("\\.", "\\/") + ".java";
@@ -527,8 +567,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     try {
                         JavaType<?> classSource = Roaster.parse(sourceFile);
                         if (classSource instanceof JavaClassSource) {
-                            nestedTypes.add((JavaClassSource) classSource);
-                            nested = true;
+                            nestedType = (JavaClassSource) classSource;
                             break;
                         }
                     } catch (FileNotFoundException e) {
@@ -537,7 +576,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 }
             }
         }
-        return nested;
+        return nestedType;
     }
 
     // CHECKSTYLE:OFF
