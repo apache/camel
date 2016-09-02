@@ -117,6 +117,20 @@ public class SubscriptionHelper extends ServiceSupport {
                         handshakeError = (String) message.get(ERROR_FIELD);
                         handshakeException = getFailure(message);
 
+
+                        if (handshakeError != null) {
+                            // refresh oauth token, if it's a 401 error
+                            if (handshakeError.startsWith("401::")) {
+                                try {
+                                    LOG.info("Refreshing OAuth token...");
+                                    session.login(session.getAccessToken());
+                                    LOG.info("Refreshed OAuth token for re-handshake");
+                                } catch (SalesforceException e) {
+                                    LOG.error("Error renewing OAuth token on 401 error: " + e.getMessage(), e);
+                                }
+                            }
+                        }
+
                         // restart if handshake fails for any reason
                         restartClient();
 
@@ -139,17 +153,6 @@ public class SubscriptionHelper extends ServiceSupport {
                         LOG.warn("Connect failure: {}", message);
                         connectError = (String) message.get(ERROR_FIELD);
                         connectException = getFailure(message);
-
-                        if (connectError != null) {
-                            // refresh oauth token, if it's a 403 error
-                            if (connectError.startsWith("403::")) {
-                                try {
-                                    session.login(null);
-                                } catch (SalesforceException e) {
-                                    LOG.error("Error renewing OAuth token on Connect 403: " + e.getMessage(), e);
-                                }
-                            }
-                        }
 
                     } else if (reconnecting) {
 
