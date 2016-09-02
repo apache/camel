@@ -561,6 +561,17 @@ String json = service.dumpStatisticsAsJson();
 And the JMX API the MBean is registered in the `type=services` tree
 with `name=MetricsMessageHistoryService`.
 
+[[MetricsComponent-InstrumentedThreadPoolFactory]]
+InstrumentedThreadPoolFactory
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.18*
+
+This factory allows you to gather performance information about Camel Thread Pools by injecting a InstrumentedThreadPoolFactory
+which collects information from inside of Camel.
+See more details at link:advanced-configuration-of-camelcontext-using-spring.html[Advanced configuration of CamelContext using Spring]
+
+
 [[MetricsComponent-SeeAlso]]
 See Also
 ^^^^^^^^
