@@ -26,6 +26,7 @@ import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -167,31 +168,57 @@ public final class ArquillianPackager {
 //        moduleDependencies.add(mainDep);
 
 
-        List<String> testProvidedDependencies = new LinkedList<>();
+        List<String> testProvidedDependenciesXml = new LinkedList<>();
         List<ScopeType> scopes = new LinkedList<>();
         if (config.getIncludeProvidedDependencies() || config.getIncludeTestDependencies() || config.getUnitTestEnabled()) {
 
             if (config.getIncludeTestDependencies() || config.getUnitTestEnabled()) {
-                testProvidedDependencies.addAll(DependencyResolver.getDependencies(config.getModuleBasePath() + "/pom.xml", ScopeType.TEST.toString()));
+                testProvidedDependenciesXml.addAll(DependencyResolver.getDependencies(config.getModuleBasePath() + "/pom.xml", ScopeType.TEST.toString()));
                 scopes.add(ScopeType.TEST);
             }
             if (config.getIncludeProvidedDependencies()) {
-                testProvidedDependencies.addAll(DependencyResolver.getDependencies(config.getModuleBasePath() + "/pom.xml", ScopeType.PROVIDED.toString()));
+                testProvidedDependenciesXml.addAll(DependencyResolver.getDependencies(config.getModuleBasePath() + "/pom.xml", ScopeType.PROVIDED.toString()));
                 scopes.add(ScopeType.PROVIDED);
             }
 
         }
 
-        List<String> cleanTestProvidedDependencies = new LinkedList<>();
-        for (String depXml : testProvidedDependencies) {
+        List<String> cleanTestProvidedDependenciesXml = new LinkedList<>();
+        for (String depXml : testProvidedDependenciesXml) {
             if (validTestDependency(config, depXml, commonExclusions)) {
                 depXml = enforceExclusions(config, depXml, commonExclusions);
-                depXml = addBOMVersionWhereMissing(config, depXml);
-                cleanTestProvidedDependencies.add(depXml);
+                //depXml = addBOMVersionWhereMissing(config, depXml);
+                cleanTestProvidedDependenciesXml.add(depXml);
             }
         }
 
-        File moduleSpringBootPom = createUserPom(config, cleanTestProvidedDependencies);
+        List<String> versionedTestProvidedDependenciesXml = new LinkedList<>();
+        if(!cleanTestProvidedDependenciesXml.isEmpty()) {
+
+            File testProvidedResolverPom = createResolverPom(config, cleanTestProvidedDependenciesXml);
+
+            List<MavenResolvedArtifact> artifacts = Arrays.asList(resolver(config)
+                    .loadPomFromFile(testProvidedResolverPom)
+                    .importDependencies(scopes.toArray(new ScopeType[0]))
+                    .resolve()
+                    .withoutTransitivity()
+                    .asResolvedArtifact());
+
+            Map<String, String> resolvedVersions = new HashMap<>();
+            for(MavenResolvedArtifact art : artifacts) {
+                String key = art.getCoordinate().getGroupId() + ":" + art.getCoordinate().getArtifactId();
+                String val = art.getCoordinate().getVersion();
+                resolvedVersions.put(key, val);
+            }
+
+            for(String dep : cleanTestProvidedDependenciesXml) {
+                dep = setResolvedVersion(config, dep, resolvedVersions);
+                versionedTestProvidedDependenciesXml.add(dep);
+            }
+
+        }
+
+        File moduleSpringBootPom = createUserPom(config, versionedTestProvidedDependenciesXml);
 
         List<ScopeType> resolvedScopes = new LinkedList<>();
         resolvedScopes.add(ScopeType.COMPILE);
@@ -254,6 +281,42 @@ public final class ArquillianPackager {
         return external.build();
     }
 
+    private static File createResolverPom(ITestConfig config, List<String> cleanTestProvidedDependencies) throws Exception {
+
+        String pom;
+        try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream("/dependency-resolver-pom.xml")) {
+            pom = IOUtils.toString(pomTemplate);
+        }
+
+        StringBuilder dependencies = new StringBuilder();
+        for (String dep : cleanTestProvidedDependencies) {
+            dependencies.append(dep);
+            dependencies.append("\n");
+        }
+
+        pom = pom.replace("<!-- DEPENDENCIES -->", dependencies.toString());
+
+        Map<String, String> resolvedProperties = new TreeMap<>();
+        Pattern propPattern = Pattern.compile("(\\$\\{[^}]*\\})");
+        Matcher m = propPattern.matcher(pom);
+        while (m.find()) {
+            String property = m.group();
+            String resolved = DependencyResolver.resolveParentProperty(property);
+            resolvedProperties.put(property, resolved);
+        }
+
+        for (String property : resolvedProperties.keySet()) {
+            pom = pom.replace(property, resolvedProperties.get(property));
+        }
+
+        File pomFile = new File(config.getModuleBasePath() + "/target/itest-spring-boot-dependency-resolver-pom.xml");
+        try (FileWriter fw = new FileWriter(pomFile)) {
+            IOUtils.write(pom, fw);
+        }
+
+        return pomFile;
+    }
+
     private static File createUserPom(ITestConfig config, List<String> cleanTestProvidedDependencies) throws Exception {
 
         String pom;
@@ -295,25 +358,6 @@ public final class ArquillianPackager {
 
     private static ConfigurableMavenResolverSystem resolver(ITestConfig config) {
         return Maven.configureResolver().workOffline(config.getMavenOfflineResolution());
-    }
-
-    public static void copyResource(String folder, String fileNameRegex, String targetFolder) throws IOException {
-
-        final Pattern pattern = Pattern.compile(fileNameRegex);
-
-        File sourceFolder = new File(folder);
-        File[] candidates = sourceFolder.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return pattern.matcher(name).matches();
-            }
-        });
-        if (candidates.length == 0) {
-            Assert.fail("No file matching regex " + fileNameRegex + " has been found");
-        }
-
-        File f = candidates[0];
-        FileUtils.copyFileToDirectory(f, new File(targetFolder));
     }
 
     private static ClassLoader getExtensionClassloader() {
@@ -368,20 +412,22 @@ public final class ArquillianPackager {
         return dependencyXml;
     }
 
-    private static String addBOMVersionWhereMissing(ITestConfig config, String dependencyXml) throws Exception {
-
-        if (dependencyXml.contains("<version>")) {
-            return dependencyXml;
-        }
+    private static String setResolvedVersion(ITestConfig config, String dependencyXml, Map<String, String> resolvedVersions) throws Exception {
 
         String groupId = textBetween(dependencyXml, "<groupId>", "</groupId>");
         String artifactId = textBetween(dependencyXml, "<artifactId>", "</artifactId>");
 
-        String version = DependencyResolver.resolveCamelParentBOMVersion(groupId, artifactId);
-        if (version != null) {
+        String resolvedVersion = resolvedVersions.get(groupId + ":" + artifactId);
+
+        if (!dependencyXml.contains("<version>")) {
             String after = "</artifactId>";
             int split = dependencyXml.indexOf(after) + after.length();
-            dependencyXml = dependencyXml.substring(0, split) + "<version>" + version + "</version>" + dependencyXml.substring(split);
+            dependencyXml = dependencyXml.substring(0, split) + "<version>" + resolvedVersion + "</version>" + dependencyXml.substring(split);
+        } else {
+            String versionTag = "<version>";
+            int split = dependencyXml.indexOf(versionTag) + versionTag.length();
+            int end = dependencyXml.indexOf("</version>");
+            dependencyXml = dependencyXml.substring(0, split) + resolvedVersion + dependencyXml.substring(end);
         }
 
         return dependencyXml;
