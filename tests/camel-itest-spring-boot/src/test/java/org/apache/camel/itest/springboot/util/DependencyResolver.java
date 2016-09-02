@@ -19,6 +19,8 @@ package org.apache.camel.itest.springboot.util;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -54,7 +56,7 @@ public final class DependencyResolver {
     /**
      * Retrieves a list of dependencies of the given scope
      */
-    public static String getDependencies(String pom, String scope) throws Exception {
+    public static List<String> getDependencies(String pom, String scope) throws Exception {
         String expression = "/project/dependencies/dependency[scope='" + scope + "']";
 
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -62,20 +64,20 @@ public final class DependencyResolver {
         XPath xpath = xPathfactory.newXPath();
         XPathExpression expr = xpath.compile(expression);
 
-        StringBuilder res =  new StringBuilder();
+        List<String> dependencies = new LinkedList<>();
         NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-        for(int i=0; i<nodes.getLength(); i++) {
+        for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            try(StringWriter writer = new StringWriter()) {
+            try (StringWriter writer = new StringWriter()) {
                 Transformer transformer = TransformerFactory.newInstance().newTransformer();
                 transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
                 transformer.transform(new DOMSource(node), new StreamResult(writer));
                 String xml = writer.toString();
-                res.append(xml + "\n");
+                dependencies.add(xml);
             }
         }
 
-        return res.toString();
+        return dependencies;
     }
 
     /**
@@ -166,6 +168,10 @@ public final class DependencyResolver {
         return groupArtifact + ":" + version;
     }
 
+    public static String resolveCamelParentBOMVersion(String groupId, String artifactId) throws Exception {
+        return xpath("../../parent/pom.xml", "/project/dependencyManagement/dependencies/dependency[groupId='" + groupId + "' and artifactId='" + artifactId + "']/version/text()");
+    }
+
     public static String resolveParentProperty(String property) {
         property = resolveSpringBootParentProperty(property);
         if (property != null && !isResolved(property)) {
@@ -176,7 +182,7 @@ public final class DependencyResolver {
     }
 
     public static String resolveSpringBootParentProperty(String property) {
-        return resolveProperty("../../parent-spring-boot/pom.xml", property, 0);
+        return resolveProperty("../../spring-boot-dm/camel-starter-parent/pom.xml", property, 0);
     }
 
     public static String resolveCamelParentProperty(String property) {
@@ -192,7 +198,7 @@ public final class DependencyResolver {
             property = resolveProperty("../pom.xml", property, 0);
         }
         if (property != null && !isResolved(property)) {
-            property = resolveProperty("../../parent-spring-boot/pom.xml", property, 0);
+            property = resolveProperty("../../spring-boot-dm/camel-starter-parent/pom.xml", property, 0);
         }
 
         return property;
