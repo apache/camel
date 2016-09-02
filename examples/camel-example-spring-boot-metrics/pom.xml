@@ -96,7 +96,7 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${spring.boot-version}</version>
         <configuration>
-          <mainClass>org.apache.camel.example.springboot.metrics.Application</mainClass>
+          <mainClass>org.apache.camel.example.spring.boot.metrics.Application</mainClass>
         </configuration>
         <executions>
           <execution>
