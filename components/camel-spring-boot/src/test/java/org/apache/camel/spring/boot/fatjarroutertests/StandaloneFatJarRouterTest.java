@@ -17,8 +17,10 @@
 package org.apache.camel.spring.boot.fatjarroutertests;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.ConnectException;
 import java.net.URL;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -30,14 +32,19 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.util.SocketUtils;
 
+import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
 import static com.jayway.awaitility.Awaitility.await;
 
 public class StandaloneFatJarRouterTest extends Assert {
 
     @Test
-    public void shouldStartCamelRoute() throws InterruptedException, IOException {
+    public void shouldStartCamelRoute() throws InterruptedException, IOException, MalformedObjectNameException {
         // Given
-        final int port = SocketUtils.findAvailableTcpPort();
+        final int port = SocketUtils.findAvailableTcpPort(20000);
         final URL httpEndpoint = new URL("http://localhost:" + port);
         new Thread() {
             @Override
@@ -62,6 +69,11 @@ public class StandaloneFatJarRouterTest extends Assert {
 
         // Then
         assertEquals("stringBean", response);
+
+        // There should be 3 routes running..
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        Set<ObjectName> objectNames = mbs.queryNames(new ObjectName("org.apache.camel:type=routes,*"), null);
+        assertEquals(3, objectNames.size());
     }
 
 }

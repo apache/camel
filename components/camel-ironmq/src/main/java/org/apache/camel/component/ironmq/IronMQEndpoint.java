@@ -72,7 +72,7 @@ public class IronMQEndpoint extends ScheduledPollEndpoint {
     }
 
     private Exchange createExchange(ExchangePattern pattern, io.iron.ironmq.Message msg) {
-        Exchange exchange = new DefaultExchange(this, pattern);
+        Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
         if (configuration.isPreserveHeaders()) {
             GsonUtil.copyFrom(msg, message);

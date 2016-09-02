@@ -21,7 +21,7 @@
 	<parent>
 		<groupId>org.apache.camel</groupId>
 		<artifactId>components</artifactId>
-		<version>2.18-SNAPSHOT</version>
+		<version>2.18.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>camel-routebox</artifactId>
@@ -52,12 +52,22 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<scope>test</scope>
-		</dependency>
+		</dependency>   
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 
 </project>

@@ -24,33 +24,37 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringApplicationConfiguration(classes = CamelConfigurationLocationsTest.class)
-@IntegrationTest("camel.springboot.file-configurations=file:src/test/secret/*.properties")
+@SpringBootTest(classes = CamelConfigurationLocationsTest.class, properties = "camel.springboot.file-configurations=file:src/test/secret/*.properties")
 public class CamelConfigurationLocationsTest extends Assert {
+
+    @Configuration
+    static class Config {
+
+        @Bean
+        RouteBuilder routeBuilder() {
+            return new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:foo")
+                            .to("stub:foo?password={{mypassword}}");
+                }
+            };
+        }
+
+    }
 
     @Autowired
     CamelContext camelContext;
 
     @Autowired
     ProducerTemplate producerTemplate;
-
-    @Bean
-    RouteBuilder routeBuilder() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:foo")
-                    .to("stub:foo?password={{mypassword}}");
-            }
-        };
-    }
 
     @Test
     public void shouldSecret() throws InterruptedException {

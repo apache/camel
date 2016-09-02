@@ -16,25 +16,27 @@
  */
 package org.apache.camel.example.cdi.kubernetes;
 
-import java.util.Iterator;
+import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Properties;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 
+import io.fabric8.kubernetes.api.model.ContainerStatus;
 import io.fabric8.kubernetes.api.model.Pod;
-
+import io.fabric8.kubernetes.client.KubernetesClientException;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
-import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.component.properties.PropertiesParser;
-import org.apache.deltaspike.core.api.config.ConfigResolver;
 
 /**
- * Example application
+ * This example periodically polls the list of pods that are deployed to the
+ * configured Kubernetes cluster.
+ *
+ * It relies on the Camel Kubernetes component and emulates the output of the
+ * {@code kubectl get pods} command.
  */
 public class Application {
 
@@ -43,37 +45,55 @@ public class Application {
 
         @Override
         public void configure() {
-            from("timer:stream?repeatCount=3")
-                .to("kubernetes://{{kubernetes-master-url}}?oauthToken={{kubernetes-oauth-token}}&category=pods&operation=listPods")
+            from("timer:client?period=10s").routeId("kubernetes-client")
+                .onException(KubernetesClientException.class).handled(true)
+                    .log(LoggingLevel.ERROR, "${exception.message}")
+                    .log("Stopping the Kubernetes route...")
+                    // Let's stop the route (we may want to implement a way to exit the container)
+                    .to("controlbus:route?routeId=kubernetes-client&action=stop&async=true&loggingLevel=DEBUG")
+                    .end()
+                .to("kubernetes://{{kubernetes-master-url:{{env:KUBERNETES_MASTER}}}}?oauthToken={{kubernetes-oauth-token:}}&category=pods&operation=listPods")
+                .log("We currently have ${body.size()} pods:")
                 .process(exchange -> {
-                    List<Pod> list = exchange.getIn().getBody(List.class);
-                    System.out.println("We currently have " + list.size() + " pods");
-                    Iterator<Pod> it = list.iterator();
-                    while (it.hasNext()) {
-                        Pod pod = it.next();
-                        System.out.println("Pod name " + pod.getMetadata().getName() + " with status " + pod.getStatus().getPhase());
-                    }
+                    List<Pod> pods = exchange.getIn().getBody(List.class);
+                    // Compute the length of the longer pod name
+                    String tty = "%-" + (pods.stream().mapToInt(pod -> pod.getMetadata().getName().length()).max().orElse(30) + 2) + "s %-9s %-9s %-10s %s";
+                    // Emulates the output of 'kubectl get pods'
+                    System.out.println(String.format(tty, "NAME", "READY", "STATUS", "RESTARTS", "AGE"));
+                    pods.stream()
+                        .map(pod -> String.format(tty, pod.getMetadata().getName(),
+                            pod.getStatus().getContainerStatuses().stream()
+                                .filter(ContainerStatus::getReady)
+                                .count() + "/" + pod.getStatus().getContainerStatuses().size(),
+                            pod.getStatus().getPhase(),
+                            pod.getStatus().getContainerStatuses().stream()
+                                .mapToInt(ContainerStatus::getRestartCount).sum(),
+                            formatDuration(Duration.between(ZonedDateTime.parse(pod.getStatus().getStartTime()), ZonedDateTime.now()))))
+                        .forEach(System.out::println);
                 });
         }
     }
-    
+
+    // Let's format duration the kubectl way!
+    static String formatDuration(Duration duration) {
+        if (Duration.ofDays(1).compareTo(duration) < 0) {
+            return duration.toDays() + "d";
+        } else if (Duration.ofHours(1).compareTo(duration) < 0) {
+            return duration.toHours() + "h";
+        } else if (Duration.ofMinutes(1).compareTo(duration) < 0) {
+            return duration.toMinutes() + "m";
+        } else {
+            return duration.getSeconds() + "s";
+        }
+    }
+
     @Produces
     @ApplicationScoped
     @Named("properties")
     // "properties" component bean that Camel uses to lookup properties
-    PropertiesComponent properties(PropertiesParser parser) {
+    PropertiesComponent properties() {
         PropertiesComponent component = new PropertiesComponent();
-        // Use DeltaSpike as configuration source for Camel CDI
-        component.setPropertiesParser(parser);
+        component.setLocation("classpath:application.properties");
         return component;
-    }
-
-    // PropertiesParser bean that uses DeltaSpike to resolve properties
-    static class DeltaSpikeParser extends DefaultPropertiesParser {
-
-        @Override
-        public String parseProperty(String key, String value, Properties properties) {
-            return ConfigResolver.getPropertyValue(key);
-        }
     }
 }

@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * xml-rpc data format
+ * XML-RPC data format
  */
 @Metadata(label = "dataformat,transformation,xml", title = "XML RPC")
 @XmlRootElement(name = "xmlrpc")
@@ -52,7 +52,7 @@ public class XmlRpcDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether to unmarshal request or response
+     * Whether to marshal/unmarshal request or response
      * <p/>
      * Is by default false
      */

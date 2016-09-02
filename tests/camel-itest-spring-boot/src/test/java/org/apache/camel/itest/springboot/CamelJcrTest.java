@@ -36,7 +36,7 @@ public class CamelJcrTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelJcrTest.class))
-                .dependency(DependencyResolver.withVersion("org.apache.lucene:lucene-core"))
+                //.dependency(DependencyResolver.withVersion("org.apache.lucene:lucene-core"))
                 // fails but the tests actually pass
                 .build();
     }

@@ -344,4 +344,28 @@ public interface CamelController {
      */
     Map<String, Set<String>> listLanguagesLabelCatalog() throws Exception;
 
+    /**
+     * Gets the component ascii documentation from the Camel catalog.
+     *
+     * @param name the name of the component
+     * @throws java.lang.Exception can be thrown
+     */
+    String catalogComponentAsciiDoc(String name) throws Exception;
+
+    /**
+     * Gets the data format ascii documentation from the Camel catalog.
+     *
+     * @param name the name of the data format
+     * @throws java.lang.Exception can be thrown
+     */
+    String catalogDataFormatAsciiDoc(String name) throws Exception;
+
+    /**
+     * Gets the language ascii documentation from the Camel catalog.
+     *
+     * @param name the name of the language
+     * @throws java.lang.Exception can be thrown
+     */
+    String catalogLanguageAsciiDoc(String name) throws Exception;
+
 }

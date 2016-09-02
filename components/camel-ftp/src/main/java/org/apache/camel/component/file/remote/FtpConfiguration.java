@@ -31,6 +31,8 @@ public class FtpConfiguration extends RemoteFileConfiguration {
 
     @UriParam(label = "security", secret = true)
     private String account;
+    @UriParam(label = "advanced")
+    private String activePortRange;
 
     public FtpConfiguration() {
         setProtocol("ftp");
@@ -54,5 +56,18 @@ public class FtpConfiguration extends RemoteFileConfiguration {
      */
     public void setAccount(String account) {
         this.account = account;
+    }
+
+    public String getActivePortRange() {
+        return activePortRange;
+    }
+
+    /**
+     * Set the client side port range in active mode.
+     * The syntax is: minPort-maxPort
+     * Both port numbers are inclusive, eg 10000-19999 to include all 1xxxx ports.
+     */
+    public void setActivePortRange(String activePortRange) {
+        this.activePortRange = activePortRange;
     }
 }

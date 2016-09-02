@@ -124,8 +124,19 @@ public class JpaProducer extends DefaultProducer {
                  */
                 private Object remove(final Object entity) {
                     LOG.debug("remove: {}", entity);
-                    entityManager.remove(entity);
-                    return entity;
+
+                    Object managedEntity;
+
+                    // First check if entity is attached to the persistence context
+                    if (entityManager.contains(entity)) {
+                        managedEntity = entity;
+                    } else {
+                        // If not, merge entity state into context before removing it
+                        managedEntity = entityManager.merge(entity);
+                    }
+
+                    entityManager.remove(managedEntity);
+                    return managedEntity;
                 }
             });
         }

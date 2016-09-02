@@ -1,0 +1,10 @@
+@if{!languages.isEmpty()}
+
+[width="100%",cols="4,6",options="header"]
+|=======================================================================
+| Language | Description
+@foreach{row : languages}
+| link:@{row.docLink}/${row.name}-language.adoc[@{row.title}] (@{row.artifactId}) | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description}
+@end{}|=======================================================================
+
+@end{}

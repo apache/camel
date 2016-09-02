@@ -31,6 +31,7 @@ import static org.apache.camel.catalog.CatalogHelper.loadText;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class CamelCatalogTest {
@@ -768,6 +769,55 @@ public class CamelCatalogTest {
         assertEquals("${body} > ${header.size", result.getSimple());
         LOG.info(result.getError());
         assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 22"));
+    }
+
+    @Test
+    public void testSpringCamelContext() throws Exception {
+        String json = catalog.modelJSonSchema("camelContext");
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+
+        assertTrue(json.contains("CamelContext using XML configuration"));
+    }
+
+    @Test
+    public void testComponentAsciiDoc() throws Exception {
+        String doc = catalog.componentAsciiDoc("mock");
+        assertNotNull(doc);
+        assertTrue(doc.contains("mock:someName"));
+
+        doc = catalog.componentAsciiDoc("geocoder");
+        assertNotNull(doc);
+        assertTrue(doc.contains("looking up geocodes"));
+
+        doc = catalog.componentAsciiDoc("smtp");
+        assertNotNull(doc);
+        assertTrue(doc.contains("The mail component"));
+
+        doc = catalog.componentAsciiDoc("unknown");
+        assertNull(doc);
+    }
+
+    @Test
+    public void testDataFormatAsciiDoc() throws Exception {
+        String doc = catalog.dataFormatAsciiDoc("json-jackson");
+        assertNotNull(doc);
+        assertTrue(doc.contains("Jackson dataformat"));
+
+        doc = catalog.dataFormatAsciiDoc("bindy-csv");
+        assertNotNull(doc);
+        assertTrue(doc.contains("CsvRecord"));
+    }
+
+    @Test
+    public void testLanguageAsciiDoc() throws Exception {
+        String doc = catalog.languageAsciiDoc("jsonpath");
+        assertNotNull(doc);
+        assertTrue(doc.contains("JSonPath language"));
     }
 
 }

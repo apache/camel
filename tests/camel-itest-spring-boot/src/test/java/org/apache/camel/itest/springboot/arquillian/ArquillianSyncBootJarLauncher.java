@@ -16,7 +16,16 @@
  */
 package org.apache.camel.itest.springboot.arquillian;
 
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.boot.loader.JarLauncher;
+import org.springframework.boot.loader.LaunchedURLClassLoader;
+import org.springframework.boot.loader.MainMethodRunner;
 
 /**
  * A Spring-boot jar launcher that uses the current thread instead of creating a new thread for spring-boot.
@@ -28,21 +37,32 @@ public class ArquillianSyncBootJarLauncher extends JarLauncher {
     public ArquillianSyncBootJarLauncher() {
     }
 
-    public void run(String[] args) {
+    public void run(String[] args) throws Exception {
         this.launch(args);
     }
 
     @Override
-    protected void launch(String[] args, String mainClass, ClassLoader classLoader)
-            throws Exception {
-
+    protected void launch(String[] args, String mainClass, ClassLoader classLoader) throws Exception {
         this.classLoader = classLoader;
 
-        Runnable runner = createMainMethodRunner(mainClass, args, classLoader);
+        MainMethodRunner runner = createMainMethodRunner(mainClass, args, classLoader);
 
         Thread.currentThread().setContextClassLoader(classLoader);
         runner.run();
     }
+
+    @Override
+    protected ClassLoader createClassLoader(URL[] urls) throws Exception {
+        // The spring classloader should not be built on top of the current classloader, it should just share the test classes if available
+        List<URL> parentUrls = Arrays.asList(((URLClassLoader) this.getClass().getClassLoader()).getURLs());
+        List<URL> additionalURLs = parentUrls.stream().filter(u -> u.toString().startsWith("file") && !u.toString().endsWith(".jar")).collect(Collectors.toList());
+
+        ArrayList<URL> newURLs = new ArrayList(Arrays.asList(urls));
+        newURLs.addAll(additionalURLs);
+
+        return new LaunchedURLClassLoader(newURLs.toArray(new URL[0]), null);
+    }
+
 
     /**
      * Returns the classloader used by spring, to communicate with it.

@@ -51,6 +51,14 @@ public class RestletProducer extends DefaultAsyncProducer {
         client.setContext(new Context());
         client.getContext().getParameters().add("socketTimeout", String.valueOf(endpoint.getSocketTimeout()));
         client.getContext().getParameters().add("socketConnectTimeoutMs", String.valueOf(endpoint.getSocketTimeout()));
+
+        RestletComponent component = (RestletComponent) endpoint.getComponent();
+        if (component.getMaxConnectionsPerHost() != null && component.getMaxConnectionsPerHost() > 0) {
+            client.getContext().getParameters().add("maxConnectionsPerHost", String.valueOf(component.getMaxConnectionsPerHost()));
+        }
+        if (component.getMaxTotalConnections() != null && component.getMaxTotalConnections() > 0) {
+            client.getContext().getParameters().add("maxTotalConnections", String.valueOf(component.getMaxTotalConnections()));
+        }
     }
 
     @Override
@@ -146,7 +154,12 @@ public class RestletProducer extends DefaultAsyncProducer {
     }
 
     private static String buildUri(RestletEndpoint endpoint, Exchange exchange) throws CamelExchangeException {
-        String uri = endpoint.getProtocol() + "://" + endpoint.getHost() + ":" + endpoint.getPort() + endpoint.getUriPattern();
+        // rest producer may provide an override url to be used which we should discard if using (hence the remove)
+        String uri = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_URI);
+
+        if (uri == null) {
+            uri = endpoint.getProtocol() + "://" + endpoint.getHost() + ":" + endpoint.getPort() + endpoint.getUriPattern();
+        }
 
         // substitute { } placeholders in uri and use mandatory headers
         LOG.trace("Substituting '(value)' placeholders in uri: {}", uri);
@@ -168,7 +181,11 @@ public class RestletProducer extends DefaultAsyncProducer {
             matcher.reset(uri);
         }
 
-        String query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        // rest producer may provide an override query string to be used which we should discard if using (hence the remove)
+        String query = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_QUERY);
+        if (query == null) {
+            query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        }
         if (query != null) {
             LOG.trace("Adding query: {} to uri: {}", query, uri);
             uri = addQueryToUri(uri, query);
@@ -201,7 +218,6 @@ public class RestletProducer extends DefaultAsyncProducer {
             }
         }
         return answer.toString();
-
     }
 
     protected RestletOperationException populateRestletProducerException(Exchange exchange, Response response, int responseCode) {
@@ -237,7 +253,6 @@ public class RestletProducer extends DefaultAsyncProducer {
     }
 
     protected Map<String, String> parseResponseHeaders(Object response, Exchange camelExchange) {
-
         Map<String, String> answer = new HashMap<String, String>();
         if (response instanceof Response) {
 

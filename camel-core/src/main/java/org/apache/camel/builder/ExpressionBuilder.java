@@ -2063,7 +2063,7 @@ public final class ExpressionBuilder {
         return constantExpression(str);
     }
 
-    public static Expression propertiesComponentExpression(final String key, final String locations) {
+    public static Expression propertiesComponentExpression(final String key, final String locations, final String defaultValue) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 String text = simpleExpression(key).evaluate(exchange, String.class);
@@ -2091,6 +2091,10 @@ public final class ExpressionBuilder {
                         return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken());
                     }
                 } catch (Exception e) {
+                    // property with key not found, use default value if provided
+                    if (defaultValue != null) {
+                        return defaultValue;
+                    }
                     throw ObjectHelper.wrapRuntimeCamelException(e);
                 }
             }

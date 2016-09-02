@@ -27,6 +27,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 
 /**
@@ -37,11 +38,14 @@ public class SpringBatchProducer extends DefaultProducer {
     private final JobLauncher jobLauncher;
 
     private final Job job;
+    
+    private final JobRegistry jobRegistry;
 
-    public SpringBatchProducer(SpringBatchEndpoint endpoint, JobLauncher jobLauncher, Job job) {
+    public SpringBatchProducer(SpringBatchEndpoint endpoint, JobLauncher jobLauncher, Job job, JobRegistry jobRegistry) {
         super(endpoint);
         this.job = job;
         this.jobLauncher = jobLauncher;
+        this.jobRegistry = jobRegistry;
     }
 
     @Override
@@ -53,7 +57,11 @@ public class SpringBatchProducer extends DefaultProducer {
         Job job2run = this.job;
 
         if (messageJobName != null) {
-            job2run = CamelContextHelper.mandatoryLookup(getEndpoint().getCamelContext(), messageJobName, Job.class);
+            if (jobRegistry != null) {
+                job2run = jobRegistry.getJob(messageJobName);
+            } else {
+                job2run = CamelContextHelper.mandatoryLookup(getEndpoint().getCamelContext(), messageJobName, Job.class);
+            }
         }
 
         if (job2run == null) {

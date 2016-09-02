@@ -20,17 +20,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.log4j.spi.LoggingEvent;
 
 public class LogEventVerifier extends LogVerifier {
+    private final List<LogEvent> events = new ArrayList<>();
 
-    private List<LogEvent> events = new ArrayList<>();
-
-    protected void append(LoggingEvent event) {
+    @Override
+    protected void doAppend(org.apache.logging.log4j.core.LogEvent event) {
         events.add(new LogEvent(
             event.getLevel().toString(),
             event.getLoggerName(),
-            event.getRenderedMessage()));
+            event.getMessage().getFormattedMessage()));
     }
 
     public List<LogEvent> getEvents() {

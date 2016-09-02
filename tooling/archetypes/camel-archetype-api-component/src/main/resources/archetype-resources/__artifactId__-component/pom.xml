@@ -74,23 +74,21 @@
       <classifier>javadoc</classifier>
       <scope>provided</scope>
     </dependency>
-
+    
     <!-- logging -->
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j-version}</version>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>${log4j-version}</version>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -173,8 +171,8 @@
                   <!-- Use substitutions to manipulate parameter names and avoid name clashes
                   <substitutions>
                     <substitution>
-                      <method>^.+$</method>
-                      <argName>^.+$</argName>
+                      <method>^(.+)$</method>
+                      <argName>^(.+)$</argName>
                       <argType>java.lang.String</argType>
                       <replacement>$1Param</replacement>
                       <replaceWithType>false</replaceWithType>
@@ -203,6 +201,11 @@
                     </alias>
                   </aliases>
                   -->
+                  <!-- for some methods, null can be a valid input
+                  <nullableOptions>
+                    <nullableOption>option-name</nullableOption>
+                  </nullableOptions>
+                  -->
                 </api>
                 <api>
                   <apiName>hello-javadoc</apiName>
@@ -211,6 +214,7 @@
                     <!-- Use exclude patterns to limit what gets exposed in component endpoint
                     <excludePackages>package-name-patterns</excludePackages>
                     <excludeClasses>class-name-patterns</excludeClasses>
+                    <includeMethods>method-name-patterns</includeMethods>
                     <excludeMethods>method-name-patterns</excludeMethods>
                     <includeStaticMethods>use 'true' to include static methods, false by default<includeStaticMethods>
                     -->
@@ -221,9 +225,10 @@
               <substitutions/>
               <excludeConfigNames/>
               <excludeConfigTypes/>
-              <extraOptions>
+              <extraOptions/>
               <fromJavadoc/>
               <aliases/>
+              <nullableOptions/>
               -->
             </configuration>
           </execution>

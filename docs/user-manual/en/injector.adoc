@@ -1,0 +1,24 @@
+[[Injector-Injector]]
+Injector
+~~~~~~~~
+
+The
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/Injector.html[Injector]
+is a pluggable strategy to any IoC container such as
+link:spring.html[Spring] or Guice to be able to create and
+dependency-inject objects of a certain type.
+
+For example if you are using the
+link:inversion-of-control-with-smart-defaults.html[Inversion Of Control
+With Smart Defaults] pattern to minimize your XML dependency; Camel will
+automatically discover and use new endpoints when they are referenced
+via their link:uris.html[URIs] by using the META-INF/services settings.
+You could explicitly configure each link:component.html[Component] and
+link:endpoint.html[Endpoint] in your Spring XML file; or let Camel find
+the defaults then use the Injector to create and inject any of its
+dependencies.
+
+As an example; consider the link:jms.html[JMS] component. Rather than
+explicitly configuring the JMS component in Spring XML you can just
+provide a ConnectionFactory in your Spring XML which the Injector will
+use to properly configure the JmsComponent when it is instantiated.

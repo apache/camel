@@ -177,7 +177,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (parts.length > 2) {
                 throw new SimpleParserException("Valid syntax: ${properties:key[:default]} was: " + function, token.getIndex());
             }
-            return ExpressionBuilder.propertiesComponentExpression(remainder, null);
+            return ExpressionBuilder.propertiesComponentExpression(remainder, null, null);
         }
 
         // properties-location: prefix
@@ -194,7 +194,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 locations = ObjectHelper.before(remainder, ":");
                 key = ObjectHelper.after(remainder, ":");
             }
-            return ExpressionBuilder.propertiesComponentExpression(key, locations);
+            return ExpressionBuilder.propertiesComponentExpression(key, locations, null);
         }
 
         // ref: prefix

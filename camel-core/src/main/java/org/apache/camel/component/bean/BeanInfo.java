@@ -47,6 +47,7 @@ import org.apache.camel.Message;
 import org.apache.camel.OutHeaders;
 import org.apache.camel.Properties;
 import org.apache.camel.Property;
+import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.spi.Registry;
@@ -973,6 +974,10 @@ public class BeanInfo {
             return ExpressionBuilder.outHeadersExpression();
         } else if (annotation instanceof ExchangeException) {
             return ExpressionBuilder.exchangeExceptionExpression(CastUtils.cast(parameterType, Exception.class));
+        } else if (annotation instanceof PropertyInject) {
+            PropertyInject propertyAnnotation = (PropertyInject) annotation;
+            Expression inject = ExpressionBuilder.propertiesComponentExpression(propertyAnnotation.value(), null, propertyAnnotation.defaultValue());
+            return ExpressionBuilder.convertToExpression(inject, parameterType);
         } else {
             LanguageAnnotation languageAnnotation = annotation.annotationType().getAnnotation(LanguageAnnotation.class);
             if (languageAnnotation != null) {

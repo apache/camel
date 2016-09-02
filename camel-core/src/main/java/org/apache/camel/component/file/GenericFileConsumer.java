@@ -125,7 +125,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         List<GenericFile<T>> files = new ArrayList<GenericFile<T>>();
         String name = endpoint.getConfiguration().getDirectory();
 
-        // time how long time it takes to poll
+        // time how long it takes to poll
         StopWatch stop = new StopWatch();
         boolean limitHit;
         try {

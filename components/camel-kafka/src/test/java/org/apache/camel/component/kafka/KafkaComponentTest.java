@@ -44,9 +44,9 @@ public class KafkaComponentTest {
         String remaining = "broker1:12345,broker2:12566";
 
         KafkaEndpoint endpoint = new KafkaComponent(context).createEndpoint(uri, remaining, params);
-        assertEquals("broker1:12345,broker2:12566", endpoint.getBrokers());
-        assertEquals("mytopic", endpoint.getTopic());
-        assertEquals("com.class.Party", endpoint.getPartitioner());
+        assertEquals("broker1:12345,broker2:12566", endpoint.getConfiguration().getBrokers());
+        assertEquals("mytopic", endpoint.getConfiguration().getTopic());
+        assertEquals("com.class.Party", endpoint.getConfiguration().getPartitioner());
     }
 
     @Test
@@ -59,49 +59,49 @@ public class KafkaComponentTest {
 
         KafkaEndpoint endpoint = new KafkaComponent(context).createEndpoint(uri, remaining, params);
 
-        assertEquals("1", endpoint.getRequestRequiredAcks());
-        assertEquals(new Integer(1), endpoint.getBufferMemorySize());
-        assertEquals(new Integer(10), endpoint.getProducerBatchSize());
-        assertEquals(new Integer(12), endpoint.getConnectionMaxIdleMs());
-        assertEquals(new Integer(1), endpoint.getMaxBlockMs());
-        assertEquals(new Integer(1), endpoint.getBufferMemorySize());
-        assertEquals("testing", endpoint.getClientId());
-        assertEquals("none", endpoint.getCompressionCodec());
-        assertEquals(new Integer(1), endpoint.getLingerMs());
-        assertEquals(new Integer(100), endpoint.getMaxRequestSize());
-        assertEquals(100, endpoint.getRequestTimeoutMs().intValue());
-        assertEquals(new Integer(1029), endpoint.getMetadataMaxAgeMs());
-        assertEquals(new Integer(23), endpoint.getReceiveBufferBytes());
-        assertEquals(new Integer(234), endpoint.getReconnectBackoffMs());
-        assertEquals(new Integer(0), endpoint.getRetries());
-        assertEquals(3782, endpoint.getRetryBackoffMs().intValue());
-        assertEquals(765, endpoint.getSendBufferBytes().intValue());
-        assertEquals(new Integer(1), endpoint.getMaxInFlightRequest());
-        assertEquals("org.apache.camel.reporters.TestReport,org.apache.camel.reporters.SampleReport", endpoint.getMetricReporters());
-        assertEquals(new Integer(3), endpoint.getNoOfMetricsSample());
-        assertEquals(new Integer(12344), endpoint.getMetricsSampleWindowMs());
-        assertEquals(KafkaConstants.KAFKA_DEFAULT_SERIALIZER, endpoint.getSerializerClass());
-        assertEquals(KafkaConstants.KAFKA_DEFAULT_SERIALIZER, endpoint.getKeySerializerClass());
-        assertEquals("testing", endpoint.getSslKeyPassword());
-        assertEquals("/abc", endpoint.getSslKeystoreLocation());
-        assertEquals("testing", endpoint.getSslKeystorePassword());
-        assertEquals("/abc", endpoint.getSslTruststoreLocation());
-        assertEquals("testing", endpoint.getSslTruststorePassword());
-        assertEquals("test", endpoint.getSaslKerberosServiceName());
-        assertEquals("PLAINTEXT", endpoint.getSecurityProtocol());
-        assertEquals("TLSv1.2", endpoint.getSslEnabledProtocols());
-        assertEquals("JKS", endpoint.getSslKeystoreType());
-        assertEquals("TLS", endpoint.getSslProtocol());
-        assertEquals("test", endpoint.getSslProvider());
-        assertEquals("JKS", endpoint.getSslTruststoreType());
-        assertEquals("/usr/bin/kinit", endpoint.getKerberosInitCmd());
-        assertEquals(new Integer(60000), endpoint.getKerberosBeforeReloginMinTime());
-        assertEquals(new Double(0.05), endpoint.getKerberosRenewJitter());
-        assertEquals(new Double(0.8), endpoint.getKerberosRenewWindowFactor());
-        assertEquals("MAC", endpoint.getSslCipherSuites());
-        assertEquals("test", endpoint.getSslEndpointAlgorithm());
-        assertEquals("SunX509", endpoint.getSslKeymanagerAlgorithm());
-        assertEquals("PKIX", endpoint.getSslTrustmanagerAlgorithm());
+        assertEquals("1", endpoint.getConfiguration().getRequestRequiredAcks());
+        assertEquals(new Integer(1), endpoint.getConfiguration().getBufferMemorySize());
+        assertEquals(new Integer(10), endpoint.getConfiguration().getProducerBatchSize());
+        assertEquals(new Integer(12), endpoint.getConfiguration().getConnectionMaxIdleMs());
+        assertEquals(new Integer(1), endpoint.getConfiguration().getMaxBlockMs());
+        assertEquals(new Integer(1), endpoint.getConfiguration().getBufferMemorySize());
+        assertEquals("testing", endpoint.getConfiguration().getClientId());
+        assertEquals("none", endpoint.getConfiguration().getCompressionCodec());
+        assertEquals(new Integer(1), endpoint.getConfiguration().getLingerMs());
+        assertEquals(new Integer(100), endpoint.getConfiguration().getMaxRequestSize());
+        assertEquals(100, endpoint.getConfiguration().getRequestTimeoutMs().intValue());
+        assertEquals(new Integer(1029), endpoint.getConfiguration().getMetadataMaxAgeMs());
+        assertEquals(new Integer(23), endpoint.getConfiguration().getReceiveBufferBytes());
+        assertEquals(new Integer(234), endpoint.getConfiguration().getReconnectBackoffMs());
+        assertEquals(new Integer(0), endpoint.getConfiguration().getRetries());
+        assertEquals(3782, endpoint.getConfiguration().getRetryBackoffMs().intValue());
+        assertEquals(765, endpoint.getConfiguration().getSendBufferBytes().intValue());
+        assertEquals(new Integer(1), endpoint.getConfiguration().getMaxInFlightRequest());
+        assertEquals("org.apache.camel.reporters.TestReport,org.apache.camel.reporters.SampleReport", endpoint.getConfiguration().getMetricReporters());
+        assertEquals(new Integer(3), endpoint.getConfiguration().getNoOfMetricsSample());
+        assertEquals(new Integer(12344), endpoint.getConfiguration().getMetricsSampleWindowMs());
+        assertEquals(KafkaConstants.KAFKA_DEFAULT_SERIALIZER, endpoint.getConfiguration().getSerializerClass());
+        assertEquals(KafkaConstants.KAFKA_DEFAULT_SERIALIZER, endpoint.getConfiguration().getKeySerializerClass());
+        assertEquals("testing", endpoint.getConfiguration().getSslKeyPassword());
+        assertEquals("/abc", endpoint.getConfiguration().getSslKeystoreLocation());
+        assertEquals("testing", endpoint.getConfiguration().getSslKeystorePassword());
+        assertEquals("/abc", endpoint.getConfiguration().getSslTruststoreLocation());
+        assertEquals("testing", endpoint.getConfiguration().getSslTruststorePassword());
+        assertEquals("test", endpoint.getConfiguration().getSaslKerberosServiceName());
+        assertEquals("PLAINTEXT", endpoint.getConfiguration().getSecurityProtocol());
+        assertEquals("TLSv1.2", endpoint.getConfiguration().getSslEnabledProtocols());
+        assertEquals("JKS", endpoint.getConfiguration().getSslKeystoreType());
+        assertEquals("TLS", endpoint.getConfiguration().getSslProtocol());
+        assertEquals("test", endpoint.getConfiguration().getSslProvider());
+        assertEquals("JKS", endpoint.getConfiguration().getSslTruststoreType());
+        assertEquals("/usr/bin/kinit", endpoint.getConfiguration().getKerberosInitCmd());
+        assertEquals(new Integer(60000), endpoint.getConfiguration().getKerberosBeforeReloginMinTime());
+        assertEquals(new Double(0.05), endpoint.getConfiguration().getKerberosRenewJitter());
+        assertEquals(new Double(0.8), endpoint.getConfiguration().getKerberosRenewWindowFactor());
+        assertEquals("MAC", endpoint.getConfiguration().getSslCipherSuites());
+        assertEquals("test", endpoint.getConfiguration().getSslEndpointAlgorithm());
+        assertEquals("SunX509", endpoint.getConfiguration().getSslKeymanagerAlgorithm());
+        assertEquals("PKIX", endpoint.getConfiguration().getSslTrustmanagerAlgorithm());
     }
 
     @Test

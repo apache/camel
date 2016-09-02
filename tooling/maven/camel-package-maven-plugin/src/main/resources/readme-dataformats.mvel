@@ -1,0 +1,10 @@
+@if{!dataformats.isEmpty()}
+
+[width="100%",cols="4,6",options="header"]
+|=======================================================================
+| Data Format | Description
+@foreach{row : dataformats}
+| link:@{row.docLink}/${row.name}-dataformat.adoc[@{row.title}] (@{row.artifactId}) | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description}
+@end{}|=======================================================================
+
+@end{}

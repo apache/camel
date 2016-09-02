@@ -30,7 +30,7 @@ public class KafkaEndpointTest {
     @Test
     public void testCreatingKafkaExchangeSetsHeaders() throws URISyntaxException {
         KafkaEndpoint endpoint = new KafkaEndpoint("kafka:localhost", new KafkaComponent());
-        endpoint.setBrokers("localhost");
+        endpoint.getConfiguration().setBrokers("localhost");
 
         ConsumerRecord<String, String> record = new ConsumerRecord<String, String>("topic", 4, 56, "somekey", "");
         Exchange exchange = endpoint.createKafkaExchange(record);
@@ -43,7 +43,7 @@ public class KafkaEndpointTest {
     @Test
     public void assertSingleton() throws URISyntaxException {
         KafkaEndpoint endpoint = new KafkaEndpoint("kafka:localhost", new KafkaComponent());
-        endpoint.setBrokers("localhost");
+        endpoint.getConfiguration().setBrokers("localhost");
         assertTrue(endpoint.isSingleton());
     }
 

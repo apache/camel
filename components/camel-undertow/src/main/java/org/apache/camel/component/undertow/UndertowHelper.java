@@ -45,7 +45,11 @@ public final class UndertowHelper {
      * @return the URL to invoke
      */
     public static String createURL(Exchange exchange, UndertowEndpoint endpoint) {
-        String uri = uri = endpoint.getHttpURI().toASCIIString();
+        // rest producer may provide an override url to be used which we should discard if using (hence the remove)
+        String uri = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_URI);
+        if (uri == null) {
+            uri = endpoint.getHttpURI().toASCIIString();
+        }
 
         // resolve placeholders in uri
         try {
@@ -87,8 +91,12 @@ public final class UndertowHelper {
      */
     public static URI createURI(Exchange exchange, String url, UndertowEndpoint endpoint) throws URISyntaxException {
         URI uri = new URI(url);
+        // rest producer may provide an override query string to be used which we should discard if using (hence the remove)
+        String queryString = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_QUERY);
         // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        if (queryString == null) {
+            queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        }
         if (queryString == null) {
             queryString = endpoint.getHttpURI().getRawQuery();
         }
@@ -123,10 +131,6 @@ public final class UndertowHelper {
 
     /**
      * Creates the HttpMethod to use to call the remote server, often either its GET or POST.
-     *
-     * @param exchange the exchange
-     * @return the created method
-     * @throws URISyntaxException
      */
     public static HttpString createMethod(Exchange exchange, UndertowEndpoint endpoint, boolean hasPayload) throws URISyntaxException {
         // is a query string provided in the endpoint URI or in a header (header

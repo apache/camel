@@ -23,6 +23,7 @@ import com.google.gson.JsonSyntaxException;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.lightcouch.Response;
 
 public class CouchDbProducer extends DefaultProducer {
@@ -37,16 +38,32 @@ public class CouchDbProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         JsonElement json = getBodyAsJsonElement(exchange);
-        Response save = saveJsonElement(json);
-        if (save == null) {
-            throw new CouchDbException("Could not save document [unknown reason]", exchange);
-        }
+        String operation = exchange.getIn().getHeader(CouchDbConstants.HEADER_METHOD, String.class);
+        if (ObjectHelper.isEmpty(operation)) {
+            Response save = saveJsonElement(json);
+            if (save == null) {
+                throw new CouchDbException("Could not save document [unknown reason]", exchange);
+            }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Document saved [_id={}, _rev={}]", save.getId(), save.getRev());
+            if (log.isTraceEnabled()) {
+                log.trace("Document saved [_id={}, _rev={}]", save.getId(), save.getRev());
+            }
+            exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, save.getRev());
+            exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, save.getId());
+        } else {
+            if (operation.equalsIgnoreCase("DELETE")) {
+                Response delete = deleteJsonElement(json);
+                if (delete == null) {
+                    throw new CouchDbException("Could not delete document [unknown reason]", exchange);
+                }
+
+                if (log.isTraceEnabled()) {
+                    log.trace("Document saved [_id={}, _rev={}]", delete.getId(), delete.getRev());
+                }
+                exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, delete.getRev());
+                exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, delete.getId());
+            }
         }
-        exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, save.getRev());
-        exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, save.getId());
     }
 
     JsonElement getBodyAsJsonElement(Exchange exchange) throws InvalidPayloadException {
@@ -77,5 +94,16 @@ public class CouchDbProducer extends DefaultProducer {
             save = couchClient.save(json);
         }
         return save;
+    }
+    
+    private Response deleteJsonElement(JsonElement json) {
+        Response delete;
+        if (json instanceof JsonObject) {
+            JsonObject obj = (JsonObject) json;
+            delete = couchClient.remove(obj);
+        } else {
+            delete = couchClient.remove(json);
+        }
+        return delete;
     }
 }

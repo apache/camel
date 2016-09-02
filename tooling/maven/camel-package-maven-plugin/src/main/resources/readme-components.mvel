@@ -1,0 +1,12 @@
+@if{!components.isEmpty()}
+
+[width="100%",cols="4,6",options="header"]
+|=======================================================================
+| Component | Description
+@foreach{row : components}
+| link:@{row.docLink}/${row.scheme}-component.adoc[@{row.title}] (@{row.artifactId}) +
+`@{row.syntax}` | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description}
+@end{}
+|=======================================================================
+
+@end{}

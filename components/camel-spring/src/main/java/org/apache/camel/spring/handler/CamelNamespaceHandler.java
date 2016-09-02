@@ -50,6 +50,7 @@ import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelConsumerTemplateFactoryBean;
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.CamelEndpointFactoryBean;
+import org.apache.camel.spring.CamelFluentProducerTemplateFactoryBean;
 import org.apache.camel.spring.CamelProducerTemplateFactoryBean;
 import org.apache.camel.spring.CamelRedeliveryPolicyFactoryBean;
 import org.apache.camel.spring.CamelRestContextFactoryBean;
@@ -142,6 +143,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
         addBeanDefinitionParser("proxy", CamelProxyFactoryBean.class, true, false);
         addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class, true, false);
+        addBeanDefinitionParser("fluentTemplate", CamelFluentProducerTemplateFactoryBean.class, true, false);
         addBeanDefinitionParser("consumerTemplate", CamelConsumerTemplateFactoryBean.class, true, false);
         addBeanDefinitionParser("export", CamelServiceExporter.class, true, false);
         addBeanDefinitionParser("threadPool", CamelThreadPoolFactoryBean.class, true, true);
@@ -429,7 +431,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                             if (ObjectHelper.isNotEmpty(id)) {
                                 parserContext.registerComponent(new BeanComponentDefinition(definition, id));
                                 // set the templates with the camel context
-                                if (localName.equals("template") || localName.equals("consumerTemplate")
+                                if (localName.equals("template") || localName.equals("fluentTemplate") || localName.equals("consumerTemplate")
                                         || localName.equals("proxy") || localName.equals("export")) {
                                     // set the camel context
                                     definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
@@ -554,10 +556,11 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     }
 
     /**
-     * Used for auto registering producer and consumer templates if not already defined in XML.
+     * Used for auto registering producer, fluent producer and consumer templates if not already defined in XML.
      */
     protected void registerTemplates(Element element, ParserContext parserContext, String contextId) {
         boolean template = false;
+        boolean fluentTemplate = false;
         boolean consumerTemplate = false;
 
         NodeList list = element.getChildNodes();
@@ -569,6 +572,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 String localName = childElement.getLocalName();
                 if ("template".equals(localName)) {
                     template = true;
+                } else if ("fluentTemplate".equals(localName)) {
+                    fluentTemplate = true;
                 } else if ("consumerTemplate".equals(localName)) {
                     consumerTemplate = true;
                 }
@@ -594,6 +599,32 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 Element templateElement = element.getOwnerDocument().createElement("template");
                 templateElement.setAttribute("id", id);
                 BeanDefinitionParser parser = parserMap.get("template");
+                BeanDefinition definition = parser.parse(templateElement, parserContext);
+
+                // auto register it
+                autoRegisterBeanDefinition(id, definition, parserContext, contextId);
+            }
+        }
+
+        if (!fluentTemplate) {
+            // either we have not used fluentTemplate before or we have auto registered it already and therefore we
+            // need it to allow to do it so it can remove the existing auto registered as there is now a clash id
+            // since we have multiple camel contexts
+            boolean existing = autoRegisterMap.get("fluentTemplate") != null;
+            boolean inUse = false;
+            try {
+                inUse = parserContext.getRegistry().isBeanNameInUse("fluentTemplate");
+            } catch (BeanCreationException e) {
+                // Spring Eclipse Tooling may throw an exception when you edit the Spring XML online in Eclipse
+                // when the isBeanNameInUse method is invoked, so ignore this and continue (CAMEL-2739)
+                LOG.debug("Error checking isBeanNameInUse(fluentTemplate). This exception will be ignored", e);
+            }
+            if (!inUse || existing) {
+                String id = "fluentTemplate";
+                // auto create a fluentTemplate
+                Element templateElement = element.getOwnerDocument().createElement("fluentTemplate");
+                templateElement.setAttribute("id", id);
+                BeanDefinitionParser parser = parserMap.get("fluentTemplate");
                 BeanDefinition definition = parser.parse(templateElement, parserContext);
 
                 // auto register it

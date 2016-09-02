@@ -28,16 +28,47 @@
       <action class="org.apache.camel.karaf.commands.catalog.CatalogComponentInfo">
         <property name="camelController" ref="camelController"/>
       </action>
+      <completers>
+        <ref component-id="componentCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel-catalog/component-doc">
+      <action class="org.apache.camel.karaf.commands.catalog.CatalogComponentDoc">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="componentCompleter"/>
+        <null/>
+      </completers>
     </command>
     <command name="camel-catalog/dataformat-list">
       <action class="org.apache.camel.karaf.commands.catalog.CatalogDataFormatList">
         <property name="camelController" ref="camelController"/>
       </action>
     </command>
+    <command name="camel-catalog/dataformat-doc">
+      <action class="org.apache.camel.karaf.commands.catalog.CatalogDataFormatDoc">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="dataFormatCompleter"/>
+        <null/>
+      </completers>
+    </command>
     <command name="camel-catalog/language-list">
       <action class="org.apache.camel.karaf.commands.catalog.CatalogLanguageList">
         <property name="camelController" ref="camelController"/>
       </action>
+    </command>
+    <command name="camel-catalog/language-doc">
+      <action class="org.apache.camel.karaf.commands.catalog.CatalogLanguageDoc">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="languageCompleter"/>
+        <null/>
+      </completers>
     </command>
     <command name="camel-catalog/eip-list">
       <action class="org.apache.camel.karaf.commands.catalog.CatalogEipList">
@@ -48,6 +79,18 @@
 
   <bean id="camelController" class="org.apache.camel.karaf.commands.internal.CamelControllerImpl">
     <property name="bundleContext" ref="blueprintBundleContext"/>
+  </bean>
+
+  <bean id="componentCompleter" class="org.apache.camel.karaf.commands.catalog.completers.ComponentListCompleter">
+    <property name="camelController" ref="camelController"/>
+  </bean>
+
+  <bean id="dataFormatCompleter" class="org.apache.camel.karaf.commands.catalog.completers.DataFormatListCompleter">
+    <property name="camelController" ref="camelController"/>
+  </bean>
+
+  <bean id="languageCompleter" class="org.apache.camel.karaf.commands.catalog.completers.LanguageListCompleter">
+    <property name="camelController" ref="camelController"/>
   </bean>
 
 </blueprint>

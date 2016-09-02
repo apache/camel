@@ -92,7 +92,7 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
     }
 
     /**
-     * To use the shared configuration
+     * To use the shared configuration. Properties of the shared configuration can also be set individually.
      */
     @Override
     public void setConfiguration(Olingo2Configuration configuration) {
@@ -174,5 +174,133 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
         if (apiProxy != null) {
             apiProxy.close();
         }
+    }
+
+    private Olingo2Configuration getConfigurationOrCreate() {
+        if (this.getConfiguration() == null) {
+            this.setConfiguration(new Olingo2Configuration());
+        }
+        return this.getConfiguration();
+    }
+
+    public Olingo2ApiName getApiName() {
+        return getConfigurationOrCreate().getApiName();
+    }
+
+    /**
+     * What kind of operation to perform
+     * @param apiName
+     */
+    public void setApiName(Olingo2ApiName apiName) {
+        getConfigurationOrCreate().setApiName(apiName);
+    }
+
+    public String getMethodName() {
+        return getConfigurationOrCreate().getMethodName();
+    }
+
+    /**
+     * What sub operation to use for the selected operation
+     * @param methodName
+     */
+    public void setMethodName(String methodName) {
+        getConfigurationOrCreate().setMethodName(methodName);
+    }
+
+    public String getServiceUri() {
+        return getConfigurationOrCreate().getServiceUri();
+    }
+
+    /**
+     * Target OData service base URI, e.g. http://services.odata.org/OData/OData.svc
+     * @param serviceUri
+     */
+    public void setServiceUri(String serviceUri) {
+        getConfigurationOrCreate().setServiceUri(serviceUri);
+    }
+
+    public String getContentType() {
+        return getConfigurationOrCreate().getContentType();
+    }
+
+    /**
+     * Content-Type header value can be used to specify JSON or XML message format, defaults to application/json;charset=utf-8
+     * @param contentType
+     */
+    public void setContentType(String contentType) {
+        getConfigurationOrCreate().setContentType(contentType);
+    }
+
+    public Map<String, String> getHttpHeaders() {
+        return getConfigurationOrCreate().getHttpHeaders();
+    }
+
+    /**
+     * Custom HTTP headers to inject into every request, this could include OAuth tokens, etc.
+     * @param httpHeaders
+     */
+    public void setHttpHeaders(Map<String, String> httpHeaders) {
+        getConfigurationOrCreate().setHttpHeaders(httpHeaders);
+    }
+
+    public int getConnectTimeout() {
+        return getConfigurationOrCreate().getConnectTimeout();
+    }
+
+    /**
+     * HTTP connection creation timeout in milliseconds, defaults to 30,000 (30 seconds)
+     * @param connectTimeout
+     */
+    public void setConnectTimeout(int connectTimeout) {
+        getConfigurationOrCreate().setConnectTimeout(connectTimeout);
+    }
+
+    public int getSocketTimeout() {
+        return getConfigurationOrCreate().getSocketTimeout();
+    }
+
+    /**
+     * HTTP request timeout in milliseconds, defaults to 30,000 (30 seconds)
+     * @param socketTimeout
+     */
+    public void setSocketTimeout(int socketTimeout) {
+        getConfigurationOrCreate().setSocketTimeout(socketTimeout);
+    }
+
+    public HttpHost getProxy() {
+        return getConfigurationOrCreate().getProxy();
+    }
+
+    /**
+     * HTTP proxy server configuration
+     * @param proxy
+     */
+    public void setProxy(HttpHost proxy) {
+        getConfigurationOrCreate().setProxy(proxy);
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return getConfigurationOrCreate().getSslContextParameters();
+    }
+
+    /**
+     * To configure security using SSLContextParameters
+     * @param sslContextParameters
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        getConfigurationOrCreate().setSslContextParameters(sslContextParameters);
+    }
+
+    public HttpAsyncClientBuilder getHttpAsyncClientBuilder() {
+        return getConfigurationOrCreate().getHttpAsyncClientBuilder();
+    }
+
+    /**
+     * Custom HTTP async client builder for more complex HTTP client configuration, overrides connectionTimeout, socketTimeout, proxy and sslContext.
+     * Note that a socketTimeout MUST be specified in the builder, otherwise OData requests could block indefinitely
+     * @param httpAsyncClientBuilder
+     */
+    public void setHttpAsyncClientBuilder(HttpAsyncClientBuilder httpAsyncClientBuilder) {
+        getConfigurationOrCreate().setHttpAsyncClientBuilder(httpAsyncClientBuilder);
     }
 }

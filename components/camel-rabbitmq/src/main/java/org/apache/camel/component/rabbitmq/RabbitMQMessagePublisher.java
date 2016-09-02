@@ -25,6 +25,7 @@ import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.ReturnListener;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -37,6 +38,13 @@ import org.slf4j.LoggerFactory;
  * A method object for publishing to RabbitMQ
  */
 public class RabbitMQMessagePublisher {
+    private static final ReturnListener GUARANTEED_DELIVERY_RETURN_LISTENER = new ReturnListener() {
+        @Override
+        public void handleReturn(int replyCode, String replyText, String exchange, String routingKey, AMQP.BasicProperties properties, byte[] body) throws IOException {
+            throw new RuntimeCamelException("Delivery failed for exchange " + exchange + " and routing key " + routingKey + "; replyCode = " + replyCode + " replyText = " + replyText);
+        }
+    };
+
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQMessagePublisher.class);
     private final Exchange camelExchange;
     private final Channel channel;
@@ -60,7 +68,7 @@ public class RabbitMQMessagePublisher {
             LOG.debug("Removing the {} header", RabbitMQEndpoint.SERIALIZE_HEADER);
             message.getHeaders().remove(RabbitMQEndpoint.SERIALIZE_HEADER);
         }
-        
+
         return message;
     }
 
@@ -86,7 +94,7 @@ public class RabbitMQMessagePublisher {
                 throw new RuntimeCamelException(e);
             }
         }
-        
+
         publishToRabbitMQ(properties, body);
     }
 
@@ -98,15 +106,28 @@ public class RabbitMQMessagePublisher {
 
         LOG.debug("Sending message to exchange: {} with CorrelationId = {}", rabbitExchange, properties.getCorrelationId());
 
-        if (endpoint.isPublisherAcknowledgements()) {
+        if (isPublisherAcknowledgements()) {
             channel.confirmSelect();
         }
+        if (endpoint.isGuaranteedDeliveries()) {
+            channel.addReturnListener(GUARANTEED_DELIVERY_RETURN_LISTENER);
 
-        channel.basicPublish(rabbitExchange, routingKey, mandatory, immediate, properties, body);
-
-        if (endpoint.isPublisherAcknowledgements()) {
-            waitForConfirmation();
         }
+
+        try {
+            channel.basicPublish(rabbitExchange, routingKey, mandatory, immediate, properties, body);
+            if (isPublisherAcknowledgements()) {
+                waitForConfirmation();
+            }
+        } finally {
+            if (endpoint.isGuaranteedDeliveries()) {
+                channel.removeReturnListener(GUARANTEED_DELIVERY_RETURN_LISTENER);
+            }
+        }
+    }
+
+    private boolean isPublisherAcknowledgements() {
+        return endpoint.isPublisherAcknowledgements() || endpoint.isGuaranteedDeliveries();
     }
 
     private void waitForConfirmation() throws IOException {

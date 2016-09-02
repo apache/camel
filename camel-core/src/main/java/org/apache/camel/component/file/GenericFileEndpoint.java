@@ -69,6 +69,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected String charset;
     @UriParam(javaType = "java.lang.String")
     protected Expression fileName;
+    @UriParam
+    protected String doneFileName;
 
     // producer options
 
@@ -84,8 +86,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected boolean eagerDeleteTargetFile = true;
     @UriParam(label = "producer,advanced")
     protected boolean keepLastModified;
-    @UriParam(label = "producer")
-    protected String doneFileName;
     @UriParam(label = "producer,advanced")
     protected boolean allowNullBody;
 
@@ -570,10 +570,15 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * If provided, then Camel will write a 2nd done file when the original file has been written.
+     * Producer: If provided, then Camel will write a 2nd done file when the original file has been written.
      * The done file will be empty. This option configures what file name to use.
      * Either you can specify a fixed name. Or you can use dynamic placeholders.
      * The done file will always be written in the same folder as the original file.
+     * <p/>
+     * Consumer: If provided, Camel will only consume files if a done file exists. 
+     * This option configures what file name to use. Either you can specify a fixed name.
+     * Or you can use dynamic placeholders.The done file is always expected in the same folder
+     * as the original file.
      * <p/>
      * Only ${file.name} and ${file.name.noext} is supported as dynamic placeholders.
      */

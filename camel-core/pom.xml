@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.18-SNAPSHOT</version>
+    <version>2.18.0-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -164,10 +164,20 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- logging -->
+    <!-- logging -->         
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -366,6 +376,7 @@
             <id>validate</id>
             <goals>
               <goal>validate-components</goal>
+              <goal>prepare-spring-boot-starter</goal>
               <goal>prepare-spring-boot-auto-configuration</goal>
             </goals>
             <phase>prepare-package</phase>
@@ -546,20 +557,6 @@
       </activation>
 
       <dependencies>
-
-        <!-- to support spring-boot auto configuration in the Camel components -->
-        <dependency>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot</artifactId>
-          <version>${spring-boot-version}</version>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-autoconfigure</artifactId>
-          <version>${spring-boot-version}</version>
-          <scope>provided</scope>
-        </dependency>
 
         <!-- enable the APT processor -->
         <dependency>

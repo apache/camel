@@ -37,7 +37,7 @@ public class CamelCatalogMBeanExporter {
      * Initializes and exports the {@link CamelCatalog} in JMX using the domain name,
      * which can be obtained using {@link #getObjectName()}.
      *
-     * @throws Exception
+     * @throws Exception is thrown if error during registration
      */
     public void init() throws Exception {
         catalog = new DefaultCamelCatalog();
@@ -66,9 +66,9 @@ public class CamelCatalogMBeanExporter {
     }
 
     /**
-     * Destroyes and unregisteres the {@link CamelCatalog} from JMX.
+     * Destroys and un-registers the {@link CamelCatalog} from JMX.
      *
-     * @throws Exception is thrown if error during unregistration
+     * @throws Exception is thrown if error during un-registration
      */
     public void destroy() throws Exception {
         if (mBeanServer != null) {

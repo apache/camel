@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
@@ -55,11 +54,6 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
-    public void process(Exchange exchange) throws Exception {
-        // just to let the stacktrace reveal that this is a dead letter channel
-        super.process(exchange);
-    }
-
     @Override
     public String toString() {
         if (output == null) {
@@ -67,10 +61,6 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
             return "";
         }
         return "DefaultErrorHandler[" + output + "]";
-    }
-
-    public Processor getDeadLetterProcessor() {
-        return deadLetter;
     }
 
 }

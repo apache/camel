@@ -266,4 +266,10 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?SkipQueueBind=true", RabbitMQEndpoint.class);
         assertTrue(endpoint.isSkipQueueBind());
     }
+
+    @Test
+    public void createEndpointWithExclusiveEnabled() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?exclusive=true", RabbitMQEndpoint.class);
+        assertTrue(endpoint.isExclusive());
+    }
 }

@@ -49,6 +49,8 @@ final class CdiCamelEnvironment {
             return true;
         } catch (ClassNotFoundException cause) {
             return false;
+        } catch (NoClassDefFoundError cause) {
+            return false;
         }
     }
 

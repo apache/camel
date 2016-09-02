@@ -20,19 +20,56 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for DefaultProducerTemplate
+ * Unit test for FluentProducerTemplate
  */
 public class FluentProducerTemplateTest extends ContextTestSupport {
+
+    public void testNoEndpoint() throws Exception {
+        FluentProducerTemplate fluent = context.createFluentProducerTemplate();
+
+        try {
+            fluent.withBody("Hello World").send();
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+
+        try {
+            fluent.withBody("Hello World").request();
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    public void testFromCamelContext() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Bye World");
+
+        FluentProducerTemplate fluent = context.createFluentProducerTemplate();
+
+        Object result = fluent
+            .withBody("Hello World")
+            .to("direct:in")
+            .request();
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals("Bye World", result);
+
+        assertSame(context, fluent.getCamelContext());
+    }
 
     public void testIn() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        Object result = FluentProducerTemplate.on(context)
+        Object result = DefaultFluentProducerTemplate.on(context)
             .withBody("Hello World")
             .to("direct:in")
             .request();
@@ -48,7 +85,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye Bye World");
 
-        Object result = FluentProducerTemplate.on(context)
+        Object result = DefaultFluentProducerTemplate.on(context)
             .withBody("Hello World")
             .to("direct:out")
             .request();
@@ -62,7 +99,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(11);
 
-        Object result = FluentProducerTemplate.on(context)
+        Object result = DefaultFluentProducerTemplate.on(context)
             .withBodyAs("10", Integer.class)
             .to("direct:sum")
             .request();
@@ -77,7 +114,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         try {
-            FluentProducerTemplate.on(context)
+            DefaultFluentProducerTemplate.on(context)
                 .withBodyAs("10", Double.class)
                 .to("direct:sum")
                 .request();
@@ -93,7 +130,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Object result = FluentProducerTemplate.on(context)
+        Object result = DefaultFluentProducerTemplate.on(context)
             .withBody("Hello World")
             .to("direct:fault")
             .request();
@@ -107,7 +144,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Exchange out = FluentProducerTemplate.on(context)
+        Exchange out = DefaultFluentProducerTemplate.on(context)
             .withBody("Hello World")
             .to("direct:exception")
             .send();
@@ -123,7 +160,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Exchange out = FluentProducerTemplate.on(context)
+        Exchange out = DefaultFluentProducerTemplate.on(context)
             .withProcessor(exchange -> exchange.getIn().setBody("Hello World"))
             .to("direct:exception")
             .send();
@@ -138,7 +175,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Exchange out = FluentProducerTemplate.on(context)
+        Exchange out = DefaultFluentProducerTemplate.on(context)
                 .withExchange(() -> {
                     Exchange exchange = context.getEndpoint("direct:exception").createExchange();
                     exchange.getIn().setBody("Hello World");
@@ -158,7 +195,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         try {
-            FluentProducerTemplate.on(context)
+            DefaultFluentProducerTemplate.on(context)
                 .withBody("Hello World")
                 .to("direct:exception")
                 .request();
@@ -176,7 +213,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Exchange out = FluentProducerTemplate.on(context)
+        Exchange out = DefaultFluentProducerTemplate.on(context)
             .withProcessor(exchange -> exchange.getIn().setBody("Hello World"))
             .to("direct:exception")
             .request(Exchange.class);
@@ -191,7 +228,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Exchange out = FluentProducerTemplate.on(context)
+        Exchange out = DefaultFluentProducerTemplate.on(context)
             .withExchange(() -> {
                 Exchange exchange = context.getEndpoint("direct:exception").createExchange(ExchangePattern.InOut);
                 exchange.getIn().setBody("Hello World");
@@ -208,7 +245,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
 
     public void testRequestBody() throws Exception {
         // with endpoint as string uri
-        FluentProducerTemplate template = FluentProducerTemplate.on(context);
+        FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context);
 
         final Integer expectedResult = new Integer(123);
 

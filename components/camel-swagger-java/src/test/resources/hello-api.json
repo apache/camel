@@ -1,0 +1,41 @@
+{
+  "swagger" : "2.0",
+  "host" : "localhost:8080",
+  "basePath" : "/api",
+  "tags" : [ {
+    "name" : "hello"
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/hello/hi/{name}" : {
+      "get" : {
+        "tags" : [ "hello" ],
+        "summary" : "Saying hi",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "path",
+          "description" : "Who is it",
+          "required" : true,
+          "type" : "string"
+        } ]
+      }
+    },
+    "/bye" : {
+      "get" : {
+        "tags" : [ "bye" ],
+        "summary" : "Saying bye",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "query",
+          "description" : "Who is it",
+          "required" : true,
+          "type" : "string"
+        } ]
+      }
+    }
+  }
+}

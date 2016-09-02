@@ -18,6 +18,7 @@ package org.apache.camel.component.braintree;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import com.braintreegateway.BraintreeGateway;
 import org.apache.camel.CamelContext;
@@ -55,7 +56,7 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
     }
 
     /**
-     * To use the shared configuration
+     * To use the shared configuration. Properties of the shared configuration can also be set individually.
      */
     @Override
     public void setConfiguration(BraintreeConfiguration configuration) {
@@ -75,5 +76,152 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
         }
 
         return gateway;
+    }
+
+    private BraintreeConfiguration getConfigurationOrCreate() {
+        if (this.getConfiguration() == null) {
+            this.setConfiguration(new BraintreeConfiguration());
+        }
+        return this.getConfiguration();
+    }
+
+    public BraintreeApiName getApiName() {
+        return getConfigurationOrCreate().getApiName();
+    }
+
+    /**
+     * What kind of operation to perform
+     * @param apiName
+     */
+    public void setApiName(BraintreeApiName apiName) {
+        getConfigurationOrCreate().setApiName(apiName);
+    }
+
+    public String getMethodName() {
+        return getConfigurationOrCreate().getMethodName();
+    }
+
+    /**
+     * What sub operation to use for the selected operation
+     * @param methodName
+     */
+    public void setMethodName(String methodName) {
+        getConfigurationOrCreate().setMethodName(methodName);
+    }
+
+    public String getEnvironment() {
+        return getConfigurationOrCreate().getEnvironment();
+    }
+
+    /**
+     * The environment Either SANDBOX or PRODUCTION
+     * @param environment
+     */
+    public void setEnvironment(String environment) {
+        getConfigurationOrCreate().setEnvironment(environment);
+    }
+
+    public String getMerchantId() {
+        return getConfigurationOrCreate().getMerchantId();
+    }
+
+    /**
+     * The merchant id provided by Braintree.
+     * @param merchantId
+     */
+    public void setMerchantId(String merchantId) {
+        getConfigurationOrCreate().setMerchantId(merchantId);
+    }
+
+    public String getPublicKey() {
+        return getConfigurationOrCreate().getPublicKey();
+    }
+
+    /**
+     * The public key provided by Braintree.
+     * @param publicKey
+     */
+    public void setPublicKey(String publicKey) {
+        getConfigurationOrCreate().setPublicKey(publicKey);
+    }
+
+    public String getPrivateKey() {
+        return getConfigurationOrCreate().getPrivateKey();
+    }
+
+    /**
+     * The private key provided by Braintree.
+     * @param privateKey
+     */
+    public void setPrivateKey(String privateKey) {
+        getConfigurationOrCreate().setPrivateKey(privateKey);
+    }
+
+    public String getProxyHost() {
+        return getConfigurationOrCreate().getProxyHost();
+    }
+
+    /**
+     * The proxy host
+     * @param proxyHost
+     */
+    public void setProxyHost(String proxyHost) {
+        getConfigurationOrCreate().setProxyHost(proxyHost);
+    }
+
+    public Integer getProxyPort() {
+        return getConfigurationOrCreate().getProxyPort();
+    }
+
+    /**
+     * The proxy port
+     * @param proxyPort
+     */
+    public void setProxyPort(Integer proxyPort) {
+        getConfigurationOrCreate().setProxyPort(proxyPort);
+    }
+
+    public Level getHttpLogLevel() {
+        return getConfigurationOrCreate().getHttpLogLevel();
+    }
+
+    /**
+     * Set logging level for http calls, @see java.util.logging.Level
+     * @param httpLogLevel
+     */
+    public void setHttpLogLevel(String httpLogLevel) {
+        getConfigurationOrCreate().setHttpLogLevel(httpLogLevel);
+    }
+
+    /**
+     * Set logging level for http calls, @see java.util.logging.Level
+     * @param httpLogLevel
+     */
+    public void setHttpLogLevel(Level httpLogLevel) {
+        getConfigurationOrCreate().setHttpLogLevel(httpLogLevel);
+    }
+
+    public String getHttpLogName() {
+        return getConfigurationOrCreate().getHttpLogName();
+    }
+
+    /**
+     * Set log category to use to log http calls, default "Braintree"
+     * @param httpLogName
+     */
+    public void setHttpLogName(String httpLogName) {
+        getConfigurationOrCreate().setHttpLogName(httpLogName);
+    }
+
+    public Integer getHttpReadTimeout() {
+        return getConfigurationOrCreate().getHttpReadTimeout();
+    }
+
+    /**
+     * Set read timeout for http calls.
+     * @param httpReadTimeout
+     */
+    public void setHttpReadTimeout(Integer httpReadTimeout) {
+        getConfigurationOrCreate().setHttpReadTimeout(httpReadTimeout);
     }
 }

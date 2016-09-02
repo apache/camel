@@ -24,6 +24,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.ManagementMBeanAssembler;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.ApplicationContextRegistry;
 import org.apache.camel.spring.spi.SpringInjector;
@@ -68,7 +69,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public SpringCamelContext(ApplicationContext applicationContext) {
         setApplicationContext(applicationContext);
-        setModelJAXBContextFactory(new SpringModelJAXBContextFactory());
     }
 
     public static void setNoStart(boolean b) {
@@ -259,6 +259,11 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     @Override
     protected Registry createRegistry() {
         return new ApplicationContextRegistry(getApplicationContext());
+    }
+
+    @Override
+    protected ModelJAXBContextFactory createModelJAXBContextFactory() {
+        return new SpringModelJAXBContextFactory();
     }
 
     private void maybeStart() throws Exception {

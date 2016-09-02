@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.18-SNAPSHOT</version>
+    <version>2.18.0-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -30,22 +30,6 @@
   <name>Camel :: Components</name>
   <description>Camel Components</description>
   <packaging>pom</packaging>
-
-  <!-- to support spring-boot auto configuration in the Camel components -->
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot</artifactId>
-      <version>${spring-boot-version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-autoconfigure</artifactId>
-      <version>${spring-boot-version}</version>
-      <scope>provided</scope>
-    </dependency>
- </dependencies>
 
   <modules>
     <!-- we want to test these modules first to catch any errors early as possible -->
@@ -252,7 +236,6 @@
     <module>camel-splunk</module>
     <module>camel-spring-batch</module>
     <module>camel-spring-boot</module>
-    <module>camel-spring-boot-starter</module>
     <module>camel-spring-javaconfig</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-ldap</module>
@@ -288,7 +271,6 @@
     <module>camel-yammer</module>
     <module>camel-zipfile</module>
     <module>camel-zipkin</module>
-    <module>camel-zipkin-starter</module>
     <module>camel-zookeeper</module>
   </modules>
 
@@ -311,6 +293,7 @@
             <id>validate</id>
             <goals>
               <goal>validate-components</goal>
+              <goal>prepare-spring-boot-starter</goal>
               <goal>prepare-spring-boot-auto-configuration</goal>
             </goals>
             <phase>prepare-package</phase>

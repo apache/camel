@@ -76,10 +76,11 @@ public class DefaultCamelCatalog implements CamelCatalog {
     private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
     private static final String DATA_FORMATS_CATALOG = "org/apache/camel/catalog/dataformats.properties";
     private static final String LANGUAGE_CATALOG = "org/apache/camel/catalog/languages.properties";
-    private static final String MODEL_JSON = "org/apache/camel/catalog/models";
-    private static final String COMPONENTS_JSON = "org/apache/camel/catalog/components";
-    private static final String DATA_FORMATS_JSON = "org/apache/camel/catalog/dataformats";
-    private static final String LANGUAGE_JSON = "org/apache/camel/catalog/languages";
+    private static final String MODEL_DIR = "org/apache/camel/catalog/models";
+    private static final String COMPONENT_DIR = "org/apache/camel/catalog/components";
+    private static final String DATAFORMAT_DIR = "org/apache/camel/catalog/dataformats";
+    private static final String LANGUAGE_DIR = "org/apache/camel/catalog/languages";
+    private static final String DOC_DIR = "org/apache/camel/catalog/docs";
     private static final String ARCHETYPES_CATALOG = "org/apache/camel/catalog/archetypes/archetype-catalog.xml";
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
 
@@ -410,7 +411,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public String modelJSonSchema(String name) {
-        String file = MODEL_JSON + "/" + name + ".json";
+        String file = MODEL_DIR + "/" + name + ".json";
 
         String answer = null;
         if (caching) {
@@ -436,7 +437,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public String componentJSonSchema(String name) {
-        String file = COMPONENTS_JSON + "/" + name + ".json";
+        String file = COMPONENT_DIR + "/" + name + ".json";
 
         String answer = null;
         if (caching) {
@@ -478,7 +479,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public String dataFormatJSonSchema(String name) {
-        String file = DATA_FORMATS_JSON + "/" + name + ".json";
+        String file = DATAFORMAT_DIR + "/" + name + ".json";
 
         String answer = null;
         if (caching) {
@@ -525,7 +526,164 @@ public class DefaultCamelCatalog implements CamelCatalog {
             name = "bean";
         }
 
-        String file = LANGUAGE_JSON + "/" + name + ".json";
+        String file = LANGUAGE_DIR + "/" + name + ".json";
+
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get("language-" + file);
+        }
+
+        if (answer == null) {
+            InputStream is = versionManager.getResourceAsStream(file);
+            if (is != null) {
+                try {
+                    answer = CatalogHelper.loadText(is);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put("language-" + file, answer);
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public String componentAsciiDoc(String name) {
+        String answer = doComponentAsciiDoc(name);
+        if (answer == null) {
+            // maybe the name is an alternative scheme name, and then we need to find the component that
+            // has the name as alternative, and use the first scheme as the name to find the documentation
+            List<String> names = findComponentNames();
+            for (String alternative : names) {
+                String schemes = getAlternativeComponentName(alternative);
+                if (schemes != null && schemes.contains(name)) {
+                    String first = schemes.split(",")[0];
+                    return componentAsciiDoc(first);
+                }
+            }
+        }
+        return answer;
+    }
+
+    private String getAlternativeComponentName(String componentName) {
+        String json = componentJSonSchema(componentName);
+        if (json != null) {
+            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+            for (Map<String, String> row : rows) {
+                if (row.containsKey("alternativeSchemes")) {
+                    return row.get("alternativeSchemes");
+                }
+            }
+        }
+        return null;
+    }
+
+    private String doComponentAsciiDoc(String name) {
+        // special for mail component
+        if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp") || name.equals("smtps")) {
+            name = "mail";
+        }
+
+        String file = DOC_DIR + "/" + name + "-component.adoc";
+
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get("component-" + file);
+        }
+
+        if (answer == null) {
+            InputStream is = versionManager.getResourceAsStream(file);
+            if (is != null) {
+                try {
+                    answer = CatalogHelper.loadText(is);
+                } catch (IOException e) {
+                    // ignore
+                }
+            } else {
+                // its maybe a third party so try load it
+                String className = extraComponents.get(name);
+                if (className != null) {
+                    String packageName = className.substring(0, className.lastIndexOf('.'));
+                    packageName = packageName.replace('.', '/');
+                    String path = packageName + "/" + name + "-component.adoc";
+                    is = versionManager.getResourceAsStream(path);
+                    if (is != null) {
+                        try {
+                            answer = CatalogHelper.loadText(is);
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                    }
+                }
+            }
+            if (caching) {
+                cache.put("component-" + file, answer);
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public String dataFormatAsciiDoc(String name) {
+        // special for some name data formats
+        if (name.startsWith("bindy")) {
+            name = "bindy";
+        } else if (name.startsWith("univocity")) {
+            name = "univocity";
+        }
+
+        String file = DOC_DIR + "/" + name + "-dataformat.adoc";
+
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get("dataformat-" + file);
+        }
+
+        if (answer == null) {
+            InputStream is = versionManager.getResourceAsStream(file);
+            if (is != null) {
+                try {
+                    answer = CatalogHelper.loadText(is);
+                } catch (IOException e) {
+                    // ignore
+                }
+            } else {
+                // its maybe a third party so try load it
+                String className = extraDataFormats.get(name);
+                if (className != null) {
+                    String packageName = className.substring(0, className.lastIndexOf('.'));
+                    packageName = packageName.replace('.', '/');
+                    String path = packageName + "/" + name + "-dataformat.adoc";
+                    is = versionManager.getResourceAsStream(path);
+                    if (is != null) {
+                        try {
+                            answer = CatalogHelper.loadText(is);
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                    }
+                }
+            }
+            if (caching) {
+                cache.put("dataformat-" + file, answer);
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public String languageAsciiDoc(String name) {
+        // if we try to look method then its in the bean.adoc file
+        if ("method".equals(name)) {
+            name = "bean";
+        }
+
+        String file = DOC_DIR + "/" + name + "-language.adoc";
 
         String answer = null;
         if (caching) {

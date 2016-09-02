@@ -18,7 +18,8 @@ package org.apache.camel.component.aws.ddbstream;
 
 import org.apache.camel.Converter;
 
-@Converter
+// Allow to ignore this type converter if the ddbstream JARs are not present on the classpath
+@Converter(ignoreOnLoadError = true)
 public final class StringSequenceNumberConverter {
 
     private StringSequenceNumberConverter() {

@@ -17,6 +17,7 @@
 package org.apache.camel.spring.boot;
 
 import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.api.management.ManagedAttribute;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "camel.springboot")
@@ -244,6 +245,76 @@ public class CamelConfigurationProperties {
      * The default value is false.
      */
     private boolean jmxCreateConnector;
+
+    /**
+     * Tracer should output message body
+     */
+    private boolean traceFormatterShowBody = true;
+
+    /**
+     * Tracer should output message body type
+     */
+    private boolean tracerFormatterShowBodyType = true;
+
+    /**
+     * Tracer should output breadcrumb
+     */
+    private boolean traceFormatterShowBreadCrumb = true;
+
+    /**
+     * Tracer should output exchange id
+     */
+    private boolean traceFormatterShowExchangeId;
+
+    /**
+     * Tracer should output message headers
+     */
+    private boolean traceFormatterShowHeaders = true;
+
+    /**
+     * Tracer should output exchange properties
+     */
+    private boolean traceFormatterShowProperties;
+
+    /**
+     * Tracer should output EIP node
+     */
+    private boolean traceFormatterShowNode = true;
+
+    /**
+     * Tracer should output message exchange pattern (MEP)
+     */
+    private boolean traceFormatterShowExchangePattern = true;
+
+    /**
+     * Tracer should output exception
+     */
+    private boolean traceFormatterShowException = true;
+
+    /**
+     * Tracer should output route id
+     */
+    private boolean traceFormatterShowRouteId = true;
+
+    /**
+     * Tracer maximum length of breadcrumb ids
+     */
+    private Integer tracerFormatterBreadCrumbLength;
+
+    /**
+     * Tracer should output short exchange id
+     */
+    private boolean traceFormatterShowShortExchangeId;
+
+    /**
+     * Tracer maximum length of node
+     */
+    private Integer tracerFormatterNodeLength;
+
+    /**
+     * Tracer maximum characters in total
+     */
+    private Integer tracerFormatterMaxChars = 10000;
 
     // Getters & setters
 
@@ -495,5 +566,117 @@ public class CamelConfigurationProperties {
 
     public void setFileConfigurations(String fileConfigurations) {
         this.fileConfigurations = fileConfigurations;
+    }
+
+    public boolean isTraceFormatterShowBody() {
+        return traceFormatterShowBody;
+    }
+
+    public void setTraceFormatterShowBody(boolean traceFormatterShowBody) {
+        this.traceFormatterShowBody = traceFormatterShowBody;
+    }
+
+    public boolean isTracerFormatterShowBodyType() {
+        return tracerFormatterShowBodyType;
+    }
+
+    public void setTracerFormatterShowBodyType(boolean tracerFormatterShowBodyType) {
+        this.tracerFormatterShowBodyType = tracerFormatterShowBodyType;
+    }
+
+    public boolean isTraceFormatterShowBreadCrumb() {
+        return traceFormatterShowBreadCrumb;
+    }
+
+    public void setTraceFormatterShowBreadCrumb(boolean traceFormatterShowBreadCrumb) {
+        this.traceFormatterShowBreadCrumb = traceFormatterShowBreadCrumb;
+    }
+
+    public boolean isTraceFormatterShowExchangeId() {
+        return traceFormatterShowExchangeId;
+    }
+
+    public void setTraceFormatterShowExchangeId(boolean traceFormatterShowExchangeId) {
+        this.traceFormatterShowExchangeId = traceFormatterShowExchangeId;
+    }
+
+    public boolean isTraceFormatterShowHeaders() {
+        return traceFormatterShowHeaders;
+    }
+
+    public void setTraceFormatterShowHeaders(boolean traceFormatterShowHeaders) {
+        this.traceFormatterShowHeaders = traceFormatterShowHeaders;
+    }
+
+    public boolean isTraceFormatterShowProperties() {
+        return traceFormatterShowProperties;
+    }
+
+    public void setTraceFormatterShowProperties(boolean traceFormatterShowProperties) {
+        this.traceFormatterShowProperties = traceFormatterShowProperties;
+    }
+
+    public boolean isTraceFormatterShowNode() {
+        return traceFormatterShowNode;
+    }
+
+    public void setTraceFormatterShowNode(boolean traceFormatterShowNode) {
+        this.traceFormatterShowNode = traceFormatterShowNode;
+    }
+
+    public boolean isTraceFormatterShowExchangePattern() {
+        return traceFormatterShowExchangePattern;
+    }
+
+    public void setTraceFormatterShowExchangePattern(boolean traceFormatterShowExchangePattern) {
+        this.traceFormatterShowExchangePattern = traceFormatterShowExchangePattern;
+    }
+
+    public boolean isTraceFormatterShowException() {
+        return traceFormatterShowException;
+    }
+
+    public void setTraceFormatterShowException(boolean traceFormatterShowException) {
+        this.traceFormatterShowException = traceFormatterShowException;
+    }
+
+    public boolean isTraceFormatterShowRouteId() {
+        return traceFormatterShowRouteId;
+    }
+
+    public void setTraceFormatterShowRouteId(boolean traceFormatterShowRouteId) {
+        this.traceFormatterShowRouteId = traceFormatterShowRouteId;
+    }
+
+    public Integer getTracerFormatterBreadCrumbLength() {
+        return tracerFormatterBreadCrumbLength;
+    }
+
+    public void setTracerFormatterBreadCrumbLength(Integer tracerFormatterBreadCrumbLength) {
+        this.tracerFormatterBreadCrumbLength = tracerFormatterBreadCrumbLength;
+    }
+
+    public boolean isTraceFormatterShowShortExchangeId() {
+        return traceFormatterShowShortExchangeId;
+    }
+
+    public void setTraceFormatterShowShortExchangeId(boolean traceFormatterShowShortExchangeId) {
+        this.traceFormatterShowShortExchangeId = traceFormatterShowShortExchangeId;
+    }
+
+    public Integer getTracerFormatterNodeLength() {
+        return tracerFormatterNodeLength;
+    }
+
+    public void setTracerFormatterNodeLength(Integer tracerFormatterNodeLength) {
+        this.tracerFormatterNodeLength = tracerFormatterNodeLength;
+    }
+
+    public Integer getTracerFormatterMaxChars() {
+        return tracerFormatterMaxChars;
+    }
+
+    public void setTracerFormatterMaxChars(Integer tracerFormatterMaxChars) {
+        this.tracerFormatterMaxChars = tracerFormatterMaxChars;
     }
 }

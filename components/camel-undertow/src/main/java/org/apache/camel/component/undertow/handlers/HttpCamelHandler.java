@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.undertow.handlers;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -66,7 +67,7 @@ public class HttpCamelHandler implements HttpHandler {
                 allowedMethods = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
             }
             //return list of allowed methods in response headers
-            httpExchange.setResponseCode(StatusCodes.OK);
+            httpExchange.setStatusCode(StatusCodes.OK);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_LENGTH, 0);
             httpExchange.getResponseHeaders().put(Headers.ALLOW, allowedMethods);
@@ -77,7 +78,7 @@ public class HttpCamelHandler implements HttpHandler {
         //reject if the method is not allowed
         if (consumer.getEndpoint().getHttpMethodRestrict() != null
             && !consumer.getEndpoint().getHttpMethodRestrict().contains(requestMethod.toString())) {
-            httpExchange.setResponseCode(StatusCodes.METHOD_NOT_ALLOWED);
+            httpExchange.setStatusCode(StatusCodes.METHOD_NOT_ALLOWED);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_LENGTH, 0);
             httpExchange.getResponseSender().close();
@@ -118,7 +119,7 @@ public class HttpCamelHandler implements HttpHandler {
         httpExchange.getResponseSender().close();
     }
 
-    private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange, UndertowConsumer consumer) {
+    private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange, UndertowConsumer consumer) throws IOException {
         Object result;
         if (camelExchange.hasOut()) {
             result = consumer.getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getOut());

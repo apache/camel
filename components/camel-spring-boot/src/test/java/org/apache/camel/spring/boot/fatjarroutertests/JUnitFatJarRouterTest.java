@@ -17,24 +17,28 @@
 package org.apache.camel.spring.boot.fatjarroutertests;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.URL;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestFatJarRouter.class)
-@IntegrationTest("spring.main.sources=org.apache.camel.spring.boot.fatjarroutertests")
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = TestFatJarRouter.class, properties = "spring.main.sources=org.apache.camel.spring.boot.fatjarroutertests")
 public class JUnitFatJarRouterTest extends Assert {
 
-    static int port = SocketUtils.findAvailableTcpPort();
+    static int port = SocketUtils.findAvailableTcpPort(20000);
 
     @BeforeClass
     public static void beforeClass() {
@@ -42,10 +46,15 @@ public class JUnitFatJarRouterTest extends Assert {
     }
 
     @Test
-    public void shouldStartCamelRoute() throws InterruptedException, IOException {
+    public void shouldStartCamelRoute() throws InterruptedException, IOException, MalformedObjectNameException {
         String response = IOUtils.toString(new URL("http://localhost:" + port));
 
         assertEquals("stringBean", response);
+
+        // There should be 3 routes running..
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        Set<ObjectName> objectNames = mbs.queryNames(new ObjectName("org.apache.camel:type=routes,*"), null);
+        assertEquals(3, objectNames.size());
     }
 
 }

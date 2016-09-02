@@ -24,8 +24,10 @@ import org.apache.camel.util.CamelLogger;
 /**
  * An {@link ErrorHandler} which uses commons-logging to dump the error
  *
- * @version 
+ * @version
+ * @deprecated use {@link DeadLetterChannel} using a log endpoint instead
  */
+@Deprecated
 public class LoggingErrorHandler extends DefaultErrorHandler {
 
     /**

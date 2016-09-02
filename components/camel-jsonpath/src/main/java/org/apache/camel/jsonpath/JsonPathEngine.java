@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Configuration.Defaults;
@@ -28,19 +30,28 @@ import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.internal.DefaultsImpl;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.file.GenericFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JsonPathEngine {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JsonPathEngine.class);
+
+    private static final Pattern SIMPLE_PATTERN = Pattern.compile("\\$\\{[^\\}]+\\}", Pattern.MULTILINE);
+    private final String expression;
     private final JsonPath path;
     private final Configuration configuration;
 
     public JsonPathEngine(String expression) {
-        this(expression, false, null);
+        this(expression, false, true, null);
     }
 
-    public JsonPathEngine(String expression, boolean suppressExceptions, Option[] options) {
+    public JsonPathEngine(String expression, boolean suppressExceptions, boolean allowSimple, Option[] options) {
+        this.expression = expression;
+
         Defaults defaults = DefaultsImpl.INSTANCE;
         if (options != null) {
             Configuration.ConfigurationBuilder builder = Configuration.builder().jsonProvider(defaults.jsonProvider()).options(options);
@@ -55,10 +66,36 @@ public class JsonPathEngine {
             }
             this.configuration = builder.build();
         }
-        this.path = JsonPath.compile(expression);
+
+        boolean hasSimple = false;
+        if (allowSimple) {
+            // is simple language embedded
+            Matcher matcher = SIMPLE_PATTERN.matcher(expression);
+            if (matcher.find()) {
+                hasSimple = true;
+            }
+        }
+        if (hasSimple) {
+            this.path = null;
+        } else {
+            this.path = JsonPath.compile(expression);
+            LOG.debug("Compiled static JsonPath: {}", expression);
+        }
     }
 
     public Object read(Exchange exchange) throws IOException, InvalidPayloadException {
+        if (path == null) {
+            Expression exp = exchange.getContext().resolveLanguage("simple").createExpression(expression);
+            String text = exp.evaluate(exchange, String.class);
+            JsonPath path = JsonPath.compile(text);
+            LOG.debug("Compiled dynamic JsonPath: {}", expression);
+            return doRead(path, exchange);
+        } else {
+            return doRead(path, exchange);
+        }
+    }
+
+    private Object doRead(JsonPath path, Exchange exchange) throws IOException, InvalidPayloadException {
         Object json = exchange.getIn().getBody();
 
         if (json instanceof GenericFile) {

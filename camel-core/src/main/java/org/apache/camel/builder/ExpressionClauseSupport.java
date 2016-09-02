@@ -354,6 +354,22 @@ public class ExpressionClauseSupport<T> {
      * expression</a>
      *
      * @param text the expression to be evaluated
+     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param allowSimple whether to allow in inlined simple exceptions in the json path expression
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonpath(String text, boolean suppressExceptions, boolean allowSimple) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setSuppressExceptions(suppressExceptions);
+        expression.setAllowSimple(allowSimple);
+        return expression(expression);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
      * @param resultType the return type expected by the expression
      * @return the builder to continue processing the DSL
      */
@@ -376,6 +392,25 @@ public class ExpressionClauseSupport<T> {
     public T jsonpath(String text, boolean suppressExceptions, Class<?> resultType) {
         JsonPathExpression expression = new JsonPathExpression(text);
         expression.setSuppressExceptions(suppressExceptions);
+        expression.setResultType(resultType);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param allowSimple whether to allow in inlined simple exceptions in the json path expression
+     * @param resultType the return type expected by the expression
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonpath(String text, boolean suppressExceptions, boolean allowSimple, Class<?> resultType) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setSuppressExceptions(suppressExceptions);
+        expression.setAllowSimple(allowSimple);
         expression.setResultType(resultType);
         setExpressionType(expression);
         return result;

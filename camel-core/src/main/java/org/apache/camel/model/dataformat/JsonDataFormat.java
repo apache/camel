@@ -31,7 +31,7 @@ import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Json data format
+ * JSon data format
  *
  * @version 
  */
@@ -371,7 +371,7 @@ public class JsonDataFormat extends DataFormatDefinition {
             setProperty(camelContext, dataFormat, "enableJaxbAnnotationModule", enableJaxbAnnotationModule);
         }
         if (moduleClassNames != null) {
-            setProperty(camelContext, dataFormat, "modulesClassNames", moduleClassNames);
+            setProperty(camelContext, dataFormat, "moduleClassNames", moduleClassNames);
         }
         if (moduleRefs != null) {
             setProperty(camelContext, dataFormat, "moduleRefs", moduleRefs);

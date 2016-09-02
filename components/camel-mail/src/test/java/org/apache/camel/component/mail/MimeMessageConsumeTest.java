@@ -78,7 +78,7 @@ public class MimeMessageConsumeTest extends CamelTestSupport {
             DataHandler dh = exchange.getIn().getAttachment(s);
             Object content = dh.getContent();
             assertNotNull("Content should not be empty", content);
-            assertEquals("log4j.properties", dh.getName());
+            assertEquals("log4j2.properties", dh.getName());
         }
     }
 
@@ -106,10 +106,10 @@ public class MimeMessageConsumeTest extends CamelTestSupport {
 
         DataSource ds;
         try {
-            File f = new File(getClass().getResource("/log4j.properties").toURI());
+            File f = new File(getClass().getResource("/log4j2.properties").toURI());
             ds = new FileDataSource(f);
         } catch (URISyntaxException ex) {
-            ds = new URLDataSource(getClass().getResource("/log4j.properties"));
+            ds = new URLDataSource(getClass().getResource("/log4j2.properties"));
         }
         DataHandler dh = new DataHandler(ds);
 
@@ -135,7 +135,8 @@ public class MimeMessageConsumeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://james3@localhost?consumer.delay=1000").convertBodyTo(String.class).to("mock:result");
+                from("pop3://james3@localhost?consumer.delay=1000").removeHeader("to").to("smtp://james4@localhost");
+                from("pop3://james4@localhost?consumer.delay=2000").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

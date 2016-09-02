@@ -30,6 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -91,7 +92,9 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
             if (responseHeaderSize != null) {
                 httpConfig.setResponseHeaderSize(responseHeaderSize);
             }
-            
+            if (useXForwardedForHeader) {
+                httpConfig.addCustomizer(new ForwardedRequestCustomizer());
+            }            
             HttpConnectionFactory httpFactory = new org.eclipse.jetty.server.HttpConnectionFactory(httpConfig); 
 
             ArrayList<ConnectionFactory> connectionFactories = new ArrayList<ConnectionFactory>();

@@ -30,6 +30,7 @@ import org.apache.camel.TypeConverters;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.processor.interceptor.BacklogTracer;
+import org.apache.camel.processor.interceptor.DefaultTraceFormatter;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
@@ -132,7 +133,6 @@ public class CamelAutoConfiguration {
             camelContext.getStreamCachingStrategy().setSpoolUsedHeapMemoryThreshold(config.getStreamCachingSpoolUsedHeapMemoryThreshold());
         }
 
-        camelContext.setTracing(config.isTracing());
         camelContext.setMessageHistory(config.isMessageHistory());
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
         camelContext.setHandleFault(config.isHandleFault());
@@ -148,6 +148,35 @@ public class CamelAutoConfiguration {
 
         camelContext.setPackageScanClassResolver(new FatJarPackageScanClassResolver());
 
+        // tracing
+        camelContext.setTracing(config.isTracing());
+        if (camelContext.getDefaultTracer() instanceof Tracer) {
+            Tracer tracer = (Tracer) camelContext.getDefaultTracer();
+            if (tracer.getDefaultTraceFormatter() != null) {
+                DefaultTraceFormatter formatter = tracer.getDefaultTraceFormatter();
+                if (config.getTracerFormatterBreadCrumbLength() != null) {
+                    formatter.setBreadCrumbLength(config.getTracerFormatterBreadCrumbLength());
+                }
+                if (config.getTracerFormatterMaxChars() != null) {
+                    formatter.setMaxChars(config.getTracerFormatterMaxChars());
+                }
+                if (config.getTracerFormatterNodeLength() != null) {
+                    formatter.setNodeLength(config.getTracerFormatterNodeLength());
+                }
+                formatter.setShowBody(config.isTraceFormatterShowBody());
+                formatter.setShowBodyType(config.isTracerFormatterShowBodyType());
+                formatter.setShowBreadCrumb(config.isTraceFormatterShowBreadCrumb());
+                formatter.setShowException(config.isTraceFormatterShowException());
+                formatter.setShowExchangeId(config.isTraceFormatterShowExchangeId());
+                formatter.setShowExchangePattern(config.isTraceFormatterShowExchangePattern());
+                formatter.setShowHeaders(config.isTraceFormatterShowHeaders());
+                formatter.setShowNode(config.isTraceFormatterShowNode());
+                formatter.setShowProperties(config.isTraceFormatterShowProperties());
+                formatter.setShowRouteId(config.isTraceFormatterShowRouteId());
+                formatter.setShowShortExchangeId(config.isTraceFormatterShowShortExchangeId());
+            }
+        }
+
         // additional advanced configuration which is not configured using CamelConfigurationProperties
         afterPropertiesSet(applicationContext, camelContext);
 
@@ -156,6 +185,11 @@ public class CamelAutoConfiguration {
 
     @Bean
     CamelSpringBootApplicationController applicationController(ApplicationContext applicationContext, CamelContext camelContext) {
+        // CAMEL-10279: We have to call setNoStart(true) here so that if a <camelContext> is imported via
+        // @ImportResource then it does not get started before the RoutesCollector gets a chance to add any
+        // routes found in RouteBuilders.  Even if no RouteBuilders are found, the RoutesCollector will handle
+        // starting the the Camel Context.
+        SpringCamelContext.setNoStart(true);
         return new CamelSpringBootApplicationController(applicationContext, camelContext);
     }
 

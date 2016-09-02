@@ -26,9 +26,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
+import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
+import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.streaming.PushTopicHelper;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
@@ -185,7 +185,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         } catch (IOException e) {
             final String msg = String.format("Error parsing message [%s] from Topic %s: %s",
                     message, topicName, e.getMessage());
-            handleException(msg, new RuntimeCamelException(msg, e));
+            handleException(msg, new SalesforceException(msg, e));
         }
 
         try {
@@ -199,11 +199,13 @@ public class SalesforceConsumer extends DefaultConsumer {
                 }
             });
         } catch (Exception e) {
-            handleException(String.format("Error processing %s: %s", exchange, e.getMessage()), e);
+            String msg = String.format("Error processing %s: %s", exchange, e);
+            handleException(msg, new SalesforceException(msg, e));
         } finally {
             Exception ex = exchange.getException();
             if (ex != null) {
-                handleException(String.format("Unhandled exception: %s", ex.getMessage()), ex);
+                String msg = String.format("Unhandled exception: %s", ex.getMessage());
+                handleException(msg, new SalesforceException(msg, ex));
             }
         }
     }

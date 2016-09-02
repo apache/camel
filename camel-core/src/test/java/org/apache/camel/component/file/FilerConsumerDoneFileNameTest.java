@@ -38,7 +38,7 @@ public class FilerConsumerDoneFileNameTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("file:target/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        // wait a bit and it should not pickup the written file as there are no done file
+        // wait a bit and it should not pickup the written file as there is no done file
         Thread.sleep(250);
 
         assertMockEndpointsSatisfied();

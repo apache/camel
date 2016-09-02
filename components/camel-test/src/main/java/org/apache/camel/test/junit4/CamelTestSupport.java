@@ -34,6 +34,7 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
@@ -44,7 +45,6 @@ import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
-import org.apache.camel.builder.FluentProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -79,6 +79,7 @@ public abstract class CamelTestSupport extends TestSupport {
     private static final ThreadLocal<Boolean> INIT = new ThreadLocal<Boolean>();
     private static ThreadLocal<ModelCamelContext> threadCamelContext = new ThreadLocal<ModelCamelContext>();
     private static ThreadLocal<ProducerTemplate> threadTemplate = new ThreadLocal<ProducerTemplate>();
+    private static ThreadLocal<FluentProducerTemplate> threadFluentTemplate = new ThreadLocal<FluentProducerTemplate>();
     private static ThreadLocal<ConsumerTemplate> threadConsumer = new ThreadLocal<ConsumerTemplate>();
     private static ThreadLocal<Service> threadService = new ThreadLocal<Service>();
     protected volatile ModelCamelContext context;
@@ -296,11 +297,13 @@ public abstract class CamelTestSupport extends TestSupport {
 
         template = context.createProducerTemplate();
         template.start();
+        fluentTemplate = context.createFluentProducerTemplate();
+        fluentTemplate.start();
         consumer = context.createConsumerTemplate();
         consumer.start();
-        fluentTemplate = FluentProducerTemplate.on(context());
 
         threadTemplate.set(template);
+        threadFluentTemplate.set(fluentTemplate);
         threadConsumer.set(consumer);
 
         // enable auto mocking if enabled
@@ -404,7 +407,7 @@ public abstract class CamelTestSupport extends TestSupport {
         }
 
         LOG.debug("tearDown test");
-        doStopTemplates(consumer, template);
+        doStopTemplates(consumer, template, fluentTemplate);
         doStopCamelContext(context, camelContextService);
     }
 
@@ -412,7 +415,7 @@ public abstract class CamelTestSupport extends TestSupport {
     public static void tearDownAfterClass() throws Exception {
         INIT.remove();
         LOG.debug("tearDownAfterClass test");
-        doStopTemplates(threadConsumer.get(), threadTemplate.get());
+        doStopTemplates(threadConsumer.get(), threadTemplate.get(), threadFluentTemplate.get());
         doStopCamelContext(threadCamelContext.get(), threadService.get());
     }
 
@@ -489,6 +492,7 @@ public abstract class CamelTestSupport extends TestSupport {
     protected void postProcessTest() throws Exception {
         context = threadCamelContext.get();
         template = threadTemplate.get();
+        fluentTemplate = threadFluentTemplate.get();
         consumer = threadConsumer.get();
         camelContextService = threadService.get();
         applyCamelPostProcessor();
@@ -527,7 +531,7 @@ public abstract class CamelTestSupport extends TestSupport {
         }
     }
 
-    private static void doStopTemplates(ConsumerTemplate consumer, ProducerTemplate template) throws Exception {
+    private static void doStopTemplates(ConsumerTemplate consumer, ProducerTemplate template, FluentProducerTemplate fluentTemplate) throws Exception {
         if (consumer != null) {
             if (consumer == threadConsumer.get()) {
                 threadConsumer.remove();
@@ -539,6 +543,12 @@ public abstract class CamelTestSupport extends TestSupport {
                 threadTemplate.remove();
             }
             template.stop();
+        }
+        if (fluentTemplate != null) {
+            if (fluentTemplate == threadFluentTemplate.get()) {
+                threadFluentTemplate.remove();
+            }
+            fluentTemplate.stop();
         }
     }
 

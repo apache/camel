@@ -32,20 +32,24 @@ import io.undertow.predicate.Predicate;
 import io.undertow.predicate.Predicates;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.PredicateHandler;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.component.undertow.handlers.HttpCamelHandler;
 import org.apache.camel.component.undertow.handlers.NotFoundHandler;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -55,7 +59,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages {@link UndertowEndpoint}.
  */
-public class UndertowComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory {
+public class UndertowComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
     private UndertowHttpBinding undertowHttpBinding;
@@ -94,14 +98,14 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
 
         // then re-create the http uri with the remaining parameters which the endpoint did not use
         URI httpUri = URISupport.createRemainingURI(
-            new URI(uriHttpUriAddress.getScheme(),
-                uriHttpUriAddress.getUserInfo(),
-                uriHttpUriAddress.getHost(),
-                uriHttpUriAddress.getPort(),
-                uriHttpUriAddress.getPath(),
-                uriHttpUriAddress.getQuery(),
-                uriHttpUriAddress.getFragment()),
-            parameters);
+                new URI(uriHttpUriAddress.getScheme(),
+                        uriHttpUriAddress.getUserInfo(),
+                        uriHttpUriAddress.getHost(),
+                        uriHttpUriAddress.getPort(),
+                        uriHttpUriAddress.getPath(),
+                        uriHttpUriAddress.getQuery(),
+                        uriHttpUriAddress.getFragment()),
+                parameters);
         endpoint.setHttpURI(httpUri);
 
         return endpoint;
@@ -227,6 +231,36 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         }
 
         return consumer;
+    }
+
+    @Override
+    public Producer createProducer(CamelContext camelContext, String host,
+                                   String verb, String basePath, String uriTemplate, String queryParameters,
+                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+
+        // avoid leading slash
+        basePath = FileUtil.stripLeadingSeparator(basePath);
+        uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
+
+        // get the endpoint
+        String url;
+        if (uriTemplate != null) {
+            url = String.format("undertow:%s/%s/%s", host, basePath, uriTemplate);
+        } else {
+            url = String.format("undertow:%s/%s", host, basePath);
+        }
+
+        UndertowEndpoint endpoint = camelContext.getEndpoint(url, UndertowEndpoint.class);
+        if (parameters != null && !parameters.isEmpty()) {
+            setProperties(camelContext, endpoint, parameters);
+        }
+        String path = uriTemplate != null ? uriTemplate : basePath;
+        endpoint.setHeaderFilterStrategy(new UndertowRestHeaderFilterStrategy(path, queryParameters));
+
+        // the endpoint must be started before creating the producer
+        ServiceHelper.startService(endpoint);
+
+        return endpoint.createProducer();
     }
 
     @Override

@@ -32,7 +32,7 @@ import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 
 /**
- * xml-security data format
+ * XML-Security data format
  */
 @Metadata(label = "dataformat,transformation,xml,security", title = "XML Security")
 @XmlRootElement(name = "secureXML")
