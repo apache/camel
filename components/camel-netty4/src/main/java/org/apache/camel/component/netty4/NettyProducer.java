@@ -99,7 +99,7 @@ public class NettyProducer extends DefaultAsyncProducer {
                 .withNativeTransport(configuration.isNativeTransport())
                 .withWorkerCount(configuration.getWorkerCount())
                 .withName("NettyClientTCPWorker").build();
-        } else {        
+        } else {
             workerGroup = configuration.getWorkerGroup();
         }
                
@@ -141,7 +141,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         // setup channel group
         if (configuration.getChannelGroup() == null) {
             allChannels = new DefaultChannelGroup("NettyProducer", ImmediateEventExecutor.INSTANCE);
-        } else {        
+        } else {
             allChannels = configuration.getChannelGroup();
         }
         
