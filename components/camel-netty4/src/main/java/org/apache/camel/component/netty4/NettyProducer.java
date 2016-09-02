@@ -139,10 +139,9 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         // setup channel group
-        if(configuration.getChannelGroup() == null) {
+        if (configuration.getChannelGroup() == null) {
             allChannels = new DefaultChannelGroup("NettyProducer", ImmediateEventExecutor.INSTANCE);
-        }
-        else {
+        } else {        
             allChannels = configuration.getChannelGroup();
         }
         
