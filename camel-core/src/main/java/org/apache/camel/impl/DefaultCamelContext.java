@@ -190,7 +190,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private EndpointRegistry<EndpointKey> endpoints;
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
-    private final Map<String, Component> components = new HashMap<String, Component>();
+    private final Map<String, Component> components = new ConcurrentHashMap<String, Component>();
     private final Set<Route> routes = new LinkedHashSet<Route>();
     private final List<Service> servicesToStop = new CopyOnWriteArrayList<Service>();
     private final List<StartupListener> startupListeners = new CopyOnWriteArrayList<StartupListener>();
@@ -379,20 +379,22 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void addComponent(String componentName, final Component component) {
         ObjectHelper.notNull(component, "component");
-        synchronized (components) {
-            if (components.containsKey(componentName)) {
-                throw new IllegalArgumentException("Cannot add component as its already previously added: " + componentName);
-            }
-            component.setCamelContext(this);
-            components.put(componentName, component);
-            for (LifecycleStrategy strategy : lifecycleStrategies) {
-                strategy.onComponentAdd(componentName, component);
-            }
+        component.setCamelContext(this);
+        Component oldValue = components.putIfAbsent(componentName, component);
+        if (oldValue != null) {
+            throw new IllegalArgumentException("Cannot add component as its already previously added: " + componentName);
+        }
+        postInitComponent(componentName, component);
+    }
 
-            // keep reference to properties component up to date
-            if (component instanceof PropertiesComponent && "properties".equals(componentName)) {
-                propertiesComponent = (PropertiesComponent) component;
-            }
+    private void postInitComponent(String componentName, final Component component) {
+        for (LifecycleStrategy strategy : lifecycleStrategies) {
+            strategy.onComponentAdd(componentName, component);
+        }
+
+        // keep reference to properties component up to date
+        if (component instanceof PropertiesComponent && "properties".equals(componentName)) {
+            propertiesComponent = (PropertiesComponent) component;
         }
     }
 
@@ -405,32 +407,37 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Component getComponent(String name, boolean autoCreateComponents, boolean autoStart) {
-        // synchronize the look up and auto create so that 2 threads can't
-        // concurrently auto create the same component.
-        synchronized (components) {
-            Component component = components.get(name);
-            if (component == null && autoCreateComponents) {
-                try {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Using ComponentResolver: {} to resolve component with name: {}", getComponentResolver(), name);
-                    }
-                    component = getComponentResolver().resolveComponent(name, this);
-                    if (component != null) {
-                        addComponent(name, component);
-                        if (autoStart && (isStarted() || isStarting())) {
-                            // If the component is looked up after the context is started, lets start it up.
-                            if (component instanceof Service) {
-                                startService((Service)component);
-                            }
+        // CAMEL-10269 : Atomic operation to get/create a component. Avoid global locks.
+        return components.computeIfAbsent(name, comp -> initComponent(name, autoCreateComponents, autoStart));
+    }
+    
+    /*
+     * CAMEL-10269
+     * Function to initialize a component and auto start. Returns null if the autoCreateComponents is disabled
+     */
+    private Component initComponent(String name, boolean autoCreateComponents, boolean autoStart) {
+        Component component = null;
+        if(autoCreateComponents) {
+            try {
+                if (log.isDebugEnabled()) {
+                    log.debug("Using ComponentResolver: {} to resolve component with name: {}", getComponentResolver(), name);
+                }
+                component = getComponentResolver().resolveComponent(name, this);
+                if (component != null) {
+                    component.setCamelContext(this);
+                    postInitComponent(name, component);
+                    if (autoStart && (isStarted() || isStarting())) {
+                        // If the component is looked up after the context is started, lets start it up.
+                        if (component instanceof Service) {
+                            startService((Service)component);
                         }
                     }
-                } catch (Exception e) {
-                    throw new RuntimeCamelException("Cannot auto create component: " + name, e);
                 }
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Cannot auto create component: " + name, e);
             }
-            log.trace("getComponent({}) -> {}", name, component);
-            return component;
         }
+        return component;
     }
 
     public <T extends Component> T getComponent(String name, Class<T> componentType) {
@@ -461,24 +468,22 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Component removeComponent(String componentName) {
-        synchronized (components) {
-            Component oldComponent = components.remove(componentName);
-            if (oldComponent != null) {
-                try {
-                    stopServices(oldComponent);
-                } catch (Exception e) {
-                    log.warn("Error stopping component " + oldComponent + ". This exception will be ignored.", e);
-                }
-                for (LifecycleStrategy strategy : lifecycleStrategies) {
-                    strategy.onComponentRemove(componentName, oldComponent);
-                }
+        Component oldComponent = components.remove(componentName);
+        if (oldComponent != null) {
+            try {
+                stopServices(oldComponent);
+            } catch (Exception e) {
+                log.warn("Error stopping component " + oldComponent + ". This exception will be ignored.", e);
             }
-            // keep reference to properties component up to date
-            if (oldComponent != null && "properties".equals(componentName)) {
-                propertiesComponent = null;
+            for (LifecycleStrategy strategy : lifecycleStrategies) {
+                strategy.onComponentRemove(componentName, oldComponent);
             }
-            return oldComponent;
         }
+        // keep reference to properties component up to date
+        if (oldComponent != null && "properties".equals(componentName)) {
+            propertiesComponent = null;
+        }
+        return oldComponent;
     }
 
     // Endpoint Management Methods
@@ -3917,13 +3922,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public List<String> getComponentNames() {
-        synchronized (components) {
-            List<String> answer = new ArrayList<String>();
-            for (String name : components.keySet()) {
-                answer.add(name);
-            }
-            return answer;
+        List<String> answer = new ArrayList<String>();
+        for (String name : components.keySet()) {
+            answer.add(name);
         }
+        return answer;
     }
 
     public List<String> getLanguageNames() {
