@@ -36,7 +36,7 @@ public class Application extends SpringBootServletInitializer {
     @Bean
     ServletRegistrationBean servletRegistrationBean() {
         ServletRegistrationBean servlet = new ServletRegistrationBean(
-            new CamelHttpTransportServlet(), "/camel-rest-sql/*");
+            new CamelHttpTransportServlet(), "/camel-rest-jpa/*");
         servlet.setName("CamelServlet");
         return servlet;
     }
@@ -47,7 +47,7 @@ public class Application extends SpringBootServletInitializer {
         @Override
         public void configure() {
             restConfiguration()
-                .contextPath("/camel-rest-sql").apiContextPath("/api-doc")
+                .contextPath("/camel-rest-jpa").apiContextPath("/api-doc")
                     .apiProperty("api.title", "Camel REST API")
                     .apiProperty("api.version", "1.0")
                     .apiProperty("cors", "true")
