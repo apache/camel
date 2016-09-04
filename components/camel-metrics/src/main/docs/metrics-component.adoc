@@ -44,6 +44,47 @@ URI format
 metrics:[ meter | counter | histogram | timer ]:metricname[?options]
 ----
 
+[[MetricsComponent-options]]
+Options
+^^^^^^^
+
+// component options: START
+The Metrics component supports 1 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2,1m,7",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| metricRegistry | MetricRegistry | To use a custom configured MetricRegistry.
+|=======================================================================
+{% endraw %}
+// component options: END
+
+
+// endpoint options: START
+The Metrics component supports 9 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| metricsType | producer |  | MetricsType | *Required* Type of metrics
+| metricsName | producer |  | String | *Required* Name of metrics
+| action | producer |  | MetricsTimerAction | Action when using timer type
+| decrement | producer |  | Long | Decrement value when using counter type
+| increment | producer |  | Long | Increment value when using counter type
+| mark | producer |  | Long | Mark when using meter type
+| value | producer |  | Long | Value value when using histogram type
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
+// endpoint options: END
+
+
+
 [[MetricsComponent-registryMetricRegistry]]
 [[MetricsComponent-registry]]Metric Registry
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
