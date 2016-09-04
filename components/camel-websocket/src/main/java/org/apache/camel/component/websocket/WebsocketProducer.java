@@ -19,11 +19,17 @@ package org.apache.camel.component.websocket;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.StopWatch;
 
 public class WebsocketProducer extends DefaultProducer implements WebsocketProducerConsumer {
 
@@ -52,9 +58,15 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
             if (connectionKey != null) {
                 DefaultWebsocket websocket = store.get(connectionKey);
                 log.debug("Sending to connection key {} -> {}", connectionKey, message);
-                sendMessage(websocket, message);
+                Future<Void> future = sendMessage(websocket, message);
+                if (future != null) {
+                    future.get(endpoint.getSendTimeout(), TimeUnit.MILLISECONDS);
+                    if (!future.isDone()) {
+                        throw new ExchangeTimedOutException(exchange, endpoint.getSendTimeout(), "Failed to send message to the connection");
+                    }
+                }
             } else {
-                throw new IllegalArgumentException("Failed to send message to single connection; connetion key not set.");
+                throw new IllegalArgumentException("Failed to send message to single connection; connection key not set.");
             }
         }
     }
@@ -86,31 +98,54 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
         log.debug("Sending to all {}", message);
         Collection<DefaultWebsocket> websockets = store.getAll();
         Exception exception = null;
+
+        List<Future> futures = new CopyOnWriteArrayList<>();
         for (DefaultWebsocket websocket : websockets) {
             try {
-                sendMessage(websocket, message);
+                Future<Void> future = sendMessage(websocket, message);
+                if (future != null) {
+                    futures.add(future);
+                }
             } catch (Exception e) {
                 if (exception == null) {
                     exception = new CamelExchangeException("Failed to deliver message to one or more recipients.", exchange, e);
                 }
             }
         }
+
+        // check if they are all done within the timed out period
+        StopWatch watch = new StopWatch();
+        while (!futures.isEmpty() && watch.taken() < endpoint.getSendTimeout()) {
+            // remove all that are done/cancelled
+            for (Future future : futures) {
+                if (future.isDone() || future.isCancelled()) {
+                    futures.remove(future);
+                }
+            }
+            // TODO sleep a bit until done to avoid burning cpu cycles
+        }
+        if (!futures.isEmpty()) {
+            exception = new CamelExchangeException("Failed to deliver message within " + endpoint.getSendTimeout() + " millis to one or more recipients.", exchange);
+        }
+
         if (exception != null) {
             throw exception;
         }
     }
 
-    void sendMessage(DefaultWebsocket websocket, Object message) throws IOException {
+    Future<Void> sendMessage(DefaultWebsocket websocket, Object message) throws IOException {
+        Future<Void> future = null;
         // in case there is web socket and socket connection is open - send message
         if (websocket != null && websocket.getSession().isOpen()) {
             log.trace("Sending to websocket {} -> {}", websocket.getConnectionKey(), message);
             if (message instanceof String) {
-                websocket.getSession().getRemote().sendString((String) message);
+                future = websocket.getSession().getRemote().sendStringByFuture((String) message);
             } else if (message instanceof byte[]) {
                 ByteBuffer buf = ByteBuffer.wrap((byte[]) message);
-                websocket.getSession().getRemote().sendBytes(buf);
+                future = websocket.getSession().getRemote().sendBytesByFuture(buf);
             }
         }
+        return future;
     }
 
     //Store is set/unset upon connect/disconnect of the producer

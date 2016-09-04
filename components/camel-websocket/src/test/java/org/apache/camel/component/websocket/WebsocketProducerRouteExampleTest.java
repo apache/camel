@@ -61,6 +61,7 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
         WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/shop").execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(new WebSocketTextListener() {
+
                     @Override
                     public void onMessage(String message) {
                         received.add(message);
@@ -68,7 +69,6 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
                         latch.countDown();
                     }
 
-                    
                     @Override
                     public void onOpen(WebSocket websocket) {
                     }
@@ -112,7 +112,6 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
                         latch.countDown();
                     }
 
-                   
                     @Override
                     public void onOpen(WebSocket websocket) {
                     }
