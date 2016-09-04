@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dataformat.beanio;
 
+import org.apache.camel.Exchange;
+import org.beanio.BeanReaderErrorHandler;
 import org.beanio.BeanReaderErrorHandlerSupport;
 import org.beanio.InvalidRecordException;
 import org.beanio.UnexpectedRecordException;
@@ -23,21 +25,46 @@ import org.beanio.UnidentifiedRecordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A {@link BeanReaderErrorHandler} to handle errors during parsing. This error handler is prototype scoped
+ * and provides access to the current {@link Exchange}.
+ * You can perform any custom initialization logic in the {@link #init()} method.
+ */
 public class BeanIOErrorHandler extends BeanReaderErrorHandlerSupport {
 
-    private static final String LOG_PREFIX = "BeanIO: ";
-    private static final Logger LOG = LoggerFactory.getLogger(BeanIOErrorHandler.class);
+    static final String LOG_PREFIX = "BeanIO: ";
+    static final Logger LOG = LoggerFactory.getLogger(BeanIOErrorHandler.class);
 
-    private final BeanIOConfiguration configuration;
+    private BeanIOConfiguration configuration;
+    private Exchange exchange;
 
-    public BeanIOErrorHandler(BeanIOConfiguration configuration) {
+    public BeanIOErrorHandler() {
+    }
+
+    public void init() {
+        // any custom init code here
+    }
+
+    public BeanIOConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(BeanIOConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public Exchange getExchange() {
+        return exchange;
+    }
+
+    public void setExchange(Exchange exchange) {
+        this.exchange = exchange;
     }
 
     @Override
     public void invalidRecord(InvalidRecordException ex) throws Exception {
         String msg = LOG_PREFIX + "InvalidRecord: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
-        if (configuration.isIgnoreInvalidRecords()) {
+        if (getConfiguration().isIgnoreInvalidRecords()) {
             LOG.debug(msg);
         } else {
             LOG.warn(msg);
@@ -48,7 +75,7 @@ public class BeanIOErrorHandler extends BeanReaderErrorHandlerSupport {
     @Override
     public void unexpectedRecord(UnexpectedRecordException ex) throws Exception {
         String msg = LOG_PREFIX + "UnexpectedRecord: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
-        if (configuration.isIgnoreUnexpectedRecords()) {
+        if (getConfiguration().isIgnoreUnexpectedRecords()) {
             LOG.debug(msg);
         } else {
             LOG.warn(msg);
@@ -59,7 +86,7 @@ public class BeanIOErrorHandler extends BeanReaderErrorHandlerSupport {
     @Override
     public void unidentifiedRecord(UnidentifiedRecordException ex) throws Exception {
         String msg = LOG_PREFIX + "UnidentifiedRecord: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
-        if (configuration.isIgnoreUnidentifiedRecords()) {
+        if (getConfiguration().isIgnoreUnidentifiedRecords()) {
             LOG.debug(msg);
         } else {
             LOG.warn(msg);

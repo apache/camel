@@ -158,6 +158,18 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
     
     /**
+     * Uses the beanio data format
+     */
+    public T beanio(String mapping, String streamName, String encoding, String beanReaderErrorHandlerType) {
+        BeanioDataFormat dataFormat = new BeanioDataFormat();
+        dataFormat.setMapping(mapping);
+        dataFormat.setStreamName(streamName);
+        dataFormat.setEncoding(encoding);
+        dataFormat.setBeanReaderErrorHandlerType(beanReaderErrorHandlerType);
+        return dataFormat(dataFormat);
+    }
+
+    /**
      * Uses the Bindy data format
      *
      * @param type      the type of bindy data format to use

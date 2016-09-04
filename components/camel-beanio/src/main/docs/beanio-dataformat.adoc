@@ -17,11 +17,25 @@ XML] file where you define the mapping from the flat format to Objects
 Options
 ^^^^^^^
 
-// component options: START
-// component options: END
+// dataformat options: START
+The BeanIO dataformat supports 7 options which are listed below.
 
-// endpoint options: START
-// endpoint options: END
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| mapping |  | String | The BeanIO mapping file. Is by default loaded from the classpath. You can prefix with file: http: or classpath: to denote from where to load the mapping file.
+| streamName |  | String | The name of the stream to use.
+| ignoreUnidentifiedRecords | false | Boolean | Whether to ignore unidentified records.
+| ignoreUnexpectedRecords | false | Boolean | Whether to ignore unexpected records.
+| ignoreInvalidRecords | false | Boolean | Whether to ignore invalid records.
+| encoding |  | String | The charset to use. Is by default the JVM platform default charset.
+| beanReaderErrorHandlerType |  | String | To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler while parsing. Configure the fully qualified class name of the error handler. Notice the options ignoreUnidentifiedRecords ignoreUnexpectedRecords and ignoreInvalidRecords may not be in use when you use a custom error handler.
+|=======================================================================
+{% endraw %}
+// dataformat options: END
 
 [[BeanIO-Usage]]
 Usage
