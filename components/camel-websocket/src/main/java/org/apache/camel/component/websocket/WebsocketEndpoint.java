@@ -195,7 +195,7 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Timeout in millise when sending to a websocket channel.
+     * Timeout in millis when sending to a websocket channel.
      * The default timeout is 30000 (30 seconds).
      */
     public void setSendTimeout(Integer sendTimeout) {
