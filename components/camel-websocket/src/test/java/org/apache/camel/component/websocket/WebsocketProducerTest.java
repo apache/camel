@@ -141,7 +141,7 @@ public class WebsocketProducerTest {
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
         inOrder.verify(remoteEndpoint, times(1)).sendStringByFuture(MESSAGE);
-        inOrder.verify(endpoint, times(2)).getSendTimeout();
+        inOrder.verify(endpoint, times(1)).getSendTimeout();
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -171,6 +171,7 @@ public class WebsocketProducerTest {
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verify(defaultWebsocket2, times(1)).getSession();
         inOrder.verify(remoteEndpoint, times(1)).sendStringByFuture(MESSAGE);
+        inOrder.verify(endpoint, times(1)).getSendTimeout();
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -185,7 +186,7 @@ public class WebsocketProducerTest {
             websocketProducer.process(exchange);
             fail("Exception expected");
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+            assertEquals(WebsocketSendException.class, e.getClass());
             assertNotNull(e.getMessage());
             assertNull(e.getCause());
         }

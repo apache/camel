@@ -86,7 +86,7 @@ The Jetty Websocket component supports 21 endpoint options which are listed belo
 | sessionSupport | consumer | false | boolean | Whether to enable session support which enables HttpSession for each http request.
 | staticResources | consumer |  | String | Set a resource path for static resources (such as .html files etc). The resources can be loaded from classpath if you prefix with classpath: otherwise the resources is loaded from file system or from JAR files. For example to load from root classpath use classpath:. or classpath:WEB-INF/static If not configured (eg null) then no static resource is in use.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| sendTimeout | producer | 60000 | Integer | Timeout in millise when sending to a websocket channel. The default timeout is 60000 (60 seconds).
+| sendTimeout | producer | 30000 | Integer | Timeout in millise when sending to a websocket channel. The default timeout is 30000 (30 seconds).
 | sendToAll | producer |  | Boolean | To send to all websocket subscribers. Can be used to configure on endpoint level instead of having to use the WebsocketConstants.SEND_TO_ALL header on the message.
 | bufferSize | advanced | 8192 | Integer | Set the buffer size of the websocketServlet which is also the max frame byte size (default 8192)
 | exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
