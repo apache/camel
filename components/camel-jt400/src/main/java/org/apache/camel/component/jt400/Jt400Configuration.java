@@ -113,6 +113,9 @@ public class Jt400Configuration {
     @UriParam
     private Integer[] outputFieldsLengthArray;
 
+    @UriParam(label = "consumer", defaultValue = "30000")
+    private int readTimeout = 30000;
+
     public Jt400Configuration(String endpointUri, AS400ConnectionPool connectionPool) throws URISyntaxException {
         ObjectHelper.notNull(endpointUri, "endpointUri", this);
         ObjectHelper.notNull(connectionPool, "connectionPool", this);
@@ -299,6 +302,17 @@ public class Jt400Configuration {
      */
     public void setOutputFieldsLengthArray(Integer[] outputFieldsLengthArray) {
         this.outputFieldsLengthArray = outputFieldsLengthArray;
+    }
+
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    /**
+     * Timeout in millis the consumer will wait while trying to read a new message of the data queue.
+     */
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
     }
 
     public void setOutputFieldsIdx(String outputFieldsIdx) {
