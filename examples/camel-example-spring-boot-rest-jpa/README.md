@@ -2,7 +2,7 @@
 
 ### Introduction
 
-This example demonstrates how to use SQL via JDBC along with Camel's REST DSL
+This example demonstrates how to use JPA and Spring Data along with Camel's REST DSL
 to expose a RESTful API that performs CRUD operations on a database.
 
 It generates orders for books referenced in database at a regular pace.
@@ -57,16 +57,16 @@ being logged to the console, e.g.:
 
 You can then access the REST API directly from your Web browser, e.g.:
 
-- <http://localhost:8080/camel-rest-sql/books>
-- <http://localhost:8080/camel-rest-sql/books/order/1>
+- <http://localhost:8080/camel-rest-jpa/books>
+- <http://localhost:8080/camel-rest-jpa/books/order/1>
 
 The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in the shell.
 
 ### Swagger API
 
 The example provides API documentation of the service using Swagger using
-the _context-path_ `camel-rest-sql/api-doc`. You can access the API documentation
-from your Web browser at <http://localhost:8080/camel-rest-sql/api-doc>.
+the _context-path_ `camel-rest-jpa/api-doc`. You can access the API documentation
+from your Web browser at <http://localhost:8080/camel-rest-jpa/api-doc>.
 
 ### Forum, Help, etc
 

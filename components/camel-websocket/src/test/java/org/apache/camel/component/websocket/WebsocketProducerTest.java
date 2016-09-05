@@ -19,6 +19,9 @@ package org.apache.camel.component.websocket;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -67,8 +70,11 @@ public class WebsocketProducerTest {
     private Message inMessage;
     @Mock
     private RemoteEndpoint remoteEndpoint;
+    @Mock
+    private Future<Void> future;
 
-    private IOException exception = new IOException("BAD NEWS EVERYONE!");
+    private IOException ioException = new IOException("BAD NEWS EVERYONE!");
+    private ExecutionException exception = new ExecutionException("Failure", ioException);
     private WebsocketProducer websocketProducer;
     private Collection<DefaultWebsocket> sockets;
 
@@ -101,7 +107,7 @@ public class WebsocketProducerTest {
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
-        inOrder.verify(remoteEndpoint, times(1)).sendString(MESSAGE);
+        inOrder.verify(remoteEndpoint, times(1)).sendStringByFuture(MESSAGE);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -115,13 +121,14 @@ public class WebsocketProducerTest {
         when(defaultWebsocket1.getSession()).thenReturn(session);
         when(session.isOpen()).thenReturn(true);
         when(session.getRemote()).thenReturn(remoteEndpoint);
-        doThrow(exception).when(remoteEndpoint).sendString(MESSAGE);
+        when(remoteEndpoint.sendStringByFuture(MESSAGE)).thenReturn(future);
+        doThrow(exception).when(future).get(60000, TimeUnit.MILLISECONDS);
 
         try {
             websocketProducer.process(exchange);
             fail("Exception expected");
-        } catch (IOException ioe) {
-            assertEquals(exception, ioe);
+        } catch (Exception e) {
+            // expected
         }
 
         InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
@@ -133,7 +140,8 @@ public class WebsocketProducerTest {
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
-        inOrder.verify(remoteEndpoint, times(1)).sendString(MESSAGE);
+        inOrder.verify(remoteEndpoint, times(1)).sendStringByFuture(MESSAGE);
+        inOrder.verify(endpoint, times(1)).getSendTimeout();
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -158,46 +166,12 @@ public class WebsocketProducerTest {
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
-        inOrder.verify(remoteEndpoint, times(1)).sendString(MESSAGE);
+        inOrder.verify(remoteEndpoint, times(1)).sendStringByFuture(MESSAGE);
         inOrder.verify(defaultWebsocket2, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verify(defaultWebsocket2, times(1)).getSession();
-        inOrder.verify(remoteEndpoint, times(1)).sendString(MESSAGE);
-        inOrder.verifyNoMoreInteractions();
-    }
-
-    @Test
-    public void testProcessMultipleMessagesWithException() throws Exception {
-        when(exchange.getIn()).thenReturn(inMessage);
-        when(inMessage.getMandatoryBody()).thenReturn(MESSAGE);
-        when(inMessage.getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class)).thenReturn(true);
-        when(store.getAll()).thenReturn(sockets);
-        when(defaultWebsocket1.getSession()).thenReturn(session);
-        when(defaultWebsocket2.getSession()).thenReturn(session);
-        when(session.getRemote()).thenReturn(remoteEndpoint);
-        doThrow(exception).when(remoteEndpoint).sendString(MESSAGE);
-        when(session.isOpen()).thenReturn(true);
-
-        try {
-            websocketProducer.process(exchange);
-            fail("Exception expected");
-        } catch (Exception e) {
-            assertEquals(exception, e.getCause());
-        }
-
-        InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(inMessage, times(1)).getMandatoryBody();
-        inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class);
-        inOrder.verify(store, times(1)).getAll();
-        inOrder.verify(defaultWebsocket1, times(1)).getSession();
-        inOrder.verify(session, times(1)).isOpen();
-        inOrder.verify(defaultWebsocket1, times(1)).getSession();
-        inOrder.verify(remoteEndpoint, times(1)).sendString(MESSAGE);
-        inOrder.verify(defaultWebsocket2, times(1)).getSession();
-        inOrder.verify(session, times(1)).isOpen();
-        inOrder.verify(defaultWebsocket2, times(1)).getSession();
-        inOrder.verify(remoteEndpoint, times(1)).sendString(MESSAGE);
+        inOrder.verify(remoteEndpoint, times(1)).sendStringByFuture(MESSAGE);
+        inOrder.verify(endpoint, times(1)).getSendTimeout();
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -212,7 +186,7 @@ public class WebsocketProducerTest {
             websocketProducer.process(exchange);
             fail("Exception expected");
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+            assertEquals(WebsocketSendException.class, e.getClass());
             assertNotNull(e.getMessage());
             assertNull(e.getCause());
         }
@@ -237,7 +211,7 @@ public class WebsocketProducerTest {
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
-        inOrder.verify(remoteEndpoint, times(1)).sendString(MESSAGE);
+        inOrder.verify(remoteEndpoint, times(1)).sendStringByFuture(MESSAGE);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -252,28 +226,6 @@ public class WebsocketProducerTest {
         InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
-        inOrder.verifyNoMoreInteractions();
-    }
-
-    @Test
-    public void testSendMessageWithException() throws Exception {
-        when(defaultWebsocket1.getSession()).thenReturn(session);
-        when(session.isOpen()).thenReturn(true);
-        when(session.getRemote()).thenReturn(remoteEndpoint);
-        doThrow(exception).when(remoteEndpoint).sendString(MESSAGE);
-
-        try {
-            websocketProducer.sendMessage(defaultWebsocket1, MESSAGE);
-            fail("Exception expected");
-        } catch (IOException ioe) {
-            assertEquals(exception, ioe);
-        }
-
-        InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
-        inOrder.verify(defaultWebsocket1, times(1)).getSession();
-        inOrder.verify(session, times(1)).isOpen();
-        inOrder.verify(defaultWebsocket1, times(1)).getSession();
-        inOrder.verify(remoteEndpoint, times(1)).sendString(MESSAGE);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -311,28 +263,32 @@ public class WebsocketProducerTest {
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
-        inOrder.verify(remoteEndpoint, times(1)).sendString(MESSAGE);
+        inOrder.verify(remoteEndpoint, times(1)).sendStringByFuture(MESSAGE);
         inOrder.verify(defaultWebsocket2, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verify(defaultWebsocket2, times(1)).getSession();
-        inOrder.verify(remoteEndpoint, times(1)).sendString(MESSAGE);
+        inOrder.verify(remoteEndpoint, times(1)).sendStringByFuture(MESSAGE);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testSendToAllWithExcpetion() throws Exception {
+    public void testSendToAllWithException() throws Exception {
+        when(exchange.getIn()).thenReturn(inMessage);
+        when(inMessage.getMandatoryBody()).thenReturn(MESSAGE);
+        when(inMessage.getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class)).thenReturn(true);
         when(store.getAll()).thenReturn(sockets);
         when(defaultWebsocket1.getSession()).thenReturn(session);
         when(defaultWebsocket2.getSession()).thenReturn(session);
         when(session.getRemote()).thenReturn(remoteEndpoint);
-        doThrow(exception).when(remoteEndpoint).sendString(MESSAGE);
         when(session.isOpen()).thenReturn(true);
+        when(remoteEndpoint.sendStringByFuture(MESSAGE)).thenReturn(future);
+        doThrow(exception).when(future).get(60000, TimeUnit.MILLISECONDS);
 
         try {
-            websocketProducer.sendToAll(store, MESSAGE, exchange);
+            websocketProducer.process(exchange);
             fail("Exception expected");
         } catch (Exception e) {
-            assertEquals(exception, e.getCause());
+            // expected
         }
 
         InOrder inOrder = inOrder(store, session, defaultWebsocket1, defaultWebsocket2, remoteEndpoint);
@@ -340,11 +296,11 @@ public class WebsocketProducerTest {
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
-        inOrder.verify(remoteEndpoint, times(1)).sendString(MESSAGE);
+        inOrder.verify(remoteEndpoint, times(1)).sendStringByFuture(MESSAGE);
         inOrder.verify(defaultWebsocket2, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verify(defaultWebsocket2, times(1)).getSession();
-        inOrder.verify(remoteEndpoint, times(1)).sendString(MESSAGE);
+        inOrder.verify(remoteEndpoint, times(1)).sendStringByFuture(MESSAGE);
         inOrder.verifyNoMoreInteractions();
     }
 }
