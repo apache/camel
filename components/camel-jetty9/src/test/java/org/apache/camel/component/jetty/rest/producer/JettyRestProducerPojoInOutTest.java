@@ -69,7 +69,8 @@ public class JettyRestProducerPojoInOutTest extends BaseJettyTest {
         user.setId(123);
         user.setName("Donald Duck");
 
-        CountryPojo pojo = fluentTemplate.to("rest:post:users/lives")
+        // must provide outType parameter to tell Camel to bind the output from the REST service from json to POJO
+        CountryPojo pojo = fluentTemplate.to("rest:post:users/lives?outType=org.apache.camel.component.jetty.rest.CountryPojo")
                 .withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withBody(user).request(CountryPojo.class);
 
@@ -90,10 +91,9 @@ public class JettyRestProducerPojoInOutTest extends BaseJettyTest {
                 // use the rest DSL to define the rest services
                 rest("/users/")
                         // just return the default country here
-                        .get("lives").to("direct:start")
-                        .post("lives").type(UserPojo.class).outType(CountryPojo.class)
+                    .get("lives").to("direct:start")
+                    .post("lives").type(UserPojo.class).outType(CountryPojo.class)
                         .route()
-                        .log("Lives where")
                         .bean(new UserService(), "livesWhere");
 
                 CountryPojo country = new CountryPojo();

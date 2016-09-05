@@ -20,6 +20,8 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.JAXBContext;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -29,10 +31,11 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.tools.apt.helper.CollectionStringBuffer;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 
@@ -43,14 +46,16 @@ public class RestProducer extends DefaultAsyncProducer {
 
     private final CamelContext camelContext;
     private final RestConfiguration configuration;
+    private boolean prepareUriTemplate = true;
     private String bindingMode;
     private Boolean skipBindingOnErrorCode;
+    private String type;
+    private String outType;
 
     // the producer of the Camel component that is used as the HTTP client to call the REST service
     private AsyncProcessor producer;
+    // if binding is enabled then this processor should be used to wrap the call with binding before/after
     private AsyncProcessor binding;
-
-    private boolean prepareUriTemplate = true;
 
     public RestProducer(Endpoint endpoint, Producer producer, RestConfiguration configuration) {
         super(endpoint);
@@ -61,12 +66,7 @@ public class RestProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // TODO: request bind to consumes context-type
-        // TODO: response bind to content-type returned in response
-        // TODO: binding
         // TODO: binding get type/outType from api-doc if possible
-        // TODO: binding reverse only enabled if outType configured
-        // TODO move consumer binding processor to this pacakge so they are both the same place
 
         try {
             prepareExchange(exchange);
@@ -114,6 +114,22 @@ public class RestProducer extends DefaultAsyncProducer {
 
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getOutType() {
+        return outType;
+    }
+
+    public void setOutType(String outType) {
+        this.outType = outType;
     }
 
     protected void prepareExchange(Exchange exchange) throws Exception {
@@ -249,7 +265,26 @@ public class RestProducer extends DefaultAsyncProducer {
         }
 
         if (json != null) {
+            Class<?> clazz = null;
+            if (type != null) {
+                String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
+                clazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
+            }
+            if (clazz != null) {
+                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), json, "unmarshalType", clazz);
+                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), json, "useList", type.endsWith("[]"));
+            }
             setAdditionalConfiguration(configuration, camelContext, json, "json.in.");
+
+            Class<?> outClazz = null;
+            if (outType != null) {
+                String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
+                outClazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
+            }
+            if (outClazz != null) {
+                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), outJson, "unmarshalType", outClazz);
+                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), outJson, "useList", outType.endsWith("[]"));
+            }
             setAdditionalConfiguration(configuration, camelContext, outJson, "json.out.");
         }
 
@@ -274,11 +309,34 @@ public class RestProducer extends DefaultAsyncProducer {
         }
 
         if (jaxb != null) {
+            Class<?> clazz = null;
+            if (type != null) {
+                String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
+                clazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
+            }
+            if (clazz != null) {
+                JAXBContext jc = JAXBContext.newInstance(clazz);
+                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), jaxb, "context", jc);
+            }
             setAdditionalConfiguration(configuration, camelContext, jaxb, "xml.in.");
+
+            Class<?> outClazz = null;
+            if (outType != null) {
+                String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
+                outClazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
+            }
+            if (outClazz != null) {
+                JAXBContext jc = JAXBContext.newInstance(outClazz);
+                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), outJaxb, "context", jc);
+            } else if (clazz != null) {
+                // fallback and use the context from the input
+                JAXBContext jc = JAXBContext.newInstance(clazz);
+                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), outJaxb, "context", jc);
+            }
             setAdditionalConfiguration(configuration, camelContext, outJaxb, "xml.out.");
         }
 
-        return new RestProducerBindingProcessor(producer, camelContext, json, jaxb, outJson, outJaxb, mode, skip);
+        return new RestProducerBindingProcessor(producer, camelContext, json, jaxb, outJson, outJaxb, mode, skip, type, outType);
     }
 
     private void setAdditionalConfiguration(RestConfiguration config, CamelContext context,

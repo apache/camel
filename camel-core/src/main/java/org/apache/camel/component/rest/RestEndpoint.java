@@ -67,7 +67,7 @@ public class RestEndpoint extends DefaultEndpoint {
     private String inType;
     @UriParam(label = "common")
     private String outType;
-    @UriParam(label = "consumer")
+    @UriParam(label = "common")
     private String routeId;
     @UriParam(label = "consumer")
     private String description;
@@ -326,7 +326,11 @@ public class RestEndpoint extends DefaultEndpoint {
                 producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, produces, parameters);
             }
             RestConfiguration config = getCamelContext().getRestConfiguration(cname, true);
-            return new RestProducer(this, producer, config);
+            RestProducer answer = new RestProducer(this, producer, config);
+            answer.setOutType(outType);
+            answer.setType(inType);
+
+            return answer;
         } else {
             throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");
         }
