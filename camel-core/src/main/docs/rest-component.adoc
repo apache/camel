@@ -67,6 +67,29 @@ The REST component supports 17 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
+[[Components-Supported]]
+Supported rest components
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following components support rest consumer (link:rest-dsl.html[Rest DSL]):
+
+* camel-coap
+* camel-netty-http
+* camel-netty4-http
+* camel-jetty
+* camel-restlet
+* camel-servlet
+* camel-spark-rest
+* camel-undertow
+
+The following components support rest producer:
+
+* camel-http
+* camel-http4
+* camel-netty4-http
+* camel-jetty
+* camel-restlet
+* camel-undertow
 
 [[Rest-PathanduriTemplatesyntax]]
 Path and uriTemplate syntax
