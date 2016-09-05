@@ -17,6 +17,8 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
@@ -73,6 +75,36 @@ public class RabbitMQConsumerIntTest extends CamelTestSupport {
         channel.basicPublish(EXCHANGE, "", properties.build(), "hello world".getBytes());
 
         to.assertIsSatisfied();
+    }
+
+    @Test
+    public void sentMessageWithTimestampIsReceived() throws InterruptedException, IOException, TimeoutException {
+        Date timestamp = currentTimestampWithoutMillis();
+
+        to.expectedMessageCount(1);
+        to.expectedHeaderReceived(RabbitMQConstants.TIMESTAMP, timestamp);
+
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        factory.setPort(5672);
+        factory.setUsername("cameltest");
+        factory.setPassword("cameltest");
+        factory.setVirtualHost("/");
+        Connection conn = factory.newConnection();
+
+        AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
+        properties.timestamp(timestamp);
+
+        Channel channel = conn.createChannel();
+        channel.basicPublish(EXCHANGE, "", properties.build(), "hello world".getBytes());
+
+        to.assertIsSatisfied();
+    }
+
+    private Date currentTimestampWithoutMillis() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
     }
 }
 
