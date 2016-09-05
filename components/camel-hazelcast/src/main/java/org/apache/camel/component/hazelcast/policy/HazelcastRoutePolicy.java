@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.component.hazelcast.HazelcastUtil;
@@ -82,19 +81,9 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
     }
 
     @Override
-    public void onExchangeBegin(Route route, Exchange exchange)  {
-        if (leader.get()) {
-            if (shouldStopConsumer) {
-                startConsumer(route);
-            }
-        } else {
-            if (shouldStopConsumer) {
-                stopConsumer(route);
-            }
-
-            exchange.setException(new IllegalStateException(
-                "Hazelcast based route policy prohibits processing exchanges, stopping route and failing the exchange")
-            );
+    public void onStart(Route route) {
+        if (!leader.get() && shouldStopConsumer) {
+            stopConsumer(route);
         }
     }
 
@@ -242,6 +231,10 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
 
     public void setTryLockTimeoutUnit(TimeUnit tryLockTimeoutUnit) {
         this.tryLockTimeoutUnit = tryLockTimeoutUnit;
+    }
+
+    public boolean isLeader() {
+        return leader.get();
     }
 
     // *************************************************************************
