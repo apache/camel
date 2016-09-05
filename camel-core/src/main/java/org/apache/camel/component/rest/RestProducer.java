@@ -39,7 +39,7 @@ public class RestProducer extends DefaultAsyncProducer {
     // the producer of the Camel component that is used as the HTTP client to call the REST service
     private AsyncProcessor producer;
 
-    private boolean preapreUriTemplate = true;
+    private boolean prepareUriTemplate = true;
 
     public RestProducer(Endpoint endpoint, Producer producer) {
         super(endpoint);
@@ -66,16 +66,16 @@ public class RestProducer extends DefaultAsyncProducer {
         return (RestEndpoint) super.getEndpoint();
     }
 
-    public boolean isPreapreUriTemplate() {
-        return preapreUriTemplate;
+    public boolean isPrepareUriTemplate() {
+        return prepareUriTemplate;
     }
 
     /**
      * Whether to prepare the uri template and replace {key} with values from the exchange, and set
      * as {@link Exchange#HTTP_URI} header with the resolved uri to use instead of uri from endpoint.
      */
-    public void setPreapreUriTemplate(boolean preapreUriTemplate) {
-        this.preapreUriTemplate = preapreUriTemplate;
+    public void setPrepareUriTemplate(boolean prepareUriTemplate) {
+        this.prepareUriTemplate = prepareUriTemplate;
     }
 
     protected void prepareExchange(Exchange exchange) throws Exception {
@@ -85,7 +85,7 @@ public class RestProducer extends DefaultAsyncProducer {
         // uri template may be optional and the user have entered the uri template in the path instead
         String resolvedUriTemplate = getEndpoint().getUriTemplate() != null ? getEndpoint().getUriTemplate() : getEndpoint().getPath();
 
-        if (preapreUriTemplate) {
+        if (prepareUriTemplate) {
             if (resolvedUriTemplate.contains("{")) {
                 // resolve template and replace {key} with the values form the exchange
                 // each {} is a parameter (url templating)
