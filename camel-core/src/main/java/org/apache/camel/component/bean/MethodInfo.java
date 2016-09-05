@@ -307,7 +307,7 @@ public class MethodInfo {
                             .whenComplete((resultObject, e) -> {
                                 if (e != null) {
                                     exchange.setException(e);
-                                } else if (resultObject != null){
+                                } else if (resultObject != null) {
                                     fillResult(exchange, resultObject);
                                 }
                                 callback.done(false);

@@ -16,18 +16,22 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Assert;
 
-import java.util.concurrent.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 /**
- * @version 
+ * Unit test for Java 8 {@link CompletableFuture} as return type on a bean being called from a Camel route.
  */
 public class BeanInvokeAsyncTest extends ContextTestSupport {
     
@@ -67,20 +71,21 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
         }
     }
 
-    private void runTestSendBody(String expectedBody, String sentBody, Function<String, String> processor)
-            throws InterruptedException, java.util.concurrent.ExecutionException {
+    private void runTestSendBody(String expectedBody, String sentBody,
+                                 Function<String, String> processor) throws Exception {
         runTestSendBody(m -> m.expectedBodiesReceived(expectedBody), sentBody, processor);
     }
 
     private void runTestSendBody(Consumer<MockEndpoint> mockPreparer, String sentBody,
-            Function<String, String> processor)
-            throws InterruptedException, java.util.concurrent.ExecutionException {
+                                 Function<String, String> processor) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.reset();
         mockPreparer.accept(mock);
+
         callFuture = new CompletableFuture<>();
         methodInvoked = new CountDownLatch(1);
         sendFuture = template.asyncSendBody("direct:entry", sentBody);
+
         Assert.assertTrue(methodInvoked.await(5, TimeUnit.SECONDS));
         Assert.assertEquals(0, mock.getReceivedCounter());
         Assert.assertFalse(sendFuture.isDone());
@@ -90,6 +95,7 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
             callFuture.completeExceptionally(e);
         }
         sendFuture.get();
+
         assertMockEndpointsSatisfied();
     }
 
@@ -108,6 +114,7 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
         };
     }
 
+    // java 8 async return type
     public CompletableFuture<?> asyncMethod(String body) {
         this.receivedBody = body;
         methodInvoked.countDown();
