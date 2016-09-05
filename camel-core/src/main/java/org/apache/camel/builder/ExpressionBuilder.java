@@ -25,10 +25,13 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
@@ -80,7 +83,7 @@ public final class ExpressionBuilder {
     private ExpressionBuilder() {
     }
     
-     /**
+    /**
      * Returns an expression for the inbound message attachments
      *
      * @return an expression object which will return the inbound message attachments
@@ -893,6 +896,80 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns a functional expression for the exchanges inbound message body
+     */
+    public static Expression bodyExpression(final Function<Object, Object> function) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(
+                    exchange.getIn().getBody()
+                );
+            }
+
+            @Override
+            public String toString() {
+                return "bodyExpression";
+            }
+        };
+    }
+
+    /**
+     * Returns a functional expression for the exchanges inbound message body and headers
+     */
+    public static Expression bodyExpression(final BiFunction<Object, Map<String, Object>, Object> function) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(
+                    exchange.getIn().getBody(),
+                    exchange.getIn().getHeaders()
+                );
+            }
+
+            @Override
+            public String toString() {
+                return "bodyExpression";
+            }
+        };
+    }
+
+    /**
+     * Returns a functional expression for the exchanges inbound message body converted to a desired type
+     */
+    public static <T> Expression bodyExpression(final Class<T> bodyType, final Function<T, Object> function) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(
+                    exchange.getIn().getBody(bodyType)
+                );
+            }
+
+            @Override
+            public String toString() {
+                return "bodyExpression (" + bodyType +  ")";
+            }
+        };
+    }
+
+    /**
+     * Returns a functional expression for the exchanges inbound message body converted to a desired type and headers
+     */
+    public static <T> Expression bodyExpression(final Class<T> bodyType, final BiFunction<T, Map<String, Object>, Object> function) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(
+                    exchange.getIn().getBody(bodyType),
+                    exchange.getIn().getHeaders()
+                );
+            }
+
+            @Override
+            public String toString() {
+                return "bodyExpression (" + bodyType +  ")";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the exchanges inbound message body invoking methods defined
      * in a simple OGNL notation
      *
@@ -1319,6 +1396,36 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns a functional expression for the exchange
+     */
+    public static Expression exchangeExpression(final Function<Exchange, Object> function) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeExpression";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the IN message
+     */
+    public static Expression messageExpression() {
+        return inMessageExpression();
+    }
+
+    /**
+     * Returns a functional expression for the IN message
+     */
+    public static Expression messageExpression(final Function<Message, Object> function) {
+        return inMessageExpression(function);
+    }
+
+    /**
      * Returns the expression for the IN message
      */
     public static Expression inMessageExpression() {
@@ -1335,6 +1442,22 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns a functional expression for the IN message
+     */
+    public static Expression inMessageExpression(final Function<Message, Object> function) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(exchange.getIn());
+            }
+
+            @Override
+            public String toString() {
+                return "inMessageExpression";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the OUT message
      */
     public static Expression outMessageExpression() {
@@ -1346,6 +1469,22 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "outMessage";
+            }
+        };
+    }
+
+    /**
+     * Returns a functional expression for the OUT message
+     */
+    public static Expression outMessageExpression(final Function<Message, Object> function) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(exchange.getOut());
+            }
+
+            @Override
+            public String toString() {
+                return "outMessageExpression";
             }
         };
     }
