@@ -29,11 +29,17 @@ import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.processor.binding.BindingException;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
+/**
+ * A {@link org.apache.camel.Processor} that binds the REST producer request and reply messages
+ * from sources of json or xml to Java Objects.
+ * <p/>
+ * The binding uses {@link org.apache.camel.spi.DataFormat} for the actual work to transform
+ * from xml/json to Java Objects and reverse again.
+ */
 public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
 
     private final CamelContext camelContext;
@@ -43,44 +49,49 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
     private final AsyncProcessor xmlMarshal;
     private final String bindingMode;
     private final boolean skipBindingOnErrorCode;
+    private final String type;
+    private final String outType;
 
     public RestProducerBindingProcessor(AsyncProcessor processor, CamelContext camelContext,
                                         DataFormat jsonDataFormat, DataFormat xmlDataFormat,
                                         DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
-                                        String bindingMode, boolean skipBindingOnErrorCode) {
+                                        String bindingMode, boolean skipBindingOnErrorCode,
+                                        String type, String outType) {
 
         super(processor);
 
         this.camelContext = camelContext;
 
         if (jsonDataFormat != null) {
-            this.jsonUnmarshal = new UnmarshalProcessor(jsonDataFormat);
+            this.jsonUnmarshal = new UnmarshalProcessor(outJsonDataFormat);
         } else {
             this.jsonUnmarshal = null;
         }
         if (outJsonDataFormat != null) {
-            this.jsonMarshal = new MarshalProcessor(outJsonDataFormat);
-        } else if (jsonDataFormat != null) {
             this.jsonMarshal = new MarshalProcessor(jsonDataFormat);
+        } else if (jsonDataFormat != null) {
+            this.jsonMarshal = new MarshalProcessor(outJsonDataFormat);
         } else {
             this.jsonMarshal = null;
         }
 
         if (xmlDataFormat != null) {
-            this.xmlUnmarshal = new UnmarshalProcessor(xmlDataFormat);
+            this.xmlUnmarshal = new UnmarshalProcessor(outXmlDataFormat);
         } else {
             this.xmlUnmarshal = null;
         }
         if (outXmlDataFormat != null) {
-            this.xmlMarshal = new MarshalProcessor(outXmlDataFormat);
-        } else if (xmlDataFormat != null) {
             this.xmlMarshal = new MarshalProcessor(xmlDataFormat);
+        } else if (xmlDataFormat != null) {
+            this.xmlMarshal = new MarshalProcessor(outXmlDataFormat);
         } else {
             this.xmlMarshal = null;
         }
 
         this.bindingMode = bindingMode;
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+        this.type = type;
+        this.outType = outType;
     }
 
     @Override
@@ -116,21 +127,26 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
         boolean isXml = false;
         boolean isJson = false;
 
-        // skip binding for empty/null body
+        // skip before binding for empty/null body
         Object body = exchange.getIn().getBody();
         if (ObjectHelper.isEmpty(body)) {
-            // TODO: add reverse operation to call before callback
+            if (outType != null) {
+                // wrap callback to add reverse operation if we know the output type from the REST service
+                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, jsonMarshal, xmlMarshal, false);
+            }
             // okay now we can continue routing to the producer
             return getProcessor().process(exchange, callback);
         }
 
-        // we only need to perform binding if the message body is POJO based
+        // we only need to perform before binding if the message body is POJO based
         // if its convertable to stream based then its not POJO based
         InputStream is = camelContext.getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
         if (is != null) {
             exchange.getIn().setBody(is);
-            // add reverse operation
-            exchange.addOnCompletion(new RestProducerBindingUnmarshalOnCompletion(jsonMarshal, xmlMarshal, false));
+            if (outType != null) {
+                // wrap callback to add reverse operation if we know the output type from the REST service
+                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, jsonMarshal, xmlMarshal, false);
+            }
             // okay now we can continue routing to the producer
             return getProcessor().process(exchange, callback);
         }
@@ -153,7 +169,6 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
 
         // favor json over xml
         if (isJson && jsonMarshal != null) {
-            // TODO: add reverse operation to call before callback
             try {
                 jsonMarshal.process(exchange);
             } catch (Exception e) {
@@ -164,12 +179,13 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             }
             // need to prepare exchange first
             ExchangeHelper.prepareOutToIn(exchange);
-            // add reverse operation
-            exchange.addOnCompletion(new RestProducerBindingUnmarshalOnCompletion(jsonMarshal, xmlMarshal, false));
+            if (outType != null) {
+                // wrap callback to add reverse operation if we know the output type from the REST service
+                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, jsonMarshal, xmlMarshal, false);
+            }
             // okay now we can continue routing to the producer
             return getProcessor().process(exchange, callback);
         } else if (isXml && xmlMarshal != null) {
-            // TODO: add reverse operation to call before callback
             try {
                 xmlMarshal.process(exchange);
             } catch (Exception e) {
@@ -180,16 +196,20 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             }
             // need to prepare exchange first
             ExchangeHelper.prepareOutToIn(exchange);
-            // add reverse operation
-            exchange.addOnCompletion(new RestProducerBindingUnmarshalOnCompletion(jsonMarshal, xmlMarshal, false));
+            if (outType != null) {
+                // wrap callback to add reverse operation if we know the output type from the REST service
+                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, jsonMarshal, xmlMarshal, true);
+            }
             // okay now we can continue routing to the producer
             return getProcessor().process(exchange, callback);
         }
 
         // we could not bind
         if ("off".equals(bindingMode) || bindingMode.equals("auto")) {
-            // add reverse operation
-            exchange.addOnCompletion(new RestProducerBindingUnmarshalOnCompletion(jsonMarshal, xmlMarshal, false));
+            if (outType != null) {
+                // wrap callback to add reverse operation if we know the output type from the REST service
+                callback = new RestProducerBindingUnmarshalCallback(exchange, callback, jsonMarshal, xmlMarshal, false);
+            }
             // okay now we can continue routing to the producer
             return getProcessor().process(exchange, callback);
         } else {
@@ -204,20 +224,36 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
         }
     }
 
-    private final class RestProducerBindingUnmarshalOnCompletion extends SynchronizationAdapter {
+    private final class RestProducerBindingUnmarshalCallback implements AsyncCallback {
 
+        private final Exchange exchange;
+        private final AsyncCallback callback;
         private final AsyncProcessor jsonMarshal;
         private final AsyncProcessor xmlMarshal;
         private boolean wasXml;
 
-        private RestProducerBindingUnmarshalOnCompletion(AsyncProcessor jsonMarshal, AsyncProcessor xmlMarshal, boolean wasXml) {
+        private RestProducerBindingUnmarshalCallback(Exchange exchange, AsyncCallback callback,
+                                                     AsyncProcessor jsonMarshal, AsyncProcessor xmlMarshal, boolean wasXml) {
+            this.exchange = exchange;
+            this.callback = callback;
             this.jsonMarshal = jsonMarshal;
             this.xmlMarshal = xmlMarshal;
             this.wasXml = wasXml;
         }
 
         @Override
-        public void onDone(Exchange exchange) {
+        public void done(boolean doneSync) {
+            try {
+                doDone();
+            } catch (Throwable e) {
+                exchange.setException(e);
+            } finally {
+                // ensure callback is called
+                callback.done(doneSync);
+            }
+        }
+
+        private void doDone() {
             // only unmarshal if there was no exception
             if (exchange.getException() != null) {
                 return;
@@ -234,20 +270,11 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             boolean isXml = false;
             boolean isJson = false;
 
-            // fallback to content type if still undecided
-            if (!isXml && !isJson) {
-                String contentType = ExchangeHelper.getContentType(exchange);
-                if (contentType != null) {
-                    isXml = contentType.toLowerCase(Locale.ENGLISH).contains("xml");
-                    isJson = contentType.toLowerCase(Locale.ENGLISH).contains("json");
-                }
-            }
-            // if content type could not tell us if it was json or xml, then fallback to if the binding was configured with
-            // that information in the consumes
-            if (!isXml && !isJson) {
-                // TODO:
-//                isXml = produces != null && produces.toLowerCase(Locale.ENGLISH).contains("xml");
-//                isJson = produces != null && produces.toLowerCase(Locale.ENGLISH).contains("json");
+            // check the content-type if its json or xml
+            String contentType = ExchangeHelper.getContentType(exchange);
+            if (contentType != null) {
+                isXml = contentType.toLowerCase(Locale.ENGLISH).contains("xml");
+                isJson = contentType.toLowerCase(Locale.ENGLISH).contains("json");
             }
 
             // only allow xml/json if the binding mode allows that (when off we still want to know if its xml or json)
@@ -272,8 +299,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             ExchangeHelper.prepareOutToIn(exchange);
 
             // ensure there is a content type header (even if binding is off)
-            // TODO:
-            // ensureHeaderContentType(produces, isXml, isJson, exchange);
+            ensureHeaderContentType(isXml, isJson, exchange);
 
             if (bindingMode == null || "off".equals(bindingMode)) {
                 // binding is off, so no message body binding
@@ -290,7 +316,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
                 return;
             }
 
-            String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+            contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
             // need to lower-case so the contains check below can match if using upper case
             contentType = contentType.toLowerCase(Locale.US);
             try {
@@ -311,9 +337,9 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
                         // okay for auto we do not mind if we could not bind
                     } else {
                         if (bindingMode.contains("xml")) {
-                            exchange.setException(new BindingException("Cannot bind to xml as message body is not xml compatible", exchange));
+                            exchange.setException(new BindingException("Cannot bind from xml as message body is not xml compatible", exchange));
                         } else {
-                            exchange.setException(new BindingException("Cannot bind to json as message body is not json compatible", exchange));
+                            exchange.setException(new BindingException("Cannot bind from json as message body is not json compatible", exchange));
                         }
                     }
                 }
@@ -322,15 +348,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             }
         }
 
-        private void ensureHeaderContentType(String contentType, boolean isXml, boolean isJson, Exchange exchange) {
-            // favor given content type
-            if (contentType != null) {
-                String type = ExchangeHelper.getContentType(exchange);
-                if (type == null) {
-                    exchange.getIn().setHeader(Exchange.CONTENT_TYPE, contentType);
-                }
-            }
-
+        private void ensureHeaderContentType(boolean isXml, boolean isJson, Exchange exchange) {
             // favor json over xml
             if (isJson) {
                 // make sure there is a content-type with json
@@ -349,7 +367,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
 
         @Override
         public String toString() {
-            return "RestProducerBindingUnmarshalOnCompletion";
+            return "RestProducerBindingUnmarshalCallback";
         }
     }
 
