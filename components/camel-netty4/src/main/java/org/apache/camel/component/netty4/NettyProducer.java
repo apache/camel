@@ -99,8 +99,6 @@ public class NettyProducer extends DefaultAsyncProducer {
                 .withNativeTransport(configuration.isNativeTransport())
                 .withWorkerCount(configuration.getWorkerCount())
                 .withName("NettyClientTCPWorker").build();
-        } else {
-            workerGroup = configuration.getWorkerGroup();
         }
                
         if (configuration.isProducerPoolEnabled()) {
