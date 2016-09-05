@@ -46,8 +46,12 @@ import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
 import com.amazonaws.services.sns.model.SetTopicAttributesResult;
 import com.amazonaws.services.sns.model.SubscribeRequest;
 import com.amazonaws.services.sns.model.SubscribeResult;
+import com.amazonaws.services.sns.model.Topic;
 import com.amazonaws.services.sns.model.UnsubscribeRequest;
 import com.amazonaws.services.sns.model.UnsubscribeResult;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
 
@@ -149,6 +153,17 @@ public class AmazonSNSClientMock extends AmazonSNSClient {
     @Override
     public ListTopicsResult listTopics() throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public ListTopicsResult listTopics(String nextToken) {
+        ListTopicsResult res = new ListTopicsResult();
+        Topic topic = new Topic();
+        topic.setTopicArn(DEFAULT_TOPIC_ARN);
+        List<Topic> list = new ArrayList<Topic>();
+        list.add(topic);
+        res.setTopics(list);
+        return res;
     }
 
     @Override
