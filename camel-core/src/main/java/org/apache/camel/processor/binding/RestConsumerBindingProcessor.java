@@ -45,7 +45,7 @@ import org.apache.camel.util.ServiceHelper;
  * The binding uses {@link org.apache.camel.spi.DataFormat} for the actual work to transform
  * from xml/json to Java Objects and reverse again.
  */
-public class RestBindingProcessor extends ServiceSupport implements AsyncProcessor {
+public class RestConsumerBindingProcessor extends ServiceSupport implements AsyncProcessor {
 
     private final CamelContext camelContext;
     private final AsyncProcessor jsonUnmarshal;
@@ -60,12 +60,12 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
     private final Map<String, String> corsHeaders;
     private final Map<String, String> queryDefaultValues;
 
-    public RestBindingProcessor(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
-                                DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
-                                String consumes, String produces, String bindingMode,
-                                boolean skipBindingOnErrorCode, boolean enableCORS,
-                                Map<String, String> corsHeaders,
-                                Map<String, String> queryDefaultValues) {
+    public RestConsumerBindingProcessor(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
+                                        DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
+                                        String consumes, String produces, String bindingMode,
+                                        boolean skipBindingOnErrorCode, boolean enableCORS,
+                                        Map<String, String> corsHeaders,
+                                        Map<String, String> queryDefaultValues) {
 
         this.camelContext = camelContext;
 
@@ -153,7 +153,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         String body = null;
         if (exchange.getIn().getBody() != null) {
 
-           // okay we have a binding mode, so need to check for empty body as that can cause the marshaller to fail
+            // okay we have a binding mode, so need to check for empty body as that can cause the marshaller to fail
             // as they assume a non-empty body
             if (isXml || isJson) {
                 // we have binding enabled, so we need to know if there body is empty or not
