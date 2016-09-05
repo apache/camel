@@ -66,8 +66,6 @@ public class RestProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // TODO: binding get type/outType from api-doc if possible
-
         try {
             prepareExchange(exchange);
             if (binding != null) {
@@ -215,7 +213,7 @@ public class RestProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        // create binding processor
+        // create binding processor (returns null if binding is not in use)
         binding = createBindingProcessor();
 
         ServiceHelper.startServices(binding, producer);

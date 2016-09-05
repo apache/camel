@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.model.NoOutputDefinition;
 import org.apache.camel.component.rest.RestConsumerBindingProcessor;
+import org.apache.camel.model.NoOutputDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
