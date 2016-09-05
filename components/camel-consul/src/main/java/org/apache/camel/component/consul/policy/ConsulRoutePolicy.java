@@ -34,7 +34,6 @@ import com.orbitz.consul.model.ConsulResponse;
 import com.orbitz.consul.model.kv.Value;
 import com.orbitz.consul.model.session.ImmutableSession;
 import com.orbitz.consul.option.QueryOptions;
-import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.support.RoutePolicySupport;
@@ -84,19 +83,9 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
     }
 
     @Override
-    public void onExchangeBegin(Route route, Exchange exchange)  {
-        if (leader.get()) {
-            if (shouldStopConsumer) {
-                startConsumer(route);
-            }
-        } else {
-            if (shouldStopConsumer) {
-                stopConsumer(route);
-            }
-
-            exchange.setException(new IllegalStateException(
-                "Consul based route policy prohibits processing exchanges, stopping route and failing the exchange")
-            );
+    public void onStart(Route route)  {
+        if (!leader.get() && shouldStopConsumer) {
+            stopConsumer(route);
         }
     }
 
