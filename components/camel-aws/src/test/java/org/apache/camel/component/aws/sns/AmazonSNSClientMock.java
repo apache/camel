@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws.sns;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
@@ -49,9 +52,6 @@ import com.amazonaws.services.sns.model.SubscribeResult;
 import com.amazonaws.services.sns.model.Topic;
 import com.amazonaws.services.sns.model.UnsubscribeRequest;
 import com.amazonaws.services.sns.model.UnsubscribeResult;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Assert;
 
