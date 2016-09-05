@@ -150,6 +150,11 @@ public class NettyComponent extends UriEndpointComponent {
             executorService = null;
         }
 
+        //shutdown workerPool if configured
+        if (configuration.getWorkerGroup() != null) {
+            configuration.getWorkerGroup().shutdownGracefully();
+        }
+               
         super.doStop();
     }
 
