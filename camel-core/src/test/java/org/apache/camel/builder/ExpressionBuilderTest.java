@@ -110,6 +110,17 @@ public class ExpressionBuilderTest extends TestSupport {
         assertEquals("Hello there!", parseSimpleOrFallbackToConstantExpression("$simple{body}", camelContext).evaluate(exchange, String.class));
     }
 
+    public void testFunction() throws Exception {
+        assertExpression(
+            messageExpression(m -> m.getExchange().getIn().getHeader("name")),
+            exchange,
+            "James");
+        assertExpression(
+            messageExpression(m -> m.getHeader("name")),
+            exchange,
+            "James");
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
