@@ -407,17 +407,16 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Component getComponent(String name, boolean autoCreateComponents, boolean autoStart) {
-        // CAMEL-10269 : Atomic operation to get/create a component. Avoid global locks.
+        // atomic operation to get/create a component. Avoid global locks.
         return components.computeIfAbsent(name, comp -> initComponent(name, autoCreateComponents, autoStart));
     }
     
-    /*
-     * CAMEL-10269
+    /**
      * Function to initialize a component and auto start. Returns null if the autoCreateComponents is disabled
      */
     private Component initComponent(String name, boolean autoCreateComponents, boolean autoStart) {
         Component component = null;
-        if(autoCreateComponents) {
+        if (autoCreateComponents) {
             try {
                 if (log.isDebugEnabled()) {
                     log.debug("Using ComponentResolver: {} to resolve component with name: {}", getComponentResolver(), name);
