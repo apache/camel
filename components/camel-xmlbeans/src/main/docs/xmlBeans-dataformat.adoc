@@ -14,6 +14,24 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
+[[XmlBeans-Options]]
+Options
+^^^^^^^
+
+// dataformat options: START
+The XML Beans dataformat supports 1 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
+|=======================================================================
+{% endraw %}
+// dataformat options: END
+
 [[XmlBeans-Dependencies]]
 Dependencies
 ^^^^^^^^^^^^
