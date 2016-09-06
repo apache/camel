@@ -28,6 +28,24 @@ END:VEVENT
 END:VCALENDAR
 ----------------------------------------------------------------------
 
+[[ICal-Options]]
+Options
+^^^^^^^
+
+// dataformat options: START
+The iCal dataformat supports 1 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| validating | false | Boolean | Whether to validate.
+|=======================================================================
+{% endraw %}
+// dataformat options: END
+
 [[ICal-BasicUsage]]
 Basic Usage
 ^^^^^^^^^^^

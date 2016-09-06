@@ -39,14 +39,22 @@ RFC3164 Syslog protocol
 
 Syslog uses the user datagram protocol (UDP)
 https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=1&linkCreation=true&fromPageId=24185759[1]
-as its underlying transport layer mechanism.  +
- The UDP port that has been assigned to syslog is 514.
+as its underlying transport layer mechanism.  
+The UDP port that has been assigned to syslog is 514.
 
 To expose a Syslog listener service we reuse the existing
 link:mina.html[camel-mina] component or link:netty.html[camel-netty]
 where we just use the `Rfc3164SyslogDataFormat` to marshal and unmarshal
 messages. Notice that from *Camel 2.14* onwards the syslog dataformat is
 renamed to `SyslogDataFormat`.
+
+[[Syslog-Dataformat-Options]]
+Options
+^^^^^^^
+
+// dataformat options: START
+The Syslog dataformat has no options.
+// dataformat options: END
 
 [[Syslog-RFC5424Syslogprotocol]]
 RFC5424 Syslog protocol
