@@ -33,8 +33,46 @@ public class JettyHttpProducerBridgeTest extends BaseJettyTest {
         // give Jetty time to startup properly
         Thread.sleep(2000);
 
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").message(0).header("bridgeEndpoint").isNull();
+        getMockEndpoint("mock:bar").message(0).header("throwExceptionOnFailure").isNull();
+
         String reply = template.requestBody("jetty:http://127.0.0.1:" + port1 + "/foo", "World", String.class);
         assertEquals("Bye World", reply);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testProxyWithHeader() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(2000);
+
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").expectedHeaderReceived("beer", "Carlsberg");
+        getMockEndpoint("mock:bar").message(0).header("bridgeEndpoint").isNull();
+        getMockEndpoint("mock:bar").message(0).header("throwExceptionOnFailure").isNull();
+
+        String reply = template.requestBodyAndHeader("jetty:http://127.0.0.1:" + port1 + "/foo", "Camel", "beer", "Carlsberg", String.class);
+        assertEquals("Bye Camel", reply);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testProxyWithQueryParameter() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(2000);
+
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").expectedHeaderReceived("beer", "Carlsberg");
+        getMockEndpoint("mock:bar").message(0).header("bridgeEndpoint").isNull();
+        getMockEndpoint("mock:bar").message(0).header("throwExceptionOnFailure").isNull();
+
+        String reply = template.requestBody("jetty:http://127.0.0.1:" + port1 + "/foo?beer=Carlsberg", "Apache", String.class);
+        assertEquals("Bye Apache", reply);
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -49,6 +87,7 @@ public class JettyHttpProducerBridgeTest extends BaseJettyTest {
                     .to("jetty:http://127.0.0.1:" + port2 + "/bar?bridgeEndpoint=true&throwExceptionOnFailure=false");
 
                 from("jetty:http://127.0.0.1:" + port2 + "/bar")
+                    .to("mock:bar")
                     .transform().simple("Bye ${body}");
             }
         };
