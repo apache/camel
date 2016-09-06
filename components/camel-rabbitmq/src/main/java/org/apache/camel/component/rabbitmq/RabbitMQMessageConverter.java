@@ -180,7 +180,7 @@ public class RabbitMQMessageConverter {
     }
 
     private Date convertTimestamp(Object timestamp) {
-        if(timestamp instanceof Date){
+        if (timestamp instanceof Date) {
             return (Date)timestamp;
         }
         return new Date(Long.parseLong(timestamp.toString()));
