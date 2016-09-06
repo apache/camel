@@ -112,11 +112,23 @@ on multiple routes. You have to set the <castor> element directly in
 Options
 ^^^^^^^
 
-// component options: START
-// component options: END
+// dataformat options: START
+The Castor dataformat supports 5 options which are listed below.
 
-// endpoint options: START
-// endpoint options: END
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| mappingFile |  | String | Path to a Castor mapping file to load from the classpath.
+| validation | true | Boolean | Whether validation is turned on or off. Is by default true.
+| encoding | UTF-8 | String | Encoding to use when marshalling an Object to XML. Is by default UTF-8
+| packages |  | String[] | Add additional packages to Castor XmlContext
+| classes |  | String[] | Add additional class names to Castor XmlContext
+|=======================================================================
+{% endraw %}
+// dataformat options: END
 
 [[Castor-Dependencies]]
 Dependencies

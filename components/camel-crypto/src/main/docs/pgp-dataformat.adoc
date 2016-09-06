@@ -1,11 +1,8 @@
-[[Crypto-Crypto]]
-Crypto
-~~~~~~
+[[PGP-PGP]]
+PGP
+~~~
 
-*Available as of Camel 2.3* 
-*PGP Available as of Camel 2.9*
-
-The Crypto link:data-format.html[Data Format] integrates the Java
+The PGP link:data-format.html[Data Format] integrates the Java
 Cryptographic Extension into Camel, allowing simple and flexible
 encryption and decryption of messages using Camel's familiar marshall
 and unmarshal formatting mechanism. It assumes marshalling to mean
@@ -328,7 +325,7 @@ signatureKeyFileName, and signatureKeyRing.
 Dependencies
 ^^^^^^^^^^^^
 
-To use the link:crypto.html[Crypto] dataformat in your camel routes you
+To use the PGP dataformat in your camel routes you
 need to add the following dependency to your pom.
 
 [source,xml]

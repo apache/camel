@@ -7,130 +7,48 @@ http://commons.apache.org/proper/commons-csv/[Apache Commons CSV] to
 handle CSV payloads (Comma Separated Values) such as those
 exported/imported by Excel.
 
-As of Camel 2.15.0, it now uses
-the http://commons.apache.org/proper/commons-csv/archives/1.1/index.html[Apache
-Commons CSV 1.1] which is based on a completely different set of
-options.
 
-[[CSV-AvailableoptionsuntilCamel2.15]]
-Available options until Camel 2.15
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[[CSV-Options]]
+Options
+^^^^^^^
 
-[width="100%",cols="10%,10%,80%",options="header",]
+// dataformat options: START
+The CSV dataformat supports 23 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
-|Option |Type |Description
-
-|config |CSVConfig |Can be used to set a custom `CSVConfig` object.
-
-|strategy |CSVStrategy |Can be used to set a custom `CSVStrategy`; the default is
-`CSVStrategy.DEFAULT_STRATEGY`.
-
-|autogenColumns |boolean |Whether or not columns are auto-generated in the resulting CSV. The
-default value is `true`; subsequent messages use the previously created
-columns with new fields being added at the end of the line.
-
-|delimiter |String |*Camel 2.4:* The column delimiter to use; the default value is "`,`".
-
-|skipFirstLine |boolean |*Camel 2.10:* Whether or not to skip the first line of CSV input when
-unmarshalling (e.g. if the content has headers on the first line); the
-default value is `false`.
-
-|lazyLoad |boolean |*Camel 2.12.2:* Whether or not to Sequential access CSV input through an
-iterator which could avoid OOM exception when processing huge CSV file;
-the default value is false
-
-|useMaps |boolean |*Camel 2.13:* Whether to use List<Map> when unmarshalling instead of
-List<List>.
+| Name | Default | Java Type | Description
+| formatRef |  | String | The reference format to use it will be updated with the other format options the default value is CSVFormat.DEFAULT
+| formatName |  | String | The name of the format to use the default value is CSVFormat.DEFAULT
+| commentMarkerDisabled | false | Boolean | Disables the comment marker of the reference format.
+| commentMarker |  | String | Sets the comment marker of the reference format.
+| delimiter |  | String | Sets the delimiter to use. The default value is (comma)
+| escapeDisabled | false | Boolean | Use for disabling using escape character
+| escape |  | String | Sets the escape character to use
+| headerDisabled | false | Boolean | Use for disabling headers
+| header |  | List | To configure the CSV headers
+| allowMissingColumnNames | false | Boolean | Whether to allow missing column names.
+| ignoreEmptyLines | false | Boolean | Whether to ignore empty lines.
+| ignoreSurroundingSpaces | false | Boolean | Whether to ignore surrounding spaces
+| nullStringDisabled | false | Boolean | Used to disable null strings
+| nullString |  | String | Sets the null string
+| quoteDisabled | false | Boolean | Used to disable quotes
+| quote |  | String | Sets the quote which by default is
+| recordSeparatorDisabled |  | String | Used for disabling record separator
+| recordSeparator |  | String | Sets the record separator (aka new line) which by default is \r\n (CRLF)
+| skipHeaderRecord | false | Boolean | Whether to skip the header record in the output
+| quoteMode |  | String | Sets the quote mode
+| lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one.
+| useMaps | false | Boolean | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected).
+| recordConverterRef |  | String | Refers to a custom CsvRecordConverter to lookup from the registry to use.
 |=======================================================================
+{% endraw %}
+// dataformat options: END
 
-[[CSV-AvailableoptionsasofCamel2.15]]
-Available options as of Camel 2.15
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Option |Type |Description
-
-|`format` |`CSVFormat` |The reference format to use, it will be updated with the other format
-options, the default value is `CSVFormat.DEFAULT`
-
-|`commentMarkerDisabled` |`boolean` |Disables the comment marker of the reference format.
-This option is `false` by default.
-
-|`commentMarker` |`Character` |Overrides the comment marker of the reference format.
-This option is `null` by default. When `null` it keeps the value of the
-reference format which is `null` for `CSVFormat.DEFAULT`.
-
-|`delimiter` |`Character` |Overrides the delimiter of the reference format.
-This option is `null` by defaut. When `null` it keeps the value of the
-reference format which is `','` for `CSVFormat.DEFAULT`.
-
-|`escapeDisabled` |`boolean` |Disables the escape character of the reference format.
-This option is `false` by default.
-
-|`escape` |`Character` |Overrides the escape character of the reference format.
-This option is `null` by default. When `null` it keeps the value of the
-reference format which is `null` for `CSVFormat.DEFAULT`.
-
-|`headerDisabled` |`boolean` |Disables the header of the reference format.
-This option is `false` by default.
-
-|`header` |`String[]` |Overrides the header of the reference format.
-This option is `null` by default. When `null` it keeps the value of the
-reference format which is `null` for `CSVFormat.DEFAULT`.
-
-|`allowMissingColumnNames` |`Boolean` |Overrides the missing column names behavior of the reference format.
-This option is `null` by default. When `null` it keeps the value of the
-reference format which is `false` for `CSVFormat.DEFAULT`.
-
-|`ignoreEmptyLines` |`Boolean` |Overrides the empty line behavior of the reference format.
-This option is `null` by default. When `null` it keeps the value of the
-reference format which is `true` for `CSVFormat.DEFAULT`.
-
-|`ignoreSurroundingSpaces` |`Boolean` |Overrides the surrounding spaces behavior of the reference format.
-This option is `null` by default. When `null` it keeps the value of the
-reference format which is `false` for `CSVFormat.DEFAULT`.
-
-|`nullStringDisabled` |`boolean` |Disables the null string representation of the reference format.
-This option is `false` by default.
-
-|`nullString` |`String` |Overrides the null string representation of the reference format.
-This option is `null` by default. When `null` it keeps the value of the
-reference format which is `null` for `CSVFormat.DEFAULT`.
-
-|`quoteDisabled` |`boolean` |Disables the quote of the reference format.
-This option is `false` by default.
-
-|`quote` |`Character` |Overrides the quote symbol of the reference format.
-This option is `null` by default. When `null` it keeps the value of the
-reference format which is `'"'` (double quote) for `CSVFormat.DEFAULT`.
-
-|`quoteMode` |`QuoteMode` |Overrides the quote mode of the reference format.
-This option is `null` by default. When `null` it keeps the value of the
-reference format which is `null` for `CSVFormat.DEFAULT`.
-
-|`recordSeparatorDisabled` |`boolean` |Disables the record separator of the reference format.
-This option is `false` by default.
-
-|`recordSeparator` |`String` |Overrides the record separator of the reference format.
-This option is `null` by default. When `null` it keeps the value of the
-reference format which is `\r\n` (CRLF) for `CSVFormat.DEFAULT`.
-
-|`skipHeaderRecord` |`Boolean` |Overrides the header record behavior of the reference format.
-This option is `null` by default. When `null` it keeps the value of the
-reference format which is `false` for `CSVFormat.DEFAULT`.
-
-|`lazyLoad` |`boolean` |Whether the unmarshalling should produce an iterator that reads the
-lines on the fly or if all the lines must be read at one.
-This option is `false` by default.
-
-|`useMaps` |`boolean` |Whether the unmarshalling should produce maps for the lines values
-instead of lists. It requires to have header (either defined or
-collected). This options is `false` by default.
-
-|`recordConverter` |`CsvRecordConverter` |Sets the record converter to use. If defines the `useMaps` options is
-disabled. This option is `null` by default.
-|=======================================================================
 
 [[CSV-MarshallingaMaptoCSV]]
 Marshalling a Map to CSV
