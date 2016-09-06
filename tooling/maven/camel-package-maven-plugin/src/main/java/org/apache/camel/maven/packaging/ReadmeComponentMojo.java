@@ -84,6 +84,13 @@ public class ReadmeComponentMojo extends AbstractMojo {
      */
     private BuildContext buildContext;
 
+    /**
+     * Whether to fail the build fast if any WARNINGS was detected.
+     *
+     * @parameter
+     */
+    protected Boolean failFast;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         executeComponent();
@@ -138,6 +145,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
                         getLog().debug("No changes to doc file: " + file);
                     } else {
                         getLog().warn("No component doc file: " + file);
+                        if (isFailFast()) {
+                            throw new MojoExecutionException("Failed build due failFast=true");
+                        }
                     }
                 }
             }
@@ -179,6 +189,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
                         getLog().debug("No changes to doc file: " + file);
                     } else {
                         getLog().warn("No dataformat doc file: " + file);
+                        if (isFailFast()) {
+                            throw new MojoExecutionException("Failed build due failFast=true");
+                        }
                     }
                 }
             }
@@ -251,6 +264,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
                         getLog().debug("No changes to doc file: " + file);
                     } else {
                         getLog().warn("No language doc file: " + file);
+                        if (isFailFast()) {
+                            throw new MojoExecutionException("Failed build due failFast=true");
+                        }
                     }
                 }
             }
@@ -284,6 +300,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 getLog().warn("Add the following markers");
                 getLog().warn("\t// component options: START");
                 getLog().warn("\t// component options: END");
+                if (isFailFast()) {
+                    throw new MojoExecutionException("Failed build due failFast=true");
+                }
                 return false;
             }
         } catch (Exception e) {
@@ -318,6 +337,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 getLog().warn("Add the following markers");
                 getLog().warn("\t// endpoint options: START");
                 getLog().warn("\t// endpoint options: END");
+                if (isFailFast()) {
+                    throw new MojoExecutionException("Failed build due failFast=true");
+                }
                 return false;
             }
         } catch (Exception e) {
@@ -352,6 +374,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 getLog().warn("Add the following markers");
                 getLog().warn("\t// dataformat options: START");
                 getLog().warn("\t// dataformat options: END");
+                if (isFailFast()) {
+                    throw new MojoExecutionException("Failed build due failFast=true");
+                }
                 return false;
             }
         } catch (Exception e) {
@@ -386,6 +411,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 getLog().warn("Add the following markers");
                 getLog().warn("\t// language options: START");
                 getLog().warn("\t// language options: END");
+                if (isFailFast()) {
+                    throw new MojoExecutionException("Failed build due failFast=true");
+                }
                 return false;
             }
         } catch (Exception e) {
@@ -716,6 +744,10 @@ public class ReadmeComponentMojo extends AbstractMojo {
             }
         }
         return languageNames;
+    }
+
+    private boolean isFailFast() {
+        return failFast != null && failFast;
     }
 
 }
