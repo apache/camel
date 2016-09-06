@@ -68,12 +68,13 @@ public final class MllpUtil {
      * @throws MllpCorruptFrameException if the MLLP Frame is corrupted in some way
      * @throws MllpException             for other unexpected error conditions
      */
-    public static boolean openFrame(Socket socket) throws SocketTimeoutException, MllpCorruptFrameException, MllpException {
+    public static boolean openFrame(Socket socket, int receiveTimeout, int readTimeout) throws SocketTimeoutException, MllpCorruptFrameException, MllpException {
         if (socket.isConnected() && !socket.isClosed()) {
             InputStream socketInputStream = MllpUtil.getInputStream(socket);
 
             int readByte = -1;
             try {
+                socket.setSoTimeout(receiveTimeout);
                 readByte = socketInputStream.read();
                 switch (readByte) {
                 case START_OF_BLOCK:
@@ -110,6 +111,7 @@ public final class MllpUtil {
             outOfFrameData.write(readByte);
 
             try {
+                socket.setSoTimeout(readTimeout);
                 while (true) {
                     readByte = socketInputStream.read();
                     switch (readByte) {
@@ -183,12 +185,13 @@ public final class MllpUtil {
      * @throws MllpCorruptFrameException if the MLLP Frame is corrupted in some way
      * @throws MllpException             for other unexpected error conditions
      */
-    public static byte[] closeFrame(Socket socket) throws MllpTimeoutException, MllpCorruptFrameException, MllpException {
+    public static byte[] closeFrame(Socket socket, int receiveTimeout, int readTimeout) throws MllpTimeoutException, MllpCorruptFrameException, MllpException {
         if (socket.isConnected() && !socket.isClosed()) {
             InputStream socketInputStream = MllpUtil.getInputStream(socket);
             // TODO:  Come up with an intelligent way to size this stream
             ByteArrayOutputStream payload = new ByteArrayOutputStream(4096);
             try {
+                socket.setSoTimeout(readTimeout);
                 while (true) {
                     int readByte = socketInputStream.read();
                     switch (readByte) {
@@ -226,6 +229,7 @@ public final class MllpUtil {
                             throw new MllpCorruptFrameException("The MLLP frame was partially closed - END_OF_BLOCK was not followed by END_OF_DATA",
                                     payload.size() > 0 ? payload.toByteArray() : null);
                         }
+                        socket.setSoTimeout(receiveTimeout);
                         return payload.toByteArray();
                     default:
                         // log.trace( "Read Character: {}", (char)readByte );
@@ -263,6 +267,11 @@ public final class MllpUtil {
             }
         }
 
+        try {
+            socket.setSoTimeout(receiveTimeout);
+        } catch (SocketException e) {
+            // Eat this exception
+        }
         return null;
     }
 
