@@ -55,7 +55,7 @@ The MLLP component has no options.
 
 
 // endpoint options: START
-The MLLP component supports 19 endpoint options which are listed below:
+The MLLP component supports 22 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -64,6 +64,7 @@ The MLLP component supports 19 endpoint options which are listed below:
 | hostname | common |  | String | *Required* Hostname or IP for connection for the TCP connection. The default value is null which means any local IP address
 | port | common |  | int | *Required* Port number for the TCP connection
 | autoAck | common | true | boolean | Enable/Disable the automatic generation of a MLLP Acknowledgement MLLP Consumers only
+| hl7Headers | common | true | boolean | Enable/Disable the automatic generation of message headers from the HL7 Message MLLP Consumers only
 | keepAlive | common | true | boolean | Enable/disable the SO_KEEPALIVE socket option.
 | reuseAddress | common | false | boolean | Enable/disable the SO_REUSEADDR socket option.
 | tcpNoDelay | common | true | boolean | Enable/disable the TCP_NODELAY socket option.
@@ -79,6 +80,8 @@ The MLLP component supports 19 endpoint options which are listed below:
 | bindRetryInterval | timeout | 5000 | int | TCP Server Only - The number of milliseconds to wait between bind attempts
 | bindTimeout | timeout | 30000 | int | TCP Server Only - The number of milliseconds to retry binding to a server port
 | connectTimeout | timeout | 30000 | int | Timeout value for establishing for a TCP connection TCP Client only
+| maxReceiveTimeouts | timeout | -1 | int | The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset.
+| readTimeout | timeout | 500 | int | The SO_TIMEOUT value used after the start of an MLLP frame has been received
 | receiveTimeout | timeout | 10000 | int | The SO_TIMEOUT value used when waiting for the start of an MLLP frame
 |=======================================================================
 {% endraw %}
