@@ -18,7 +18,6 @@ package org.apache.camel.itest.springboot.util;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessController;
@@ -34,13 +33,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.itest.springboot.ITestConfig;
 import org.apache.camel.itest.springboot.ITestConfigBuilder;
 import org.apache.camel.itest.springboot.arquillian.SpringBootZipExporterImpl;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.se.api.ClassPath;
 import org.jboss.shrinkwrap.api.Archive;
@@ -68,7 +67,6 @@ import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenCoordinates;
 import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenDependencies;
 import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenDependency;
 import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenDependencyExclusion;
-import org.junit.Assert;
 
 /**
  * Packages a module in a spring-boot compatible nested-jar structure.
@@ -84,10 +82,17 @@ public final class ArquillianPackager {
     private static final String LIB_FOLDER = "/BOOT-INF/lib";
     private static final String CLASSES_FOLDER = "BOOT-INF/classes";
 
+    private static final boolean FAIL_ON_TEST_LIBRARY_MISMATCH = false;
+    private static final boolean FAIL_ON_RELATED_LIBRARY_MISMATCH = true;
+    private static final boolean VERSION_EQUALITY_MINOR_VERSION = true;
+
     private ArquillianPackager() {
     }
 
     public static Archive<?> springBootPackage(ITestConfig config) throws Exception {
+        if (!new File(".").getCanonicalFile().getName().equals("camel-itest-spring-boot")) {
+            throw new IllegalStateException("In order to run the integration tests, 'camel-itest-spring-boot' must be the working directory. Check your configuration.");
+        }
 
         ExtensionLoader extensionLoader = new ServiceExtensionLoader(Collections.singleton(getExtensionClassloader()));
         extensionLoader.addOverride(ZipExporter.class, SpringBootZipExporterImpl.class);
@@ -187,53 +192,48 @@ public final class ArquillianPackager {
         for (String depXml : testProvidedDependenciesXml) {
             if (validTestDependency(config, depXml, commonExclusions)) {
                 depXml = enforceExclusions(config, depXml, commonExclusions);
-                //depXml = addBOMVersionWhereMissing(config, depXml);
+                depXml = switchToStarterIfPresent(config, depXml);
                 cleanTestProvidedDependenciesXml.add(depXml);
             }
         }
 
-        List<String> versionedTestProvidedDependenciesXml = new LinkedList<>();
-        if(!cleanTestProvidedDependenciesXml.isEmpty()) {
+        List<MavenResolvedArtifact> testDependencies = new LinkedList<>();
+        if (!cleanTestProvidedDependenciesXml.isEmpty()) {
 
             File testProvidedResolverPom = createResolverPom(config, cleanTestProvidedDependenciesXml);
 
-            List<MavenResolvedArtifact> artifacts = Arrays.asList(resolver(config)
+            testDependencies.addAll(Arrays.asList(resolver(config)
                     .loadPomFromFile(testProvidedResolverPom)
                     .importDependencies(scopes.toArray(new ScopeType[0]))
                     .resolve()
-                    .withoutTransitivity()
-                    .asResolvedArtifact());
-
-            Map<String, String> resolvedVersions = new HashMap<>();
-            for(MavenResolvedArtifact art : artifacts) {
-                String key = art.getCoordinate().getGroupId() + ":" + art.getCoordinate().getArtifactId();
-                String val = art.getCoordinate().getVersion();
-                resolvedVersions.put(key, val);
-            }
-
-            for(String dep : cleanTestProvidedDependenciesXml) {
-                dep = setResolvedVersion(config, dep, resolvedVersions);
-                versionedTestProvidedDependenciesXml.add(dep);
-            }
-
+                    .withTransitivity()
+                    .asResolvedArtifact()));
         }
 
-        File moduleSpringBootPom = createUserPom(config, versionedTestProvidedDependenciesXml);
+        File moduleSpringBootPom = createUserPom(config);
 
-        List<ScopeType> resolvedScopes = new LinkedList<>();
-        resolvedScopes.add(ScopeType.COMPILE);
-        resolvedScopes.add(ScopeType.RUNTIME);
-        resolvedScopes.addAll(scopes);
+//        List<ScopeType> resolvedScopes = new LinkedList<>();
+//        resolvedScopes.add(ScopeType.COMPILE);
+//        resolvedScopes.add(ScopeType.RUNTIME);
+//        resolvedScopes.addAll(scopes);
 
-        List<File> dependencies = new LinkedList<>();
-        dependencies.addAll(Arrays.asList(resolver(config)
+        List<MavenResolvedArtifact> runtimeDependencies = new LinkedList<>();
+        runtimeDependencies.addAll(Arrays.asList(resolver(config)
                 .loadPomFromFile(moduleSpringBootPom)
-                .importDependencies(resolvedScopes.toArray(new ScopeType[0]))
+                .importRuntimeDependencies()
                 .addDependencies(additionalDependencies)
                 .resolve()
                 .withTransitivity()
-                .asFile()));
+                .asResolvedArtifact()));
 
+
+        List<MavenResolvedArtifact> dependencyArtifacts = merge(config, runtimeDependencies, testDependencies);
+        lookForVersionMismatch(config, dependencyArtifacts);
+
+        List<File> dependencies = new LinkedList<>();
+        for (MavenResolvedArtifact a : dependencyArtifacts) {
+            dependencies.add(a.asFile());
+        }
 
         // The spring boot-loader dependency will be added to the main jar, so it should be excluded from the embedded ones
         excludeDependencyRegex(dependencies, "^spring-boot-loader-[0-9].*");
@@ -281,6 +281,159 @@ public final class ArquillianPackager {
         return external.build();
     }
 
+    private static void lookForVersionMismatch(ITestConfig config, List<MavenResolvedArtifact> dependencyArtifacts) {
+
+        Set<String> ignore = new HashSet<>();
+        ignore.addAll(config.getIgnoreLibraryMismatch());
+
+        ignore.add("org.apache.commons");
+        ignore.add("commons-beanutils:commons-beanutils");
+        ignore.add("io.netty:netty:jar"); // an old version
+        ignore.add("xml-apis:xml-apis-ext");
+        ignore.add("org.scala-lang:scala-compiler");
+        ignore.add("org.mortbay.jetty:servlet-api-2.5");
+        ignore.add("org.apache.geronimo.specs");
+        ignore.add("org.apache.qpid:qpid-jms-client");
+        ignore.add("com.github.jnr");
+        ignore.add("stax:stax-api");
+        ignore.add("net.openhft");
+        ignore.add("org.easytesting");
+        ignore.add("com.sun.xml.bind:jaxb-xjc");
+        ignore.add("io.swagger:swagger-parser");
+        ignore.add("io.fabric8:kubernetes-");
+        ignore.add("org.apache.maven");
+        ignore.add("org.codehaus.plexus");
+        ignore.add("org.jboss.arquillian.container");
+        ignore.add("org.apache.curator");
+        ignore.add("org.apache.parquet");
+        ignore.add("org.springframework.data");
+        ignore.add("org.apache.velocity");
+
+        Map<String, Map<String, String>> status = new TreeMap<>();
+        Set<String> mismatches = new TreeSet<>();
+        for (MavenResolvedArtifact a : dependencyArtifacts) {
+            boolean ignoreCheck = false;
+            for (String i : ignore) {
+                if (getIdentifier(a).startsWith(i)) {
+                    ignoreCheck = true;
+                    break;
+                }
+            }
+            if (ignoreCheck) {
+                continue;
+            }
+
+            String group = a.getCoordinate().getGroupId();
+            String artifact = a.getCoordinate().getArtifactId();
+            String version = a.getCoordinate().getVersion();
+
+            String artifactPrefix = artifact;
+            if (artifactPrefix.contains("-")) {
+                artifactPrefix = artifactPrefix.substring(0, artifactPrefix.indexOf("-"));
+            }
+            String prefixId = group + ":" + artifactPrefix;
+
+            if (!status.containsKey(prefixId)) {
+                status.put(prefixId, new TreeMap<>());
+            }
+
+            for (String anotherVersion : status.get(prefixId).values()) {
+                if (!sameVersion(anotherVersion, version)) {
+                    mismatches.add(prefixId);
+                }
+            }
+
+            status.get(prefixId).put(getIdentifier(a), version);
+        }
+
+        StringBuilder message = new StringBuilder();
+        for (String mismatch : mismatches) {
+            message.append("Found mismatch for dependency " + mismatch + ":\n");
+            for (String art : status.get(mismatch).keySet()) {
+                String ver = status.get(mismatch).get(art);
+                message.append(" - " + art + " --> " + ver + "\n");
+            }
+        }
+
+        if (message.length() > 0) {
+            String alert = "Library version mismatch found.\n" + message;
+            if (FAIL_ON_RELATED_LIBRARY_MISMATCH) {
+                throw new RuntimeException(alert);
+            } else {
+                debug(alert);
+            }
+        }
+    }
+
+    private static boolean sameVersion(String v1, String v2) {
+        if (VERSION_EQUALITY_MINOR_VERSION) {
+            if (v1.indexOf(".") != v1.lastIndexOf(".") && v2.indexOf(".") != v2.lastIndexOf(".")) {
+                // truncate up to minor version
+                int v1MinSplit = v1.indexOf(".", v1.indexOf(".") + 1);
+                v1 = v1.substring(0, v1MinSplit);
+
+                int v2MinSplit = v2.indexOf(".", v2.indexOf(".") + 1);
+                v2 = v2.substring(0, v2MinSplit);
+            }
+        }
+
+        return v1.equals(v2);
+    }
+
+    private static List<MavenResolvedArtifact> merge(ITestConfig config, List<MavenResolvedArtifact> runtimeDependencies, List<MavenResolvedArtifact> testDependencies) {
+
+
+        Set<String> runtimeArtifacts = new HashSet<>();
+        for (MavenResolvedArtifact a : runtimeDependencies) {
+            runtimeArtifacts.add(getIdentifier(a));
+        }
+
+        Map<String, String> testVersions = new HashMap<>();
+        for (MavenResolvedArtifact a : testDependencies) {
+            testVersions.put(getIdentifier(a), a.getCoordinate().getVersion());
+        }
+
+        List<MavenResolvedArtifact> result = new LinkedList<>();
+        List<String> problems = new LinkedList<>();
+
+        for (MavenResolvedArtifact a : runtimeDependencies) {
+            String version = a.getCoordinate().getVersion();
+            String testVersion = testVersions.get(getIdentifier(a));
+
+            if (testVersion != null && !sameVersion(testVersion, version)) {
+                problems.add("Versions for artifact " + getIdentifier(a) + " are different between runtime (" + version + ") and test (" + testVersion + ") scopes");
+            }
+
+            result.add(a);
+        }
+
+        for (MavenResolvedArtifact a : testDependencies) {
+            if (!runtimeArtifacts.contains(getIdentifier(a))) {
+                result.add(a);
+            }
+        }
+
+        if (!problems.isEmpty()) {
+            StringBuilder message = new StringBuilder();
+            message.append("Some problems found while merging test dependencies:\n");
+            for (String problem : problems) {
+                message.append(" - " + problem + "\n");
+            }
+
+            if (FAIL_ON_TEST_LIBRARY_MISMATCH) {
+                throw new RuntimeException(message.toString());
+            } else {
+                debug(message.toString());
+            }
+        }
+
+        return result;
+    }
+
+    private static String getIdentifier(MavenResolvedArtifact a) {
+        return a.getCoordinate().getGroupId() + ":" + a.getCoordinate().getArtifactId() + ":" + a.getCoordinate().getType() + ":" + a.getCoordinate().getClassifier();
+    }
+
     private static File createResolverPom(ITestConfig config, List<String> cleanTestProvidedDependencies) throws Exception {
 
         String pom;
@@ -309,6 +462,8 @@ public final class ArquillianPackager {
             pom = pom.replace(property, resolvedProperties.get(property));
         }
 
+        pom = pom.replace("#{module}", config.getModuleName());
+
         File pomFile = new File(config.getModuleBasePath() + "/target/itest-spring-boot-dependency-resolver-pom.xml");
         try (FileWriter fw = new FileWriter(pomFile)) {
             IOUtils.write(pom, fw);
@@ -317,20 +472,20 @@ public final class ArquillianPackager {
         return pomFile;
     }
 
-    private static File createUserPom(ITestConfig config, List<String> cleanTestProvidedDependencies) throws Exception {
+    private static File createUserPom(ITestConfig config) throws Exception {
 
         String pom;
         try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream("/application-pom.xml")) {
             pom = IOUtils.toString(pomTemplate);
         }
 
-        StringBuilder dependencies = new StringBuilder();
-        for (String dep : cleanTestProvidedDependencies) {
-            dependencies.append(dep);
-            dependencies.append("\n");
-        }
-
-        pom = pom.replace("<!-- DEPENDENCIES -->", dependencies.toString());
+//        StringBuilder dependencies = new StringBuilder();
+//        for (String dep : cleanTestProvidedDependencies) {
+//            dependencies.append(dep);
+//            dependencies.append("\n");
+//        }
+//
+//        pom = pom.replace("<!-- DEPENDENCIES -->", dependencies.toString());
 
         Map<String, String> resolvedProperties = new TreeMap<>();
         Pattern propPattern = Pattern.compile("(\\$\\{[^}]*\\})");
@@ -407,6 +562,23 @@ public final class ArquillianPackager {
             String artifactId = excl.getArtifactId();
 
             dependencyXml = dependencyXml.replace("</exclusions>", "<exclusion><groupId>" + groupId + "</groupId><artifactId>" + artifactId + "</artifactId></exclusion></exclusions>");
+        }
+
+        return dependencyXml;
+    }
+
+    private static String switchToStarterIfPresent(ITestConfig config, String dependencyXml) {
+
+        String groupId = textBetween(dependencyXml, "<groupId>", "</groupId>");
+        String artifactId = textBetween(dependencyXml, "<artifactId>", "</artifactId>");
+        String type = textBetween(dependencyXml, "<type>", "</type>");
+
+        if ("org.apache.camel".equals(groupId) && artifactId.startsWith("camel-") && !"test-jar".equals(type)) {
+            String starterArtifact = artifactId + "-starter";
+            File starterFile = new File("../../components-starter/" + starterArtifact);
+            if (starterFile.exists()) {
+                dependencyXml = dependencyXml.replace(artifactId, starterArtifact);
+            }
         }
 
         return dependencyXml;

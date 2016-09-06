@@ -22,7 +22,7 @@
 
     <groupId>com.company</groupId>
     <artifactId>spring-boot-dependency-resolver</artifactId>
-    <version>1.0</version>
+    <version>${project.version}</version>
 
     <name>Spring-Boot Dependency Resolver</name>
     <description>This POM is used to resolve test and provided dependencies required in integration tests</description>
@@ -31,7 +31,15 @@
         <dependencies>
 
             <dependency>
-                <!-- Then use camel dependency management -->
+                <!-- BOM first -->
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-spring-boot-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-starter-parent</artifactId>
                 <version>${project.version}</version>
@@ -40,7 +48,7 @@
             </dependency>
 
             <dependency>
-                <!-- Added as fallback for test and optional dependencies -->
+                <!-- Added as fallback for test and provided dependencies -->
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-parent</artifactId>
                 <version>${project.version}</version>
@@ -52,6 +60,13 @@
     </dependencyManagement>
 
     <dependencies>
+
+        <!-- Adding the starter as provided dependency -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>#{module}-starter</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- DEPENDENCIES -->
 
