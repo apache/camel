@@ -62,28 +62,24 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
 
         this.camelContext = camelContext;
 
-        if (jsonDataFormat != null) {
+        if (outJsonDataFormat != null) {
             this.jsonUnmarshal = new UnmarshalProcessor(outJsonDataFormat);
         } else {
             this.jsonUnmarshal = null;
         }
-        if (outJsonDataFormat != null) {
+        if (jsonDataFormat != null) {
             this.jsonMarshal = new MarshalProcessor(jsonDataFormat);
-        } else if (jsonDataFormat != null) {
-            this.jsonMarshal = new MarshalProcessor(outJsonDataFormat);
         } else {
             this.jsonMarshal = null;
         }
 
-        if (xmlDataFormat != null) {
+        if (outXmlDataFormat != null) {
             this.xmlUnmarshal = new UnmarshalProcessor(outXmlDataFormat);
         } else {
             this.xmlUnmarshal = null;
         }
-        if (outXmlDataFormat != null) {
+        if (xmlDataFormat != null) {
             this.xmlMarshal = new MarshalProcessor(xmlDataFormat);
-        } else if (xmlDataFormat != null) {
-            this.xmlMarshal = new MarshalProcessor(outXmlDataFormat);
         } else {
             this.xmlMarshal = null;
         }
@@ -139,17 +135,29 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
         }
 
         // we only need to perform before binding if the message body is POJO based
-        // if its convertable to stream based then its not POJO based
-        InputStream is = camelContext.getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
-        if (is != null) {
-            exchange.getIn().setBody(is);
+        if (body instanceof String || body instanceof byte[]) {
+            // the body is text based and thus not POJO so no binding needed
             if (outType != null) {
                 // wrap callback to add reverse operation if we know the output type from the REST service
                 callback = new RestProducerBindingUnmarshalCallback(exchange, callback, jsonMarshal, xmlMarshal, false);
             }
             // okay now we can continue routing to the producer
             return getProcessor().process(exchange, callback);
+        } else {
+            // if its convertable to stream based then its not POJO based
+            InputStream is = camelContext.getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
+            if (is != null) {
+                exchange.getIn().setBody(is);
+                if (outType != null) {
+                    // wrap callback to add reverse operation if we know the output type from the REST service
+                    callback = new RestProducerBindingUnmarshalCallback(exchange, callback, jsonMarshal, xmlMarshal, false);
+                }
+                // okay now we can continue routing to the producer
+                return getProcessor().process(exchange, callback);
+            }
         }
+
+        // assume body is POJO based and binding needed
 
         String contentType = ExchangeHelper.getContentType(exchange);
         if (contentType != null) {
@@ -306,8 +314,8 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
                 return;
             }
 
-            // is there any marshaller at all
-            if (jsonMarshal == null && xmlMarshal == null) {
+            // is there any unmarshaller at all
+            if (jsonUnmarshal == null && xmlUnmarshal == null) {
                 return;
             }
 
