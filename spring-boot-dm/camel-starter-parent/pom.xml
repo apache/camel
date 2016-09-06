@@ -49,12 +49,7 @@
 
             <!-- Custom dependencies that should be automatically applied -->
 
-            <!-- Caffeine - Mismatch resolved in favor of camel version -->
-            <dependency>
-                <groupId>com.github.ben-manes.caffeine</groupId>
-                <artifactId>caffeine</artifactId>
-                <version>${caffeine-version}</version>
-            </dependency>
+
 
 
 
@@ -139,11 +134,7 @@
                 <!--<version>${netty-version}</version>-->
             <!--</dependency>-->
 
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate-version}</version>
-            </dependency>
+
 
 
             <!-- Import the spring-boot dependencies -->
