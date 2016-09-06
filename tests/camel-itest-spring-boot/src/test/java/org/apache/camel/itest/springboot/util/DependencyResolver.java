@@ -16,6 +16,8 @@
  */
 package org.apache.camel.itest.springboot.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashSet;
@@ -169,7 +171,7 @@ public final class DependencyResolver {
     }
 
     public static String resolveCamelParentBOMVersion(String groupId, String artifactId) throws Exception {
-        return xpath("../../parent/pom.xml", "/project/dependencyManagement/dependencies/dependency[groupId='" + groupId + "' and artifactId='" + artifactId + "']/version/text()");
+        return xpath(camelRoot("parent/parent/pom.xml"), "/project/dependencyManagement/dependencies/dependency[groupId='" + groupId + "' and artifactId='" + artifactId + "']/version/text()");
     }
 
     public static String resolveParentProperty(String property) {
@@ -182,29 +184,29 @@ public final class DependencyResolver {
     }
 
     public static String resolveSpringBootParentProperty(String property) {
-        return resolveProperty("../../spring-boot-dm/camel-starter-parent/pom.xml", property, 0);
+        return resolveProperty(camelRoot("spring-boot-dm/pom.xml"), property, 0);
     }
 
     public static String resolveCamelParentProperty(String property) {
-        return resolveProperty("../../parent/pom.xml", property, 0);
+        return resolveProperty(camelRoot("parent/pom.xml"), property, 0);
     }
 
     private static String resolveSurefireProperty(String property) throws Exception {
-        property = getSurefirePropertyFromPom("pom.xml", property);
+        property = getSurefirePropertyFromPom(new File("pom.xml"), property);
         if (property != null && !isResolved(property)) {
-            property = resolveProperty("pom.xml", property, 0);
+            property = resolveProperty(new File("pom.xml"), property, 0);
         }
         if (property != null && !isResolved(property)) {
-            property = resolveProperty("../pom.xml", property, 0);
+            property = resolveProperty(new File("../pom.xml"), property, 0);
         }
         if (property != null && !isResolved(property)) {
-            property = resolveProperty("../../spring-boot-dm/camel-starter-parent/pom.xml", property, 0);
+            property = resolveProperty(camelRoot("spring-boot-dm/pom.xml"), property, 0);
         }
 
         return property;
     }
 
-    private static String resolveProperty(String pom, String property, int depth) {
+    private static String resolveProperty(File pom, String property, int depth) {
         try {
             property = property.trim();
             if (!property.startsWith("${") || !property.endsWith("}")) {
@@ -232,19 +234,19 @@ public final class DependencyResolver {
         }
     }
 
-    private static String getSurefirePropertyFromPom(String pom, String property) throws Exception {
+    private static String getSurefirePropertyFromPom(File pom, String property) throws Exception {
         return xpath(pom, "//plugin[artifactId='maven-surefire-plugin']//systemProperties/property[name='" + property + "']/value/text()");
     }
 
-    private static String getPropertyFromPom(String pom, String property) throws Exception {
+    private static String getPropertyFromPom(File pom, String property) throws Exception {
         return xpath(pom, "/project/properties/" + property + "/text()");
     }
 
-    private static String getParentVersion(String pom) throws Exception {
+    private static String getParentVersion(File pom) throws Exception {
         return xpath(pom, "/project/parent/version/text()");
     }
 
-    private static String xpath(String pom, String expression) throws Exception {
+    private static String xpath(File pom, String expression) throws Exception {
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse(pom);
         XPath xpath = xPathfactory.newXPath();
@@ -258,6 +260,30 @@ public final class DependencyResolver {
 
     private static boolean isResolved(String value) {
         return value != null && !value.startsWith("$");
+    }
+
+    private static File camelRoot(String path) {
+        return new File(camelRoot(), path);
+    }
+
+    private static File camelRoot() {
+        try {
+            File root = new File(".").getCanonicalFile();
+            while (root != null) {
+                File[] names = root.listFiles(pathname -> pathname.getName().equals("components-starter"));
+                if (names != null && names.length == 1) {
+                    break;
+                }
+                root = root.getParentFile();
+            }
+
+            if (root == null) {
+                throw new IllegalStateException("Cannot find Apache Camel project root directory");
+            }
+            return root;
+        } catch (IOException e) {
+            throw new IllegalStateException("Error while getting directory", e);
+        }
     }
 
 }

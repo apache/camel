@@ -29,62 +29,115 @@
 
         <dependencies>
 
+            <!-- What's in the user BOM is OK for the parent -->
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-spring-boot-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+
+            <!-- Testing -->
+            <dependency>
+                <groupId>org.jboss.arquillian.junit</groupId>
+                <artifactId>arquillian-junit-container</artifactId>
+                <version>${arquillian-version}</version>
+                <scope>test</scope>
+            </dependency>
+
             <!-- Custom dependencies that should be automatically applied -->
 
+            <!-- Caffeine - Mismatch resolved in favor of camel version -->
             <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-annotations</artifactId>
-                <version>${jetty-version}</version>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>${caffeine-version}</version>
             </dependency>
 
 
 
+
+
+            <!-- Hadoop - TBD -->
             <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-all</artifactId>
-                <version>${netty-version}</version>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-common</artifactId>
+                <version>${hadoop2-version}</version>
             </dependency>
             <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-buffer</artifactId>
-                <version>${netty-version}</version>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-auth</artifactId>
+                <version>${hadoop2-version}</version>
             </dependency>
             <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-codec-http</artifactId>
-                <version>${netty-version}</version>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-mapreduce-client-core</artifactId>
+                <version>${hadoop2-version}</version>
             </dependency>
             <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-codec</artifactId>
-                <version>${netty-version}</version>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-yarn-common</artifactId>
+                <version>${hadoop2-version}</version>
             </dependency>
             <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-handler</artifactId>
-                <version>${netty-version}</version>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-annotations</artifactId>
+                <version>${hadoop2-version}</version>
             </dependency>
             <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-transport-native-epoll</artifactId>
-                <classifier>linux-x86_64</classifier>
-                <version>${netty-version}</version>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-hdfs</artifactId>
+                <version>${hadoop2-version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-common</artifactId>
-                <version>${netty-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-resolver</artifactId>
-                <version>${netty-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-transport</artifactId>
-                <version>${netty-version}</version>
-            </dependency>
+
+            <!--<dependency>-->
+                <!--<groupId>io.netty</groupId>-->
+                <!--<artifactId>netty-all</artifactId>-->
+                <!--<version>${netty-version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>io.netty</groupId>-->
+                <!--<artifactId>netty-buffer</artifactId>-->
+                <!--<version>${netty-version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>io.netty</groupId>-->
+                <!--<artifactId>netty-codec-http</artifactId>-->
+                <!--<version>${netty-version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>io.netty</groupId>-->
+                <!--<artifactId>netty-codec</artifactId>-->
+                <!--<version>${netty-version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>io.netty</groupId>-->
+                <!--<artifactId>netty-handler</artifactId>-->
+                <!--<version>${netty-version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>io.netty</groupId>-->
+                <!--<artifactId>netty-transport-native-epoll</artifactId>-->
+                <!--<classifier>linux-x86_64</classifier>-->
+                <!--<version>${netty-version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>io.netty</groupId>-->
+                <!--<artifactId>netty-common</artifactId>-->
+                <!--<version>${netty-version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>io.netty</groupId>-->
+                <!--<artifactId>netty-resolver</artifactId>-->
+                <!--<version>${netty-version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>io.netty</groupId>-->
+                <!--<artifactId>netty-transport</artifactId>-->
+                <!--<version>${netty-version}</version>-->
+            <!--</dependency>-->
 
             <dependency>
                 <groupId>org.hibernate</groupId>
