@@ -63,10 +63,12 @@ public class Jt400DataQueueConsumer extends ScheduledPollConsumer {
     @Override
     protected void doStart() throws Exception {
         queueService.start();
+        super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
+        super.doStop();
         queueService.stop();
     }
 
