@@ -25,13 +25,13 @@
     <version>1.0</version>
 
     <name>Spring-Boot Application</name>
-    <description>This is a the base pom of spring-boot applications launched by the users</description>
+    <description>This a the base pom of spring-boot applications launched by the users</description>
 
     <dependencyManagement>
         <dependencies>
 
             <dependency>
-                <!-- Then use camel dependency management -->
+                <!-- Only the BOM -->
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-spring-boot-bom</artifactId>
                 <version>${project.version}</version>

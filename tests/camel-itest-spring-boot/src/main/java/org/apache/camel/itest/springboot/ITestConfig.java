@@ -67,6 +67,8 @@ public class ITestConfig implements Serializable {
 
     private Boolean useCustomLog;
 
+    private Set<String> ignoreLibraryMismatch;
+
     public ITestConfig() {
     }
 
@@ -230,6 +232,14 @@ public class ITestConfig implements Serializable {
         this.useCustomLog = useCustomLog;
     }
 
+    public Set<String> getIgnoreLibraryMismatch() {
+        return ignoreLibraryMismatch;
+    }
+
+    public void setIgnoreLibraryMismatch(Set<String> ignoreLibraryMismatch) {
+        this.ignoreLibraryMismatch = ignoreLibraryMismatch;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ITestConfig{");
@@ -253,6 +263,7 @@ public class ITestConfig implements Serializable {
         sb.append(", jmxDisabledNames=").append(jmxDisabledNames);
         sb.append(", systemProperties=").append(systemProperties);
         sb.append(", useCustomLog=").append(useCustomLog);
+        sb.append(", ignoreLibraryMismatch=").append(ignoreLibraryMismatch);
         sb.append('}');
         return sb.toString();
     }
