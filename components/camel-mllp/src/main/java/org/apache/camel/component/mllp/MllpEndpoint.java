@@ -232,7 +232,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Timeout value while waiting for a TCP connection
+     * Timeout (in milliseconds) while waiting for a TCP connection
      * <p/>
      * TCP Server Only
      *
@@ -247,7 +247,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Timeout value for establishing for a TCP connection
+     * Timeout (in milliseconds) for establishing for a TCP connection
      * <p/>
      * TCP Client only
      *
@@ -262,7 +262,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The SO_TIMEOUT value used when waiting for the start of an MLLP frame
+     * The SO_TIMEOUT value (in milliseconds) used when waiting for the start of an MLLP frame
      *
      * @param receiveTimeout timeout in milliseconds
      */
@@ -288,7 +288,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The SO_TIMEOUT value used after the start of an MLLP frame has been received
+     * The SO_TIMEOUT value (in milliseconds) used after the start of an MLLP frame has been received
      *
      * @param readTimeout timeout in milliseconds
      */
@@ -340,7 +340,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the SO_RCVBUF option to the specified value
+     * Sets the SO_RCVBUF option to the specified value (in bytes)
      *
      * @param receiveBufferSize the SO_RCVBUF option value.  If null, the system default is used
      */
@@ -353,7 +353,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the SO_SNDBUF option to the specified value
+     * Sets the SO_SNDBUF option to the specified value (in bytes)
      *
      * @param sendBufferSize the SO_SNDBUF option value.  If null, the system default is used
      */
