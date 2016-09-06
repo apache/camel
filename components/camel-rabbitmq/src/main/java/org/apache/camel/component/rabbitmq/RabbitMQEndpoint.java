@@ -71,7 +71,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam(label = "common", defaultValue = "true")
     private boolean durable = true;
     @UriParam(label = "common", defaultValue = "false")
-    private boolean exclusive = false;
+    private boolean exclusive;
     @UriParam(label = "producer")
     private boolean bridgeEndpoint;
     @UriParam(label = "common")

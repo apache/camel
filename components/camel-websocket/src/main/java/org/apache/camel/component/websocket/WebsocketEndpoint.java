@@ -54,6 +54,8 @@ public class WebsocketEndpoint extends DefaultEndpoint {
 
     @UriParam(label = "producer")
     private Boolean sendToAll;
+    @UriParam(label = "producer", defaultValue = "30000")
+    private Integer sendTimeout = 30000;
     @UriParam(label = "monitoring")
     private boolean enableJmx;
     @UriParam(label = "consumer")
@@ -186,6 +188,18 @@ public class WebsocketEndpoint extends DefaultEndpoint {
      */
     public void setSendToAll(Boolean sendToAll) {
         this.sendToAll = sendToAll;
+    }
+
+    public Integer getSendTimeout() {
+        return sendTimeout;
+    }
+
+    /**
+     * Timeout in millis when sending to a websocket channel.
+     * The default timeout is 30000 (30 seconds).
+     */
+    public void setSendTimeout(Integer sendTimeout) {
+        this.sendTimeout = sendTimeout;
     }
 
     public String getProtocol() {

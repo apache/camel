@@ -152,7 +152,7 @@ public class RabbitMQMessageConverter {
 
         final Object timestamp = msg.removeHeader(RabbitMQConstants.TIMESTAMP);
         if (timestamp != null) {
-            properties.timestamp(new Date(Long.parseLong(timestamp.toString())));
+            properties.timestamp(convertTimestamp(timestamp));
         }
 
         final Map<String, Object> headers = msg.getHeaders();
@@ -177,6 +177,13 @@ public class RabbitMQMessageConverter {
         properties.headers(filteredHeaders);
 
         return properties;
+    }
+
+    private Date convertTimestamp(Object timestamp) {
+        if (timestamp instanceof Date) {
+            return (Date)timestamp;
+        }
+        return new Date(Long.parseLong(timestamp.toString()));
     }
 
     /**

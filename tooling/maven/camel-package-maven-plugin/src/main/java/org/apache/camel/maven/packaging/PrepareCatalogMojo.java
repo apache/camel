@@ -880,8 +880,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
             // special for bindy
             if (dataformat.startsWith("bindy")) {
                 dataformat = "bindy";
-            } else if (dataformat.startsWith("crypto")) {
-                dataformat = "pgp";
             }
             String name = dataformat + "-dataformat";
             if (!docs.contains(name)) {

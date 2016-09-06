@@ -41,16 +41,14 @@ import org.beanio.BeanReader;
 import org.beanio.BeanReaderErrorHandler;
 import org.beanio.BeanWriter;
 import org.beanio.StreamFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.dataformat.beanio.BeanIOHelper.getOrCreateBeanReaderErrorHandler;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (
  * {@link DataFormat}) for beanio data.
  */
 public class BeanIODataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(BeanIODataFormat.class);
 
     private transient CamelContext camelContext;
     private transient StreamFactory factory;
@@ -141,19 +139,16 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
         out.close();
     }
 
-    private List<Object> readModels(Exchange exchange, InputStream stream) {
+    private List<Object> readModels(Exchange exchange, InputStream stream) throws Exception {
         List<Object> results = new ArrayList<Object>();
         BufferedReader streamReader = IOHelper.buffered(new InputStreamReader(stream, getEncoding()));
 
         BeanReader in = factory.createReader(getStreamName(), streamReader);
 
-        try {
-            if (ObjectHelper.isNotEmpty(configuration.getBeanReaderErrorHandler())) {
-                in.setErrorHandler(configuration.getBeanReaderErrorHandler());
-            } else {
-                in.setErrorHandler(new BeanIOErrorHandler(configuration));
-            }
+        BeanReaderErrorHandler errorHandler = getOrCreateBeanReaderErrorHandler(configuration, exchange);
+        in.setErrorHandler(errorHandler);
 
+        try {
             Object readObject;
             while ((readObject = in.read()) != null) {
                 if (readObject instanceof BeanIOHeader) {
@@ -230,5 +225,17 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
 
     public void setBeanReaderErrorHandler(BeanReaderErrorHandler beanReaderErrorHandler) {
         configuration.setBeanReaderErrorHandler(beanReaderErrorHandler);
+    }
+
+    public String getBeanReaderErrorHandlerType() {
+        return configuration.getBeanReaderErrorHandlerType();
+    }
+
+    public void setBeanReaderErrorHandlerType(String beanReaderErrorHandlerType) {
+        configuration.setBeanReaderErrorHandlerType(beanReaderErrorHandlerType);
+    }
+
+    public void setBeanReaderErrorHandlerType(Class<?> beanReaderErrorHandlerType) {
+        configuration.setBeanReaderErrorHandlerType(beanReaderErrorHandlerType);
     }
 }

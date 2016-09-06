@@ -28,6 +28,26 @@ from("mqseries:Another.Queue").
   to("activemq:My.Queue");
 -------------------------------------------
 
+[[JiBX-Options]]
+Options
+^^^^^^^
+
+// dataformat options: START
+The JiBX dataformat supports 2 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| unmarshallClass |  | String | Class name to use when unmarshalling from XML to Java.
+| bindingName |  | String | To use a custom binding factory
+|=======================================================================
+{% endraw %}
+// dataformat options: END
+
+
 [[JiBX-JiBXSpringDSL]]
 JiBX Spring DSL
 ^^^^^^^^^^^^^^^

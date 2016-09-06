@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.binding;
+package org.apache.camel.component.rest;
 
 import java.util.Locale;
 import java.util.Map;
@@ -28,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Route;
 import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.processor.UnmarshalProcessor;
+import org.apache.camel.processor.binding.BindingException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.ServiceSupport;
@@ -45,7 +46,7 @@ import org.apache.camel.util.ServiceHelper;
  * The binding uses {@link org.apache.camel.spi.DataFormat} for the actual work to transform
  * from xml/json to Java Objects and reverse again.
  */
-public class RestBindingProcessor extends ServiceSupport implements AsyncProcessor {
+public class RestConsumerBindingProcessor extends ServiceSupport implements AsyncProcessor {
 
     private final CamelContext camelContext;
     private final AsyncProcessor jsonUnmarshal;
@@ -60,12 +61,12 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
     private final Map<String, String> corsHeaders;
     private final Map<String, String> queryDefaultValues;
 
-    public RestBindingProcessor(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
-                                DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
-                                String consumes, String produces, String bindingMode,
-                                boolean skipBindingOnErrorCode, boolean enableCORS,
-                                Map<String, String> corsHeaders,
-                                Map<String, String> queryDefaultValues) {
+    public RestConsumerBindingProcessor(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
+                                        DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
+                                        String consumes, String produces, String bindingMode,
+                                        boolean skipBindingOnErrorCode, boolean enableCORS,
+                                        Map<String, String> corsHeaders,
+                                        Map<String, String> queryDefaultValues) {
 
         this.camelContext = camelContext;
 
@@ -112,7 +113,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
     @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         if (enableCORS) {
-            exchange.addOnCompletion(new RestBindingCORSOnCompletion(corsHeaders));
+            exchange.addOnCompletion(new RestConsumerBindingCORSOnCompletion(corsHeaders));
         }
 
         String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
@@ -153,7 +154,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         String body = null;
         if (exchange.getIn().getBody() != null) {
 
-           // okay we have a binding mode, so need to check for empty body as that can cause the marshaller to fail
+            // okay we have a binding mode, so need to check for empty body as that can cause the marshaller to fail
             // as they assume a non-empty body
             if (isXml || isJson) {
                 // we have binding enabled, so we need to know if there body is empty or not
@@ -183,7 +184,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         // favor json over xml
         if (isJson && jsonUnmarshal != null) {
             // add reverse operation
-            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, false, accept));
+            exchange.addOnCompletion(new RestConsumerBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, false, accept));
             if (ObjectHelper.isNotEmpty(body)) {
                 return jsonUnmarshal.process(exchange, callback);
             } else {
@@ -192,7 +193,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             }
         } else if (isXml && xmlUnmarshal != null) {
             // add reverse operation
-            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, true, accept));
+            exchange.addOnCompletion(new RestConsumerBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, true, accept));
             if (ObjectHelper.isNotEmpty(body)) {
                 return xmlUnmarshal.process(exchange, callback);
             } else {
@@ -204,7 +205,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         // we could not bind
         if ("off".equals(bindingMode) || bindingMode.equals("auto")) {
             // okay for auto we do not mind if we could not bind
-            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, false, accept));
+            exchange.addOnCompletion(new RestConsumerBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, false, accept));
             callback.done(true);
             return true;
         } else {
@@ -220,7 +221,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
     @Override
     public String toString() {
-        return "RestBindingProcessor";
+        return "RestConsumerBindingProcessor";
     }
 
     @Override
@@ -250,7 +251,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
      * An {@link org.apache.camel.spi.Synchronization} that does the reverse operation
      * of marshalling from POJO to json/xml
      */
-    private final class RestBindingMarshalOnCompletion extends SynchronizationAdapter {
+    private final class RestConsumerBindingMarshalOnCompletion extends SynchronizationAdapter {
 
         private final AsyncProcessor jsonMarshal;
         private final AsyncProcessor xmlMarshal;
@@ -258,7 +259,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         private boolean wasXml;
         private String accept;
 
-        private RestBindingMarshalOnCompletion(String routeId, AsyncProcessor jsonMarshal, AsyncProcessor xmlMarshal, boolean wasXml, String accept) {
+        private RestConsumerBindingMarshalOnCompletion(String routeId, AsyncProcessor jsonMarshal, AsyncProcessor xmlMarshal, boolean wasXml, String accept) {
             this.routeId = routeId;
             this.jsonMarshal = jsonMarshal;
             this.xmlMarshal = xmlMarshal;
@@ -410,15 +411,15 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
         @Override
         public String toString() {
-            return "RestBindingMarshalOnCompletion";
+            return "RestConsumerBindingMarshalOnCompletion";
         }
     }
 
-    private final class RestBindingCORSOnCompletion extends SynchronizationAdapter {
+    private final class RestConsumerBindingCORSOnCompletion extends SynchronizationAdapter {
 
         private final Map<String, String> corsHeaders;
 
-        private RestBindingCORSOnCompletion(Map<String, String> corsHeaders) {
+        private RestConsumerBindingCORSOnCompletion(Map<String, String> corsHeaders) {
             this.corsHeaders = corsHeaders;
         }
 
@@ -453,7 +454,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
         @Override
         public String toString() {
-            return "RestBindingCORSOnCompletion";
+            return "RestConsumerBindingCORSOnCompletion";
         }
     }
 

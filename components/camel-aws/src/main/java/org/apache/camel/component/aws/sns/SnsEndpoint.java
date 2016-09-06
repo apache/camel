@@ -16,14 +16,18 @@
  */
 package org.apache.camel.component.aws.sns;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.model.AuthorizationErrorException;
 import com.amazonaws.services.sns.model.CreateTopicRequest;
 import com.amazonaws.services.sns.model.CreateTopicResult;
+import com.amazonaws.services.sns.model.ListTopicsResult;
 import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
+import com.amazonaws.services.sns.model.Topic;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -87,6 +91,27 @@ public class SnsEndpoint extends DefaultEndpoint {
         if (ObjectHelper.isNotEmpty(configuration.getAmazonSNSEndpoint())) {
             LOG.trace("Updating the SNS region with : {} " + configuration.getAmazonSNSEndpoint());
             snsClient.setEndpoint(configuration.getAmazonSNSEndpoint());
+        }
+        
+        if (configuration.getTopicArn() == null) {
+            try {
+                String nextToken = null;
+                final String arnSuffix = ":" + configuration.getTopicName();
+                do {
+                    final ListTopicsResult response = snsClient.listTopics(nextToken);
+                    nextToken = response.getNextToken();
+
+                    for (final Topic topic : response.getTopics()) {
+                        if (topic.getTopicArn().endsWith(arnSuffix)) {
+                            configuration.setTopicArn(topic.getTopicArn());
+                            break;
+                        }
+                    }
+                } while (nextToken != null);
+            } catch (final AmazonServiceException ase) {
+                LOG.trace("The list topics operation return the following error code {}", ase.getErrorCode());
+                throw ase;
+            }
         }
 
         if (configuration.getTopicArn() == null) {

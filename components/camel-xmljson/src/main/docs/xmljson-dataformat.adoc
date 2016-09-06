@@ -23,109 +23,30 @@ semantics are assigned as follows:
 Options
 ^^^^^^^
 
-This data format supports the following options. You can set them via
-all DSLs. The defaults marked with (*) are determined by json-lib,
-rather than the code of the data format itself. They are reflected here
-for convenience so that you don't have to dot back and forth with the
-json-lib docs.
+// dataformat options: START
+The XML JSon dataformat supports 12 options which are listed below.
 
-[width="100%",cols="1s,1m,1m,4",options="header",]
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
-|Name |Type |Default |Description
-|`encoding` |`String` |UTF-8 (*) |*Used when* *unmarshalling* *(JSON to
-XML conversion).* Sets the encoding for the call to
-http://json-lib.sourceforge.net/apidocs/net/sf/json/xml/XMLSerializer.html#write(net.sf.json.JSON,%20java.lang.String)[`XMLSerializer.write()`]
-method, hence it is only used when producing XML. +
-When producing JSON, the encoding is determined by the input String
-being processed. If the conversion is performed on an InputStream,
-json-lib uses the platform's default encoding (e.g. determined by the
-`file.encoding` system property).
-
-|`elementName` |`String` |'e' (*) |*Used when* *unmarshalling*** (JSON
-to XML conversion).** Specifies the name of the XML elements
-representing each array element. See
-http://json-lib.sourceforge.net/snippets.html#JSONObject_to_XML_change_node_names[json-lib
-doc].
-
-|`arrayName` |`String` |'a' (*) |*Used when* *unmarshalling*** (JSON to
-XML conversion).** Specifies the name of the top-level XML element. +
-For example, when converting `[1, 2, 3]`, it will be output by default
-as `<a><e>1</e><e>2</e><e>3</e></a>`. By setting this option or
-rootName, you can alter the name of element 'a'.
-
-|`rootName` |`String` |none (*) |*Used when* *unmarshalling*** (JSON to
-XML conversion).** When converting any JSON construct (object, array,
-null) to XML (unmarshalling), it specifies the name of the top-level
-element. +
-If not set, json-lib will use `arrayName` or `objectName` (default
-value: 'o', at the current time it is not configurable in this data
-format). If set to 'root', the JSON string `{ 'x': 'value1', 'y' :
-'value2' }` would turn into `<root><x>value1</x><y>value2</y></root>`,
-otherwise the 'root' element would be named 'o'.
-
-|`namespaceLenient` |`Boolean` |false (*) |*Used when*
-*unmarshalling*** (JSON to XML conversion).** According to the json-lib
-docs: "Flag to be tolerant to incomplete namespace prefixes." In most
-cases, json-lib automatically changes this flag at runtime to match the
-processing.
-
-|`namespaceMappings` |`List<NamespacesPerElementMapping>` |none |*Used
-when* *unmarshalling*** (JSON to XML conversion).** Binds namespace
-prefixes and URIs to specific JSON
-elements. `NamespacesPerElementMapping` is a wrapper around an element
-name + a Map of prefixes against URIs.
-
-|`expandableProperties` |`List<String>` |none |*Used when*
-*unmarshalling*** (JSON to XML conversion).** With expandable
-properties, JSON array elements are converted to XML as a sequence of
-repetitive XML elements with the local name equal to the JSON key, for
-example: `{ number: 1,2,3 }`, normally converted to:
-`<number><e>1</e><e>2</e><e>3</e></number>` (where e can be modified by
-setting `elementName`), would instead translate to
-`<number>1</number><number>2</number><number>3</number>`, if `number` is
-set as an expandable property
-
-|`typeHints` |`TypeHintsEnum` |YES a|
-*Used when* *unmarshalling*** (JSON to XML conversion).** Adds type
-hints to the resulting XML to aid conversion back to JSON. See
-documentation
-http://json-lib.sourceforge.net/apidocs/net/sf/json/xml/XMLSerializer.html[here]
-for an explanation. `TypeHintsEnum` comprises the following values,
-which lead to different combinations of the underlying XMLSerializer's
-`typeHintsEnabled` and `typeHintsCompatibility` flags:
-
-* `TypeHintsEnum.NO` => `typeHintsEnabled` = `false`
-* `TypeHintsEnum.YES` =>  `typeHintsEnabled` =
-true,  `typeHintsCompatibility` = `true`
-* `TypeHintsEnum.WITH_PREFIX` =>  `typeHintsEnabled` =
-true,  `typeHintsCompatibility` = `false`
-
-|`forceTopLevelObject` |`Boolean` |false (*) |*Used when* *marshalling*
-*(XML to JSON conversion).* Determines whether the resulting JSON will
-start off with a top-most element whose name matches the XML root
-element. If disabled, XML string `<a><x>1</x><y>2</y></a>` turns into `{
-'x: '1', 'y': '2' }`. Otherwise, it turns into `{ 'a': { 'x: '1', 'y':
-'2' }}`.
-
-|`skipWhitespace` |`Boolean` |false (*) |*Used when*
-*marshalling*** (XML to JSON conversion).** Determines whether white
-spaces between XML elements will be regarded as text values or
-disregarded.
-
-|`trimSpaces` |`Boolean` |false (*) |*Used when* *marshalling*** (XML to
-JSON conversion).** Determines whether leading and trailing white spaces
-will be omitted from String values.
-
-|`skipNamespaces` |`Boolean` |false (*) |*Used when*
-*marshalling*** (XML to JSON conversion).** Signals whether namespaces
-should be ignored. By default they will be added to the JSON output
-using `@xmlns` elements.
-
-|`removeNamespacePrefixes` |`Boolean` |false (*) |*Used when*
-*marshalling*** (XML to JSON conversion).** Removes the namespace
-prefixes from XML qualified elements, so that the resulting JSON string
-does not contain them.
+| Name | Default | Java Type | Description
+| encoding |  | String | Sets the encoding. Used for unmarshalling (JSON to XML conversion).
+| elementName |  | String | Specifies the name of the XML elements representing each array element. Used for unmarshalling (JSON to XML conversion).
+| arrayName |  | String | Specifies the name of the top-level XML element. Used for unmarshalling (JSON to XML conversion). For example when converting 1 2 3 it will be output by default as 123. By setting this option or rootName you can alter the name of element 'a'.
+| forceTopLevelObject | false | Boolean | Determines whether the resulting JSON will start off with a top-most element whose name matches the XML root element. Used for marshalling (XML to JSon conversion). If disabled XML string 12 turns into 'x: '1' 'y': '2' . Otherwise it turns into 'a': 'x: '1' 'y': '2' .
+| namespaceLenient | false | Boolean | Flag to be tolerant to incomplete namespace prefixes. Used for unmarshalling (JSON to XML conversion). In most cases json-lib automatically changes this flag at runtime to match the processing.
+| rootName |  | String | Specifies the name of the top-level element. Used for unmarshalling (JSON to XML conversion). If not set json-lib will use arrayName or objectName (default value: 'o' at the current time it is not configurable in this data format). If set to 'root' the JSON string 'x': 'value1' 'y' : 'value2' would turn into value1value2 otherwise the 'root' element would be named 'o'.
+| skipWhitespace | false | Boolean | Determines whether white spaces between XML elements will be regarded as text values or disregarded. Used for marshalling (XML to JSon conversion).
+| trimSpaces | false | Boolean | Determines whether leading and trailing white spaces will be omitted from String values. Used for marshalling (XML to JSon conversion).
+| skipNamespaces | false | Boolean | Signals whether namespaces should be ignored. By default they will be added to the JSON output using xmlns elements. Used for marshalling (XML to JSon conversion).
+| removeNamespacePrefixes | false | Boolean | Removes the namespace prefixes from XML qualified elements so that the resulting JSON string does not contain them. Used for marshalling (XML to JSon conversion).
+| expandableProperties |  | List | With expandable properties JSON array elements are converted to XML as a sequence of repetitive XML elements with the local name equal to the JSON key for example: number: 123 normally converted to: 123 (where e can be modified by setting elementName) would instead translate to 123 if number is set as an expandable property Used for unmarshalling (JSON to XML conversion).
+| typeHints |  | String | Adds type hints to the resulting XML to aid conversion back to JSON. Used for unmarshalling (JSON to XML conversion).
 |=======================================================================
+{% endraw %}
+// dataformat options: END
 
 [[XmlJson-BasicUsagewithJavaDSL]]
 Basic Usage with Java DSL

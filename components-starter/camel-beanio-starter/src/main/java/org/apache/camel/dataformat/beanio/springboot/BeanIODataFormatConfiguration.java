@@ -52,6 +52,14 @@ public class BeanIODataFormatConfiguration {
      * The charset to use. Is by default the JVM platform default charset.
      */
     private String encoding;
+    /**
+     * To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as
+     * error handler while parsing. Configure the fully qualified class name of
+     * the error handler. Notice the options ignoreUnidentifiedRecords
+     * ignoreUnexpectedRecords and ignoreInvalidRecords may not be in use when
+     * you use a custom error handler.
+     */
+    private String beanReaderErrorHandlerType;
 
     public String getMapping() {
         return mapping;
@@ -99,5 +107,13 @@ public class BeanIODataFormatConfiguration {
 
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    public String getBeanReaderErrorHandlerType() {
+        return beanReaderErrorHandlerType;
+    }
+
+    public void setBeanReaderErrorHandlerType(String beanReaderErrorHandlerType) {
+        this.beanReaderErrorHandlerType = beanReaderErrorHandlerType;
     }
 }

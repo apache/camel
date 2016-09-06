@@ -24,8 +24,6 @@ import java.util.List;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.beanio.BeanReaderErrorHandler;
-import org.beanio.BeanReaderException;
 import org.junit.Test;
 
 public class BeanIODataFormatSimpleCustomBeanReaderErrorHandlerTest extends CamelTestSupport {
@@ -36,6 +34,11 @@ public class BeanIODataFormatSimpleCustomBeanReaderErrorHandlerTest extends Came
             + "Jane,Doe,Architect,80000,01152008" + LS
             + "Jon,Anderson,Manager,85000,03182007" + LS;
     // END SNIPPET: e2
+
+    private static final String FIXED_FAIL_DATA =
+            "Joe,Smith,Developer,75000,10012009" + LS
+                    + "Jane,Doe,Architect,80000,01152008" + LS
+                    + "Jon,Anderson,Manager,XXX,03182007" + LS;
 
     @Test
     public void testMarshal() throws Exception {
@@ -61,6 +64,17 @@ public class BeanIODataFormatSimpleCustomBeanReaderErrorHandlerTest extends Came
         mock.assertIsSatisfied();
     }
 
+    @Test
+    public void testUnmarshalFail() throws Exception {
+        // there should be 1 splitted that failed
+        MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
+        mock.expectedMessageCount(2);
+
+        template.sendBody("direct:unmarshal", FIXED_FAIL_DATA);
+
+        mock.assertIsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -71,16 +85,9 @@ public class BeanIODataFormatSimpleCustomBeanReaderErrorHandlerTest extends Came
                 BeanIODataFormat format = new BeanIODataFormat(
                         "org/apache/camel/dataformat/beanio/mappings.xml",
                         "employeeFile");
-                
-                BeanReaderErrorHandler reader = new BeanReaderErrorHandler() {
 
-                    @Override
-                    public void handleError(BeanReaderException ex) throws Exception {
-                        log.info("Error: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText());
-                        return;
-                    }
-                };
-                format.setBeanReaderErrorHandler(reader);
+                // use our custom error handler
+                format.setBeanReaderErrorHandlerType(MyErrorHandler.class);
 
                 // a route which uses the bean io data format to format a CSV data
                 // to java objects
@@ -126,4 +133,5 @@ public class BeanIODataFormatSimpleCustomBeanReaderErrorHandlerTest extends Came
         employees.add(three);
         return employees;
     }
+
 }

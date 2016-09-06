@@ -57,7 +57,7 @@
     <asm-version>3.3.1</asm-version>
     <aspectj-version>1.8.9</aspectj-version>
     <atmos-client-version>2.2.2</atmos-client-version>
-    <atmosphere-version>2.4.5</atmosphere-version>
+    <atmosphere-version>2.4.6</atmosphere-version>
     <atmosphere-version-range>[2.4,3.0)</atmosphere-version-range>
     <automaton-bundle-version>1.11-8_1</automaton-bundle-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
@@ -188,7 +188,7 @@
     <felix-scr-annotations-version>1.9.12</felix-scr-annotations-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
     <flatpack-version>3.4.3</flatpack-version>
-    <flink-version>1.1.0</flink-version>
+    <flink-version>1.1.2</flink-version>
     <fop-bundle-version>2.1_1</fop-bundle-version>
     <fop-version>2.1</fop-version>
     <ftpserver-version>1.0.6</ftpserver-version>
@@ -278,7 +278,7 @@
     <jackson-version>1.9.12</jackson-version>
     <jackson-spark-version>2.4.5</jackson-spark-version>
     <jackson2-scala-version>2.6.1</jackson2-scala-version>
-    <jackson2-version>2.8.1</jackson2-version>
+    <jackson2-version>2.8.2</jackson2-version>
     <jackrabbit-version>2.13.2</jackrabbit-version>
     <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
@@ -486,7 +486,7 @@
     <rabbitmq-amqp-client-version>3.6.5</rabbitmq-amqp-client-version>
     <reflections-bundle-version>0.9.10_3</reflections-bundle-version>
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
-    <rest-assured-version>3.0.0</rest-assured-version>
+    <rest-assured-version>3.0.1</rest-assured-version>
     <restlet-version>2.3.6</restlet-version>
     <restlet-jackson-version>2.4.4</restlet-jackson-version>
     <restlet-woodstox-version>4.3.0</restlet-woodstox-version>

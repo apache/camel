@@ -22,32 +22,26 @@ trailers for the marshal operation.
 Options
 ^^^^^^^
 
-The data format has the following options:
+// dataformat options: START
+The Flatpack dataformat supports 8 options which are listed below.
 
-[width="100%",cols="10%,10%,80%",options="header",]
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
-|Option |Default |Description
-
-|`definition` |`null` |The flatpack pzmap configuration file. Can be omitted in simpler
-situations, but its preferred to use the pzmap.
-
-|`fixed` |`false` |Delimited or fixed.
-
-|`ignoreFirstRecord` |`true` |Whether the first line is ignored for delimited files (for the column
-headers).
-
-|`textQualifier` |`"` |If the text is qualified with a char such as `"`.
-
-|`delimiter` |`,` |The delimiter char (could be `;` `,` or similar)
-
-|`parserFactory` |`null` |Uses the default Flatpack parser factory.
-
-|`allowShortLines` |`false` |*Camel 2.9.7 and 2.10.5 onwards*: Allows for lines to be shorter than
-expected and ignores the extra characters.
-
-|`ignoreExtraColumns` |`false` |*Camel 2.9.7 and 2.10.5 onwards*: Allows for lines to be longer than
-expected and ignores the extra characters.
+| Name | Default | Java Type | Description
+| parserFactoryRef |  | String | References to a custom parser factory to lookup in the registry
+| definition |  | String | The flatpack pzmap configuration file. Can be omitted in simpler situations but its preferred to use the pzmap.
+| fixed | false | Boolean | Delimited or fixed. Is by default false = delimited
+| ignoreFirstRecord | true | Boolean | Whether the first line is ignored for delimited files (for the column headers). Is by default true.
+| textQualifier | " | String | If the text is qualified with a char such as "
+| delimiter | , | String | The delimiter char (could be ; or similar)
+| allowShortLines | false | Boolean | Allows for lines to be shorter than expected and ignores the extra characters
+| ignoreExtraColumns | false | Boolean | Allows for lines to be longer than expected and ignores the extra characters.
 |=======================================================================
+{% endraw %}
+// dataformat options: END
 
 [[FlatpackDataFormat-Usage]]
 Usage

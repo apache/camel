@@ -10,11 +10,21 @@ http://en.wikipedia.org/wiki/Base64[base64 encoding and decoding].
 Options
 ^^^^^^^
 
-// component options: START
-// component options: END
+// dataformat options: START
+The Base64 dataformat supports 3 options which are listed below.
 
-// endpoint options: START
-// endpoint options: END
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| lineLength | 76 | Integer | To specific a maximum line length for the encoded data. By default 76 is used.
+| lineSeparator | \r\n | String | The line separators to use. By default \r\n is used.
+| urlSafe | false | Boolean | Instead of emitting '' and '/' we emit '-' and '_' respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes. Is by default false.
+|=======================================================================
+{% endraw %}
+// dataformat options: END
 
 In Spring DSL, you configure the data format using this tag:
 

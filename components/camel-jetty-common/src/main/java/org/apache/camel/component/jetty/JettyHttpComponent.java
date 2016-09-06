@@ -298,6 +298,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         endpoint.setSendServerVersion(isSendServerVersion());
 
         setProperties(endpoint, parameters);
+
+        // re-create http uri after all parameters has been set on the endpoint, as the remainders are for http uri
+        httpUri = URISupport.createRemainingURI(addressUri, parameters);
+        endpoint.setHttpUri(httpUri);
+
         return endpoint;
     }
 

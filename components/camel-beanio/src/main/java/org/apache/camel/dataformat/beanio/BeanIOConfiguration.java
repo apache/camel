@@ -34,6 +34,7 @@ public class BeanIOConfiguration {
     private Charset encoding = Charset.defaultCharset();
     private Properties properties;
     private BeanReaderErrorHandler beanReaderErrorHandler;
+    private String beanReaderErrorHandlerType;
 
     public String getMapping() {
         return mapping;
@@ -97,5 +98,17 @@ public class BeanIOConfiguration {
 
     public void setBeanReaderErrorHandler(BeanReaderErrorHandler beanReaderErrorHandler) {
         this.beanReaderErrorHandler = beanReaderErrorHandler;
+    }
+
+    public String getBeanReaderErrorHandlerType() {
+        return beanReaderErrorHandlerType;
+    }
+
+    public void setBeanReaderErrorHandlerType(String beanReaderErrorHandlerType) {
+        this.beanReaderErrorHandlerType = beanReaderErrorHandlerType;
+    }
+
+    public void setBeanReaderErrorHandlerType(Class<?> beanReaderErrorHandlerType) {
+        this.beanReaderErrorHandlerType = beanReaderErrorHandlerType.getName();
     }
 }

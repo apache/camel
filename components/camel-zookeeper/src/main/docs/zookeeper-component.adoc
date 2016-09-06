@@ -54,6 +54,28 @@ _znode_) that will be the target of the endpoint:
 Options
 ^^^^^^^
 
+// component options: START
+The ZooKeeper component supports 10 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2,1m,7",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| configuration | ZooKeeperConfiguration | To use a shared ZooKeeperConfiguration. Properties of the shared configuration can also be set individually.
+| servers | List | The zookeeper server hosts
+| timeout | int | The time interval to wait on connection before timing out.
+| listChildren | boolean | Whether the children of the node should be listed
+| path | String | The node in the ZooKeeper server (aka znode)
+| repeat | boolean | Should changes to the znode be 'watched' and repeatedly processed.
+| backoff | long | The time interval to backoff for after an error before retrying.
+| create | boolean | Should the endpoint create the node if it does not currently exist.
+| createMode | String | The create mode that should be used for the newly created node
+| sendEmptyMessageOnDelete | boolean | Upon the delete of a znode should an empty message be send to the consumer
+|=======================================================================
+{% endraw %}
+// component options: END
 
 // endpoint options: START
 The ZooKeeper component supports 14 endpoint options which are listed below:

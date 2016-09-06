@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
@@ -298,19 +299,25 @@ public class MethodInfo {
                     return routingSlip.doRoutingSlip(exchange, result, callback);
                 }
 
+                //If it's Java 8 async result
+                if (CompletionStage.class.isAssignableFrom(getMethod().getReturnType())) {
+                    CompletionStage<?> completionStage = (CompletionStage<?>) result;
+
+                    completionStage
+                            .whenComplete((resultObject, e) -> {
+                                if (e != null) {
+                                    exchange.setException(e);
+                                } else if (resultObject != null) {
+                                    fillResult(exchange, resultObject);
+                                }
+                                callback.done(false);
+                            });
+                    return false;
+                }
+
                 // if the method returns something then set the value returned on the Exchange
                 if (!getMethod().getReturnType().equals(Void.TYPE) && result != Void.TYPE) {
-                    if (exchange.getPattern().isOutCapable()) {
-                        // force out creating if not already created (as its lazy)
-                        LOG.debug("Setting bean invocation result on the OUT message: {}", result);
-                        exchange.getOut().setBody(result);
-                        // propagate headers
-                        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-                    } else {
-                        // if not out then set it on the in
-                        LOG.debug("Setting bean invocation result on the IN message: {}", result);
-                        exchange.getIn().setBody(result);
-                    }
+                    fillResult(exchange, result);
                 }
 
                 // we did not use any of the eips, but just invoked the bean
@@ -327,6 +334,20 @@ public class MethodInfo {
                 return method;
             }
         };
+    }
+
+    private void fillResult(Exchange exchange, Object result) {
+        if (exchange.getPattern().isOutCapable()) {
+            // force out creating if not already created (as its lazy)
+            LOG.debug("Setting bean invocation result on the OUT message: {}", result);
+            exchange.getOut().setBody(result);
+            // propagate headers
+            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+        } else {
+            // if not out then set it on the in
+            LOG.debug("Setting bean invocation result on the IN message: {}", result);
+            exchange.getIn().setBody(result);
+        }
     }
 
     public Class<?> getType() {

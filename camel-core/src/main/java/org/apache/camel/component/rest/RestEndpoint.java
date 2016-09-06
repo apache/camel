@@ -29,7 +29,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RestApiProcessorFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
@@ -68,7 +67,7 @@ public class RestEndpoint extends DefaultEndpoint {
     private String inType;
     @UriParam(label = "common")
     private String outType;
-    @UriParam(label = "consumer")
+    @UriParam(label = "common")
     private String routeId;
     @UriParam(label = "consumer")
     private String description;
@@ -326,7 +325,12 @@ public class RestEndpoint extends DefaultEndpoint {
             } else {
                 producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, produces, parameters);
             }
-            return new RestProducer(this, producer);
+            RestConfiguration config = getCamelContext().getRestConfiguration(cname, true);
+            RestProducer answer = new RestProducer(this, producer, config);
+            answer.setOutType(outType);
+            answer.setType(inType);
+
+            return answer;
         } else {
             throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");
         }

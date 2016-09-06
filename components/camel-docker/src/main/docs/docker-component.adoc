@@ -11,18 +11,6 @@ https://github.com/docker-java/docker-java[docker-java] via the
 https://docs.docker.com/reference/api/docker_remote_api[Docker Remote
 API].
 
-Maven users will need to add the following dependency to their `pom.xml`
-for this component:
-
-[source,xml]
-------------------------------------------------------------
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-docker</artifactId>
-    <version>x.x.x</version>
-    <!-- use the same version as your Camel core version -->
-</dependency>
-------------------------------------------------------------
 
 [[Docker-URIformat]]
 URI format
@@ -34,6 +22,69 @@ docker://[operation]?[options]
 ------------------------------
 
 Where *operation* is the specific action to perform on Docker.
+
+[[Docker-Options]]
+General Options
+^^^^^^^^^^^^^^^
+
+// component options: START
+The Docker component supports 16 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2,1m,7",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| configuration | DockerConfiguration | To use the shared docker configuration. Properties of the shared configuration can also be set individually.
+| host | String | Docker host
+| port | Integer | Docker port
+| username | String | User name to authenticate with
+| password | String | Password to authenticate with
+| email | String | Email address associated with the user
+| serverAddress | String | Server address for docker registry.
+| requestTimeout | Integer | Request timeout for response (in seconds)
+| secure | boolean | Use HTTPS communication
+| certPath | String | Location containing the SSL certificate chain
+| maxTotalConnections | Integer | Maximum total connections
+| maxPerRouteConnections | Integer | Maximum route connections
+| loggingFilter | boolean | Whether to use logging filter
+| followRedirectFilter | boolean | Whether to follow redirect filter
+| parameters | Map | Additional configuration parameters as key/value pairs
+| operation | DockerOperation | Which operation to use
+|=======================================================================
+{% endraw %}
+// component options: END
+
+
+// endpoint options: START
+The Docker component supports 18 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| operation | common |  | DockerOperation | *Required* Which operation to use
+| certPath | common |  | String | Location containing the SSL certificate chain
+| email | common |  | String | Email address associated with the user
+| followRedirectFilter | common | false | boolean | Whether to follow redirect filter
+| host | common | localhost | String | *Required* Docker host
+| loggingFilter | common | false | boolean | Whether to use logging filter
+| maxPerRouteConnections | common | 100 | Integer | Maximum route connections
+| maxTotalConnections | common | 100 | Integer | Maximum total connections
+| password | common |  | String | Password to authenticate with
+| port | common | 2375 | Integer | *Required* Docker port
+| requestTimeout | common |  | Integer | Request timeout for response (in seconds)
+| secure | common | false | boolean | Use HTTPS communication
+| serverAddress | common | https://index.docker.io/v1/ | String | Server address for docker registry.
+| username | common |  | String | User name to authenticate with
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
+// endpoint options: END
 
 [[Docker-HeaderStrategy]]
 Header Strategy
@@ -51,137 +102,6 @@ below
 |containerId |CamelDockerContainerId
 |=======================================================================
 
-[[Docker-GeneralOptions]]
-General Options
-^^^^^^^^^^^^^^^
-
-The following parameters can be used with any invocation of the
-component
-
-[width="100%",cols="10%,10%,70%,10%",options="header",]
-|=======================================================================
-|Option |Header |Description |Default Value
-
-|host |CamelDockerHost |*Mandatory:* Docker host |localhost
-
-|port |CamelDockerPort |*Mandatory:* Docker port |2375
-
-|username |CamelDockerUserName |User name to authenticate with |
-
-|password |CamelDockerPassword |Password to authenticate with |
-
-|email |CamelDockerEmail |Email address associated with the user |
-
-|secure |CamelDockerSecure |Use HTTPS communication |false
-
-|requestTimeout |CamelDockerRequestTimeout |Request timeout for response (in seconds) |30
-
-|certPath |CamelDockerCertPath |Location containing the SSL certificate chain |
-|=======================================================================
- 
-
-[[Docker-ConsumerOperations]]
-Consumer Operations
-^^^^^^^^^^^^^^^^^^^
-
-The consumer supports the following operations.
-
-[width="100%",cols="10%,10%,70%,10%",options="header",]
-|=======================================================================
-|Operation |Options |Description |Produces
-
-|events |initialRange |Monitor Docker events (Streaming) |Event
-|=======================================================================
-
-[[Docker-ProducerOperations]]
-Producer Operations
-^^^^^^^^^^^^^^^^^^^
-
-The following producer operations are available.
-
-[width="100%",cols="10%,10%,70%,10%",options="header",]
-|=======================================================================
-|Misc Operation |Options |Description |Returns
-
-|auth |  |Check auth configuration |
-
-|info |  |System wide information | Info
-
-|ping |  |Ping the Docker server |
-
-|version |  |Show the docker version information |Version
-
-|=======================================================================
-
-[width="100%",cols="10%,10%,60%,10%,10%",options="header",]
-|=======================================================================
-|Image Operation |Options |Description |Body Content |Returns
-
-|image/list |filter, showAll |List images |   | List<Image>
-
-|image/create |*repository* |Create an image |InputStream |CreateImageResponse
-
-|image/build |noCache, quiet, remove, tag |Build an image from Dockerfile via stdin |InputStream or File |InputStream
-
-|image/pull |*repository*, registry, tag |Pull an image from the registry |  | InputStream
-
-|image/push |*name* |Push an image on the registry |  |InputStream 
-
-|image/search |*term* |Search for images |  | List<SearchItem>
-
-|image/remove |*imageId* |Remove an image |  |  
-
-|image/tag |*imageId, repository, tag, force* |Tag an image into a repository |  |
-
-|image/inspect |*imageId* |Inspect an image |  | InspectImageResponse
-|=======================================================================
-
-
-[width="100%",cols="10%,30%,40%,10%,10%",options="header",]
-|=======================================================================
-|Container Operation |Options |Description |Body Content |Returns
-
-|container/list |showSize, showAll, before, since, limit, List containers |initialRange |  | List<Container>
-
-|container/create |*imageId*, name, exposedPorts, workingDir, disableNetwork, hostname,
-user, tty, stdInOpen, stdInOnce, memoryLimit, memorySwap, cpuShares,
-attachStdIn, attachStdOut, attachStdErr, env, cmd, dns, image,
-volumes, volumesFrom |Create a container |CreateContainerResponse
-
-|container/start |*containerId*, binds, links, lxcConf, portBindings, privileged,
-publishAllPorts, dns, dnsSearch, volumesFrom, networkMode, devices, restartPolicy, 
-capAdd, capDrop |Start a container |  |
-
-|container/inspect |*containerId* |Inspect a container |  | InspectContainerResponse
-
-|container/wait |*containerId* |Wait a container |Integer |
-
-|container/log |*containerId*, stdOut, stdErr, timestamps, followStream, tailAll, tail |Get container logs  |  |InputStream
-
-|container/attach |*containerId*, stdOut, stdErr, timestamps, logs, followStream |Attach to a container |  |InputStream
-
-|container/stop |*containerId*, timeout |Stop a container |  |
-
-|container/restart |*containerId*, timeout |Restart a container |  |
-
-|container/diff |*containerId* |Inspect changes on a container |  | ChangeLog
-
-|container/kill |*containerId*, signal |Kill a container |  |
-
-|container/top |*containerId*, psArgs |List processes running in a container |  | TopContainerResponse
-
-|container/pause |*containerId* |Pause a container |  |
-
-|container/unpause |*containerId* |Unpause a container |  |
-
-|container/commit |*containerId*, repository, message, tag, attachStdIn, attachStdOut,
-attachStdErr, cmd, disableNetwork, pause, env, exposedPorts, hostname, memory,
-memorySwap, openStdIn, portSpecs, stdInOnce, tty, user, volumes, hostname |Create a new image from a container's changes |String |
-
-|container/copyfile |*containerId*, *resource*, hostPath |Copy files or folders from a container |InputStream |
-
-|container/remove |*containerId*, force, removeVolumes |Remove a container | |
-|=======================================================================
 
 [[Docker-Examples]]
 Examples
@@ -194,8 +114,6 @@ The following example consumes events from Docker:
 from("docker://events?host=192.168.59.103&port=2375").to("log:event");
 ----------------------------------------------------------------------
 
- 
-
 The following example queries Docker for system wide information
 
 [source,java]
@@ -203,8 +121,23 @@ The following example queries Docker for system wide information
 from("docker://info?host=192.168.59.103&port=2375").to("log:info");
 -------------------------------------------------------------------
 
- 
 
- 
+[[Docker-Dependencies]]
+Dependencies
+^^^^^^^^^^^^
 
- 
+To use Docker in your Camel routes you need to add a dependency on
+*camel-docker*, which implements the component.
+
+If you use Maven you can just add the following to your pom.xml,
+substituting the version number for the latest and greatest release (see
+link:download.html[the download page for the latest versions]).
+
+[source,java]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-docker</artifactId>
+  <version>x.x.x</version>
+</dependency>
+-------------------------------------
