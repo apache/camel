@@ -107,8 +107,8 @@ public class MllpTcpClientProducer extends DefaultProducer {
         log.debug("Reading acknowledgement from external system");
         byte[] acknowledgementBytes = null;
         try {
-            if (MllpUtil.openFrame(socket)) {
-                acknowledgementBytes = MllpUtil.closeFrame(socket);
+            if (MllpUtil.openFrame(socket, endpoint.receiveTimeout, endpoint.readTimeout)) {
+                acknowledgementBytes = MllpUtil.closeFrame(socket, endpoint.receiveTimeout, endpoint.readTimeout);
             }
         } catch (SocketTimeoutException timeoutEx) {
             exchange.setException(new MllpAcknowledgementTimoutException("Acknowledgement timout", timeoutEx));

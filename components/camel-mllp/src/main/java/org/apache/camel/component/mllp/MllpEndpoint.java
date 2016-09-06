@@ -72,6 +72,12 @@ public class MllpEndpoint extends DefaultEndpoint {
     @UriParam(label = "timeout", defaultValue = "10000")
     int receiveTimeout = 10000;
 
+    @UriParam(label = "timeout", defaultValue = "-1")
+    int maxReceiveTimeouts = -1;
+
+    @UriParam(label = "timeout", defaultValue = "500")
+    int readTimeout = 500;
+
     @UriParam(defaultValue = "true")
     boolean keepAlive = true;
 
@@ -89,6 +95,9 @@ public class MllpEndpoint extends DefaultEndpoint {
 
     @UriParam(defaultValue = "true")
     boolean autoAck = true;
+
+    @UriParam(defaultValue = "true")
+    boolean hl7Headers = true;
 
     @UriParam(label = "codec")
     String charsetName;
@@ -261,6 +270,32 @@ public class MllpEndpoint extends DefaultEndpoint {
         this.receiveTimeout = receiveTimeout;
     }
 
+    public int getMaxReceiveTimeouts() {
+        return maxReceiveTimeouts;
+    }
+
+    /**
+     * The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset.
+     *
+     * @param maxReceiveTimeouts maximum number of receiveTimeouts
+     */
+    public void setMaxReceiveTimeouts(int maxReceiveTimeouts) {
+        this.maxReceiveTimeouts = maxReceiveTimeouts;
+    }
+
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    /**
+     * The SO_TIMEOUT value used after the start of an MLLP frame has been received
+     *
+     * @param readTimeout timeout in milliseconds
+     */
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
     public boolean isKeepAlive() {
         return keepAlive;
     }
@@ -341,4 +376,18 @@ public class MllpEndpoint extends DefaultEndpoint {
         this.autoAck = autoAck;
     }
 
+    public boolean isHl7Headers() {
+        return hl7Headers;
+    }
+
+    /**
+     * Enable/Disable the automatic generation of message headers from the HL7 Message
+     *
+     * MLLP Consumers only
+     *
+     * @param hl7Headers enabled if true, otherwise disabled
+     */
+    public void setHl7Headers(boolean hl7Headers) {
+        this.hl7Headers = hl7Headers;
+    }
 }

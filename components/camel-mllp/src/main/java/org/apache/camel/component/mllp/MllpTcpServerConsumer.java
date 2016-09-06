@@ -325,6 +325,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         }
     }
 
+    /**
+     * Nested Class read the Socket
+     */
     class ClientSocketThread extends Thread {
         Socket clientSocket;
         Hl7AcknowledgementGenerator acknowledgementGenerator = new Hl7AcknowledgementGenerator();
@@ -346,7 +349,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             this.clientSocket.setReuseAddress(endpoint.reuseAddress);
             this.clientSocket.setSoLinger(false, -1);
 
-            // Read Timeout
+            // Initial Read Timeout
             this.clientSocket.setSoTimeout(endpoint.receiveTimeout);
 
         }
@@ -378,6 +381,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
+            int receiveTimeoutCounter = 0;
 
             while (!isInterrupted()  &&  null != clientSocket  &&  clientSocket.isConnected()  &&  !clientSocket.isClosed()) {
                 byte[] hl7MessageBytes = null;
@@ -385,17 +389,25 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 log.debug("Reading data ....");
                 try {
                     if (null != initialByte && START_OF_BLOCK == initialByte) {
-                        hl7MessageBytes = MllpUtil.closeFrame(clientSocket);
+                        hl7MessageBytes = MllpUtil.closeFrame(clientSocket, endpoint.receiveTimeout, endpoint.readTimeout);
                     } else {
                         try {
-                            if (!MllpUtil.openFrame(clientSocket)) {
+                            if (!MllpUtil.openFrame(clientSocket, endpoint.receiveTimeout, endpoint.readTimeout)) {
+                                receiveTimeoutCounter = 0;
                                 continue;
+                            } else {
+                                receiveTimeoutCounter = 0;
                             }
                         } catch (SocketTimeoutException timeoutEx) {
                             // When thrown by openFrame, it indicates that no data was available - but no error
+                            if (endpoint.maxReceiveTimeouts > 0 && ++receiveTimeoutCounter >= endpoint.maxReceiveTimeouts) {
+                                // TODO:  Enhance logging??
+                                log.warn("Idle Client - resetting connection");
+                                MllpUtil.resetConnection(clientSocket);
+                            }
                             continue;
                         }
-                        hl7MessageBytes = MllpUtil.closeFrame(clientSocket);
+                        hl7MessageBytes = MllpUtil.closeFrame(clientSocket, endpoint.receiveTimeout, endpoint.readTimeout);
                     }
                 } catch (MllpException mllpEx) {
                     Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
@@ -525,6 +537,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     MllpUtil.writeFramedPayload(clientSocket, acknowledgementMessageBytes);
                     exchange.getIn().setHeader(MLLP_ACKNOWLEDGEMENT, acknowledgementMessageBytes);
                     exchange.getIn().setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, acknowledgementMessageType);
+                    exchange.setProperty(MLLP_ACKNOWLEDGEMENT, acknowledgementMessageBytes);
+                    exchange.setProperty(MLLP_ACKNOWLEDGEMENT_TYPE, acknowledgementMessageType);
 
                     // Check AFTER_SEND Properties
                     if (exchange.getProperty(MLLP_RESET_CONNECTION_AFTER_SEND, boolean.class)) {
@@ -540,8 +554,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
             }
 
-            log.info("ClientSocketThread exiting");
-
+            log.debug("ClientSocketThread exiting");
         }
 
         private void populateHl7DataHeaders(Exchange exchange, Message message, byte[] hl7MessageBytes) {
@@ -567,8 +580,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             if (-1 == endOfMSH) {
                 // TODO:  May want to throw some sort of an Exception here
                 log.error("Population of message headers failed - unable to find the end of the MSH segment");
-            } else {
-                log.debug("Populating the message headers");
+            } else if (endpoint.hl7Headers) {
+                log.debug("Populating the HL7 message headers");
                 Charset charset = Charset.forName(IOHelper.getCharsetName(exchange));
 
                 for (int i = 2; i < fieldSeparatorIndexes.size(); ++i) {
@@ -634,6 +647,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         }
                     }
                 }
+            } else {
+                log.trace("HL7 Message headers disabled");
             }
 
         }
