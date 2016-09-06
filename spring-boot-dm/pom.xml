@@ -17,6 +17,8 @@
     <modules>
         <module>camel-starter-parent</module>
         <module>camel-spring-boot-bom</module>
+        <module>camel-spring-boot-generator-bom</module>
+        <module>camel-spring-boot-bom-ng</module>
     </modules>
 
     <properties>
