@@ -41,39 +41,30 @@ executable must in the system path.
 URI options
 ^^^^^^^^^^^
 
-[width="100%",cols="10%,10%,80%",options="header",]
+// component options: START
+The Exec component has no options.
+// component options: END
+
+// endpoint options: START
+The Exec component supports 10 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-|Name |Default value |Description
-|`args` |`null` |The arguments of the executable. The arguments may be one or many +
- whitespace-separated tokens, that can be quoted with `"` - e.g.
-`args="arg 1" arg2` will use two arguments `arg 1` and `arg2`. To
-include the quotes use `""` - e.g. `args=""arg 1"" arg2` will use the
-arguments `"arg 1"` and `arg2`.
-
-|`workingDir` |`null` |The directory in which the command should be executed. If `null`, the
-working directory of the current process will be used.
-
-|`timeout` |`Long.MAX_VALUE` |The timeout, in milliseconds, after which the executable should be
-terminated. If execution has not completed within the timeout, the
-component will send a termination request.
-
-|`outFile` |`null` |The name of a file, created by the executable, that should be considered
-as its output. If no `outFile` is set, the standard output (stdout) of
-the executable will be used instead.
-
-|`binding` |a `DefaultExecBinding` instance |A reference to a `org.apache.commons.exec.ExecBinding` in the
-http://camel.apache.org/registry.html[Registry].
-
-|`commandExecutor` |a `DefaultCommandExecutor` instance |A reference to a `org.apache.commons.exec.ExecCommandExecutor` in the
-http://camel.apache.org/registry.html[Registry] that customizes the
-command execution. The default command executor utilizes the
-http://commons.apache.org/exec/[commons-exec library], which adds a
-shutdown hook for every executed command.
-
-|`useStderrOnEmptyStdout` |`false` |A boolean indicating that when `stdout` is empty, this component will
-populate the Camel Message Body with `stderr`. This behavior is disabled
-(`false`) by default.
+| Name | Group | Default | Java Type | Description
+| executable | producer |  | String | *Required* Sets the executable to be executed. The executable must not be empty or null.
+| args | producer |  | String | The arguments may be one or many whitespace-separated tokens.
+| binding | producer |  | ExecBinding | A reference to a org.apache.commons.exec.ExecBinding in the Registry.
+| commandExecutor | producer |  | ExecCommandExecutor | A reference to a org.apache.commons.exec.ExecCommandExecutor in the Registry that customizes the command execution. The default command executor utilizes the commons-exec library which adds a shutdown hook for every executed command.
+| outFile | producer |  | String | The name of a file created by the executable that should be considered as its output. If no outFile is set the standard output (stdout) of the executable will be used instead.
+| timeout | producer |  | long | The timeout in milliseconds after which the executable should be terminated. If execution has not completed within the timeout the component will send a termination request.
+| useStderrOnEmptyStdout | producer | false | boolean | A boolean indicating that when stdout is empty this component will populate the Camel Message Body with stderr. This behavior is disabled (false) by default.
+| workingDir | producer |  | String | The directory in which the command should be executed. If null the working directory of the current process will be used.
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+{% endraw %}
+// endpoint options: END
 
 [[Exec-Messageheaders]]
 Message headers

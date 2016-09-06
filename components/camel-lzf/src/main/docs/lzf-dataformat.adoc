@@ -15,17 +15,19 @@ comressed using LZF algotithm.
 Options
 ^^^^^^^
 
-There are no options provided for this data format.
+// dataformat options: START
+The LZF Deflate Compression dataformat supports 1 options which are listed below.
 
-[width="100%",cols="<25%,<25%,<25%,<25%",options="header",]
+
+
+{% raw %}
+[width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
-|Name |Type |Default |Description
-|usingParallelCompression |`boolean` |`false`
-|`Enable parallel compressor` implementation which can encode (compress)
-content using multiple processing cores: concurrent compression works on
-chunk-by-chunk basis (64k max chunk size) so megabyte-sized content can
-be processed very efficiently.
+| Name | Default | Java Type | Description
+| usingParallelCompression | false | Boolean | Enable encoding (compress) using multiple processing cores.
 |=======================================================================
+{% endraw %}
+// dataformat options: END
 
 [[LZFDataFormat-Marshal]]
 Marshal

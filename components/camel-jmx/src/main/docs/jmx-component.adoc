@@ -17,6 +17,56 @@ Camel also provides a link:jmx.html[JMX] component that allows you to
 subscribe to MBean notifications. This page is about how to manage and
 monitor Camel using JMX.
 
+
+[[CamelJMX-Options]]
+Options
+^^^^^^^
+
+// component options: START
+The JMX component has no options.
+// component options: END
+
+// endpoint options: START
+The JMX component supports 30 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| serverURL | consumer |  | String | server url comes from the remaining endpoint
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| format | consumer | xml | String | URI Property: Format for the message body. Either xml or raw. If xml the notification is serialized to xml. If raw then the raw java object is set as the body.
+| granularityPeriod | consumer | 10000 | long | URI Property: monitor types only The frequency to poll the bean to check the monitor.
+| monitorType | consumer |  | String | URI Property: monitor types only The type of monitor to create. One of string gauge counter.
+| objectDomain | consumer |  | String | *Required* URI Property: The domain for the mbean you're connecting to
+| objectName | consumer |  | String | URI Property: The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that get passed.
+| observedAttribute | consumer |  | String | URI Property: monitor types only The attribute to observe for the monitor bean.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| handback | advanced |  | Object | URI Property: Value to handback to the listener when a notification is received. This value will be put in the message header with the key jmx.handback
+| notificationFilter | advanced |  | NotificationFilter | URI Property: Reference to a bean that implements the NotificationFilter.
+| objectProperties | advanced |  | Map | URI Property: properties for the object name. These values will be used if the objectName param is not set
+| reconnectDelay | advanced | 10 | int | URI Property: The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to reconnect a lost connection
+| reconnectOnConnectionFailure | advanced | false | boolean | URI Property: If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs. The consumer will attempt to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured reconnectionDelay
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| testConnectionOnStartup | advanced | true | boolean | URI Property: If true the consumer will throw an exception if unable to establish the JMX connection upon startup. If false the consumer will attempt to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured reconnectionDelay
+| initThreshold | counter |  | int | URI Property: counter monitor only Initial threshold for the monitor. The value must exceed this before notifications are fired.
+| modulus | counter |  | int | URI Property: counter monitor only The value at which the counter is reset to zero
+| offset | counter |  | int | URI Property: counter monitor only The amount to increment the threshold after it's been exceeded.
+| differenceMode | gauge | false | boolean | URI Property: counter gauge monitor only If true then the value reported in the notification is the difference from the threshold as opposed to the value itself.
+| notifyHigh | gauge | false | boolean | URI Property: gauge monitor only If true the gauge will fire a notification when the high threshold is exceeded
+| notifyLow | gauge | false | boolean | URI Property: gauge monitor only If true the gauge will fire a notification when the low threshold is exceeded
+| thresholdHigh | gauge |  | Double | URI Property: gauge monitor only Value for the gauge's high threshold
+| thresholdLow | gauge |  | Double | URI Property: gauge monitor only Value for the gauge's low threshold
+| password | security |  | String | URI Property: credentials for making a remote connection
+| user | security |  | String | URI Property: credentials for making a remote connection
+| notifyDiffer | string | false | boolean | URI Property: string monitor only If true the string monitor will fire a notification when the string attribute differs from the string to compare.
+| notifyMatch | string | false | boolean | URI Property: string monitor only If true the string monitor will fire a notification when the string attribute matches the string to compare.
+| stringToCompare | string |  | String | URI Property: string monitor only Value for the string monitor's string to compare.
+|=======================================================================
+{% endraw %}
+// endpoint options: END
+
 [[CamelJMX-ActivatingJMXinCamel]]
 Activating JMX in Camel
 ^^^^^^^^^^^^^^^^^^^^^^^
