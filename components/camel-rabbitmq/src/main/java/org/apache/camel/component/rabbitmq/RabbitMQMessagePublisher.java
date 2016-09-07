@@ -38,10 +38,11 @@ import org.slf4j.LoggerFactory;
  * A method object for publishing to RabbitMQ
  */
 public class RabbitMQMessagePublisher {
-    private static final ReturnListener GUARANTEED_DELIVERY_RETURN_LISTENER = new ReturnListener() {
+    private final ReturnListener GUARANTEED_DELIVERY_RETURN_LISTENER = new ReturnListener() {
         @Override
         public void handleReturn(int replyCode, String replyText, String exchange, String routingKey, AMQP.BasicProperties properties, byte[] body) throws IOException {
-            throw new RuntimeCamelException("Delivery failed for exchange " + exchange + " and routing key " + routingKey + "; replyCode = " + replyCode + " replyText = " + replyText);
+            LOG.warn("Delivery failed for exchange {} and routing key {}; replyCode = {}; replyText = {}", exchange, routingKey, replyCode, replyText);
+            basicReturnReceived = true;
         }
     };
 
@@ -51,6 +52,8 @@ public class RabbitMQMessagePublisher {
     private final String routingKey;
     private final RabbitMQEndpoint endpoint;
     private final Message message;
+    
+    private boolean basicReturnReceived = false;
 
     public RabbitMQMessagePublisher(final Exchange camelExchange, final Channel channel, final String routingKey, final RabbitMQEndpoint endpoint) {
         this.camelExchange = camelExchange;
@@ -110,6 +113,7 @@ public class RabbitMQMessagePublisher {
             channel.confirmSelect();
         }
         if (endpoint.isGuaranteedDeliveries()) {
+        	basicReturnReceived = false;
             channel.addReturnListener(GUARANTEED_DELIVERY_RETURN_LISTENER);
 
         }
@@ -134,6 +138,9 @@ public class RabbitMQMessagePublisher {
         try {
             LOG.debug("Waiting for publisher acknowledgements for {}ms", endpoint.getPublisherAcknowledgementsTimeout());
             channel.waitForConfirmsOrDie(endpoint.getPublisherAcknowledgementsTimeout());
+            if(basicReturnReceived){
+            	throw new RuntimeCamelException("Failed to deliver message; basic.return received");
+            }
         } catch (InterruptedException | TimeoutException e) {
             LOG.warn("Acknowledgement error for {}", camelExchange);
             throw new RuntimeCamelException(e);
