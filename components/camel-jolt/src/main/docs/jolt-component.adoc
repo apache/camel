@@ -66,7 +66,7 @@ The JOLT component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The JOLT component supports 7 endpoint options which are listed below:
+The JOLT component supports 6 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -77,7 +77,6 @@ The JOLT component supports 7 endpoint options which are listed below:
 | inputType | producer | Hydrated | JoltInputOutputType | Specifies if the input is hydrated JSON or a JSON String.
 | outputType | producer | Hydrated | JoltInputOutputType | Specifies if the output should be hydrated JSON or a JSON String.
 | transformDsl | producer | Chainr | JoltTransformType | Specifies the Transform DSL of the endpoint resource. If none is specified Chainr will be used.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

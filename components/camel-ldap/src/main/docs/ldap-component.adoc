@@ -51,7 +51,7 @@ The LDAP component has no options.
 
 
 // endpoint options: START
-The LDAP component supports 7 endpoint options which are listed below:
+The LDAP component supports 6 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -62,7 +62,6 @@ The LDAP component supports 7 endpoint options which are listed below:
 | pageSize | producer |  | Integer | When specified the ldap module uses paging to retrieve all results (most LDAP Servers throw an exception when trying to retrieve more than 1000 entries in one query). To be able to use this a LdapContext (subclass of DirContext) has to be passed in as ldapServerBean (otherwise an exception is thrown)
 | returnedAttributes | producer |  | String | Comma-separated list of attributes that should be set in each entry of the result
 | scope | producer | subtree | String | Specifies how deeply to search the tree of entries starting at the base DN.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

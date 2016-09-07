@@ -96,7 +96,7 @@ The Mock component has no options.
 
 
 // endpoint options: START
-The Mock component supports 12 endpoint options which are listed below:
+The Mock component supports 11 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -112,7 +112,6 @@ The Mock component supports 12 endpoint options which are listed below:
 | retainLast | producer | -1 | int | Specifies to only retain the last n'th number of received Exchanges. This is used when testing with big data to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation then the link getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges and have configured to only retain the last 20 Exchanges then the link getReceivedCounter() will still return 5000 but there is only the last 20 Exchanges in the link getExchanges() and link getReceivedExchanges() methods. When using this method then some of the other expectation methods is not supported for example the link expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both link setRetainFirst(int) and link setRetainLast(int) methods to limit both the first and last received.
 | sleepForEmptyTest | producer | 0 | long | Allows a sleep to be specified to wait to check that this endpoint really is empty when link expectedMessageCount(int) is called with zero
 | copyOnExchange | producer (advanced) | true | boolean | Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint. Is by default true.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

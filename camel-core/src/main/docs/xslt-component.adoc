@@ -90,7 +90,7 @@ The XSLT component supports 5 options which are listed below.
 
 
 // endpoint options: START
-The XSLT component supports 18 endpoint options which are listed below:
+The XSLT component supports 17 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -107,7 +107,6 @@ The XSLT component supports 18 endpoint options which are listed below:
 | converter | advanced |  | XmlConverter | To use a custom implementation of org.apache.camel.converter.jaxp.XmlConverter
 | entityResolver | advanced |  | EntityResolver | To use a custom org.xml.sax.EntityResolver with javax.xml.transform.sax.SAXSource.
 | errorListener | advanced |  | ErrorListener | Allows to configure to use a custom javax.xml.transform.ErrorListener. Beware when doing this then the default error listener which captures any errors or fatal errors and store information on the Exchange as properties is not in use. So only use this option for special use-cases.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange.
 | resultHandlerFactory | advanced |  | ResultHandlerFactory | Allows you to use a custom org.apache.camel.builder.xml.ResultHandlerFactory which is capable of using custom org.apache.camel.builder.xml.ResultHandler types.
 | saxonExtensionFunctions | advanced |  | String | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry where you can comma to separate multiple values to lookup.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).

@@ -52,7 +52,7 @@ The Crypto (JCE) component supports 21 options which are listed below.
 // component options: END
 
 // endpoint options: START
-The Crypto (JCE) component supports 22 endpoint options which are listed below:
+The Crypto (JCE) component supports 21 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -78,7 +78,6 @@ The Crypto (JCE) component supports 22 endpoint options which are listed below:
 | secureRandom | producer |  | SecureRandom | Set the SecureRandom used to initialize the Signature service
 | secureRandomName | producer |  | String | Sets the reference name for a SecureRandom that can be fond in the registry.
 | signatureHeaderName | producer |  | String | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature'
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

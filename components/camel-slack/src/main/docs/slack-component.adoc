@@ -65,7 +65,7 @@ The Slack component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Slack component supports 7 endpoint options which are listed below:
+The Slack component supports 6 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -76,7 +76,6 @@ The Slack component supports 7 endpoint options which are listed below:
 | iconUrl | producer |  | String | The avatar that the component will use when sending message to a channel or user.
 | username | producer |  | String | This is the username that the bot will have when sending messages to a channel or user.
 | webhookUrl | producer |  | String | The incoming webhook URL
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

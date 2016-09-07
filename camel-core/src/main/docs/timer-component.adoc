@@ -57,8 +57,8 @@ The Timer component supports 13 endpoint options which are listed below:
 | period | consumer | 1000 | long | If greater than 0 generate periodic events every period milliseconds. The default value is 1000. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
 | repeatCount | consumer | 0 | long | Specifies a maximum limit of number of fires. So if you set it to 1 the timer will only fire once. If you set it to 5 it will only fire five times. A value of zero or negative means fire forever.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the default exchange pattern when creating an exchange.
 | daemon | advanced | true | boolean | Specifies whether or not the thread associated with the timer endpoint runs as a daemon. The default value is true.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange.
 | pattern | advanced |  | String | Allows you to specify a custom Date pattern to use for setting the time option using URI syntax.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | time | advanced |  | Date | A java.util.Date the first event should be generated. If using the URI the pattern expected is: yyyy-MM-dd HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss.

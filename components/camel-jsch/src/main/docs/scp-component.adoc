@@ -67,7 +67,7 @@ The SCP component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The SCP component supports 22 endpoint options which are listed below:
+The SCP component supports 21 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -84,7 +84,6 @@ The SCP component supports 22 endpoint options which are listed below:
 | strictHostKeyChecking | producer | no | String | Sets whether to use strict host key checking. Possible values are: no yes
 | allowNullBody | producer (advanced) | false | boolean | Used to specify if a null body is allowed during file writing. If set to true then an empty file will be created when set to false and attempting to send a null body to the file component a GenericFileWriteException of 'Cannot write null body to file.' will be thrown. If the fileExist option is set to 'Override' then the file will be truncated and if set to append the file will remain unchanged.
 | connectTimeout | advanced | 10000 | int | Sets the connect timeout for waiting for a connection to be established Used by both FTPClient and JSCH
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | soTimeout | advanced | 300000 | int | Sets the so timeout Used only by FTPClient
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | timeout | advanced | 30000 | int | Sets the data timeout for waiting for reply Used only by FTPClient

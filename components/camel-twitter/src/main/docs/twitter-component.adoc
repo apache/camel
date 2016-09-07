@@ -169,13 +169,13 @@ The Twitter component supports 43 endpoint options which are listed below:
 | type | consumer | direct | EndpointType | Endpoint type to use. Only streaming supports event type.
 | distanceMetric | consumer (advanced) | km | String | Used by the non-stream geography search to search by radius using the configured metrics. The unit can either be mi for miles or km for kilometers. You need to configure all the following options: longitude latitude radius and distanceMetric.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | latitude | consumer (advanced) |  | Double | Used by the non-stream geography search to search by latitude. You need to configure all the following options: longitude latitude radius and distanceMetric.
 | locations | consumer (advanced) |  | String | Bounding boxes created by pairs of lat/lons. Can be used for streaming/filter. A pair is defined as latlon. And multiple paris can be separated by semi colon.
 | longitude | consumer (advanced) |  | Double | Used by the non-stream geography search to search by longitude. You need to configure all the following options: longitude latitude radius and distanceMetric.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | radius | consumer (advanced) |  | Double | Used by the non-stream geography search to search by radius. You need to configure all the following options: longitude latitude radius and distanceMetric.
 | twitterStream | consumer (advanced) |  | TwitterStream | To use a custom instance of TwitterStream
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | count | filter |  | Integer | Limiting number of results per page.
 | filterOld | filter | true | boolean | Filter out old tweets that has previously been polled. This state is stored in memory only and based on last tweet id.

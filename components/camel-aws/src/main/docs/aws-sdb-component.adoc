@@ -38,7 +38,7 @@ The AWS SimpleDB component has no options.
 
 
 // endpoint options: START
-The AWS SimpleDB component supports 12 endpoint options which are listed below:
+The AWS SimpleDB component supports 11 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -54,7 +54,6 @@ The AWS SimpleDB component supports 12 endpoint options which are listed below:
 | proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
 | proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
 | secretKey | producer |  | String | Amazon AWS Secret Key
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

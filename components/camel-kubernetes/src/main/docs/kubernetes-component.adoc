@@ -68,8 +68,8 @@ The Kubernetes component supports 28 endpoint options which are listed below:
 | poolSize | consumer | 1 | int | The Consumer pool size
 | resourceName | consumer |  | String | The Consumer Resource Name we would like to watch
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | operation | producer |  | String | Producer operation to do on Kubernetes
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | caCertData | security |  | String | The CA Cert Data
 | caCertFile | security |  | String | The CA Cert File

@@ -132,10 +132,10 @@ The Mina2 component supports 29 endpoint options which are listed below:
 | clientMode | consumer | false | boolean | If the clientMode is true mina consumer will connect the address as a TCP client.
 | disconnectOnNoReply | consumer (advanced) | true | boolean | If sync is enabled then this option dictates MinaConsumer if it should disconnect where there is no reply to send back.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | noReplyLogLevel | consumer (advanced) | WARN | LoggingLevel | If sync is enabled this option dictates MinaConsumer which logging level to use when logging a there is no reply to send back.
 | cachedAddress | producer (advanced) | true | boolean | Whether to create the InetAddress once and reuse. Setting this to false allows to pickup DNS changes in the network.
 | lazySessionCreation | producer (advanced) | true | boolean | Sessions can be lazily created to avoid exceptions if the remote server is not up and running when the Camel producer is started.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | maximumPoolSize | advanced | 16 | int | Number of worker threads in the worker pool for TCP and UDP
 | orderedThreadPoolExecutor | advanced | true | boolean | Whether to use ordered thread pool to ensure events are processed orderly on the same channel.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).

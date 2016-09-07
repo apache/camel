@@ -75,7 +75,7 @@ The MSV component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The MSV component supports 13 endpoint options which are listed below:
+The MSV component supports 12 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -86,7 +86,6 @@ The MSV component supports 13 endpoint options which are listed below:
 | failOnNullHeader | producer | true | boolean | Whether to fail if no header exists when validating against a header.
 | headerName | producer |  | String | To validate against a header instead of the message body.
 | errorHandler | advanced |  | ValidatorErrorHandler | To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | resourceResolver | advanced |  | LSResourceResolver | To use a custom LSResourceResolver. Do not use together with resourceResolverFactory
 | resourceResolverFactory | advanced |  | ValidatorResourceResolverFactory | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI. The default resource resolver factory resturns a resource resolver which can read files from the class path and file system. Do not use together with resourceResolver.
 | schemaFactory | advanced |  | SchemaFactory | To use a custom javax.xml.validation.SchemaFactory

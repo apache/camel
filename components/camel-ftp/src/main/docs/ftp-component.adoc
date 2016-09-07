@@ -150,6 +150,7 @@ The FTP component supports 104 endpoint options which are listed below:
 | streamDownload | consumer | false | boolean | Sets the download method to use when not using a local working directory. If set to true the remote files are streamed to the route as they are read. When set to false the remote files are loaded into memory before being sent into the route.
 | directoryMustExist | consumer (advanced) | false | boolean | Similar to startingDirectoryMustExist but this applies during polling recursive sub directories.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | ignoreFileNotFoundOrPermissionError | consumer (advanced) | false | boolean | Whether to ignore when trying to download a file which does not exist or due to permission error. By default when a file does not exists or insufficient permission then an exception is thrown. Setting this option to true allows to ignore that instead.
 | inProgressRepository | consumer (advanced) |  | String> | A pluggable in-progress repository org.apache.camel.spi.IdempotentRepository. The in-progress repository is used to account the current in progress files being consumed. By default a memory based repository is used.
 | localWorkDirectory | consumer (advanced) |  | String | When consuming a local work directory can be used to store the remote file content directly in local files to avoid loading the content into memory. This is beneficial if you consume a very big remote file and thus can conserve memory.
@@ -172,7 +173,6 @@ The FTP component supports 104 endpoint options which are listed below:
 | autoCreate | advanced | true | boolean | Automatically create missing directories in the file's pathname. For the file consumer that means creating the starting directory. For the file producer it means the directory the files should be written to.
 | bufferSize | advanced | 131072 | int | Write buffer sized in bytes.
 | connectTimeout | advanced | 10000 | int | Sets the connect timeout for waiting for a connection to be established Used by both FTPClient and JSCH
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | ftpClient | advanced |  | FTPClient | To use a custom instance of FTPClient
 | ftpClientConfig | advanced |  | FTPClientConfig | To use a custom instance of FTPClientConfig to configure the FTP client the endpoint should use.
 | ftpClientConfigParameters | advanced |  | Map | Used by FtpComponent to provide additional parameters for the FTPClientConfig

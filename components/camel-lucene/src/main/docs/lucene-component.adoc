@@ -83,7 +83,7 @@ The Lucene component supports 7 options which are listed below.
 
 
 // endpoint options: START
-The Lucene component supports 8 endpoint options which are listed below:
+The Lucene component supports 7 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -95,7 +95,6 @@ The Lucene component supports 8 endpoint options which are listed below:
 | indexDir | producer |  | File | A file system directory in which index files are created upon analysis of the document by the specified analyzer
 | maxHits | producer |  | int | An integer value that limits the result set of the search operation
 | srcDir | producer |  | File | An optional directory containing files to be used to be analyzed and added to the index at producer startup.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

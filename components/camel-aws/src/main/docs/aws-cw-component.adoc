@@ -41,7 +41,7 @@ The AWS CloudWatch component has no options.
 
 
 // endpoint options: START
-The AWS CloudWatch component supports 13 endpoint options which are listed below:
+The AWS CloudWatch component supports 12 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -58,7 +58,6 @@ The AWS CloudWatch component supports 13 endpoint options which are listed below
 | timestamp | producer |  | Date | The metric timestamp
 | unit | producer |  | String | The metric unit
 | value | producer |  | Double | The metric value
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

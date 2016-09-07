@@ -91,7 +91,7 @@ The Ganglia component supports 15 options which are listed below.
 
 
 // endpoint options: START
-The Ganglia component supports 16 endpoint options which are listed below:
+The Ganglia component supports 15 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -111,7 +111,6 @@ The Ganglia component supports 16 endpoint options which are listed below:
 | type | producer | STRING | GMetricType | The type of value
 | units | producer |  | String | Any unit of measurement that qualifies the metric e.g. widgets litres bytes. Do not include a prefix such as k (kilo) or m (milli) other tools may scale the units later. The value should be unscaled.
 | wireFormat31x | producer | true | boolean | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

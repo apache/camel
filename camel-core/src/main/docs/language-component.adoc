@@ -48,7 +48,7 @@ The Language component has no options.
 
 
 // endpoint options: START
-The Language component supports 9 endpoint options which are listed below:
+The Language component supports 8 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -61,7 +61,6 @@ The Language component supports 9 endpoint options which are listed below:
 | contentCache | producer | false | boolean | Sets whether to use resource content cache or not.
 | script | producer |  | String | Sets the script to execute
 | transform | producer | true | boolean | Whether or not the result of the script should be used as message body. This options is default true.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

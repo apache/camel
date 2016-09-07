@@ -58,7 +58,7 @@ The Printer component has no options.
 
 
 // endpoint options: START
-The Printer component supports 15 endpoint options which are listed below:
+The Printer component supports 14 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -77,7 +77,6 @@ The Printer component supports 15 endpoint options which are listed below:
 | printerPrefix | producer |  | String | Sets the prefix name of the printer it is useful when the printer name does not start with //hostname/printer
 | sendToPrinter | producer | true | boolean | etting this option to false prevents sending of the print data to the printer
 | sides | producer | one-sided | String | Sets one sided or two sided printing based on the javax.print.attribute.standard.Sides API
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

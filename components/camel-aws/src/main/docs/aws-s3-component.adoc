@@ -69,6 +69,7 @@ The AWS S3 Storage Service component supports 40 endpoint options which are list
 | prefix | consumer |  | String | Camel 2.10.1: The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | deleteAfterWrite | producer | false | boolean | Camel 2.11.0: Delete file object after the S3 file has been uploaded
 | multiPartUpload | producer | false | boolean | Camel 2.15.0: If it is true camel will upload the file with multi part format the part size is decided by the option of partSize
@@ -77,7 +78,6 @@ The AWS S3 Storage Service component supports 40 endpoint options which are list
 | region | producer |  | String | The region where the bucket is located. This option is used in the com.amazonaws.services.s3.model.CreateBucketRequest.
 | serverSideEncryption | producer |  | String | Camel 2.16: Sets the server-side encryption algorithm when encrypting the object using AWS-managed keys. For example use AES256.
 | storageClass | producer |  | String | Camel 2.8.4: The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
 | backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.

@@ -76,10 +76,10 @@ The Stream component supports 18 endpoint options which are listed below:
 | scanStream | consumer | false | boolean | To be used for continuously reading a stream such as the unix tail command.
 | scanStreamDelay | consumer |  | long | Delay in milliseconds between read attempts when using scanStream.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | autoCloseCount | producer |  | int | Number of messages to process before closing stream on Producer side. Never close stream by default (only when Producer is stopped). If more messages are sent the stream is reopened for another autoCloseCount batch.
 | closeOnDone | producer | false | boolean | This option is used in combination with Splitter and streaming to the same file. The idea is to keep the stream open and only close when the Splitter is done to improve performance. Mind this requires that you only stream to the same file and not 2 or more files.
 | delay | producer |  | long | Initial delay in milliseconds before producing the stream.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

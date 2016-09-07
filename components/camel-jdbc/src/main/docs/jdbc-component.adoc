@@ -65,7 +65,7 @@ The JDBC component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The JDBC component supports 15 endpoint options which are listed below:
+The JDBC component supports 14 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -84,7 +84,6 @@ The JDBC component supports 15 endpoint options which are listed below:
 | useGetBytesForBlob | producer | false | boolean | To read BLOB columns as bytes instead of string data. This may be needed for certain databases such as Oracle where you must read BLOB columns as bytes.
 | useHeadersAsParameters | producer | false | boolean | Set this option to true to use the prepareStatementStrategy with named parameters. This allows to define queries with named placeholders and use headers with the dynamic values for the query placeholders.
 | useJDBC4ColumnNameAndLabelSemantics | producer | true | boolean | Sets whether to use JDBC 4 or JDBC 3.0 or older semantic when retrieving column name. JDBC 4.0 uses columnLabel to get the column name where as JDBC 3.0 uses both columnName or columnLabel. Unfortunately JDBC drivers behave differently so you can use this option to work out issues around your JDBC driver if you get problem using this component This option is default true.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

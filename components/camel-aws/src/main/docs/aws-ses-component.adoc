@@ -38,7 +38,7 @@ The AWS Simple Email Service component has no options.
 
 
 // endpoint options: START
-The AWS Simple Email Service component supports 13 endpoint options which are listed below:
+The AWS Simple Email Service component supports 12 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -55,7 +55,6 @@ The AWS Simple Email Service component supports 13 endpoint options which are li
 | secretKey | producer |  | String | Amazon AWS Secret Key
 | subject | producer |  | String | The subject which is used if the message header 'CamelAwsSesSubject' is not present.
 | to | producer |  | List | List of destination email address. Can be overriden with 'CamelAwsSesTo' header.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

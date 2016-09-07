@@ -102,6 +102,7 @@ The HDFS component supports 41 endpoint options which are listed below:
 | pattern | consumer | * | String | The pattern used for scanning the directory
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | append | producer | false | boolean | Append to existing file. Notice that not all HDFS file systems support the append option.
 | overwrite | producer | true | boolean | Whether to overwrite existing files with the same name
@@ -111,7 +112,6 @@ The HDFS component supports 41 endpoint options which are listed below:
 | chunkSize | advanced | 4096 | int | When reading a normal file this is split into chunks producing a message per chunk.
 | compressionCodec | advanced | DEFAULT | HdfsCompressionCodec | The compression codec to use
 | compressionType | advanced | NONE | CompressionType | The compression type to use (is default not in use)
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | openedSuffix | advanced | opened | String | When a file is opened for reading/writing the file is renamed with this suffix to avoid to read it during the writing phase.
 | readSuffix | advanced | read | String | Once the file has been read is renamed with this suffix to avoid to read it again.
 | replication | advanced | 3 | short | The HDFS replication factor

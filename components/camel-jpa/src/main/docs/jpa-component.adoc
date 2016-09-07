@@ -143,13 +143,13 @@ The JPA component supports 42 endpoint options which are listed below:
 | skipLockedEntity | consumer | false | boolean | To configure whether to use NOWAIT on lock and silently skip the entity.
 | transacted | consumer | false | boolean | Whether to run the consumer in transacted mode by which all messages will either commit or rollback when the entire batch has been processed. The default behavior (false) is to commit all the previously successfully processed messages and only rollback the last failed message.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | flushOnSend | producer | true | boolean | Flushes the EntityManager after the entity bean has been persisted.
 | remove | producer | false | boolean | Indicates to use entityManager.remove(entity).
 | usePassedInEntityManager | producer | false | boolean | If set to true then Camel will use the EntityManager from the header JpaConstants.ENTITYMANAGER instead of the configured entity manager on the component/endpoint. This allows end users to control which entity manager will be in use.
 | usePersist | producer | false | boolean | Indicates to use entityManager.persist(entity) instead of entityManager.merge(entity). Note: entityManager.persist(entity) doesn't work for detached entities (where the EntityManager has to execute an UPDATE instead of an INSERT query)!
 | entityManagerProperties | advanced |  | Map | Additional properties for the entity manager to use.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
 | backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
