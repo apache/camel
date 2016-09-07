@@ -28,4 +28,11 @@ public interface WrappedFile<T> {
      */
     T getFile();
 
+    /**
+     * Gets the content of the file.
+     *
+     * @return the content of the file.
+     */
+    Object getBody();
+
 }

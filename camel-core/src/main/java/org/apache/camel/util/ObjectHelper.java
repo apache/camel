@@ -1805,9 +1805,15 @@ public final class ObjectHelper {
      */
     public static Scanner getScanner(Exchange exchange, Object value) {
         if (value instanceof WrappedFile) {
-            // generic file is just a wrapper for the real file so call again with the real file
             WrappedFile<?> gf = (WrappedFile<?>) value;
-            return getScanner(exchange, gf.getFile());
+            Object body = gf.getBody();
+            if (body != null) {
+                // we have loaded the file content into the body so use that
+                value = body;
+            } else {
+                // generic file is just a wrapper for the real file so call again with the real file
+                return getScanner(exchange, gf.getFile());
+            }
         }
 
         String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
