@@ -27,14 +27,11 @@ public class MyErrorHandler extends BeanIOErrorHandler {
     public void invalidRecord(InvalidRecordException ex) throws Exception {
         String id = getExchange().getExchangeId();
         String line = "ExchangeId: " + id + " Invalid record: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
-
-        // lets store to the results a dummy error DTO
-        MyErrorDto dto = new MyErrorDto(ex.getRecordName(), ex.getMessage());
-        getResults().add(dto);
-
-        getExchange().getOut().setHeader("record", ex.getRecordName());
-
         LOG.warn(line);
+
+        // lets handle the error and store to the results a dummy error DTO
+        MyErrorDto dto = new MyErrorDto(ex.getRecordName(), ex.getMessage());
+        handleErrorAndAddAsResult(dto);
     }
 
 }

@@ -31,8 +31,8 @@ public final class BeanIOHelper {
         // utility class
     }
 
-    public static BeanReaderErrorHandler getOrCreateBeanReaderErrorHandler(BeanIOConfiguration configuration,
-                                                                           Exchange exchange, List<Object> results) throws Exception {
+    public static BeanReaderErrorHandler getOrCreateBeanReaderErrorHandler(BeanIOConfiguration configuration, Exchange exchange,
+                                                                           List<Object> results, BeanIOIterator iterator) throws Exception {
         BeanReaderErrorHandler answer = null;
 
         if (ObjectHelper.isNotEmpty(configuration.getBeanReaderErrorHandlerType())) {
@@ -53,6 +53,7 @@ public final class BeanIOHelper {
             eh.setConfiguration(configuration);
             eh.setExchange(exchange);
             eh.setResults(results);
+            eh.setIterator(iterator);
             eh.init();
         }
 
