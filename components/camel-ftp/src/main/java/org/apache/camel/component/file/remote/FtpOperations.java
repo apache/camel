@@ -325,7 +325,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         
         if (is != null) {
             try {
-                is.close();
+                IOHelper.close(is);
                 client.completePendingCommand();
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
@@ -335,7 +335,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
-        OutputStream os = null;
         boolean result;
         try {
             GenericFile<FTPFile> target = (GenericFile<FTPFile>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
@@ -365,9 +364,15 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 exchange.getIn().setHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, is);
                 result = true;
             } else {
-                os = new ByteArrayOutputStream();
-                target.setBody(os);
-                result = client.retrieveFile(remoteName, os);
+                // read the entire file into memory in the byte array
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                result = client.retrieveFile(remoteName, bos);
+                // close the stream after done
+                IOHelper.close(bos);
+
+                // and then set the body as an input stream so we can read the content easily
+                InputStream is = new ByteArrayInputStream(bos.toByteArray());
+                target.setBody(is);
             }
 
             // store client reply information after the operation
@@ -381,8 +386,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
-        } finally {
-            IOHelper.close(os, "retrieve: " + name, log);
         }
 
         return result;
