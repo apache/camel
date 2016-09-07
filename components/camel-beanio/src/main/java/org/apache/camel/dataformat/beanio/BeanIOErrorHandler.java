@@ -40,6 +40,7 @@ public class BeanIOErrorHandler extends BeanReaderErrorHandlerSupport {
     private BeanIOConfiguration configuration;
     private Exchange exchange;
     private List<Object> results;
+    private BeanIOIterator iterator;
 
     public BeanIOErrorHandler() {
     }
@@ -70,17 +71,23 @@ public class BeanIOErrorHandler extends BeanReaderErrorHandlerSupport {
         this.exchange = exchange;
     }
 
-    /**
-     * Gets the current list of POJOs mapped when unmarshalling.
-     *
-     * @return the current list, or <tt>null</tt> if not unmarshalling
-     */
-    public List<Object> getResults() {
-        return results;
+    void setResults(List<Object> results) {
+        this.results = results;
     }
 
-    public void setResults(List<Object> results) {
-        this.results = results;
+    void setIterator(BeanIOIterator iterator) {
+        this.iterator = iterator;
+    }
+
+    /**
+     * Sets a custom POJO as the result from handling an beanio error.
+     */
+    public void handleErrorAndAddAsResult(Object result) {
+        if (results != null) {
+            results.add(result);
+        } else if (iterator != null) {
+            iterator.setNext(result);
+        }
     }
 
     @Override
