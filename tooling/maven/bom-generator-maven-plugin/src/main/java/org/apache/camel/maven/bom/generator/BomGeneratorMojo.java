@@ -2,10 +2,12 @@ package org.apache.camel.maven.bom.generator;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -89,7 +91,7 @@ public class BomGeneratorMojo extends AbstractMojo {
     }
 
     private List<Dependency> filter(List<Dependency> dependencyList) {
-        List<Dependency> outDependencies = new LinkedList<>();
+        List<Dependency> outDependencies = new ArrayList<>();
 
         DependencyMatcher inclusions = new DependencyMatcher(dependencies.getIncludes());
         DependencyMatcher exclusions = new DependencyMatcher(dependencies.getExcludes());
@@ -103,6 +105,8 @@ public class BomGeneratorMojo extends AbstractMojo {
             }
         }
 
+        Collections.sort(outDependencies, (d1, d2) -> (d1.getGroupId() + ":" + d1.getArtifactId()).compareTo(d2.getGroupId() + ":" + d2.getArtifactId()));
+
         return outDependencies;
     }
 
@@ -113,7 +117,23 @@ public class BomGeneratorMojo extends AbstractMojo {
     }
 
     private void writePom(Document pom) throws Exception {
+
+        XPathFactory xpathFactory = XPathFactory.newInstance();
+        // XPath to find empty text nodes.
+        XPathExpression xpathExp = xpathFactory.newXPath().compile("//text()[normalize-space(.) = '']");
+        NodeList emptyTextNodes = (NodeList) xpathExp.evaluate(pom, XPathConstants.NODESET);
+
+        // Remove each empty text node from document.
+        for (int i = 0; i < emptyTextNodes.getLength(); i++) {
+            Node emptyTextNode = emptyTextNodes.item(i);
+            emptyTextNode.getParentNode().removeChild(emptyTextNode);
+        }
+
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+
         DOMSource source = new DOMSource(pom);
 
         targetPom.getParentFile().mkdirs();
@@ -174,11 +194,11 @@ public class BomGeneratorMojo extends AbstractMojo {
                 dependencyEl.appendChild(scopeEl);
             }
 
-            if(dep.getExclusions()!=null) {
+            if (dep.getExclusions() != null && !dep.getExclusions().isEmpty()) {
 
                 Element exclsEl = pom.createElement("exclusions");
 
-                for(Exclusion e : dep.getExclusions()) {
+                for (Exclusion e : dep.getExclusions()) {
                     Element exclEl = pom.createElement("exclusion");
 
                     Element groupIdExEl = pom.createElement("groupId");

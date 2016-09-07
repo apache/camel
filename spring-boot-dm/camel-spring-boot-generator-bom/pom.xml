@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -9,33 +25,39 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>camel-spring-boot-bom-ng</artifactId>
+    <artifactId>camel-spring-boot-generator-bom</artifactId>
     <packaging>pom</packaging>
+    <name>Camel :: Spring-Boot :: Dependency Management :: BOM Generator</name>
+    <description>Camel Spring-Boot BOM Generator</description>
 
     <dependencyManagement>
 
         <dependencies>
 
+            <!--
+                The dependency management is organized as follows:
+                - custom dependencies first (to override values)
+                - spring-boot dependencies
+                - camel dependencies
+
+                Dependencies are flattened and a BOM file is generated using a plugin.
+             -->
+
+            <!-- Use the camel version of caffeine -->
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
                 <artifactId>caffeine</artifactId>
                 <version>${caffeine-version}</version>
             </dependency>
 
-            <!-- Missing from spring-boot -->
+            <!-- Added to match the version of related libraries provided by spring-boot -->
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
                 <version>${hibernate-version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit-version}</version>
-            </dependency>
-
-            <!-- Choose a uniform jackson1 for testing -->
+            <!-- Add a uniform jackson 1 (used in many components) -->
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-core</artifactId>
@@ -62,39 +84,24 @@
                 <version>${jackson-version}</version>
             </dependency>
 
-            <!-- Missing in spring-boot -->
+            <!-- Added to match the version of related libraries provided by spring-boot -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-ext</artifactId>
                 <version>${slf4j-version}</version>
             </dependency>
 
-            <!-- Also missing -->
+            <!-- Added to match the version of related libraries provided by spring-boot -->
             <dependency>
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna-platform</artifactId>
                 <version>${jna-version}</version>
             </dependency>
 
-            <!-- Some are missing -->
+            <!-- Added to match the version of related libraries provided by spring-boot -->
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-util-ajax</artifactId>
-                <version>${jetty-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-jmx</artifactId>
-                <version>${jetty-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-security</artifactId>
-                <version>${jetty-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-client</artifactId>
                 <version>${jetty-version}</version>
             </dependency>
             <dependency>
@@ -104,10 +111,11 @@
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-io</artifactId>
+                <artifactId>jetty-servlet</artifactId>
                 <version>${jetty-version}</version>
             </dependency>
-            <!-- Jetty - Mismatch resolved in favour of spring-boot -->
+
+            <!-- Added to match the version of related libraries provided by spring-boot -->
             <dependency>
                 <groupId>org.eclipse.jetty.websocket</groupId>
                 <artifactId>websocket-api</artifactId>
@@ -128,19 +136,8 @@
                 <artifactId>websocket-servlet</artifactId>
                 <version>${jetty-version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-server</artifactId>
-                <version>${jetty-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-servlet</artifactId>
-                <version>${jetty-version}</version>
-            </dependency>
 
-
-            <!-- ActiveMq from camel -->
+            <!-- Using the version of ActiveMQ from camel -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-amqp</artifactId>
@@ -295,7 +292,7 @@
                 <version>${activemq-version}</version>
             </dependency>
 
-            <!-- Missing in spring-boot -->
+            <!-- Added to match the version of related libraries provided by Camel -->
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-scala_2.11</artifactId>
@@ -307,7 +304,7 @@
                 <version>${jackson2-version}</version>
             </dependency>
 
-            <!-- Jackson From spring-boot -->
+            <!-- Using the Camel Version of Jackson -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
@@ -409,44 +406,8 @@
                 <version>${jackson2-version}</version>
             </dependency>
 
-            <!-- Spring dependencies (not included in spring-boot BOM) -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-                <version>${spring-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-                <version>${spring-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${spring-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-                <version>${spring-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-                <version>${spring-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-oxm</artifactId>
-                <version>${spring-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jms</artifactId>
-                <version>${spring-version}</version>
-            </dependency>
 
-
+            <!-- Dependencies from the spring-boot BOM are included after custom dependencies -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -455,6 +416,7 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- Dependencies from Camel parent at the end -->
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-parent</artifactId>
@@ -484,33 +446,32 @@
                 <configuration>
                     <dependencies>
                         <includes>
-                            <include>org.apache.camel:*</include>
-                            <include>org.springframework.boot:*</include>
-
-                            <include>com.github.ben-manes.caffeine:*</include>
-                            <include>org.hibernate:*</include>
-                            <include>junit:junit</include>
-                            <include>org.codehaus.jackson:jackson*</include>
-                            <include>org.slf4j:*</include>
-                            <include>net.java.dev.jna:*</include>
-
-                            <include>org.eclipse.jetty:*</include>
-                            <include>org.eclipse.jetty.websocket:*</include>
-
-                            <include>org.apache.activemq:*</include>
-
-                            <include>com.fasterxml.jackson.*:*</include>
-
-                            <include>org.springframework:*</include>
-
+                            <include>*:*</include>
                         </includes>
                         <excludes>
+
+                            <!-- These artifacts should not be included in the final (generated) BOM -->
+
+                            <exclude>com.google.inject:*</exclude>
+                            <exclude>com.google.guava:*</exclude>
+                            <exclude>com.google.code.gson:*</exclude>
+
+                            <exclude>org.apache.servicemix.bundles:*</exclude>
+                            <exclude>org.ops4j.pax*:*</exclude>
+                            <exclude>org.codehaus.mojo:*</exclude>
+                            <exclude>org.apache.servicemix:*</exclude>
+                            <exclude>org.apache.aries.blueprint:*</exclude>
+                            <exclude>org.apache.felix:*</exclude>
+                            <exclude>org.apache.maven.archetype:*</exclude>
+                            <exclude>org.osgi:*</exclude>
+
                             <exclude>org.springframework:springloaded</exclude>
+                            <exclude>com.zaxxer:HikariCP-java6</exclude>
                         </excludes>
                     </dependencies>
 
                     <sourcePom>${basedir}/target-template-pom.xml</sourcePom>
-                    <targetPom>${basedir}/../camel-spring-boot-bom-ng/pom.xml</targetPom>
+                    <targetPom>${basedir}/../camel-spring-boot-dependencies/pom.xml</targetPom>
                 </configuration>
 
             </plugin>
