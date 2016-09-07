@@ -147,7 +147,7 @@ The HTTP component supports 6 options which are listed below.
 
 
 // endpoint options: START
-The HTTP component supports 26 endpoint options which are listed below:
+The HTTP component supports 25 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -170,7 +170,6 @@ The HTTP component supports 26 endpoint options which are listed below:
 | throwExceptionOnFailure | producer | true | boolean | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
 | transferException | producer | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
 | urlRewrite | producer (advanced) |  | UrlRewrite | Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | httpClientConfigurer | advanced |  | HttpClientConfigurer | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc
 | httpClientOptions | advanced |  | Map | To configure the HttpClient using the key/values from the Map.
 | httpConnectionManager | advanced |  | HttpConnectionManager | To use a custom HttpConnectionManager to manage connections

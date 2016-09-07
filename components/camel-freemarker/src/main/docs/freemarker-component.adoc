@@ -61,7 +61,7 @@ The Freemarker component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Freemarker component supports 7 endpoint options which are listed below:
+The Freemarker component supports 6 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -72,7 +72,6 @@ The Freemarker component supports 7 endpoint options which are listed below:
 | contentCache | producer | false | boolean | Sets whether to use resource content cache or not
 | encoding | producer |  | String | Sets the encoding to be used for loading the template file.
 | templateUpdateDelay | producer |  | int | Number of seconds the loaded template resource will remain in the cache.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

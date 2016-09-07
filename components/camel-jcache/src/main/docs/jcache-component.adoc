@@ -26,6 +26,7 @@ The JCache component supports 23 endpoint options which are listed below:
 | synchronous | consumer | false | boolean | if the the event listener should block the thread causing the event
 | eventFilters | consumer (advanced) |  | List | The CacheEntryEventFilter. If using eventFilters option then filteredEvents one will be ignored
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | action | producer |  | String | To configure using a cache operation by default. If an operation in the message header then the operation from the header takes precedence.
 | cacheConfiguration | advanced |  | Configuration | A Configuration for the Cache
 | cacheConfigurationProperties | advanced |  | Properties | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager
@@ -34,7 +35,6 @@ The JCache component supports 23 endpoint options which are listed below:
 | cachingProvider | advanced |  | String | *Required* The fully qualified class name of the javax.cache.spi.CachingProvider
 | configurationUri | advanced |  | String | An implementation specific URI for the CacheManager
 | createCacheIfNotExists | advanced | true | boolean | Configure if a cache need to be created if it does exist or can't be pre-configured.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | expiryPolicyFactory | advanced |  | ExpiryPolicy> | The ExpiryPolicy factory
 | lookupProviders | advanced | false | boolean | Configure if a camel-cache should try to find implementations of jcache api in runtimes like OSGi.
 |=======================================================================

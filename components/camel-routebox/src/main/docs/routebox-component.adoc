@@ -129,9 +129,9 @@ The RouteBox component supports 18 endpoint options which are listed below:
 | pollInterval | consumer | 1000 | long | The timeout used when polling from seda. When a timeout occurs the consumer can check whether it is allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown.
 | threads | consumer | 20 | int | Number of threads to be used by the routebox to receive requests.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | connectionTimeout | producer | 20000 | long | Timeout in millis used by the producer when sending a message.
 | sendToConsumer | producer | true | boolean | Dictates whether a Producer endpoint sends a request to an external routebox consumer. If the setting is false the Producer creates an embedded inner context and processes requests internally.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | innerContext | advanced |  | CamelContext | A string representing a key in the Camel Registry matching an object value of the type org.apache.camel.CamelContext. If a CamelContext is not provided by the user a CamelContext is automatically created for deployment of inner routes.
 | innerProducerTemplate | advanced |  | ProducerTemplate | The ProducerTemplate to use by the internal embeded CamelContext
 | innerRegistry | advanced |  | Registry | To use a custom registry for the internal embedded CamelContext.

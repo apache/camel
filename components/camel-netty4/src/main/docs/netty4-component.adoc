@@ -175,6 +175,7 @@ The Netty4 component supports 73 endpoint options which are listed below:
 | bossGroup | consumer (advanced) |  | EventLoopGroup | Set the BossGroup which could be used for handling the new connection of the server side across the NettyEndpoint
 | disconnectOnNoReply | consumer (advanced) | true | boolean | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | nettyServerBootstrapFactory | consumer (advanced) |  | NettyServerBootstrapFactory | To use a custom NettyServerBootstrapFactory
 | networkInterface | consumer (advanced) |  | String | When using UDP then this option can be used to specify a network interface by its name such as eth0 to join a multicast group.
 | noReplyLogLevel | consumer (advanced) | WARN | LoggingLevel | If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back.
@@ -198,7 +199,6 @@ The Netty4 component supports 73 endpoint options which are listed below:
 | useByteBuf | producer (advanced) | false | boolean | If the useByteBuf is true netty producer will turn the message body into ByteBuf before sending it out.
 | bootstrapConfiguration | advanced |  | NettyServerBootstrapConfiguration | To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint.
 | channelGroup | advanced |  | ChannelGroup | To use a explicit ChannelGroup.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | nativeTransport | advanced | false | boolean | Whether to use native transport instead of NIO. Native transport takes advantage of the host operating system and is only supported on some platforms. You need to add the netty JAR for the host operating system you are using. See more details at: http://netty.io/wiki/native-transports.html
 | options | advanced |  | Map | Allows to configure additional netty options using option. as prefix. For example option.child.keepAlive=false to set the netty option child.keepAlive=false. See the Netty documentation for possible options that can be used.
 | receiveBufferSize | advanced | 65536 | int | The TCP/UDP buffer sizes to be used during inbound communication. Size is bytes.

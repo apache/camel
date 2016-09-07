@@ -38,7 +38,7 @@ The AWS DynamoDB component has no options.
 
 
 // endpoint options: START
-The AWS DynamoDB component supports 15 endpoint options which are listed below:
+The AWS DynamoDB component supports 14 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -57,7 +57,6 @@ The AWS DynamoDB component supports 15 endpoint options which are listed below:
 | readCapacity | producer |  | Long | The provisioned throughput to reserve for reading resources from your table
 | secretKey | producer |  | String | Amazon AWS Secret Key
 | writeCapacity | producer |  | Long | The provisioned throughput to reserved for writing resources to your table
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

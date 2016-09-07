@@ -56,7 +56,7 @@ The Bean Validator component has no options.
 
 
 // endpoint options: START
-The Bean Validator component supports 8 endpoint options which are listed below:
+The Bean Validator component supports 7 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -68,7 +68,6 @@ The Bean Validator component supports 8 endpoint options which are listed below:
 | messageInterpolator | producer |  | MessageInterpolator | To use a custom MessageInterpolator
 | traversableResolver | producer |  | TraversableResolver | To use a custom TraversableResolver
 | validationProviderResolver | producer |  | ValidationProviderResolver | To use a a custom ValidationProviderResolver
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

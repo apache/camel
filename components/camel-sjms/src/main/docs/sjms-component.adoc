@@ -147,6 +147,7 @@ The Simple JMS component supports 32 endpoint options which are listed below:
 | durableSubscriptionId | consumer |  | String | Sets the durable subscription Id required for durable topics.
 | synchronous | consumer | true | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | messageSelector | consumer (advanced) |  | String | Sets the JMS Message selector syntax.
 | namedReplyTo | producer |  | String | Sets the reply to destination name used for InOut producer endpoints.
 | persistent | producer | true | boolean | Flag used to enable/disable message persistence.
@@ -161,7 +162,6 @@ The Simple JMS component supports 32 endpoint options which are listed below:
 | connectionFactory | advanced |  | ConnectionFactory | Initializes the connectionFactory for the endpoint which takes precedence over the component's connectionFactory if any
 | connectionResource | advanced |  | ConnectionResource | Initializes the connectionResource for the endpoint which takes precedence over the component's connectionResource if any
 | destinationCreationStrategy | advanced |  | DestinationCreationStrategy | To use a custom DestinationCreationStrategy.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | headerFilterStrategy | advanced |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 | includeAllJMSXProperties | advanced | false | boolean | Whether to include all JMSXxxx properties when mapping from JMS to Camel Message. Setting this to true will include properties such as JMSXAppID and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy then this option does not apply.
 | jmsKeyFormatStrategy | advanced |  | JmsKeyFormatStrategy | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides two implementations out of the box: default and passthrough. The default strategy will safely marshal dots and hyphens (. and -). The passthrough strategy leaves the key as is. Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the notation.

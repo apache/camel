@@ -71,7 +71,7 @@ The Validator component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Validator component supports 13 endpoint options which are listed below:
+The Validator component supports 12 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -82,7 +82,6 @@ The Validator component supports 13 endpoint options which are listed below:
 | failOnNullHeader | producer | true | boolean | Whether to fail if no header exists when validating against a header.
 | headerName | producer |  | String | To validate against a header instead of the message body.
 | errorHandler | advanced |  | ValidatorErrorHandler | To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange.
 | resourceResolver | advanced |  | LSResourceResolver | To use a custom LSResourceResolver. See also link setResourceResolverFactory(ValidatorResourceResolverFactory)
 | resourceResolverFactory | advanced |  | ValidatorResourceResolverFactory | For creating a resource resolver which depends on the endpoint resource URI. Must not be used in combination with method link setResourceResolver(LSResourceResolver). If not set then DefaultValidatorResourceResolverFactory is used
 | schemaFactory | advanced |  | SchemaFactory | To use a custom javax.xml.validation.SchemaFactory

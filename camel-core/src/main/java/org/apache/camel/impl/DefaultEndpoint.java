@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultEndpoint.class);
+    private final String id = EndpointHelper.createEndpointId();
     private transient String endpointUriToString;
     private String endpointUri;
     private EndpointConfiguration endpointConfiguration;
@@ -69,16 +70,20 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
             + " Notice if the option bridgeErrorHandler is enabled then this options is not in use."
             + " By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored.")
     private ExceptionHandler exceptionHandler;
-    @UriParam(defaultValue = "InOnly", label = "advanced",
-            description = "Sets the default exchange pattern when creating an exchange")
+    @UriParam(label = "consumer,advanced",
+            description = "Sets the exchange pattern when the consumer creates an exchange.")
+    // no default value set on @UriParam as the MEP is sometimes InOnly or InOut depending on the component in use
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     // option to allow end user to dictate whether async processing should be
     // used or not (if possible)
     @UriParam(defaultValue = "false", label = "advanced",
             description = "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported).")
     private boolean synchronous;
-    private final String id = EndpointHelper.createEndpointId();
+    // these options are not really in use any option related to the consumer has a specific option on the endpoint
+    // and consumerProperties was added from the very start of Camel.
     private Map<String, Object> consumerProperties;
+    // pooling consumer options only related to EventDrivenPollingConsumer which are very seldom in use
+    // so lets not expose them in the component docs as it will be included in every component
     private int pollingConsumerQueueSize = 1000;
     private boolean pollingConsumerBlockWhenFull = true;
     private long pollingConsumerBlockTimeout;

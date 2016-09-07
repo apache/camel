@@ -44,7 +44,7 @@ The JBPM component has no options.
 
 
 // endpoint options: START
-The JBPM component supports 27 endpoint options which are listed below:
+The JBPM component supports 26 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -70,7 +70,6 @@ The JBPM component supports 27 endpoint options which are listed below:
 | value | producer |  | Object | the value to assign to the global identifier
 | workItemId | producer |  | Long | the id of the work item
 | entities | advanced |  | List | The potentialOwners when nominateTask operation is performed
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | extraJaxbClasses | advanced |  | Class[] | To load additional classes when working with XML
 | parameters | advanced |  | Map | the variables that should be set for various operations
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).

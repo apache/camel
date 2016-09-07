@@ -42,7 +42,7 @@ The JMX component supports 30 endpoint options which are listed below:
 | objectName | consumer |  | String | URI Property: The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that get passed.
 | observedAttribute | consumer |  | String | URI Property: monitor types only The attribute to observe for the monitor bean.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | handback | advanced |  | Object | URI Property: Value to handback to the listener when a notification is received. This value will be put in the message header with the key jmx.handback
 | notificationFilter | advanced |  | NotificationFilter | URI Property: Reference to a bean that implements the NotificationFilter.
 | objectProperties | advanced |  | Map | URI Property: properties for the object name. These values will be used if the objectName param is not set

@@ -46,7 +46,7 @@ The Exec component has no options.
 // component options: END
 
 // endpoint options: START
-The Exec component supports 10 endpoint options which are listed below:
+The Exec component supports 9 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -60,7 +60,6 @@ The Exec component supports 10 endpoint options which are listed below:
 | timeout | producer |  | long | The timeout in milliseconds after which the executable should be terminated. If execution has not completed within the timeout the component will send a termination request.
 | useStderrOnEmptyStdout | producer | false | boolean | A boolean indicating that when stdout is empty this component will populate the Camel Message Body with stderr. This behavior is disabled (false) by default.
 | workingDir | producer |  | String | The directory in which the command should be executed. If null the working directory of the current process will be used.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

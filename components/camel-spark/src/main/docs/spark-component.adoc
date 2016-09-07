@@ -79,7 +79,7 @@ The Apache Spark component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Apache Spark component supports 8 endpoint options which are listed below:
+The Apache Spark component supports 7 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -91,7 +91,6 @@ The Apache Spark component supports 8 endpoint options which are listed below:
 | dataFrameCallback | producer |  | DataFrameCallback | Function performing action against an DataFrame.
 | rdd | producer |  | JavaRDDLike | RDD to compute against.
 | rddCallback | producer |  | RddCallback | Function performing action against an RDD.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

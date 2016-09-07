@@ -60,7 +60,7 @@ The Velocity component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Velocity component supports 7 endpoint options which are listed below:
+The Velocity component supports 6 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -71,7 +71,6 @@ The Velocity component supports 7 endpoint options which are listed below:
 | encoding | producer |  | String | Character encoding of the resource content.
 | loaderCache | producer | true | boolean | Enables / disables the velocity resource loader cache which is enabled by default
 | propertiesFile | producer |  | String | The URI of the properties file which is used for VelocityEngine initialization.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

@@ -109,7 +109,7 @@ The XML RPC component has no options.
 
 
 // endpoint options: START
-The XML RPC component supports 20 endpoint options which are listed below:
+The XML RPC component supports 19 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -128,7 +128,6 @@ The XML RPC component supports 20 endpoint options which are listed below:
 | replyTimeout | producer |  | int | Set the reply timeout in milliseconds 0 is to disable it.
 | clientConfig | advanced |  | XmlRpcClientConfigImpl | To use the given XmlRpcClientConfigImpl as configuration for the client.
 | clientConfigurer | advanced |  | XmlRpcClientConfigurer | To use a custom XmlRpcClientConfigurer to configure the client
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | timeZone | advanced |  | TimeZone | The timezone which is used to interpret date/time. Defaults to link TimeZonegetDefault().
 | userAgent | advanced |  | String | The http user agent header to set when doing xmlrpc requests

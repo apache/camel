@@ -62,7 +62,7 @@ The Test component has no options.
 
 
 // endpoint options: START
-The Test component supports 16 endpoint options which are listed below:
+The Test component supports 15 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -82,7 +82,6 @@ The Test component supports 16 endpoint options which are listed below:
 | split | producer | false | boolean | If enabled the the messages loaded from the test endpoint will be split using \n\r delimiters (new lines) so each line is an expected message. For example to use a file endpoint to load a file where each line is an expected message.
 | timeout | producer | 2000 | long | The timeout to use when polling for message bodies from the URI
 | copyOnExchange | producer (advanced) | true | boolean | Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint. Is by default true.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

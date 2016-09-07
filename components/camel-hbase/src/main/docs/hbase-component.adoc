@@ -153,8 +153,8 @@ The HBase component supports 17 endpoint options which are listed below:
 | remove | consumer | true | boolean | If the option is true Camel HBase Consumer will remove the rows which it processes.
 | removeHandler | consumer |  | HBaseRemoveHandler | To use a custom HBaseRemoveHandler that is executed when a row is to be removed.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | maxResults | producer | 100 | int | The maximum number of rows to scan.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

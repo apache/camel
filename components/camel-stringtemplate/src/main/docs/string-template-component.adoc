@@ -47,7 +47,7 @@ The String Template component has no options.
 
 
 // endpoint options: START
-The String Template component supports 6 endpoint options which are listed below:
+The String Template component supports 5 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -57,7 +57,6 @@ The String Template component supports 6 endpoint options which are listed below
 | contentCache | producer | false | boolean | Sets whether to use resource content cache or not
 | delimiterStart | producer | < | char | The variable start delimiter
 | delimiterStop | producer | > | char | The variable end delimiter
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

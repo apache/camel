@@ -51,7 +51,7 @@ The Jing component has no options.
 
 
 // endpoint options: START
-The Jing component supports 4 endpoint options which are listed below:
+The Jing component supports 3 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -59,7 +59,6 @@ The Jing component supports 4 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | resourceUri | producer |  | String | *Required* URL to a local resource on the classpath or a full URL to a remote resource or resource on the file system which contains the schema to validate against.
 | compactSyntax | producer | false | boolean | Whether to validate using RelaxNG compact syntax or not. By default this is false for using RelaxNG XML Syntax (rng) And true is for using RelaxNG Compact Syntax (rnc)
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

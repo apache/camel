@@ -73,7 +73,7 @@ The Control Bus component has no options.
 
 
 // endpoint options: START
-The Control Bus component supports 8 endpoint options which are listed below:
+The Control Bus component supports 7 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -85,7 +85,6 @@ The Control Bus component supports 8 endpoint options which are listed below:
 | async | producer | false | boolean | Whether to execute the control bus task asynchronously. Important: If this option is enabled then any result from the task is not set on the Exchange. This is only possible if executing tasks synchronously.
 | loggingLevel | producer | INFO | LoggingLevel | Logging level used for logging when task is done or if any exceptions occurred during processing the task.
 | routeId | producer |  | String | To specify a route by its id. The special keyword current indicates the current route.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

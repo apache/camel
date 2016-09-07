@@ -70,7 +70,7 @@ The Nagios component supports 7 options which are listed below.
 
 
 // endpoint options: START
-The Nagios component supports 9 endpoint options which are listed below:
+The Nagios component supports 8 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -83,7 +83,6 @@ The Nagios component supports 9 endpoint options which are listed below:
 | password | producer |  | String | Password to be authenticated when sending checks to Nagios.
 | sendSync | producer | true | boolean | Whether or not to use synchronous when sending a passive check. Setting it to false will allow Camel to continue routing the message and the passive check message will be send asynchronously.
 | timeout | producer | 5000 | int | Sending timeout in millis.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

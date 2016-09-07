@@ -77,13 +77,13 @@ The Undertow component supports 17 endpoint options which are listed below:
 | matchOnUriPrefix | consumer | true | Boolean | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
 | optionsEnabled | consumer | false | boolean | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | keepAlive | producer | true | Boolean | Setting to ensure socket is not closed due to inactivity
 | options | producer |  | Map | Sets additional channel options. The options that can be used are defined in org.xnio.Options. To configure from endpoint uri then prefix each option with option. such as option.close-abort=true&option.send-buffer=8192
 | reuseAddresses | producer | true | Boolean | Setting to facilitate socket multiplexing
 | tcpNoDelay | producer | true | Boolean | Setting to improve TCP protocol performance
 | throwExceptionOnFailure | producer | true | Boolean | If the option is true HttpProducer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the option throwExceptionOnFailure to be false to let the producer send all the fault response back.
 | transferException | producer | false | Boolean | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | headerFilterStrategy | advanced |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | undertowHttpBinding | advanced |  | UndertowHttpBinding | To use a custom UndertowHttpBinding to control the mapping between Camel message and undertow.

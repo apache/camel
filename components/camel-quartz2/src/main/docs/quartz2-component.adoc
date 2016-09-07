@@ -94,8 +94,8 @@ The Quartz2 component supports 21 endpoint options which are listed below:
 | recoverableJob | consumer | false | boolean | Instructs the scheduler whether or not the job should be re-executed if a 'recovery' or 'fail-over' situation is encountered.
 | stateful | consumer | false | boolean | Uses a Quartz PersistJobDataAfterExecution and DisallowConcurrentExecution instead of the default job.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | customCalendar | advanced |  | Calendar | Specifies a custom calendar to avoid specific range of date
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | jobParameters | advanced |  | Map | To configure additional options on the job.
 | prefixJobNameWithEndpointId | advanced | false | boolean | Whether the job name should be prefixed with endpoint id
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).

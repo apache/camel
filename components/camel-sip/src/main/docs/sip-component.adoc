@@ -107,12 +107,12 @@ The SIP component supports 45 endpoint options which are listed below:
 | consumer | consumer | false | boolean | This setting is used to determine whether the kind of header (FromHeaderToHeader etc) that needs to be created for this endpoint
 | presenceAgent | consumer | false | boolean | This setting is used to distinguish between a Presence Agent & a consumer. This is due to the fact that the SIP Camel component ships with a basic Presence Agent (for testing purposes only). Consumers have to set this flag to true.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | addressFactory | advanced |  | AddressFactory | To use a custom AddressFactory
 | callIdHeader | advanced |  | CallIdHeader | A custom Header object containing call details. Must implement the type javax.sip.header.CallIdHeader
 | contactHeader | advanced |  | ContactHeader | An optional custom Header object containing verbose contact details (email phone number etc). Must implement the type javax.sip.header.ContactHeader
 | contentTypeHeader | advanced |  | ContentTypeHeader | A custom Header object containing message content details. Must implement the type javax.sip.header.ContentTypeHeader
 | eventHeader | advanced |  | EventHeader | A custom Header object containing event details. Must implement the type javax.sip.header.EventHeader
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | expiresHeader | advanced |  | ExpiresHeader | A custom Header object containing message expiration details. Must implement the type javax.sip.header.ExpiresHeader
 | extensionHeader | advanced |  | ExtensionHeader | A custom Header object containing user/application specific details. Must implement the type javax.sip.header.ExtensionHeader
 | fromHeader | advanced |  | FromHeader | A custom Header object containing message originator settings. Must implement the type javax.sip.header.FromHeader

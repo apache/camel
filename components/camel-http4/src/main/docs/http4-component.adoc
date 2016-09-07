@@ -92,7 +92,7 @@ The HTTP4 component supports 13 options which are listed below.
 
 
 // endpoint options: START
-The HTTP4 component supports 32 endpoint options which are listed below:
+The HTTP4 component supports 31 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -120,7 +120,6 @@ The HTTP4 component supports 32 endpoint options which are listed below:
 | urlRewrite | producer (advanced) |  | UrlRewrite | Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html
 | clientBuilder | advanced |  | HttpClientBuilder | Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint.
 | clientConnectionManager | advanced |  | HttpClientConnectionManager | To use a custom HttpClientConnectionManager to manage connections
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | httpClient | advanced |  | HttpClient | Gets the HttpClient to be used by org.apache.camel.component.http4.HttpProducer
 | httpClientConfigurer | advanced |  | HttpClientConfigurer | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc
 | httpClientOptions | advanced |  | Map | To configure the HttpClient using the key/values from the Map.

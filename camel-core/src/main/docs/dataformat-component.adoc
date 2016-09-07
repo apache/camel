@@ -34,7 +34,7 @@ The Data Format component has no options.
 
 
 // endpoint options: START
-The Data Format component supports 4 endpoint options which are listed below:
+The Data Format component supports 3 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -42,7 +42,6 @@ The Data Format component supports 4 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | name | producer |  | String | *Required* Name of data format
 | operation | producer |  | String | *Required* Operation to use either marshal or unmarshal
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

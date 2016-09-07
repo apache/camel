@@ -42,7 +42,7 @@ The ServiceNow component has no options.
 
 
 // endpoint options: START
-The ServiceNow component supports 17 endpoint options which are listed below:
+The ServiceNow component supports 16 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -56,7 +56,6 @@ The ServiceNow component supports 17 endpoint options which are listed below:
 | resource | producer |  | String | The default resource can be overridden by header CamelServiceNowResource
 | suppressAutoSysField | producer |  | Boolean | True to suppress auto generation of system fields (default: false)
 | table | producer |  | String | The default table can be overridden by header CamelServiceNowTable
-| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
 | mapper | advanced |  | ObjectMapper | Sets Jackson's ObjectMapper to use for request/reply
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | apiUrl | security |  | String | The ServiceNow REST API url
