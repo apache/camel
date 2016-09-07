@@ -145,7 +145,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
 
         BeanReader in = factory.createReader(getStreamName(), streamReader);
 
-        BeanReaderErrorHandler errorHandler = getOrCreateBeanReaderErrorHandler(configuration, exchange);
+        BeanReaderErrorHandler errorHandler = getOrCreateBeanReaderErrorHandler(configuration, exchange, results);
         in.setErrorHandler(errorHandler);
 
         try {

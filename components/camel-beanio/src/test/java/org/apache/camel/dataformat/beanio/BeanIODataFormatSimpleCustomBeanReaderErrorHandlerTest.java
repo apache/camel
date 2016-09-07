@@ -66,13 +66,18 @@ public class BeanIODataFormatSimpleCustomBeanReaderErrorHandlerTest extends Came
 
     @Test
     public void testUnmarshalFail() throws Exception {
-        // there should be 1 splitted that failed
+        // there should be 1 splitted that failed we get also
         MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
-        mock.expectedMessageCount(2);
+        mock.expectedMessageCount(3);
+        mock.message(0).body().isInstanceOf(Employee.class);
+        mock.message(1).body().isInstanceOf(Employee.class);
+        mock.message(2).body().isInstanceOf(MyErrorDto.class);
 
         template.sendBody("direct:unmarshal", FIXED_FAIL_DATA);
 
         mock.assertIsSatisfied();
+
+        assertEquals("employee", mock.getReceivedExchanges().get(2).getIn().getBody(MyErrorDto.class).getRecord());
     }
 
     @Override
