@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dataformat.beanio;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.beanio.BeanReaderErrorHandler;
 import org.beanio.BeanReaderErrorHandlerSupport;
@@ -37,6 +39,7 @@ public class BeanIOErrorHandler extends BeanReaderErrorHandlerSupport {
 
     private BeanIOConfiguration configuration;
     private Exchange exchange;
+    private List<Object> results;
 
     public BeanIOErrorHandler() {
     }
@@ -45,6 +48,9 @@ public class BeanIOErrorHandler extends BeanReaderErrorHandlerSupport {
         // any custom init code here
     }
 
+    /**
+     * The configuration
+     */
     public BeanIOConfiguration getConfiguration() {
         return configuration;
     }
@@ -53,12 +59,28 @@ public class BeanIOErrorHandler extends BeanReaderErrorHandlerSupport {
         this.configuration = configuration;
     }
 
+    /**
+     * The current exchange
+     */
     public Exchange getExchange() {
         return exchange;
     }
 
     public void setExchange(Exchange exchange) {
         this.exchange = exchange;
+    }
+
+    /**
+     * Gets the current list of POJOs mapped when unmarshalling.
+     *
+     * @return the current list, or <tt>null</tt> if not unmarshalling
+     */
+    public List<Object> getResults() {
+        return results;
+    }
+
+    public void setResults(List<Object> results) {
+        this.results = results;
     }
 
     @Override

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dataformat.beanio;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 import org.beanio.BeanReaderErrorHandler;
@@ -29,7 +31,8 @@ public final class BeanIOHelper {
         // utility class
     }
 
-    public static BeanReaderErrorHandler getOrCreateBeanReaderErrorHandler(BeanIOConfiguration configuration, Exchange exchange) throws Exception {
+    public static BeanReaderErrorHandler getOrCreateBeanReaderErrorHandler(BeanIOConfiguration configuration,
+                                                                           Exchange exchange, List<Object> results) throws Exception {
         BeanReaderErrorHandler answer = null;
 
         if (ObjectHelper.isNotEmpty(configuration.getBeanReaderErrorHandlerType())) {
@@ -49,6 +52,7 @@ public final class BeanIOHelper {
             BeanIOErrorHandler eh = (BeanIOErrorHandler) answer;
             eh.setConfiguration(configuration);
             eh.setExchange(exchange);
+            eh.setResults(results);
             eh.init();
         }
 

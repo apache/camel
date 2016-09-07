@@ -98,7 +98,7 @@ public class BeanIOSplitter implements Expression {
             beanReader = factory.createReader(getStreamName(), reader);
         }
 
-        BeanReaderErrorHandler errorHandler = getOrCreateBeanReaderErrorHandler(configuration, exchange);
+        BeanReaderErrorHandler errorHandler = getOrCreateBeanReaderErrorHandler(configuration, exchange, null);
         beanReader.setErrorHandler(errorHandler);
 
         return new BeanIOIterator(beanReader);

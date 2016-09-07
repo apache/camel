@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,25 +16,21 @@
  */
 package org.apache.camel.dataformat.beanio;
 
-import org.beanio.InvalidRecordException;
+public class MyErrorDto {
 
-public class MyErrorHandler extends BeanIOErrorHandler {
+    private String record;
+    private String message;
 
-    public MyErrorHandler() {
+    public MyErrorDto(String record, String message) {
+        this.record = record;
+        this.message = message;
     }
 
-    @Override
-    public void invalidRecord(InvalidRecordException ex) throws Exception {
-        String id = getExchange().getExchangeId();
-        String line = "ExchangeId: " + id + " Invalid record: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
-
-        // lets store to the results a dummy error DTO
-        MyErrorDto dto = new MyErrorDto(ex.getRecordName(), ex.getMessage());
-        getResults().add(dto);
-
-        getExchange().getOut().setHeader("record", ex.getRecordName());
-
-        LOG.warn(line);
+    public String getRecord() {
+        return record;
     }
 
+    public String getMessage() {
+        return message;
+    }
 }
