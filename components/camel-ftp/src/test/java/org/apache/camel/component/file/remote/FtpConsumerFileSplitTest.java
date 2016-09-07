@@ -30,42 +30,27 @@ import org.junit.Test;
 public class FtpConsumerFileSplitTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin"
-                + "&recursive=false";
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        prepareFtpServer();
+        return "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin&delete=true";
     }
 
     @Test
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.expectedMessageCount(3);
-        resultEndpoint.expectedBodiesReceived("line1","line2");
-        resultEndpoint.assertIsSatisfied();
+        resultEndpoint.expectedBodiesReceived("line1","line2","line3");
 
-        // assert the file
-        File file = new File("target/ftptest/textexample.txt");
-        assertTrue("The text file should exists", file.exists());
-    }
-
-    private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
-        // test that we can pool and store as a local file
         template.sendBodyAndHeader(getFtpUrl(), new File("src/test/data/ftptextfile/textexample.txt"), Exchange.FILE_NAME, "textexample.txt");
+
+        resultEndpoint.assertIsSatisfied();
     }
-    
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from(getFtpUrl())
-                .log("${body}")
-                .split(body().tokenize("\n"))
-                .to("mock:result");
+                    .to("log:file")
+                    .split(body().tokenize("\n"))
+                        .to("log:line")
+                        .to("mock:result");
             }
         };
     }
