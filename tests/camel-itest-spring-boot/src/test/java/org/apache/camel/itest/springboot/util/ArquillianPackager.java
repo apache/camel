@@ -308,6 +308,7 @@ public final class ArquillianPackager {
         ignore.add("org.apache.parquet");
         ignore.add("org.springframework.data");
         ignore.add("org.apache.velocity");
+        ignore.add("org.apache.cxf:cxf-api");
 
         Map<String, Map<String, String>> status = new TreeMap<>();
         Set<String> mismatches = new TreeSet<>();

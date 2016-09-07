@@ -43,6 +43,30 @@
                 Dependencies are flattened and a BOM file is generated using a plugin.
              -->
 
+            <!-- Additional libraries related to Avro -->
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro</artifactId>
+                <version>${avro-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-mapred</artifactId>
+                <version>${avro-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-ipc</artifactId>
+                <classifier>tests</classifier>
+                <version>${avro-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-mapred</artifactId>
+                <classifier>hadoop2</classifier>
+                <version>${avro-version}</version>
+            </dependency>
+
             <!-- Use the camel version of caffeine -->
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
@@ -96,6 +120,28 @@
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna-platform</artifactId>
                 <version>${jna-version}</version>
+            </dependency>
+
+            <!-- Overwrite with the version provided in camel -->
+            <dependency>
+                <groupId>net.sourceforge.htmlunit</groupId>
+                <artifactId>htmlunit-core-js</artifactId>
+                <version>${htmlunit-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sourceforge.htmlunit</groupId>
+                <artifactId>htmlunit</artifactId>
+                <version>${htmlunit-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sourceforge.htmlunit</groupId>
+                <artifactId>htmlunit</artifactId>
+                <version>${htmlunit-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>htmlunit-driver</artifactId>
+                <version>${htmlunit-version}</version>
             </dependency>
 
             <!-- Added to match the version of related libraries provided by spring-boot -->
@@ -455,6 +501,8 @@
                             <exclude>com.google.inject:*</exclude>
                             <exclude>com.google.guava:*</exclude>
                             <exclude>com.google.code.gson:*</exclude>
+
+                            <exclude>org.scala-lang:*</exclude>
 
                             <exclude>org.apache.servicemix.bundles:*</exclude>
                             <exclude>org.ops4j.pax*:*</exclude>
