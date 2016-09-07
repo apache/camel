@@ -42,22 +42,23 @@
         <spring-boot-version>1.4.0.RELEASE</spring-boot-version>
 
         <!-- The following dependencies should be aligned with the ones in standard camel parent -->
-        <activemq-version>5.14.0</activemq-version>
-        <arquillian-version>1.1.11.Final</arquillian-version>
+        <avro-version>1.8.1</avro-version>
         <caffeine-version>2.3.3</caffeine-version>
+        <jackson-version>1.9.12</jackson-version>
+        <activemq-version>5.14.0</activemq-version>
+        <htmlunit-version>2.22</htmlunit-version>
+
+        <ahc-netty-version>4.0.40.Final</ahc-netty-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
+        <google-guava-version>19.0</google-guava-version>
         <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
         <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
-        <google-guava-version>19.0</google-guava-version>
-        <hadoop2-version>2.7.2</hadoop2-version>
-        <jackson-version>1.9.12</jackson-version>
-        <junit-version>4.12</junit-version>
-        <log4j2-version>2.6.2</log4j2-version>
+
         <maven-checkstyle-plugin-version>2.17</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>6.17</maven-checkstyle-version>
-        <netty-version>4.1.5.Final</netty-version>
-        <ahc-netty-version>4.0.40.Final</ahc-netty-version>
-        <spring-version>4.3.2.RELEASE</spring-version>
+
+        <arquillian-version>1.1.11.Final</arquillian-version>
+        <hadoop2-version>2.7.2</hadoop2-version>
 
         <!-- The following versions should be aligned with the ones in spring-boot-repo/spring-boot-dependencies/pom.xml (for the targeted version of spring-boot) -->
         <commons-beanutils-version>1.9.2</commons-beanutils-version>
