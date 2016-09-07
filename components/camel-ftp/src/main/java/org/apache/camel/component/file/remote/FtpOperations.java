@@ -370,9 +370,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 // close the stream after done
                 IOHelper.close(bos);
 
-                // and then set the body as an input stream so we can read the content easily
-                InputStream is = new ByteArrayInputStream(bos.toByteArray());
-                target.setBody(is);
+                target.setBody(bos.toByteArray());
             }
 
             // store client reply information after the operation
