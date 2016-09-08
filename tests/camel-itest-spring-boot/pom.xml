@@ -150,95 +150,11 @@
           <rerunFailingTestsCount>1</rerunFailingTestsCount>
           <includes>
             <include>**/*Test.java</include>
-
-            <!--<include>org.apache.camel.itest.springboot.CamelNetty4Test</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelNettyHttpTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelNettyTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelOgnlTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelOlingo2Test</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelOpenshiftTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelOptaplannerTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelPahoTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelPdfTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelPgeventTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelPrinterTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelProtobufTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelQuartz2Test</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelQuartzTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelQuickfixTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelRabbitmqTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelRestletTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelRibbonTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelRmiTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelRouteboxTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelRssTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelRubyTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelRxTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSalesforceTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSapNetweaverTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSaxonTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelScalaTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSchematronTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelScriptTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelScrTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelServicenowTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelServletlistenerTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelServletTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelShiroTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSipTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSjmsTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSlackTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSmppTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSnakeyamlTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSnmpTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSoapTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSolrTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSparkRestTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSparkTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSplunkTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSpringBatchTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSpringBootTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSpringDmTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSpringIntegrationTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSpringJavaconfigTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSpringLdapTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSpringRedisTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSpringSecurityTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSpringTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSpringWsTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSqlTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSshTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelStaxTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelStompTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelStreamTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelStringtemplateTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSwaggerJavaTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelSyslogTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelTagsoupTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelTarfileTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelTelegramTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelTestngTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelTestTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelTwitterTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelUndertowTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelUnivocityParsersTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelUrlrewriteTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelVelocityTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelVertxTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelWeatherTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelWebsocketTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelXmlbeansTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelXmljsonTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelXmlrpcTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelXmlsecurityTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelXmppTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelXstreamTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelYammerTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelZipfileTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelZipkinTest</include>-->
-            <!--<include>org.apache.camel.itest.springboot.CamelZookeeperTest</include>-->
-
           </includes>
+          <excludes>
+            <!--<exclude>**/*CamelMongodbTest.java</exclude>-->
+	        <!--<exclude>**/*CamelMongodbGridfsTest.java</exclude>-->
+          </excludes>
           <systemProperties>
             <!-- Test configuration -->
             <!--

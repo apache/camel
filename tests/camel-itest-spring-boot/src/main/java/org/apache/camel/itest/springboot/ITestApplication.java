@@ -39,33 +39,16 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @Import(ITestXmlConfiguration.class)
 public class ITestApplication {
 
-    private static final long TEST_TIMEOUT = 1000L * 60 * 7;
-
     public static void main(String[] args) throws Exception {
 
         try {
             overrideLoggingConfig();
-            startKillerThread();
 
             SpringApplication.run(ITestApplication.class, args);
         } catch (Throwable t) {
             LoggerFactory.getLogger(ITestApplication.class).error("Error while executing test", t);
             throw t;
         }
-    }
-
-    private static void startKillerThread() {
-        Thread thread = new Thread(() -> {
-            try {
-                Thread.sleep(TEST_TIMEOUT);
-            } catch (Exception e) {
-            }
-
-            LoggerFactory.getLogger(ITestApplication.class).warn("Timeout. Killing the test.");
-            System.exit(1);
-        });
-        thread.setDaemon(true);
-        thread.start();
     }
 
     @Override

@@ -1,7 +1,26 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.maven.bom.generator;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +41,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Exclusion;
@@ -76,7 +96,7 @@ public class BomGeneratorMojo extends AbstractMojo {
         try {
             DependencyManagement mng = project.getDependencyManagement();
 
-            List<Dependency> filteredDependencies = filter(mng.getDependencies());
+            List<Dependency> filteredDependencies = enhance(filter(mng.getDependencies()));
 
             Document pom = loadBasePom();
 
@@ -88,6 +108,17 @@ public class BomGeneratorMojo extends AbstractMojo {
         } catch (Exception ex) {
             throw new MojoExecutionException("Cannot generate the output BOM file", ex);
         }
+    }
+
+    private List<Dependency> enhance(List<Dependency> dependencyList) {
+
+        for (Dependency dep : dependencyList) {
+            if(dep.getGroupId().startsWith(project.getGroupId()) && project.getVersion().equals(dep.getVersion())) {
+                dep.setVersion("${project.version}");
+            }
+        }
+
+        return dependencyList;
     }
 
     private List<Dependency> filter(List<Dependency> dependencyList) {
@@ -117,32 +148,62 @@ public class BomGeneratorMojo extends AbstractMojo {
     }
 
     private void writePom(Document pom) throws Exception {
+        XPathExpression xpath = XPathFactory.newInstance().newXPath().compile("//text()[normalize-space(.) = '']");
+        NodeList emptyNodes = (NodeList) xpath.evaluate(pom, XPathConstants.NODESET);
 
-        XPathFactory xpathFactory = XPathFactory.newInstance();
-        // XPath to find empty text nodes.
-        XPathExpression xpathExp = xpathFactory.newXPath().compile("//text()[normalize-space(.) = '']");
-        NodeList emptyTextNodes = (NodeList) xpathExp.evaluate(pom, XPathConstants.NODESET);
-
-        // Remove each empty text node from document.
-        for (int i = 0; i < emptyTextNodes.getLength(); i++) {
-            Node emptyTextNode = emptyTextNodes.item(i);
-            emptyTextNode.getParentNode().removeChild(emptyTextNode);
+        // Remove empty text nodes
+        for (int i = 0; i < emptyNodes.getLength(); i++) {
+            Node emptyNode = emptyNodes.item(i);
+            emptyNode.getParentNode().removeChild(emptyNode);
         }
 
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
         DOMSource source = new DOMSource(pom);
 
         targetPom.getParentFile().mkdirs();
 
-        try (FileWriter out = new FileWriter(targetPom)) {
+        String content;
+        try (StringWriter out = new StringWriter()) {
             StreamResult result = new StreamResult(out);
             transformer.transform(source, result);
+            content = out.toString();
+        }
+
+        // Fix header formatting problem
+        content = content.replaceFirst("-->", "-->\n");
+        writeFileIfChanged(content, targetPom);
+    }
+
+    private void writeFileIfChanged(String content, File file) throws IOException {
+        boolean write = true;
+
+        if (file.exists()) {
+            try (FileReader fr = new FileReader(file)) {
+                String oldContent = IOUtils.toString(fr);
+                if (!content.equals(oldContent)) {
+                    getLog().debug("Writing new file " + file.getAbsolutePath());
+                    fr.close();
+                } else {
+                    getLog().debug("File " + file.getAbsolutePath() + " left unchanged");
+                    write = false;
+                }
+            }
+        } else {
+            File parent = file.getParentFile();
+            parent.mkdirs();
+        }
+
+        if (write) {
+            try (FileWriter fw = new FileWriter(file)) {
+                IOUtils.write(content, fw);
+            }
         }
     }
+
 
     private void overwriteDependencyManagement(Document pom, List<Dependency> dependencies) throws Exception {
 

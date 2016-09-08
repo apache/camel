@@ -38,6 +38,10 @@
             <artifactId>camel-jira</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-rest-java-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-starter</artifactId>
         </dependency>

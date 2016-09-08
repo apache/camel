@@ -38,6 +38,11 @@
             <artifactId>camel-cassandraql</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${cassandra-driver-guava-version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-starter</artifactId>
         </dependency>
