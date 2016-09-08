@@ -16,12 +16,12 @@
  */
 package org.apache.camel.converter.myconverter;
 
+import java.util.TimeZone;
+
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
-
-import java.util.TimeZone;
 
 
 /**

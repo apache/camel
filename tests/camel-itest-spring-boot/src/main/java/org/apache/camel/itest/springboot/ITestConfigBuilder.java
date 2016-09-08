@@ -228,7 +228,7 @@ public class ITestConfigBuilder {
             config.setUseCustomLog(booleanPropertyOr("useCustomLog", true));
         }
 
-        if(config.getIgnoreLibraryMismatch() == null) {
+        if (config.getIgnoreLibraryMismatch() == null) {
             config.setIgnoreLibraryMismatch(new HashSet<>());
         }
 
