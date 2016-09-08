@@ -48,6 +48,7 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.builder.ProcessClause;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -2661,6 +2662,21 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         answer.setRef(ref);
         addOutput(answer);
         return (Type) this;
+    }
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public ProcessClause<ProcessorDefinition<Type>> process() {
+        ProcessClause<ProcessorDefinition<Type>> clause = new ProcessClause<>(this);
+        ProcessDefinition answer = new ProcessDefinition(clause);
+
+        addOutput(answer);
+        return clause;
     }
 
     /**

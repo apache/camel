@@ -37,14 +37,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring-javaconfig</artifactId>
-    </dependency>
 
     <!-- logging -->
     <dependency>
@@ -78,7 +70,7 @@
         <artifactId>camel-maven-plugin</artifactId>
         <version>${project.version}</version>
         <configuration>
-          <basedPackages>org.apache.camel.example.dsl.java8</basedPackages>
+          <mainClass>org.apache.camel.example.dsl.java8.MyApplication</mainClass>
         </configuration>
       </plugin>
     </plugins>
