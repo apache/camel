@@ -26,6 +26,7 @@ import java.util.concurrent.TimeoutException;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ReturnListener;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -38,22 +39,20 @@ import org.slf4j.LoggerFactory;
  * A method object for publishing to RabbitMQ
  */
 public class RabbitMQMessagePublisher {
-    private final ReturnListener GUARANTEED_DELIVERY_RETURN_LISTENER = new ReturnListener() {
-        @Override
-        public void handleReturn(int replyCode, String replyText, String exchange, String routingKey, AMQP.BasicProperties properties, byte[] body) throws IOException {
-            LOG.warn("Delivery failed for exchange {} and routing key {}; replyCode = {}; replyText = {}", exchange, routingKey, replyCode, replyText);
-            basicReturnReceived = true;
-        }
-    };
-
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQMessagePublisher.class);
     private final Exchange camelExchange;
     private final Channel channel;
     private final String routingKey;
     private final RabbitMQEndpoint endpoint;
     private final Message message;
-    
-    private boolean basicReturnReceived = false;
+    private volatile boolean basicReturnReceived;
+    private final ReturnListener guaranteedDeliveryReturnListener = new ReturnListener() {
+        @Override
+        public void handleReturn(int replyCode, String replyText, String exchange, String routingKey, AMQP.BasicProperties properties, byte[] body) throws IOException {
+            LOG.warn("Delivery failed for exchange {} and routing key {}; replyCode = {}; replyText = {}", exchange, routingKey, replyCode, replyText);
+            basicReturnReceived = true;
+        }
+    };
 
     public RabbitMQMessagePublisher(final Exchange camelExchange, final Channel channel, final String routingKey, final RabbitMQEndpoint endpoint) {
         this.camelExchange = camelExchange;
@@ -113,9 +112,8 @@ public class RabbitMQMessagePublisher {
             channel.confirmSelect();
         }
         if (endpoint.isGuaranteedDeliveries()) {
-        	basicReturnReceived = false;
-            channel.addReturnListener(GUARANTEED_DELIVERY_RETURN_LISTENER);
-
+            basicReturnReceived = false;
+            channel.addReturnListener(guaranteedDeliveryReturnListener);
         }
 
         try {
@@ -125,7 +123,7 @@ public class RabbitMQMessagePublisher {
             }
         } finally {
             if (endpoint.isGuaranteedDeliveries()) {
-                channel.removeReturnListener(GUARANTEED_DELIVERY_RETURN_LISTENER);
+                channel.removeReturnListener(guaranteedDeliveryReturnListener);
             }
         }
     }
@@ -138,8 +136,8 @@ public class RabbitMQMessagePublisher {
         try {
             LOG.debug("Waiting for publisher acknowledgements for {}ms", endpoint.getPublisherAcknowledgementsTimeout());
             channel.waitForConfirmsOrDie(endpoint.getPublisherAcknowledgementsTimeout());
-            if(basicReturnReceived){
-            	throw new RuntimeCamelException("Failed to deliver message; basic.return received");
+            if (basicReturnReceived) {
+                throw new RuntimeCamelException("Failed to deliver message; basic.return received");
             }
         } catch (InterruptedException | TimeoutException e) {
             LOG.warn("Acknowledgement error for {}", camelExchange);
