@@ -1311,12 +1311,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected void doStart() throws Exception {
         // validate that the read lock options is valid for the process strategy
         if (!"none".equals(readLock) && !"off".equals(readLock)) {
-            if (readLockTimeout > 0 && readLockMinAge > 0 && readLockTimeout <= readLockCheckInterval + readLockMinAge) {
-                throw new IllegalArgumentException("The option readLockTimeout must be higher than readLockCheckInterval + readLockMinAge"
-                    + ", was readLockTimeout=" + readLockTimeout + ", readLockCheckInterval+readLockMinAge=" + (readLockCheckInterval + readLockMinAge)
-                    + ". A good practice is to let the readLockTimeout be at least readLockMinAge + 2 times the readLockCheckInterval"
-                    + " to ensure that the read lock procedure has enough time to acquire the lock.");
-            }
             if (readLockTimeout > 0 && readLockTimeout <= readLockCheckInterval) {
                 throw new IllegalArgumentException("The option readLockTimeout must be higher than readLockCheckInterval"
                         + ", was readLockTimeout=" + readLockTimeout + ", readLockCheckInterval=" + readLockCheckInterval
