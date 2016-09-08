@@ -35,6 +35,7 @@ public class CamelHystrixTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelHystrixTest.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BlueprintHystrixRouteOkTest$|BlueprintHystrixRouteFallbackTest$)")
                 .build();
     }
 
