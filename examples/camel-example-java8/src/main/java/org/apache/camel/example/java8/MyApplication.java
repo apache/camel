@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.dsl.java8;
+package org.apache.camel.example.java8;
 
 import java.util.Date;
 import java.util.Objects;
