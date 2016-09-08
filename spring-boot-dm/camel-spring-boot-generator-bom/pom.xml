@@ -74,6 +74,18 @@
                 <version>${caffeine-version}</version>
             </dependency>
 
+            <!-- Use the camel version of Cassandra 3 vs 2 -->
+            <dependency>
+                <groupId>com.datastax.cassandra</groupId>
+                <artifactId>cassandra-driver-core</artifactId>
+                <version>${cassandra-driver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.datastax.cassandra</groupId>
+                <artifactId>cassandra-driver-mapping</artifactId>
+                <version>${cassandra-driver-version}</version>
+            </dependency>
+
             <!-- Added to match the version of related libraries provided by spring-boot -->
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -471,9 +483,7 @@
                 <scope>import</scope>
             </dependency>
 
-
         </dependencies>
-
     </dependencyManagement>
 
     <build>
@@ -498,12 +508,17 @@
 
                             <!-- These artifacts should not be included in the final (generated) BOM -->
 
+                            <!-- Different versions required by some modules -->
                             <exclude>com.google.inject:*</exclude>
                             <exclude>com.google.guava:*</exclude>
                             <exclude>com.google.code.gson:*</exclude>
-
                             <exclude>org.scala-lang:*</exclude>
+                            <exclude>org.apache.lucene:*</exclude>
 
+                            <!-- Changed name to dse-driver in version 3 -->
+                            <exclude>com.datastax.cassandra:cassandra-driver-dse</exclude>
+
+                            <!-- Unrelated -->
                             <exclude>org.apache.servicemix.bundles:*</exclude>
                             <exclude>org.ops4j.pax*:*</exclude>
                             <exclude>org.codehaus.mojo:*</exclude>
@@ -513,6 +528,7 @@
                             <exclude>org.apache.maven.archetype:*</exclude>
                             <exclude>org.osgi:*</exclude>
 
+                            <!-- Unuseful -->
                             <exclude>org.springframework:springloaded</exclude>
                             <exclude>com.zaxxer:HikariCP-java6</exclude>
                         </excludes>

@@ -18,7 +18,6 @@ package org.apache.camel.itest.springboot.util;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -309,6 +308,7 @@ public final class ArquillianPackager {
         ignore.add("org.springframework.data");
         ignore.add("org.apache.velocity");
         ignore.add("org.apache.cxf:cxf-api");
+        ignore.add("com.atlassian.jira:jira-rest-java-client-api");
 
         Map<String, Map<String, String>> status = new TreeMap<>();
         Set<String> mismatches = new TreeSet<>();
@@ -480,14 +480,6 @@ public final class ArquillianPackager {
             pom = IOUtils.toString(pomTemplate);
         }
 
-//        StringBuilder dependencies = new StringBuilder();
-//        for (String dep : cleanTestProvidedDependencies) {
-//            dependencies.append(dep);
-//            dependencies.append("\n");
-//        }
-//
-//        pom = pom.replace("<!-- DEPENDENCIES -->", dependencies.toString());
-
         Map<String, String> resolvedProperties = new TreeMap<>();
         Pattern propPattern = Pattern.compile("(\\$\\{[^}]*\\})");
         Matcher m = propPattern.matcher(pom);
@@ -585,27 +577,6 @@ public final class ArquillianPackager {
         return dependencyXml;
     }
 
-    private static String setResolvedVersion(ITestConfig config, String dependencyXml, Map<String, String> resolvedVersions) throws Exception {
-
-        String groupId = textBetween(dependencyXml, "<groupId>", "</groupId>");
-        String artifactId = textBetween(dependencyXml, "<artifactId>", "</artifactId>");
-
-        String resolvedVersion = resolvedVersions.get(groupId + ":" + artifactId);
-
-        if (!dependencyXml.contains("<version>")) {
-            String after = "</artifactId>";
-            int split = dependencyXml.indexOf(after) + after.length();
-            dependencyXml = dependencyXml.substring(0, split) + "<version>" + resolvedVersion + "</version>" + dependencyXml.substring(split);
-        } else {
-            String versionTag = "<version>";
-            int split = dependencyXml.indexOf(versionTag) + versionTag.length();
-            int end = dependencyXml.indexOf("</version>");
-            dependencyXml = dependencyXml.substring(0, split) + resolvedVersion + dependencyXml.substring(end);
-        }
-
-        return dependencyXml;
-    }
-
     private static String textBetween(String text, String start, String end) {
         int sp = text.indexOf(start);
         int rsp = sp + start.length();
@@ -621,7 +592,7 @@ public final class ArquillianPackager {
     private static boolean excludeDependencyRegex(List<File> dependencies, String regex) {
         Pattern pattern = Pattern.compile(regex);
         int count = 0;
-        for (Iterator<File> it = dependencies.iterator(); it.hasNext(); ) {
+        for (Iterator<File> it = dependencies.iterator(); it.hasNext();) {
             File f = it.next();
             if (pattern.matcher(f.getName()).matches()) {
                 it.remove();
@@ -640,34 +611,6 @@ public final class ArquillianPackager {
         }
 
         return ark;
-    }
-
-    private static JavaArchive addTestClasses(JavaArchive mainArk, Domain domain, ITestConfig config) throws IOException {
-
-        File test = new File(config.getModuleBasePath() + "/target/test-classes/");
-        File[] fs = test.listFiles();
-        if (fs == null) {
-            fs = new File[]{};
-        }
-        LinkedList<File> testFiles = new LinkedList<>(Arrays.asList(fs));
-        while (!testFiles.isEmpty()) {
-            File f = testFiles.pop();
-            String relative = test.getCanonicalFile().toURI().relativize(f.getCanonicalFile().toURI()).getPath();
-            if (f.isFile()) {
-                if (f.getName().endsWith(".class")) {
-                    mainArk = mainArk.addAsResource(f, CLASSES_FOLDER + "/" + relative);
-                }
-            } else {
-                mainArk = mainArk.addAsDirectory(CLASSES_FOLDER + "/" + relative);
-                File[] files = f.listFiles();
-                if (files == null) {
-                    files = new File[]{};
-                }
-                testFiles.addAll(Arrays.asList(files));
-            }
-        }
-
-        return mainArk;
     }
 
     private static JavaArchive addSpringbootPackage(JavaArchive ark, String... packageNames) throws Exception {
