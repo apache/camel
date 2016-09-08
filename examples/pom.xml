@@ -53,11 +53,11 @@
     <module>camel-example-cxf-proxy</module>
     <module>camel-example-cxf-tomcat</module>
     <module>camel-example-console</module>
-    <module>camel-example-dsl-java8</module>
     <module>camel-example-etl</module>
     <module>camel-example-ftp</module>
     <module>camel-example-guice-jms</module>
     <module>camel-example-hystrix</module>
+    <module>camel-example-java8</module>
     <module>camel-example-jdbc</module>
     <module>camel-example-jmx</module>
     <module>camel-example-jms-file</module>
