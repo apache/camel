@@ -36,7 +36,7 @@ public class FtpConsumerFileSplitTest extends FtpServerTestSupport {
     @Test
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.expectedBodiesReceived("line1","line2","line3");
+        resultEndpoint.expectedBodiesReceived("line1", "line2", "line3");
 
         template.sendBodyAndHeader(getFtpUrl(), new File("src/test/data/ftptextfile/textexample.txt"), Exchange.FILE_NAME, "textexample.txt");
 
