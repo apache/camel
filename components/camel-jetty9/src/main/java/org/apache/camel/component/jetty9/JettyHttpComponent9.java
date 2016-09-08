@@ -104,7 +104,8 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
                 httpConfig.addCustomizer(new org.eclipse.jetty.server.SecureRequestCustomizer());
                 SslConnectionFactory scf = new org.eclipse.jetty.server.SslConnectionFactory(sslcf, "HTTP/1.1");
                 connectionFactories.add(scf);
-                result.setDefaultProtocol("SSL-HTTP/1.1");
+                // The protocol name can be "SSL" or "SSL-HTTP/1.1" depending on the version of Jetty
+                result.setDefaultProtocol(scf.getProtocol());
             }
             connectionFactories.add(httpFactory);
             result.setConnectionFactories(connectionFactories);
