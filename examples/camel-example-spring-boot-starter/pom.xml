@@ -30,23 +30,12 @@
   <name>Camel :: Example :: Spring Boot Starter</name>
   <description>An example showing how to work with Camel and Spring Boot using Spring Boot Starter</description>
 
-  <properties>
-    <spring.boot-version>${spring-boot-version}</spring.boot-version>
-  </properties>
-
   <!-- import Spring-Boot and Camel BOM -->
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring.boot-version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-parent</artifactId>
+        <artifactId>camel-spring-boot-dependencies</artifactId>
         <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>

@@ -31,16 +31,12 @@
   <name>Camel :: Example :: Spring Boot</name>
   <description>An example showing how to work with Camel and Spring Boot</description>
 
-  <properties>
-    <spring.boot-version>${spring-boot-version}</spring.boot-version>
-  </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring.boot-version}</version>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-boot-dependencies</artifactId>
+        <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -104,7 +100,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${spring.boot-version}</version>
+        <version>${spring-boot-version}</version>
         <configuration>
           <mainClass>org.apache.camel.spring.boot.FatJarRouter</mainClass>
         </configuration>
