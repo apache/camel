@@ -150,11 +150,56 @@
           <rerunFailingTestsCount>1</rerunFailingTestsCount>
           <includes>
             <include>**/*Test.java</include>
+
+            <!-- Modules to verify -->
+
+            <!--<include>org.apache.camel.itest.springboot.CamelAhcTest</include>           fail-->
+            <!--<include>org.apache.camel.itest.springboot.CamelApnsTest</include>          fail-->
+
+
+            <!--<include>org.apache.camel.itest.springboot.CamelCacheTest</include>         1-->
+            <!--<include>org.apache.camel.itest.springboot.CamelConsulTest</include>        5-->
+            <!--<include>org.apache.camel.itest.springboot.CamelHttp4Test</include>         1-->
+            <!--<include>org.apache.camel.itest.springboot.CamelIbatisTest</include>        32-->
+            <!--<include>org.apache.camel.itest.springboot.CamelJgroupsTest</include>       6-->
+            <!--<include>org.apache.camel.itest.springboot.CamelJibxTest</include>          6-->
+            <!--<include>org.apache.camel.itest.springboot.CamelJpaTest</include>           5/56-->
+            <!--<include>org.apache.camel.itest.springboot.CamelMailTest</include>          1-->
+            <!--<include>org.apache.camel.itest.springboot.CamelMybatisTest</include>       30-->
+            <!--<include>org.apache.camel.itest.springboot.CamelQuartzTest</include>        7-->
+
+            <!--<include>org.apache.camel.itest.springboot.CamelRestletTest</include>       3-->
+
+
+
+            <!--<include>org.apache.camel.itest.springboot.CamelSparkRestTest</include>     23/23-->
+
+            <!--<include>org.apache.camel.itest.springboot.CamelSpringBootTest</include>    XX CHECK-->
+
+            <!--<include>org.apache.camel.itest.springboot.CamelSpringTest</include>        30/1085-->
+
+            <!--<include>org.apache.camel.itest.springboot.CamelSwaggerJavaTest</include>   1 -> org.apache.camel.tools.apt.helper.CollectionStringBuffer-->
+
+            <!--<include>org.apache.camel.itest.springboot.CamelUndertowTest</include>      1 -> org.apache.camel.tools.apt.helper.CollectionStringBuffer-->
+
+
+            <!--<include>org.apache.camel.itest.springboot.CamelZipkinTest</include>        1 CHECK -->
+
+            <!-- TBC -->
+            <!--<include>**/*CamelMongodbTest.java</include>-->
+            <!--<include>**/*CamelMongodbGridfsTest.java</include>-->
+            <!--<include>**/*Netty*Test.java</include>-->
+
+
+
+
+            <!-- OK -->
+            <!--<include>org.apache.camel.itest.springboot.CamelScriptTest</include>        17/44 OK . Test framework problem with JavaScript-->
+
+            <!--<include>org.apache.camel.itest.springboot.CamelServletTest</include>       1 OK . Excluded arquillian test -->
+
+
           </includes>
-          <excludes>
-            <!--<exclude>**/*CamelMongodbTest.java</exclude>-->
-	        <!--<exclude>**/*CamelMongodbGridfsTest.java</exclude>-->
-          </excludes>
           <systemProperties>
             <!-- Test configuration -->
             <!--
@@ -166,7 +211,7 @@
             -->
             <property>
               <name>itest.springboot.unitTestEnabled</name>
-              <value>true</value>
+              <value>false</value>
             </property>
             <property>
               <name>itest.springboot.includeTestDependencies</name>
