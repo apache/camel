@@ -40,14 +40,23 @@
             <!--<artifactId>log4j-to-slf4j</artifactId>-->
             <!--<version>${log4j2-version}</version>-->
         <!--</dependency>-->
+
     </dependencies>
 
     <dependencyManagement>
 
         <dependencies>
 
+            <!-- The spring-boot dependencies will be used by end users, so it's ok to use it in the parent -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- What's in the user BOM is OK for the parent -->
-            <!-- It normally includes the spring-boot dependencies first then the camel ones (with some exceptions) -->
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-spring-boot-dependencies</artifactId>

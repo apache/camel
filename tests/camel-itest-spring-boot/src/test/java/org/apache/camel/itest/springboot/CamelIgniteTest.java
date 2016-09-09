@@ -17,6 +17,7 @@
 package org.apache.camel.itest.springboot;
 
 import org.apache.camel.itest.springboot.util.ArquillianPackager;
+import org.apache.camel.itest.springboot.util.DependencyResolver;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -36,6 +37,7 @@ public class CamelIgniteTest extends AbstractSpringBootTestSupport {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelIgniteTest.class))
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|AbstractIgniteTest$)")
+                .testLibraryVersion("com.google.guava:guava", DependencyResolver.resolveCamelParentProperty("${google-guava-version}"))
                 .build();
     }
 

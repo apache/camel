@@ -17,7 +17,6 @@
 package org.apache.camel.itest.springboot.util;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,6 +35,8 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import static org.apache.camel.itest.springboot.util.LocationUtils.camelRoot;
 
 /**
  * Resolves the currently used version of a library. Useful to run unit tests directly from the IDE, without passing additional parameters.
@@ -144,30 +145,6 @@ public final class DependencyResolver {
 
     private static boolean isResolved(String value) {
         return value != null && !value.startsWith("$");
-    }
-
-    private static File camelRoot(String path) {
-        return new File(camelRoot(), path);
-    }
-
-    private static File camelRoot() {
-        try {
-            File root = new File(".").getCanonicalFile();
-            while (root != null) {
-                File[] names = root.listFiles(pathname -> pathname.getName().equals("components-starter"));
-                if (names != null && names.length == 1) {
-                    break;
-                }
-                root = root.getParentFile();
-            }
-
-            if (root == null) {
-                throw new IllegalStateException("Cannot find Apache Camel project root directory");
-            }
-            return root;
-        } catch (IOException e) {
-            throw new IllegalStateException("Error while getting directory", e);
-        }
     }
 
 }
