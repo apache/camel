@@ -35,17 +35,20 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 import freemarker.cache.URLTemplateLoader;
 import freemarker.template.Configuration;
@@ -78,7 +81,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
 
     private static final String[] IGNORE_MODULES = {/* OSGi -> */ "camel-core-osgi", "camel-eventadmin", "camel-paxlogging",  /* deprecated (and not working perfectly) -> */"camel-swagger",
-        "camel-mina", /* others (not managed) -> */ "camel-zipkin"};
+            "camel-mina", /* others (not managed) -> */ "camel-zipkin"};
 
     private static final boolean IGNORE_TEST_MODULES = true;
 
@@ -484,37 +487,36 @@ public class SpringBootStarterMojo extends AbstractMojo {
         return componentId;
     }
 
-    private void writeXmlFormatted(Document xml, File destination) throws Exception {
+    private void writeXmlFormatted(Document pom, File destination) throws Exception {
+        XPathExpression xpath = XPathFactory.newInstance().newXPath().compile("//text()[normalize-space(.) = '']");
+        NodeList emptyNodes = (NodeList) xpath.evaluate(pom, XPathConstants.NODESET);
 
-        OutputFormat format = new OutputFormat(xml);
-        format.setLineWidth(200);
-        format.setIndenting(true);
-        format.setIndent(4);
-
-        StringWriter sw = new StringWriter();
-        XMLSerializer serializer = new XMLSerializer(sw, format);
-        serializer.serialize(xml);
-
-        // Fix the output (cannot find a good serializer)
-        // The apache header is put in the wrong location
-        StringBuilder b = new StringBuilder(sw.toString());
-        int lastTagLoc = b.lastIndexOf("<");
-        int lastCloseHeaderLoc = b.lastIndexOf("-->");
-        if (lastCloseHeaderLoc > lastTagLoc) {
-            // The apache header has been put at the end
-            int headerLoc = b.lastIndexOf("<!--");
-            String apacheHeader = b.substring(headerLoc, lastCloseHeaderLoc + 3);
-            b.delete(headerLoc, lastCloseHeaderLoc + 3);
-
-            int pos = b.indexOf("?>");
-            if (pos > 0) {
-                b.insert(pos + 2, "\n" + apacheHeader);
-            } else {
-                b.insert(0, apacheHeader);
-            }
+        // Remove empty text nodes
+        for (int i = 0; i < emptyNodes.getLength(); i++) {
+            Node emptyNode = emptyNodes.item(i);
+            emptyNode.getParentNode().removeChild(emptyNode);
         }
 
-        writeIfChanged(b.toString(), destination);
+        pom.setXmlStandalone(true);
+
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+        DOMSource source = new DOMSource(pom);
+
+        String content;
+        try (StringWriter out = new StringWriter()) {
+            StreamResult result = new StreamResult(out);
+            transformer.transform(source, result);
+            content = out.toString();
+        }
+
+        // Fix header formatting problem
+        content = content.replaceFirst("-->", "-->\n").replaceFirst("\\?><!--", "\\?>\n<!--");
+
+        writeIfChanged(content, destination);
     }
 
     private void writeIfChanged(String content, File file) throws IOException {
