@@ -235,6 +235,7 @@
     <hadoop-version>1.2.1</hadoop-version>
     <hadoop2-bundle-version>2.7.2_1</hadoop2-bundle-version>
     <hadoop2-version>2.7.2</hadoop2-version>
+    <hadoop2-protobuf-version>2.5.0</hadoop2-protobuf-version>
     <hamcrest-version>2.0.0.0</hamcrest-version>
     <hapi-version>2.2</hapi-version>
     <hawtbuf-version>1.11</hawtbuf-version>
@@ -473,7 +474,7 @@
     <pdfbox-version>1.8.11</pdfbox-version>
     <pgjdbc-ng-driver-version>0.6</pgjdbc-ng-driver-version>  
     <powermock-version>1.6.1</powermock-version>
-    <protobuf-version>3.0.0</protobuf-version>
+    <protobuf-version>3.0.2</protobuf-version>
     <qpid-bundle-version>0.28_1</qpid-bundle-version>
     <qpid-version>0.28</qpid-version>
     <qpid-proton-j-version>0.13.0</qpid-proton-j-version>
