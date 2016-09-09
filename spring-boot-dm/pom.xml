@@ -55,6 +55,8 @@
         <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
         <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
         <lucene3-version>3.6.0</lucene3-version>
+        <scala-version>2.11.7</scala-version>
+        <scalaxml-version>1.0.4</scalaxml-version>
 
         <maven-checkstyle-plugin-version>2.17</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>6.17</maven-checkstyle-version>
