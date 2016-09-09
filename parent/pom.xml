@@ -2044,11 +2044,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-blueprint-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-boon-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2075,11 +2070,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-castor-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-cdi-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2190,11 +2180,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ehcache-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-ejb-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3000,16 +2985,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-telegram-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-testng-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-test-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

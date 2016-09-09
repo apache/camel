@@ -78,12 +78,18 @@ public final class ArquillianPackager {
      */
     private static final boolean DEBUG_ENABLED = false;
 
-    private static final String LIB_FOLDER = "/BOOT-INF/lib";
-    private static final String CLASSES_FOLDER = "BOOT-INF/classes";
-
+    /**
+     * Configuration of the library checker.
+     */
     private static final boolean FAIL_ON_TEST_LIBRARY_MISMATCH = false;
     private static final boolean FAIL_ON_RELATED_LIBRARY_MISMATCH = true;
     private static final boolean VERSION_EQUALITY_MINOR_VERSION = true;
+
+    /**
+     * Spring-boot 1.4+ packaging model
+     */
+    private static final String LIB_FOLDER = "/BOOT-INF/lib";
+    private static final String CLASSES_FOLDER = "BOOT-INF/classes";
 
     private ArquillianPackager() {
     }
@@ -285,30 +291,32 @@ public final class ArquillianPackager {
         Set<String> ignore = new HashSet<>();
         ignore.addAll(config.getIgnoreLibraryMismatch());
 
-        ignore.add("org.apache.commons");
-        ignore.add("commons-beanutils:commons-beanutils");
-        ignore.add("io.netty:netty:jar"); // an old version
-        ignore.add("xml-apis:xml-apis-ext");
-        ignore.add("org.scala-lang:scala-compiler");
-        ignore.add("org.mortbay.jetty:servlet-api-2.5");
-        ignore.add("org.apache.geronimo.specs");
-        ignore.add("org.apache.qpid:qpid-jms-client");
+        // A list of known libraries that don't follow the all-artifacts-same-version convention
+        ignore.add("com.atlassian.jira:jira-rest-java-client-api");
         ignore.add("com.github.jnr");
-        ignore.add("stax:stax-api");
-        ignore.add("net.openhft");
-        ignore.add("org.easytesting");
         ignore.add("com.sun.xml.bind:jaxb-xjc");
-        ignore.add("io.swagger:swagger-parser");
+        ignore.add("commons-beanutils:commons-beanutils");
         ignore.add("io.fabric8:kubernetes-");
+        ignore.add("io.netty:netty:jar"); // an old version
+        ignore.add("io.swagger:swagger-parser");
+        ignore.add("org.apache.commons");
+        ignore.add("org.apache.curator");
+        ignore.add("org.apache.cxf:cxf-api");
+        ignore.add("org.apache.geronimo.specs");
         ignore.add("org.apache.maven");
+        ignore.add("org.apache.parquet");
+        ignore.add("org.apache.velocity");
+        ignore.add("org.apache.qpid:qpid-jms-client");
         ignore.add("org.codehaus.plexus");
         ignore.add("org.jboss.arquillian.container");
-        ignore.add("org.apache.curator");
-        ignore.add("org.apache.parquet");
+        ignore.add("org.mortbay.jetty:servlet-api-2.5");
+        ignore.add("org.scala-lang:scala-compiler");
+        ignore.add("org.easytesting");
+        ignore.add("net.openhft");
         ignore.add("org.springframework.data");
-        ignore.add("org.apache.velocity");
-        ignore.add("org.apache.cxf:cxf-api");
-        ignore.add("com.atlassian.jira:jira-rest-java-client-api");
+        ignore.add("stax:stax-api");
+        ignore.add("xml-apis:xml-apis-ext");
+
 
         Map<String, Map<String, String>> status = new TreeMap<>();
         Set<String> mismatches = new TreeSet<>();
