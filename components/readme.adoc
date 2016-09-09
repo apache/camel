@@ -36,6 +36,39 @@ Components
 | link:camel-avro/src/main/docs/avro-component.adoc[Avro] (camel-avro) +
 `avro:transport:host:port/messageName` | Working with Apache Avro for data serialization.
 
+| link:camel-aws/src/main/docs/aws-cw-component.adoc[AWS CloudWatch] (camel-aws) +
+`aws-cw:namespace` | The aws-cw component is used for sending metrics to an Amazon CloudWatch.
+
+| link:camel-aws/src/main/docs/aws-ddb-component.adoc[AWS DynamoDB] (camel-aws) +
+`aws-ddb:tableName` | The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
+
+| link:camel-aws/src/main/docs/aws-ddbstream-component.adoc[AWS DynamoDB Streams] (camel-aws) +
+`aws-ddbstream:tableName` | The aws-ddbstream component is used for working with Amazon DynamoDB Streams.
+
+| link:camel-aws/src/main/docs/aws-ec2-component.adoc[AWS EC2] (camel-aws) +
+`aws-ec2:label` | The aws-ec2 is used for managing Amazon EC2 instances.
+
+| link:camel-aws/src/main/docs/aws-kinesis-component.adoc[AWS Kinesis] (camel-aws) +
+`aws-kinesis:streamName` | The aws-kinesis component is for consuming records from Amazon Kinesis Streams.
+
+| link:camel-aws/src/main/docs/aws-s3-component.adoc[AWS S3 Storage Service] (camel-aws) +
+`aws-s3:bucketNameOrArn` | The aws-s3 component is used for storing and retrieving objecct from Amazon S3 Storage Service.
+
+| link:camel-aws/src/main/docs/aws-ses-component.adoc[AWS Simple Email Service] (camel-aws) +
+`aws-ses:from` | The aws-ses component is used for sending emails with Amazon's SES service.
+
+| link:camel-aws/src/main/docs/aws-sns-component.adoc[AWS Simple Notification System] (camel-aws) +
+`aws-sns:topicNameOrArn` | The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
+
+| link:camel-aws/src/main/docs/aws-sqs-component.adoc[AWS Simple Queue Service] (camel-aws) +
+`aws-sqs:queueNameOrArn` | The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
+
+| link:camel-aws/src/main/docs/aws-swf-component.adoc[AWS Simple Workflow] (camel-aws) +
+`aws-swf:type` | The aws-swf component is used for managing workflows from Amazon Simple Workflow.
+
+| link:camel-aws/src/main/docs/aws-sdb-component.adoc[AWS SimpleDB] (camel-aws) +
+`aws-sdb:domainName` | The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
+
 | link:camel-bean-validator/src/main/docs/bean-validator-component.adoc[Bean Validator] (camel-bean-validator) +
 `bean-validator:label` | The Validator component performs bean validation of the message body using the Java Bean Validation API.
 
@@ -159,23 +192,8 @@ Components
 | link:camel-google-drive/src/main/docs/google-drive-component.adoc[Google Drive] (camel-google-drive) +
 `google-drive:apiName/methodName` | The google-drive component provides access to Google Drive file storage service.
 
-| link:camel-gae/src/main/docs/gauth-component.adoc[Google GAuth] (camel-gae) +
-`gauth:name` | The gauth component is used by web applications to implement a Google-specific OAuth consumer.
-
-| link:camel-gae/src/main/docs/ghttp-component.adoc[Google HTTP] (camel-gae) +
-`ghttp:httpUri` | The ghttp component provides HTTP connectivity to the GAE.
-
-| link:camel-gae/src/main/docs/glogin-component.adoc[Google Login] (camel-gae) +
-`glogin:hostName` | The glogin component is used by Camel applications outside Google App Engine (GAE) for programmatic login to GAE applications.
-
-| link:camel-gae/src/main/docs/gmail-component.adoc[Google mail] (camel-gae) +
-`gmail:sender` | The gmail component is used for sending emails to GAE.
-
 | link:camel-google-mail/src/main/docs/google-mail-component.adoc[Google Mail] (camel-google-mail) +
 `google-mail:apiName/methodName` | The google-mail component provides access to Google Mail.
-
-| link:camel-gae/src/main/docs/gtask-component.adoc[Google Task] (camel-gae) +
-`gtask:queueName` | The gtask component is used for sending messages to GAE task queue service.
 
 | link:camel-gora/src/main/docs/gora-component.adoc[Gora] (camel-gora) +
 `gora:name` | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
