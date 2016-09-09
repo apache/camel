@@ -20,6 +20,10 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.util.Set;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -29,10 +33,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
-
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestFatJarRouter.class, properties = "spring.main.sources=org.apache.camel.spring.boot.fatjarroutertests")
