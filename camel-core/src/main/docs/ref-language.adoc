@@ -6,8 +6,8 @@ Ref Expression Language
 
 The Ref Expression Language is really just a way to lookup a custom
 link:expression.html[Expression] from the link:registry.html[Registry].
- +
- This is particular useable in XML DSLs.
+
+This is particular useable in XML DSLs.
 
 [[RefLanguage-Options]]
 Ref Language options
