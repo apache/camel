@@ -22,7 +22,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -614,8 +613,18 @@ public class MailBinding {
                 int size = multipart.getCount();
                 for (int i = 0; i < size; i++) {
                     BodyPart part = multipart.getBodyPart(i);
+                    content = part.getContent();
+                    // in case of nested multiparts iterate into them
+                    while (content instanceof MimeMultipart) {
+                        if (multipart.getCount() < 1) {
+                            break;
+                        }
+                        part = ((MimeMultipart)content).getBodyPart(0);
+                        content = part.getContent();
+                    }
                     if (part.getContentType().toLowerCase().startsWith("text")) {
                         answer.put(Exchange.CONTENT_TYPE, part.getContentType());
+                        break;
                     }
                 }
             }
