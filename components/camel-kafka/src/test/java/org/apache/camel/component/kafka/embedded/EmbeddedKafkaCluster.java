@@ -72,7 +72,7 @@ public class EmbeddedKafkaCluster {
     }
 
     private List<Integer> resolvePorts(List<Integer> ports) {
-        List<Integer> resolvedPorts = new ArrayList<Integer>();
+        List<Integer> resolvedPorts = new ArrayList<Integer>(ports.size());
         for (Integer port : ports) {
             resolvedPorts.add(resolvePort(port));
         }

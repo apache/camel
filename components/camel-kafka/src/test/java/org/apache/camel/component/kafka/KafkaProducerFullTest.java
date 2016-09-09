@@ -33,15 +33,12 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
@@ -49,20 +46,17 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     private static final String TOPIC_STRINGS_IN_HEADER = "testHeader";
     private static final String TOPIC_BYTES = "testBytes";
     private static final String TOPIC_BYTES_IN_HEADER = "testBytesHeader";
-    private static final String GROUP_STRINGS = "groupStrings";
     private static final String GROUP_BYTES = "groupStrings";
-
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaProducerFullTest.class);
 
     private static KafkaConsumer<String, String> stringsConsumerConn;
     private static KafkaConsumer<byte[], byte[]> bytesConsumerConn;
 
-    @EndpointInject(uri = "kafka:localhost:{{karfkaPort}}?topic=" + TOPIC_STRINGS
+    @EndpointInject(uri = "kafka:localhost:{{kafkaPort}}?topic=" + TOPIC_STRINGS
             + "&requestRequiredAcks=-1")
     private Endpoint toStrings;
     @EndpointInject(uri = "mock:kafkaAck")
     private MockEndpoint mockEndpoint;
-    @EndpointInject(uri = "kafka:localhost:{{karfkaPort}}?topic=" + TOPIC_BYTES + "&requestRequiredAcks=-1"
+    @EndpointInject(uri = "kafka:localhost:{{kafkaPort}}?topic=" + TOPIC_BYTES + "&requestRequiredAcks=-1"
             + "&serializerClass=org.apache.kafka.common.serialization.ByteArraySerializer&"
             + "keySerializerClass=org.apache.kafka.common.serialization.ByteArraySerializer")
     private Endpoint toBytes;
@@ -77,7 +71,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     public static void before() {
         Properties stringsProps = new Properties();
 
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:" + getKarfkaPort());
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:" + getKafkaPort());
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG, "DemoConsumer");
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
@@ -132,6 +126,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         List<Exchange> exchangeList = mockEndpoint.getExchanges();
         assertEquals("Fifteen Exchanges are expected", exchangeList.size(), 15);
         for (Exchange exchange : exchangeList) {
+            @SuppressWarnings("unchecked")
             List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
             assertEquals("One RecordMetadata is expected.", recordMetaData1.size(), 1);
             assertTrue("Offset is positive", recordMetaData1.get(0).offset() >= 0);
@@ -166,6 +161,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         List<Exchange> exchangeList = mockEndpoint.getExchanges();
         assertEquals("Two Exchanges are expected", exchangeList.size(), 2);
         Exchange e1 = exchangeList.get(0);
+        @SuppressWarnings("unchecked")
         List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) (e1.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
         assertEquals("Ten RecordMetadata is expected.", recordMetaData1.size(), 10);
         for (RecordMetadata recordMeta : recordMetaData1) {
@@ -173,6 +169,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
             assertTrue("Topic Name start with 'test'", recordMeta.topic().startsWith("test"));
         }
         Exchange e2 = exchangeList.get(1);
+        @SuppressWarnings("unchecked")
         List<RecordMetadata> recordMetaData2 = (List<RecordMetadata>) (e2.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
         assertEquals("Five RecordMetadata is expected.", recordMetaData2.size(), 5);
         for (RecordMetadata recordMeta : recordMetaData2) {
@@ -206,6 +203,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         List<Exchange> exchangeList = mockEndpoint.getExchanges();
         assertEquals("Fifteen Exchanges are expected", exchangeList.size(), 15);
         for (Exchange exchange : exchangeList) {
+            @SuppressWarnings("unchecked")
             List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
             assertEquals("One RecordMetadata is expected.", recordMetaData1.size(), 1);
             assertTrue("Offset is positive", recordMetaData1.get(0).offset() >= 0);
@@ -221,7 +219,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
         while (run) {
             ConsumerRecords<String, String> records = consumerConn.poll(100);
-            for (ConsumerRecord<String, String> record : records) {
+            for (int i = 0; i < records.count(); i++) {
                 messagesLatch.countDown();
                 if (messagesLatch.getCount() == 0) {
                     run = false;
@@ -239,7 +237,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
         while (run) {
             ConsumerRecords<byte[], byte[]> records = consumerConn.poll(100);
-            for (ConsumerRecord<byte[], byte[]> record : records) {
+            for (int i = 0; i < records.count(); i++) {
                 messagesLatch.countDown();
                 if (messagesLatch.getCount() == 0) {
                     run = false;
