@@ -31,7 +31,6 @@
     <name>Camel :: Spring-Boot :: Dependency Management</name>
     <description>Camel Spring-Boot Dependency Management POM</description>
     <modules>
-        <module>camel-spring-boot-bom</module>
         <module>camel-spring-boot-generator-bom</module>
         <module>camel-spring-boot-dependencies</module>
         <module>camel-starter-parent</module>

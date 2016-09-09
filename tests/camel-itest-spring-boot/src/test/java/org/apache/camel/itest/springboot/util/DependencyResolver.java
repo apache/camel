@@ -39,7 +39,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Resolves the currently used version of a library. Useful to run unit tests directly from the IDE, without passing additional parameters.
- * It resolves surefire properties.
+ * It resolves properties present in spring-boot and camel parent.
  */
 public final class DependencyResolver {
 
