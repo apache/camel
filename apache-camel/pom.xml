@@ -1405,11 +1405,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-ibatis-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-ical-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1471,11 +1466,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jcache-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jclouds-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -1770,11 +1760,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-quartz-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-quickfix-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1911,11 +1896,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-solr-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spark-rest-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

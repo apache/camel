@@ -353,7 +353,6 @@
         <include>org.apache.camel:camel-http-common-starter</include>
         <include>org.apache.camel:camel-http-starter</include>
         <include>org.apache.camel:camel-hystrix-starter</include>
-        <include>org.apache.camel:camel-ibatis-starter</include>
         <include>org.apache.camel:camel-ical-starter</include>
         <include>org.apache.camel:camel-ignite-starter</include>
         <include>org.apache.camel:camel-infinispan-starter</include>
@@ -367,7 +366,6 @@
         <include>org.apache.camel:camel-jaxb-starter</include>
         <include>org.apache.camel:camel-jbpm-starter</include>
         <include>org.apache.camel:camel-jcache-starter</include>
-        <include>org.apache.camel:camel-jclouds-starter</include>
         <include>org.apache.camel:camel-jcr-starter</include>
         <include>org.apache.camel:camel-jdbc-starter</include>
         <include>org.apache.camel:camel-jetty9-starter</include>
@@ -426,7 +424,6 @@
         <include>org.apache.camel:camel-printer-starter</include>
         <include>org.apache.camel:camel-protobuf-starter</include>
         <include>org.apache.camel:camel-quartz2-starter</include>
-        <include>org.apache.camel:camel-quartz-starter</include>
         <include>org.apache.camel:camel-quickfix-starter</include>
         <include>org.apache.camel:camel-rabbitmq-starter</include>
         <include>org.apache.camel:camel-restlet-starter</include>
@@ -455,7 +452,6 @@
         <include>org.apache.camel:camel-snmp-starter</include>
         <include>org.apache.camel:camel-soap-starter</include>
         <include>org.apache.camel:camel-solr-starter</include>
-        <include>org.apache.camel:camel-spark-rest-starter</include>
         <include>org.apache.camel:camel-spark-starter</include>
         <include>org.apache.camel:camel-splunk-starter</include>
         <include>org.apache.camel:camel-spring-batch-starter</include>

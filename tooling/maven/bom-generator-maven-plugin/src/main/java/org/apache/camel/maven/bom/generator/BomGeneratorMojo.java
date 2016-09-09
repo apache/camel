@@ -22,8 +22,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -42,9 +46,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Exclusion;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -90,6 +100,49 @@ public class BomGeneratorMojo extends AbstractMojo {
      */
     protected DependencySet dependencies;
 
+    /**
+     * The conflict checks configured by the user
+     *
+     * @parameter
+     * @readonly
+     */
+    protected ExternalBomConflictCheckSet checkConflicts;
+
+    /**
+     * Used to look up Artifacts in the remote repository.
+     *
+     * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
+     * @required
+     * @readonly
+     */
+    protected ArtifactFactory artifactFactory;
+
+    /**
+     * Used to look up Artifacts in the remote repository.
+     *
+     * @component role="org.apache.maven.artifact.resolver.ArtifactResolver"
+     * @required
+     * @readonly
+     */
+    protected ArtifactResolver artifactResolver;
+
+    /**
+     * List of Remote Repositories used by the resolver
+     *
+     * @parameter property="project.remoteArtifactRepositories"
+     * @readonly
+     * @required
+     */
+    protected List remoteRepositories;
+
+    /**
+     * Location of the local repository.
+     *
+     * @parameter property="localRepository"
+     * @readonly
+     * @required
+     */
+    protected ArtifactRepository localRepository;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -98,6 +151,9 @@ public class BomGeneratorMojo extends AbstractMojo {
 
             List<Dependency> filteredDependencies = enhance(filter(mng.getDependencies()));
 
+            Set<String> externallyManagedDependencies = getExternallyManagedDependencies();
+            checkConflictsWithExternalBoms(filteredDependencies, externallyManagedDependencies);
+
             Document pom = loadBasePom();
 
             // transform
@@ -105,6 +161,10 @@ public class BomGeneratorMojo extends AbstractMojo {
 
             writePom(pom);
 
+        } catch (MojoFailureException ex) {
+            throw ex;
+        } catch (MojoExecutionException ex) {
+            throw ex;
         } catch (Exception ex) {
             throw new MojoExecutionException("Cannot generate the output BOM file", ex);
         }
@@ -283,5 +343,74 @@ public class BomGeneratorMojo extends AbstractMojo {
 
     }
 
+    private void checkConflictsWithExternalBoms(Collection<Dependency> dependencies, Set<String> external) throws MojoFailureException {
+        Set<String> errors = new TreeSet<>();
+        for (Dependency d : dependencies) {
+            String key = comparisonKey(d);
+            if (external.contains(key)) {
+                errors.add(key);
+            }
+        }
+
+        if (errors.size() > 0) {
+            StringBuilder msg = new StringBuilder();
+            msg.append("Found ").append(errors.size()).append(" conflicts between the current managed dependencies and the external BOMS:\n");
+            for (String error : errors) {
+                msg.append(" - ").append(error).append("\n");
+            }
+
+            throw new MojoFailureException(msg.toString());
+        }
+    }
+
+    private Set<String> getExternallyManagedDependencies() throws Exception {
+        Set<String> provided = new HashSet<>();
+        if (checkConflicts != null && checkConflicts.getBoms() != null) {
+            for (ExternalBomConflictCheck check : checkConflicts.getBoms()) {
+                Set<String> bomProvided = getProvidedDependencyManagement(check.getGroupId(), check.getArtifactId(), check.getVersion());
+                provided.addAll(bomProvided);
+            }
+        }
+
+        return provided;
+    }
+
+    private Set<String> getProvidedDependencyManagement(String groupId, String artifactId, String version) throws Exception {
+        Artifact bom = resolveArtifact(groupId, artifactId, version, "pom");
+        MavenProject bomProject = loadExternalProjectPom(bom.getFile());
+
+        Set<String> provided = new HashSet<>();
+        if (bomProject.getDependencyManagement() != null && bomProject.getDependencyManagement().getDependencies() != null) {
+            for (Dependency dep : bomProject.getDependencyManagement().getDependencies()) {
+                provided.add(comparisonKey(dep));
+            }
+        }
+
+        return provided;
+    }
+
+    private String comparisonKey(Dependency dependency) {
+        return dependency.getGroupId() + ":" + dependency.getArtifactId();
+    }
+
+    private Artifact resolveArtifact(String groupId, String artifactId, String version, String type) throws Exception {
+
+        Artifact art = artifactFactory.createArtifact(groupId, artifactId, version, "runtime", type);
+
+        artifactResolver.resolve(art, remoteRepositories, localRepository);
+
+        return art;
+    }
+
+    private MavenProject loadExternalProjectPom(File pomFile) throws Exception {
+        try (FileReader reader = new FileReader(pomFile)) {
+            MavenXpp3Reader mavenReader = new MavenXpp3Reader();
+            Model model = mavenReader.read(reader);
+
+            MavenProject project = new MavenProject(model);
+            project.setFile(pomFile);
+            return project;
+        }
+    }
 
 }

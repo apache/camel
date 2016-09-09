@@ -34,30 +34,10 @@
 
         <dependencies>
 
-            <!--
-                The dependency management is organized as follows:
-                - custom dependencies first (to override values)
-                - spring-boot dependencies
-                - camel dependencies
-
-                Dependencies are flattened and a BOM file is generated using a plugin.
-             -->
-
-            <!-- Additional libraries related to Avro -->
-            <dependency>
-                <groupId>org.apache.avro</groupId>
-                <artifactId>avro</artifactId>
-                <version>${avro-version}</version>
-            </dependency>
+            <!-- Additional libraries related to Avro (version from Camel) -->
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-mapred</artifactId>
-                <version>${avro-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.avro</groupId>
-                <artifactId>avro-ipc</artifactId>
-                <classifier>tests</classifier>
                 <version>${avro-version}</version>
             </dependency>
             <dependency>
@@ -67,33 +47,8 @@
                 <version>${avro-version}</version>
             </dependency>
 
-            <!-- Use the camel version of caffeine -->
-            <dependency>
-                <groupId>com.github.ben-manes.caffeine</groupId>
-                <artifactId>caffeine</artifactId>
-                <version>${caffeine-version}</version>
-            </dependency>
 
-            <!-- Use the camel version of Cassandra 3 vs 2 -->
-            <dependency>
-                <groupId>com.datastax.cassandra</groupId>
-                <artifactId>cassandra-driver-core</artifactId>
-                <version>${cassandra-driver-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.datastax.cassandra</groupId>
-                <artifactId>cassandra-driver-mapping</artifactId>
-                <version>${cassandra-driver-version}</version>
-            </dependency>
-
-            <!-- Added to match the version of related libraries provided by spring-boot -->
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate-version}</version>
-            </dependency>
-
-            <!-- Add a uniform jackson 1 (used in many components) -->
+            <!-- Add a uniform jackson 1 (version from Camel) -->
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-core</artifactId>
@@ -134,27 +89,13 @@
                 <version>${jna-version}</version>
             </dependency>
 
-            <!-- Overwrite with the version provided in camel -->
-            <dependency>
-                <groupId>net.sourceforge.htmlunit</groupId>
-                <artifactId>htmlunit-core-js</artifactId>
-                <version>${htmlunit-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sourceforge.htmlunit</groupId>
-                <artifactId>htmlunit</artifactId>
-                <version>${htmlunit-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sourceforge.htmlunit</groupId>
-                <artifactId>htmlunit</artifactId>
-                <version>${htmlunit-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>htmlunit-driver</artifactId>
-                <version>${htmlunit-version}</version>
-            </dependency>
+            <!-- Added to match the version of related libraries provided by spring-boot -->
+            <!-- Seems that htmlunit 2.21 is not present in Maven central -->
+            <!--<dependency>-->
+                <!--<groupId>net.sourceforge.htmlunit</groupId>-->
+                <!--<artifactId>htmlunit-core-js</artifactId>-->
+                <!--<version>${htmlunit-version}</version>-->
+            <!--</dependency>-->
 
             <!-- Added to match the version of related libraries provided by spring-boot -->
             <dependency>
@@ -165,11 +106,6 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-rewrite</artifactId>
-                <version>${jetty-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-servlet</artifactId>
                 <version>${jetty-version}</version>
             </dependency>
 
@@ -186,293 +122,17 @@
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty.websocket</groupId>
-                <artifactId>websocket-server</artifactId>
-                <version>${jetty-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty.websocket</groupId>
                 <artifactId>websocket-servlet</artifactId>
                 <version>${jetty-version}</version>
             </dependency>
 
-            <!-- Using the version of ActiveMQ from camel -->
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-amqp</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-blueprint</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-broker</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-camel</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-client</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-console</artifactId>
-                <version>${activemq-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-http</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-jaas</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-jdbc-store</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-jms-pool</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-kahadb-store</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-karaf</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-leveldb-store</artifactId>
-                <version>${activemq-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-log4j-appender</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-mqtt</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-openwire-generator</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-openwire-legacy</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-osgi</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-partition</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-pool</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-ra</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-run</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-runtime-config</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-shiro</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-spring</artifactId>
-                <version>${activemq-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-stomp</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-web</artifactId>
-                <version>${activemq-version}</version>
-            </dependency>
-
-            <!-- Added to match the version of related libraries provided by Camel -->
+            <!-- Added to match the version of related libraries provided by Spring-boot -->
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-scala_2.11</artifactId>
                 <version>${jackson2-version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jaxrs</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
 
-            <!-- Using the Camel Version of Jackson -->
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-cbor</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-csv</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-smile</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-xml</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-yaml</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-guava</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-hibernate4</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-hibernate5</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jdk8</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-joda</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-json-org</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jsr310</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                <artifactId>jackson-jaxrs-base</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                <artifactId>jackson-jaxrs-json-provider</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-jaxb-annotations</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-kotlin</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-parameter-names</artifactId>
-                <version>${jackson2-version}</version>
-            </dependency>
-
-
-            <!-- Dependencies from the spring-boot BOM are included after custom dependencies -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot-version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <!-- Dependencies from Camel parent at the end -->
             <dependency>
@@ -500,6 +160,36 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <checkConflicts>
+                        <boms>
+                            <bom>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-dependencies</artifactId>
+                                <version>${spring-boot-version}</version>
+                            </bom>
+                            <!-- Other BOMs imported by SB should be listed explicitly -->
+                            <bom>
+                                <groupId>org.springframework</groupId>
+                                <artifactId>spring-framework-bom</artifactId>
+                                <version>${spring-version}</version>
+                            </bom>
+                            <bom>
+                                <groupId>org.springframework.data</groupId>
+                                <artifactId>spring-data-releasetrain</artifactId>
+                                <version>${spring-data-releasetrain-version}</version>
+                            </bom>
+                            <bom>
+                                <groupId>org.springframework.integration</groupId>
+                                <artifactId>spring-integration-bom</artifactId>
+                                <version>${spring-integration-version}</version>
+                            </bom>
+                            <bom>
+                                <groupId>org.springframework.security</groupId>
+                                <artifactId>spring-security-bom</artifactId>
+                                <version>${spring-security-version}</version>
+                            </bom>
+                        </boms>
+                    </checkConflicts>
                     <dependencies>
                         <includes>
                             <include>*:*</include>
@@ -508,15 +198,60 @@
 
                             <!-- These artifacts should not be included in the final (generated) BOM -->
 
+                            <!-- Different versions from the ones provided by spring-boot -->
+                            <exclude>de.flapdoodle*:*</exclude>
+                            <exclude>org.apache.activemq:*</exclude>
+                            <exclude>org.apache.commons:commons-pool2</exclude>
+                            <exclude>org.apache.httpcomponents:httpcore</exclude>
+                            <exclude>org.apache.derby:derby</exclude>
+                            <exclude>org.apache.logging.log4j:*</exclude>
+                            <exclude>org.codehaus.groovy:*</exclude>
+                            <exclude>org.hibernate:hibernate-entitymanager</exclude>
+                            <exclude>org.hsqldb:*</exclude>
+                            <exclude>org.mockito:*</exclude>
+
+                            <exclude>org.slf4j:jul-to-slf4j</exclude>
+                            <exclude>org.slf4j:log4j-over-slf4j</exclude>
+                            <exclude>org.slf4j:slf4j-api</exclude>
+                            <exclude>org.slf4j:slf4j-log4j12</exclude>
+                            <exclude>org.slf4j:slf4j-simple</exclude>
+
+                            <exclude>org.springframework*:*</exclude>
+
+                            <exclude>commons-codec:*</exclude>
+                            <exclude>commons-collections:*</exclude>
+                            <exclude>commons-dbcp:*</exclude>
+                            <exclude>commons-pool:*</exclude>
+
+                            <exclude>com.github.ben-manes.caffeine:caffeine</exclude>
+                            <exclude>com.datastax.cassandra:*</exclude>
+
+                            <exclude>com.fasterxml.jackson.core:jackson-annotations</exclude>
+                            <exclude>com.fasterxml.jackson.core:jackson-core</exclude>
+                            <exclude>com.fasterxml.jackson.core:jackson-databind</exclude>
+                            <exclude>com.fasterxml.jackson.dataformat:jackson-dataformat-cbor</exclude>
+                            <exclude>com.fasterxml.jackson.dataformat:jackson-dataformat-smile</exclude>
+                            <exclude>com.fasterxml.jackson.dataformat:jackson-dataformat-xml</exclude>
+                            <exclude>com.fasterxml.jackson.dataformat:jackson-dataformat-yaml</exclude>
+                            <exclude>com.fasterxml.jackson.datatype:jackson-datatype-jaxrs</exclude>
+                            <exclude>com.fasterxml.jackson.datatype:jackson-datatype-joda</exclude>
+                            <exclude>com.fasterxml.jackson.jaxrs:jackson-jaxrs-base</exclude>
+                            <exclude>com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider</exclude>
+                            <exclude>com.fasterxml.jackson.module:jackson-module-jaxb-annotations</exclude>
+
+                            <exclude>com.google.code.gson:*</exclude>
+                            <exclude>javax.servlet:javax.servlet-api</exclude>
+                            <exclude>junit:*</exclude>
+                            <exclude>net.sf.ehcache:ehcache</exclude>
+
+                            <exclude>xml-apis:*</exclude>
+
                             <!-- Different versions required by some modules -->
                             <exclude>com.google.inject:*</exclude>
                             <exclude>com.google.guava:*</exclude>
-                            <exclude>com.google.code.gson:*</exclude>
                             <exclude>org.scala-lang:*</exclude>
                             <exclude>org.apache.lucene:*</exclude>
 
-                            <!-- Changed name to dse-driver in version 3 -->
-                            <exclude>com.datastax.cassandra:cassandra-driver-dse</exclude>
 
                             <!-- Unrelated -->
                             <exclude>org.apache.servicemix.bundles:*</exclude>

@@ -69,6 +69,8 @@ public class ITestConfig implements Serializable {
 
     private Set<String> ignoreLibraryMismatch;
 
+    private Map<String, String> testLibraryVersions;
+
     public ITestConfig() {
     }
 
@@ -240,6 +242,14 @@ public class ITestConfig implements Serializable {
         this.ignoreLibraryMismatch = ignoreLibraryMismatch;
     }
 
+    public Map<String, String> getTestLibraryVersions() {
+        return testLibraryVersions;
+    }
+
+    public void setTestLibraryVersions(Map<String, String> testLibraryVersions) {
+        this.testLibraryVersions = testLibraryVersions;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ITestConfig{");
@@ -264,6 +274,7 @@ public class ITestConfig implements Serializable {
         sb.append(", systemProperties=").append(systemProperties);
         sb.append(", useCustomLog=").append(useCustomLog);
         sb.append(", ignoreLibraryMismatch=").append(ignoreLibraryMismatch);
+        sb.append(", testLibraryVersions=").append(testLibraryVersions);
         sb.append('}');
         return sb.toString();
     }

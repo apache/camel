@@ -148,6 +148,14 @@ public class ITestConfigBuilder {
         return this;
     }
 
+    public ITestConfigBuilder testLibraryVersion(String groupIdArtifactId, String version) {
+        if (config.getTestLibraryVersions() == null) {
+            config.setTestLibraryVersions(new HashMap<>());
+        }
+        config.getTestLibraryVersions().put(groupIdArtifactId, version);
+        return this;
+    }
+
     public ITestConfig build() {
 
         // Checking conditions
@@ -230,6 +238,10 @@ public class ITestConfigBuilder {
 
         if (config.getIgnoreLibraryMismatch() == null) {
             config.setIgnoreLibraryMismatch(new HashSet<>());
+        }
+
+        if (config.getTestLibraryVersions() == null) {
+            config.setTestLibraryVersions(new HashMap<>());
         }
 
         return config;

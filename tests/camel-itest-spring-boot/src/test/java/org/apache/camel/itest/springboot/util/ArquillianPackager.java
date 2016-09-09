@@ -117,11 +117,11 @@ public final class ArquillianPackager {
         }
 
         if (config.getUseCustomLog()) {
-            ark = ark.addAsResource("spring-logback.xml", CLASSES_FOLDER + "/spring-logback.xml");
+            ark = ark.addAsResource("spring-logback.xml", "/spring-logback.xml");
         }
 
         for (Map.Entry<String, String> res : config.getResources().entrySet()) {
-            ark = ark.addAsResource(res.getKey(), CLASSES_FOLDER + "/" + res.getValue());
+            ark = ark.addAsResource(res.getKey(), "/" + res.getValue());
         }
 
         String version = System.getProperty("version_org.apache.camel:camel-core");
@@ -196,43 +196,44 @@ public final class ArquillianPackager {
         List<String> cleanTestProvidedDependenciesXml = new LinkedList<>();
         for (String depXml : testProvidedDependenciesXml) {
             if (validTestDependency(config, depXml, commonExclusions)) {
+                depXml = useBOMVersionIfPresent(config, depXml);
                 depXml = enforceExclusions(config, depXml, commonExclusions);
                 depXml = switchToStarterIfPresent(config, depXml);
                 cleanTestProvidedDependenciesXml.add(depXml);
             }
         }
 
-        List<MavenResolvedArtifact> testDependencies = new LinkedList<>();
-        if (!cleanTestProvidedDependenciesXml.isEmpty()) {
+//        List<MavenResolvedArtifact> testDependencies = new LinkedList<>();
+//        if (!cleanTestProvidedDependenciesXml.isEmpty()) {
+//
+//            File testProvidedResolverPom = createResolverPom(config, cleanTestProvidedDependenciesXml);
+//
+//            testDependencies.addAll(Arrays.asList(resolver(config)
+//                    .loadPomFromFile(testProvidedResolverPom)
+//                    .importDependencies(scopes.toArray(new ScopeType[0]))
+//                    .resolve()
+//                    .withTransitivity()
+//                    .asResolvedArtifact()));
+//        }
 
-            File testProvidedResolverPom = createResolverPom(config, cleanTestProvidedDependenciesXml);
+        File moduleSpringBootPom = createUserPom(config, cleanTestProvidedDependenciesXml);
 
-            testDependencies.addAll(Arrays.asList(resolver(config)
-                    .loadPomFromFile(testProvidedResolverPom)
-                    .importDependencies(scopes.toArray(new ScopeType[0]))
-                    .resolve()
-                    .withTransitivity()
-                    .asResolvedArtifact()));
-        }
-
-        File moduleSpringBootPom = createUserPom(config);
-
-//        List<ScopeType> resolvedScopes = new LinkedList<>();
-//        resolvedScopes.add(ScopeType.COMPILE);
-//        resolvedScopes.add(ScopeType.RUNTIME);
-//        resolvedScopes.addAll(scopes);
+        List<ScopeType> resolvedScopes = new LinkedList<>();
+        resolvedScopes.add(ScopeType.COMPILE);
+        resolvedScopes.add(ScopeType.RUNTIME);
+        resolvedScopes.addAll(scopes);
 
         List<MavenResolvedArtifact> runtimeDependencies = new LinkedList<>();
         runtimeDependencies.addAll(Arrays.asList(resolver(config)
                 .loadPomFromFile(moduleSpringBootPom)
-                .importRuntimeDependencies()
+                .importDependencies(resolvedScopes.toArray(new ScopeType[0]))
                 .addDependencies(additionalDependencies)
                 .resolve()
                 .withTransitivity()
                 .asResolvedArtifact()));
 
 
-        List<MavenResolvedArtifact> dependencyArtifacts = merge(config, runtimeDependencies, testDependencies);
+        List<MavenResolvedArtifact> dependencyArtifacts = runtimeDependencies; //merge(config, runtimeDependencies, testDependencies);
         lookForVersionMismatch(config, dependencyArtifacts);
 
         List<File> dependencies = new LinkedList<>();
@@ -307,13 +308,20 @@ public final class ArquillianPackager {
         ignore.add("org.apache.parquet");
         ignore.add("org.apache.velocity");
         ignore.add("org.apache.qpid:qpid-jms-client");
+        ignore.add("org.ow2.asm"); // No problem
         ignore.add("org.codehaus.plexus");
         ignore.add("org.jboss.arquillian.container");
+        ignore.add("org.jboss:");
+        ignore.add("org.hibernate:hibernate-validator"); // does not match with hibernate-core
         ignore.add("org.mortbay.jetty:servlet-api-2.5");
         ignore.add("org.scala-lang:scala-compiler");
         ignore.add("org.easytesting");
         ignore.add("net.openhft");
+        ignore.add("net.sourceforge.htmlunit:htmlunit-core-js"); // v 2.21 does not exist
         ignore.add("org.springframework.data");
+        ignore.add("org.springframework.security:spring-security-jwt");
+        ignore.add("org.springframework.social");
+        ignore.add("org.webjars"); // No problem
         ignore.add("stax:stax-api");
         ignore.add("xml-apis:xml-apis-ext");
 
@@ -443,10 +451,11 @@ public final class ArquillianPackager {
         return a.getCoordinate().getGroupId() + ":" + a.getCoordinate().getArtifactId() + ":" + a.getCoordinate().getType() + ":" + a.getCoordinate().getClassifier();
     }
 
-    private static File createResolverPom(ITestConfig config, List<String> cleanTestProvidedDependencies) throws Exception {
+
+    private static File createUserPom(ITestConfig config, List<String> cleanTestProvidedDependencies) throws Exception {
 
         String pom;
-        try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream("/dependency-resolver-pom.xml")) {
+        try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream("/application-pom.xml")) {
             pom = IOUtils.toString(pomTemplate);
         }
 
@@ -457,36 +466,6 @@ public final class ArquillianPackager {
         }
 
         pom = pom.replace("<!-- DEPENDENCIES -->", dependencies.toString());
-
-        Map<String, String> resolvedProperties = new TreeMap<>();
-        Pattern propPattern = Pattern.compile("(\\$\\{[^}]*\\})");
-        Matcher m = propPattern.matcher(pom);
-        while (m.find()) {
-            String property = m.group();
-            String resolved = DependencyResolver.resolveParentProperty(property);
-            resolvedProperties.put(property, resolved);
-        }
-
-        for (String property : resolvedProperties.keySet()) {
-            pom = pom.replace(property, resolvedProperties.get(property));
-        }
-
-        pom = pom.replace("#{module}", config.getModuleName());
-
-        File pomFile = new File(config.getModuleBasePath() + "/target/itest-spring-boot-dependency-resolver-pom.xml");
-        try (FileWriter fw = new FileWriter(pomFile)) {
-            IOUtils.write(pom, fw);
-        }
-
-        return pomFile;
-    }
-
-    private static File createUserPom(ITestConfig config) throws Exception {
-
-        String pom;
-        try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream("/application-pom.xml")) {
-            pom = IOUtils.toString(pomTemplate);
-        }
 
         Map<String, String> resolvedProperties = new TreeMap<>();
         Pattern propPattern = Pattern.compile("(\\$\\{[^}]*\\})");
@@ -579,6 +558,32 @@ public final class ArquillianPackager {
             File starterFile = new File("../../components-starter/" + starterArtifact);
             if (starterFile.exists()) {
                 dependencyXml = dependencyXml.replace(artifactId, starterArtifact);
+            }
+        }
+
+        return dependencyXml;
+    }
+
+    private static String useBOMVersionIfPresent(ITestConfig config, String dependencyXml) {
+
+        String groupId = textBetween(dependencyXml, "<groupId>", "</groupId>");
+        String artifactId = textBetween(dependencyXml, "<artifactId>", "</artifactId>");
+
+        String bomVersion = config.getTestLibraryVersions().get(groupId + ":" + artifactId);
+        if (bomVersion == null) {
+            bomVersion = BOMResolver.getInstance().getBOMVersion(groupId, artifactId);
+        }
+
+        if (bomVersion != null) {
+            if (dependencyXml.contains("<version>")) {
+                int from = dependencyXml.indexOf("<version>") + 9;
+                int to = dependencyXml.indexOf("</version>");
+
+                dependencyXml = dependencyXml.substring(0, from) + bomVersion + dependencyXml.substring(to);
+            } else {
+                String kw = "</artifactId>";
+                int pos = dependencyXml.indexOf(kw) + kw.length();
+                dependencyXml = dependencyXml.substring(0, pos) + "<version>" + bomVersion + "</version>" + dependencyXml.substring(pos);
             }
         }
 

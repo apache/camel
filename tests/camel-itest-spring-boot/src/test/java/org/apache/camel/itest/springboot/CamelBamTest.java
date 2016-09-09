@@ -38,7 +38,6 @@ public class CamelBamTest extends AbstractSpringBootTestSupport {
                 .module(inferModuleName(CamelBamTest.class))
                 .resource("components/bam-persistence.xml", "META-INF/persistence.xml")
                 .resource("components/bam-spring.xml", "META-INF/spring/spring.xml")
-                .dependency("org.hibernate:hibernate-entitymanager:" + DependencyResolver.resolveSpringBootParentProperty("${hibernate-version}"))
                 .build();
     }
 
