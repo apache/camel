@@ -47,6 +47,15 @@ public final class TelegramConverter {
         return message != null ? message.getText() : null;
     }
 
+    /**
+     * Fallback converter for any unlisted object, using String default mapping.
+     */
+    @Converter
+    public static OutgoingMessage toOutgoingMessage(Object message, Exchange exchange) {
+        String content = exchange.getIn().getBody(String.class);
+        return toOutgoingMessage(content, exchange);
+    }
+
     @Converter
     public static OutgoingMessage toOutgoingMessage(String message, Exchange exchange) {
         if (message == null) {
