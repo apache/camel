@@ -65,7 +65,7 @@ public final class MailConverters {
     @Converter
     public static String toString(Message message) throws MessagingException, IOException {
         Object content = message.getContent();
-        if (content instanceof MimeMultipart) {
+        while (content instanceof MimeMultipart) {
             MimeMultipart multipart = (MimeMultipart) content;
             if (multipart.getCount() > 0) {
                 BodyPart part = multipart.getBodyPart(0);
@@ -87,6 +87,14 @@ public final class MailConverters {
         int size = multipart.getCount();
         for (int i = 0; i < size; i++) {
             BodyPart part = multipart.getBodyPart(i);
+            Object content = part.getContent();
+            while (content instanceof MimeMultipart) {
+                if (multipart.getCount() < 1) {
+                    break;
+                }
+                part = ((MimeMultipart)content).getBodyPart(0);
+                content = part.getContent();
+            }
             if (part.getContentType().toLowerCase().startsWith("text")) {
                 return part.getContent().toString();
             }
