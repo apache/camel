@@ -20,12 +20,16 @@
        xsi:schemaLocation="
 	   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-
-    <bean id="hazelcastInstance" class="com.hazelcast.core.Hazelcast"
-          factory-method="newHazelcastInstance" />
-    <bean id="hazelcastLifecycle" class="com.hazelcast.core.LifecycleService"
+	
+	<bean id="hazelcastLifecycle" class="com.hazelcast.core.LifecycleService"
           factory-bean="hazelcastInstance" factory-method="getLifecycleService"
           destroy-method="shutdown" />
+          
+	<bean id="config" class="com.hazelcast.config.Config" />
+
+	<bean id="hazelcastInstance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
+          <constructor-arg type="com.hazelcast.config.Config" ref="config"/>
+	</bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route id="testHazelcastInstanceBeanRefPut">
