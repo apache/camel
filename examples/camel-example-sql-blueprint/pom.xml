@@ -85,10 +85,6 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
         <version>${project.version}</version>
-        <configuration>
-          <!-- Tell camel run plugin to load application from the blueprint file -->
-          <useBlueprint>true</useBlueprint>
-        </configuration>
       </plugin>
     </plugins>
   </build>
