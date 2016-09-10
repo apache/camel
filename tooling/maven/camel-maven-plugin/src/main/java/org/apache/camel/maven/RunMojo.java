@@ -106,17 +106,15 @@ public class RunMojo extends AbstractExecMojo {
      * Whether to use Blueprint when running, instead of Spring
      *
      * @parameter property="camel.useBlueprint"
-     *            default-value="false"
      */
-    protected boolean useBlueprint;
+    protected Boolean useBlueprint;
 
     /**
      * Whether to use CDI when running, instead of Spring
      *
      * @parameter property="camel.useCDI"
-     *            default-value="false"
      */
-    protected boolean useCDI;
+    protected Boolean useCDI;
     
     protected String extendedPluginDependencyArtifactId;
 
@@ -361,8 +359,24 @@ public class RunMojo extends AbstractExecMojo {
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         boolean usingSpringJavaConfigureMain = false;
-        boolean useCdiMain = useCDI || detectCDIOnClassPath();
-        boolean usingBlueprintMain = useBlueprint || detectBlueprintOnClassPathOrBlueprintXMLFiles();
+
+        boolean useCdiMain = false;
+        if (useCDI != null) {
+            // use configured value
+            useCdiMain = useCDI;
+        } else {
+            // auto detect if we have cdi
+            useCdiMain = detectCDIOnClassPath();
+        }
+        boolean usingBlueprintMain = false;
+        if (useBlueprint != null) {
+            // use configured value
+            usingBlueprintMain = useBlueprint;
+        } else {
+            // auto detect if we have blueprint
+            usingBlueprintMain = detectBlueprintOnClassPathOrBlueprintXMLFiles();
+        }
+
         if (killAfter != -1) {
             getLog().warn("Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.");
         }
