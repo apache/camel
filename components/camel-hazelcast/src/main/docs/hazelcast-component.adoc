@@ -120,9 +120,25 @@ Map cache producer - to("hazelcast:map:foo")
 ++++++++++++++++++++++++++++++++++++++++++++
 
 If you want to store a value in a map you can use the map cache
-producer. The map cache producer provides 5 operations (put, get,
-update, delete, query). For the first 4 you have to provide the
-operation inside the "hazelcast.operation.type" header variable. In Java
+producer. 
+
+The map cache producer provides follow operations specified by *CamelHazelcastOperationType* header:
+
+* put
+* putIfAbsent
+* get
+* getAll
+* keySet
+* containsKey
+* containsValue
+* delete
+* update
+* query
+* clear
+* evict
+* evictAll
+
+All operations are provide the inside the "hazelcast.operation.type" header variable. In Java
 DSL you can use the constants from `org.apache.camel.component.hazelcast.HazelcastConstants`.
 
 Header Variables for the request message:
@@ -130,16 +146,26 @@ Header Variables for the request message:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Name |Type |Description
-|`CamelHazelcastOperationType` |`String` |valid values are: put, delete, get, update, query, getAll, putIfAbsent, clear, keySet. 
+|`CamelHazelcastOperationType` |`String` | as already described. 
 
 |`CamelHazelcastObjectId` |`String` |the object id to store / find your object inside the cache (not needed for the query operation)
+|=======================================================================
+
+*put* and *putIfAbsent* operations provide an eviction mechanism: 
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Type |Description
+|`CamelHazelcastObjectTtlValue` |`Integer` | value of TTL. 
+
+|`CamelHazelcastObjectTtlUnit` |`java.util.concurrent.TimeUnit` | value of time unit ( DAYS / HOURS / MINUTES / ....
 |=======================================================================
 
 You can call the samples with:
 
 [source,java]
 -------------------------------------------------------------------------------------------------------------------
-template.sendBodyAndHeader("direct:[put|get|update|delete|query]", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
+template.sendBodyAndHeader("direct:[put|get|update|delete|query|evict]", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
 -------------------------------------------------------------------------------------------------------------------
 
 [[HazelcastComponent-Sampleforput:]]
@@ -167,6 +193,40 @@ Spring DSL:
     <to uri="hazelcast:map:foo" />
 </route>
 -----------------------------------------------------------------------------------------------
+
+Sample for *put* with eviction:
+
+Java DSL:
+
+[source,java]
+------------------------------------------------------------------------------------
+from("direct:put")
+.setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION))
+.setHeader(HazelcastConstants.TTL_VALUE, constant(Long.valueOf(1)))
+.setHeader(HazelcastConstants.TTL_UNIT, constant(TimeUnit.MINUTES))
+.toF("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX);
+------------------------------------------------------------------------------------
+
+Spring DSL:
+
+[source,java]
+-----------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:put" />
+        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
+    <setHeader headerName="hazelcast.operation.type">
+        <constant>put</constant>
+    </setHeader>
+    <setHeader headerName="HazelcastConstants.TTL_VALUE">
+        <simple resultType="java.lang.Long">1</simple>
+    </setHeader>
+    <setHeader headerName="HazelcastConstants.TTL_UNIT">
+        <simple resultType="java.util.concurrent.TimeUnit">TimeUnit.MINUTES</simple>
+    </setHeader>
+    <to uri="hazelcast:map:foo" />
+</route>
+-----------------------------------------------------------------------------------------------
+
 
 [[HazelcastComponent-Sampleforget:]]
 Sample for *get*:
