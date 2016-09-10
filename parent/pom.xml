@@ -390,7 +390,7 @@
     <lucene3-bundle-version>3.6.0_1</lucene3-bundle-version>
     <lucene3-version>3.6.0</lucene3-version>
     <lucene-bundle-version>5.5.0_1</lucene-bundle-version>
-    <lucene-version>5.5.0</lucene-version>
+    <lucene-version>5.5.3</lucene-version>
     <lucene-version-range>[5,6)</lucene-version-range>
     <lightcouch-version>0.1.8</lightcouch-version>
     <lightcouch-gson-version>2.4</lightcouch-gson-version>
@@ -528,7 +528,7 @@
     <snappy-version>1.1.2.6</snappy-version>
     <snmp4j-version>2.3.4_1</snmp4j-version>
     <solr-bundle-version>5.5.0_1</solr-bundle-version>
-    <solr-version>5.5.0</solr-version>
+    <solr-version>5.5.3</solr-version>
     <solr-version-range>[5,6)</solr-version-range>
     <spark-version>1.6.1</spark-version>
     <spark-rest-version>2.3</spark-rest-version>
