@@ -208,7 +208,6 @@ public class HazelcastComponent extends UriEndpointComponent {
 
         // Query param named 'hazelcastInstance' (if exists) overrides the instance that was set
         HazelcastInstance hzInstance = resolveAndRemoveReferenceParameter(parameters, HAZELCAST_INSTANCE_PARAM, HazelcastInstance.class);
-
         // check if an already created instance is given then just get instance by its name.
         if (hzInstance == null && parameters.get(HAZELCAST_INSTANCE_NAME_PARAM) != null) {
             hzInstance = Hazelcast.getHazelcastInstanceByName((String) parameters.get(HAZELCAST_INSTANCE_NAME_PARAM));
