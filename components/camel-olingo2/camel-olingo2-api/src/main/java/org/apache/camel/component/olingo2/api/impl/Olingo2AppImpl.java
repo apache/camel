@@ -389,6 +389,17 @@ public final class Olingo2AppImpl implements Olingo2App {
                 EntityProviderReadProperties.init().build());
             break;
 
+        // Function Imports
+        case URI10:
+        case URI11:
+        case URI12:
+        case URI13:
+        case URI14:
+            response = (T) EntityProvider.readFunctionImport(getContentType(),
+                uriInfo.getFunctionImport(), content,
+                EntityProviderReadProperties.init().build());
+            break;
+
         default:
             throw new ODataApplicationException("Unsupported resource type " + uriInfo.getTargetType(),
                 Locale.ENGLISH);
