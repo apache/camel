@@ -96,7 +96,7 @@
 			evicted. Any integer between 0 and 100. If 25 is set for example, 25%
 			of the entries will get evicted.
 		-->
-		<eviction-percentage>100</eviction-percentage>
+		<!--  DEPRECATED SINCE: 3.7.0 <eviction-percentage>100</eviction-percentage-->
 
 		<!--
 			While recovering from split-brain (network partitioning), map entries

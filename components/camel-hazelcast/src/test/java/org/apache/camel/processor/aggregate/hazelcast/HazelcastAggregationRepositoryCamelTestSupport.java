@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.aggregate.hazelcast;
 
+import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -28,8 +29,8 @@ public class HazelcastAggregationRepositoryCamelTestSupport extends CamelTestSup
     private static HazelcastInstance hzTwo;
 
     protected static void doInitializeHazelcastInstances() {
-        hzOne = Hazelcast.newHazelcastInstance();
-        hzTwo = Hazelcast.newHazelcastInstance();
+        hzOne = Hazelcast.newHazelcastInstance(new Config("hzOne"));
+        hzTwo = Hazelcast.newHazelcastInstance(new Config("hzTwo"));
     }
 
     protected static void doDestroyHazelcastInstances() {
