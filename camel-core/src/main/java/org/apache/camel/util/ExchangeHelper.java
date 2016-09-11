@@ -735,7 +735,7 @@ public final class ExchangeHelper {
      * @return the result body, can be <tt>null</tt>.
      * @throws CamelExecutionException is thrown if the processing of the exchange failed
      */
-    public static <T> T extractFutureBody(CamelContext context, Future<Object> future, Class<T> type) {
+    public static <T> T extractFutureBody(CamelContext context, Future<?> future, Class<T> type) {
         try {
             return doExtractFutureBody(context, future.get(), type);
         } catch (InterruptedException e) {
@@ -765,7 +765,7 @@ public final class ExchangeHelper {
      * @throws CamelExecutionException is thrown if the processing of the exchange failed
      * @throws java.util.concurrent.TimeoutException is thrown if a timeout triggered
      */
-    public static <T> T extractFutureBody(CamelContext context, Future<Object> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
+    public static <T> T extractFutureBody(CamelContext context, Future<?> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
         try {
             if (timeout > 0) {
                 return doExtractFutureBody(context, future.get(timeout, unit), type);

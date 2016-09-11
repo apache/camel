@@ -17,11 +17,12 @@
 package org.apache.camel.impl;
 
 import java.util.Map;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -39,6 +40,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**
  * Template (named like Spring's TransactionTemplate & JmsTemplate
@@ -54,6 +56,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     private Endpoint defaultEndpoint;
     private int maximumCacheSize;
     private boolean eventNotifierEnabled = true;
+    private volatile boolean synchronous;
 
     public DefaultProducerTemplate(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -80,6 +83,16 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     public void setMaximumCacheSize(int maximumCacheSize) {
         this.maximumCacheSize = maximumCacheSize;
+    }
+
+    @Override
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    @Override
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     public int getCurrentCacheSize() {
@@ -241,17 +254,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public void sendBodyAndHeaders(Endpoint endpoint, final Object body, final Map<String, Object> headers) throws CamelExecutionException {
-        Exchange result = send(endpoint, new Processor() {
-            public void process(Exchange exchange) {
-                Message in = exchange.getIn();
-                if (headers != null) {
-                    for (Map.Entry<String, Object> header : headers.entrySet()) {
-                        in.setHeader(header.getKey(), header.getValue());
-                    }
-                }
-                in.setBody(body);
-            }
-        });
+        Exchange result = send(endpoint, createBodyAndHeaders(body, headers));
         // must invoke extract result body in case of exception to be rethrown
         extractResultBody(result);
     }
@@ -261,17 +264,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public Object sendBodyAndHeaders(Endpoint endpoint, ExchangePattern pattern, final Object body, final Map<String, Object> headers) throws CamelExecutionException {
-        Exchange exchange = send(endpoint, pattern, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                Message in = exchange.getIn();
-                if (headers != null) {
-                    for (Map.Entry<String, Object> header : headers.entrySet()) {
-                        in.setHeader(header.getKey(), header.getValue());
-                    }
-                }
-                in.setBody(body);
-            }
-        });
+        Exchange exchange = send(endpoint, pattern, createBodyAndHeaders(body, headers));
         Object result = extractResultBody(exchange, pattern);
         if (pattern.isOutCapable()) {
             return result;
@@ -485,6 +478,21 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return new ConvertBodyProcessor(type);
     }
 
+    protected Function<Exchange, Exchange> createCompletionFunction(Synchronization onCompletion) {
+        return (answer) -> {
+            // invoke callback before returning answer
+            // as it allows callback to be used without unit of work invoking it
+            // and thus it works directly from a producer template as well, as opposed
+            // to the unit of work that is injected in routes
+            if (answer.isFailed()) {
+                onCompletion.onFailure(answer);
+            } else {
+                onCompletion.onComplete(answer);
+            }
+            return answer;
+        };
+    }
+
     protected Endpoint resolveMandatoryEndpoint(String endpointUri) {
         Endpoint endpoint = camelContext.getEndpoint(endpointUri);
         if (endpoint == null) {
@@ -511,228 +519,169 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         this.executor = executorService;
     }
 
-    public Future<Exchange> asyncSend(final String uri, final Exchange exchange) {
+    public CompletableFuture<Exchange> asyncSend(final String uri, final Exchange exchange) {
         return asyncSend(resolveMandatoryEndpoint(uri), exchange);
     }
 
-    public Future<Exchange> asyncSend(final String uri, final Processor processor) {
+    public CompletableFuture<Exchange> asyncSend(final String uri, final Processor processor) {
         return asyncSend(resolveMandatoryEndpoint(uri), processor);
     }
 
-    public Future<Object> asyncSendBody(final String uri, final Object body) {
+    public CompletableFuture<Object> asyncSendBody(final String uri, final Object body) {
         return asyncSendBody(resolveMandatoryEndpoint(uri), body);
     }
 
-    public Future<Object> asyncRequestBody(final String uri, final Object body) {
+    public CompletableFuture<Object> asyncRequestBody(final String uri, final Object body) {
         return asyncRequestBody(resolveMandatoryEndpoint(uri), body);
     }
 
-    public <T> Future<T> asyncRequestBody(final String uri, final Object body, final Class<T> type) {
-        return asyncRequestBody(resolveMandatoryEndpoint(uri), body, type);
+    public <T> CompletableFuture<T> asyncRequestBody(final String uri, final Object body, final Class<T> type) {
+        return asyncRequestBody(resolveMandatoryEndpoint(uri), createSetBodyProcessor(body), type);
     }
 
-    public Future<Object> asyncRequestBodyAndHeader(final String endpointUri, final Object body, final String header, final Object headerValue) {
+    public CompletableFuture<Object> asyncRequestBodyAndHeader(final String endpointUri, final Object body, final String header, final Object headerValue) {
         return asyncRequestBodyAndHeader(resolveMandatoryEndpoint(endpointUri), body, header, headerValue);
     }
 
-    public <T> Future<T> asyncRequestBodyAndHeader(final String endpointUri, final Object body, final String header, final Object headerValue, final Class<T> type) {
+    public <T> CompletableFuture<T> asyncRequestBodyAndHeader(final String endpointUri, final Object body, final String header, final Object headerValue, final Class<T> type) {
         return asyncRequestBodyAndHeader(resolveMandatoryEndpoint(endpointUri), body, header, headerValue, type);
     }
 
-    public Future<Object> asyncRequestBodyAndHeaders(final String endpointUri, final Object body, final Map<String, Object> headers) {
+    public CompletableFuture<Object> asyncRequestBodyAndHeaders(final String endpointUri, final Object body, final Map<String, Object> headers) {
         return asyncRequestBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers);
     }
 
-    public <T> Future<T> asyncRequestBodyAndHeaders(final String endpointUri, final Object body, final Map<String, Object> headers, final Class<T> type) {
+    public <T> CompletableFuture<T> asyncRequestBodyAndHeaders(final String endpointUri, final Object body, final Map<String, Object> headers, final Class<T> type) {
         return asyncRequestBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers, type);
     }
 
-    public <T> T extractFutureBody(Future<Object> future, Class<T> type) {
+    public <T> T extractFutureBody(Future<?> future, Class<T> type) {
         return ExchangeHelper.extractFutureBody(camelContext, future, type);
     }
 
-    public <T> T extractFutureBody(Future<Object> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
+    public <T> T extractFutureBody(Future<?> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
         return ExchangeHelper.extractFutureBody(camelContext, future, timeout, unit, type);
     }
 
-    public Future<Object> asyncCallbackSendBody(String uri, Object body, Synchronization onCompletion) {
+    public CompletableFuture<Object> asyncCallbackSendBody(String uri, Object body, Synchronization onCompletion) {
         return asyncCallbackSendBody(resolveMandatoryEndpoint(uri), body, onCompletion);
     }
 
-    public Future<Object> asyncCallbackSendBody(Endpoint endpoint, Object body, Synchronization onCompletion) {
+    public CompletableFuture<Object> asyncCallbackSendBody(Endpoint endpoint, Object body, Synchronization onCompletion) {
         return asyncCallback(endpoint, ExchangePattern.InOnly, body, onCompletion);
     }
 
-    public Future<Object> asyncCallbackRequestBody(String uri, Object body, Synchronization onCompletion) {
+    public CompletableFuture<Object> asyncCallbackRequestBody(String uri, Object body, Synchronization onCompletion) {
         return asyncCallbackRequestBody(resolveMandatoryEndpoint(uri), body, onCompletion);
     }
 
-    public Future<Object> asyncCallbackRequestBody(Endpoint endpoint, Object body, Synchronization onCompletion) {
+    public CompletableFuture<Object> asyncCallbackRequestBody(Endpoint endpoint, Object body, Synchronization onCompletion) {
         return asyncCallback(endpoint, ExchangePattern.InOut, body, onCompletion);
     }
 
-    public Future<Exchange> asyncCallback(String uri, Exchange exchange, Synchronization onCompletion) {
+    public CompletableFuture<Exchange> asyncCallback(String uri, Exchange exchange, Synchronization onCompletion) {
         return asyncCallback(resolveMandatoryEndpoint(uri), exchange, onCompletion);
     }
 
-    public Future<Exchange> asyncCallback(String uri, Processor processor, Synchronization onCompletion) {
+    public CompletableFuture<Exchange> asyncCallback(String uri, Processor processor, Synchronization onCompletion) {
         return asyncCallback(resolveMandatoryEndpoint(uri), processor, onCompletion);
     }
 
-    public Future<Object> asyncRequestBody(final Endpoint endpoint, final Object body) {
-        Callable<Object> task = new Callable<Object>() {
-            public Object call() throws Exception {
-                return requestBody(endpoint, body);
-            }
-        };
-        return getExecutorService().submit(task);
+    public CompletableFuture<Object> asyncRequestBody(final Endpoint endpoint, final Object body) {
+        return asyncRequestBody(endpoint, createSetBodyProcessor(body));
     }
 
-    public <T> Future<T> asyncRequestBody(final Endpoint endpoint, final Object body, final Class<T> type) {
-        Callable<T> task = new Callable<T>() {
-            public T call() throws Exception {
-                return requestBody(endpoint, body, type);
-            }
-        };
-        return getExecutorService().submit(task);
+    public <T> CompletableFuture<T> asyncRequestBody(Endpoint endpoint, Object body, Class<T> type) {
+        return asyncRequestBody(endpoint, createSetBodyProcessor(body), type);
     }
 
-    public Future<Object> asyncRequestBodyAndHeader(final Endpoint endpoint, final Object body, final String header,
+    public CompletableFuture<Object> asyncRequestBodyAndHeader(final Endpoint endpoint, final Object body, final String header,
                                                     final Object headerValue) {
-        Callable<Object> task = new Callable<Object>() {
-            public Object call() throws Exception {
-                return requestBodyAndHeader(endpoint, body, header, headerValue);
-            }
-        };
-        return getExecutorService().submit(task);
+        return asyncRequestBody(endpoint, createBodyAndHeaderProcessor(body, header, headerValue));
     }
 
-    public <T> Future<T> asyncRequestBodyAndHeader(final Endpoint endpoint, final Object body, final String header,
+    protected  <T> CompletableFuture<T> asyncRequestBody(final Endpoint endpoint, Processor processor, final Class<T> type) {
+        return asyncRequestBody(endpoint, processor, createConvertBodyProcessor(type))
+                .thenApply(answer -> camelContext.getTypeConverter().convertTo(type, answer));
+    }
+
+    public <T> CompletableFuture<T> asyncRequestBodyAndHeader(final Endpoint endpoint, final Object body, final String header,
                                                    final Object headerValue, final Class<T> type) {
-        Callable<T> task = new Callable<T>() {
-            public T call() throws Exception {
-                return requestBodyAndHeader(endpoint, body, header, headerValue, type);
-            }
-        };
-        return getExecutorService().submit(task);
+        return asyncRequestBody(endpoint, createBodyAndHeaderProcessor(body, header, headerValue), type);
     }
 
-    public Future<Object> asyncRequestBodyAndHeaders(final Endpoint endpoint, final Object body,
+    public CompletableFuture<Object> asyncRequestBodyAndHeaders(final Endpoint endpoint, final Object body,
                                                      final Map<String, Object> headers) {
-        Callable<Object> task = new Callable<Object>() {
-            public Object call() throws Exception {
-                return requestBodyAndHeaders(endpoint, body, headers);
-            }
-        };
-        return getExecutorService().submit(task);
+        return asyncRequestBody(endpoint, createBodyAndHeaders(body, headers));
     }
 
-    public <T> Future<T> asyncRequestBodyAndHeaders(final Endpoint endpoint, final Object body,
+    public <T> CompletableFuture<T> asyncRequestBodyAndHeaders(final Endpoint endpoint, final Object body,
                                                     final Map<String, Object> headers, final Class<T> type) {
-        Callable<T> task = new Callable<T>() {
-            public T call() throws Exception {
-                return requestBodyAndHeaders(endpoint, body, headers, type);
-            }
-        };
-        return getExecutorService().submit(task);
+        return asyncRequestBody(endpoint, createBodyAndHeaders(body, headers), type);
     }
 
-    public Future<Exchange> asyncSend(final Endpoint endpoint, final Exchange exchange) {
-        Callable<Exchange> task = new Callable<Exchange>() {
-            public Exchange call() throws Exception {
-                return send(endpoint, exchange);
-            }
-        };
-        return getExecutorService().submit(task);
+    public CompletableFuture<Exchange> asyncSend(final Endpoint endpoint, final Exchange exchange) {
+        return asyncSendExchange(endpoint, null, null, null, exchange);
     }
 
-    public Future<Exchange> asyncSend(final Endpoint endpoint, final Processor processor) {
-        Callable<Exchange> task = new Callable<Exchange>() {
-            public Exchange call() throws Exception {
-                return send(endpoint, processor);
-            }
-        };
-        return getExecutorService().submit(task);
+    public CompletableFuture<Exchange> asyncSend(final Endpoint endpoint, final Processor processor) {
+        return asyncSend(endpoint, null, processor, null);
     }
 
-    public Future<Object> asyncSendBody(final Endpoint endpoint, final Object body) {
-        Callable<Object> task = new Callable<Object>() {
-            public Object call() throws Exception {
-                sendBody(endpoint, body);
-                // its InOnly, so no body to return
-                return null;
-            }
-        };
-        return getExecutorService().submit(task);
+    public CompletableFuture<Object> asyncSendBody(final Endpoint endpoint, final Object body) {
+        return asyncSend(endpoint, createSetBodyProcessor(body))
+                .thenApply(this::extractResultBody);
     }
 
-    private Future<Object> asyncCallback(final Endpoint endpoint, final ExchangePattern pattern, final Object body, final Synchronization onCompletion) {
-        Callable<Object> task = new Callable<Object>() {
-            public Object call() throws Exception {
-                Exchange answer = send(endpoint, pattern, createSetBodyProcessor(body));
-
-                // invoke callback before returning answer
-                // as it allows callback to be used without unit of work invoking it
-                // and thus it works directly from a producer template as well, as opposed
-                // to the unit of work that is injected in routes
-                if (answer.isFailed()) {
-                    onCompletion.onFailure(answer);
-                } else {
-                    onCompletion.onComplete(answer);
-                }
-
-                Object result = extractResultBody(answer, pattern);
-                if (pattern.isOutCapable()) {
-                    return result;
-                } else {
-                    // return null if not OUT capable
-                    return null;
-                }
-            }
-        };
-        return getExecutorService().submit(task);
+    public CompletableFuture<Exchange> asyncCallback(final Endpoint endpoint, final Exchange exchange, final Synchronization onCompletion) {
+        return asyncSend(endpoint, exchange).thenApply(createCompletionFunction(onCompletion));
     }
 
-    public Future<Exchange> asyncCallback(final Endpoint endpoint, final Exchange exchange, final Synchronization onCompletion) {
-        Callable<Exchange> task = new Callable<Exchange>() {
-            public Exchange call() throws Exception {
-                // process the exchange, any exception occurring will be caught and set on the exchange
-                send(endpoint, exchange);
-
-                // invoke callback before returning answer
-                // as it allows callback to be used without unit of work invoking it
-                // and thus it works directly from a producer template as well, as opposed
-                // to the unit of work that is injected in routes
-                if (exchange.isFailed()) {
-                    onCompletion.onFailure(exchange);
-                } else {
-                    onCompletion.onComplete(exchange);
-                }
-                return exchange;
-            }
-        };
-        return getExecutorService().submit(task);
+    public CompletableFuture<Exchange> asyncCallback(final Endpoint endpoint, final Processor processor, final Synchronization onCompletion) {
+        return asyncSend(endpoint, processor).thenApply(createCompletionFunction(onCompletion));
     }
 
-    public Future<Exchange> asyncCallback(final Endpoint endpoint, final Processor processor, final Synchronization onCompletion) {
-        Callable<Exchange> task = new Callable<Exchange>() {
-            public Exchange call() throws Exception {
-                // process the exchange, any exception occurring will be caught and set on the exchange
-                Exchange answer = send(endpoint, processor);
+    protected CompletableFuture<Object> asyncRequestBody(final Endpoint endpoint, Processor processor) {
+        return asyncRequestBody(endpoint, processor, (Processor) null);
+    }
 
-                // invoke callback before returning answer
-                // as it allows callback to be used without unit of work invoking it
-                // and thus it works directly from a producer template as well, as opposed
-                // to the unit of work that is injected in routes
-                if (answer.isFailed()) {
-                    onCompletion.onFailure(answer);
-                } else {
-                    onCompletion.onComplete(answer);
-                }
-                return answer;
-            }
-        };
-        return getExecutorService().submit(task);
+    protected CompletableFuture<Object> asyncRequestBody(final Endpoint endpoint, Processor processor, Processor resultProcessor) {
+        return asyncRequest(endpoint, processor, resultProcessor)
+                .thenApply(e -> extractResultBody(e, ExchangePattern.InOut));
+    }
+
+    protected CompletableFuture<Exchange> asyncRequest(Endpoint endpoint, Processor processor,
+            Processor resultProcessor) {
+        return asyncSend(endpoint, ExchangePattern.InOut, processor, resultProcessor);
+    }
+
+    protected CompletableFuture<Exchange> asyncSend(
+            Endpoint endpoint, ExchangePattern pattern, Processor processor, Processor resultProcessor) {
+        return asyncSendExchange(endpoint, pattern, processor, resultProcessor, null);
+    }
+
+    protected CompletableFuture<Exchange> asyncSendExchange(
+            Endpoint endpoint, ExchangePattern pattern, Processor processor, Processor resultProcessor,
+            Exchange inExchange) {
+        CompletableFuture<Exchange> exchangeFuture = new CompletableFuture<>();
+        getExecutorService().submit(() -> getProducerCache().asyncSendExchange(endpoint, pattern, processor,
+                resultProcessor, inExchange, exchangeFuture));
+        return exchangeFuture;
+    }
+
+    protected CompletableFuture<Object> asyncCallback(final Endpoint endpoint, final ExchangePattern pattern,
+            final Object body, final Synchronization onCompletion) {
+        return asyncSend(endpoint, pattern, createSetBodyProcessor(body), null)
+                .thenApply(createCompletionFunction(onCompletion))
+                .thenApply(answer -> {
+                    Object result = extractResultBody(answer, pattern);
+                    if (pattern.isOutCapable()) {
+                        return result;
+                    } else {
+                        // return null if not OUT capable
+                        return null;
+                    }
+                });
     }
 
     private ProducerCache getProducerCache() {
@@ -756,7 +705,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             if (executor != null) {
                 return executor;
             }
-            executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "ProducerTemplate");
+            if (synchronous) {
+                executor = new SynchronousExecutorService();
+            } else {
+                executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "ProducerTemplate");
+            }
         }
 
         ObjectHelper.notNull(executor, "ExecutorService");
