@@ -20,20 +20,40 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Producer or consumer encounter an error transmitting data
  */
 public class MllpWriteException extends MllpException {
-    public MllpWriteException(String message) {
-        super(message);
-    }
+    private final byte[] mllpPayload;
 
     public MllpWriteException(String message, byte[] mllpPayload) {
-        super(message, mllpPayload);
-    }
-
-    public MllpWriteException(String message, Throwable cause) {
-        super(message, cause);
+        super(message);
+        this.mllpPayload = mllpPayload;
     }
 
     public MllpWriteException(String message, byte[] mllpPayload, Throwable cause) {
-        super(message, mllpPayload, cause);
+        super(message, cause);
+        this.mllpPayload = mllpPayload;
+    }
+
+    public byte[] getMllpPayload() {
+        return mllpPayload;
+    }
+
+    @Override
+    public String getMessage() {
+        if (isLogPhi()) {
+            return String.format("%s:\n\tMLLP Payload: %s", super.getMessage(), covertBytesToPrintFriendlyString(mllpPayload));
+        } else {
+            return super.getMessage();
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder(this.getClass().getName());
+
+        stringBuilder.append(": {mllpPayload=")
+                .append(covertBytesToPrintFriendlyString(mllpPayload))
+                .append("}");
+
+        return stringBuilder.toString();
     }
 
 }

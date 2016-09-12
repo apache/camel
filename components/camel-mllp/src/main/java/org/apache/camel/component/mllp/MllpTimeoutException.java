@@ -20,20 +20,40 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Producer or Consumer encounter a timeout reading a message
  */
 public class MllpTimeoutException extends MllpException {
-    public MllpTimeoutException(String message) {
+    private final byte[] hl7Message;
+
+    public MllpTimeoutException(String message, byte[] hl7Message) {
         super(message);
+        this.hl7Message = hl7Message;
     }
 
-    public MllpTimeoutException(String message, byte[] mllpPayload) {
-        super(message, mllpPayload);
-    }
-
-    public MllpTimeoutException(String message, Throwable cause) {
+    public MllpTimeoutException(String message, byte[] hl7Message, Throwable cause) {
         super(message, cause);
+        this.hl7Message = hl7Message;
     }
 
-    public MllpTimeoutException(String message, byte[] mllpPayload, Throwable cause) {
-        super(message, mllpPayload, cause);
+    public byte[] getHl7Message() {
+        return hl7Message;
+    }
+
+    @Override
+    public String getMessage() {
+        if (isLogPhi()) {
+            return String.format("%s:\n\tHL7 Message: %s", super.getMessage(), covertBytesToPrintFriendlyString(hl7Message));
+        } else {
+            return super.getMessage();
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder(this.getClass().getName());
+
+        stringBuilder.append(": {hl7Message=")
+                .append(covertBytesToPrintFriendlyString(hl7Message))
+                .append("}");
+
+        return stringBuilder.toString();
     }
 
 }
