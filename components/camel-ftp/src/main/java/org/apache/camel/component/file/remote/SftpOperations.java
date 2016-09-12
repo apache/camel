@@ -132,7 +132,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
                         LOG.trace("Connecting ...");
                         channel.connect();
                     }
-                    LOG.info("Connected to " + configuration.remoteServerInformation());
+                    LOG.debug("Connected to " + configuration.remoteServerInformation());
                 }
 
                 // yes we could connect
