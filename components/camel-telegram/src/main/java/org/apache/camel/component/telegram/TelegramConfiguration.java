@@ -56,21 +56,26 @@ public class TelegramConfiguration {
      * Sets the remaining configuration parameters available in the URI.
      *
      * @param remaining the URI part after the scheme
+     * @param defaultAuthorizationToken the default authorization token to use if not present in the URI
      */
-    public void updatePathConfig(String remaining) {
+    public void updatePathConfig(String remaining, String defaultAuthorizationToken) {
         String[] parts = remaining.split("/");
-        if (parts.length != 2) {
-            throw new IllegalArgumentException("Unexpected URI format. Expected 'bots/<authorizationToken>', found '" + remaining + "'");
+        if (parts.length == 0 || parts.length > 2) {
+            throw new IllegalArgumentException("Unexpected URI format. Expected 'bots' or 'bots/<authorizationToken>', found '" + remaining + "'");
         }
 
         String type = parts[0];
         if (!type.equals(ENDPOINT_TYPE_BOTS)) {
-            throw new IllegalArgumentException("Unexpected endpoint type. Expected 'bots', found '" + parts[0] + "'");
+            throw new IllegalArgumentException("Unexpected endpoint type. Expected 'bots', found '" + type + "'");
         }
 
-        String authorizationToken = parts[1];
-        if (authorizationToken.length() == 0) {
-            throw new IllegalArgumentException("Authorization token is required");
+        String authorizationToken = defaultAuthorizationToken;
+        if (parts.length > 1) {
+            authorizationToken = parts[1];
+        }
+
+        if (authorizationToken == null || authorizationToken.trim().length() == 0) {
+            throw new IllegalArgumentException("The authorization token must be provided and cannot be empty");
         }
 
         this.type = type;
