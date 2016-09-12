@@ -229,7 +229,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             // do nothing, as we're working with a DefaultJmsMessageListenerContainer with an explicit DefaultTaskExecutorType,
             // so DefaultJmsMessageListenerContainer#createDefaultTaskExecutor will handle the creation
             log.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}",
-                    listenerContainer, configuration.getDefaultTaskExecutorType());
+                    listenerContainer, getDefaultTaskExecutorType());
         }
 
         // set a default transaction name if none provided

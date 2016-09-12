@@ -368,7 +368,7 @@ public class DisruptorReference {
             shutdownExecutor();
         }
         endpoints.remove(disruptorEndpoint);
-        LOGGER.debug("Endpoint removed: {}, new total endpoints {}", disruptorEndpoint, endpoints.size());
+        LOGGER.debug("Endpoint removed: {}, new total endpoints {}", disruptorEndpoint, getEndpointCount());
     }
 
     public synchronized int getEndpointCount() {
