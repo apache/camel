@@ -27,7 +27,6 @@ import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.component.jetty.JettyHttpEndpoint;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.Connector;
@@ -39,8 +38,8 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 public class JettyHttpComponent9 extends JettyHttpComponent {
 
-    protected CamelHttpClient createCamelHttpClient(HttpClientTransport transport, SslContextFactory sslContextFactory) {
-        return new CamelHttpClient9(transport, sslContextFactory);
+    protected CamelHttpClient createCamelHttpClient(SslContextFactory sslContextFactory) {
+        return new CamelHttpClient9(sslContextFactory);
     }
 
     protected JettyHttpEndpoint createEndpoint(URI endpointUri, URI httpUri) throws URISyntaxException {

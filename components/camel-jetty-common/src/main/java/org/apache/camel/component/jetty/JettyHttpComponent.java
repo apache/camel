@@ -63,8 +63,6 @@ import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpClientTransport;
-import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.AbstractConnector;
@@ -654,8 +652,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
      */
     public CamelHttpClient createHttpClient(JettyHttpEndpoint endpoint, Integer minThreads, Integer maxThreads, SSLContextParameters ssl) throws Exception {
         SslContextFactory sslContextFactory = createSslContextFactory(ssl);
-        HttpClientTransport transport = createHttpClientTransport(maxThreads);
-        CamelHttpClient httpClient = createCamelHttpClient(transport, sslContextFactory);
+        CamelHttpClient httpClient = createCamelHttpClient(sslContextFactory);
         
         CamelContext context = endpoint.getCamelContext();
 
@@ -705,21 +702,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         return httpClient;
     }
 
-    private HttpClientTransport createHttpClientTransport(Integer maxThreads) {
-        if (maxThreads == null) {
-            return new HttpClientTransportOverHTTP();
-        }
-
-        int selectors = Runtime.getRuntime().availableProcessors() / 2;
-
-        if (selectors >= maxThreads) {
-            selectors = maxThreads - 1;
-        }
-
-        return new HttpClientTransportOverHTTP(selectors);
-    }
-
-    protected abstract CamelHttpClient createCamelHttpClient(HttpClientTransport transport, SslContextFactory sslContextFactory);
+    protected abstract CamelHttpClient createCamelHttpClient(SslContextFactory sslContextFactory);
 
     public Integer getHttpClientMinThreads() {
         return httpClientMinThreads;

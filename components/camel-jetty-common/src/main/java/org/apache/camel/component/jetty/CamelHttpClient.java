@@ -22,7 +22,6 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
@@ -32,10 +31,6 @@ public abstract class CamelHttpClient extends HttpClient {
 
     public CamelHttpClient(SslContextFactory sslContextFactory) {
         super(sslContextFactory);
-    }
-
-    public CamelHttpClient(HttpClientTransport transport, SslContextFactory sslContextFactory) {
-        super(transport, sslContextFactory);
     }
 
     @Deprecated
@@ -50,8 +45,10 @@ public abstract class CamelHttpClient extends HttpClient {
     @Override
     protected void doStart() throws Exception {
         if (!hasThreadPool()) {
-            // if there is no thread pool then create a default thread pool using daemon threads with default size (200)
+            // if there is no thread pool then create a default thread pool using daemon threads
             QueuedThreadPool qtp = new QueuedThreadPool();
+            // 16 max threads is the default in the http client
+            qtp.setMaxThreads(16);
             qtp.setDaemon(true);
             // let the thread names indicate they are from the client
             qtp.setName("CamelJettyClient(" + ObjectHelper.getIdentityHashCode(this) + ")");
