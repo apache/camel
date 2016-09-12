@@ -561,13 +561,13 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             final SuspendedExchange se = suspendedBreakpoints.get(nodeId);
             if (se != null) {
                 // now wait until we should continue
-                logger.log("NodeBreakpoint at node " + toNode + " is waiting to continue for exchangeId: " + exchange.getExchangeId());
+                logger.log("NodeBreakpoint at node " + toNode + " is waiting to continue for exchangeId: " + exchangeId);
                 try {
                     boolean hit = se.getLatch().await(fallbackTimeout, TimeUnit.SECONDS);
                     if (!hit) {
-                        logger.log("NodeBreakpoint at node " + toNode + " timed out and is continued exchangeId: " + exchange.getExchangeId(), LoggingLevel.WARN);
+                        logger.log("NodeBreakpoint at node " + toNode + " timed out and is continued exchangeId: " + exchangeId, LoggingLevel.WARN);
                     } else {
-                        logger.log("NodeBreakpoint at node " + toNode + " is continued exchangeId: " + exchange.getExchangeId());
+                        logger.log("NodeBreakpoint at node " + toNode + " is continued exchangeId: " + exchangeId);
                     }
                 } catch (InterruptedException e) {
                     // ignore
