@@ -46,6 +46,9 @@ public class TelegramProducer extends DefaultProducer {
         // Tries to get a message in its OutgoingMessage format
         // Automatic conversion applies here
         OutgoingMessage message = exchange.getIn().getBody(OutgoingMessage.class);
+        if (message == null) {
+            throw new IllegalArgumentException("Cannot convert the content to a Telegram OutgoingMessage");
+        }
 
         if (message.getChatId() == null) {
             log.debug("Chat id is null on outgoing message, trying resolution");
