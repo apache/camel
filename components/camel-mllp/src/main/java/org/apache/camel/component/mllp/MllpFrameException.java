@@ -20,21 +20,41 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Producer or consumer encounters a corrupt MLLP Frame while attempting
  * to read or write a MLLP payload.
  */
-public class MllpCorruptFrameException extends MllpException {
-    public MllpCorruptFrameException(String message) {
+public class MllpFrameException extends MllpException {
+    private final byte[] mllpPayload;
+
+    public MllpFrameException(String message, byte[] mllpPayload) {
         super(message);
+        this.mllpPayload = mllpPayload;
     }
 
-    public MllpCorruptFrameException(String message, byte[] mllpPayload) {
-        super(message, mllpPayload);
-    }
-
-    public MllpCorruptFrameException(String message, Throwable cause) {
+    public MllpFrameException(String message, byte[] mllpPayload, Throwable cause) {
         super(message, cause);
+        this.mllpPayload = mllpPayload;
     }
 
-    public MllpCorruptFrameException(String message, byte[] mllpPayload, Throwable cause) {
-        super(message, mllpPayload, cause);
+    public byte[] getMllpPayload() {
+        return mllpPayload;
+    }
+
+    @Override
+    public String getMessage() {
+        if (isLogPhi()) {
+            return String.format("%s:\n\tMLLP Payload: %s", super.getMessage(), covertBytesToPrintFriendlyString(mllpPayload));
+        } else {
+            return super.getMessage();
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder(this.getClass().getName());
+
+        stringBuilder.append(": {mllpPayload=")
+                .append(covertBytesToPrintFriendlyString(mllpPayload))
+                .append("}");
+
+        return stringBuilder.toString();
     }
 
 }

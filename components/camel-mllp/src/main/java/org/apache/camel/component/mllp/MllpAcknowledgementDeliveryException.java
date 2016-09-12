@@ -17,16 +17,16 @@
 package org.apache.camel.component.mllp;
 
 /**
- * Raised when a MLLP Producer receives a HL7 Commit Reject Acknowledgement
+ * Raised when a MLLP Consumer cannot deliver the MLLP Acknowledgement
  */
-public class MllpCommitRejectAcknowledgementException extends MllpAcknowledgementException {
-    static final String EXCEPTION_MESSAGE = "HL7 Commit Reject Acknowledgment Received";
+public class MllpAcknowledgementDeliveryException extends MllpAcknowledgementException {
+    static final String EXCEPTION_MESSAGE = "HL7 Acknowledgment Delivery Failed";
 
-    public MllpCommitRejectAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement) {
+    public MllpAcknowledgementDeliveryException(byte[] hl7Message, byte[] hl7Acknowledgement) {
         super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement);
     }
 
-    public MllpCommitRejectAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
+    public MllpAcknowledgementDeliveryException(byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
         super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement, cause);
     }
 }

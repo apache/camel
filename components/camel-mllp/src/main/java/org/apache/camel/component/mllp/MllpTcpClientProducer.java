@@ -19,7 +19,6 @@ package org.apache.camel.component.mllp;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
@@ -111,7 +110,7 @@ public class MllpTcpClientProducer extends DefaultProducer {
                 acknowledgementBytes = MllpUtil.closeFrame(socket, endpoint.receiveTimeout, endpoint.readTimeout);
             }
         } catch (SocketTimeoutException timeoutEx) {
-            exchange.setException(new MllpAcknowledgementTimoutException("Acknowledgement timout", timeoutEx));
+            exchange.setException(new MllpAcknowledgementTimoutException("Acknowledgement timout", hl7MessageBytes, timeoutEx));
             return;
         } catch (MllpException mllpEx) {
             exchange.setException(mllpEx);
@@ -146,14 +145,14 @@ public class MllpTcpClientProducer extends DefaultProducer {
                             // Found the beginning of the MSA - the next two bytes should be our acknowledgement code
                             msaStartIndex = i + 1;
                             if (bA != acknowledgementBytes[i + 5] && bC != acknowledgementBytes[i + 5]) {
-                                exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
+                                exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes, i + 5, 2), hl7MessageBytes, acknowledgementBytes));
                             } else {
                                 String acknowledgemenTypeString;
                                 switch (acknowledgementBytes[i + 6]) {
                                 case bA:
                                     // We have an AA or CA- make sure that's the end of the field
                                     if (fieldDelim != acknowledgementBytes[i + 7]) {
-                                        exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
+                                        exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes, i + 5, 3), hl7MessageBytes, acknowledgementBytes));
                                     }
                                     if (bA == acknowledgementBytes[i + 5]) {
                                         message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
@@ -165,24 +164,24 @@ public class MllpTcpClientProducer extends DefaultProducer {
                                     // We have an AE or CE
                                     if (bA == acknowledgementBytes[i + 5]) {
                                         message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AE");
-                                        exchange.setException(new MllpApplicationErrorAcknowledgementException(new String(acknowledgementBytes)));
+                                        exchange.setException(new MllpApplicationErrorAcknowledgementException(hl7MessageBytes, acknowledgementBytes));
                                     } else {
                                         message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "CE");
-                                        exchange.setException(new MllpCommitErrorAcknowledgementException(new String(acknowledgementBytes)));
+                                        exchange.setException(new MllpCommitErrorAcknowledgementException(hl7MessageBytes, acknowledgementBytes));
                                     }
                                     break;
                                 case bR:
                                     // We have an AR or CR
                                     if (bA == acknowledgementBytes[i + 5]) {
                                         message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AR");
-                                        exchange.setException(new MllpApplicationRejectAcknowledgementException(new String(acknowledgementBytes)));
+                                        exchange.setException(new MllpApplicationRejectAcknowledgementException(hl7MessageBytes, acknowledgementBytes));
                                     } else {
                                         message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "CR");
-                                        exchange.setException(new MllpCommitRejectAcknowledgementException(new String(acknowledgementBytes)));
+                                        exchange.setException(new MllpCommitRejectAcknowledgementException(hl7MessageBytes, acknowledgementBytes));
                                     }
                                     break;
                                 default:
-                                    exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
+                                    exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes, i + 5, 2), hl7MessageBytes, acknowledgementBytes));
                                 }
                             }
 
@@ -194,7 +193,7 @@ public class MllpTcpClientProducer extends DefaultProducer {
             }
             if (-1 == msaStartIndex) {
                 // Didn't find an MSA
-                exchange.setException(new MllpInvalidAcknowledgementException(new String(acknowledgementBytes)));
+                exchange.setException(new MllpInvalidAcknowledgementException("MSA Not found in acknowledgement", hl7MessageBytes, acknowledgementBytes));
             }
         }
         // Check AFTER_SEND Properties

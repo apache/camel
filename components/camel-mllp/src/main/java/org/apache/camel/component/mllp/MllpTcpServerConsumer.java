@@ -33,18 +33,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.mllp.impl.AcknowledgmentSynchronizationAdapter;
 import org.apache.camel.component.mllp.impl.MllpUtil;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
 import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerator;
 import org.apache.camel.util.IOHelper;
 
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_ACKNOWLEDGEMENT;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_AUTO_ACKNOWLEDGE;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_CHARSET;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_EVENT_TYPE;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_LOCAL_ADDRESS;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_MESSAGE_CONTROL;
@@ -53,8 +49,6 @@ import static org.apache.camel.component.mllp.MllpConstants.MLLP_PROCESSING_ID;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_RECEIVING_APPLICATION;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_RECEIVING_FACILITY;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_REMOTE_ADDRESS;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_SECURITY;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_SENDING_APPLICATION;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_SENDING_FACILITY;
@@ -428,128 +422,20 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
                 message.setHeader(MLLP_LOCAL_ADDRESS, clientSocket.getLocalAddress().toString());
                 message.setHeader(MLLP_REMOTE_ADDRESS, clientSocket.getRemoteSocketAddress());
+                message.setHeader(MLLP_AUTO_ACKNOWLEDGE, endpoint.autoAck);
 
                 populateHl7DataHeaders(exchange, message, hl7MessageBytes);
 
+                exchange.addOnCompletion(new AcknowledgmentSynchronizationAdapter(clientSocket, hl7MessageBytes));
 
                 log.debug("Calling processor");
                 try {
                     getProcessor().process(exchange);
-                    // processed the message - send the acknowledgement
-
-                    // Check BEFORE_SEND Properties
-                    if (exchange.getProperty(MLLP_RESET_CONNECTION_BEFORE_SEND, boolean.class)) {
-                        MllpUtil.resetConnection(clientSocket);
-                        return;
-                    } else if (exchange.getProperty(MLLP_CLOSE_CONNECTION_BEFORE_SEND, boolean.class)) {
-                        MllpUtil.closeConnection(clientSocket);
-                    }
-
-                    // Find the acknowledgement body
-                    byte[] acknowledgementMessageBytes = exchange.getProperty(MLLP_ACKNOWLEDGEMENT, byte[].class);
-                    String acknowledgementMessageType = null;
-                    if (null == acknowledgementMessageBytes) {
-                        if (!endpoint.autoAck) {
-                            exchange.setException(new MllpInvalidAcknowledgementException("Automatic Acknowledgement is disabled and the "
-                                    + MLLP_ACKNOWLEDGEMENT + " exchange property is null or cannot be converted to byte[]"));
-                            return;
-                        }
-
-                        String acknowledgmentTypeProperty = exchange.getProperty(MLLP_ACKNOWLEDGEMENT_TYPE, String.class);
-                        try {
-                            if (null == acknowledgmentTypeProperty) {
-                                if (null == exchange.getException()) {
-                                    acknowledgementMessageType = "AA";
-                                    acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationAcceptAcknowledgementMessage(hl7MessageBytes);
-                                } else {
-                                    acknowledgementMessageType = "AE";
-                                    acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationErrorAcknowledgementMessage(hl7MessageBytes);
-                                }
-                            } else {
-                                switch (acknowledgmentTypeProperty) {
-                                case "AA":
-                                    acknowledgementMessageType = "AA";
-                                    acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationAcceptAcknowledgementMessage(hl7MessageBytes);
-                                    break;
-                                case "AE":
-                                    acknowledgementMessageType = "AE";
-                                    acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationErrorAcknowledgementMessage(hl7MessageBytes);
-                                    break;
-                                case "AR":
-                                    acknowledgementMessageType = "AR";
-                                    acknowledgementMessageBytes = acknowledgementGenerator.generateApplicationRejectAcknowledgementMessage(hl7MessageBytes);
-                                    break;
-                                default:
-                                    exchange.setException(new Hl7AcknowledgementGenerationException("Unsupported acknowledgment type: " + acknowledgmentTypeProperty));
-                                    return;
-                                }
-                            }
-                        } catch (Hl7AcknowledgementGenerationException ackGenerationException) {
-                            exchange.setException(ackGenerationException);
-                        }
-                    } else {
-                        final byte bM = 77;
-                        final byte bS = 83;
-                        final byte bA = 65;
-                        final byte bE = 69;
-                        final byte bR = 82;
-
-                        final byte fieldSeparator = hl7MessageBytes[3];
-                        // Acknowledgment is specified in exchange property - determine the acknowledgement type
-                        for (int i = 0; i < hl7MessageBytes.length; ++i) {
-                            if (SEGMENT_DELIMITER == i) {
-                                if (i + 7 < hl7MessageBytes.length // Make sure we don't run off the end of the message
-                                        && bM == hl7MessageBytes[i + 1] && bS == hl7MessageBytes[i + 2] && bA == hl7MessageBytes[i + 3] && fieldSeparator == hl7MessageBytes[i + 4]) {
-                                    if (fieldSeparator != hl7MessageBytes[i + 7]) {
-                                        log.warn("MSA-1 is longer than 2-bytes - ignoring trailing bytes");
-                                    }
-                                    // Found MSA - pull acknowledgement bytes
-                                    byte[] acknowledgmentTypeBytes = new byte[2];
-                                    acknowledgmentTypeBytes[0] = hl7MessageBytes[i + 5];
-                                    acknowledgmentTypeBytes[1] = hl7MessageBytes[i + 6];
-                                    acknowledgementMessageType = IOConverter.toString(acknowledgmentTypeBytes, exchange);
-
-                                    // Verify it's a valid acknowledgement code
-                                    if (bA != acknowledgmentTypeBytes[0]) {
-                                        switch (acknowledgementMessageBytes[1]) {
-                                        case bA:
-                                        case bR:
-                                        case bE:
-                                            break;
-                                        default:
-                                            log.warn("Invalid acknowledgement type [" + acknowledgementMessageType + "] found in message - should be AA, AE or AR");
-                                        }
-                                    }
-
-                                    // if the MLLP_ACKNOWLEDGEMENT_TYPE property is set on the exchange, make sure it matches
-                                    String acknowledgementTypeProperty = exchange.getProperty(MLLP_ACKNOWLEDGEMENT_TYPE, String.class);
-                                    if (null != acknowledgementTypeProperty && !acknowledgementTypeProperty.equals(acknowledgementMessageType)) {
-                                        log.warn("Acknowledgement type found in message [" + acknowledgementMessageType + "] does not match "
-                                                + MLLP_ACKNOWLEDGEMENT_TYPE + " exchange property value [" + acknowledgementTypeProperty + "] - using value found in message");
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // Send the acknowledgement
-                    log.debug("Writing Acknowledgement");
-                    MllpUtil.writeFramedPayload(clientSocket, acknowledgementMessageBytes);
-                    exchange.getIn().setHeader(MLLP_ACKNOWLEDGEMENT, acknowledgementMessageBytes);
-                    exchange.getIn().setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, acknowledgementMessageType);
-                    exchange.setProperty(MLLP_ACKNOWLEDGEMENT, acknowledgementMessageBytes);
-                    exchange.setProperty(MLLP_ACKNOWLEDGEMENT_TYPE, acknowledgementMessageType);
-
-                    // Check AFTER_SEND Properties
-                    if (exchange.getProperty(MLLP_RESET_CONNECTION_AFTER_SEND, boolean.class)) {
-                        MllpUtil.resetConnection(clientSocket);
-                        return;
-                    } else if (exchange.getProperty(MLLP_CLOSE_CONNECTION_AFTER_SEND, boolean.class)) {
-                        MllpUtil.closeConnection(clientSocket);
-                    }
-
-                } catch (Exception e) {
-                    exchange.setException(e);
+                } catch (RuntimeException runtimeEx) {
+                    throw runtimeEx;
+                } catch (Exception ex) {
+                    log.error("Unexpected exception processing exchange", ex);
+                    throw new RuntimeException("Unexpected exception processing exchange", ex);
                 }
 
             }
