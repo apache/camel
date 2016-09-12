@@ -75,7 +75,7 @@ public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport 
 
         String message;
 
-        public BrandNewType(String message) {
+        BrandNewType(String message) {
             this.message = message;
         }
 
