@@ -26,10 +26,10 @@
     <version>2.18.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-example-dsl-java8</artifactId>
+  <artifactId>camel-example-java8</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Example :: DSL :: Java8 :: Spring JavaConfig</name>
-  <description>An example for showing Camel Spring JavaConfig DSL for Java 8</description>
+  <name>Camel :: Example :: Java8</name>
+  <description>An example for showing Camel DSL for Java 8</description>
 
   <dependencies>
 
