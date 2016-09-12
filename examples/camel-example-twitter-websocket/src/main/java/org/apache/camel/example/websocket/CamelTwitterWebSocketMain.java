@@ -60,7 +60,7 @@ public final class CamelTwitterWebSocketMain {
 
         // poll for gaga, every 5nd second
         route.setSearchTerm("gaga");
-        route.setDelay(5);
+        route.setDelay(5000);
 
         // web socket on port 9090
         route.setPort(9090);
