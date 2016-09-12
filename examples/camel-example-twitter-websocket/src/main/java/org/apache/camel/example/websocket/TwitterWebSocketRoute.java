@@ -28,7 +28,7 @@ public class TwitterWebSocketRoute extends RouteBuilder {
 
     private int port = 9090;
     private String searchTerm;
-    private int delay = 2;
+    private int delay = 5000;
     private String consumerKey;
     private String consumerSecret;
     private String accessToken;
