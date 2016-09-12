@@ -20,30 +20,25 @@ package org.apache.camel.component.mllp;
  * Base class for all MLLP Exceptions, and also used as a generic MLLP exception
  */
 public class MllpException extends Exception {
-    private final byte[] mllpPayload;
-
     public MllpException(String message) {
         super(message);
-        this.mllpPayload = null;
-    }
-
-    public MllpException(String message, byte[] mllpPayload) {
-        super(message);
-        this.mllpPayload = mllpPayload;
     }
 
     public MllpException(String message, Throwable cause) {
         super(message, cause);
-        this.mllpPayload = null;
     }
 
-    public MllpException(String message, byte[] mllpPayload, Throwable cause) {
-        super(message, cause);
-        this.mllpPayload = mllpPayload;
+    public boolean isLogPhi() {
+        String logPhiProperty = System.getProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
+        return Boolean.valueOf(logPhiProperty);
     }
 
-    public byte[] getMllpPayload() {
-        return mllpPayload;
+    protected String covertBytesToPrintFriendlyString(byte[] hl7Bytes) {
+        if (null == hl7Bytes) {
+            return "null";
+        } else if (hl7Bytes.length == 0) {
+            return "";
+        }
+        return new String(hl7Bytes).replaceAll("\r", "<CR>").replaceAll("\n", "<LF>");
     }
-
 }
