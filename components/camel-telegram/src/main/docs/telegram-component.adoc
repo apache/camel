@@ -49,7 +49,17 @@ Options
 ^^^^^^^
 
 // component options: START
-The Telegram component has no options.
+The Telegram component supports 1 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2,1m,7",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| authorizationToken | String | The default Telegram authorization token to be used when the information is not provided in the endpoints.
+|=======================================================================
+{% endraw %}
 // component options: END
 
 
@@ -270,3 +280,32 @@ public class ChatBotLogic {
 Every non-null string returned by the `chatBotProcess` method is automatically routed to the
 chat that originated the request (as the `CamelTelegramChatId` header is used to route the message).
 
+[[Telegram-GettingTheChatId]]
+Getting the Chat ID
+^^^^^^^^^^^^^^^^^^^
+
+If you want to push messages to a specific Telegram chat when an event occurs, you need to
+retrieve the corresponding chat ID. The chat ID is not currently shown in the telegram client,
+but you can obtain it using a simple route.
+
+First, add the bot to the chat where you want to push messages, then run a route like the following one.
+
+[source,java]
+---------------------------------------------------------
+from("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L")
+.to("log:INFO?showHeaders=true");
+---------------------------------------------------------
+
+Any message received by the bot will be dumped to your log together with information about the chat (`CamelTelegramChatId`
+header).
+
+Once you get the chat ID, you can use the following sample route to push message to it.
+
+[source,java]
+---------------------------------------------------------
+from("timer:tick")
+.setBody().constant("Hello")
+to("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L?chatId=123456")
+---------------------------------------------------------
+
+Note that the corresponding URI parameter is simply `chatId`.
