@@ -40,7 +40,7 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     private transient Charset charset;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(enums = "in,out,err,header,file,url") @Metadata(required = "true")
     private String url;
     @UriParam
     private String fileName;
