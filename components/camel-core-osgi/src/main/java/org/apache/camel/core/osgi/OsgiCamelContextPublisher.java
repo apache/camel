@@ -113,7 +113,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("Registering CamelContext [{}] of in OSGi registry", camelContext.getName());
+                log.debug("Registering CamelContext [{}] of in OSGi registry", name);
             }
 
             ServiceRegistration<?> reg = bundleContext.registerService(CamelContext.class.getName(), camelContext, props);
