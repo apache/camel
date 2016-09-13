@@ -55,7 +55,7 @@ public class SaxonConverterTest extends CamelTestSupport {
         super.setUp();
         exchange = new DefaultExchange(context);
         evaluator = new XPathEvaluator();
-        doc = evaluator.setSource(new StringSource(CONTENT));
+        doc = evaluator.getConfiguration().buildDocumentTree(new StringSource(CONTENT)).getRootNode();
     }
 
     @Test

@@ -545,7 +545,7 @@ public class XsltBuilder implements Processor {
      */
     protected void configureTransformer(Transformer transformer, Exchange exchange) throws Exception {
         if (uriResolver == null) {
-            uriResolver = new XsltUriResolver(exchange.getContext().getClassResolver(), null);
+            uriResolver = new XsltUriResolver(exchange.getContext(), null);
         }
         transformer.setURIResolver(uriResolver);
         if (errorListener == null) {

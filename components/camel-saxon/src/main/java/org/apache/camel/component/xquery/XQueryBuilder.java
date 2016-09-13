@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
@@ -40,17 +39,17 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.w3c.dom.Node;
-
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.ObjectValue;
 import net.sf.saxon.value.Whitespace;
 import org.apache.camel.BytesSource;
 import org.apache.camel.Exchange;
@@ -69,6 +68,7 @@ import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
 
 /**
  * Creates an XQuery builder.
@@ -604,12 +604,23 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         throws Exception {
         addParameters(dynamicQueryContext, exchange.getProperties());
         addParameters(dynamicQueryContext, exchange.getIn().getHeaders(), "in.headers.");
-        dynamicQueryContext.setParameter("in.body", exchange.getIn().getBody());
+        dynamicQueryContext.setParameter(
+            StructuredQName.fromClarkName("in.body"),
+            new ObjectValue(exchange.getIn().getBody())
+        );
+
         addParameters(dynamicQueryContext, getParameters());
 
-        dynamicQueryContext.setParameter("exchange", exchange);
+        dynamicQueryContext.setParameter(
+            StructuredQName.fromClarkName("exchange"),
+            new ObjectValue(exchange)
+        );
         if (exchange.hasOut() && exchange.getPattern().isOutCapable()) {
-            dynamicQueryContext.setParameter("out.body", exchange.getOut().getBody());
+            dynamicQueryContext.setParameter(
+                StructuredQName.fromClarkName("out.body"),
+                new ObjectValue(exchange.getOut().getBody())
+            );
+
             addParameters(dynamicQueryContext, exchange.getOut().getHeaders(), "out.headers.");
         }
     }
@@ -621,7 +632,10 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     protected void addParameters(DynamicQueryContext dynamicQueryContext, Map<String, Object> map, String parameterPrefix) {
         Set<Map.Entry<String, Object>> propertyEntries = map.entrySet();
         for (Map.Entry<String, Object> entry : propertyEntries) {
-            dynamicQueryContext.setParameter(parameterPrefix + entry.getKey(), entry.getValue());
+            dynamicQueryContext.setParameter(
+                StructuredQName.fromClarkName(parameterPrefix + entry.getKey()),
+                new ObjectValue(entry.getValue())
+            );
         }
     }
 
@@ -638,7 +652,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             LOG.debug("Initializing XQueryBuilder {}", this);
             if (configuration == null) {
                 configuration = new Configuration();
-                configuration.setHostLanguage(Configuration.XQUERY);
+                //configuration.setHostLanguage(Configuration.XQUERY);
                 configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);
                 LOG.debug("Created new Configuration {}", configuration);
             } else {
