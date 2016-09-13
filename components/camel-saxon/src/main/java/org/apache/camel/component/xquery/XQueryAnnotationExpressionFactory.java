@@ -19,9 +19,7 @@ package org.apache.camel.component.xquery;
 import java.lang.annotation.Annotation;
 
 import org.w3c.dom.Node;
-
-import net.sf.saxon.functions.Collection;
-
+import net.sf.saxon.functions.CollectionFn;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.component.bean.DefaultAnnotationExpressionFactory;
@@ -54,7 +52,7 @@ public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressi
         }
         if (expressionReturnType.isAssignableFrom(String.class)) {
             builder.setResultsFormat(ResultFormat.String);
-        } else if (expressionReturnType.isAssignableFrom(Collection.class)) {
+        } else if (expressionReturnType.isAssignableFrom(CollectionFn.class)) {
             builder.setResultsFormat(ResultFormat.List);
         } else if (expressionReturnType.isAssignableFrom(Node.class)) {
             builder.setResultsFormat(ResultFormat.DOM);

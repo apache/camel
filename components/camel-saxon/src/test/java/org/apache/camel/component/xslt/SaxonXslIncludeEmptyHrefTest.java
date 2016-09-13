@@ -21,8 +21,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class SaxonXslIncludetEmptyHrefTest extends CamelTestSupport {
+public class SaxonXslIncludeEmptyHrefTest extends CamelTestSupport {
 
+    //TODO: fix
+    //@Ignore("To Fix")
     @Test
     public void testXsltOutput() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

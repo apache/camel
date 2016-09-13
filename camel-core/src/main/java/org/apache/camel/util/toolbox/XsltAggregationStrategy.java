@@ -154,7 +154,7 @@ public class XsltAggregationStrategy implements AggregationStrategy {
         }
 
         if (uriResolver == null) {
-            uriResolver = new XsltUriResolver(context.getClassResolver(), xslFile);
+            uriResolver = new XsltUriResolver(context, xslFile);
         }
 
         xslt.setUriResolver(uriResolver);

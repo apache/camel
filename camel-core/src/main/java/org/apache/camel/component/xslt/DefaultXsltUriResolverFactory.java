@@ -30,7 +30,7 @@ public class DefaultXsltUriResolverFactory implements XsltUriResolverFactory {
 
     @Override
     public URIResolver createUriResolver(CamelContext camelContext, String resourceUri) {
-        return new XsltUriResolver(camelContext.getClassResolver(), resourceUri);
+        return new XsltUriResolver(camelContext, resourceUri);
     }
 
 }
