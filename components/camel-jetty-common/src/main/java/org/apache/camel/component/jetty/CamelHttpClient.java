@@ -38,15 +38,6 @@ public abstract class CamelHttpClient extends HttpClient {
         super(transport, sslContextFactory);
     }
 
-    @Deprecated
-    /**
-     * It does nothing here, please setup SslContextFactory directly, it will be removed in Camel 2.16.0
-     * @param context
-     */
-    public void setSSLContext(SSLContext context) {
-        // do nothing here, please setup SslContextFactory directly.
-    }
-    
     @Override
     protected void doStart() throws Exception {
         if (!hasThreadPool()) {
