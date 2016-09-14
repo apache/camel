@@ -33,6 +33,7 @@ import org.snmp4j.security.SecurityProtocols;
 import org.snmp4j.security.USM;
 import org.snmp4j.smi.Address;
 import org.snmp4j.smi.GenericAddress;
+import org.snmp4j.smi.Integer32;
 import org.snmp4j.smi.OID;
 import org.snmp4j.smi.OctetString;
 import org.snmp4j.smi.VariableBinding;
@@ -73,8 +74,12 @@ public class SnmpProducer extends DefaultProducer {
     public void stop() throws Exception {
         super.stop();
 
-        this.targetAddress = null;
-        this.usm = null;
+        try {
+            SecurityModels.getInstance().removeSecurityModel(new Integer32(this.usm.getID()));
+        } finally {
+            this.targetAddress = null;
+            this.usm = null;
+        }
     }
     
     @Override
