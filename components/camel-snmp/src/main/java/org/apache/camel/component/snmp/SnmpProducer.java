@@ -57,16 +57,12 @@ public class SnmpProducer extends DefaultProducer {
     public void process(final Exchange exchange) throws Exception {
         // load connection data only if the endpoint is enabled
         Snmp snmp = null;
-        USM usm;
         TransportMapping<? extends Address> transport = null;
-        CommunityTarget target = null;
-        PDU pdu = null;
-        Address targetAddress = null;
 
         try {
             LOG.debug("Starting SNMP producer on {}", endpoint.getAddress());
     
-            targetAddress = GenericAddress.parse(endpoint.getAddress());
+            Address targetAddress = GenericAddress.parse(endpoint.getAddress());
             
             LOG.debug("targetAddress: " + targetAddress);
             
@@ -80,19 +76,19 @@ public class SnmpProducer extends DefaultProducer {
             }
     
             snmp = new Snmp(transport);
-            usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
+            USM usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
             
             SecurityModels.getInstance().addSecurityModel(usm);
     
             // setting up target
-            target = new CommunityTarget();
+            CommunityTarget target = new CommunityTarget();
             target.setCommunity(new OctetString(endpoint.getSnmpCommunity()));
             target.setAddress(targetAddress);
             target.setRetries(this.endpoint.getRetries());
             target.setTimeout(this.endpoint.getTimeout());
             target.setVersion(this.endpoint.getSnmpVersion());
     
-            pdu = new PDU();
+            PDU pdu = new PDU();
             for (OID oid : endpoint.getOids()) {
                 pdu.add(new VariableBinding(oid));
             }
