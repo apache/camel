@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.snmp;
 
+import java.util.concurrent.TimeoutException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
@@ -48,9 +50,31 @@ public class SnmpProducer extends DefaultProducer {
     
     private SnmpEndpoint endpoint;
     
+    private Address targetAddress;
+    private USM usm;
+
     public SnmpProducer(SnmpEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+    }
+    
+    @Override
+    public void start() throws Exception {
+        super.start();
+
+        this.targetAddress = GenericAddress.parse(endpoint.getAddress());
+        LOG.debug("targetAddress: {}", targetAddress);
+
+        this.usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
+        SecurityModels.getInstance().addSecurityModel(this.usm);
+    }
+    
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+
+        this.targetAddress = null;
+        this.usm = null;
     }
     
     @Override
@@ -61,10 +85,6 @@ public class SnmpProducer extends DefaultProducer {
 
         try {
             LOG.debug("Starting SNMP producer on {}", endpoint.getAddress());
-    
-            Address targetAddress = GenericAddress.parse(endpoint.getAddress());
-            
-            LOG.debug("targetAddress: " + targetAddress);
             
             // either tcp or udp
             if ("tcp".equals(endpoint.getProtocol())) {
@@ -72,14 +92,11 @@ public class SnmpProducer extends DefaultProducer {
             } else if ("udp".equals(endpoint.getProtocol())) {
                 transport = new DefaultUdpTransportMapping();
             } else {
-                throw new IllegalArgumentException("Unknown protocol: " + endpoint.getProtocol());
+                throw new IllegalArgumentException("Unknown protocol: {} " + endpoint.getProtocol());
             }
     
             snmp = new Snmp(transport);
-            USM usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
             
-            SecurityModels.getInstance().addSecurityModel(usm);
-    
             // setting up target
             CommunityTarget target = new CommunityTarget();
             target.setCommunity(new OctetString(endpoint.getSnmpCommunity()));
@@ -107,7 +124,7 @@ public class SnmpProducer extends DefaultProducer {
             if (responseEvent.getResponse() != null) {
                 exchange.getIn().setBody(new SnmpMessage(responseEvent.getResponse()));
             } else {
-                throw new Exception("SNMP Producer Timeout");
+                throw new TimeoutException("SNMP Producer Timeout");
             }
         } finally {
             try {
