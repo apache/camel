@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.olingo2.api.impl;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
@@ -85,6 +86,13 @@ public abstract class AbstractFutureCallback<T> implements FutureCallback<HttpRe
             onCompleted(result);
         } catch (Exception e) {
             failed(e);
+        } finally {
+            if (result instanceof Closeable) {
+                try {
+                    ((Closeable) result).close();
+                } catch (final IOException ignore) {
+                }
+            }
         }
     }
 
