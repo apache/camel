@@ -125,7 +125,6 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
         } catch (MllpJUnitResourceException ex) {
             Throwable cause = ex.getCause();
             assertIsInstanceOf(SocketException.class, cause);
-            assertEquals("Broken pipe", cause.getMessage());
         }
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
