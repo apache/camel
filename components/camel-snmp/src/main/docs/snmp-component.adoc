@@ -5,7 +5,7 @@ SNMP Component
 *Available as of Camel 2.1*
 
 The *snmp:* component gives you the ability to poll SNMP capable devices
-or receiving traps.
+or receiving traps
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -34,6 +34,16 @@ and receiving traps.
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
+
+[[SNMP-Producer]]
+Snmp Producer 
+^^^^^^^^^^^^^
+
+*Available from 2.18 release*
+
+It can also be used to request information using GET method.
+
+The response body type is org.apache.camel.component.snmp.SnmpMessage
 
 [[SNMP-Options]]
 Options
@@ -92,7 +102,6 @@ The SNMP component supports 36 endpoint options which are listed below:
 |=======================================================================
 {% endraw %}
 // endpoint options: END
-
 
 [[SNMP-Theresultofapoll]]
 The result of a poll
