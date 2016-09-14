@@ -111,7 +111,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("SnmpProducer is not implemented");
+        return new SnmpProducer(this);
     }
 
     public boolean isSingleton() {
