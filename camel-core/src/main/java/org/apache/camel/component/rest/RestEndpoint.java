@@ -46,6 +46,8 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", label = "core,rest", lenientProperties = true)
 public class RestEndpoint extends DefaultEndpoint {
 
+    public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS = new String[]{"coap", "netty-http", "netty4-http", "jetty", "restlet", "servlet", "spark-java", "undertow"};
+    public static final String[] DEFAULT_REST_PRODUCER_COMPONENTS = new String[]{"http", "http4", "netty4-http", "jetty", "restlet", "undertow"};
     public static final String DEFAULT_API_COMPONENT_NAME = "swagger";
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/rest/";
 
@@ -314,6 +316,28 @@ public class RestEndpoint extends DefaultEndpoint {
             }
         }
 
+        // no explicit factory found then try to see if we can find any of the default rest consumer components
+        // and there must only be exactly one so we safely can pick this one
+        if (factory == null) {
+            RestProducerFactory found = null;
+            String foundName = null;
+            for (String name : DEFAULT_REST_PRODUCER_COMPONENTS) {
+                Object comp = getCamelContext().getComponent(name, true);
+                if (comp != null && comp instanceof RestProducerFactory) {
+                    if (found == null) {
+                        found = (RestProducerFactory) comp;
+                        foundName = name;
+                    } else {
+                        throw new IllegalArgumentException("Multiple RestProducerFactory found on classpath. Configure explicit which component to use");
+                    }
+                }
+            }
+            if (found != null) {
+                LOG.debug("Auto discovered {} as RestProducerFactory", foundName);
+                factory = found;
+            }
+        }
+
         if (factory != null) {
             LOG.debug("Using RestProducerFactory: {}", factory);
 
@@ -378,6 +402,28 @@ public class RestEndpoint extends DefaultEndpoint {
             Set<RestConsumerFactory> factories = getCamelContext().getRegistry().findByType(RestConsumerFactory.class);
             if (factories != null && factories.size() == 1) {
                 factory = factories.iterator().next();
+            }
+        }
+
+        // no explicit factory found then try to see if we can find any of the default rest consumer components
+        // and there must only be exactly one so we safely can pick this one
+        if (factory == null) {
+            RestConsumerFactory found = null;
+            String foundName = null;
+            for (String name : DEFAULT_REST_CONSUMER_COMPONENTS) {
+                Object comp = getCamelContext().getComponent(name, true);
+                if (comp != null && comp instanceof RestConsumerFactory) {
+                    if (found == null) {
+                        found = (RestConsumerFactory) comp;
+                        foundName = name;
+                    } else {
+                        throw new IllegalArgumentException("Multiple RestConsumerFactory found on classpath. Configure explicit which component to use");
+                    }
+                }
+            }
+            if (found != null) {
+                LOG.debug("Auto discovered {} as RestConsumerFactory", foundName);
+                factory = found;
             }
         }
 
