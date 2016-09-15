@@ -24,6 +24,7 @@
       <unpack>false</unpack>
       <scope>runtime</scope>
       <includes>
+        <include>org.apache.camel:camel-asterisk</include>
         <include>org.apache.camel:camel-ahc</include>
         <include>org.apache.camel:camel-ahc-ws</include>
         <include>org.apache.camel:camel-amqp</include>
