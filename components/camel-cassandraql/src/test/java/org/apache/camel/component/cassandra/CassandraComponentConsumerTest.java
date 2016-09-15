@@ -31,6 +31,8 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.junit.Assume.assumeTrue;
+
 public class CassandraComponentConsumerTest extends CamelTestSupport {
 
     private static final String CQL = "select login, first_name, last_name from camel_user";
@@ -40,6 +42,7 @@ public class CassandraComponentConsumerTest extends CamelTestSupport {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        assumeTrue("Skipping test running in CI server - Fails sometimes on CI server with address already in use", System.getenv("BUILD_ID") == null);
         CassandraUnitUtils.startEmbeddedCassandra();
     }
 

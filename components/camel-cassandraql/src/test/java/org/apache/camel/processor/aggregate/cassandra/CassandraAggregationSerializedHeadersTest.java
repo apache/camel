@@ -28,6 +28,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
 import org.junit.Test;
 
+import static org.junit.Assume.assumeTrue;
+
 /**
  * Unite test for {@link CassandraAggregationRepository}
  */
@@ -37,6 +39,7 @@ public class CassandraAggregationSerializedHeadersTest extends CamelTestSupport 
 
     @Override
     protected void doPreSetup() throws Exception {
+        assumeTrue("Skipping test running in CI server - Fails sometimes on CI server with address already in use", System.getenv("BUILD_ID") == null);
         CassandraUnitUtils.startEmbeddedCassandra();
         cluster = CassandraUnitUtils.cassandraCluster();
         Session rootSession = cluster.connect();
