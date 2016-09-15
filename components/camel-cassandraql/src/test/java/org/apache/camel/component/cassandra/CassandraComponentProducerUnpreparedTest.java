@@ -37,6 +37,7 @@ import org.junit.Test;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
+import static org.junit.Assume.assumeTrue;
 
 public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
 
@@ -54,6 +55,7 @@ public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        assumeTrue("Skipping test running in CI server - Fails sometimes on CI server with address already in use", System.getenv("BUILD_ID") == null);
         CassandraUnitUtils.startEmbeddedCassandra();
     }
 

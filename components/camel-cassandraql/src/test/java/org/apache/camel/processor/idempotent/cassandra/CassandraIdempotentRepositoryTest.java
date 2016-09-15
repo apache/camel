@@ -29,6 +29,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * Unit test for {@link CassandraIdempotentRepository}
@@ -43,6 +44,7 @@ public class CassandraIdempotentRepositoryTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        assumeTrue("Skipping test running in CI server - Fails sometimes on CI server with address already in use", System.getenv("BUILD_ID") == null);
         CassandraUnitUtils.startEmbeddedCassandra();
     }
 
