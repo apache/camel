@@ -18,29 +18,21 @@ package org.apache.camel.component.snmp;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Rule;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
+@Ignore("CAMEL-10319: Set host, port and oids to test snmp producer.")
 public class ProducerTest extends CamelTestSupport {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
 
     private String host = "192.168.0.254";
     private String port = "161";
     private String oids = "1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1";
-    private Integer timeout = 5; // 5ms
     
     @Test
     public void testSnmpProducer() throws Exception {
-        thrown.expect(CamelExecutionException.class);
-
         template.sendBody("direct:in", "");
         
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -54,7 +46,7 @@ public class ProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                        .to("snmp://" + host + ":" + port + "?oids=" + oids + "&timeout=" + timeout)
+                        .to("snmp://" + host + ":" + port + "?oids=" + oids)
                         .log("${body}")
                         .to("mock:result");
             }

@@ -53,32 +53,54 @@ public class SnmpProducer extends DefaultProducer {
     
     private Address targetAddress;
     private USM usm;
-
+    private CommunityTarget target;
+    private PDU pdu;
+    
     public SnmpProducer(SnmpEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }
     
     @Override
-    public void start() throws Exception {
-        super.start();
+    protected void doStart() throws Exception {
+        super.doStart();
 
-        this.targetAddress = GenericAddress.parse(endpoint.getAddress());
+        this.targetAddress = GenericAddress.parse(this.endpoint.getAddress());
         LOG.debug("targetAddress: {}", targetAddress);
 
         this.usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
         SecurityModels.getInstance().addSecurityModel(this.usm);
+        
+        // setting up target
+        this.target = new CommunityTarget();
+        this.target.setCommunity(new OctetString(endpoint.getSnmpCommunity()));
+        this.target.setAddress(this.targetAddress);
+        this.target.setRetries(this.endpoint.getRetries());
+        this.target.setTimeout(this.endpoint.getTimeout());
+        this.target.setVersion(this.endpoint.getSnmpVersion());
+
+        this.pdu = new PDU();
+        for (OID oid : this.endpoint.getOids()) {
+            this.pdu.add(new VariableBinding(oid));
+        }
+        this.pdu.setErrorIndex(0);
+        this.pdu.setErrorStatus(0);
+        this.pdu.setMaxRepetitions(0);
+        this.pdu.setType(PDU.GET);
+        
     }
     
     @Override
-    public void stop() throws Exception {
-        super.stop();
+    protected void doStop() throws Exception {
+        super.doStop();
 
         try {
             SecurityModels.getInstance().removeSecurityModel(new Integer32(this.usm.getID()));
         } finally {
             this.targetAddress = null;
             this.usm = null;
+            this.target = null;
+            this.pdu = null;
         }
     }
     
@@ -89,40 +111,23 @@ public class SnmpProducer extends DefaultProducer {
         TransportMapping<? extends Address> transport = null;
 
         try {
-            LOG.debug("Starting SNMP producer on {}", endpoint.getAddress());
+            LOG.debug("Starting SNMP producer on {}", this.endpoint.getAddress());
             
             // either tcp or udp
-            if ("tcp".equals(endpoint.getProtocol())) {
+            if ("tcp".equals(this.endpoint.getProtocol())) {
                 transport = new DefaultTcpTransportMapping();
-            } else if ("udp".equals(endpoint.getProtocol())) {
+            } else if ("udp".equals(this.endpoint.getProtocol())) {
                 transport = new DefaultUdpTransportMapping();
             } else {
-                throw new IllegalArgumentException("Unknown protocol: {} " + endpoint.getProtocol());
+                throw new IllegalArgumentException("Unknown protocol: {} " + this.endpoint.getProtocol());
             }
     
             snmp = new Snmp(transport);
             
-            // setting up target
-            CommunityTarget target = new CommunityTarget();
-            target.setCommunity(new OctetString(endpoint.getSnmpCommunity()));
-            target.setAddress(targetAddress);
-            target.setRetries(this.endpoint.getRetries());
-            target.setTimeout(this.endpoint.getTimeout());
-            target.setVersion(this.endpoint.getSnmpVersion());
-    
-            PDU pdu = new PDU();
-            for (OID oid : endpoint.getOids()) {
-                pdu.add(new VariableBinding(oid));
-            }
-            pdu.setErrorIndex(0);
-            pdu.setErrorStatus(0);
-            pdu.setMaxRepetitions(0);
-            pdu.setType(PDU.GET);
-            
             LOG.debug("Snmp: i am sending");
     
             snmp.listen();
-            ResponseEvent responseEvent = snmp.send(pdu, target);
+            ResponseEvent responseEvent = snmp.send(this.pdu, this.target);
             
             LOG.debug("Snmp: sended");
     
