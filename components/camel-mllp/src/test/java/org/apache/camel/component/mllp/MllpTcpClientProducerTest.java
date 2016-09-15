@@ -67,7 +67,6 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-
         return new RouteBuilder() {
             int connectTimeout = 1000;
             int responseTimeout = 1000;
@@ -76,34 +75,27 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 errorHandler(
                         defaultErrorHandler().allowRedeliveryWhileStopping(false));
-
-                onException(MllpCorruptFrameException.class)
+                onException(MllpFrameException.class)
                         .handled(true)
                         .logHandled(false)
                         .to(frame);
-
                 onException(MllpTimeoutException.class)
                         .handled(true)
                         .logHandled(false)
                         .to(timeout);
-
                 onCompletion()
                         .onFailureOnly().log(LoggingLevel.ERROR, "Processing Failed");
-
                 from(source.getDefaultEndpoint())
                         .routeId("mllp-sender-test-route")
                         .log(LoggingLevel.INFO, "Sending Message: $simple{header[CamelHL7MessageControl]}")
                         .toF("mllp://%s:%d?connectTimeout=%d&receiveTimeout=%d",
                                 mllpServer.getListenHost(), mllpServer.getListenPort(), connectTimeout, responseTimeout)
                         .to(acknowledged);
-
                 from("direct://handle-timeout")
                         .log(LoggingLevel.ERROR, "Response Timeout")
                         .rollback();
-
             }
         };
-
     }
 
     @Test

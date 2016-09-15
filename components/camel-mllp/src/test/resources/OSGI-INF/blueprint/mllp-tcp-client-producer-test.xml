@@ -61,7 +61,7 @@
         </onException>
 
         <onException>
-            <exception>org.apache.camel.component.mllp.MllpCorruptFrameException</exception>
+            <exception>org.apache.camel.component.mllp.MllpFrameException</exception>
             <redeliveryPolicy logHandled="true"/>
             <handled>
                 <constant>true</constant>

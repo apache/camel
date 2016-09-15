@@ -23,6 +23,8 @@ public final class MllpConstants {
     public static final String MLLP_ACKNOWLEDGEMENT = "CamelMllpAcknowledgement";
     public static final String MLLP_ACKNOWLEDGEMENT_TYPE = "CamelMllpAcknowledgementType";
 
+    public static final String MLLP_ACKNOWLEDGEMENT_EXCEPTION = "CamelMllpAcknowledgementException";
+    public static final String MLLP_AUTO_ACKNOWLEDGE = "CamelMllpAutoAcknowledge";
     /*
      Connection Control Exchange Properties
       - For Consumers, "SEND" => ACKNOWLEDGEMENT

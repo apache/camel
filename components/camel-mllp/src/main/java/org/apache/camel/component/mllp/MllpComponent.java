@@ -26,7 +26,7 @@ import org.apache.camel.impl.UriEndpointComponent;
  * Represents the component that manages {@link MllpEndpoint}.
  */
 public class MllpComponent extends UriEndpointComponent {
-    public static final String MLLP_LOG_PHI_PROPERTY = "org.apache.camel.mllp.logPHI";
+    public static final String MLLP_LOG_PHI_PROPERTY = "org.apache.camel.component.mllp.logPHI";
 
     public MllpComponent() {
         super(MllpEndpoint.class);
