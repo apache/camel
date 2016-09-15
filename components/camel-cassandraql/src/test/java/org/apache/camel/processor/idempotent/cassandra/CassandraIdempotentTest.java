@@ -48,7 +48,11 @@ public class CassandraIdempotentTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
         idempotentRepository.stop();
-        CassandraUnitUtils.cleanEmbeddedCassandra();
+        try {
+            CassandraUnitUtils.cleanEmbeddedCassandra();
+        } catch (Throwable e) {
+            // ignore shutdown errors
+        }
     }
 
     @Override

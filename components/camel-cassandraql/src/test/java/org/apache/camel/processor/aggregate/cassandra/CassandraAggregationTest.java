@@ -24,6 +24,7 @@ import org.apache.camel.component.cassandra.CassandraUnitUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AfterClass;
 import org.junit.Test;
 
 /**
@@ -51,7 +52,11 @@ public class CassandraAggregationTest extends CamelTestSupport {
         super.tearDown();
         aggregationRepository.stop();
         cluster.close();
-        CassandraUnitUtils.cleanEmbeddedCassandra();
+        try {
+            CassandraUnitUtils.cleanEmbeddedCassandra();
+        } catch (Throwable e) {
+            // ignore shutdown errors
+        }
     }
 
     @Override

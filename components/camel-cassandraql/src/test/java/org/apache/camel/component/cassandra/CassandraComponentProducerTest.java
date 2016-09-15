@@ -72,7 +72,11 @@ public class CassandraComponentProducerTest extends CamelTestSupport {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        CassandraUnitUtils.cleanEmbeddedCassandra();
+        try {
+            CassandraUnitUtils.cleanEmbeddedCassandra();
+        } catch (Throwable e) {
+            // ignore shutdown errors
+        }
     }
 
     @Override

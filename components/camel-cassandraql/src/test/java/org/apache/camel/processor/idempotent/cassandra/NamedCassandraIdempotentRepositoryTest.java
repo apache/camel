@@ -65,7 +65,11 @@ public class NamedCassandraIdempotentRepositoryTest {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        CassandraUnitUtils.cleanEmbeddedCassandra();
+        try {
+            CassandraUnitUtils.cleanEmbeddedCassandra();
+        } catch (Throwable e) {
+            // ignore shutdown errors
+        }
     }
 
     private boolean exists(String key) {
