@@ -85,7 +85,7 @@ public class AsteriskEndpoint extends DefaultEndpoint {
         }
         
         // validate action value
-        ActionsEnum.valueOf(action);
+        AsteriskActionEnum.valueOf(action);
 
         return new AsteriskProducer(this);
     }
