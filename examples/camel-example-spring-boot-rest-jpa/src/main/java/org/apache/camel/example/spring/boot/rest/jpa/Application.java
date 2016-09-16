@@ -52,7 +52,6 @@ public class Application extends SpringBootServletInitializer {
                     .apiProperty("api.version", "1.0")
                     .apiProperty("cors", "true")
                     .apiContextRouteId("doc-api")
-                .component("servlet")
                 .bindingMode(RestBindingMode.json);
 
             rest("/books").description("Books REST service")
