@@ -31,8 +31,6 @@ public class Application {
 
         @Override
         public void configure() {
-            restConfiguration().component("servlet");
-
             rest("/say/")
                 .produces("text/plain")
                 .get("hello")
