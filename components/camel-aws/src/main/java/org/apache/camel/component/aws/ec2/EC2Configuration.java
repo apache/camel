@@ -95,7 +95,9 @@ public class EC2Configuration {
     }
 
     /**
-     * The operation to perform
+     * The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, 
+     * describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances,  
+     * createTags or deleteTags
      */
     public void setOperation(EC2Operations operation) {
         this.operation = operation;

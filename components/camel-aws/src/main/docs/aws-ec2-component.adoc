@@ -48,7 +48,7 @@ The AWS EC2 component supports 9 endpoint options which are listed below:
 | accessKey | producer |  | String | Amazon AWS Access Key
 | amazonEc2Client | producer |  | AmazonEC2Client | To use a existing configured AmazonEC2Client as client
 | amazonEc2Endpoint | producer |  | String | The region with which the AWS-EC2 client wants to work with.
-| operation | producer |  | EC2Operations | *Required* The operation to perform
+| operation | producer |  | EC2Operations | *Required* The operation to perform. It can be createAndRunInstances startInstances stopInstances terminateInstances describeInstances describeInstancesStatus rebootInstances monitorInstances unmonitorInstances createTags or deleteTags
 | proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
 | proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
 | secretKey | producer |  | String | Amazon AWS Secret Key
@@ -95,6 +95,8 @@ Message headers evaluated by the EC2 producer
 
 |`CamelAwsEC2InstancesIds` |`Collection` |A collection of instances IDS to execute start, stop, describe and
 terminate operations on.
+
+|`CamelAwsEC2InstancesTags` |`Collection` |A collection of tags to add or remove from EC2 resources
 |=======================================================================
 
 Dependencies
