@@ -20,4 +20,8 @@ public final class AsteriskConstants {
     public static final String EVENT_NAME = "AsteriskEventName";
     public static final String EXTEN = "AsteriskExtension";
     public static final String CONTEXT = "AsteriskContext";
+
+    private AsteriskConstants() {
+    }
+
 }
