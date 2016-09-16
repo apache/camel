@@ -28,16 +28,6 @@ public class HazelcastAggregationRepositoryCamelTestSupport extends CamelTestSup
     private static HazelcastInstance hzOne;
     private static HazelcastInstance hzTwo;
 
-    protected static void doInitializeHazelcastInstances() {
-        hzOne = Hazelcast.newHazelcastInstance(new Config("hzOne"));
-        hzTwo = Hazelcast.newHazelcastInstance(new Config("hzTwo"));
-    }
-
-    protected static void doDestroyHazelcastInstances() {
-        hzOne.getLifecycleService().shutdown();
-        hzTwo.getLifecycleService().shutdown();
-    }
-
     protected static HazelcastInstance getFirstInstance() {
         return hzOne;
     }
@@ -48,11 +38,21 @@ public class HazelcastAggregationRepositoryCamelTestSupport extends CamelTestSup
 
     @BeforeClass
     public static void setUpHazelcastCluster() {
-        doInitializeHazelcastInstances();
+        hzOne = Hazelcast.newHazelcastInstance(createConfig("hzOne"));
+        hzTwo = Hazelcast.newHazelcastInstance(createConfig("hzTwo"));
     }
 
     @AfterClass
     public static void shutDownHazelcastCluster() {
-        doDestroyHazelcastInstances();
+        Hazelcast.shutdownAll();
+    }
+
+    private static Config createConfig(String name) {
+        Config config = new Config();
+        config.setInstanceName(name);
+        config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
+        config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true).addMember("127.0.0.1");
+
+        return config;
     }
 }
