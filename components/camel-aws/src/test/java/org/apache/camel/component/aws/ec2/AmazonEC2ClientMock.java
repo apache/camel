@@ -23,6 +23,10 @@ import java.util.Iterator;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.CreateTagsRequest;
+import com.amazonaws.services.ec2.model.CreateTagsResult;
+import com.amazonaws.services.ec2.model.DeleteTagsRequest;
+import com.amazonaws.services.ec2.model.DeleteTagsResult;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusRequest;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
@@ -297,5 +301,15 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
             result.setInstanceMonitorings(coll);
         }
         return result;
+    }
+    
+    @Override
+    public CreateTagsResult createTags(CreateTagsRequest createTagsRequest) {
+    	return new CreateTagsResult();
+    }
+    
+    @Override
+    public DeleteTagsResult deleteTags(DeleteTagsRequest deleteTagsRequest) {
+    	return new DeleteTagsResult();
     }
 }
