@@ -305,11 +305,11 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
     
     @Override
     public CreateTagsResult createTags(CreateTagsRequest createTagsRequest) {
-    	return new CreateTagsResult();
+        return new CreateTagsResult();
     }
     
     @Override
     public DeleteTagsResult deleteTags(DeleteTagsRequest deleteTagsRequest) {
-    	return new DeleteTagsResult();
+        return new DeleteTagsResult();
     }
 }
