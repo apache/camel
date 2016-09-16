@@ -100,10 +100,10 @@ public class EC2Producer extends DefaultProducer {
             unmonitorInstances(getEndpoint().getEc2Client(), exchange);
             break; 
         case createTags:
-        	createTags(getEndpoint().getEc2Client(), exchange);
+            createTags(getEndpoint().getEc2Client(), exchange);
             break;
         case deleteTags:
-        	deleteTags(getEndpoint().getEc2Client(), exchange);
+            deleteTags(getEndpoint().getEc2Client(), exchange);
             break; 
         default:
             throw new IllegalArgumentException("Unsupported operation");
