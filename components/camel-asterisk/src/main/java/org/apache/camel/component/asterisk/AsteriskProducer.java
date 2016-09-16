@@ -55,7 +55,7 @@ public class AsteriskProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         ManagerAction action;
-        switch (AsteriskEndpoint.ActionsEnum.valueOf(endpoint.getAction())) {
+        switch (AsteriskActionEnum.valueOf(endpoint.getAction())) {
         case QUEUE_STATUS:
             action = new QueueStatusAction();
             break;

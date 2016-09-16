@@ -16,18 +16,6 @@
  */
 package org.apache.camel.component.asterisk;
 
-import org.apache.camel.CamelException;
-
-public class CamelAsteriskException extends CamelException {
-    private static final long serialVersionUID = -8873987361491963823L;
-
-    public CamelAsteriskException() {
-        super();
-    }
-
-    public CamelAsteriskException(String message) {
-        super(message);
-    }
-
-
+public enum AsteriskActionEnum {
+    QUEUE_STATUS, SIP_PEERS, EXTENSION_STATE;
 }

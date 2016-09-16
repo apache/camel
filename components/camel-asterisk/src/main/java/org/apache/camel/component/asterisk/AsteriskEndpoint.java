@@ -44,10 +44,6 @@ public class AsteriskEndpoint extends DefaultEndpoint {
     @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(AsteriskProducer.class);
 
-    protected enum ActionsEnum {
-        QUEUE_STATUS, SIP_PEERS, EXTENSION_STATE;
-    }
-    
     @UriPath(description = "Name of component") @Metadata(required = "true")
     private String name;
     
