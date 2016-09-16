@@ -35,13 +35,14 @@ import org.slf4j.LoggerFactory;
  */
 public class AsteriskProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(AsteriskProducer.class);
+
     private AsteriskEndpoint endpoint;
 
     public AsteriskProducer(AsteriskEndpoint endpoint) throws IllegalStateException, IOException, AuthenticationFailedException, TimeoutException, CamelAsteriskException {
         super(endpoint);
         this.endpoint = endpoint;
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         endpoint.login();
@@ -51,17 +52,17 @@ public class AsteriskProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         endpoint.logoff();
     }
-    
+
     public void process(Exchange exchange) throws Exception {
         ManagerAction action;
-        switch (endpoint.getAction()) {
-        case "QueueStatus":
+        switch (AsteriskEndpoint.ActionsEnum.valueOf(endpoint.getAction())) {
+        case QUEUE_STATUS:
             action = new QueueStatusAction();
             break;
-        case "SipPeers":
+        case SIP_PEERS:
             action = new SipPeersAction();
             break;
-        case "ExtensionState":
+        case EXTENSION_STATE:
             action = new ExtensionStateAction((String)exchange.getIn().getHeader(AsteriskConstants.EXTEN), (String)exchange.getIn().getHeader(AsteriskConstants.CONTEXT));
             break;
 
@@ -70,7 +71,7 @@ public class AsteriskProducer extends DefaultProducer {
         }
 
         LOG.debug("Asterisk, send action {} ", endpoint.getAction());
-        
+
         ManagerResponse response = endpoint.sendAction(action);
         exchange.getIn().setBody(response);
     }

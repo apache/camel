@@ -41,8 +41,13 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name", consumerClass = AsteriskConsumer.class, label = "voip")
 public class AsteriskEndpoint extends DefaultEndpoint {
+    @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(AsteriskProducer.class);
 
+    protected enum ActionsEnum {
+        QUEUE_STATUS, SIP_PEERS, EXTENSION_STATE;
+    }
+    
     @UriPath(description = "Name of component") @Metadata(required = "true")
     private String name;
     
@@ -82,6 +87,9 @@ public class AsteriskEndpoint extends DefaultEndpoint {
         if (action == null) {
             throw new IllegalArgumentException("Missing required action parameter");
         }
+        
+        // validate action value
+        ActionsEnum.valueOf(action);
 
         return new AsteriskProducer(this);
     }
