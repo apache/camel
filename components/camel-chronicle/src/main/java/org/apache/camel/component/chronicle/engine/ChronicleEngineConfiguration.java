@@ -106,14 +106,14 @@ public class ChronicleEngineConfiguration implements CamelContextAware {
     }
 
     /**
-     * Description
+     * The Wire type to use, default to binary wire.
      */
     public void setWireType(String wireType) {
         setWireType(WireType.valueOf(wireType));
     }
 
     /**
-     * Description
+     * The Wire type to use, default to binary wire.
      */
     public void setWireType(WireType wireType) {
         this.wireType = wireType;
@@ -128,7 +128,7 @@ public class ChronicleEngineConfiguration implements CamelContextAware {
     }
 
     /**
-     * Description
+     * Set if consumer should subscribe to Map events, default true.
      */
     public void setSubscribeMapEvents(boolean subscribeMapEvents) {
         this.subscribeMapEvents = subscribeMapEvents;
@@ -139,14 +139,14 @@ public class ChronicleEngineConfiguration implements CamelContextAware {
     }
 
     /**
-     * Description
+     * A comma separated list of Map event type to filer, valid values are: INSERT, UPDATE, REMOVE.
      */
     public void setFilteredMapEvents(String filteredMapEvents) {
         setFilteredMapEvents(filteredMapEvents.split(","));
     }
 
     /**
-     * Description
+     * The list of Map event type to filer, valid values are: INSERT, UPDATE, REMOVE.
      */
     public void setFilteredMapEvents(String[] filteredMapEvents) {
         this.filteredMapEvents = filteredMapEvents;
@@ -161,7 +161,7 @@ public class ChronicleEngineConfiguration implements CamelContextAware {
     }
 
     /**
-     * Description
+     * Set if consumer should subscribe to TopologicalEvents,d efault false.
      */
     public void setSubscribeTopologicalEvents(boolean subscribeTopologicalEvents) {
         this.subscribeTopologicalEvents = subscribeTopologicalEvents;
@@ -176,7 +176,7 @@ public class ChronicleEngineConfiguration implements CamelContextAware {
     }
 
     /**
-     * Description
+     * Set if consumer should subscribe to TopicEvents,d efault false.
      */
     public void setSubscribeTopicEvents(boolean subscribeTopicEvents) {
         this.subscribeTopicEvents = subscribeTopicEvents;
@@ -191,7 +191,18 @@ public class ChronicleEngineConfiguration implements CamelContextAware {
     }
 
     /**
-     * Description
+     * The default action to perform, valid values are:
+     * - PUBLISH
+     * - PPUBLISH_AND_INDEX
+     * - PPUT
+     * - PGET_AND_PUT
+     * - PPUT_ALL
+     * - PPUT_IF_ABSENT
+     * - PGET
+     * - PGET_AND_REMOVE
+     * - PREMOVE
+     * - PIS_EMPTY
+     * - PSIZE
      */
     public void setAction(String action) {
         this.action = action;
@@ -202,7 +213,7 @@ public class ChronicleEngineConfiguration implements CamelContextAware {
     }
 
     /**
-     * Description
+     * Enable/disable data persistence
      */
     public void setPersistent(boolean persistent) {
         this.persistent = persistent;
