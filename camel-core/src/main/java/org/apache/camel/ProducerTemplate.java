@@ -16,14 +16,14 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.spi.Synchronization;
-
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import org.apache.camel.spi.Synchronization;
 
 /**
  * Template for working with Camel and sending {@link Message} instances in an
@@ -94,19 +94,20 @@ public interface ProducerTemplate extends Service {
     int getCurrentCacheSize();
 
     /**
-     * Reports if async* methods will dispath processing from the calling thread (true) or through executor (false).
-     * They will still employ asynchronous engine, so this mode can be useful for high-speed non-blocking processing.
-     * @return if async* methods will run in the calling thread
+     * Reports if async* methods will dispath processing from the calling thread (false) or through executor (true).
+     * In both cases asynchronous engine will be used, so this non-threaded can be useful for high-speed
+     * non-blocking processing.
+     * @return if async* methods will dipatch processing with the executor
      */
-    boolean isSynchronous();
+    boolean isThreadedAsyncMode();
 
     /**
-     * Reports if async* methods will dispath processing from the calling thread (true) or through executor (false).
-     * In any case they would still employ asynchronous engine, so setting to true can be useful
-     * for high-speed non-blocking processing.
-     * @param synchronous if async* methods will run in the calling thread
+     * Reports if async* methods will dispath processing from the calling thread (false) or through executor (true).
+     * In both cases asynchronous engine will be used, so this non-threaded can be useful for high-speed
+     * non-blocking processing.
+     * @param useExecutor if async* methods will dipatch processing with the executor
      */
-    void setSynchronous(boolean synchronous);
+    void setThreadedAsyncMode(boolean useExecutor);
     
     /**
      * Get the default endpoint to use if none is specified

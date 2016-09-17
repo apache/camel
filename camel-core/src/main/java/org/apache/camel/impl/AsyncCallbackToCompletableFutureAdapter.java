@@ -16,14 +16,14 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.AsyncCallback;
-
 import java.util.concurrent.CompletableFuture;
 
+import org.apache.camel.AsyncCallback;
+
 /**
- * AsyncCallback that provides a CompletableFuture when async action is done
+ * AsyncCallback that provides a CompletableFuture completed when async action is done
  */
-public class AsyncCallbackToCompletableFutureAdapter<T> implements AsyncCallback{
+public class AsyncCallbackToCompletableFutureAdapter<T> implements AsyncCallback {
     private final CompletableFuture<T> future;
     private volatile T result;
 

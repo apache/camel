@@ -56,7 +56,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     private Endpoint defaultEndpoint;
     private int maximumCacheSize;
     private boolean eventNotifierEnabled = true;
-    private volatile boolean synchronous;
+    private volatile boolean threadedAsyncMode = true;
 
     public DefaultProducerTemplate(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -86,13 +86,13 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     @Override
-    public boolean isSynchronous() {
-        return synchronous;
+    public boolean isThreadedAsyncMode() {
+        return threadedAsyncMode;
     }
 
     @Override
-    public void setSynchronous(boolean synchronous) {
-        this.synchronous = synchronous;
+    public void setThreadedAsyncMode(boolean useExecutor) {
+        this.threadedAsyncMode = useExecutor;
     }
 
     public int getCurrentCacheSize() {
@@ -705,7 +705,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             if (executor != null) {
                 return executor;
             }
-            if (synchronous) {
+            if (!threadedAsyncMode) {
                 executor = new SynchronousExecutorService();
             } else {
                 executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "ProducerTemplate");
