@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Cache containing created {@link Producer}.
  *
- * @version 
+ * @version
  */
 public class ProducerCache extends ServiceSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ProducerCache.class);
@@ -277,7 +277,7 @@ public class ProducerCache extends ServiceSupport {
      *              or new one if parameter was null
      */
     public CompletableFuture<Exchange> asyncSend(Endpoint endpoint, ExchangePattern pattern, Processor processor, Processor resultProcessor,
-            CompletableFuture<Exchange> future) {
+                                                 CompletableFuture<Exchange> future) {
         return asyncSendExchange(endpoint, pattern, processor, resultProcessor, null, future);
     }
 
@@ -299,41 +299,37 @@ public class ProducerCache extends ServiceSupport {
      *              or new one if parameter was null
      */
     public CompletableFuture<Exchange> asyncSendExchange(final Endpoint endpoint, ExchangePattern pattern,
-            final Processor processor, final Processor resultProcessor, Exchange exchange,
-            CompletableFuture<Exchange> future) {
+                                                         final Processor processor, final Processor resultProcessor, Exchange exchange,
+                                                         CompletableFuture<Exchange> future) {
         AsyncCallbackToCompletableFutureAdapter<Exchange> futureAdapter = new AsyncCallbackToCompletableFutureAdapter<>(future, exchange);
         doInAsyncProducer(endpoint, exchange, pattern, futureAdapter,
-                (producer, asyncProducer, innerExchange, exchangePattern, producerCallback) -> {
-                    if (innerExchange == null) {
-                        innerExchange = pattern != null ?
-                                producer.getEndpoint().createExchange(pattern) :
-                                producer.getEndpoint().createExchange();
-                        futureAdapter.setResult(innerExchange);
-                    }
+            (producer, asyncProducer, innerExchange, exchangePattern, producerCallback) -> {
+                if (innerExchange == null) {
+                    innerExchange = pattern != null
+                            ? producer.getEndpoint().createExchange(pattern)
+                            : producer.getEndpoint().createExchange();
+                    futureAdapter.setResult(innerExchange);
+                }
 
-                    if (processor != null) {
-                        // lets populate using the processor callback
-                        AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
-                        try {
-                            final Exchange finalExchange = innerExchange;
-                            asyncProcessor.process(innerExchange, new AsyncCallback() {
-                                @Override
-                                public void done(boolean doneSync) {
-                                    asyncDispatchExchange(endpoint, producer, resultProcessor, finalExchange,
-                                            producerCallback);
-                                }
-                            });
-                            return false;
-                        } catch (Exception e) {
-                            // populate failed so return
-                            innerExchange.setException(e);
-                            producerCallback.done(true);
-                            return true;
-                        }
+                if (processor != null) {
+                    // lets populate using the processor callback
+                    AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
+                    try {
+                        final Exchange finalExchange = innerExchange;
+                        asyncProcessor.process(innerExchange,
+                            doneSync -> asyncDispatchExchange(endpoint, producer, resultProcessor,
+                                    finalExchange, producerCallback));
+                        return false;
+                    } catch (Exception e) {
+                        // populate failed so return
+                        innerExchange.setException(e);
+                        producerCallback.done(true);
+                        return true;
                     }
+                }
 
-                    return asyncDispatchExchange(endpoint, producer, resultProcessor, innerExchange, producerCallback);
-                });
+                return asyncDispatchExchange(endpoint, producer, resultProcessor, innerExchange, producerCallback);
+            });
         return futureAdapter.getFuture();
     }
 
@@ -437,31 +433,28 @@ public class ProducerCache extends ServiceSupport {
             }
             // invoke the callback
             AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(producer);
-            return producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    try {
-                        if (eventNotifierEnabled && watch != null) {
-                            long timeTaken = watch.stop();
-                            // emit event that the exchange was sent to the endpoint
-                            EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
-                        }
-
-                        if (producer instanceof ServicePoolAware) {
-                            // release back to the pool
-                            pool.release(endpoint, producer);
-                        } else if (!producer.isSingleton()) {
-                            // stop and shutdown non-singleton producers as we should not leak resources
-                            try {
-                                ServiceHelper.stopAndShutdownService(producer);
-                            } catch (Exception e) {
-                                // ignore and continue
-                                LOG.warn("Error stopping/shutting down producer: " + producer, e);
-                            }
-                        }
-                    } finally {
-                        callback.done(doneSync);
+            return producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, doneSync -> {
+                try {
+                    if (eventNotifierEnabled && watch != null) {
+                        long timeTaken = watch.stop();
+                        // emit event that the exchange was sent to the endpoint
+                        EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
                     }
+
+                    if (producer instanceof ServicePoolAware) {
+                        // release back to the pool
+                        pool.release(endpoint, producer);
+                    } else if (!producer.isSingleton()) {
+                        // stop and shutdown non-singleton producers as we should not leak resources
+                        try {
+                            ServiceHelper.stopAndShutdownService(producer);
+                        } catch (Exception e) {
+                            // ignore and continue
+                            LOG.warn("Error stopping/shutting down producer: " + producer, e);
+                        }
+                    }
+                } finally {
+                    callback.done(doneSync);
                 }
             });
         } catch (Throwable e) {
@@ -475,7 +468,7 @@ public class ProducerCache extends ServiceSupport {
     }
 
     protected boolean asyncDispatchExchange(final Endpoint endpoint, Producer producer,
-            final Processor resultProcessor, Exchange exchange, AsyncCallback callback) {
+                                            final Processor resultProcessor, Exchange exchange, AsyncCallback callback) {
         // now lets dispatch
         LOG.debug(">>>> {} {}", endpoint, exchange);
 
@@ -659,7 +652,7 @@ public class ProducerCache extends ServiceSupport {
     public int getCapacity() {
         int capacity = -1;
         if (producers instanceof LRUCache) {
-            LRUCache<String, Producer> cache = (LRUCache<String, Producer>)producers;
+            LRUCache<String, Producer> cache = (LRUCache<String, Producer>) producers;
             capacity = cache.getMaxCacheSize();
         }
         return capacity;
@@ -675,7 +668,7 @@ public class ProducerCache extends ServiceSupport {
     public long getHits() {
         long hits = -1;
         if (producers instanceof LRUCache) {
-            LRUCache<String, Producer> cache = (LRUCache<String, Producer>)producers;
+            LRUCache<String, Producer> cache = (LRUCache<String, Producer>) producers;
             hits = cache.getHits();
         }
         return hits;
@@ -691,7 +684,7 @@ public class ProducerCache extends ServiceSupport {
     public long getMisses() {
         long misses = -1;
         if (producers instanceof LRUCache) {
-            LRUCache<String, Producer> cache = (LRUCache<String, Producer>)producers;
+            LRUCache<String, Producer> cache = (LRUCache<String, Producer>) producers;
             misses = cache.getMisses();
         }
         return misses;
@@ -707,7 +700,7 @@ public class ProducerCache extends ServiceSupport {
     public long getEvicted() {
         long evicted = -1;
         if (producers instanceof LRUCache) {
-            LRUCache<String, Producer> cache = (LRUCache<String, Producer>)producers;
+            LRUCache<String, Producer> cache = (LRUCache<String, Producer>) producers;
             evicted = cache.getEvicted();
         }
         return evicted;
@@ -718,7 +711,7 @@ public class ProducerCache extends ServiceSupport {
      */
     public void resetCacheStatistics() {
         if (producers instanceof LRUCache) {
-            LRUCache<String, Producer> cache = (LRUCache<String, Producer>)producers;
+            LRUCache<String, Producer> cache = (LRUCache<String, Producer>) producers;
             cache.resetStatistics();
         }
         if (statistics != null) {
@@ -742,7 +735,7 @@ public class ProducerCache extends ServiceSupport {
      */
     public void cleanUp() {
         if (producers instanceof LRUCache) {
-            LRUCache<String, Producer> cache = (LRUCache<String, Producer>)producers;
+            LRUCache<String, Producer> cache = (LRUCache<String, Producer>) producers;
             cache.cleanUp();
         }
     }
