@@ -16,21 +16,21 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.Exchange;
-import org.junit.Assert;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+
+import org.apache.camel.Exchange;
+import org.junit.Assert;
 
 /**
  * @version
  */
-public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducerTemplateAsyncTest{
+public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducerTemplateAsyncTest {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         template.stop();
-        template.setSynchronous(true);
+        template.setThreadedAsyncMode(false);
         template.start();
     }
 

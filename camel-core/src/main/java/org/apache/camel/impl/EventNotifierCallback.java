@@ -25,7 +25,7 @@ import org.apache.camel.util.StopWatch;
 /**
  * Helper class to notify on exchange sending events in async engine
  */
-class EventNotifierCallback implements AsyncCallback {
+public class EventNotifierCallback implements AsyncCallback {
     private final AsyncCallback originalCallback;
     private final StopWatch watch;
     private final Exchange exchange;
@@ -42,11 +42,8 @@ class EventNotifierCallback implements AsyncCallback {
 
     @Override
     public void done(boolean doneSync) {
-        try {
-            originalCallback.done(doneSync);
-        } finally {
-            long timeTaken = watch.stop();
-            EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
-        }
+        long timeTaken = watch.stop();
+        EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
+        originalCallback.done(doneSync);
     }
 }
