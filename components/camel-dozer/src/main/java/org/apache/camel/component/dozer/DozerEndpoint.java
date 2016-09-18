@@ -164,10 +164,11 @@ public class DozerEndpoint extends DefaultEndpoint {
             BeanContainer.getInstance().setElementReader(reader);
         } finally {
             Thread.currentThread().setContextClassLoader(tccl);
-            if (elprop != null)
+            if (elprop != null) {
                 System.setProperty("javax.el.ExpressionFactory", elprop);
-            else
+            } else {
                 System.clearProperty("javax.el.ExpressionFactory");
+            }
         }
     }
 
