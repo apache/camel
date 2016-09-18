@@ -24,8 +24,6 @@ import java.util.Map;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.slack.helper.SlackMessage;
-import org.apache.camel.component.slack.helper.SlackMessage.Attachment;
-import org.apache.camel.component.slack.helper.SlackMessage.Attachment.Field;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.http.HttpResponse;
@@ -54,7 +52,7 @@ public class SlackProducer extends DefaultProducer {
         // Build Helper object
         SlackMessage slackMessage;
         Object payload = exchange.getIn().getBody();
-        if(payload instanceof SlackMessage) {
+        if (payload instanceof SlackMessage) {
             slackMessage = (SlackMessage) payload;
         } else { 
             slackMessage = new SlackMessage();
