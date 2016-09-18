@@ -25,7 +25,7 @@ public class RestShow extends CamelCommandSupport {
 
     @Argument(index = 0, name = "name", description = "The name of the Camel context", required = true, multiValued = false)
     String name;
-	
+
     public Object doExecute() throws Exception {
         RestShowCommand command = new RestShowCommand(name);
         return command.execute(camelController, System.out, System.err);
