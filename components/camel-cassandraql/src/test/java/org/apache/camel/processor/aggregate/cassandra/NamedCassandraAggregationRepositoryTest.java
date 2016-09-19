@@ -22,28 +22,21 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.cassandra.BaseCassandraTest;
 import org.apache.camel.component.cassandra.CassandraUnitUtils;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.cassandraunit.CassandraCQLUnit;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
 
 /**
  * Unite test for {@link CassandraAggregationRepository}
  */
-public class NamedCassandraAggregationRepositoryTest {
+public class NamedCassandraAggregationRepositoryTest extends BaseCassandraTest {
+
     @Rule
     public CassandraCQLUnit cassandraRule = CassandraUnitUtils.cassandraCQLUnit("NamedAggregationDataSet.cql");
 
@@ -52,35 +45,24 @@ public class NamedCassandraAggregationRepositoryTest {
     private CassandraAggregationRepository aggregationRepository;
     private CamelContext camelContext;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        assumeTrue("Skipping test running in CI server - Fails sometimes on CI server with address already in use", System.getenv("BUILD_ID") == null);
-        CassandraUnitUtils.startEmbeddedCassandra();
-    }
-
     @Before
     public void setUp() throws Exception {
         camelContext = new DefaultCamelContext();
-        cluster = CassandraUnitUtils.cassandraCluster();
-        session = cluster.connect(CassandraUnitUtils.KEYSPACE);
-        aggregationRepository = new NamedCassandraAggregationRepository(session, "ID");
-        aggregationRepository.setTable("NAMED_CAMEL_AGGREGATION");
-        aggregationRepository.start();
+        if (canTest()) {
+            cluster = CassandraUnitUtils.cassandraCluster();
+            session = cluster.connect(CassandraUnitUtils.KEYSPACE);
+            aggregationRepository = new NamedCassandraAggregationRepository(session, "ID");
+            aggregationRepository.setTable("NAMED_CAMEL_AGGREGATION");
+            aggregationRepository.start();
+        }
     }
 
     @After
     public void tearDown() throws Exception {
-        aggregationRepository.stop();
-        session.close();
-        cluster.close();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        try {
-            CassandraUnitUtils.cleanEmbeddedCassandra();
-        } catch (Throwable e) {
-            // ignore shutdown errors
+        if (canTest()) {
+            aggregationRepository.stop();
+            session.close();
+            cluster.close();
         }
     }
 
@@ -92,6 +74,10 @@ public class NamedCassandraAggregationRepositoryTest {
 
     @Test
     public void testAdd() {
+        if (!canTest()) {
+            return;
+        }
+
         // Given
         String key = "Add";
         assertFalse(exists(key));
@@ -104,6 +90,10 @@ public class NamedCassandraAggregationRepositoryTest {
 
     @Test
     public void testGetExists() {
+        if (!canTest()) {
+            return;
+        }
+
         // Given
         String key = "Get_Exists";
         Exchange exchange = new DefaultExchange(camelContext);
@@ -118,6 +108,10 @@ public class NamedCassandraAggregationRepositoryTest {
 
     @Test
     public void testGetNotExists() {
+        if (!canTest()) {
+            return;
+        }
+
         // Given
         String key = "Get_NotExists";
         assertFalse(exists(key));
@@ -129,6 +123,10 @@ public class NamedCassandraAggregationRepositoryTest {
 
     @Test
     public void testRemoveExists() {
+        if (!canTest()) {
+            return;
+        }
+
         // Given
         String key = "Remove_Exists";
         Exchange exchange = new DefaultExchange(camelContext);
@@ -142,6 +140,10 @@ public class NamedCassandraAggregationRepositoryTest {
 
     @Test
     public void testRemoveNotExists() {
+        if (!canTest()) {
+            return;
+        }
+
         // Given
         String key = "RemoveNotExists";
         Exchange exchange = new DefaultExchange(camelContext);
@@ -154,6 +156,10 @@ public class NamedCassandraAggregationRepositoryTest {
 
     @Test
     public void testGetKeys() {
+        if (!canTest()) {
+            return;
+        }
+
         // Given
         String[] keys = {"GetKeys1", "GetKeys2"};
         addExchanges(keys);
@@ -167,6 +173,10 @@ public class NamedCassandraAggregationRepositoryTest {
 
     @Test
     public void testConfirmExist() {
+        if (!canTest()) {
+            return;
+        }
+
         // Given
         for (int i = 1; i < 4; i++) {
             String key = "Confirm_" + i;
@@ -185,6 +195,10 @@ public class NamedCassandraAggregationRepositoryTest {
 
     @Test
     public void testConfirmNotExist() {
+        if (!canTest()) {
+            return;
+        }
+
         // Given
         String[] keys = new String[3];
         for (int i = 1; i < 4; i++) {
@@ -212,6 +226,10 @@ public class NamedCassandraAggregationRepositoryTest {
 
     @Test
     public void testScan() {
+        if (!canTest()) {
+            return;
+        }
+
         // Given
         String[] keys = {"Scan1", "Scan2"};
         addExchanges(keys);
@@ -225,6 +243,10 @@ public class NamedCassandraAggregationRepositoryTest {
 
     @Test
     public void testRecover() {
+        if (!canTest()) {
+            return;
+        }
+
         // Given
         String[] keys = {"Recover1", "Recover2"};
         addExchanges(keys);
