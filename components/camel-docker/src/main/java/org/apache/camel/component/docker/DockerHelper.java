@@ -20,10 +20,12 @@ import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.dockerjava.api.DockerClientException;
 import org.apache.camel.Message;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.lang.BooleanUtils;
+
+import com.github.dockerjava.api.exception.DockerClientException;
+
 
 /**
  * Utility methods for Docker Component
