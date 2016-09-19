@@ -18,14 +18,15 @@ package org.apache.camel.component.docker.headers;
 
 import java.util.Map;
 
-import com.github.dockerjava.api.command.AttachContainerCmd;
-
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import com.github.dockerjava.api.command.AttachContainerCmd;
+import com.github.dockerjava.core.command.AttachContainerResultCallback;
 
 /**
  * Validates Attach Container Request headers are applied properly
@@ -35,8 +36,11 @@ public class AttachContainerCmdHeaderTest extends BaseDockerHeaderTest<AttachCon
     @Mock
     private AttachContainerCmd mockObject;
 
+    @Mock
+    private AttachContainerResultCallback callback;
+    
     @Test
-    public void attachContainerHeaderTest() {
+    public void attachContainerHeaderTest(){
 
         String containerId = "9c09acd48a25";
         boolean stdOut = true;
@@ -55,7 +59,7 @@ public class AttachContainerCmdHeaderTest extends BaseDockerHeaderTest<AttachCon
 
 
         template.sendBodyAndHeaders("direct:in", "", headers);
-
+        
         Mockito.verify(dockerClient, Mockito.times(1)).attachContainerCmd(containerId);
         Mockito.verify(mockObject, Mockito.times(1)).withFollowStream(Matchers.eq(followStream));
         Mockito.verify(mockObject, Mockito.times(1)).withLogs(Matchers.eq(logs));

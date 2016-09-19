@@ -45,6 +45,7 @@ public final class DockerConstants {
     public static final String DOCKER_SECURE = "CamelDockerSecure";
     public static final String DOCKER_FOLLOW_REDIRECT_FILTER = "CamelDockerFollowRedirectFilter";
     public static final String DOCKER_LOGGING_FILTER = "CamelDockerLoggingFilter";
+    public static final String DOCKER_TLSVERIFY = "CamelDockerTlsVerify";
 
     /**
      * List Images *
