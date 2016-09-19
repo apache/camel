@@ -17,9 +17,11 @@
 package org.apache.camel.component.docker.producer;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.AttachContainerCmd;
 import com.github.dockerjava.api.command.BuildImageCmd;
 import com.github.dockerjava.api.command.ExecStartCmd;
@@ -92,7 +94,16 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                         log.trace("build image callback {}", item);
                         super.onNext(item);
                     }
-                }).awaitImageId();
+                });
+
+                if (result != null) {
+                    String imageId = ((BuildImageResultCallback)result).awaitImageId();
+
+                    ((BuildImageResultCallback)result).close();
+                    
+                    result = imageId;
+                }
+
                 break;
             case PULL_IMAGE:
                 result = executePullImageRequest(client, message).exec(new PullImageResultCallback() {
@@ -102,6 +113,13 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                         super.onNext(item);
                     }
                 });
+
+                if (result != null) {
+                    result = ((PullImageResultCallback)result).awaitCompletion();
+
+                    ((PullImageResultCallback)result).close();
+                }
+
                 break;
             case PUSH_IMAGE:
                 result = executePushImageRequest(client, message).exec(new PushImageResultCallback() {
@@ -110,7 +128,14 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                         log.trace("push image callback {}", item);
                         super.onNext(item);
                     }
-                }).awaitCompletion();
+                });
+
+                if (result != null) {
+                    result = ((PushImageResultCallback)result).awaitCompletion();
+                    
+                    ((PushImageResultCallback)result).close();
+                }
+
                 break;
             /** Containers **/
             case ATTACH_CONTAINER:
@@ -121,7 +146,13 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                         super.onNext(item);
                     }
 
-                }).awaitCompletion();
+                });
+
+                if (result != null) {
+                    result = ((AttachContainerResultCallback)result).awaitCompletion();
+                    
+                    ((AttachContainerResultCallback)result).close();
+                }
 
                 break;
             case LOG_CONTAINER:
@@ -132,8 +163,14 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                         super.onNext(item);
                     }
 
-                }).awaitCompletion();
+                });
 
+                if (result != null) {
+                    result = ((LogContainerResultCallback)result).awaitCompletion();
+                    
+                    ((LogContainerResultCallback)result).close();
+                }
+                
                 break;
             case WAIT_CONTAINER:
                 // result contain a status code value
@@ -144,7 +181,16 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                         super.onNext(item);
                     }
 
-                }).awaitStatusCode();
+                });
+                
+                if (result != null) {
+                    Integer statusCode = ((WaitContainerResultCallback)result).awaitStatusCode();
+                    
+                    ((WaitContainerResultCallback)result).close();
+                    
+                    result = statusCode;
+                }
+                
                 break;
             case EXEC_START:
                 result = executeExecStartRequest(client, message).exec(new ExecStartResultCallback() {
@@ -154,7 +200,14 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                         super.onNext(item);
                     }
 
-                }).awaitCompletion();
+                });
+                
+                if (result != null) {
+                    result = ((ExecStartResultCallback)result).awaitCompletion();
+                    
+                    ((ExecStartResultCallback)result).close();
+                }
+                
                 break;
             default:
                 throw new DockerException("Invalid operation: " + operation);
@@ -166,7 +219,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
                 return true;
             }
-        } catch (DockerException | InterruptedException e) {
+        } catch (DockerException | InterruptedException | IOException e) {
             log.error(e.getMessage(), e);
 
             return false;
@@ -313,7 +366,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 
         AttachContainerCmd attachContainerCmd = client.attachContainerCmd(containerId);
-        
+
         Boolean followStream = DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_STREAM, configuration, message, Boolean.class);
 
         if (followStream != null) {
