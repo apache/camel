@@ -95,7 +95,7 @@ public class AsteriskEndpoint extends DefaultEndpoint {
     }
 
     public boolean isSingleton() {
-        return true;
+        return false;
     }
 
     public void addListener(ManagerEventListener listener) throws CamelAsteriskException {

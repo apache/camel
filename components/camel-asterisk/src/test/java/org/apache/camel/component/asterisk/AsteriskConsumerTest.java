@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Ignore("CAMEL-10321: Set host, port and oids to test asterisk consumer.")
+@Ignore("CAMEL-10321: Set host, username and password test asterisk consumer.")
 public class AsteriskConsumerTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AsteriskConsumerTest.class);
 
