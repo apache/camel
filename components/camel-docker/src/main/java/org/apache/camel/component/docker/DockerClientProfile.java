@@ -45,9 +45,9 @@ public class DockerClientProfile {
     private Integer maxTotalConnections;
 
     private Integer maxPerRouteConnections;
-    
+
     private Boolean loggingFilterEnabled;
-    
+
     private Boolean followRedirectFilterEnabled;
 
     private Boolean tlsVerify;
@@ -149,22 +149,6 @@ public class DockerClientProfile {
         return ((this.socket) ? "unix" : "tcp") + "://" + host + ":" + port;
     }
 
-    public Boolean isLoggingFilterEnabled() {
-        return loggingFilterEnabled;
-    }
-
-    public void setLoggingFilter(Boolean loggingFilterEnabled) {
-        this.loggingFilterEnabled = loggingFilterEnabled;
-    }
-
-    public Boolean isFollowRedirectFilterEnabled() {
-        return followRedirectFilterEnabled;
-    }
-
-    public void setFollowRedirectFilter(Boolean followRedirectFilterEnabled) {
-        this.followRedirectFilterEnabled = followRedirectFilterEnabled;
-    }
-
     public Boolean isTlsVerify() {
         return tlsVerify;
     }
@@ -179,9 +163,9 @@ public class DockerClientProfile {
 
     public void setSocket(Boolean socket) {
         this.socket = socket;
-    }    
+    }
 
-   @Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -212,7 +196,7 @@ public class DockerClientProfile {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        DockerClientProfile other = (DockerClientProfile) obj;
+        DockerClientProfile other = (DockerClientProfile)obj;
         if (certPath == null) {
             if (other.certPath != null) {
                 return false;

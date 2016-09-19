@@ -67,9 +67,9 @@ The Docker component supports 18 endpoint options which are listed below:
 | operation | common |  | DockerOperation | *Required* Which operation to use
 | certPath | common |  | String | Location containing the SSL certificate chain
 | email | common |  | String | Email address associated with the user
-| followRedirectFilter | common | false | boolean | Whether to follow redirect filter
+| followRedirectFilter | common | false | boolean | *Deprecated since 2.18* Whether to follow redirect filter
 | host | common | localhost | String | *Required* Docker host
-| loggingFilter | common | false | boolean | Whether to use logging filter
+| loggingFilter | common | false | boolean | *Deprecated since 2.18* Whether to use logging filter
 | maxPerRouteConnections | common | 100 | Integer | Maximum route connections
 | maxTotalConnections | common | 100 | Integer | Maximum total connections
 | password | common |  | String | Password to authenticate with
@@ -82,6 +82,8 @@ The Docker component supports 18 endpoint options which are listed below:
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| tlsVerify | boolean | *from 2.18* TLS Verify flag
+| socket | boolean | *from 2.18* Connection mode, true docker client use socket otherwise tcp
 |=======================================================================
 {% endraw %}
 // endpoint options: END
