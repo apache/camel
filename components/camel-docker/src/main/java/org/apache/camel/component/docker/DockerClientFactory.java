@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.docker;
 
-import org.apache.camel.Message;
-import org.apache.camel.component.docker.exception.DockerException;
-import org.apache.camel.component.docker.ssl.NoImplSslConfig;
-import org.apache.camel.util.ObjectHelper;
-
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.DockerCmdExecFactory;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
@@ -28,6 +23,10 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.LocalDirectorySSLConfig;
 import com.github.dockerjava.core.SSLConfig;
 import com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory;
+import org.apache.camel.Message;
+import org.apache.camel.component.docker.exception.DockerException;
+import org.apache.camel.component.docker.ssl.NoImplSslConfig;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Methods for communicating with Docker
@@ -64,10 +63,6 @@ public final class DockerClientFactory {
         String serverAddress = DockerHelper.getProperty(DockerConstants.DOCKER_SERVER_ADDRESS, dockerConfiguration, message, String.class, dockerConfiguration.getServerAddress());
         String certPath = DockerHelper.getProperty(DockerConstants.DOCKER_CERT_PATH, dockerConfiguration, message, String.class, dockerConfiguration.getCertPath());
         Boolean secure = DockerHelper.getProperty(DockerConstants.DOCKER_SECURE, dockerConfiguration, message, Boolean.class, dockerConfiguration.isSecure());
-        Boolean loggingFilter = DockerHelper.getProperty(DockerConstants.DOCKER_LOGGING_FILTER, dockerConfiguration, message, Boolean.class,
-                                                         dockerConfiguration.isLoggingFilterEnabled());
-        Boolean followRedirectFilter = DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_REDIRECT_FILTER, dockerConfiguration, message, Boolean.class,
-                                                                dockerConfiguration.isFollowRedirectFilterEnabled());
         Boolean tlsVerify = DockerHelper.getProperty(DockerConstants.DOCKER_TLSVERIFY, dockerConfiguration, message, Boolean.class, dockerConfiguration.isTlsVerify());
 
         clientProfile.setHost(host);
@@ -81,8 +76,6 @@ public final class DockerClientFactory {
         clientProfile.setMaxTotalConnections(maxTotalConnections);
         clientProfile.setMaxPerRouteConnections(maxPerRouteConnections);
         clientProfile.setSecure(secure);
-        clientProfile.setFollowRedirectFilter(followRedirectFilter);
-        clientProfile.setLoggingFilter(loggingFilter);
         clientProfile.setTlsVerify(tlsVerify);
 
         DockerClient dockerClient = dockerComponent.getClient(clientProfile);
