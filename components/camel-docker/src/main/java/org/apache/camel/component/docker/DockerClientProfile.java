@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.docker;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.util.ObjectHelper;
 
@@ -52,6 +49,10 @@ public class DockerClientProfile {
     private Boolean loggingFilterEnabled;
     
     private Boolean followRedirectFilterEnabled;
+
+    private Boolean tlsVerify;
+
+    private Boolean socket;
 
     public String getHost() {
         return host;
@@ -145,16 +146,7 @@ public class DockerClientProfile {
         ObjectHelper.notNull(this.host, "host");
         ObjectHelper.notNull(this.port, "port");
 
-        URL uri;
-        String secure = this.secure != null && this.secure ? "https" : "http";
-        try {
-            uri = new URL(secure, this.host, this.port, "");
-        } catch (MalformedURLException e) {
-            throw new DockerException(e);
-        }
-
-        return uri.toString();
-
+        return ((this.socket) ? "unix" : "tcp") + "://" + host + ":" + port;
     }
 
     public Boolean isLoggingFilterEnabled() {
@@ -173,7 +165,23 @@ public class DockerClientProfile {
         this.followRedirectFilterEnabled = followRedirectFilterEnabled;
     }
 
-    @Override
+    public Boolean isTlsVerify() {
+        return tlsVerify;
+    }
+
+    public void setTlsVerify(Boolean tlsVerify) {
+        this.tlsVerify = tlsVerify;
+    }
+
+    public Boolean isSocket() {
+        return socket;
+    }
+
+    public void setSocket(Boolean socket) {
+        this.socket = socket;
+    }    
+
+   @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -297,6 +305,6 @@ public class DockerClientProfile {
             return false;
         }
         return true;
-    }    
+    }
 
 }
