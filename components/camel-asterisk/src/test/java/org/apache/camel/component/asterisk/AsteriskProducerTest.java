@@ -24,7 +24,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("CAMEL-10321: Set host, port and oids to test asterisk producer.")
+@Ignore("CAMEL-10321: Set host, username and password test asterisk producer.")
 public class AsteriskProducerTest extends CamelTestSupport {
 
     private String hostname = "192.168.0.254";

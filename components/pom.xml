@@ -59,11 +59,11 @@
     <module>camel-jms</module>
 
     <!-- regular modules in alphabetic order -->
-	<module>camel-asterisk</module>
     <module>camel-ahc</module>
     <module>camel-ahc-ws</module>
     <module>camel-amqp</module>
     <module>camel-apns</module>
+    <module>camel-asterisk</module>
     <module>camel-atmos</module>
     <module>camel-atmosphere-websocket</module>
     <module>camel-atom</module>
