@@ -19,42 +19,38 @@ package org.apache.camel.processor.idempotent.cassandra;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cassandra.BaseCassandraTest;
 import org.apache.camel.component.cassandra.CassandraUnitUtils;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import static org.junit.Assume.assumeTrue;
 
 /**
  * Unite test for {@link CassandraIdempotentRepository}
  */
-public class CassandraIdempotentTest extends CamelTestSupport {
+public class CassandraIdempotentTest extends BaseCassandraTest {
+
     private Cluster cluster;
     private CassandraIdempotentRepository idempotentRepository;
 
     @Override
     protected void doPreSetup() throws Exception {
-        assumeTrue("Skipping test running in CI server - Fails sometimes on CI server with address already in use", System.getenv("BUILD_ID") == null);
-        CassandraUnitUtils.startEmbeddedCassandra();
-        cluster = CassandraUnitUtils.cassandraCluster();
-        Session rootSession = cluster.connect();
-        CassandraUnitUtils.loadCQLDataSet(rootSession, "NamedIdempotentDataSet.cql");
-        rootSession.close();
-        idempotentRepository = new NamedCassandraIdempotentRepository(cluster, CassandraUnitUtils.KEYSPACE, "ID");
-        idempotentRepository.setTable("NAMED_CAMEL_IDEMPOTENT");
-        idempotentRepository.start();
+        if (canTest()) {
+            cluster = CassandraUnitUtils.cassandraCluster();
+            Session rootSession = cluster.connect();
+            CassandraUnitUtils.loadCQLDataSet(rootSession, "NamedIdempotentDataSet.cql");
+            rootSession.close();
+            idempotentRepository = new NamedCassandraIdempotentRepository(cluster, CassandraUnitUtils.KEYSPACE, "ID");
+            idempotentRepository.setTable("NAMED_CAMEL_IDEMPOTENT");
+            idempotentRepository.start();
+        }
         super.doPreSetup();
     }
 
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-        idempotentRepository.stop();
-        try {
-            CassandraUnitUtils.cleanEmbeddedCassandra();
-        } catch (Throwable e) {
-            // ignore shutdown errors
+        if (canTest()) {
+            idempotentRepository.stop();
         }
     }
 
@@ -76,6 +72,10 @@ public class CassandraIdempotentTest extends CamelTestSupport {
 
     @Test
     public void testIdempotentRoute() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
         // Given
         MockEndpoint mockOutput = getMockEndpoint("mock:output");
         mockOutput.expectedMessageCount(2);
