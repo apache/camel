@@ -66,7 +66,7 @@ public class DockerEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new CamelException();
+        throw new UnsupportedOperationException("DockerConsumer is not implemented");
     }
     
     @Override
