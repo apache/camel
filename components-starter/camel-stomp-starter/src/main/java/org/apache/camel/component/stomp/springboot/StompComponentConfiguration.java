@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.stomp.springboot;
 
-import org.apache.camel.component.stomp.StompConfiguration;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The stomp component is used for communicating with Stomp compliant message
@@ -31,7 +32,7 @@ public class StompComponentConfiguration {
     /**
      * To use the shared stomp configuration
      */
-    private StompConfiguration configuration;
+    private StompConfigurationNestedConfiguration configuration;
     /**
      * The URI of the Stomp broker to connect to
      */
@@ -49,11 +50,12 @@ public class StompComponentConfiguration {
      */
     private String host;
 
-    public StompConfiguration getConfiguration() {
+    public StompConfigurationNestedConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(StompConfiguration configuration) {
+    public void setConfiguration(
+            StompConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -87,5 +89,71 @@ public class StompComponentConfiguration {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public static class StompConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.stomp.StompConfiguration.class;
+        /**
+         * The URI of the Stomp broker to connect to
+         */
+        private String brokerURL = "tcp://localhost:61613";
+        /**
+         * The virtual host name
+         */
+        private String host;
+        /**
+         * The username
+         */
+        private String login;
+        /**
+         * The password
+         */
+        private String passcode;
+        /**
+         * To configure security using SSLContextParameters
+         */
+        @NestedConfigurationProperty
+        private SSLContextParameters sslContextParameters;
+
+        public String getBrokerURL() {
+            return brokerURL;
+        }
+
+        public void setBrokerURL(String brokerURL) {
+            this.brokerURL = brokerURL;
+        }
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public String getLogin() {
+            return login;
+        }
+
+        public void setLogin(String login) {
+            this.login = login;
+        }
+
+        public String getPasscode() {
+            return passcode;
+        }
+
+        public void setPasscode(String passcode) {
+            this.passcode = passcode;
+        }
+
+        public SSLContextParameters getSslContextParameters() {
+            return sslContextParameters;
+        }
+
+        public void setSslContextParameters(
+                SSLContextParameters sslContextParameters) {
+            this.sslContextParameters = sslContextParameters;
+        }
     }
 }

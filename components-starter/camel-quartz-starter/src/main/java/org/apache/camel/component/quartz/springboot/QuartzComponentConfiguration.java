@@ -20,6 +20,7 @@ import java.util.Properties;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Provides a scheduled delivery of messages using the Quartz 1.x scheduler.
@@ -32,11 +33,13 @@ public class QuartzComponentConfiguration {
     /**
      * To use the custom SchedulerFactory which is used to create the Scheduler.
      */
+    @NestedConfigurationProperty
     private SchedulerFactory factory;
     /**
      * To use the custom configured Quartz scheduler instead of creating a new
      * Scheduler.
      */
+    @NestedConfigurationProperty
     private Scheduler scheduler;
     /**
      * Properties to configure the Quartz scheduler.

@@ -19,6 +19,7 @@ package org.apache.camel.component.quickfixj.springboot;
 import java.util.Map;
 import org.apache.camel.component.quickfixj.QuickfixjConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import quickfix.LogFactory;
 import quickfix.MessageFactory;
 import quickfix.MessageStoreFactory;
@@ -35,14 +36,17 @@ public class QuickfixjComponentConfiguration {
     /**
      * To use the given MessageFactory
      */
+    @NestedConfigurationProperty
     private MessageFactory messageFactory;
     /**
      * To use the given LogFactory
      */
+    @NestedConfigurationProperty
     private LogFactory logFactory;
     /**
      * To use the given MessageStoreFactory
      */
+    @NestedConfigurationProperty
     private MessageStoreFactory messageStoreFactory;
     /**
      * To use the given map of pre configured QuickFix configurations mapped to

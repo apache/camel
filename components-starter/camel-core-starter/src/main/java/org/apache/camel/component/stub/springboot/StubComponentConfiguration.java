@@ -19,6 +19,7 @@ package org.apache.camel.component.stub.springboot;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The stub component provides a simple way to stub out any physical endpoints
@@ -41,6 +42,7 @@ public class StubComponentConfiguration {
     /**
      * Sets the default queue factory.
      */
+    @NestedConfigurationProperty
     private BlockingQueueFactory<Exchange> defaultQueueFactory;
 
     public Integer getQueueSize() {

@@ -18,6 +18,7 @@ package org.apache.camel.component.apns.springboot;
 
 import com.notnoop.apns.ApnsService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * For sending notifications to Apple iOS devices.
@@ -30,6 +31,7 @@ public class ApnsComponentConfiguration {
     /**
      * To use a custom link ApnsService
      */
+    @NestedConfigurationProperty
     private ApnsService apnsService;
 
     public ApnsService getApnsService() {

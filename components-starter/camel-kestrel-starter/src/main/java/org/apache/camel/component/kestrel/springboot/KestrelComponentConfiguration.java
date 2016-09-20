@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kestrel.springboot;
 
-import org.apache.camel.component.kestrel.KestrelConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -32,13 +31,54 @@ public class KestrelComponentConfiguration {
      * To use a shared configured configuration as base for creating new
      * endpoints.
      */
-    private KestrelConfiguration configuration;
+    private KestrelConfigurationNestedConfiguration configuration;
 
-    public KestrelConfiguration getConfiguration() {
+    public KestrelConfigurationNestedConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(KestrelConfiguration configuration) {
+    public void setConfiguration(
+            KestrelConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public static class KestrelConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.kestrel.KestrelConfiguration.class;
+        /**
+         * The addresses
+         */
+        private String[] addresses;
+        /**
+         * The wait time in milliseconds
+         */
+        private Integer waitTimeMs;
+        /**
+         * The number of concurrent consumers
+         */
+        private Integer concurrentConsumers;
+
+        public String[] getAddresses() {
+            return addresses;
+        }
+
+        public void setAddresses(String[] addresses) {
+            this.addresses = addresses;
+        }
+
+        public Integer getWaitTimeMs() {
+            return waitTimeMs;
+        }
+
+        public void setWaitTimeMs(Integer waitTimeMs) {
+            this.waitTimeMs = waitTimeMs;
+        }
+
+        public Integer getConcurrentConsumers() {
+            return concurrentConsumers;
+        }
+
+        public void setConcurrentConsumers(Integer concurrentConsumers) {
+            this.concurrentConsumers = concurrentConsumers;
+        }
     }
 }

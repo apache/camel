@@ -17,8 +17,8 @@
 package org.apache.camel.component.zookeeper.springboot;
 
 import java.util.List;
-import org.apache.camel.component.zookeeper.ZooKeeperConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
 /**
  * The zookeeper component allows interaction with a ZooKeeper cluster.
@@ -29,125 +29,147 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ZooKeeperComponentConfiguration {
 
     /**
-     * To use a shared ZooKeeperConfiguration. Properties of the shared
-     * configuration can also be set individually.
+     * To use a shared ZooKeeperConfiguration
      */
-    private ZooKeeperConfiguration configuration;
-    /**
-     * The zookeeper server hosts
-     */
-    private List<String> servers;
-    /**
-     * The time interval to wait on connection before timing out.
-     */
-    private Integer timeout;
-    /**
-     * Whether the children of the node should be listed
-     */
-    private Boolean listChildren;
-    /**
-     * The node in the ZooKeeper server (aka znode)
-     */
-    private String path;
-    /**
-     * Should changes to the znode be 'watched' and repeatedly processed.
-     */
-    private Boolean repeat;
-    /**
-     * The time interval to backoff for after an error before retrying.
-     */
-    private long backoff;
-    /**
-     * Should the endpoint create the node if it does not currently exist.
-     */
-    private Boolean create;
-    /**
-     * The create mode that should be used for the newly created node
-     */
-    private String createMode;
-    /**
-     * Upon the delete of a znode should an empty message be send to the
-     * consumer
-     */
-    private Boolean sendEmptyMessageOnDelete;
+    private ZooKeeperConfigurationNestedConfiguration configuration;
 
-    public ZooKeeperConfiguration getConfiguration() {
+    public ZooKeeperConfigurationNestedConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(ZooKeeperConfiguration configuration) {
+    public void setConfiguration(
+            ZooKeeperConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public List<String> getServers() {
-        return servers;
-    }
+    public static class ZooKeeperConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.zookeeper.ZooKeeperConfiguration.class;
+        /**
+         * The zookeeper server hosts
+         */
+        private List servers;
+        /**
+         * The time interval to wait on connection before timing out.
+         */
+        private Integer timeout;
+        /**
+         * Whether the children of the node should be listed
+         */
+        private Boolean listChildren;
+        /**
+         * The node in the ZooKeeper server (aka znode)
+         */
+        private String path;
+        /**
+         * Should changes to the znode be 'watched' and repeatedly processed.
+         */
+        private Boolean repeat;
+        /**
+         * Not in use
+         * 
+         * @deprecated The usage of this option has no effect at all.
+         */
+        @Deprecated
+        private Boolean awaitExistence;
+        /**
+         * The time interval to backoff for after an error before retrying.
+         */
+        private Long backoff;
+        /**
+         * Should the endpoint create the node if it does not currently exist.
+         */
+        private Boolean create;
+        /**
+         * The create mode that should be used for the newly created node
+         */
+        private String createMode = "EPHEMERAL";
+        /**
+         * Upon the delete of a znode, should an empty message be send to the
+         * consumer
+         */
+        private Boolean sendEmptyMessageOnDelete;
 
-    public void setServers(List<String> servers) {
-        this.servers = servers;
-    }
+        public List getServers() {
+            return servers;
+        }
 
-    public Integer getTimeout() {
-        return timeout;
-    }
+        public void setServers(List servers) {
+            this.servers = servers;
+        }
 
-    public void setTimeout(Integer timeout) {
-        this.timeout = timeout;
-    }
+        public Integer getTimeout() {
+            return timeout;
+        }
 
-    public Boolean getListChildren() {
-        return listChildren;
-    }
+        public void setTimeout(Integer timeout) {
+            this.timeout = timeout;
+        }
 
-    public void setListChildren(Boolean listChildren) {
-        this.listChildren = listChildren;
-    }
+        public Boolean getListChildren() {
+            return listChildren;
+        }
 
-    public String getPath() {
-        return path;
-    }
+        public void setListChildren(Boolean listChildren) {
+            this.listChildren = listChildren;
+        }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
+        public String getPath() {
+            return path;
+        }
 
-    public Boolean getRepeat() {
-        return repeat;
-    }
+        public void setPath(String path) {
+            this.path = path;
+        }
 
-    public void setRepeat(Boolean repeat) {
-        this.repeat = repeat;
-    }
+        public Boolean getRepeat() {
+            return repeat;
+        }
 
-    public long getBackoff() {
-        return backoff;
-    }
+        public void setRepeat(Boolean repeat) {
+            this.repeat = repeat;
+        }
 
-    public void setBackoff(long backoff) {
-        this.backoff = backoff;
-    }
+        @Deprecated
+        @DeprecatedConfigurationProperty
+        public Boolean getAwaitExistence() {
+            return awaitExistence;
+        }
 
-    public Boolean getCreate() {
-        return create;
-    }
+        @Deprecated
+        public void setAwaitExistence(Boolean awaitExistence) {
+            this.awaitExistence = awaitExistence;
+        }
 
-    public void setCreate(Boolean create) {
-        this.create = create;
-    }
+        public Long getBackoff() {
+            return backoff;
+        }
 
-    public String getCreateMode() {
-        return createMode;
-    }
+        public void setBackoff(Long backoff) {
+            this.backoff = backoff;
+        }
 
-    public void setCreateMode(String createMode) {
-        this.createMode = createMode;
-    }
+        public Boolean getCreate() {
+            return create;
+        }
 
-    public Boolean getSendEmptyMessageOnDelete() {
-        return sendEmptyMessageOnDelete;
-    }
+        public void setCreate(Boolean create) {
+            this.create = create;
+        }
 
-    public void setSendEmptyMessageOnDelete(Boolean sendEmptyMessageOnDelete) {
-        this.sendEmptyMessageOnDelete = sendEmptyMessageOnDelete;
+        public String getCreateMode() {
+            return createMode;
+        }
+
+        public void setCreateMode(String createMode) {
+            this.createMode = createMode;
+        }
+
+        public Boolean getSendEmptyMessageOnDelete() {
+            return sendEmptyMessageOnDelete;
+        }
+
+        public void setSendEmptyMessageOnDelete(Boolean sendEmptyMessageOnDelete) {
+            this.sendEmptyMessageOnDelete = sendEmptyMessageOnDelete;
+        }
     }
 }

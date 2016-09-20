@@ -21,6 +21,7 @@ import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * To exchange data with external Websocket clients using Atmosphere.
@@ -37,6 +38,7 @@ public class WebsocketComponentConfiguration {
     /**
      * To use a custom org.apache.camel.component.servlet.HttpRegistry.
      */
+    @NestedConfigurationProperty
     private HttpRegistry httpRegistry;
     /**
      * Whether to automatic bind multipart/form-data as attachments on the Camel
@@ -48,10 +50,12 @@ public class WebsocketComponentConfiguration {
      * To use a custom HttpBinding to control the mapping between Camel message
      * and HttpClient.
      */
+    @NestedConfigurationProperty
     private HttpBinding httpBinding;
     /**
      * To use the shared HttpConfiguration as base configuration.
      */
+    @NestedConfigurationProperty
     private HttpConfiguration httpConfiguration;
     /**
      * Whether to allow java serialization when a request uses
@@ -65,6 +69,7 @@ public class WebsocketComponentConfiguration {
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
      */
+    @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
 
     public String getServletName() {

@@ -19,6 +19,7 @@ package org.apache.camel.component.spark.springboot;
 import org.apache.camel.component.spark.RddCallback;
 import org.apache.spark.api.java.JavaRDDLike;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The spark component can be used to send RDD or DataFrame jobs to Apache Spark
@@ -32,10 +33,12 @@ public class SparkComponentConfiguration {
     /**
      * RDD to compute against.
      */
+    @NestedConfigurationProperty
     private JavaRDDLike rdd;
     /**
      * Function performing action against an RDD.
      */
+    @NestedConfigurationProperty
     private RddCallback rddCallback;
 
     public JavaRDDLike getRdd() {

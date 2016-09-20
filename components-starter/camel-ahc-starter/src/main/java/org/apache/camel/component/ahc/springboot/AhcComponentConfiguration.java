@@ -22,6 +22,7 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * To call external HTTP services using Async Http Client.
@@ -34,16 +35,19 @@ public class AhcComponentConfiguration {
     /**
      * To use a custom AsyncHttpClient
      */
+    @NestedConfigurationProperty
     private AsyncHttpClient client;
     /**
      * To use a custom AhcBinding which allows to control how to bind between
      * AHC and Camel.
      */
+    @NestedConfigurationProperty
     private AhcBinding binding;
     /**
      * To configure the AsyncHttpClient to use a custom
      * com.ning.http.client.AsyncHttpClientConfig instance.
      */
+    @NestedConfigurationProperty
     private AsyncHttpClientConfig clientConfig;
     /**
      * Reference to a org.apache.camel.util.jsse.SSLContextParameters in the
@@ -51,6 +55,7 @@ public class AhcComponentConfiguration {
      * configuration options provided through the clientConfig option at the
      * endpoint or component level.
      */
+    @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
     /**
      * Whether to allow java serialization when a request uses
@@ -64,6 +69,7 @@ public class AhcComponentConfiguration {
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
      */
+    @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
 
     public AsyncHttpClient getClient() {

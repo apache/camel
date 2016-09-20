@@ -18,6 +18,7 @@ package org.apache.camel.component.hazelcast.springboot;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The hazelcast component allows you to work with the Hazelcast distributed
@@ -33,6 +34,7 @@ public class HazelcastComponentConfiguration {
      * endpoint. If you don't specify the instance reference camel use the
      * default hazelcast instance from the camel-hazelcast instance.
      */
+    @NestedConfigurationProperty
     private HazelcastInstance hazelcastInstance;
 
     public HazelcastInstance getHazelcastInstance() {

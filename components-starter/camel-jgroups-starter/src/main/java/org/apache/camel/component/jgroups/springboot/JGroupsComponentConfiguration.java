@@ -18,6 +18,7 @@ package org.apache.camel.component.jgroups.springboot;
 
 import org.jgroups.Channel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The jgroups component provides exchange of messages between Camel and JGroups
@@ -31,6 +32,7 @@ public class JGroupsComponentConfiguration {
     /**
      * Channel to use
      */
+    @NestedConfigurationProperty
     private Channel channel;
     /**
      * Specifies configuration properties of the JChannel used by the endpoint.

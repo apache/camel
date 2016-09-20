@@ -18,6 +18,7 @@ package org.apache.camel.component.ibatis.springboot;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Performs a query poll insert update or delete in a relational database using
@@ -31,6 +32,7 @@ public class IBatisComponentConfiguration {
     /**
      * To use the given com.ibatis.sqlmap.client.SqlMapClient
      */
+    @NestedConfigurationProperty
     private SqlMapClient sqlMapClient;
     /**
      * Location of iBatis xml configuration file. The default value is:

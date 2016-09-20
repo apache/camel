@@ -17,11 +17,12 @@
 package org.apache.camel.component.cache.springboot;
 
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
-import org.apache.camel.component.cache.CacheConfiguration;
 import org.apache.camel.component.cache.CacheEventListenerRegistry;
 import org.apache.camel.component.cache.CacheLoaderRegistry;
 import org.apache.camel.component.cache.CacheManagerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The cache component enables you to perform caching operations using EHCache
@@ -36,71 +37,17 @@ public class CacheComponentConfiguration {
      * To use the given CacheManagerFactory for creating the CacheManager. By
      * default the DefaultCacheManagerFactory is used.
      */
+    @NestedConfigurationProperty
     private CacheManagerFactory cacheManagerFactory;
     /**
-     * Sets the Cache configuration. Properties of the shared configuration can
-     * also be set individually.
+     * Sets the Cache configuration
      */
-    private CacheConfiguration configuration;
+    private CacheConfigurationNestedConfiguration configuration;
     /**
      * Sets the location of the ehcache.xml file to load from classpath or file
      * system. By default the file is loaded from classpath:ehcache.xml
      */
     private String configurationFile;
-    /**
-     * Name of the cache
-     */
-    private String cacheName;
-    /**
-     * The number of elements that may be stored in the defined cache in memory.
-     */
-    private Integer maxElementsInMemory;
-    /**
-     * Which eviction strategy to use when maximum number of elements in memory
-     * is reached. The strategy defines which elements to be removed. LRU - Lest
-     * Recently Used LFU - Lest Frequently Used FIFO - First In First Out
-     */
-    private MemoryStoreEvictionPolicy memoryStoreEvictionPolicy;
-    /**
-     * Specifies whether cache may overflow to disk
-     */
-    private Boolean overflowToDisk;
-    /**
-     * Sets whether elements are eternal. If eternal timeouts are ignored and
-     * the element never expires.
-     */
-    private Boolean eternal;
-    /**
-     * The maximum time between creation time and when an element expires. Is
-     * used only if the element is not eternal
-     */
-    private long timeToLiveSeconds;
-    /**
-     * The maximum amount of time between accesses before an element expires
-     */
-    private long timeToIdleSeconds;
-    /**
-     * Whether the disk store persists between restarts of the application.
-     */
-    private Boolean diskPersistent;
-    /**
-     * The number of seconds between runs of the disk expiry thread.
-     */
-    private long diskExpiryThreadIntervalSeconds;
-    /**
-     * To configure event listeners using the CacheEventListenerRegistry
-     */
-    private CacheEventListenerRegistry eventListenerRegistry;
-    /**
-     * To configure cache loader using the CacheLoaderRegistry
-     */
-    private CacheLoaderRegistry cacheLoaderRegistry;
-    /**
-     * Whether to turn on allowing to store non serializable objects in the
-     * cache. If this option is enabled then overflow to disk cannot be enabled
-     * as well.
-     */
-    private Boolean objectCache;
 
     public CacheManagerFactory getCacheManagerFactory() {
         return cacheManagerFactory;
@@ -110,11 +57,12 @@ public class CacheComponentConfiguration {
         this.cacheManagerFactory = cacheManagerFactory;
     }
 
-    public CacheConfiguration getConfiguration() {
+    public CacheConfigurationNestedConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(CacheConfiguration configuration) {
+    public void setConfiguration(
+            CacheConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -126,102 +74,186 @@ public class CacheComponentConfiguration {
         this.configurationFile = configurationFile;
     }
 
-    public String getCacheName() {
-        return cacheName;
-    }
+    public static class CacheConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.cache.CacheConfiguration.class;
+        /**
+         * Name of the cache
+         */
+        private String cacheName;
+        /**
+         * The number of elements that may be stored in the defined cache in
+         * memory.
+         */
+        private Integer maxElementsInMemory;
+        /**
+         * Which eviction strategy to use when maximum number of elements in
+         * memory is reached. The strategy defines which elements to be removed.
+         * <ul>
+         * <li>LRU - Lest Recently Used</li>
+         * <li>LFU - Lest Frequently Used</li>
+         * <li>FIFO - First In First Out</li>
+         * </ul>
+         */
+        @NestedConfigurationProperty
+        private MemoryStoreEvictionPolicy memoryStoreEvictionPolicy;
+        /**
+         * Specifies whether cache may overflow to disk
+         */
+        private Boolean overflowToDisk;
+        /**
+         * This parameter is ignored. CacheManager sets it using setter
+         * injection.
+         */
+        @Deprecated
+        private String diskStorePath;
+        /**
+         * Sets whether elements are eternal. If eternal, timeouts are ignored
+         * and the element never expires.
+         */
+        private Boolean eternal;
+        /**
+         * The maximum time between creation time and when an element expires.
+         * Is used only if the element is not eternal
+         */
+        private Long timeToLiveSeconds;
+        /**
+         * The maximum amount of time between accesses before an element expires
+         */
+        private Long timeToIdleSeconds;
+        /**
+         * Whether the disk store persists between restarts of the application.
+         */
+        private Boolean diskPersistent;
+        /**
+         * The number of seconds between runs of the disk expiry thread.
+         */
+        private Long diskExpiryThreadIntervalSeconds;
+        /**
+         * To configure event listeners using the CacheEventListenerRegistry
+         */
+        @NestedConfigurationProperty
+        private CacheEventListenerRegistry eventListenerRegistry;
+        /**
+         * To configure cache loader using the CacheLoaderRegistry
+         */
+        @NestedConfigurationProperty
+        private CacheLoaderRegistry cacheLoaderRegistry;
+        /**
+         * Whether to turn on allowing to store non serializable objects in the
+         * cache. If this option is enabled then overflow to disk cannot be
+         * enabled as well.
+         */
+        private Boolean objectCache;
 
-    public void setCacheName(String cacheName) {
-        this.cacheName = cacheName;
-    }
+        public String getCacheName() {
+            return cacheName;
+        }
 
-    public Integer getMaxElementsInMemory() {
-        return maxElementsInMemory;
-    }
+        public void setCacheName(String cacheName) {
+            this.cacheName = cacheName;
+        }
 
-    public void setMaxElementsInMemory(Integer maxElementsInMemory) {
-        this.maxElementsInMemory = maxElementsInMemory;
-    }
+        public Integer getMaxElementsInMemory() {
+            return maxElementsInMemory;
+        }
 
-    public MemoryStoreEvictionPolicy getMemoryStoreEvictionPolicy() {
-        return memoryStoreEvictionPolicy;
-    }
+        public void setMaxElementsInMemory(Integer maxElementsInMemory) {
+            this.maxElementsInMemory = maxElementsInMemory;
+        }
 
-    public void setMemoryStoreEvictionPolicy(
-            MemoryStoreEvictionPolicy memoryStoreEvictionPolicy) {
-        this.memoryStoreEvictionPolicy = memoryStoreEvictionPolicy;
-    }
+        public MemoryStoreEvictionPolicy getMemoryStoreEvictionPolicy() {
+            return memoryStoreEvictionPolicy;
+        }
 
-    public Boolean getOverflowToDisk() {
-        return overflowToDisk;
-    }
+        public void setMemoryStoreEvictionPolicy(
+                MemoryStoreEvictionPolicy memoryStoreEvictionPolicy) {
+            this.memoryStoreEvictionPolicy = memoryStoreEvictionPolicy;
+        }
 
-    public void setOverflowToDisk(Boolean overflowToDisk) {
-        this.overflowToDisk = overflowToDisk;
-    }
+        public Boolean getOverflowToDisk() {
+            return overflowToDisk;
+        }
 
-    public Boolean getEternal() {
-        return eternal;
-    }
+        public void setOverflowToDisk(Boolean overflowToDisk) {
+            this.overflowToDisk = overflowToDisk;
+        }
 
-    public void setEternal(Boolean eternal) {
-        this.eternal = eternal;
-    }
+        @Deprecated
+        @DeprecatedConfigurationProperty
+        public String getDiskStorePath() {
+            return diskStorePath;
+        }
 
-    public long getTimeToLiveSeconds() {
-        return timeToLiveSeconds;
-    }
+        @Deprecated
+        public void setDiskStorePath(String diskStorePath) {
+            this.diskStorePath = diskStorePath;
+        }
 
-    public void setTimeToLiveSeconds(long timeToLiveSeconds) {
-        this.timeToLiveSeconds = timeToLiveSeconds;
-    }
+        public Boolean getEternal() {
+            return eternal;
+        }
 
-    public long getTimeToIdleSeconds() {
-        return timeToIdleSeconds;
-    }
+        public void setEternal(Boolean eternal) {
+            this.eternal = eternal;
+        }
 
-    public void setTimeToIdleSeconds(long timeToIdleSeconds) {
-        this.timeToIdleSeconds = timeToIdleSeconds;
-    }
+        public Long getTimeToLiveSeconds() {
+            return timeToLiveSeconds;
+        }
 
-    public Boolean getDiskPersistent() {
-        return diskPersistent;
-    }
+        public void setTimeToLiveSeconds(Long timeToLiveSeconds) {
+            this.timeToLiveSeconds = timeToLiveSeconds;
+        }
 
-    public void setDiskPersistent(Boolean diskPersistent) {
-        this.diskPersistent = diskPersistent;
-    }
+        public Long getTimeToIdleSeconds() {
+            return timeToIdleSeconds;
+        }
 
-    public long getDiskExpiryThreadIntervalSeconds() {
-        return diskExpiryThreadIntervalSeconds;
-    }
+        public void setTimeToIdleSeconds(Long timeToIdleSeconds) {
+            this.timeToIdleSeconds = timeToIdleSeconds;
+        }
 
-    public void setDiskExpiryThreadIntervalSeconds(
-            long diskExpiryThreadIntervalSeconds) {
-        this.diskExpiryThreadIntervalSeconds = diskExpiryThreadIntervalSeconds;
-    }
+        public Boolean getDiskPersistent() {
+            return diskPersistent;
+        }
 
-    public CacheEventListenerRegistry getEventListenerRegistry() {
-        return eventListenerRegistry;
-    }
+        public void setDiskPersistent(Boolean diskPersistent) {
+            this.diskPersistent = diskPersistent;
+        }
 
-    public void setEventListenerRegistry(
-            CacheEventListenerRegistry eventListenerRegistry) {
-        this.eventListenerRegistry = eventListenerRegistry;
-    }
+        public Long getDiskExpiryThreadIntervalSeconds() {
+            return diskExpiryThreadIntervalSeconds;
+        }
 
-    public CacheLoaderRegistry getCacheLoaderRegistry() {
-        return cacheLoaderRegistry;
-    }
+        public void setDiskExpiryThreadIntervalSeconds(
+                Long diskExpiryThreadIntervalSeconds) {
+            this.diskExpiryThreadIntervalSeconds = diskExpiryThreadIntervalSeconds;
+        }
 
-    public void setCacheLoaderRegistry(CacheLoaderRegistry cacheLoaderRegistry) {
-        this.cacheLoaderRegistry = cacheLoaderRegistry;
-    }
+        public CacheEventListenerRegistry getEventListenerRegistry() {
+            return eventListenerRegistry;
+        }
 
-    public Boolean getObjectCache() {
-        return objectCache;
-    }
+        public void setEventListenerRegistry(
+                CacheEventListenerRegistry eventListenerRegistry) {
+            this.eventListenerRegistry = eventListenerRegistry;
+        }
 
-    public void setObjectCache(Boolean objectCache) {
-        this.objectCache = objectCache;
+        public CacheLoaderRegistry getCacheLoaderRegistry() {
+            return cacheLoaderRegistry;
+        }
+
+        public void setCacheLoaderRegistry(
+                CacheLoaderRegistry cacheLoaderRegistry) {
+            this.cacheLoaderRegistry = cacheLoaderRegistry;
+        }
+
+        public Boolean getObjectCache() {
+            return objectCache;
+        }
+
+        public void setObjectCache(Boolean objectCache) {
+            this.objectCache = objectCache;
+        }
     }
 }

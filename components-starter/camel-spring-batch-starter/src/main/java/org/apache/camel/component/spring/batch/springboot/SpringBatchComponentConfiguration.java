@@ -19,6 +19,7 @@ package org.apache.camel.component.spring.batch.springboot;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The spring-batch component allows to send messages to Spring Batch for
@@ -32,10 +33,12 @@ public class SpringBatchComponentConfiguration {
     /**
      * Explicitly specifies a JobLauncher to be used.
      */
+    @NestedConfigurationProperty
     private JobLauncher jobLauncher;
     /**
      * Explicitly specifies a JobRegistry to be used.
      */
+    @NestedConfigurationProperty
     private JobRegistry jobRegistry;
 
     public JobLauncher getJobLauncher() {

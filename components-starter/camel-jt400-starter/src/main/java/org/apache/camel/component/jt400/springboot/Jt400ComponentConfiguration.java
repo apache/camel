@@ -18,6 +18,7 @@ package org.apache.camel.component.jt400.springboot;
 
 import com.ibm.as400.access.AS400ConnectionPool;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The jt400 component allows you to exchanges messages with an AS/400 system
@@ -31,6 +32,7 @@ public class Jt400ComponentConfiguration {
     /**
      * Returns the default connection pool used by this component.
      */
+    @NestedConfigurationProperty
     private AS400ConnectionPool connectionPool;
 
     public AS400ConnectionPool getConnectionPool() {

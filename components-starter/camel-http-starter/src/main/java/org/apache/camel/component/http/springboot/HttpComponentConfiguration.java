@@ -22,6 +22,7 @@ import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * For calling out to external HTTP servers using Apache HTTP Client 3.x.
@@ -35,19 +36,23 @@ public class HttpComponentConfiguration {
      * To use the custom HttpClientConfigurer to perform configuration of the
      * HttpClient that will be used.
      */
+    @NestedConfigurationProperty
     private HttpClientConfigurer httpClientConfigurer;
     /**
      * To use a custom HttpConnectionManager to manage connections
      */
+    @NestedConfigurationProperty
     private HttpConnectionManager httpConnectionManager;
     /**
      * To use a custom HttpBinding to control the mapping between Camel message
      * and HttpClient.
      */
+    @NestedConfigurationProperty
     private HttpBinding httpBinding;
     /**
      * To use the shared HttpConfiguration as base configuration.
      */
+    @NestedConfigurationProperty
     private HttpConfiguration httpConfiguration;
     /**
      * Whether to allow java serialization when a request uses
@@ -61,6 +66,7 @@ public class HttpComponentConfiguration {
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
      */
+    @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
 
     public HttpClientConfigurer getHttpClientConfigurer() {

@@ -18,6 +18,7 @@ package org.apache.camel.component.metrics.springboot;
 
 import com.codahale.metrics.MetricRegistry;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * To collect various metrics directly from Camel routes using the DropWizard
@@ -31,6 +32,7 @@ public class MetricsComponentConfiguration {
     /**
      * To use a custom configured MetricRegistry.
      */
+    @NestedConfigurationProperty
     private MetricRegistry metricRegistry;
 
     public MetricRegistry getMetricRegistry() {

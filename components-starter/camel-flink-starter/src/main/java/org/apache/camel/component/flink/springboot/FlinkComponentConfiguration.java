@@ -21,6 +21,7 @@ import org.apache.camel.component.flink.DataStreamCallback;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The flink component can be used to send DataSet jobs to Apache Flink cluster.
@@ -33,18 +34,22 @@ public class FlinkComponentConfiguration {
     /**
      * DataSet to compute against.
      */
+    @NestedConfigurationProperty
     private DataSet dataSet;
     /**
      * DataStream to compute against.
      */
+    @NestedConfigurationProperty
     private DataStream dataStream;
     /**
      * Function performing action against a DataSet.
      */
+    @NestedConfigurationProperty
     private DataSetCallback dataSetCallback;
     /**
      * Function performing action against a DataStream.
      */
+    @NestedConfigurationProperty
     private DataStreamCallback dataStreamCallback;
 
     public DataSet getDataSet() {

@@ -17,6 +17,7 @@
 package org.apache.camel.component.event.springboot;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -30,6 +31,7 @@ public class EventComponentConfiguration {
     /**
      * The Spring ApplicationContext
      */
+    @NestedConfigurationProperty
     private ApplicationContext applicationContext;
 
     public ApplicationContext getApplicationContext() {

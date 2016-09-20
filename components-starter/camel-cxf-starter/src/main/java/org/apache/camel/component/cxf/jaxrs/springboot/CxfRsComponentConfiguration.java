@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.jaxrs.springboot;
 
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The cxfrs component is used for JAX-RS REST services using Apache CXF.
@@ -31,6 +32,7 @@ public class CxfRsComponentConfiguration {
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
      */
+    @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {

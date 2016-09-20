@@ -21,10 +21,10 @@ import com.box.boxjavalibv2.BoxConnectionManagerBuilder;
 import com.box.boxjavalibv2.IBoxConfig;
 import com.box.boxjavalibv2.authorization.IAuthSecureStorage;
 import com.box.boxjavalibv2.authorization.OAuthRefreshListener;
-import org.apache.camel.component.box.BoxConfiguration;
 import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * For uploading downloading and managing files folders groups collaborations
@@ -36,222 +36,233 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class BoxComponentConfiguration {
 
     /**
-     * To use the shared configuration. Properties of the shared configuration
-     * can also be set individually.
+     * To use the shared configuration
      */
-    private BoxConfiguration configuration;
-    /**
-     * What kind of operation to perform
-     */
-    private BoxApiName apiName;
-    /**
-     * What sub operation to use for the selected operation
-     */
-    private String methodName;
-    /**
-     * Box application client ID
-     */
-    private String clientId;
-    /**
-     * Box application client secret
-     */
-    private String clientSecret;
-    /**
-     * OAuth Secure Storage callback can be used to provide and or save OAuth
-     * tokens. The callback may return null on first call to allow the component
-     * to login and authorize application and obtain an OAuth token which can
-     * then be saved in the secure storage. For the component to be able to
-     * create a token automatically a user password must be provided.
-     */
-    private IAuthSecureStorage authSecureStorage;
-    /**
-     * Box user name MUST be provided
-     */
-    private String userName;
-    /**
-     * Box user password MUST be provided if authSecureStorage is not set or
-     * returns null on first call
-     */
-    private String userPassword;
-    /**
-     * OAuth listener for token updates if the Camel application needs to use
-     * the access token outside the route
-     */
-    private OAuthRefreshListener refreshListener;
-    /**
-     * Flag to revoke OAuth refresh token on route shutdown default false. Will
-     * require a fresh refresh token on restart using either a custom
-     * IAuthSecureStorage or automatic component login by providing a user
-     * password
-     */
-    private Boolean revokeOnShutdown;
-    /**
-     * Box shared link for shared endpoints can be a link for a shared comment
-     * file or folder
-     */
-    private String sharedLink;
-    /**
-     * Password associated with the shared link MUST be provided with sharedLink
-     */
-    private String sharedPassword;
-    /**
-     * Custom Box SDK configuration not required normally
-     */
-    private IBoxConfig boxConfig;
-    /**
-     * Custom Box connection manager builder used to override default settings
-     * like max connections for underlying HttpClient.
-     */
-    private BoxConnectionManagerBuilder connectionManagerBuilder;
-    /**
-     * Custom HTTP params for settings like proxy host
-     */
-    private Map<String, Object> httpParams;
-    /**
-     * To configure security using SSLContextParameters.
-     */
-    private SSLContextParameters sslContextParameters;
-    /**
-     * Amount of time the component will wait for a response from Box.com
-     * default is 30 seconds
-     */
-    private Integer loginTimeout;
+    private BoxConfigurationNestedConfiguration configuration;
 
-    public BoxConfiguration getConfiguration() {
+    public BoxConfigurationNestedConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(BoxConfiguration configuration) {
+    public void setConfiguration(
+            BoxConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public BoxApiName getApiName() {
-        return apiName;
-    }
+    public static class BoxConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.box.BoxConfiguration.class;
+        /**
+         * What kind of operation to perform
+         */
+        private BoxApiName apiName;
+        /**
+         * What sub operation to use for the selected operation
+         */
+        private String methodName;
+        /**
+         * Box application client ID
+         */
+        private String clientId;
+        /**
+         * Box application client secret
+         */
+        private String clientSecret;
+        /**
+         * OAuth Secure Storage callback, can be used to provide and or save
+         * OAuth tokens. The callback may return null on first call to allow the
+         * component to login and authorize application and obtain an OAuth
+         * token, which can then be saved in the secure storage. For the
+         * component to be able to create a token automatically a user password
+         * must be provided.
+         */
+        @NestedConfigurationProperty
+        private IAuthSecureStorage authSecureStorage;
+        /**
+         * Box user name, MUST be provided
+         */
+        private String userName;
+        /**
+         * Box user password, MUST be provided if authSecureStorage is not set,
+         * or returns null on first call
+         */
+        private String userPassword;
+        /**
+         * OAuth listener for token updates, if the Camel application needs to
+         * use the access token outside the route
+         */
+        @NestedConfigurationProperty
+        private OAuthRefreshListener refreshListener;
+        /**
+         * Flag to revoke OAuth refresh token on route shutdown, default false.
+         * Will require a fresh refresh token on restart using either a custom
+         * IAuthSecureStorage or automatic component login by providing a user
+         * password
+         */
+        private Boolean revokeOnShutdown;
+        /**
+         * Box shared link for shared endpoints, can be a link for a shared
+         * comment, file or folder
+         */
+        private String sharedLink;
+        /**
+         * Password associated with the shared link, MUST be provided with
+         * sharedLink
+         */
+        private String sharedPassword;
+        /**
+         * Custom Box SDK configuration, not required normally
+         */
+        @NestedConfigurationProperty
+        private IBoxConfig boxConfig;
+        /**
+         * Custom Box connection manager builder, used to override default
+         * settings like max connections for underlying HttpClient.
+         */
+        @NestedConfigurationProperty
+        private BoxConnectionManagerBuilder connectionManagerBuilder;
+        /**
+         * Custom HTTP params for settings like proxy host
+         */
+        private Map httpParams;
+        /**
+         * To configure security using SSLContextParameters.
+         */
+        @NestedConfigurationProperty
+        private SSLContextParameters sslContextParameters;
+        /**
+         * Amount of time the component will wait for a response from Box.com,
+         * default is 30 seconds
+         */
+        private Integer loginTimeout;
 
-    public void setApiName(BoxApiName apiName) {
-        this.apiName = apiName;
-    }
+        public BoxApiName getApiName() {
+            return apiName;
+        }
 
-    public String getMethodName() {
-        return methodName;
-    }
+        public void setApiName(BoxApiName apiName) {
+            this.apiName = apiName;
+        }
 
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
+        public String getMethodName() {
+            return methodName;
+        }
 
-    public String getClientId() {
-        return clientId;
-    }
+        public void setMethodName(String methodName) {
+            this.methodName = methodName;
+        }
 
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
+        public String getClientId() {
+            return clientId;
+        }
 
-    public String getClientSecret() {
-        return clientSecret;
-    }
+        public void setClientId(String clientId) {
+            this.clientId = clientId;
+        }
 
-    public void setClientSecret(String clientSecret) {
-        this.clientSecret = clientSecret;
-    }
+        public String getClientSecret() {
+            return clientSecret;
+        }
 
-    public IAuthSecureStorage getAuthSecureStorage() {
-        return authSecureStorage;
-    }
+        public void setClientSecret(String clientSecret) {
+            this.clientSecret = clientSecret;
+        }
 
-    public void setAuthSecureStorage(IAuthSecureStorage authSecureStorage) {
-        this.authSecureStorage = authSecureStorage;
-    }
+        public IAuthSecureStorage getAuthSecureStorage() {
+            return authSecureStorage;
+        }
 
-    public String getUserName() {
-        return userName;
-    }
+        public void setAuthSecureStorage(IAuthSecureStorage authSecureStorage) {
+            this.authSecureStorage = authSecureStorage;
+        }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+        public String getUserName() {
+            return userName;
+        }
 
-    public String getUserPassword() {
-        return userPassword;
-    }
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
 
-    public void setUserPassword(String userPassword) {
-        this.userPassword = userPassword;
-    }
+        public String getUserPassword() {
+            return userPassword;
+        }
 
-    public OAuthRefreshListener getRefreshListener() {
-        return refreshListener;
-    }
+        public void setUserPassword(String userPassword) {
+            this.userPassword = userPassword;
+        }
 
-    public void setRefreshListener(OAuthRefreshListener refreshListener) {
-        this.refreshListener = refreshListener;
-    }
+        public OAuthRefreshListener getRefreshListener() {
+            return refreshListener;
+        }
 
-    public Boolean getRevokeOnShutdown() {
-        return revokeOnShutdown;
-    }
+        public void setRefreshListener(OAuthRefreshListener refreshListener) {
+            this.refreshListener = refreshListener;
+        }
 
-    public void setRevokeOnShutdown(Boolean revokeOnShutdown) {
-        this.revokeOnShutdown = revokeOnShutdown;
-    }
+        public Boolean getRevokeOnShutdown() {
+            return revokeOnShutdown;
+        }
 
-    public String getSharedLink() {
-        return sharedLink;
-    }
+        public void setRevokeOnShutdown(Boolean revokeOnShutdown) {
+            this.revokeOnShutdown = revokeOnShutdown;
+        }
 
-    public void setSharedLink(String sharedLink) {
-        this.sharedLink = sharedLink;
-    }
+        public String getSharedLink() {
+            return sharedLink;
+        }
 
-    public String getSharedPassword() {
-        return sharedPassword;
-    }
+        public void setSharedLink(String sharedLink) {
+            this.sharedLink = sharedLink;
+        }
 
-    public void setSharedPassword(String sharedPassword) {
-        this.sharedPassword = sharedPassword;
-    }
+        public String getSharedPassword() {
+            return sharedPassword;
+        }
 
-    public IBoxConfig getBoxConfig() {
-        return boxConfig;
-    }
+        public void setSharedPassword(String sharedPassword) {
+            this.sharedPassword = sharedPassword;
+        }
 
-    public void setBoxConfig(IBoxConfig boxConfig) {
-        this.boxConfig = boxConfig;
-    }
+        public IBoxConfig getBoxConfig() {
+            return boxConfig;
+        }
 
-    public BoxConnectionManagerBuilder getConnectionManagerBuilder() {
-        return connectionManagerBuilder;
-    }
+        public void setBoxConfig(IBoxConfig boxConfig) {
+            this.boxConfig = boxConfig;
+        }
 
-    public void setConnectionManagerBuilder(
-            BoxConnectionManagerBuilder connectionManagerBuilder) {
-        this.connectionManagerBuilder = connectionManagerBuilder;
-    }
+        public BoxConnectionManagerBuilder getConnectionManagerBuilder() {
+            return connectionManagerBuilder;
+        }
 
-    public Map<String, Object> getHttpParams() {
-        return httpParams;
-    }
+        public void setConnectionManagerBuilder(
+                BoxConnectionManagerBuilder connectionManagerBuilder) {
+            this.connectionManagerBuilder = connectionManagerBuilder;
+        }
 
-    public void setHttpParams(Map<String, Object> httpParams) {
-        this.httpParams = httpParams;
-    }
+        public Map getHttpParams() {
+            return httpParams;
+        }
 
-    public SSLContextParameters getSslContextParameters() {
-        return sslContextParameters;
-    }
+        public void setHttpParams(Map httpParams) {
+            this.httpParams = httpParams;
+        }
 
-    public void setSslContextParameters(
-            SSLContextParameters sslContextParameters) {
-        this.sslContextParameters = sslContextParameters;
-    }
+        public SSLContextParameters getSslContextParameters() {
+            return sslContextParameters;
+        }
 
-    public Integer getLoginTimeout() {
-        return loginTimeout;
-    }
+        public void setSslContextParameters(
+                SSLContextParameters sslContextParameters) {
+            this.sslContextParameters = sslContextParameters;
+        }
 
-    public void setLoginTimeout(Integer loginTimeout) {
-        this.loginTimeout = loginTimeout;
+        public Integer getLoginTimeout() {
+            return loginTimeout;
+        }
+
+        public void setLoginTimeout(Integer loginTimeout) {
+            this.loginTimeout = loginTimeout;
+        }
     }
 }

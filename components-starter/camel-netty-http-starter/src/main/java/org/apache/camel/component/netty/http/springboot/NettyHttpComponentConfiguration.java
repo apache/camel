@@ -16,23 +16,14 @@
  */
 package org.apache.camel.component.netty.http.springboot;
 
-import java.util.List;
-import java.util.Map;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.component.netty.ClientPipelineFactory;
 import org.apache.camel.component.netty.NettyConfiguration;
-import org.apache.camel.component.netty.NettyServerBootstrapFactory;
-import org.apache.camel.component.netty.ServerPipelineFactory;
 import org.apache.camel.component.netty.http.NettyHttpBinding;
-import org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration;
+import org.apache.camel.component.netty.http.SecurityAuthenticator;
+import org.apache.camel.component.netty.http.SecurityConstraint;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.jboss.netty.channel.ChannelHandler;
-import org.jboss.netty.channel.group.ChannelGroup;
-import org.jboss.netty.channel.socket.nio.BossPool;
-import org.jboss.netty.channel.socket.nio.WorkerPool;
-import org.jboss.netty.handler.ssl.SslHandler;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Netty HTTP server and client using the Netty 3.x library.
@@ -46,307 +37,30 @@ public class NettyHttpComponentConfiguration {
      * To use a custom org.apache.camel.component.netty.http.NettyHttpBinding
      * for binding to/from Netty and Camel Message API.
      */
+    @NestedConfigurationProperty
     private NettyHttpBinding nettyHttpBinding;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
      * headers.
      */
+    @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
     /**
      * Refers to a
      * org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration for
      * configuring secure web resources.
      */
-    private NettyHttpSecurityConfiguration securityConfiguration;
+    private NettyHttpSecurityConfigurationNestedConfiguration securityConfiguration;
     /**
      * To use the NettyConfiguration as configuration when creating endpoints.
-     * Properties of the shared configuration can also be set individually.
      */
+    @NestedConfigurationProperty
     private NettyConfiguration configuration;
     /**
      * The core pool size for the ordered thread pool if its in use. The default
      * value is 16.
      */
     private Integer maximumPoolSize;
-    /**
-     * Whether to use ordered thread pool to ensure events are processed orderly
-     * on the same channel. See details at the netty javadoc of
-     * org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor
-     * for more details.
-     */
-    private Boolean orderedThreadPoolExecutor;
-    /**
-     * Sets the cap on the number of objects that can be allocated by the pool
-     * (checked out to clients or idle awaiting checkout) at a given time. Use a
-     * negative value for no limit.
-     */
-    private Integer producerPoolMaxActive;
-    /**
-     * Sets the minimum number of instances allowed in the producer pool before
-     * the evictor thread (if active) spawns new objects.
-     */
-    private Integer producerPoolMinIdle;
-    /**
-     * Sets the cap on the number of idle instances in the pool.
-     */
-    private Integer producerPoolMaxIdle;
-    /**
-     * Sets the minimum amount of time (value in millis) an object may sit idle
-     * in the pool before it is eligible for eviction by the idle object
-     * evictor.
-     */
-    private long producerPoolMinEvictableIdle;
-    /**
-     * Whether producer pool is enabled or not. Important: Do not turn this off
-     * as the pooling is needed for handling concurrency and reliable
-     * request/reply.
-     */
-    private Boolean producerPoolEnabled;
-    /**
-     * If the useChannelBuffer is true netty producer will turn the message body
-     * into ChannelBuffer before sending it out.
-     */
-    private Boolean useChannelBuffer;
-    /**
-     * The maximum total size of the queued events per channel when using
-     * orderedThreadPoolExecutor. Specify 0 to disable.
-     */
-    private long maxChannelMemorySize;
-    /**
-     * The maximum total size of the queued events for this pool when using
-     * orderedThreadPoolExecutor. Specify 0 to disable.
-     */
-    private long maxTotalMemorySize;
-    /**
-     * The protocol to use which can be tcp or udp.
-     */
-    private String protocol;
-    /**
-     * The hostname. For the consumer the hostname is localhost or 0.0.0.0 For
-     * the producer the hostname is the remote host to connect to
-     */
-    private String host;
-    /**
-     * The host port number
-     */
-    private Integer port;
-    /**
-     * The TCP/UDP buffer sizes to be used during outbound communication. Size
-     * is bytes.
-     */
-    private long sendBufferSize;
-    /**
-     * The TCP/UDP buffer sizes to be used during inbound communication. Size is
-     * bytes.
-     */
-    private long receiveBufferSize;
-    /**
-     * Configures the buffer size predictor. See details at Jetty documentation
-     * and this mail thread.
-     */
-    private Integer receiveBufferSizePredictor;
-    /**
-     * When netty works on nio mode it uses default workerCount parameter from
-     * Netty which is cpu_core_threads2. User can use this operation to override
-     * the default workerCount from Netty
-     */
-    private Integer workerCount;
-    /**
-     * When netty works on nio mode it uses default bossCount parameter from
-     * Netty which is 1. User can use this operation to override the default
-     * bossCount from Netty
-     */
-    private Integer bossCount;
-    /**
-     * Setting to ensure socket is not closed due to inactivity
-     */
-    private Boolean keepAlive;
-    /**
-     * Setting to improve TCP protocol performance
-     */
-    private Boolean tcpNoDelay;
-    /**
-     * Setting to facilitate socket multiplexing
-     */
-    private Boolean reuseAddress;
-    /**
-     * Time to wait for a socket connection to be available. Value is in millis.
-     */
-    private long connectTimeout;
-    /**
-     * Allows to configure a backlog for netty consumer (server). Note the
-     * backlog is just a best effort depending on the OS. Setting this option to
-     * a value such as 200 500 or 1000 tells the TCP stack how long the accept
-     * queue can be If this option is not configured then the backlog depends on
-     * OS setting.
-     */
-    private Integer backlog;
-    /**
-     * Setting to specify whether SSL encryption is applied to this endpoint
-     */
-    private Boolean ssl;
-    /**
-     * When enabled and in SSL mode then the Netty consumer will enrich the
-     * Camel Message with headers having information about the client
-     * certificate such as subject name issuer name serial number and the valid
-     * date range.
-     */
-    private Boolean sslClientCertHeaders;
-    /**
-     * Reference to a class that could be used to return an SSL Handler
-     */
-    private SslHandler sslHandler;
-    /**
-     * To configure security using SSLContextParameters
-     */
-    private SSLContextParameters sslContextParameters;
-    /**
-     * Configures whether the server needs client authentication when using SSL.
-     */
-    private Boolean needClientAuth;
-    /**
-     * Client side certificate keystore to be used for encryption. Is loaded by
-     * default from classpath but you can prefix with classpath: file: or http:
-     * to load the resource from different systems.
-     */
-    private String keyStoreResource;
-    /**
-     * Server side certificate keystore to be used for encryption. Is loaded by
-     * default from classpath but you can prefix with classpath: file: or http:
-     * to load the resource from different systems.
-     */
-    private String trustStoreResource;
-    /**
-     * Keystore format to be used for payload encryption. Defaults to JKS if not
-     * set
-     */
-    private String keyStoreFormat;
-    /**
-     * Security provider to be used for payload encryption. Defaults to SunX509
-     * if not set.
-     */
-    private String securityProvider;
-    /**
-     * Password setting to use in order to encrypt/decrypt payloads sent using
-     * SSH
-     */
-    private String passphrase;
-    /**
-     * To use a custom ServerPipelineFactory
-     */
-    private ServerPipelineFactory serverPipelineFactory;
-    /**
-     * Allows to use a timeout for the Netty producer when calling a remote
-     * server. By default no timeout is in use. The value is in milli seconds so
-     * eg 30000 is 30 seconds. The requestTimeout is using Netty's
-     * ReadTimeoutHandler to trigger the timeout.
-     */
-    private long requestTimeout;
-    /**
-     * To use a custom NettyServerBootstrapFactory
-     */
-    private NettyServerBootstrapFactory nettyServerBootstrapFactory;
-    /**
-     * Setting to set endpoint as one-way or request-response
-     */
-    private Boolean sync;
-    /**
-     * Allows to configure additional netty options using option. as prefix. For
-     * example option.child.keepAlive=false to set the netty option
-     * child.keepAlive=false. See the Netty documentation for possible options
-     * that can be used.
-     */
-    private Map<String, Object> options;
-    /**
-     * To use a explicit org.jboss.netty.channel.socket.nio.BossPool as the boss
-     * thread pool. For example to share a thread pool with multiple consumers.
-     * By default each consumer has their own boss pool with 1 core thread.
-     */
-    private BossPool bossPool;
-    /**
-     * To use a explicit org.jboss.netty.channel.socket.nio.WorkerPool as the
-     * worker thread pool. For example to share a thread pool with multiple
-     * consumers. By default each consumer has their own worker pool with 2 x
-     * cpu count core threads.
-     */
-    private WorkerPool workerPool;
-    /**
-     * To use a explicit ChannelGroup.
-     */
-    private ChannelGroup channelGroup;
-    /**
-     * A list of decoders to be used. You can use a String which have values
-     * separated by comma and have the values be looked up in the Registry. Just
-     * remember to prefix the value with so Camel knows it should lookup.
-     */
-    private List<ChannelHandler> decoders;
-    /**
-     * Which protocols to enable when using SSL
-     */
-    private String enabledProtocols;
-    /**
-     * A list of encoders to be used. You can use a String which have values
-     * separated by comma and have the values be looked up in the Registry. Just
-     * remember to prefix the value with so Camel knows it should lookup.
-     */
-    private List<ChannelHandler> encoders;
-    /**
-     * A custom ChannelHandler class that can be used to perform special
-     * marshalling of outbound payloads. Must override
-     * org.jboss.netty.channel.ChannelDownStreamHandler.
-     */
-    private ChannelHandler encoder;
-    /**
-     * A custom ChannelHandler class that can be used to perform special
-     * marshalling of inbound payloads. Must override
-     * org.jboss.netty.channel.ChannelUpStreamHandler.
-     */
-    private ChannelHandler decoder;
-    /**
-     * Whether or not to disconnect(close) from Netty Channel right after use.
-     * Can be used for both consumer and producer.
-     */
-    private Boolean disconnect;
-    /**
-     * Channels can be lazily created to avoid exceptions if the remote server
-     * is not up and running when the Camel producer is started.
-     */
-    private Boolean lazyChannelCreation;
-    /**
-     * Only used for TCP. You can transfer the exchange over the wire instead of
-     * just the body. The following fields are transferred: In body Out body
-     * fault body In headers Out headers fault headers exchange properties
-     * exchange exception. This requires that the objects are serializable.
-     * Camel will exclude any non-serializable objects and log it at WARN level.
-     */
-    private Boolean transferExchange;
-    /**
-     * If sync is enabled then this option dictates NettyConsumer if it should
-     * disconnect where there is no reply to send back.
-     */
-    private Boolean disconnectOnNoReply;
-    /**
-     * If sync is enabled this option dictates NettyConsumer which logging level
-     * to use when logging a there is no reply to send back.
-     */
-    private LoggingLevel noReplyLogLevel;
-    /**
-     * If the server (NettyConsumer) catches an exception then its logged using
-     * this logging level.
-     */
-    private LoggingLevel serverExceptionCaughtLogLevel;
-    /**
-     * If the server (NettyConsumer) catches an
-     * java.nio.channels.ClosedChannelException then its logged using this
-     * logging level. This is used to avoid logging the closed channel
-     * exceptions as clients can disconnect abruptly and then cause a flood of
-     * closed exceptions in the Netty server.
-     */
-    private LoggingLevel serverClosedChannelExceptionCaughtLogLevel;
-    /**
-     * To use a custom ClientPipelineFactory
-     */
-    private ClientPipelineFactory clientPipelineFactory;
 
     public NettyHttpBinding getNettyHttpBinding() {
         return nettyHttpBinding;
@@ -365,12 +79,12 @@ public class NettyHttpComponentConfiguration {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
-    public NettyHttpSecurityConfiguration getSecurityConfiguration() {
+    public NettyHttpSecurityConfigurationNestedConfiguration getSecurityConfiguration() {
         return securityConfiguration;
     }
 
     public void setSecurityConfiguration(
-            NettyHttpSecurityConfiguration securityConfiguration) {
+            NettyHttpSecurityConfigurationNestedConfiguration securityConfiguration) {
         this.securityConfiguration = securityConfiguration;
     }
 
@@ -390,434 +104,104 @@ public class NettyHttpComponentConfiguration {
         this.maximumPoolSize = maximumPoolSize;
     }
 
-    public Boolean getOrderedThreadPoolExecutor() {
-        return orderedThreadPoolExecutor;
-    }
-
-    public void setOrderedThreadPoolExecutor(Boolean orderedThreadPoolExecutor) {
-        this.orderedThreadPoolExecutor = orderedThreadPoolExecutor;
-    }
-
-    public Integer getProducerPoolMaxActive() {
-        return producerPoolMaxActive;
-    }
-
-    public void setProducerPoolMaxActive(Integer producerPoolMaxActive) {
-        this.producerPoolMaxActive = producerPoolMaxActive;
-    }
-
-    public Integer getProducerPoolMinIdle() {
-        return producerPoolMinIdle;
-    }
-
-    public void setProducerPoolMinIdle(Integer producerPoolMinIdle) {
-        this.producerPoolMinIdle = producerPoolMinIdle;
-    }
-
-    public Integer getProducerPoolMaxIdle() {
-        return producerPoolMaxIdle;
-    }
-
-    public void setProducerPoolMaxIdle(Integer producerPoolMaxIdle) {
-        this.producerPoolMaxIdle = producerPoolMaxIdle;
-    }
-
-    public long getProducerPoolMinEvictableIdle() {
-        return producerPoolMinEvictableIdle;
-    }
-
-    public void setProducerPoolMinEvictableIdle(
-            long producerPoolMinEvictableIdle) {
-        this.producerPoolMinEvictableIdle = producerPoolMinEvictableIdle;
-    }
-
-    public Boolean getProducerPoolEnabled() {
-        return producerPoolEnabled;
-    }
-
-    public void setProducerPoolEnabled(Boolean producerPoolEnabled) {
-        this.producerPoolEnabled = producerPoolEnabled;
-    }
-
-    public Boolean getUseChannelBuffer() {
-        return useChannelBuffer;
-    }
-
-    public void setUseChannelBuffer(Boolean useChannelBuffer) {
-        this.useChannelBuffer = useChannelBuffer;
-    }
-
-    public long getMaxChannelMemorySize() {
-        return maxChannelMemorySize;
-    }
-
-    public void setMaxChannelMemorySize(long maxChannelMemorySize) {
-        this.maxChannelMemorySize = maxChannelMemorySize;
-    }
-
-    public long getMaxTotalMemorySize() {
-        return maxTotalMemorySize;
-    }
-
-    public void setMaxTotalMemorySize(long maxTotalMemorySize) {
-        this.maxTotalMemorySize = maxTotalMemorySize;
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
-    }
-
-    public long getSendBufferSize() {
-        return sendBufferSize;
-    }
-
-    public void setSendBufferSize(long sendBufferSize) {
-        this.sendBufferSize = sendBufferSize;
-    }
-
-    public long getReceiveBufferSize() {
-        return receiveBufferSize;
-    }
-
-    public void setReceiveBufferSize(long receiveBufferSize) {
-        this.receiveBufferSize = receiveBufferSize;
-    }
-
-    public Integer getReceiveBufferSizePredictor() {
-        return receiveBufferSizePredictor;
-    }
-
-    public void setReceiveBufferSizePredictor(Integer receiveBufferSizePredictor) {
-        this.receiveBufferSizePredictor = receiveBufferSizePredictor;
-    }
-
-    public Integer getWorkerCount() {
-        return workerCount;
-    }
-
-    public void setWorkerCount(Integer workerCount) {
-        this.workerCount = workerCount;
-    }
-
-    public Integer getBossCount() {
-        return bossCount;
-    }
-
-    public void setBossCount(Integer bossCount) {
-        this.bossCount = bossCount;
-    }
-
-    public Boolean getKeepAlive() {
-        return keepAlive;
-    }
-
-    public void setKeepAlive(Boolean keepAlive) {
-        this.keepAlive = keepAlive;
-    }
-
-    public Boolean getTcpNoDelay() {
-        return tcpNoDelay;
-    }
-
-    public void setTcpNoDelay(Boolean tcpNoDelay) {
-        this.tcpNoDelay = tcpNoDelay;
-    }
-
-    public Boolean getReuseAddress() {
-        return reuseAddress;
-    }
-
-    public void setReuseAddress(Boolean reuseAddress) {
-        this.reuseAddress = reuseAddress;
-    }
-
-    public long getConnectTimeout() {
-        return connectTimeout;
-    }
-
-    public void setConnectTimeout(long connectTimeout) {
-        this.connectTimeout = connectTimeout;
-    }
-
-    public Integer getBacklog() {
-        return backlog;
-    }
-
-    public void setBacklog(Integer backlog) {
-        this.backlog = backlog;
-    }
-
-    public Boolean getSsl() {
-        return ssl;
-    }
-
-    public void setSsl(Boolean ssl) {
-        this.ssl = ssl;
-    }
-
-    public Boolean getSslClientCertHeaders() {
-        return sslClientCertHeaders;
-    }
-
-    public void setSslClientCertHeaders(Boolean sslClientCertHeaders) {
-        this.sslClientCertHeaders = sslClientCertHeaders;
-    }
-
-    public SslHandler getSslHandler() {
-        return sslHandler;
-    }
-
-    public void setSslHandler(SslHandler sslHandler) {
-        this.sslHandler = sslHandler;
-    }
-
-    public SSLContextParameters getSslContextParameters() {
-        return sslContextParameters;
-    }
-
-    public void setSslContextParameters(
-            SSLContextParameters sslContextParameters) {
-        this.sslContextParameters = sslContextParameters;
-    }
-
-    public Boolean getNeedClientAuth() {
-        return needClientAuth;
-    }
-
-    public void setNeedClientAuth(Boolean needClientAuth) {
-        this.needClientAuth = needClientAuth;
-    }
-
-    public String getKeyStoreResource() {
-        return keyStoreResource;
-    }
-
-    public void setKeyStoreResource(String keyStoreResource) {
-        this.keyStoreResource = keyStoreResource;
-    }
-
-    public String getTrustStoreResource() {
-        return trustStoreResource;
-    }
-
-    public void setTrustStoreResource(String trustStoreResource) {
-        this.trustStoreResource = trustStoreResource;
-    }
-
-    public String getKeyStoreFormat() {
-        return keyStoreFormat;
-    }
-
-    public void setKeyStoreFormat(String keyStoreFormat) {
-        this.keyStoreFormat = keyStoreFormat;
-    }
-
-    public String getSecurityProvider() {
-        return securityProvider;
-    }
-
-    public void setSecurityProvider(String securityProvider) {
-        this.securityProvider = securityProvider;
-    }
-
-    public String getPassphrase() {
-        return passphrase;
-    }
-
-    public void setPassphrase(String passphrase) {
-        this.passphrase = passphrase;
-    }
-
-    public ServerPipelineFactory getServerPipelineFactory() {
-        return serverPipelineFactory;
-    }
-
-    public void setServerPipelineFactory(
-            ServerPipelineFactory serverPipelineFactory) {
-        this.serverPipelineFactory = serverPipelineFactory;
-    }
-
-    public long getRequestTimeout() {
-        return requestTimeout;
-    }
-
-    public void setRequestTimeout(long requestTimeout) {
-        this.requestTimeout = requestTimeout;
-    }
-
-    public NettyServerBootstrapFactory getNettyServerBootstrapFactory() {
-        return nettyServerBootstrapFactory;
-    }
-
-    public void setNettyServerBootstrapFactory(
-            NettyServerBootstrapFactory nettyServerBootstrapFactory) {
-        this.nettyServerBootstrapFactory = nettyServerBootstrapFactory;
-    }
-
-    public Boolean getSync() {
-        return sync;
-    }
-
-    public void setSync(Boolean sync) {
-        this.sync = sync;
-    }
-
-    public Map<String, Object> getOptions() {
-        return options;
-    }
-
-    public void setOptions(Map<String, Object> options) {
-        this.options = options;
-    }
-
-    public BossPool getBossPool() {
-        return bossPool;
-    }
-
-    public void setBossPool(BossPool bossPool) {
-        this.bossPool = bossPool;
-    }
-
-    public WorkerPool getWorkerPool() {
-        return workerPool;
-    }
-
-    public void setWorkerPool(WorkerPool workerPool) {
-        this.workerPool = workerPool;
-    }
-
-    public ChannelGroup getChannelGroup() {
-        return channelGroup;
-    }
-
-    public void setChannelGroup(ChannelGroup channelGroup) {
-        this.channelGroup = channelGroup;
-    }
-
-    public List<ChannelHandler> getDecoders() {
-        return decoders;
-    }
-
-    public void setDecoders(List<ChannelHandler> decoders) {
-        this.decoders = decoders;
-    }
-
-    public String getEnabledProtocols() {
-        return enabledProtocols;
-    }
-
-    public void setEnabledProtocols(String enabledProtocols) {
-        this.enabledProtocols = enabledProtocols;
-    }
-
-    public List<ChannelHandler> getEncoders() {
-        return encoders;
-    }
-
-    public void setEncoders(List<ChannelHandler> encoders) {
-        this.encoders = encoders;
-    }
-
-    public ChannelHandler getEncoder() {
-        return encoder;
-    }
-
-    public void setEncoder(ChannelHandler encoder) {
-        this.encoder = encoder;
-    }
-
-    public ChannelHandler getDecoder() {
-        return decoder;
-    }
-
-    public void setDecoder(ChannelHandler decoder) {
-        this.decoder = decoder;
-    }
-
-    public Boolean getDisconnect() {
-        return disconnect;
-    }
-
-    public void setDisconnect(Boolean disconnect) {
-        this.disconnect = disconnect;
-    }
-
-    public Boolean getLazyChannelCreation() {
-        return lazyChannelCreation;
-    }
-
-    public void setLazyChannelCreation(Boolean lazyChannelCreation) {
-        this.lazyChannelCreation = lazyChannelCreation;
-    }
-
-    public Boolean getTransferExchange() {
-        return transferExchange;
-    }
-
-    public void setTransferExchange(Boolean transferExchange) {
-        this.transferExchange = transferExchange;
-    }
-
-    public Boolean getDisconnectOnNoReply() {
-        return disconnectOnNoReply;
-    }
-
-    public void setDisconnectOnNoReply(Boolean disconnectOnNoReply) {
-        this.disconnectOnNoReply = disconnectOnNoReply;
-    }
-
-    public LoggingLevel getNoReplyLogLevel() {
-        return noReplyLogLevel;
-    }
-
-    public void setNoReplyLogLevel(LoggingLevel noReplyLogLevel) {
-        this.noReplyLogLevel = noReplyLogLevel;
-    }
-
-    public LoggingLevel getServerExceptionCaughtLogLevel() {
-        return serverExceptionCaughtLogLevel;
-    }
-
-    public void setServerExceptionCaughtLogLevel(
-            LoggingLevel serverExceptionCaughtLogLevel) {
-        this.serverExceptionCaughtLogLevel = serverExceptionCaughtLogLevel;
-    }
-
-    public LoggingLevel getServerClosedChannelExceptionCaughtLogLevel() {
-        return serverClosedChannelExceptionCaughtLogLevel;
-    }
-
-    public void setServerClosedChannelExceptionCaughtLogLevel(
-            LoggingLevel serverClosedChannelExceptionCaughtLogLevel) {
-        this.serverClosedChannelExceptionCaughtLogLevel = serverClosedChannelExceptionCaughtLogLevel;
-    }
-
-    public ClientPipelineFactory getClientPipelineFactory() {
-        return clientPipelineFactory;
-    }
-
-    public void setClientPipelineFactory(
-            ClientPipelineFactory clientPipelineFactory) {
-        this.clientPipelineFactory = clientPipelineFactory;
+    public static class NettyHttpSecurityConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration.class;
+        /**
+         * Whether to enable authentication
+         * <p/>
+         * This is by default enabled.
+         */
+        private Boolean authenticate;
+        /**
+         * The supported restricted.
+         * <p/>
+         * Currently only Basic is supported.
+         */
+        private String constraint;
+        /**
+         * Sets the name of the realm to use.
+         */
+        private String realm;
+        /**
+         * Sets a {@link SecurityConstraint} to use for checking if a web
+         * resource is restricted or not
+         * <p/>
+         * By default this is <tt>null</tt>, which means all resources is
+         * restricted.
+         */
+        @NestedConfigurationProperty
+        private SecurityConstraint securityConstraint;
+        /**
+         * Sets the {@link SecurityAuthenticator} to use for authenticating the
+         * {@link HttpPrincipal} .
+         */
+        @NestedConfigurationProperty
+        private SecurityAuthenticator securityAuthenticator;
+        /**
+         * Sets a logging level to use for logging denied login attempts (incl
+         * stacktraces)
+         * <p/>
+         * This level is by default DEBUG.
+         */
+        private LoggingLevel loginDeniedLoggingLevel;
+        private String roleClassName;
+
+        public Boolean getAuthenticate() {
+            return authenticate;
+        }
+
+        public void setAuthenticate(Boolean authenticate) {
+            this.authenticate = authenticate;
+        }
+
+        public String getConstraint() {
+            return constraint;
+        }
+
+        public void setConstraint(String constraint) {
+            this.constraint = constraint;
+        }
+
+        public String getRealm() {
+            return realm;
+        }
+
+        public void setRealm(String realm) {
+            this.realm = realm;
+        }
+
+        public SecurityConstraint getSecurityConstraint() {
+            return securityConstraint;
+        }
+
+        public void setSecurityConstraint(SecurityConstraint securityConstraint) {
+            this.securityConstraint = securityConstraint;
+        }
+
+        public SecurityAuthenticator getSecurityAuthenticator() {
+            return securityAuthenticator;
+        }
+
+        public void setSecurityAuthenticator(
+                SecurityAuthenticator securityAuthenticator) {
+            this.securityAuthenticator = securityAuthenticator;
+        }
+
+        public LoggingLevel getLoginDeniedLoggingLevel() {
+            return loginDeniedLoggingLevel;
+        }
+
+        public void setLoginDeniedLoggingLevel(
+                LoggingLevel loginDeniedLoggingLevel) {
+            this.loginDeniedLoggingLevel = loginDeniedLoggingLevel;
+        }
+
+        public String getRoleClassName() {
+            return roleClassName;
+        }
+
+        public void setRoleClassName(String roleClassName) {
+            this.roleClassName = roleClassName;
+        }
     }
 }

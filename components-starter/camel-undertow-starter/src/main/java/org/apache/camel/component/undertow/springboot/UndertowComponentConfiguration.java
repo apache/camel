@@ -19,6 +19,7 @@ package org.apache.camel.component.undertow.springboot;
 import org.apache.camel.component.undertow.UndertowHttpBinding;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The undertow component provides HTTP-based endpoints for consuming and
@@ -33,10 +34,12 @@ public class UndertowComponentConfiguration {
      * To use a custom HttpBinding to control the mapping between Camel message
      * and HttpClient.
      */
+    @NestedConfigurationProperty
     private UndertowHttpBinding undertowHttpBinding;
     /**
      * To configure security using SSLContextParameters
      */
+    @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
 
     public UndertowHttpBinding getUndertowHttpBinding() {

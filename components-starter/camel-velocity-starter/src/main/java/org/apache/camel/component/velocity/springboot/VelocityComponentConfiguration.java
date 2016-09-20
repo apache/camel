@@ -18,6 +18,7 @@ package org.apache.camel.component.velocity.springboot;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Transforms the message using a Velocity template.
@@ -30,6 +31,7 @@ public class VelocityComponentConfiguration {
     /**
      * To use the VelocityEngine otherwise a new engine is created
      */
+    @NestedConfigurationProperty
     private VelocityEngine velocityEngine;
 
     public VelocityEngine getVelocityEngine() {

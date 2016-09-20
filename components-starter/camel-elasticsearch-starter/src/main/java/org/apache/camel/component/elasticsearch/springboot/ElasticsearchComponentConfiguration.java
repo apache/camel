@@ -18,6 +18,7 @@ package org.apache.camel.component.elasticsearch.springboot;
 
 import org.elasticsearch.client.Client;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The elasticsearch component is used for interfacing with ElasticSearch
@@ -32,6 +33,7 @@ public class ElasticsearchComponentConfiguration {
      * To use an existing configured Elasticsearch client instead of creating a
      * client per endpoint.
      */
+    @NestedConfigurationProperty
     private Client client;
 
     public Client getClient() {

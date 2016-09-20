@@ -26,6 +26,7 @@ import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.protocol.HttpContext;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * For calling out to external HTTP servers using Apache HTTP Client 4.x.
@@ -39,19 +40,23 @@ public class HttpComponentConfiguration {
      * To use the custom HttpClientConfigurer to perform configuration of the
      * HttpClient that will be used.
      */
+    @NestedConfigurationProperty
     private HttpClientConfigurer httpClientConfigurer;
     /**
      * To use a custom HttpClientConnectionManager to manage connections
      */
+    @NestedConfigurationProperty
     private HttpClientConnectionManager clientConnectionManager;
     /**
      * To use a custom HttpBinding to control the mapping between Camel message
      * and HttpClient.
      */
+    @NestedConfigurationProperty
     private HttpBinding httpBinding;
     /**
      * To use the shared HttpConfiguration as base configuration.
      */
+    @NestedConfigurationProperty
     private HttpConfiguration httpConfiguration;
     /**
      * Whether to allow java serialization when a request uses
@@ -65,6 +70,7 @@ public class HttpComponentConfiguration {
      * To use a custom org.apache.http.protocol.HttpContext when executing
      * requests.
      */
+    @NestedConfigurationProperty
     private HttpContext httpContext;
     /**
      * To configure security using SSLContextParameters. Important: Only one
@@ -72,12 +78,14 @@ public class HttpComponentConfiguration {
      * per HttpComponent. If you need to use 2 or more different instances you
      * need to define a new HttpComponent per instance you need.
      */
+    @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
     /**
      * To use a custom X509HostnameVerifier such as
      * org.apache.http.conn.ssl.StrictHostnameVerifier or
      * org.apache.http.conn.ssl.AllowAllHostnameVerifier.
      */
+    @NestedConfigurationProperty
     private X509HostnameVerifier x509HostnameVerifier;
     /**
      * The maximum number of connections.
@@ -91,7 +99,7 @@ public class HttpComponentConfiguration {
      * The time for connection to live the time unit is millisecond the default
      * value is always keep alive.
      */
-    private long connectionTimeToLive;
+    private Long connectionTimeToLive;
     /**
      * To use a custom org.apache.http.client.CookieStore. By default the
      * org.apache.http.impl.client.BasicCookieStore is used which is an
@@ -99,11 +107,13 @@ public class HttpComponentConfiguration {
      * cookie store is forced to be a noop cookie store as cookie shouldn't be
      * stored as we are just bridging (eg acting as a proxy).
      */
+    @NestedConfigurationProperty
     private CookieStore cookieStore;
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
      */
+    @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
 
     public HttpClientConfigurer getHttpClientConfigurer() {
@@ -190,11 +200,11 @@ public class HttpComponentConfiguration {
         this.connectionsPerRoute = connectionsPerRoute;
     }
 
-    public long getConnectionTimeToLive() {
+    public Long getConnectionTimeToLive() {
         return connectionTimeToLive;
     }
 
-    public void setConnectionTimeToLive(long connectionTimeToLive) {
+    public void setConnectionTimeToLive(Long connectionTimeToLive) {
         this.connectionTimeToLive = connectionTimeToLive;
     }
 

@@ -22,9 +22,9 @@ import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
-import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The sjms component (simple jms) allows messages to be sent to (or consumed
@@ -44,12 +44,14 @@ public class SjmsComponentConfiguration {
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
      */
+    @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
     /**
      * A ConnectionResource is an interface that allows for customization and
      * container control of the ConnectionFactory. See Plugable Connection
      * Resource Management for further details.
      */
+    @NestedConfigurationProperty
     private ConnectionResource connectionResource;
     /**
      * The maximum number of connections available to endpoints started under
@@ -66,25 +68,29 @@ public class SjmsComponentConfiguration {
      * org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using
      * the notation.
      */
+    @NestedConfigurationProperty
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
     /**
      * To configure which kind of commit strategy to use. Camel provides two
      * implementations out of the box default and batch.
      */
+    @NestedConfigurationProperty
     private TransactionCommitStrategy transactionCommitStrategy;
     /**
      * To use a custom DestinationCreationStrategy.
      */
+    @NestedConfigurationProperty
     private DestinationCreationStrategy destinationCreationStrategy;
     /**
      * To use a custom TimedTaskManager
      */
-    private TimedTaskManager timedTaskManager;
+    private TimedTaskManagerNestedConfiguration timedTaskManager;
     /**
      * To use the given MessageCreatedStrategy which are invoked when Camel
      * creates new instances of javax.jms.Message objects when Camel is sending
      * a JMS message.
      */
+    @NestedConfigurationProperty
     private MessageCreatedStrategy messageCreatedStrategy;
 
     public ConnectionFactory getConnectionFactory() {
@@ -147,11 +153,12 @@ public class SjmsComponentConfiguration {
         this.destinationCreationStrategy = destinationCreationStrategy;
     }
 
-    public TimedTaskManager getTimedTaskManager() {
+    public TimedTaskManagerNestedConfiguration getTimedTaskManager() {
         return timedTaskManager;
     }
 
-    public void setTimedTaskManager(TimedTaskManager timedTaskManager) {
+    public void setTimedTaskManager(
+            TimedTaskManagerNestedConfiguration timedTaskManager) {
         this.timedTaskManager = timedTaskManager;
     }
 
@@ -162,5 +169,9 @@ public class SjmsComponentConfiguration {
     public void setMessageCreatedStrategy(
             MessageCreatedStrategy messageCreatedStrategy) {
         this.messageCreatedStrategy = messageCreatedStrategy;
+    }
+
+    public static class TimedTaskManagerNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.sjms.taskmanager.TimedTaskManager.class;
     }
 }

@@ -36,7 +36,7 @@ public class DirectComponentConfiguration {
     /**
      * The timeout value to use if block is enabled.
      */
-    private long timeout = 30000;
+    private Long timeout = 30000;
 
     public Boolean getBlock() {
         return block;
@@ -46,11 +46,11 @@ public class DirectComponentConfiguration {
         this.block = block;
     }
 
-    public long getTimeout() {
+    public Long getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(long timeout) {
+    public void setTimeout(Long timeout) {
         this.timeout = timeout;
     }
 }

@@ -18,6 +18,7 @@ package org.apache.camel.component.guava.eventbus.springboot;
 
 import com.google.common.eventbus.EventBus;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The guava-eventbus component provides integration bridge between Camel and
@@ -31,6 +32,7 @@ public class GuavaEventBusComponentConfiguration {
     /**
      * To use the given Guava EventBus instance
      */
+    @NestedConfigurationProperty
     private EventBus eventBus;
     /**
      * The interface with method(s) marked with the Subscribe annotation.
