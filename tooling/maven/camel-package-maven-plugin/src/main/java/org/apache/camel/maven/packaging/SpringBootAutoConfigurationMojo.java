@@ -454,7 +454,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         private String propertyType;
         private PropertySource<JavaClassSource> propertySource;
 
-        public ResolvedProperty(String propertyType, PropertySource<JavaClassSource> propertySource) {
+        ResolvedProperty(String propertyType, PropertySource<JavaClassSource> propertySource) {
             this.propertyType = propertyType;
             this.propertySource = propertySource;
         }

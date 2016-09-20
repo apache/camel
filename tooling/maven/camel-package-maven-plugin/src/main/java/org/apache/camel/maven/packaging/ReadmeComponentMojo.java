@@ -76,6 +76,13 @@ public class ReadmeComponentMojo extends AbstractMojo {
     protected File docDir;
 
     /**
+     * Whether to fail the build fast if any Warnings was detected.
+     *
+     * @parameter
+     */
+    protected Boolean failFast;
+
+    /**
      * build context to check changed files and mark them for refresh (used for
      * m2e compatibility)
      *
@@ -83,13 +90,6 @@ public class ReadmeComponentMojo extends AbstractMojo {
      * @readonly
      */
     private BuildContext buildContext;
-
-    /**
-     * Whether to fail the build fast if any WARNINGS was detected.
-     *
-     * @parameter
-     */
-    protected Boolean failFast;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
