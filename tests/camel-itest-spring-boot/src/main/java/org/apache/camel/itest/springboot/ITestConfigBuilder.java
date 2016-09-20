@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.springboot;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeSet;
@@ -213,23 +212,23 @@ public class ITestConfigBuilder {
         }
 
         if (config.getResources() == null) {
-            config.setResources(Collections.<String, String>emptyMap());
+            config.setResources(new HashMap<>());
         }
 
         if (config.getAdditionalDependencies() == null) {
-            config.setAdditionalDependencies(Collections.<String>emptySet());
+            config.setAdditionalDependencies(new HashSet<>());
         }
 
         if (config.getMavenExclusions() == null) {
-            config.setMavenExclusions(Collections.<String>emptySet());
+            config.setMavenExclusions(new HashSet<>());
         }
 
         if (config.getJmxDisabledNames() == null) {
-            config.setJmxDisabledNames(Collections.<String>emptySet());
+            config.setJmxDisabledNames(new HashSet<>());
         }
 
         if (config.getSystemProperties() == null) {
-            config.setSystemProperties(Collections.<String, String>emptyMap());
+            config.setSystemProperties(new HashMap<>());
         }
 
         if (config.getUseCustomLog() == null) {

@@ -185,7 +185,7 @@
             </property>
             <property>
               <name>itest.springboot.includeTestDependencies</name>
-              <value>false</value>
+              <value>true</value>
             </property>
             <property>
               <name>itest.springboot.mavenOfflineResolution</name>
