@@ -30,7 +30,7 @@ General Options
 ^^^^^^^^^^^^^^^
 
 // component options: START
-The Docker component supports 16 options which are listed below.
+The Docker component supports 1 options which are listed below.
 
 
 
@@ -39,28 +39,13 @@ The Docker component supports 16 options which are listed below.
 |=======================================================================
 | Name | Java Type | Description
 | configuration | DockerConfiguration | To use the shared docker configuration. Properties of the shared configuration can also be set individually.
-| host | String | Docker host
-| port | Integer | Docker port
-| username | String | User name to authenticate with
-| password | String | Password to authenticate with
-| email | String | Email address associated with the user
-| serverAddress | String | Server address for docker registry.
-| requestTimeout | Integer | Request timeout for response (in seconds)
-| secure | boolean | Use HTTPS communication
-| certPath | String | Location containing the SSL certificate chain
-| maxTotalConnections | Integer | Maximum total connections
-| maxPerRouteConnections | Integer | Maximum route connections
-| loggingFilter | boolean | Whether to use logging filter
-| followRedirectFilter | boolean | Whether to follow redirect filter
-| parameters | Map | Additional configuration parameters as key/value pairs
-| operation | DockerOperation | Which operation to use
 |=======================================================================
 {% endraw %}
 // component options: END
 
 
 // endpoint options: START
-The Docker component supports 18 endpoint options which are listed below:
+The Docker component supports 20 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -69,9 +54,9 @@ The Docker component supports 18 endpoint options which are listed below:
 | operation | common |  | DockerOperation | *Required* Which operation to use
 | certPath | common |  | String | Location containing the SSL certificate chain
 | email | common |  | String | Email address associated with the user
-| followRedirectFilter | common | false | boolean | *Deprecated since 2.18* Whether to follow redirect filter
+| followRedirectFilter | common | false | boolean | Whether to follow redirect filter
 | host | common | localhost | String | *Required* Docker host
-| loggingFilter | common | false | boolean | *Deprecated since 2.18* Whether to use logging filter
+| loggingFilter | common | false | boolean | Whether to use logging filter
 | maxPerRouteConnections | common | 100 | Integer | Maximum route connections
 | maxTotalConnections | common | 100 | Integer | Maximum total connections
 | password | common |  | String | Password to authenticate with
@@ -79,13 +64,13 @@ The Docker component supports 18 endpoint options which are listed below:
 | requestTimeout | common |  | Integer | Request timeout for response (in seconds)
 | secure | common | false | boolean | Use HTTPS communication
 | serverAddress | common | https://index.docker.io/v1/ | String | Server address for docker registry.
+| socket | common | true | boolean | Socket connection mode
+| tlsVerify | common | false | boolean | Check TLS
 | username | common |  | String | User name to authenticate with
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| tlsVerify | boolean | *from 2.18* TLS Verify flag
-| socket | boolean | *from 2.18* Connection mode, true docker client use socket otherwise tcp
 |=======================================================================
 {% endraw %}
 // endpoint options: END
