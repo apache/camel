@@ -17,6 +17,7 @@
 package org.apache.camel.itest.springboot;
 
 import org.apache.camel.itest.springboot.util.ArquillianPackager;
+import org.apache.camel.itest.springboot.util.DependencyResolver;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -38,6 +39,7 @@ public class CamelSalesforceTest extends AbstractSpringBootTestSupport {
                 .basePath("../../components/camel-salesforce/camel-salesforce-component")
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest.*|MSPTest$)")
                 .autostart(false) // needs configuration
+                .dependency("org.codehaus.groovy:groovy-all:" + DependencyResolver.resolveParentProperty("${groovy-version}"))
                 .build();
     }
 

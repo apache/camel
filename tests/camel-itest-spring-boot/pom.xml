@@ -34,24 +34,12 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-boot-starter</artifactId>
-      <exclusions>
-        <exclusion>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-logging</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- Dependency needed to incorporate classes in main jar -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-loader</artifactId>
-      <version>${spring-boot-version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-log4j2</artifactId>
       <version>${spring-boot-version}</version>
     </dependency>
 
@@ -162,6 +150,55 @@
           <rerunFailingTestsCount>1</rerunFailingTestsCount>
           <includes>
             <include>**/*Test.java</include>
+
+            <!-- Modules to verify -->
+
+            <!--<include>org.apache.camel.itest.springboot.CamelAhcTest</include>           fail-->
+            <!--<include>org.apache.camel.itest.springboot.CamelApnsTest</include>          fail-->
+
+
+            <!--<include>org.apache.camel.itest.springboot.CamelCacheTest</include>         1-->
+            <!--<include>org.apache.camel.itest.springboot.CamelConsulTest</include>        5-->
+            <!--<include>org.apache.camel.itest.springboot.CamelHttp4Test</include>         1-->
+            <!--<include>org.apache.camel.itest.springboot.CamelIbatisTest</include>        32-->
+            <!--<include>org.apache.camel.itest.springboot.CamelJgroupsTest</include>       6-->
+            <!--<include>org.apache.camel.itest.springboot.CamelJibxTest</include>          6-->
+            <!--<include>org.apache.camel.itest.springboot.CamelJpaTest</include>           5/56-->
+            <!--<include>org.apache.camel.itest.springboot.CamelMailTest</include>          1-->
+            <!--<include>org.apache.camel.itest.springboot.CamelMybatisTest</include>       30-->
+            <!--<include>org.apache.camel.itest.springboot.CamelQuartzTest</include>        7-->
+
+            <!--<include>org.apache.camel.itest.springboot.CamelRestletTest</include>       3-->
+
+
+
+            <!--<include>org.apache.camel.itest.springboot.CamelSparkRestTest</include>     23/23-->
+
+            <!--<include>org.apache.camel.itest.springboot.CamelSpringBootTest</include>    XX CHECK-->
+
+            <!--<include>org.apache.camel.itest.springboot.CamelSpringTest</include>        30/1085-->
+
+            <!--<include>org.apache.camel.itest.springboot.CamelSwaggerJavaTest</include>   1 -> org.apache.camel.tools.apt.helper.CollectionStringBuffer-->
+
+            <!--<include>org.apache.camel.itest.springboot.CamelUndertowTest</include>      1 -> org.apache.camel.tools.apt.helper.CollectionStringBuffer-->
+
+
+            <!--<include>org.apache.camel.itest.springboot.CamelZipkinTest</include>        1 CHECK -->
+
+            <!-- TBC -->
+            <!--<include>**/*CamelMongodbTest.java</include>-->
+            <!--<include>**/*CamelMongodbGridfsTest.java</include>-->
+            <!--<include>**/*Netty*Test.java</include>-->
+
+
+
+
+            <!-- OK -->
+            <!--<include>org.apache.camel.itest.springboot.CamelScriptTest</include>        17/44 OK . Test framework problem with JavaScript-->
+
+            <!--<include>org.apache.camel.itest.springboot.CamelServletTest</include>       1 OK . Excluded arquillian test -->
+
+
           </includes>
           <systemProperties>
             <!-- Test configuration -->
@@ -185,77 +222,6 @@
               <value>false</value>
             </property>
 
-            <!-- Test dependencies required by modules -->
-            <property>
-              <name>version_bam_org.hibernate:hibernate-entitymanager</name>
-              <value>5.0.9.Final</value>
-            </property>
-            <property>
-              <name>version_org.apache.geronimo.specs:geronimo-jta_1.1_spec</name>
-              <value>${geronimo-jta-spec-version}</value>
-            </property>
-
-            <!-- Other dependencies needed before starters -->
-            <property>
-              <name>version_org.apache.camel:camel-core</name>
-              <value>${project.version}</value>
-            </property>
-            <property>
-              <name>version_org.apache.camel:camel-netty4</name>
-              <value>${project.version}</value>
-            </property>
-            <property>
-              <name>version_org.springframework.data:spring-data-redis</name>
-              <value>${spring-data-redis-version}</value>
-            </property>
-            <property>
-              <name>version_org.hibernate:hibernate-validator</name>
-              <value>${hibernate-validator-version}</value>
-            </property>
-            <property>
-              <name>version_xom:xom</name>
-              <value>${xom-version}</value>
-            </property>
-            <property>
-              <name>version_org.springframework.boot:spring-boot-starter-web</name>
-              <value>${spring-boot-version}</value>
-            </property>
-            <property>
-              <name>version_2.10_org.scala-lang:scala-library</name>
-              <value>${scala-2.10-version}</value>
-            </property>
-            <property>
-              <name>version_org.springframework:spring-webmvc</name>
-              <value>${spring-version}</value>
-            </property>
-            <property>
-              <name>version_org.apache.lucene:lucene-core</name>
-              <value>${lucene3-version}</value>
-            </property>
-            <property>
-              <name>version_com.google.inject:guice</name>
-              <value>${guice3-version}</value>
-            </property>
-            <property>
-              <name>version_com.google.guava:guava</name>
-              <value>${google-guava-version}</value>
-            </property>
-            <property>
-              <name>version_org.apache.hadoop:hadoop-hdfs</name>
-              <value>${hadoop2-version}</value>
-            </property>
-            <property>
-              <name>version_io.netty:netty-all</name>
-              <value>${netty-version}</value>
-            </property>
-            <property>
-              <name>version_org.glassfish.grizzly:grizzly-websockets</name>
-              <value>${grizzly-websockets-version}</value>
-            </property>
-            <property>
-              <name>version_org.glassfish.grizzly:connection-pool</name>
-              <value>${grizzly-websockets-version}</value>
-            </property>
           </systemProperties>
         </configuration>
       </plugin>

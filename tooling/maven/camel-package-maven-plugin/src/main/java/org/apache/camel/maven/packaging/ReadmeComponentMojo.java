@@ -85,11 +85,11 @@ public class ReadmeComponentMojo extends AbstractMojo {
     private BuildContext buildContext;
 
     /**
-     * Whether to fail the build fast if any WARNINGS was detected.
+     * Whether to fail the build fast if any warnings was detected.
      *
      * @parameter
      */
-    protected Boolean failFast;
+    private Boolean failFast;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

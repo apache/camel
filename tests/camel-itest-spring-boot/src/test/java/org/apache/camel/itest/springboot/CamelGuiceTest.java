@@ -35,6 +35,7 @@ public class CamelGuiceTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelGuiceTest.class))
+                .ignoreLibraryMismatch("org.hamcrest")
                 .build();
     }
 

@@ -331,6 +331,8 @@
     <jibx-version>1.2.6</jibx-version>
     <jing-bundle-version>20030619_5</jing-bundle-version>
     <jing-version>20030619</jing-version>
+    <jira-rest-client-version>1.2-m01</jira-rest-client-version>
+    <jira-rest-client-api-version>2.0.0-m30</jira-rest-client-api-version>
     <jmockit-version>1.5</jmockit-version>
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
     <jodatime2-bundle-version>2.9.4</jodatime2-bundle-version>
@@ -2044,11 +2046,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-blueprint-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-boon-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2075,11 +2072,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-castor-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-cdi-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2190,11 +2182,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ehcache-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-ejb-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3004,16 +2991,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-testng-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-test-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-twitter-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3462,6 +3439,16 @@
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-all</artifactId>
+        <version>${activemq-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-openwire-legacy</artifactId>
+        <version>${activemq-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-jaas</artifactId>
         <version>${activemq-version}</version>
       </dependency>
 
@@ -3961,6 +3948,13 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>${exec-maven-plugin-version}</version>
+      </dependency>
+
+      <!-- Optional Jira -->
+      <dependency>
+        <groupId>com.atlassian.jira</groupId>
+        <artifactId>jira-rest-java-client</artifactId>
+        <version>${jira-rest-client-version}</version>
       </dependency>
  
       <!-- optional misc -->

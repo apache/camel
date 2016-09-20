@@ -77,8 +77,11 @@ import org.apache.maven.shared.dependency.tree.traversal.CollectingDependencyNod
 public class SpringBootStarterMojo extends AbstractMojo {
 
 
-    private static final String[] IGNORE_MODULES = {/* OSGi -> */ "camel-core-osgi", "camel-eventadmin", "camel-paxlogging",  /* deprecated (and not working perfectly) -> */"camel-swagger",
-        "camel-mina", /* others (not managed) -> */ "camel-zipkin"};
+    private static final String[] IGNORE_MODULES = {
+        /* OSGi -> */ "camel-blueprint", "camel-core-osgi", "camel-eventadmin", "camel-paxlogging",
+        /* Java EE -> */ "camel-cdi", "camel-ejb",
+        /* deprecated (and not working perfectly) -> */ "camel-swagger", "camel-mina",
+        /* others (not managed) -> */ "camel-zipkin"};
 
     private static final boolean IGNORE_TEST_MODULES = true;
 
@@ -269,6 +272,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
         loggingImpl.add("ch.qos.logback:logback-classic");
 
         loggingImpl.add("org.apache.logging.log4j:log4j");
+        loggingImpl.add("org.apache.logging.log4j:log4j-core");
         loggingImpl.add("org.apache.logging.log4j:log4j-slf4j-impl");
 
         loggingImpl.add("org.slf4j:slf4j-jcl");
@@ -453,7 +457,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
             }
         }
 
-        if (IGNORE_TEST_MODULES && project.getArtifactId().startsWith("camel-test-")) {
+        if (IGNORE_TEST_MODULES && (project.getArtifactId().startsWith("camel-test") || project.getArtifactId().startsWith("camel-testng"))) {
             getLog().debug("Test components are ignored");
             return false;
         }

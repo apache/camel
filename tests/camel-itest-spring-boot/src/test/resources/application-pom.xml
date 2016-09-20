@@ -29,19 +29,11 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <!-- First the dependency management from Spring Boot -->
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot-version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <dependency>
-                <!-- Then use camel dependency management -->
+                <!-- Only the BOM -->
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-parent</artifactId>
+                <artifactId>camel-spring-boot-dependencies</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -55,7 +47,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>#{module}-starter</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- Required by the integration tests to run -->
@@ -63,6 +54,8 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+
+        <!-- DEPENDENCIES -->
 
     </dependencies>
 

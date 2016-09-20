@@ -140,6 +140,14 @@ public class ITestConfigBuilder {
         return this;
     }
 
+    public ITestConfigBuilder ignoreLibraryMismatch(String libraryPrefix) {
+        if (config.getIgnoreLibraryMismatch() == null) {
+            config.setIgnoreLibraryMismatch(new HashSet<String>());
+        }
+        config.getIgnoreLibraryMismatch().add(libraryPrefix);
+        return this;
+    }
+
     public ITestConfig build() {
 
         // Checking conditions
@@ -218,6 +226,10 @@ public class ITestConfigBuilder {
 
         if (config.getUseCustomLog() == null) {
             config.setUseCustomLog(booleanPropertyOr("useCustomLog", true));
+        }
+
+        if (config.getIgnoreLibraryMismatch() == null) {
+            config.setIgnoreLibraryMismatch(new HashSet<>());
         }
 
         return config;
