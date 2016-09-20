@@ -18,6 +18,7 @@ package org.apache.camel.component.hbase.springboot;
 
 import org.apache.hadoop.conf.Configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * For reading/writing from/to an HBase store (Hadoop database).
@@ -30,6 +31,7 @@ public class HBaseComponentConfiguration {
     /**
      * To use the shared configuration
      */
+    @NestedConfigurationProperty
     private Configuration configuration;
     /**
      * Maximum number of references to keep for each table in the HTable pool.

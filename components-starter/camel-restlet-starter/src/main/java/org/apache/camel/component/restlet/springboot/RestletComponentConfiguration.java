@@ -19,6 +19,7 @@ package org.apache.camel.component.restlet.springboot;
 import java.util.List;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Component for consuming and producing Restful resources using Restlet.
@@ -131,6 +132,7 @@ public class RestletComponentConfiguration {
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
      */
+    @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
 
     public Boolean getControllerDaemon() {

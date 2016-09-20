@@ -18,6 +18,7 @@ package org.apache.camel.component.jpa.springboot;
 
 import javax.persistence.EntityManagerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
@@ -37,6 +38,7 @@ public class JpaComponentConfiguration {
     /**
      * To use the PlatformTransactionManager for managing transactions.
      */
+    @NestedConfigurationProperty
     private PlatformTransactionManager transactionManager;
     /**
      * The camel-jpa component will join transaction by default. You can use

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.ssh.springboot;
 
-import org.apache.camel.component.ssh.SshConfiguration;
 import org.apache.sshd.common.KeyPairProvider;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The ssh component enables access to SSH servers such that you can send an SSH
@@ -33,7 +33,7 @@ public class SshComponentConfiguration {
     /**
      * To use the shared SSH configuration
      */
-    private SshConfiguration configuration;
+    private SshConfigurationNestedConfiguration configuration;
     /**
      * Sets the hostname of the remote SSH server.
      */
@@ -62,6 +62,7 @@ public class SshComponentConfiguration {
      * Sets the KeyPairProvider reference to use when connecting using
      * Certificates to the remote SSH Server.
      */
+    @NestedConfigurationProperty
     private KeyPairProvider keyPairProvider;
     /**
      * Sets the key type to pass to the KeyPairProvider as part of
@@ -73,7 +74,7 @@ public class SshComponentConfiguration {
      * Sets the timeout in milliseconds to wait in establishing the remote SSH
      * server connection. Defaults to 30000 milliseconds.
      */
-    private long timeout;
+    private Long timeout;
     /**
      * Sets the resource path of the certificate to use for Authentication.
      */
@@ -86,11 +87,12 @@ public class SshComponentConfiguration {
      */
     private String certResource;
 
-    public SshConfiguration getConfiguration() {
+    public SshConfigurationNestedConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(SshConfiguration configuration) {
+    public void setConfiguration(
+            SshConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -150,11 +152,11 @@ public class SshComponentConfiguration {
         this.keyType = keyType;
     }
 
-    public long getTimeout() {
+    public Long getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(long timeout) {
+    public void setTimeout(Long timeout) {
         this.timeout = timeout;
     }
 
@@ -175,5 +177,178 @@ public class SshComponentConfiguration {
 
     public void setCertResource(String certResource) {
         this.certResource = certResource;
+    }
+
+    public static class SshConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.ssh.SshConfiguration.class;
+        /**
+         * Sets the username to use in logging into the remote SSH server.
+         * 
+         * @param username
+         *            String representing login username.
+         */
+        private String username;
+        /**
+         * Sets the hostname of the remote SSH server.
+         * 
+         * @param host
+         *            String representing hostname of SSH server.
+         */
+        private String host;
+        /**
+         * Sets the port number for the remote SSH server.
+         * 
+         * @param port
+         *            int representing port number on remote host. Defaults to
+         *            22.
+         */
+        private Integer port;
+        /**
+         * Sets the password to use in connecting to remote SSH server. Requires
+         * keyPairProvider to be set to null.
+         * 
+         * @param password
+         *            String representing password for username at remote host.
+         */
+        private String password;
+        /**
+         * Sets the command string to send to the remote SSH server during every
+         * poll cycle. Only works with camel-ssh component being used as a
+         * consumer, i.e. from("ssh://...") You may need to end your command
+         * with a newline, and that must be URL encoded %0A
+         * 
+         * @param pollCommand
+         *            String representing the command to send.
+         */
+        private String pollCommand;
+        /**
+         * Sets the KeyPairProvider reference to use when connecting using
+         * Certificates to the remote SSH Server.
+         * 
+         * @param keyPairProvider
+         *            KeyPairProvider reference to use in authenticating. If set
+         *            to 'null', then will attempt to connect using
+         *            username/password settings.
+         * @see KeyPairProvider
+         */
+        @NestedConfigurationProperty
+        private KeyPairProvider keyPairProvider;
+        /**
+         * Sets the key type to pass to the KeyPairProvider as part of
+         * authentication. KeyPairProvider.loadKey(...) will be passed this
+         * value. Defaults to "ssh-rsa".
+         * 
+         * @param keyType
+         *            String defining the type of KeyPair to use for
+         *            authentication.
+         * @see KeyPairProvider
+         */
+        private String keyType = "KeyPairProvider.SSH_RSA";
+        /**
+         * Sets the timeout in milliseconds to wait in establishing the remote
+         * SSH server connection. Defaults to 30000 milliseconds.
+         * 
+         * @param timeout
+         *            long milliseconds to wait.
+         */
+        private Long timeout;
+        /**
+         * @deprecated As of version 2.11, replaced by
+         *             {@link #setCertResource(String)}
+         */
+        @Deprecated
+        private String certFilename;
+        /**
+         * Sets the resource path of the certificate to use for Authentication.
+         * Will use {@link ResourceHelperKeyPairProvider} to resolve file based
+         * certificate, and depends on keyType setting.
+         * 
+         * @param certResource
+         *            String file, classpath, or http url for the certificate
+         */
+        private String certResource;
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public Integer getPort() {
+            return port;
+        }
+
+        public void setPort(Integer port) {
+            this.port = port;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String getPollCommand() {
+            return pollCommand;
+        }
+
+        public void setPollCommand(String pollCommand) {
+            this.pollCommand = pollCommand;
+        }
+
+        public KeyPairProvider getKeyPairProvider() {
+            return keyPairProvider;
+        }
+
+        public void setKeyPairProvider(KeyPairProvider keyPairProvider) {
+            this.keyPairProvider = keyPairProvider;
+        }
+
+        public String getKeyType() {
+            return keyType;
+        }
+
+        public void setKeyType(String keyType) {
+            this.keyType = keyType;
+        }
+
+        public Long getTimeout() {
+            return timeout;
+        }
+
+        public void setTimeout(Long timeout) {
+            this.timeout = timeout;
+        }
+
+        @Deprecated
+        @DeprecatedConfigurationProperty
+        public String getCertFilename() {
+            return certFilename;
+        }
+
+        @Deprecated
+        public void setCertFilename(String certFilename) {
+            this.certFilename = certFilename;
+        }
+
+        public String getCertResource() {
+            return certResource;
+        }
+
+        public void setCertResource(String certResource) {
+            this.certResource = certResource;
+        }
     }
 }

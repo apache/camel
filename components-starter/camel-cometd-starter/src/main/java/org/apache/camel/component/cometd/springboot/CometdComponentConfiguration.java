@@ -21,6 +21,7 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 import org.cometd.bayeux.server.BayeuxServer.Extension;
 import org.cometd.bayeux.server.SecurityPolicy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The cometd component is a transport for working with the Jetty implementation
@@ -46,6 +47,7 @@ public class CometdComponentConfiguration {
     /**
      * To use a custom configured SecurityPolicy to control authorization
      */
+    @NestedConfigurationProperty
     private SecurityPolicy securityPolicy;
     /**
      * To use a list of custom BayeuxServer.Extension that allows modifying
@@ -55,6 +57,7 @@ public class CometdComponentConfiguration {
     /**
      * To configure security using SSLContextParameters
      */
+    @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
 
     public String getSslKeyPassword() {

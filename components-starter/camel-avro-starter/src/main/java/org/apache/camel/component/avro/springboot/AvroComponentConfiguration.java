@@ -17,8 +17,9 @@
 package org.apache.camel.component.avro.springboot;
 
 import org.apache.avro.Protocol;
-import org.apache.camel.component.avro.AvroConfiguration;
+import org.apache.camel.component.avro.AvroTransport;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Working with Apache Avro for data serialization.
@@ -29,139 +30,141 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class AvroComponentConfiguration {
 
     /**
-     * To use a shared AvroConfiguration to configure options once. Properties
-     * of the shared configuration can also be set individually.
+     * To use a shared AvroConfiguration to configure options once
      */
-    private AvroConfiguration configuration;
-    /**
-     * Hostname to use
-     */
-    private String host;
-    /**
-     * Port number to use
-     */
-    private Integer port;
-    /**
-     * Avro protocol to use
-     */
-    private Protocol protocol;
-    /**
-     * Transport to use
-     */
-    private String transport;
-    /**
-     * Avro protocol location
-     */
-    private String protocolLocation;
-    /**
-     * Avro protocol to use defined by the FQN class name
-     */
-    private String protocolClassName;
-    /**
-     * The name of the message to send.
-     */
-    private String messageName;
-    /**
-     * Authority to use (username and password)
-     */
-    private String uriAuthority;
-    /**
-     * If protocol object provided is reflection protocol. Should be used only
-     * with protocol parameter because for protocolClassName protocol type will
-     * be auto detected
-     */
-    private Boolean reflectionProtocol;
-    /**
-     * If true consumer parameter won't be wrapped into array. Will fail if
-     * protocol specifies more then 1 parameter for the message
-     */
-    private Boolean singleParameter;
+    private AvroConfigurationNestedConfiguration configuration;
 
-    public AvroConfiguration getConfiguration() {
+    public AvroConfigurationNestedConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(AvroConfiguration configuration) {
+    public void setConfiguration(
+            AvroConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public String getHost() {
-        return host;
-    }
+    public static class AvroConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.avro.AvroConfiguration.class;
+        /**
+         * Hostname to use
+         */
+        private String host;
+        /**
+         * Port number to use
+         */
+        private Integer port;
+        /**
+         * Avro protocol to use
+         */
+        @NestedConfigurationProperty
+        private Protocol protocol;
+        private AvroTransport transport;
+        /**
+         * Avro protocol location
+         */
+        private String protocolLocation;
+        /**
+         * Avro protocol to use defined by the FQN class name
+         */
+        private String protocolClassName;
+        /**
+         * The name of the message to send.
+         */
+        private String messageName;
+        /**
+         * Authority to use (username and password)
+         */
+        private String uriAuthority;
+        /**
+         * If protocol object provided is reflection protocol. Should be used
+         * only with protocol parameter because for protocolClassName protocol
+         * type will be auto detected
+         */
+        private Boolean reflectionProtocol;
+        /**
+         * If true, consumer parameter won't be wrapped into array. Will fail if
+         * protocol specifies more then 1 parameter for the message
+         */
+        private Boolean singleParameter;
 
-    public void setHost(String host) {
-        this.host = host;
-    }
+        public String getHost() {
+            return host;
+        }
 
-    public Integer getPort() {
-        return port;
-    }
+        public void setHost(String host) {
+            this.host = host;
+        }
 
-    public void setPort(Integer port) {
-        this.port = port;
-    }
+        public Integer getPort() {
+            return port;
+        }
 
-    public Protocol getProtocol() {
-        return protocol;
-    }
+        public void setPort(Integer port) {
+            this.port = port;
+        }
 
-    public void setProtocol(Protocol protocol) {
-        this.protocol = protocol;
-    }
+        public Protocol getProtocol() {
+            return protocol;
+        }
 
-    public String getTransport() {
-        return transport;
-    }
+        public void setProtocol(Protocol protocol) {
+            this.protocol = protocol;
+        }
 
-    public void setTransport(String transport) {
-        this.transport = transport;
-    }
+        public AvroTransport getTransport() {
+            return transport;
+        }
 
-    public String getProtocolLocation() {
-        return protocolLocation;
-    }
+        public void setTransport(AvroTransport transport) {
+            this.transport = transport;
+        }
 
-    public void setProtocolLocation(String protocolLocation) {
-        this.protocolLocation = protocolLocation;
-    }
+        public String getProtocolLocation() {
+            return protocolLocation;
+        }
 
-    public String getProtocolClassName() {
-        return protocolClassName;
-    }
+        public void setProtocolLocation(String protocolLocation) {
+            this.protocolLocation = protocolLocation;
+        }
 
-    public void setProtocolClassName(String protocolClassName) {
-        this.protocolClassName = protocolClassName;
-    }
+        public String getProtocolClassName() {
+            return protocolClassName;
+        }
 
-    public String getMessageName() {
-        return messageName;
-    }
+        public void setProtocolClassName(String protocolClassName) {
+            this.protocolClassName = protocolClassName;
+        }
 
-    public void setMessageName(String messageName) {
-        this.messageName = messageName;
-    }
+        public String getMessageName() {
+            return messageName;
+        }
 
-    public String getUriAuthority() {
-        return uriAuthority;
-    }
+        public void setMessageName(String messageName) {
+            this.messageName = messageName;
+        }
 
-    public void setUriAuthority(String uriAuthority) {
-        this.uriAuthority = uriAuthority;
-    }
+        public String getUriAuthority() {
+            return uriAuthority;
+        }
 
-    public Boolean getReflectionProtocol() {
-        return reflectionProtocol;
-    }
+        public void setUriAuthority(String uriAuthority) {
+            this.uriAuthority = uriAuthority;
+        }
 
-    public void setReflectionProtocol(Boolean reflectionProtocol) {
-        this.reflectionProtocol = reflectionProtocol;
-    }
+        public Boolean getReflectionProtocol() {
+            return reflectionProtocol;
+        }
 
-    public Boolean getSingleParameter() {
-        return singleParameter;
-    }
+        public void setReflectionProtocol(Boolean reflectionProtocol) {
+            this.reflectionProtocol = reflectionProtocol;
+        }
 
-    public void setSingleParameter(Boolean singleParameter) {
-        this.singleParameter = singleParameter;
+        public Boolean getSingleParameter() {
+            return singleParameter;
+        }
+
+        public void setSingleParameter(Boolean singleParameter) {
+            this.singleParameter = singleParameter;
+        }
     }
 }

@@ -20,6 +20,7 @@ import java.util.Properties;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The properties component is used for using property placeholders in endpoint
@@ -52,10 +53,12 @@ public class PropertiesComponentConfiguration {
     /**
      * To use a custom PropertiesResolver
      */
+    @NestedConfigurationProperty
     private PropertiesResolver propertiesResolver;
     /**
      * To use a custom PropertiesParser
      */
+    @NestedConfigurationProperty
     private PropertiesParser propertiesParser;
     /**
      * Whether or not to cache loaded properties. The default value is true.

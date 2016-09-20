@@ -17,8 +17,8 @@
 package org.apache.camel.component.sparkrest.springboot;
 
 import org.apache.camel.component.sparkrest.SparkBinding;
-import org.apache.camel.component.sparkrest.SparkConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The spark-rest component is used for hosting REST services which has been
@@ -70,10 +70,11 @@ public class SparkComponentConfiguration {
     /**
      * To use the shared SparkConfiguration
      */
-    private SparkConfiguration sparkConfiguration;
+    private SparkConfigurationNestedConfiguration sparkConfiguration;
     /**
      * To use a custom SparkBinding to map to/from Camel message.
      */
+    @NestedConfigurationProperty
     private SparkBinding sparkBinding;
 
     public Integer getPort() {
@@ -148,11 +149,12 @@ public class SparkComponentConfiguration {
         this.truststorePassword = truststorePassword;
     }
 
-    public SparkConfiguration getSparkConfiguration() {
+    public SparkConfigurationNestedConfiguration getSparkConfiguration() {
         return sparkConfiguration;
     }
 
-    public void setSparkConfiguration(SparkConfiguration sparkConfiguration) {
+    public void setSparkConfiguration(
+            SparkConfigurationNestedConfiguration sparkConfiguration) {
         this.sparkConfiguration = sparkConfiguration;
     }
 
@@ -162,5 +164,93 @@ public class SparkComponentConfiguration {
 
     public void setSparkBinding(SparkBinding sparkBinding) {
         this.sparkBinding = sparkBinding;
+    }
+
+    public static class SparkConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.sparkrest.SparkConfiguration.class;
+        /**
+         * If this option is enabled, then during binding from Spark to Camel
+         * Message then the headers will be mapped as well (eg added as header
+         * to the Camel Message as well). You can turn off this option to
+         * disable this. The headers can still be accessed from the
+         * org.apache.camel.component.sparkrest.SparkMessage message with the
+         * method getRequest() that returns the Spark HTTP request instance.
+         */
+        private Boolean mapHeaders;
+        /**
+         * Determines whether or not the raw input stream from Spark
+         * HttpRequest#getContent() is cached or not (Camel will read the stream
+         * into a in light-weight memory based Stream caching) cache. By default
+         * Camel will cache the Netty input stream to support reading it
+         * multiple times to ensure Camel can retrieve all data from the stream.
+         * However you can set this option to true when you for example need to
+         * access the raw stream, such as streaming it directly to a file or
+         * other persistent store. Mind that if you enable this option, then you
+         * cannot read the Netty stream multiple times out of the box, and you
+         * would need manually to reset the reader index on the Spark raw
+         * stream.
+         */
+        private Boolean disableStreamCache;
+        /**
+         * If this option is enabled, then during binding from Spark to Camel
+         * Message then the header values will be URL decoded (eg %20 will be a
+         * space character.)
+         */
+        private Boolean urlDecodeHeaders;
+        /**
+         * If enabled and an Exchange failed processing on the consumer side,
+         * and if the caused Exception was send back serialized in the response
+         * as a application/x-java-serialized-object content type.
+         * <p/>
+         * This is by default turned off. If you enable this then be aware that
+         * Java will deserialize the incoming data from the request to Java and
+         * that can be a potential security risk.
+         */
+        private Boolean transferException;
+        /**
+         * Whether or not the consumer should try to find a target consumer by
+         * matching the URI prefix if no exact match is found.
+         */
+        private Boolean matchOnUriPrefix;
+
+        public Boolean getMapHeaders() {
+            return mapHeaders;
+        }
+
+        public void setMapHeaders(Boolean mapHeaders) {
+            this.mapHeaders = mapHeaders;
+        }
+
+        public Boolean getDisableStreamCache() {
+            return disableStreamCache;
+        }
+
+        public void setDisableStreamCache(Boolean disableStreamCache) {
+            this.disableStreamCache = disableStreamCache;
+        }
+
+        public Boolean getUrlDecodeHeaders() {
+            return urlDecodeHeaders;
+        }
+
+        public void setUrlDecodeHeaders(Boolean urlDecodeHeaders) {
+            this.urlDecodeHeaders = urlDecodeHeaders;
+        }
+
+        public Boolean getTransferException() {
+            return transferException;
+        }
+
+        public void setTransferException(Boolean transferException) {
+            this.transferException = transferException;
+        }
+
+        public Boolean getMatchOnUriPrefix() {
+            return matchOnUriPrefix;
+        }
+
+        public void setMatchOnUriPrefix(Boolean matchOnUriPrefix) {
+            this.matchOnUriPrefix = matchOnUriPrefix;
+        }
     }
 }

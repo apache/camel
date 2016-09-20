@@ -28,6 +28,7 @@ import org.apache.camel.component.jms.ReplyToType;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
@@ -47,6 +48,7 @@ public class AMQPComponentConfiguration {
     /**
      * To use a shared JMS configuration
      */
+    @NestedConfigurationProperty
     private JmsConfiguration configuration;
     /**
      * Specifies whether the consumer accept messages while it is stopping. You
@@ -178,6 +180,7 @@ public class AMQPComponentConfiguration {
      * errorHandlerLogStackTrace options. This makes it much easier to configure
      * than having to code a custom errorHandler.
      */
+    @NestedConfigurationProperty
     private ErrorHandler errorHandler;
     /**
      * Allows to configure the default errorHandler logging level for logging
@@ -248,6 +251,7 @@ public class AMQPComponentConfiguration {
      * org.springframework.jms.support.converter.MessageConverter so you can be
      * in control how to map to/from a javax.jms.Message.
      */
+    @NestedConfigurationProperty
     private MessageConverter messageConverter;
     /**
      * Specifies whether Camel should auto map the received JMS message to a
@@ -291,13 +295,13 @@ public class AMQPComponentConfiguration {
     /**
      * The timeout for receiving messages (in milliseconds).
      */
-    private long receiveTimeout;
+    private Long receiveTimeout;
     /**
      * Specifies the interval between recovery attempts i.e. when a connection
      * is being refreshed in milliseconds. The default is 5000 ms that is 5
      * seconds.
      */
-    private long recoveryInterval;
+    private Long recoveryInterval;
     /**
      * Deprecated: Enabled by default if you specify a durableSubscriptionName
      * and a clientId.
@@ -307,12 +311,13 @@ public class AMQPComponentConfiguration {
     /**
      * Allows you to specify a custom task executor for consuming messages.
      */
+    @NestedConfigurationProperty
     private TaskExecutor taskExecutor;
     /**
      * When sending messages specifies the time-to-live of the message (in
      * milliseconds).
      */
-    private long timeToLive;
+    private Long timeToLive;
     /**
      * Specifies whether to use transacted mode
      */
@@ -325,6 +330,7 @@ public class AMQPComponentConfiguration {
     /**
      * The Spring transaction manager to use.
      */
+    @NestedConfigurationProperty
     private PlatformTransactionManager transactionManager;
     /**
      * The name of the transaction to use.
@@ -375,7 +381,7 @@ public class AMQPComponentConfiguration {
      * and thus have per message individual timeout values. See also the
      * requestTimeoutCheckerInterval option.
      */
-    private long requestTimeout;
+    private Long requestTimeout;
     /**
      * Configures how often Camel should check for timed out Exchanges when
      * doing request/reply over JMS. By default Camel checks once per second.
@@ -383,7 +389,7 @@ public class AMQPComponentConfiguration {
      * this interval to check more frequently. The timeout is determined by the
      * option requestTimeout.
      */
-    private long requestTimeoutCheckerInterval;
+    private Long requestTimeoutCheckerInterval;
     /**
      * You can transfer the exchange over the wire instead of just the body and
      * headers. The following fields are transferred: In body Out body Fault
@@ -424,6 +430,7 @@ public class AMQPComponentConfiguration {
      * JmsTemplate as default. Can be used for testing purpose but not used much
      * as stated in the spring API docs.
      */
+    @NestedConfigurationProperty
     private JmsOperations jmsOperations;
     /**
      * A pluggable
@@ -431,6 +438,7 @@ public class AMQPComponentConfiguration {
      * allows you to use your own resolver (for example to lookup the real
      * destination in a JNDI registry).
      */
+    @NestedConfigurationProperty
     private DestinationResolver destinationResolver;
     /**
      * Allows for explicitly specifying which kind of strategy to use for
@@ -509,25 +517,30 @@ public class AMQPComponentConfiguration {
      * implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy
      * and refer to it using the notation.
      */
+    @NestedConfigurationProperty
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
     /**
      * Sets the Spring ApplicationContext to use
      */
+    @NestedConfigurationProperty
     private ApplicationContext applicationContext;
     /**
      * To use a custom QueueBrowseStrategy when browsing queues
      */
+    @NestedConfigurationProperty
     private QueueBrowseStrategy queueBrowseStrategy;
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
      */
+    @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
     /**
      * To use the given MessageCreatedStrategy which are invoked when Camel
      * creates new instances of javax.jms.Message objects when Camel is sending
      * a JMS message.
      */
+    @NestedConfigurationProperty
     private MessageCreatedStrategy messageCreatedStrategy;
     /**
      * Number of times to wait for provisional correlation id to be updated to
@@ -539,7 +552,7 @@ public class AMQPComponentConfiguration {
      * Interval in millis to sleep each time while waiting for provisional
      * correlation id to be updated.
      */
-    private long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime;
+    private Long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime;
 
     public JmsConfiguration getConfiguration() {
         return configuration;
@@ -858,19 +871,19 @@ public class AMQPComponentConfiguration {
         this.pubSubNoLocal = pubSubNoLocal;
     }
 
-    public long getReceiveTimeout() {
+    public Long getReceiveTimeout() {
         return receiveTimeout;
     }
 
-    public void setReceiveTimeout(long receiveTimeout) {
+    public void setReceiveTimeout(Long receiveTimeout) {
         this.receiveTimeout = receiveTimeout;
     }
 
-    public long getRecoveryInterval() {
+    public Long getRecoveryInterval() {
         return recoveryInterval;
     }
 
-    public void setRecoveryInterval(long recoveryInterval) {
+    public void setRecoveryInterval(Long recoveryInterval) {
         this.recoveryInterval = recoveryInterval;
     }
 
@@ -893,11 +906,11 @@ public class AMQPComponentConfiguration {
         this.taskExecutor = taskExecutor;
     }
 
-    public long getTimeToLive() {
+    public Long getTimeToLive() {
         return timeToLive;
     }
 
-    public void setTimeToLive(long timeToLive) {
+    public void setTimeToLive(Long timeToLive) {
         this.timeToLive = timeToLive;
     }
 
@@ -975,20 +988,20 @@ public class AMQPComponentConfiguration {
         this.forceSendOriginalMessage = forceSendOriginalMessage;
     }
 
-    public long getRequestTimeout() {
+    public Long getRequestTimeout() {
         return requestTimeout;
     }
 
-    public void setRequestTimeout(long requestTimeout) {
+    public void setRequestTimeout(Long requestTimeout) {
         this.requestTimeout = requestTimeout;
     }
 
-    public long getRequestTimeoutCheckerInterval() {
+    public Long getRequestTimeoutCheckerInterval() {
         return requestTimeoutCheckerInterval;
     }
 
     public void setRequestTimeoutCheckerInterval(
-            long requestTimeoutCheckerInterval) {
+            Long requestTimeoutCheckerInterval) {
         this.requestTimeoutCheckerInterval = requestTimeoutCheckerInterval;
     }
 
@@ -1141,12 +1154,12 @@ public class AMQPComponentConfiguration {
         this.waitForProvisionCorrelationToBeUpdatedCounter = waitForProvisionCorrelationToBeUpdatedCounter;
     }
 
-    public long getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime() {
+    public Long getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime() {
         return waitForProvisionCorrelationToBeUpdatedThreadSleepingTime;
     }
 
     public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
-            long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
+            Long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
         this.waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = waitForProvisionCorrelationToBeUpdatedThreadSleepingTime;
     }
 }

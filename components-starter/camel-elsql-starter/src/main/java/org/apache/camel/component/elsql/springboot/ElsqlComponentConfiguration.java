@@ -20,6 +20,7 @@ import javax.sql.DataSource;
 import com.opengamma.elsql.ElSqlConfig;
 import org.apache.camel.component.elsql.ElSqlDatabaseVendor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The elsql component is an extension to the existing SQL Component that uses
@@ -42,6 +43,7 @@ public class ElsqlComponentConfiguration {
      * To use a specific configured ElSqlConfig. It may be better to use the
      * databaseVendor option instead.
      */
+    @NestedConfigurationProperty
     private ElSqlConfig elSqlConfig;
     /**
      * The resource file which contains the elsql SQL statements to use. You can

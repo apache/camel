@@ -18,6 +18,7 @@ package org.apache.camel.component.paho.springboot;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Component for communicating with MQTT M2M message brokers using Eclipse Paho
@@ -39,6 +40,7 @@ public class PahoComponentConfiguration {
     /**
      * Client connection options
      */
+    @NestedConfigurationProperty
     private MqttConnectOptions connectOptions;
 
     public String getBrokerUrl() {

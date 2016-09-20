@@ -18,6 +18,7 @@ package org.apache.camel.component.mustache.springboot;
 
 import com.github.mustachejava.MustacheFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Transforms the message using a Mustache template.
@@ -30,6 +31,7 @@ public class MustacheComponentConfiguration {
     /**
      * To use a custom MustacheFactory
      */
+    @NestedConfigurationProperty
     private MustacheFactory mustacheFactory;
 
     public MustacheFactory getMustacheFactory() {

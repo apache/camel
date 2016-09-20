@@ -18,6 +18,7 @@ package org.apache.camel.component.mybatis.springboot;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Performs a query poll insert update or delete in a relational database using
@@ -31,6 +32,7 @@ public class MyBatisComponentConfiguration {
     /**
      * To use the SqlSessionFactory
      */
+    @NestedConfigurationProperty
     private SqlSessionFactory sqlSessionFactory;
     /**
      * Location of MyBatis xml configuration file. The default value is:

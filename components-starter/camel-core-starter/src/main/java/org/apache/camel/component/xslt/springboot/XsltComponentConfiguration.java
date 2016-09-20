@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.xslt.springboot;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 import org.apache.camel.component.xslt.XsltUriResolverFactory;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Transforms the message using a XSLT template.
@@ -33,13 +35,14 @@ public class XsltComponentConfiguration {
      * To use a custom implementation of
      * org.apache.camel.converter.jaxp.XmlConverter
      */
-    private XmlConverter xmlConverter;
+    private XmlConverterNestedConfiguration xmlConverter;
     /**
      * To use a custom javax.xml.transform.URIResolver which depends on a
      * dynamic endpoint resource URI or which is a subclass of XsltUriResolver.
      * Do not use in combination with uriResolver. See also link
      * setUriResolver(URIResolver).
      */
+    @NestedConfigurationProperty
     private XsltUriResolverFactory uriResolverFactory;
     /**
      * To use a custom javax.xml.transform.URIResolver. Do not use in
@@ -62,11 +65,11 @@ public class XsltComponentConfiguration {
      */
     private Boolean saxon;
 
-    public XmlConverter getXmlConverter() {
+    public XmlConverterNestedConfiguration getXmlConverter() {
         return xmlConverter;
     }
 
-    public void setXmlConverter(XmlConverter xmlConverter) {
+    public void setXmlConverter(XmlConverterNestedConfiguration xmlConverter) {
         this.xmlConverter = xmlConverter;
     }
 
@@ -100,5 +103,28 @@ public class XsltComponentConfiguration {
 
     public void setSaxon(Boolean saxon) {
         this.saxon = saxon;
+    }
+
+    public static class XmlConverterNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.converter.jaxp.XmlConverter.class;
+        private DocumentBuilderFactory documentBuilderFactory;
+        private TransformerFactory transformerFactory;
+
+        public DocumentBuilderFactory getDocumentBuilderFactory() {
+            return documentBuilderFactory;
+        }
+
+        public void setDocumentBuilderFactory(
+                DocumentBuilderFactory documentBuilderFactory) {
+            this.documentBuilderFactory = documentBuilderFactory;
+        }
+
+        public TransformerFactory getTransformerFactory() {
+            return transformerFactory;
+        }
+
+        public void setTransformerFactory(TransformerFactory transformerFactory) {
+            this.transformerFactory = transformerFactory;
+        }
     }
 }

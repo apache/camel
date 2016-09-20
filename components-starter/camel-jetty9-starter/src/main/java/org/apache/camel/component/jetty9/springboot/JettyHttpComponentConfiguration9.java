@@ -27,6 +27,7 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The jetty component provides HTTP-based endpoints for consuming and producing
@@ -57,6 +58,7 @@ public class JettyHttpComponentConfiguration9 {
     /**
      * This option is used to set the ErrorHandler that Jetty server uses.
      */
+    @NestedConfigurationProperty
     private ErrorHandler errorHandler;
     /**
      * A map which contains per port number specific SSL connectors.
@@ -91,6 +93,7 @@ public class JettyHttpComponentConfiguration9 {
      * To use a custom thread pool for the server. This option should only be
      * used in special circumstances.
      */
+    @NestedConfigurationProperty
     private ThreadPool threadPool;
     /**
      * If this option is true Jetty JMX support will be enabled for this
@@ -101,19 +104,23 @@ public class JettyHttpComponentConfiguration9 {
      * To use a custom org.apache.camel.component.jetty.JettyHttpBinding which
      * are used to customize how a response should be written for the producer.
      */
+    @NestedConfigurationProperty
     private JettyHttpBinding jettyHttpBinding;
     /**
      * Not to be used - use JettyHttpBinding instead.
      */
+    @NestedConfigurationProperty
     private HttpBinding httpBinding;
     /**
      * Jetty component does not use HttpConfiguration.
      */
+    @NestedConfigurationProperty
     private HttpConfiguration httpConfiguration;
     /**
      * To use a existing configured org.eclipse.jetty.jmx.MBeanContainer if JMX
      * is enabled that Jetty uses for registering mbeans.
      */
+    @NestedConfigurationProperty
     private MBeanContainer mbContainer;
     /**
      * A map which contains general SSL connector properties.
@@ -139,6 +146,7 @@ public class JettyHttpComponentConfiguration9 {
     /**
      * To configure security using SSLContextParameters
      */
+    @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
     /**
      * Allows to configure a custom value of the response buffer size on the
@@ -191,6 +199,7 @@ public class JettyHttpComponentConfiguration9 {
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
      */
+    @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
 
     public String getSslKeyPassword() {

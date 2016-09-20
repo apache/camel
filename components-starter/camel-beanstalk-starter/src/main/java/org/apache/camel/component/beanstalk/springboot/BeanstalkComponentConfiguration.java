@@ -18,6 +18,7 @@ package org.apache.camel.component.beanstalk.springboot;
 
 import org.apache.camel.component.beanstalk.ConnectionSettingsFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The beanstalk component is used for job retrieval and post-processing of
@@ -33,6 +34,7 @@ public class BeanstalkComponentConfiguration {
      * to use to make connections to Beanstalkd. Especially useful for unit
      * testing without beanstalkd daemon (you can mock ConnectionSettings)
      */
+    @NestedConfigurationProperty
     private ConnectionSettingsFactory connectionSettingsFactory;
 
     public ConnectionSettingsFactory getConnectionSettingsFactory() {

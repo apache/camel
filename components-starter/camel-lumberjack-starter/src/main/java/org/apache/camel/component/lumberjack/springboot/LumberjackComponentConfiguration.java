@@ -18,6 +18,7 @@ package org.apache.camel.component.lumberjack.springboot;
 
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Camel Lumberjack log streaming component
@@ -31,6 +32,7 @@ public class LumberjackComponentConfiguration {
      * Sets the default SSL configuration to use for all the endpoints. You can
      * also configure it directly at the endpoint level.
      */
+    @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
 
     public SSLContextParameters getSslContextParameters() {

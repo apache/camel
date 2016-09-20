@@ -18,6 +18,7 @@ package org.apache.camel.component.xquery.springboot;
 
 import net.sf.saxon.lib.ModuleURIResolver;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Transforms the message using a XQuery template using Saxon.
@@ -30,6 +31,7 @@ public class XQueryComponentConfiguration {
     /**
      * To use the custom ModuleURIResolver
      */
+    @NestedConfigurationProperty
     private ModuleURIResolver moduleURIResolver;
 
     public ModuleURIResolver getModuleURIResolver() {

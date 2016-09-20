@@ -18,6 +18,7 @@ package org.apache.camel.component.directvm.springboot;
 
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The direct-vm component provides direct synchronous call to another endpoint
@@ -37,12 +38,13 @@ public class DirectVmComponentConfiguration {
     /**
      * The timeout value to use if block is enabled.
      */
-    private long timeout = 30000;
+    private Long timeout = 30000;
     /**
      * Sets a HeaderFilterStrategy that will only be applied on producer
      * endpoints (on both directions: request and response). Default value:
      * none.
      */
+    @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
     /**
      * Whether to propagate or not properties from the producer side to the
@@ -58,11 +60,11 @@ public class DirectVmComponentConfiguration {
         this.block = block;
     }
 
-    public long getTimeout() {
+    public Long getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(long timeout) {
+    public void setTimeout(Long timeout) {
         this.timeout = timeout;
     }
 

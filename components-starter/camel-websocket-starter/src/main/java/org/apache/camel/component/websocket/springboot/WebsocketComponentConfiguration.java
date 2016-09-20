@@ -21,6 +21,7 @@ import org.apache.camel.component.websocket.WebSocketFactory;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The websocket component provides websocket endpoints for communicating with
@@ -81,10 +82,12 @@ public class WebsocketComponentConfiguration {
      * To use a custom thread pool for the server. MaxThreads/minThreads or
      * threadPool fields are required due to switch to Jetty9.
      */
+    @NestedConfigurationProperty
     private ThreadPool threadPool;
     /**
      * To configure security using SSLContextParameters
      */
+    @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
     /**
      * To configure a map which contains custom WebSocketFactory for sub

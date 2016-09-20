@@ -19,6 +19,7 @@ package org.apache.camel.component.vm.springboot;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The vm component provides asynchronous call to another endpoint from the same
@@ -41,6 +42,7 @@ public class VmComponentConfiguration {
     /**
      * Sets the default queue factory.
      */
+    @NestedConfigurationProperty
     private BlockingQueueFactory<Exchange> defaultQueueFactory;
 
     public Integer getQueueSize() {

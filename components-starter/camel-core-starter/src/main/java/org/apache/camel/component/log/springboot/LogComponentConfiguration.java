@@ -18,6 +18,7 @@ package org.apache.camel.component.log.springboot;
 
 import org.apache.camel.spi.ExchangeFormatter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The log component logs message exchanges to the underlying logging mechanism.
@@ -32,6 +33,7 @@ public class LogComponentConfiguration {
      * suitable for logging. If not specified we default to
      * DefaultExchangeFormatter.
      */
+    @NestedConfigurationProperty
     private ExchangeFormatter exchangeFormatter;
 
     public ExchangeFormatter getExchangeFormatter() {

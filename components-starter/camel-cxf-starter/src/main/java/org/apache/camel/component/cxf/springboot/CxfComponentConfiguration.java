@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.springboot;
 
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The cxf component is used for SOAP WebServices using Apache CXF.
@@ -38,6 +39,7 @@ public class CxfComponentConfiguration {
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
      */
+    @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
 
     public Boolean getAllowStreaming() {

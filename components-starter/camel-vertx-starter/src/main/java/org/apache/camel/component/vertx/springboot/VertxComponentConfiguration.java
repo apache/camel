@@ -20,6 +20,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.spi.VertxFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The vertx component is used for sending and receive messages from a vertx
@@ -33,6 +34,7 @@ public class VertxComponentConfiguration {
     /**
      * To use a custom VertxFactory implementation
      */
+    @NestedConfigurationProperty
     private VertxFactory vertxFactory;
     /**
      * Hostname for creating an embedded clustered EventBus
@@ -45,11 +47,13 @@ public class VertxComponentConfiguration {
     /**
      * Options to use for creating vertx
      */
+    @NestedConfigurationProperty
     private VertxOptions vertxOptions;
     /**
      * To use the given vertx EventBus instead of creating a new embedded
      * EventBus
      */
+    @NestedConfigurationProperty
     private Vertx vertx;
     /**
      * Timeout in seconds to wait for clustered Vertx EventBus to be ready. The

@@ -18,6 +18,7 @@ package org.apache.camel.component.splunk.springboot;
 
 import org.apache.camel.component.splunk.SplunkConfigurationFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The splunk component allows to publish or search for events in Splunk.
@@ -30,6 +31,7 @@ public class SplunkComponentConfiguration {
     /**
      * To use the SplunkConfigurationFactory
      */
+    @NestedConfigurationProperty
     private SplunkConfigurationFactory splunkConfigurationFactory;
 
     public SplunkConfigurationFactory getSplunkConfigurationFactory() {

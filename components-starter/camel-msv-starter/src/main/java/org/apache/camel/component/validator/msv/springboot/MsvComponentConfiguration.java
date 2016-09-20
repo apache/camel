@@ -19,6 +19,7 @@ package org.apache.camel.component.validator.msv.springboot;
 import javax.xml.validation.SchemaFactory;
 import org.apache.camel.component.validator.ValidatorResourceResolverFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Validates the payload of a message using the MSV Library.
@@ -36,6 +37,7 @@ public class MsvComponentConfiguration {
      * To use a custom LSResourceResolver which depends on a dynamic endpoint
      * resource URI
      */
+    @NestedConfigurationProperty
     private ValidatorResourceResolverFactory resourceResolverFactory;
 
     public SchemaFactory getSchemaFactory() {
