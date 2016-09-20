@@ -77,6 +77,18 @@ public final class DependencyResolver {
         return dependencies;
     }
 
+    public static String resolveModuleOrParentProperty(File modulePom, String property) {
+        property = resolveProperty(modulePom, property, 0);
+        if (property != null && !isResolved(property)) {
+            property = resolveSpringBootParentProperty(property);
+        }
+        if (property != null && !isResolved(property)) {
+            property = resolveCamelParentProperty(property);
+        }
+
+        return property;
+    }
+
     public static String resolveParentProperty(String property) {
         property = resolveSpringBootParentProperty(property);
         if (property != null && !isResolved(property)) {
