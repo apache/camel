@@ -30,12 +30,16 @@
   <name>Camel :: Example :: Spring Boot Metrics</name>
   <description>An example showing how to work with Camel and Spring Boot and report metrics to Graphite</description>
 
+  <properties>
+    <spring.boot-version>${spring-boot-version}</spring.boot-version>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot-version}</version>
+        <version>${spring.boot-version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
