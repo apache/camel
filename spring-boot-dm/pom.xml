@@ -66,6 +66,7 @@
         <jetty9-version>9.3.11.v20160721</jetty9-version>
         <jetty-version>${jetty9-version}</jetty-version>
         <jna-version>4.2.2</jna-version>
+        <hazelcast-version>3.6.4</hazelcast-version>
         <htmlunit-version>2.21</htmlunit-version>
         <log4j2-version>2.6.2</log4j2-version>
         <slf4j-version>1.7.21</slf4j-version>

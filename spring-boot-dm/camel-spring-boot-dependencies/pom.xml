@@ -69,6 +69,11 @@
         <version>0.27</version>
       </dependency>
       <dependency>
+        <groupId>com.hazelcast</groupId>
+        <artifactId>hazelcast-client</artifactId>
+        <version>3.6.4</version>
+      </dependency>
+      <dependency>
         <groupId>com.jayway.awaitility</groupId>
         <artifactId>awaitility</artifactId>
         <version>1.7.0</version>
