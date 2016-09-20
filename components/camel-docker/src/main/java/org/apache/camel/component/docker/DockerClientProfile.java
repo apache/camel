@@ -46,10 +46,6 @@ public class DockerClientProfile {
 
     private Integer maxPerRouteConnections;
 
-    private Boolean loggingFilterEnabled;
-
-    private Boolean followRedirectFilterEnabled;
-
     private Boolean tlsVerify;
 
     private Boolean socket;
@@ -171,9 +167,9 @@ public class DockerClientProfile {
         int result = 1;
         result = prime * result + ((certPath == null) ? 0 : certPath.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
-        result = prime * result + ((followRedirectFilterEnabled == null) ? 0 : followRedirectFilterEnabled.hashCode());
+        result = prime * result + ((tlsVerify == null) ? 0 : tlsVerify.hashCode());
         result = prime * result + ((host == null) ? 0 : host.hashCode());
-        result = prime * result + ((loggingFilterEnabled == null) ? 0 : loggingFilterEnabled.hashCode());
+        result = prime * result + ((socket == null) ? 0 : socket.hashCode());
         result = prime * result + ((maxPerRouteConnections == null) ? 0 : maxPerRouteConnections.hashCode());
         result = prime * result + ((maxTotalConnections == null) ? 0 : maxTotalConnections.hashCode());
         result = prime * result + ((password == null) ? 0 : password.hashCode());
@@ -211,11 +207,11 @@ public class DockerClientProfile {
         } else if (!email.equals(other.email)) {
             return false;
         }
-        if (followRedirectFilterEnabled == null) {
-            if (other.followRedirectFilterEnabled != null) {
+        if (socket == null) {
+            if (other.socket != null) {
                 return false;
             }
-        } else if (!followRedirectFilterEnabled.equals(other.followRedirectFilterEnabled)) {
+        } else if (!socket.equals(other.socket)) {
             return false;
         }
         if (host == null) {
@@ -225,11 +221,11 @@ public class DockerClientProfile {
         } else if (!host.equals(other.host)) {
             return false;
         }
-        if (loggingFilterEnabled == null) {
-            if (other.loggingFilterEnabled != null) {
+        if (tlsVerify == null) {
+            if (other.tlsVerify != null) {
                 return false;
             }
-        } else if (!loggingFilterEnabled.equals(other.loggingFilterEnabled)) {
+        } else if (!tlsVerify.equals(other.tlsVerify)) {
             return false;
         }
         if (maxPerRouteConnections == null) {
@@ -290,5 +286,4 @@ public class DockerClientProfile {
         }
         return true;
     }
-
 }

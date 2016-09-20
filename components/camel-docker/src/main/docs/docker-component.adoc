@@ -4,6 +4,8 @@ Camel Docker component
 
 *Available as of Camel 2.15*
 
+*Since Camel 2.18 docker consumer is deprecated!*
+
 Camel component for communicating with Docker.
 
 The Docker Camel component leverages the

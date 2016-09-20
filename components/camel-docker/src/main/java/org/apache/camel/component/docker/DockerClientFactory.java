@@ -64,6 +64,7 @@ public final class DockerClientFactory {
         String certPath = DockerHelper.getProperty(DockerConstants.DOCKER_CERT_PATH, dockerConfiguration, message, String.class, dockerConfiguration.getCertPath());
         Boolean secure = DockerHelper.getProperty(DockerConstants.DOCKER_SECURE, dockerConfiguration, message, Boolean.class, dockerConfiguration.isSecure());
         Boolean tlsVerify = DockerHelper.getProperty(DockerConstants.DOCKER_TLSVERIFY, dockerConfiguration, message, Boolean.class, dockerConfiguration.isTlsVerify());
+        Boolean socket = DockerHelper.getProperty(DockerConstants.DOCKER_SOCKET_ENABLED, dockerConfiguration, message, Boolean.class, dockerConfiguration.isSocket());
 
         clientProfile.setHost(host);
         clientProfile.setPort(port);
@@ -77,6 +78,7 @@ public final class DockerClientFactory {
         clientProfile.setMaxPerRouteConnections(maxPerRouteConnections);
         clientProfile.setSecure(secure);
         clientProfile.setTlsVerify(tlsVerify);
+        clientProfile.setSocket(socket);
 
         DockerClient dockerClient = dockerComponent.getClient(clientProfile);
 
