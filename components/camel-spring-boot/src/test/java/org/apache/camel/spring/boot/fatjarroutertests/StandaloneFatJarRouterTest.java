@@ -25,17 +25,15 @@ import java.util.concurrent.Callable;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 
-import org.apache.camel.spring.boot.FatJarRouter;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 
+import org.apache.camel.spring.boot.FatJarRouter;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.util.SocketUtils;
-
-import javax.management.MBeanServer;
-import javax.management.MBeanServerConnection;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
 
 import static com.jayway.awaitility.Awaitility.await;
 
