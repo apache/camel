@@ -472,7 +472,7 @@ public final class ArquillianPackager {
         Matcher m = propPattern.matcher(pom);
         while (m.find()) {
             String property = m.group();
-            String resolved = DependencyResolver.resolveParentProperty(property);
+            String resolved = DependencyResolver.resolveModuleOrParentProperty(new File(new File(config.getModuleBasePath()), "pom.xml"), property);
             resolvedProperties.put(property, resolved);
         }
 
