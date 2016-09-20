@@ -18,21 +18,21 @@ package org.apache.camel.component.jcache;
 
 public enum JCacheProviders implements JCacheProvider {
     hazelcast    {{
-        shortName = "hazelcast";
-        className = "com.hazelcast.cache.HazelcastCachingProvider";
-    }},
+            shortName = "hazelcast";
+            className = "com.hazelcast.cache.HazelcastCachingProvider";
+        }},
     ehcache      {{
-        shortName = "ehcache";
-        className = "org.ehcache.jsr107.EhcacheCachingProvider";
-    }},
+            shortName = "ehcache";
+            className = "org.ehcache.jsr107.EhcacheCachingProvider";
+        }},
     caffeine     {{
-        shortName = "caffeine";
-        className = "com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider";
-    }},
+            shortName = "caffeine";
+            className = "com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider";
+        }},
     ispnEmbedded {{
-        shortName = "infinispan-embedded";
-        className = "org.infinispan.jcache.embedded.JCachingProvider";
-    }};
+            shortName = "infinispan-embedded";
+            className = "org.infinispan.jcache.embedded.JCachingProvider";
+        }};
 
     protected String shortName;
     protected String className;

@@ -19,8 +19,8 @@ package org.apache.camel.component.jcache.processor.idempotent;
 import javax.cache.Cache;
 
 import org.apache.camel.component.jcache.JCacheConfiguration;
-import org.apache.camel.component.jcache.JCacheManager;
 import org.apache.camel.component.jcache.JCacheHelper;
+import org.apache.camel.component.jcache.JCacheManager;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
