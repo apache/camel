@@ -55,6 +55,7 @@
         <module>camel-ahc-ws-starter</module>
         <module>camel-amqp-starter</module>
         <module>camel-apns-starter</module>
+        <module>camel-asterisk-starter</module>
         <module>camel-atmos-starter</module>
         <module>camel-atmosphere-websocket-starter</module>
         <module>camel-atom-starter</module>
