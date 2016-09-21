@@ -35,6 +35,7 @@ public class CamelInfluxdbTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelInfluxdbTest.class))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|AbstractInfluxDbTest$)")
                 .build();
     }
 

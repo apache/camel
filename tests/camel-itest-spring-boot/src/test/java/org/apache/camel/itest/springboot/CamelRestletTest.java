@@ -36,7 +36,8 @@ public class CamelRestletTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelRestletTest.class))
-                //.dependency(DependencyResolver.withVersion("org.hibernate:hibernate-validator"))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|RestletConfigurationTest$)")
+                .testLibraryVersion("com.google.guava:guava", DependencyResolver.resolveCamelParentProperty("${google-guava-version}"))
                 .build();
     }
 

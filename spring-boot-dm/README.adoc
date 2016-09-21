@@ -1,0 +1,46 @@
+= Camel Spring-Boot Dependency Management
+
+The `spring-boot-dm` module include tools to generate a valid spring-boot BOM (bill of materials)
+that can be used in spring-boot applications.
+
+Using the generated BOM (`camel-spring-boot-dependencies`), together with the Spring framework's `spring-boot-dependencies`,
+ is the preferred way of configuring a Camel-based application running on Spring-Boot.
+
+The POM of a end user application should include both BOMs, as in the following example:
+
+[source,xml]
+.pom.xml
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  ...
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-boot-dependencies</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- Include all needed camel-xxx-starter modules -->
+  </dependencies>
+
+  ...
+
+</project>
+----
+
+The `camel-spring-boot-dependencies` BOM includes Camel modules
+and all transitive dependencies that have no conflicts with the spring-boot BOM.

@@ -20,6 +20,10 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.util.Set;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
 
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;

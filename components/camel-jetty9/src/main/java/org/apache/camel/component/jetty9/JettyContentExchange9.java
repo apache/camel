@@ -20,6 +20,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Map;
@@ -237,10 +238,28 @@ public class JettyContentExchange9 implements JettyContentExchange {
 
     private Map<String, Collection<String>> getFieldsAsMap(HttpFields fields) {
         final Map<String, Collection<String>> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        for (String name : fields.getFieldNamesCollection()) {
+        for (String name : getFieldNamesCollection(fields)) {
             result.put(name, fields.getValuesList(name));
         }
         return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Collection<String> getFieldNamesCollection(HttpFields fields) {
+        try {
+            return fields.getFieldNamesCollection();
+        } catch (NoSuchMethodError e) {
+            try {
+                // In newer versions of Jetty the return type has been changed to Set.
+                // This causes problems at byte-code level. Try recovering.
+                Method reflGetFieldNamesCollection = HttpFields.class.getMethod("getFieldNamesCollection");
+                Object result = reflGetFieldNamesCollection.invoke(fields);
+                return (Collection<String>) result;
+            } catch (Exception reflectionException) {
+                // Suppress, throwing the original exception
+                throw e;
+            }
+        }
     }
 
     public Map<String, Collection<String>> getRequestHeaders() {

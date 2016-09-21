@@ -36,7 +36,8 @@ public class CamelJetty9Test extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelJetty9Test.class))
-                //.dependency(DependencyResolver.withVersion("org.hibernate:hibernate-validator"))
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|JettyHttpContentTypeTest$)")
+                // in JettyHttpContentTypeTest the case of the encoding string is different in Jetty 9.3
                 .build();
     }
 

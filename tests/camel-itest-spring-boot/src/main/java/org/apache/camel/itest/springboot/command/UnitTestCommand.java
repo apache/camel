@@ -88,10 +88,15 @@ public class UnitTestCommand extends AbstractTestCommand implements Command {
 
         final List<Class<?>> classes = new ArrayList<>();
         for (String cn : testClasses) {
-            Class<?> clazz = Class.forName(cn);
-            if (isAdmissible(clazz)) {
-                logger.info("Found admissible test class: {}", cn);
-                classes.add(clazz);
+            try {
+                Class<?> clazz = Class.forName(cn);
+                if (isAdmissible(clazz)) {
+                    logger.info("Found admissible test class: {}", cn);
+                    classes.add(clazz);
+                }
+            } catch (Throwable t) {
+                logger.warn("Test class {} has thrown an exception during initialization", cn);
+                logger.debug("Exception for test cass " + cn + " is:", t);
             }
         }
 
@@ -107,8 +112,9 @@ public class UnitTestCommand extends AbstractTestCommand implements Command {
         });
         Result result = runner.run(classes.toArray(new Class[]{}));
 
-        logger.info("Success: " + result.wasSuccessful() + " - Test Run: " + result.getRunCount() + " - Failures: " + result.getFailureCount() + " - Ignored Tests: " + result
-                .getIgnoreCount());
+        logger.info(config.getModuleName() + " unit tests. "
+                + "Success: " + result.wasSuccessful() + " - Test Run: " + result.getRunCount() + " - Failures: " + result.getFailureCount()
+                + " - Ignored Tests: " + result.getIgnoreCount());
 
 
         for (Failure f : result.getFailures()) {
