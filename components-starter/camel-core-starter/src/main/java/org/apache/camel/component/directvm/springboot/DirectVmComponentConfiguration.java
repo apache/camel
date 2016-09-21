@@ -38,7 +38,7 @@ public class DirectVmComponentConfiguration {
     /**
      * The timeout value to use if block is enabled.
      */
-    private Long timeout = 30000;
+    private Long timeout = 30000L;
     /**
      * Sets a HeaderFilterStrategy that will only be applied on producer
      * endpoints (on both directions: request and response). Default value:

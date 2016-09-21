@@ -98,7 +98,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     /**
      * Classes to exclude when adding {@link NestedConfigurationProperty} annotations.
      */
-    private static final Pattern EXCLUDE_INNER_PATTERN = Pattern.compile("^((java\\.)|(javax\\.)).*");
+    private static final Pattern EXCLUDE_INNER_PATTERN = Pattern.compile("^((java\\.)|(javax\\.)|(org\\.springframework\\.context\\.ApplicationContext)|(freemarker\\.template\\.Configuration)).*");
 
     private static final Map<String, String> PRIMITIVEMAP;
 
@@ -357,7 +357,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 if ("java.lang.String".equals(option.getJavaType())) {
                     prop.getField().setStringInitializer(option.getDefaultValue());
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
-                    prop.getField().setLiteralInitializer(option.getDefaultValue());
+                    String value = option.getDefaultValue();
+                    if("long".equals(option.getJavaType()) && !value.toUpperCase().endsWith("L")) {
+                        value = value + "L";
+                    }
+                    prop.getField().setLiteralInitializer(value);
                 } else if (!Strings.isBlank(option.getEnumValues())) {
                     String enumShortName = type.substring(type.lastIndexOf(".") + 1);
                     prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
@@ -636,7 +640,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 if ("java.lang.String".equals(option.getType())) {
                     prop.getField().setStringInitializer(option.getDefaultValue());
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
-                    prop.getField().setLiteralInitializer(option.getDefaultValue());
+                    String value = option.getDefaultValue();
+                    if("long".equals(option.getJavaType()) && !value.toUpperCase().endsWith("L")) {
+                        value = value + "L";
+                    }
+                    prop.getField().setLiteralInitializer(value);
                 } else if (!Strings.isBlank(option.getEnumValues())) {
                     String enumShortName = type.substring(type.lastIndexOf(".") + 1);
                     prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
@@ -724,7 +732,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 if ("java.lang.String".equals(option.getType())) {
                     prop.getField().setStringInitializer(option.getDefaultValue());
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
-                    prop.getField().setLiteralInitializer(option.getDefaultValue());
+                    String value = option.getDefaultValue();
+                    if("long".equals(option.getJavaType()) && !value.toUpperCase().endsWith("L")) {
+                        value = value + "L";
+                    }
+                    prop.getField().setLiteralInitializer(value);
                 } else if (!Strings.isBlank(option.getEnumValues())) {
                     String enumShortName = type.substring(type.lastIndexOf(".") + 1);
                     prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());

@@ -522,7 +522,6 @@ public class AMQPComponentConfiguration {
     /**
      * Sets the Spring ApplicationContext to use
      */
-    @NestedConfigurationProperty
     private ApplicationContext applicationContext;
     /**
      * To use a custom QueueBrowseStrategy when browsing queues
