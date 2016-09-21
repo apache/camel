@@ -18,7 +18,6 @@ package org.apache.camel.component.freemarker.springboot;
 
 import freemarker.template.Configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Transforms the message using a FreeMarker template.
@@ -32,7 +31,6 @@ public class FreemarkerComponentConfiguration {
      * To use an existing freemarker.template.Configuration instance as the
      * configuration.
      */
-    @NestedConfigurationProperty
     private Configuration configuration;
 
     public Configuration getConfiguration() {

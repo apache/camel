@@ -256,6 +256,7 @@
                             <!-- Different versions required by some modules -->
                             <exclude>com.google.inject:*</exclude>
                             <exclude>com.google.guava:*</exclude>
+                            <exclude>io.netty*:*</exclude>
                             <exclude>org.scala-lang:*</exclude>
                             <exclude>org.apache.lucene:*</exclude>
 

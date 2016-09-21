@@ -36,7 +36,7 @@ public class DirectComponentConfiguration {
     /**
      * The timeout value to use if block is enabled.
      */
-    private Long timeout = 30000;
+    private Long timeout = 30000L;
 
     public Boolean getBlock() {
         return block;
