@@ -35,16 +35,25 @@ Options
 ^^^^^^^
 
 // component options: START
-The Asterisk component supports 4 endpoint options which are listed below:
+The Asterisk component has no options.
+// component options: END
+
+// endpoint options: START
+The Asterisk component supports 9 endpoint options which are listed below:
 
 {% raw %}
-[width="100%",cols="1,1m,1m,5",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Group | Java Type | Description
-| hostname | common | String | *Required* This is hostname / ip of Asterisk Server.
-| username | common | String | username
-| password | common | String | password
-| action | producer | AsteriskActionEnum | *Required* Operation to send via AMI
+| Name | Group | Default | Java Type | Description
+| name | common |  | String | *Required* name
+| action | common |  | String | action
+| hostname | common |  | String | Hostname
+| password | common |  | String | AsteriskServer password
+| username | common |  | String | AsteriskServer username
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
 // endpoint options: END
