@@ -294,6 +294,7 @@ public final class ArquillianPackager {
 
         // A list of known libraries that don't follow the all-artifacts-same-version convention
         ignore.add("com.atlassian.jira:jira-rest-java-client-api");
+        ignore.add("com.fasterxml.jackson.module:jackson-module-scala_2.11"); // latest version not available
         ignore.add("com.github.jnr");
         ignore.add("com.sun.xml.bind:jaxb-xjc");
         ignore.add("commons-beanutils:commons-beanutils");
