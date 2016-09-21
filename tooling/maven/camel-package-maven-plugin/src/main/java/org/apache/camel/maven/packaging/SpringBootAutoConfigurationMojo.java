@@ -358,7 +358,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     prop.getField().setStringInitializer(option.getDefaultValue());
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
                     String value = option.getDefaultValue();
-                    if("long".equals(option.getJavaType()) && !value.toUpperCase().endsWith("L")) {
+                    if ("long".equals(option.getJavaType()) && !value.toUpperCase().endsWith("L")) {
                         value = value + "L";
                     }
                     prop.getField().setLiteralInitializer(value);
@@ -641,7 +641,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     prop.getField().setStringInitializer(option.getDefaultValue());
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
                     String value = option.getDefaultValue();
-                    if("long".equals(option.getJavaType()) && !value.toUpperCase().endsWith("L")) {
+                    if ("long".equals(option.getJavaType()) && !value.toUpperCase().endsWith("L")) {
                         value = value + "L";
                     }
                     prop.getField().setLiteralInitializer(value);
@@ -733,7 +733,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     prop.getField().setStringInitializer(option.getDefaultValue());
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
                     String value = option.getDefaultValue();
-                    if("long".equals(option.getJavaType()) && !value.toUpperCase().endsWith("L")) {
+                    if ("long".equals(option.getJavaType()) && !value.toUpperCase().endsWith("L")) {
                         value = value + "L";
                     }
                     prop.getField().setLiteralInitializer(value);
