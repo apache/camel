@@ -41,6 +41,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-${componentId}</artifactId>
+            <version><#noparse>${project.version}</#noparse></version>
         </dependency>
 
     </dependencies>
