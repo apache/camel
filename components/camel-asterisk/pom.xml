@@ -46,10 +46,10 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-	    <groupId>org.asteriskjava</groupId>
-	    <artifactId>asterisk-java</artifactId>
-	    <version>${asterisk-java-version}</version>
-	</dependency>
+      <groupId>org.asteriskjava</groupId>
+      <artifactId>asterisk-java</artifactId>
+      <version>${asterisk-java-version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
