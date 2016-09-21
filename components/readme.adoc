@@ -24,6 +24,9 @@ Components
 | link:camel-apns/src/main/docs/apns-component.adoc[APNS] (camel-apns) +
 `apns:name` | For sending notifications to Apple iOS devices.
 
+| link:camel-asterisk/src/main/docs/asterisk-component.adoc[Asterisk] (camel-asterisk) +
+`asterisk:name` | Represents a Asterisk endpoint.
+
 | link:camel-atmos/src/main/docs/atmos-component.adoc[Atmos] (camel-atmos) +
 `atmos:name/operation` | The atmos component is used for integrating with EMC's Atomos Storage.
 

@@ -130,6 +130,7 @@
 	* [Apache Flink](flink-component.adoc)
 	* [Apache Spark](spark-component.adoc)
 	* [APNS](apns-component.adoc)
+	* [Asterisk](asterisk-component.adoc)
 	* [Atmos](atmos-component.adoc)
 	* [Atmosphere Websocket](atmosphere-websocket-component.adoc)
 	* [Atom](atom-component.adoc)
