@@ -50,7 +50,10 @@ public class DropboxComponent extends UriEndpointComponent {
         // set options from component
         configuration.setAccessToken((String)parameters.get("accessToken"));
         configuration.setLocalPath((String)parameters.get("localPath"));
-        configuration.setRemotePath(((String)parameters.get("remotePath")).replaceAll("\\s","+"));
+        configuration.setRemotePath(
+                parameters.get("remotePath") != null
+                    ? ((String) parameters.get("remotePath")).replaceAll("\\s", "+")
+                    : null);
         configuration.setNewRemotePath((String)parameters.get("newRemotePath"));
         configuration.setQuery((String)parameters.get("query"));
         configuration.setOperation(DropboxOperation.valueOf(remaining));
