@@ -20,9 +20,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-parent</artifactId>
+        <artifactId>camel-starter-parent</artifactId>
         <version>2.18.0-SNAPSHOT</version>
-        <relativePath>../parent</relativePath>
+        <relativePath>../spring-boot-dm/camel-starter-parent</relativePath>
     </parent>
     <artifactId>components-starter</artifactId>
     <packaging>pom</packaging>
@@ -67,14 +67,12 @@
         <module>camel-beanio-starter</module>
         <module>camel-beanstalk-starter</module>
         <module>camel-bindy-starter</module>
-        <module>camel-blueprint-starter</module>
         <module>camel-boon-starter</module>
         <module>camel-box-starter</module>
         <module>camel-braintree-starter</module>
         <module>camel-cache-starter</module>
         <module>camel-cassandraql-starter</module>
         <module>camel-castor-starter</module>
-        <module>camel-cdi-starter</module>
         <module>camel-chronicle-starter</module>
         <module>camel-chunk-starter</module>
         <module>camel-cm-sms-starter</module>
@@ -97,7 +95,6 @@
         <module>camel-dropbox-starter</module>
         <module>camel-eclipse-starter</module>
         <module>camel-ehcache-starter</module>
-        <module>camel-ejb-starter</module>
         <module>camel-elasticsearch-starter</module>
         <module>camel-elsql-starter</module>
         <module>camel-etcd-starter</module>
@@ -133,7 +130,6 @@
         <module>camel-http-starter</module>
         <module>camel-http4-starter</module>
         <module>camel-hystrix-starter</module>
-        <module>camel-ibatis-starter</module>
         <module>camel-ical-starter</module>
         <module>camel-ignite-starter</module>
         <module>camel-infinispan-starter</module>
@@ -147,7 +143,6 @@
         <module>camel-jaxb-starter</module>
         <module>camel-jbpm-starter</module>
         <module>camel-jcache-starter</module>
-        <module>camel-jclouds-starter</module>
         <module>camel-jcr-starter</module>
         <module>camel-jdbc-starter</module>
         <module>camel-jetty-common-starter</module>
@@ -205,7 +200,6 @@
         <module>camel-pgevent-starter</module>
         <module>camel-printer-starter</module>
         <module>camel-protobuf-starter</module>
-        <module>camel-quartz-starter</module>
         <module>camel-quartz2-starter</module>
         <module>camel-quickfix-starter</module>
         <module>camel-rabbitmq-starter</module>
@@ -235,7 +229,6 @@
         <module>camel-snmp-starter</module>
         <module>camel-soap-starter</module>
         <module>camel-solr-starter</module>
-        <module>camel-spark-rest-starter</module>
         <module>camel-spark-starter</module>
         <module>camel-splunk-starter</module>
         <module>camel-spring-batch-starter</module>
@@ -259,8 +252,6 @@
         <module>camel-tagsoup-starter</module>
         <module>camel-tarfile-starter</module>
         <module>camel-telegram-starter</module>
-        <module>camel-test-starter</module>
-        <module>camel-testng-starter</module>
         <module>camel-twitter-starter</module>
         <module>camel-undertow-starter</module>
         <module>camel-univocity-parsers-starter</module>
