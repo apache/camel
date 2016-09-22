@@ -46,4 +46,17 @@
       <artifactId>camel-spring-boot-starter</artifactId>
     </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>jboss.fs</id>
+      <name>JBoss FuseSource Public Release Repository</name>
+      <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
 </project>

@@ -63,6 +63,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.model.Repository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -71,6 +72,7 @@ import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.apache.maven.shared.dependency.tree.traversal.CollectingDependencyNodeVisitor;
+
 
 /**
  * Generate Spring Boot starter for the component
@@ -164,6 +166,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
             // Apply changes to the starter pom
             fixExcludedDependencies(pom);
             fixAdditionalDependencies(pom);
+            fixAdditionalRepositories(pom);
 
             // Write the starter pom
             File pomFile = new File(starterDir, "pom.xml");
@@ -248,6 +251,33 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
         }
 
+    }
+
+    @SuppressWarnings("unchecked")
+    private void fixAdditionalRepositories(Document pom) throws Exception {
+
+        if (project.getFile() != null) {
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document originalPom = builder.parse(project.getFile());
+
+            XPath xpath = XPathFactory.newInstance().newXPath();
+            Node repositories = (Node) xpath.compile("/project/repositories").evaluate(originalPom, XPathConstants.NODE);
+            if (repositories != null) {
+                pom.getDocumentElement().appendChild(pom.importNode(repositories, true));
+            }
+        } else {
+            getLog().warn("Cannot access the project pom file to retrieve repositories");
+        }
+    }
+
+    private void appendTextElementIfPresent(Document pom, Element parent, String name, String value) {
+        if (value == null || value.length() == 0) {
+            return;
+        }
+        Element element = pom.createElement(name);
+        element.setTextContent(value);
+
+        parent.appendChild(element);
     }
 
     private Set<String> csvToSet(String csv) {

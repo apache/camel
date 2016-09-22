@@ -46,4 +46,11 @@
       <artifactId>camel-spring-boot-starter</artifactId>
     </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>servicemix</id>
+      <name>ServiceMix Repository</name>
+      <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
+    </repository>
+  </repositories>
 </project>

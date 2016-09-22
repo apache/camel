@@ -50,4 +50,10 @@
       <artifactId>camel-spring-boot-starter</artifactId>
     </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>atlassian-public</id>
+      <url>https://maven.atlassian.com/repository/public</url>
+    </repository>
+  </repositories>
 </project>
