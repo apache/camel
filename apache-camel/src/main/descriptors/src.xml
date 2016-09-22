@@ -50,6 +50,8 @@
         <exclude>**/*.iws</exclude>
 
         <exclude>**/cobertura.ser</exclude>
+
+        <exclude>**/node_modules/**</exclude>
       </excludes>
     </fileSet>
 
