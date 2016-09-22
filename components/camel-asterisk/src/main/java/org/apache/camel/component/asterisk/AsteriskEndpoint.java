@@ -44,22 +44,18 @@ public class AsteriskEndpoint extends DefaultEndpoint {
     @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(AsteriskProducer.class);
 
+    private AsteriskConnection asteriskConnection;
+
     @UriPath(description = "Name of component") @Metadata(required = "true")
     private String name;
-    
     @UriParam
     private String hostname;
-
-    @UriParam
-    private String action;
-
-    @UriParam
+    @UriParam(label = "producer")
+    private AsteriskActionEnum action;
+    @UriParam(secret = true)
     private String username;
-
-    @UriParam
+    @UriParam(secret = true)
     private String password;
-
-    private AsteriskConnection asteriskConnection;
 
     public AsteriskEndpoint(String uri, AsteriskComponent component) {
         super(uri, component);
@@ -84,9 +80,6 @@ public class AsteriskEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException("Missing required action parameter");
         }
         
-        // validate action value
-        AsteriskActionEnum.valueOf(action);
-
         return new AsteriskProducer(this);
     }
 
@@ -95,6 +88,8 @@ public class AsteriskEndpoint extends DefaultEndpoint {
     }
 
     public boolean isSingleton() {
+        // TODO: prefer to be singleton and do not have state on the endpoint
+        // the asteriskConnection should be createed on the consumer / producer instance and be private there
         return false;
     }
 
@@ -126,9 +121,7 @@ public class AsteriskEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * AsteriskServer username
-     * 
-     * @param host
+     * Login username
      */
     public void setUsername(String username) {
         this.username = username;
@@ -139,24 +132,20 @@ public class AsteriskEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * AsteriskServer password
-     * 
-     * @param host
+     * Login password
      */
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public String getAction() {
+    public AsteriskActionEnum getAction() {
         return action;
     }
 
     /**
-     * action
-     * 
-     * @param host
+     * What action to perform such as getting queue status, sip peers or extension state.
      */
-    public void setAction(String action) {
+    public void setAction(AsteriskActionEnum action) {
         this.action = action;
     }
 
@@ -165,18 +154,14 @@ public class AsteriskEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Hostname 
-     * 
-     * @param hostname
+     * The hostname of the asterix server
      */
     public void setHostname(String hostname) {
         this.hostname = hostname;
     }
 
     /**
-     * name 
-     * 
-     * @return
+     * Logical name
      */
     public String getName() {
         return name;

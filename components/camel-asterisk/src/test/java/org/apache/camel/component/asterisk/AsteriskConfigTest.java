@@ -25,7 +25,7 @@ public class AsteriskConfigTest extends CamelTestSupport {
     private String hostname = "192.168.0.254";
     private String username = "username";
     private String password = "password";
-    private String action = "action";
+    private String action = "QUEUE_STATUS";
 
     @Test
     public void asteriskEndpointData() throws Exception {
@@ -36,6 +36,6 @@ public class AsteriskConfigTest extends CamelTestSupport {
         assertEquals(hostname, asteriskEndpoint.getHostname());
         assertEquals(username, asteriskEndpoint.getUsername());
         assertEquals(password, asteriskEndpoint.getPassword());
-        assertEquals(action, asteriskEndpoint.getAction());
+        assertEquals(action, asteriskEndpoint.getAction().name());
     }
 }
