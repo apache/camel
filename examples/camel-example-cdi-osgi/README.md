@@ -114,15 +114,14 @@ context, e.g.:
      osgi-example   Started                   1              0              0   1 minute  
     ```
 
-- The `camel:route-list` command displays the Camel route configured
-  by the `RouteBuilder` bean:
+- The `camel:route-list` command displays the Camel route configured by the `RouteBuilder` bean:
 
     ```
     karaf@root()> camel:route-list
-     Context        Route            Status              Total #       Failed #     Inflight #   Uptime        
-     -------        -----            ------              -------       --------     ----------   ------        
+     Context        Route            Status              Total #       Failed #     Inflight #   Uptime     
+     -------        -----            ------              -------       --------     ----------   ------      
      osgi-example   consumer-route   Started                   1              0              0   3 minutes
-     ```
+    ```
 
 - And the `camel:route-info` command displays the exchange completed
   when the `CamelContextStartedEvent` CDI event is fired:
