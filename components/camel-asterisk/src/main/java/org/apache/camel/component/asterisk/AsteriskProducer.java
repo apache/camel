@@ -55,7 +55,7 @@ public class AsteriskProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         ManagerAction action;
-        switch (AsteriskActionEnum.valueOf(endpoint.getAction())) {
+        switch (endpoint.getAction()) {
         case QUEUE_STATUS:
             action = new QueueStatusAction();
             break;
@@ -63,9 +63,8 @@ public class AsteriskProducer extends DefaultProducer {
             action = new SipPeersAction();
             break;
         case EXTENSION_STATE:
-            action = new ExtensionStateAction((String)exchange.getIn().getHeader(AsteriskConstants.EXTEN), (String)exchange.getIn().getHeader(AsteriskConstants.CONTEXT));
+            action = new ExtensionStateAction((String)exchange.getIn().getHeader(AsteriskConstants.EXTENSION), (String)exchange.getIn().getHeader(AsteriskConstants.CONTEXT));
             break;
-
         default:
             throw new IllegalStateException("Unknown action");
         }

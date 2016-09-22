@@ -17,9 +17,10 @@
 package org.apache.camel.component.asterisk;
 
 public final class AsteriskConstants {
-    public static final String EVENT_NAME = "AsteriskEventName";
-    public static final String EXTEN = "AsteriskExtension";
-    public static final String CONTEXT = "AsteriskContext";
+
+    public static final String EVENT_NAME = "CamelAsteriskEventName";
+    public static final String EXTENSION = "CamelAsteriskExtension";
+    public static final String CONTEXT = "CamelAsteriskContext";
 
     private AsteriskConstants() {
     }

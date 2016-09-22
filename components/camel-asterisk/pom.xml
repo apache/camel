@@ -27,7 +27,7 @@
   <artifactId>camel-asterisk</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Asterisk</name>
-  <description>Camel Asterisk to interact with an Asterisk PBX Server.</description>
+  <description>Camel Asterisk to interact with an Asterisk PBX Server</description>
 
   <properties>
     <camel.osgi.import.before.defaults>

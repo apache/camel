@@ -53,7 +53,7 @@ public class AsteriskConnection {
             ManagerConnectionFactory factory = new ManagerConnectionFactory(host, username, password);
             managerConnection = factory.createManagerConnection();
             
-            LOG.debug("asterisk connection estabilished!");
+            LOG.debug("asterisk connection established!");
         }
     }
     
