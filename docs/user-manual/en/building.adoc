@@ -31,7 +31,7 @@ Maven options
 
 To build camel maven has to be configured to use more memory
 
-[[Building-Unix/Linux/Mac]]
+[[Building-UnixLinuxMac]]
 Unix/Linux/Mac
 
 [source,text]
@@ -41,6 +41,7 @@ export MAVEN_OPTS="-Xms2048m -Xmx2048m -XX:MaxPermSize=512m"
 
 For Camel 2.18:
 
+[source,text]
 ------------------------------------------------------------
 export MAVEN_OPTS="-XX:+UseConcMarkSweepGC -Xms5120m -Xmx6144m"
 ------------------------------------------------------------
@@ -55,6 +56,7 @@ set MAVEN_OPTS=-Xms2048m -Xmx2048m -XX:MaxPermSize=512m
 
 For Camel 2.18:
 
+[source,text]
 ------------------------------------------------------------
 set MAVEN_OPTS="-XX:+UseConcMarkSweepGC -Xms5120m -Xmx6144m"
 ------------------------------------------------------------

@@ -427,3 +427,6 @@
         * [CDI Testing](cdi-testing.adoc)
         * [Spring Testing](spring-testing.adoc)
     * [JSSE Utility](camel-configuration-utilities.adoc)
+
+* Developer Guide
+    * [Building](building.adoc)
