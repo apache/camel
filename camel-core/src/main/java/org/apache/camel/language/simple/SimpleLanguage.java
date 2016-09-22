@@ -46,10 +46,12 @@ import org.apache.camel.util.PredicateToExpressionAdapter;
  * <li>sysenv.foo to access the system environment called 'foo'</li>
  * <li>exception.messsage to access the exception message</li>
  * <li>threadName to access the current thread name</li>
- * <li>date:&lt;command&gt;:&lt;pattern&gt; for date formatting using the {@link java.text.SimpleDateFormat} patterns.
+ * <li>date:&lt;command&gt;:&lt;pattern&gt; or date:&lt;command&gt;:&lt;timezone&gt;:&lt;pattern&gt; for date formatting using the {@link java.text.SimpleDateFormat} patterns.
+ * If the pattern is empty the expression will resolve to a Date object.
  *     Supported commands are: <tt>now</tt> for current timestamp,
  *     <tt>in.header.xxx</tt> or <tt>header.xxx</tt> to use the Date object in the in header.
  *     <tt>out.header.xxx</tt> to use the Date object in the out header.
+ *     Command accepts offsets such as: <tt>now-24h</tt> or <tt>in.header.xxx+1h</tt> or <tt>now+1h-100</tt>.
  * </li>
  * <li>bean:&lt;bean expression&gt; to invoke a bean using the
  * {@link org.apache.camel.language.bean.BeanLanguage BeanLanguage}</li>
@@ -77,7 +79,7 @@ import org.apache.camel.util.PredicateToExpressionAdapter;
  *   <li><tt>file:length</tt> to access the file length as a Long type</li>
  *   <li><tt>file:size</tt> to access the file length as a Long type</li>
  *   <li><tt>file:modified</tt> to access the file last modified as a Date type</li>
- *   <li><tt>date:&lt;command&gt;:&lt;pattern&gt;</tt> for date formatting using the {@link java.text.SimpleDateFormat} patterns.
+ *   <li><tt>date:&lt;command&gt;:&lt;pattern&gt;</tt> or <tt>date:&lt;command&gt;:&lt;timezone&gt;:&lt;pattern&gt;</tt> for date formatting using the {@link java.text.SimpleDateFormat} patterns.
  *     Additional Supported commands are: <tt>file</tt> for the last modified timestamp of the file.
  *     All the commands from {@link SimpleLanguage} is also available.
  *   </li>
