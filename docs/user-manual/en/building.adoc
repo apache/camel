@@ -43,7 +43,7 @@ For Camel 2.18:
 
 [source,text]
 ------------------------------------------------------------
-export MAVEN_OPTS="-XX:+UseConcMarkSweepGC -Xms5120m -Xmx6144m"
+export MAVEN_OPTS="-XX:+UseConcMarkSweepGC -Xms2048m -Xmx2048m"
 ------------------------------------------------------------
 
 [[Building-Windows]]
@@ -58,7 +58,7 @@ For Camel 2.18:
 
 [source,text]
 ------------------------------------------------------------
-set MAVEN_OPTS="-XX:+UseConcMarkSweepGC -Xms5120m -Xmx6144m"
+set MAVEN_OPTS="-XX:+UseConcMarkSweepGC -Xms2048m -Xmx2048m"
 ------------------------------------------------------------
 
 [[Building-Anormalbuild]]
