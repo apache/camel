@@ -143,9 +143,9 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         // Spring-boot configuration has been moved on starters
 
         File starterDir = SpringBootHelper.starterDir(baseDir, project.getArtifactId());
-        if (!starterDir.exists()) {
+        if (!starterDir.exists() || !(new File(starterDir, "pom.xml").exists())) {
             // If the starter does not exist, no configuration can be created
-            getLog().info("Component auto-configuration will not be created: the starter dir does not exist");
+            getLog().info("Component auto-configuration will not be created: the starter does not exist");
             return;
         }
 
