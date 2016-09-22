@@ -155,13 +155,22 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // date: prefix
         remainder = ifStartsWithReturnRemainder("date:", function);
         if (remainder != null) {
-            String[] parts = remainder.split(":");
-            if (parts.length < 2) {
-                throw new SimpleParserException("Valid syntax: ${date:command:pattern} was: " + function, token.getIndex());
+            String[] parts = remainder.split(":", 2);
+            if (parts.length == 1) {
+                return ExpressionBuilder.dateExpression(parts[0]);
+            } else if (parts.length == 2) {
+                return ExpressionBuilder.dateExpression(parts[0], parts[1]);
             }
-            String command = ObjectHelper.before(remainder, ":");
-            String pattern = ObjectHelper.after(remainder, ":");
-            return ExpressionBuilder.dateExpression(command, pattern);
+        }
+
+        // date-with-timezone: prefix
+        remainder = ifStartsWithReturnRemainder("date-with-timezone:", function);
+        if (remainder != null) {
+            String[] parts = remainder.split(":", 3);
+            if (parts.length < 3) {
+                throw new SimpleParserException("Valid syntax: ${date:command:timezone:pattern} was: " + function, token.getIndex());
+            }
+            return ExpressionBuilder.dateExpression(parts[0], parts[1], parts[2]);
         }
 
         // bean: prefix
