@@ -377,7 +377,9 @@ public class SpringBootStarterMojo extends AbstractMojo {
             modules.removeChild(modules.getFirstChild());
         }
 
-        for (File starterDir : Arrays.asList(allStartersDir().listFiles((f, n) -> (new File(f, n)).isDirectory() && n.endsWith(SpringBootHelper.STARTER_SUFFIX))).stream().sorted()
+        for (File starterDir : Arrays
+                .asList(allStartersDir().listFiles((f, n) ->
+                        (new File(f, n)).isDirectory() && n.endsWith(SpringBootHelper.STARTER_SUFFIX) && (new File(new File(f, n), "pom.xml").exists()))).stream().sorted()
                 .collect(Collectors.toList())) {
             Node module = pom.createElement("module");
             module.setTextContent(starterDir.getName());
