@@ -466,6 +466,13 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("date:header.birthday", cal.getTime());
         assertExpression("date:header.birthday:yyyyMMdd", "19740420");
         assertExpression("date:header.birthday+24h:yyyyMMdd", "19740421");
+
+        try {
+            assertExpression("date:yyyyMMdd", "19740420");
+            fail("Should thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Command not supported for dateExpression: yyyyMMdd", e.getMessage());
+        }
     }
 
     public void testDateAndTimeExpressions() throws Exception {

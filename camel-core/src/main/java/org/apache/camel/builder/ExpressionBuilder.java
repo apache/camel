@@ -81,6 +81,8 @@ import org.apache.camel.util.StringHelper;
  */
 public final class ExpressionBuilder {
 
+    private static final Pattern OFFSET_PATTERN = Pattern.compile("([+-])([^+-]+)");
+
     /**
      * Utility classes should not have a public constructor.
      */
@@ -1868,11 +1870,11 @@ public final class ExpressionBuilder {
     }
 
     public static Expression dateExpression(final String command) {
-        return dateExpression(command, TimeZone.getDefault().getID(), "");
+        return dateExpression(command, null, null);
     }
 
     public static Expression dateExpression(final String command, final String pattern) {
-        return dateExpression(command, TimeZone.getDefault().getID(), pattern);
+        return dateExpression(command, null, pattern);
     }
 
     public static Expression dateExpression(final String commandWithOffsets, final String timezone, final String pattern) {
@@ -1881,13 +1883,13 @@ public final class ExpressionBuilder {
                 // Capture optional time offsets
                 String command = commandWithOffsets.split("[+-]", 2)[0].trim();
                 List<Long> offsets = new ArrayList<>();
-                Matcher offsetMatcher = Pattern.compile("([+-])([^+-]+)").matcher(commandWithOffsets);
+                Matcher offsetMatcher = OFFSET_PATTERN.matcher(commandWithOffsets);
                 while (offsetMatcher.find()) {
                     try {
                         long value = exchange.getContext().getTypeConverter().mandatoryConvertTo(long.class, exchange, offsetMatcher.group(2).trim());
                         offsets.add(offsetMatcher.group(1).equals("+") ? value : -value);
                     } catch (NoTypeConversionAvailableException e) {
-                        e.printStackTrace();
+                        throw ObjectHelper.wrapCamelExecutionException(exchange, e);
                     }
                 }
 
@@ -1927,9 +1929,11 @@ public final class ExpressionBuilder {
                 }
                 date = new Date(dateAsLong);
 
-                if (null != pattern && !pattern.isEmpty()) {
+                if (pattern != null && !pattern.isEmpty()) {
                     SimpleDateFormat df = new SimpleDateFormat(pattern);
-                    df.setTimeZone(TimeZone.getTimeZone(timezone));
+                    if (timezone != null && !timezone.isEmpty()) {
+                        df.setTimeZone(TimeZone.getTimeZone(timezone));
+                    }
                     return df.format(date);
                 } else {
                     return date;
