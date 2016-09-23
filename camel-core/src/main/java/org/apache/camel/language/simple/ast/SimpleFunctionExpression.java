@@ -168,7 +168,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String[] parts = remainder.split(":", 3);
             if (parts.length < 3) {
-                throw new SimpleParserException("Valid syntax: ${date:command:timezone:pattern} was: " + function, token.getIndex());
+                throw new SimpleParserException("Valid syntax: ${date-with-timezone:command:timezone:pattern} was: " + function, token.getIndex());
             }
             return ExpressionBuilder.dateExpression(parts[0], parts[1], parts[2]);
         }
