@@ -16,28 +16,15 @@
  */
 package org.apache.camel.example.java8.rx;
 
-import java.util.Date;
-import java.util.Objects;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
-import org.apache.camel.main.MainSupport;
 import org.apache.camel.main.MainListenerSupport;
 import org.apache.camel.rx.ReactiveCamel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import rx.Observable;
 
-public final class MyApplication extends Main {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MyApplication.class);
-
-    private MyApplication() {
-    }
+public class MyApplication extends Main {
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
@@ -85,7 +72,7 @@ public final class MyApplication extends Main {
         private final String id;
         private final double amount;
 
-        public MyOrder(Exchange e) {
+        MyOrder(Exchange e) {
             this.amount = e.getProperty(Exchange.TIMER_COUNTER, Integer.class) % 5;
             this.id = e.getProperty(Exchange.TIMER_COUNTER, String.class);
         }
