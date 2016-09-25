@@ -83,4 +83,5 @@ http\://camel.apache.org/schema/spring-security/camel-spring-security-2.16.0.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-2.16.1.xsd=schema/camel-spring-security.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-2.16.2.xsd=schema/camel-spring-security.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-2.16.3.xsd=schema/camel-spring-security.xsd
+http\://camel.apache.org/schema/spring-security/camel-spring-security-2.16.4.xsd=schema/camel-spring-security.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-${project.version}.xsd=schema/camel-spring-security.xsd
