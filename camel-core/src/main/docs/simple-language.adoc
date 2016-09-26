@@ -223,11 +223,16 @@ exception set on exchange. Will fallback and grab caught exceptions
 *null* if no exception set on exchange. Will fallback and grab caught
 exceptions (`Exchange.EXCEPTION_CAUGHT`) if the Exchange has any.
 
-|date:_command:pattern_ |String |Date formatting using the `java.text.SimpleDataFormat` patterns.
+|date:_command_ |Date |Evaluates to a Date object.
 Supported commands are: *now* for current timestamp, *in.header.xxx* or
 *header.xxx* to use the Date object in the IN header with the key xxx.
-*out.header.xxx* to use the Date object in the OUT header with the key
-xxx.
+*out.header.xxx* to use the Date object in the OUT header with the key xxx.
+*file* for the last modified timestamp of the file (available with a File consumer).
+Command accepts offsets such as: *now-24h* or *in.header.xxx+1h* or even *now+1h30m-100*.
+
+|date:_command:pattern_ |String |Date formatting using `java.text.SimpleDataFormat` patterns.
+
+|date-with-timezone:_command:timezone:pattern_ |String |Date formatting using `java.text.SimpleDataFormat` timezones and patterns.
 
 |bean:_bean expression_ |Object |Invoking a bean expression using the link:bean.html[Bean] language.
 Specifying a method name you must use dot as separator. We also support
