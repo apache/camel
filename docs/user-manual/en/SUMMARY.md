@@ -77,6 +77,7 @@
     * [Event Message](event-message.adoc)
     * [Message](message.adoc)
     * [Request Reply](request-reply.adoc)
+    * [Return Address](return-address.adoc)
 
 * Community
     * FAQ
