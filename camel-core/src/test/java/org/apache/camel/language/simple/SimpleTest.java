@@ -487,13 +487,13 @@ public class SimpleTest extends LanguageTestSupport {
 
     public void testDateWithTimezone() throws Exception {
         Calendar cal = Calendar.getInstance();
-        cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+        cal.setTimeZone(TimeZone.getTimeZone("GMT+8"));
         cal.set(1974, Calendar.APRIL, 20, 8, 55, 47);
         cal.set(Calendar.MILLISECOND, 123);
         exchange.getIn().setHeader("birthday", cal.getTime());
 
-        assertExpression("date:header.birthday:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T08:55:47:123");
-        assertExpression("date-with-timezone:header.birthday:UTC:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T06:55:47:123");
+        assertExpression("date-with-timezone:header.birthday:GMT+8:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T08:55:47:123");
+        assertExpression("date-with-timezone:header.birthday:GMT:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T00:55:47:123");
     }
 
     public void testDatePredicates() throws Exception {
