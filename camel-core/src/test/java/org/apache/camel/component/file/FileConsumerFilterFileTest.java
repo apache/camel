@@ -59,11 +59,10 @@ public class FileConsumerFilterFileTest extends ContextTestSupport {
     public void testFilterFilesWithDate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result2");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello World");
+        mock.expectedBodiesReceived("Something else");
         mock.setResultMinimumWaitTime(1500);
-        mock.setResultWaitTime(5000);
 
-        template.sendBodyAndHeader("file:target/filefilter/", "Hello World", Exchange.FILE_NAME, "hello2.txt");
+        template.sendBodyAndHeader("file:target/filefilter/", "Something else", Exchange.FILE_NAME, "hello2.txt");
 
         mock.assertIsSatisfied();
     }
