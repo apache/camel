@@ -156,7 +156,6 @@
     <dnsjava-bundle-version>2.1.7_1</dnsjava-bundle-version>
     <docker-guava-version>18.0</docker-guava-version>
     <docker-java-version>3.0.5</docker-java-version>
-    <docker-bundle-version>1.4.0_1</docker-bundle-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>5.5.1</dozer-version>
     <drools-version>6.4.0.Final</drools-version>
