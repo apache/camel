@@ -101,7 +101,6 @@ public class WeatherQuery {
         }
 
         return answer;
-
     }
 
     private String createContext() {

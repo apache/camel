@@ -45,16 +45,18 @@ public class WeatherConfiguration {
     @UriParam @Metadata(required = "true")
     private String appid;
     @UriParam
+    private WeatherApi weatherApi;
+    @UriParam(label = "filter")
     private String location = "";
-    @UriParam
+    @UriParam(label = "filter")
     private String lat;
-    @UriParam
+    @UriParam(label = "filter")
     private String lon;
-    @UriParam
+    @UriParam(label = "filter")
     private String rightLon;
-    @UriParam
+    @UriParam(label = "filter")
     private String topLat;
-    @UriParam
+    @UriParam(label = "filter")
     private Integer zoom;
     @UriParam
     private String period = "";
@@ -66,14 +68,12 @@ public class WeatherConfiguration {
     private WeatherLanguage language = en;
     @UriParam
     private String headerName;
-    @UriParam
+    @UriParam(label = "filter")
     private String zip;
-    @UriParam(javaType = "java.lang.String")
+    @UriParam(label = "filter", javaType = "java.lang.String")
     private List<String> ids;
-    @UriParam
+    @UriParam(label = "filter")
     private Integer cnt;
-    @UriParam
-    private WeatherApi weatherApi;
 
     @UriParam(label = "proxy")
     private String proxyHost;
