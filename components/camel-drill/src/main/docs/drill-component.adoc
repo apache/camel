@@ -44,23 +44,23 @@ Options
 ^^^^^^^
 
 // component options: START
-The Drill component has no options.
+The DRILL component has no options.
 // component options: END
 
 
 
 // endpoint options: START
-The Drill component supports some endpoint options which are listed below:
+The DRILL component supports 6 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | producer |  | String | *Required* ZooKeeper host name or IP address
-| port | producer | 2181 | Integer | ZooKeeper port number 
-| schema | producer | | String | *Required* Storage plugin https://drill.apache.org/docs/storage-plugin-registration
-| directory | producer| /Drill | String | Drill directory in ZooKeeper
-| clusterId | producer | drillbits1 | String | Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/#determining-the-cluster-id
+| host | producer |  | String | *Required* ZooKeeper host name or IP address. Use local instead of a host name or IP address to connect to the local Drillbit
+| port | producer |  | Integer | ZooKeeper port number
+| clusterId | producer | drillbits1 | String | Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/determining-the-cluster-id
+| directory | producer | /Drill | String | Drill directory in ZooKeeper
+| schema | producer |  | String | Storage plugin https://drill.apache.org/docs/storage-plugin-registration
 |=======================================================================
 {% endraw %}
 // endpoint options: END
