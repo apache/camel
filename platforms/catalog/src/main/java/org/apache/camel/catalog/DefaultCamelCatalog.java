@@ -119,14 +119,28 @@ public class DefaultCamelCatalog implements CamelCatalog {
         caching = true;
     }
 
+    public boolean isCaching() {
+        return caching;
+    }
+
     @Override
     public void setSuggestionStrategy(SuggestionStrategy suggestionStrategy) {
         this.suggestionStrategy = suggestionStrategy;
     }
 
     @Override
+    public SuggestionStrategy getSuggestionStrategy() {
+        return suggestionStrategy;
+    }
+
+    @Override
     public void setVersionManager(VersionManager versionManager) {
         this.versionManager = versionManager;
+    }
+
+    @Override
+    public VersionManager getVersionManager() {
+        return versionManager;
     }
 
     @Override
