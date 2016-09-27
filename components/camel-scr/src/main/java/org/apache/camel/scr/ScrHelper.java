@@ -43,7 +43,7 @@ public final class ScrHelper {
     }
 
     public static Map<String, String> getScrProperties(String xmlLocation, String componentName) throws Exception {
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
 
         XMLInputFactory inputFactory = XMLInputFactory.newFactory();
         inputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);

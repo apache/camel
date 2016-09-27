@@ -27,6 +27,7 @@ import ${package}.internal.${className}Route;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.felix.scr.annotations.*;
+import org.osgi.framework.BundleContext;
 
 @Component(label = ${className}.COMPONENT_LABEL, description = ${className}.COMPONENT_DESCRIPTION, immediate = true, metatype = true)
 @Properties({
@@ -47,10 +48,20 @@ public class ${className} extends AbstractCamelRunner {
     public static final String COMPONENT_DESCRIPTION = "This is the description for ${artifactId}.";
 
     @Override
-    protected List<RoutesBuilder>getRouteBuilders() {
-        List<RoutesBuilder>routesBuilders = new ArrayList<>();
+    protected List<RoutesBuilder> getRouteBuilders() {
+        List<RoutesBuilder> routesBuilders = new ArrayList<>();
         routesBuilders.add(new ${className}Route());
         return routesBuilders;
     }
 
+    @Override
+    protected void setupCamelContext(BundleContext bundleContext, String camelContextId)throws Exception{
+        super.setupCamelContext(bundleContext, camelContextId);
+
+        // Use MDC logging
+        getContext().setUseMDCLogging(true);
+
+        // Use breadcrumb logging
+        getContext().setUseBreadcrumb(true);
+    }
 }
