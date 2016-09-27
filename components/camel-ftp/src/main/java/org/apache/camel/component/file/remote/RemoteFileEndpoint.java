@@ -33,17 +33,17 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
-    @UriParam
+    @UriParam(label = "advanced")
     private int maximumReconnectAttempts = 3;
-    @UriParam
+    @UriParam(label = "advanced")
     private long reconnectDelay = 1000;
-    @UriParam
+    @UriParam(label = "common")
     private boolean disconnect;
-    @UriParam
+    @UriParam(label = "producer,advanced")
     private boolean disconnectOnBatchComplete;   
-    @UriParam
+    @UriParam(label = "common,advanced")
     private boolean fastExistsCheck;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean download = true;
 
     public RemoteFileEndpoint() {
@@ -226,9 +226,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     }
 
     /**
-     * Whether or not to disconnect from remote FTP server right after a Batch is complete.
+     * Whether or not to disconnect from remote FTP server right after a Batch upload is complete.
      * disconnectOnBatchComplete will only disconnect the current connection to the FTP server.
-     * If you have a consumer which you want to stop, then you need to stop the consumer/route instead.
      */
     public void setDisconnectOnBatchComplete(boolean disconnectOnBatchComplete) {
         this.disconnectOnBatchComplete = disconnectOnBatchComplete;
