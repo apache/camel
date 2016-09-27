@@ -36,14 +36,29 @@ public interface CamelCatalog {
     void enableCache();
 
     /**
+     * Whether caching has been enabled.
+     */
+    boolean isCaching();
+
+    /**
      * To plugin a custom {@link SuggestionStrategy} to provide suggestion for unknown options
      */
     void setSuggestionStrategy(SuggestionStrategy suggestionStrategy);
 
     /**
+     * Gets the {@link SuggestionStrategy} in use
+     */
+    SuggestionStrategy getSuggestionStrategy();
+
+    /**
      * To plugin a custom {@link VersionManager} to load other versions of Camel the catalog should use.
      */
     void setVersionManager(VersionManager versionManager);
+
+    /**
+     * Gets the {@link VersionManager} in use
+     */
+    VersionManager getVersionManager();
 
     /**
      * Adds a 3rd party component to this catalog.
