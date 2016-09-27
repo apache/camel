@@ -453,7 +453,11 @@ public class WebsocketComponent extends UriEndpointComponent {
     protected WebsocketComponentServlet createServlet(NodeSynchronization sync, String pathSpec, Map<String, WebsocketComponentServlet> servlets, ServletContextHandler handler) {
         WebsocketComponentServlet servlet = new WebsocketComponentServlet(sync, socketFactory);
         servlets.put(pathSpec, servlet);
-        handler.addServlet(new ServletHolder(servlet), pathSpec);
+        ServletHolder servletHolder = new ServletHolder(servlet);
+        servletHolder.getInitParameters().putAll(handler.getInitParams());
+        // Jetty 9 parameter bufferSize is now inputBufferSize
+        servletHolder.setInitParameter("inputBufferSize", handler.getInitParameter("bufferSize"));
+        handler.addServlet(servletHolder, pathSpec);
         return servlet;
     }
 
