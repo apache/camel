@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder.script;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -52,9 +52,9 @@ public class JavaScriptListWithMapExpressionTest extends CamelTestSupport {
 
         log.info("Check header instance: {}", header.getClass().getCanonicalName());
         
-        assertTrue(header instanceof ArrayList);
-        assertNotEquals(((ArrayList)header).size(), 0);
-        assertTrue(((ArrayList)header).get(0) instanceof Map);
+        assertTrue(header instanceof List);
+        assertNotEquals(((List)header).size(), 0);
+        assertTrue(((List)header).get(0) instanceof Map);
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
