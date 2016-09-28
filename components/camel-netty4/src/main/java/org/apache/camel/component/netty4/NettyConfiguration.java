@@ -74,6 +74,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean lazyChannelCreation = true;
     @UriParam(label = "advanced")
     private boolean transferExchange;
+    @UriParam(label = "advanced", defaultValue = "false")
+    private boolean allowSerializedHeaders;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean disconnectOnNoReply = true;
     @UriParam(label = "consumer,advanced", defaultValue = "WARN")
@@ -426,6 +428,19 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         this.transferExchange = transferExchange;
     }
 
+    public boolean isAllowSerializedHeaders() {
+    	return allowSerializedHeaders;
+    }
+    
+    /**
+     * Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties
+     * will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN
+     * level.
+     */
+    public void setAllowSerializedHeaders(final boolean allowSerializedHeaders) {
+        this.allowSerializedHeaders = allowSerializedHeaders;
+    }
+    
     public boolean isDisconnectOnNoReply() {
         return disconnectOnNoReply;
     }
