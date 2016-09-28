@@ -41,6 +41,15 @@
             <!--<version>${log4j2-version}</version>-->
         <!--</dependency>-->
 
+        <!-- Force the reactor build order -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring-boot-dependencies</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>

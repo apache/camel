@@ -36,4 +36,15 @@
         </dependencies>
     </dependencyManagement>
 
+    <!-- Force the reactor build order -->
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring-boot-generator-bom</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
 </project>
