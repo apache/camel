@@ -21,7 +21,7 @@
     <parent>
         <artifactId>camel-spring-boot-dm</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>2.18.0-SNAPSHOT</version>
+        <version>${project.version}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
