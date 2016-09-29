@@ -35,8 +35,8 @@ public class ServiceNowTest extends ServiceNowTestSupport {
                 new KVBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                    .put(ServiceNowConstants.SYSPARM_QUERY, "number=" + UUID.randomUUID().toString())
-                    .put(ServiceNowConstants.TABLE, "incident")
+                    .put(ServiceNowParams.SYSPARM_QUERY, "number=" + UUID.randomUUID().toString())
+                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
                     .build()
             );
         } catch (CamelExecutionException e) {
@@ -56,8 +56,8 @@ public class ServiceNowTest extends ServiceNowTestSupport {
                 new KVBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                    .put(ServiceNowConstants.SYSPARM_QUERY, "number=" + UUID.randomUUID().toString())
-                    .put(ServiceNowConstants.TABLE, "notExistingTable")
+                    .put(ServiceNowParams.SYSPARM_QUERY, "number=" + UUID.randomUUID().toString())
+                    .put(ServiceNowParams.PARAM_TABLE_NAME, "notExistingTable")
                     .build()
             );
         } catch (CamelExecutionException e) {
@@ -79,7 +79,7 @@ public class ServiceNowTest extends ServiceNowTestSupport {
                 new KVBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
-                    .put(ServiceNowConstants.TABLE, "incident")
+                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
                     .build()
             );
 

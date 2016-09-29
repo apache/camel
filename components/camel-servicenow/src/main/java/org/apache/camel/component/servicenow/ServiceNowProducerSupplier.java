@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
 
-import org.apache.camel.Producer;
-
-public interface ServiceNowProducer extends Producer {
-    ServiceNowRelease getRelease();
+public interface ServiceNowProducerSupplier {
+    ServiceNowProducer get(ServiceNowEndpoint endpoint) throws Exception;
 }

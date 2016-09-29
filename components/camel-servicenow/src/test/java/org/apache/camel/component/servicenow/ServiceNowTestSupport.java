@@ -38,7 +38,7 @@ class ServiceNowTestSupport extends CamelTestSupport {
         private final Map<String, Object> headers;
 
         public KVBuilder() {
-            this(new HashMap<String, Object>());
+            this(new HashMap<>());
         }
 
         private KVBuilder(Map<String, Object> headers) {
@@ -51,6 +51,11 @@ class ServiceNowTestSupport extends CamelTestSupport {
 
         public KVBuilder put(String key, Object val) {
             headers.put(key, val);
+            return this;
+        }
+
+        public KVBuilder put(ServiceNowParam key, Object val) {
+            headers.put(key.getHeader(), val);
             return this;
         }
 

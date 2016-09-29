@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.servicenow;
 
-import org.apache.camel.Producer;
+import org.apache.camel.Message;
 
-public interface ServiceNowProducer extends Producer {
-    ServiceNowRelease getRelease();
+public interface ServiceNowParam {
+    String getId();
+    String getHeader();
+    Class<?> getType();
+    Object getDefaultValue(ServiceNowConfiguration configuration);
+    Object getHeaderValue(Message message);
+    Object getHeaderValue(Message message, ServiceNowConfiguration configuration);
 }

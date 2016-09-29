@@ -16,37 +16,59 @@
  */
 package org.apache.camel.component.servicenow;
 
-public interface ServiceNowConstants {
-    String RESOURCE = "CamelServiceNowResource";
-    String TABLE = "CamelServiceNowTable";
-    String ACTION = "CamelServiceNowAction";
-    String MODEL = "CamelServiceNowModel";
+public final class ServiceNowConstants {
+    public static final String CAMEL_HEADER_PREFIX = "CamelServiceNow";
 
-    String RESOURCE_TABLE = "table";
-    String RESOURCE_AGGREGATE = "aggregate";
-    String RESOURCE_IMPORT = "import";
+    public static final String RESOURCE = "CamelServiceNowResource";
+    public static final String ACTION = "CamelServiceNowAction";
+    public static final String ACTION_SUBJECT = "CamelServiceNowActionSubject";
+    public static final String MODEL = "CamelServiceNowModel";
+    public static final String OFFSET_NEXT = "CamelServiceNowOffsetNext";
+    public static final String OFFSET_PREV = "CamelServiceNowOffsetPrev";
+    public static final String OFFSET_FIRST = "CamelServiceNowOffsetFirst";
+    public static final String OFFSET_LAST = "CamelServiceNowOffsetLast";
+    public static final String CONTENT_TYPE = "CamelServiceNowContentType";
+    public static final String CONTENT_ENCODING = "CamelServiceNowContentEncoding";
+    public static final String CONTENT_META = "CamelServiceNowContentMeta";
 
-    String ACTION_RETRIEVE = "retrieve";
-    String ACTION_CREATE = "create";
-    String ACTION_MODIFY = "modify";
-    String ACTION_DELETE = "delete";
-    String ACTION_UPDATE = "update";
+    public static final String ATTACHMENT_META_HEADER = "X-Attachment-Metadata";
 
-    String SYSPARM_ID = "CamelServiceNowSysId";
-    String SYSPARM_QUERY = "CamelServiceNowQuery";
-    String SYSPARM_DISPLAY_VALUE = "CamelServiceNowDisplayValue";
-    String SYSPARM_INPUT_DISPLAY_VALUE = "CamelServiceNowInputDisplayValue";
-    String SYSPARM_EXCLUDE_REFERENCE_LINK = "CamelServiceNowExcludeReferenceLink";
-    String SYSPARM_FIELDS = "CamelServiceNowFields";
-    String SYSPARM_MIN_FIELDS = "CamelServiceNowMinFields";
-    String SYSPARM_MAX_FIELDS = "CamelServiceNowMaxFields";
-    String SYSPARM_SUM_FIELDS = "CamelServiceNowSumFields";
-    String SYSPARM_LIMIT = "CamelServiceNowLimit";
-    String SYSPARM_VIEW = "CamelServiceNowView";
-    String SYSPARM_SUPPRESS_AUTO_SYS_FIELD = "CamelServiceNowSuppressAutoSysField";
-    String SYSPARM_AVG_FIELDS = "CamelServiceNowAvgFields";
-    String SYSPARM_COUNT = "CamelServiceNowCount";
-    String SYSPARM_GROUP_BY = "CamelServiceGroupBy";
-    String SYSPARM_ORDER_BY = "CamelServiceOrderBy";
-    String SYSPARM_HAVING = "CamelServiceHaving";
+    public static final String RESOURCE_TABLE = "table";
+    public static final String RESOURCE_AGGREGATE = "aggregate";
+    public static final String RESOURCE_IMPORT = "import";
+    public static final String RESOURCE_ATTACHMENT = "attachment";
+    public static final String RESOURCE_SCORECARDS = "scorecards";
+    public static final String RESOURCE_MISC = "misc";
+    public static final String RESOURCE_SERVICE_CATALOG = "service_catalog";
+    public static final String RESOURCE_SERVICE_CATALOG_ITEMS = "service_catalog_items";
+    public static final String RESOURCE_SERVICE_CATALOG_CARTS = "service_catalog_cart";
+    public static final String RESOURCE_SERVICE_CATALOG_CATEGORIES = "service_catalog_categories";
+
+    public static final String ACTION_RETRIEVE = "retrieve";
+    public static final String ACTION_CONTENT = "content";
+    public static final String ACTION_CREATE = "create";
+    public static final String ACTION_MODIFY = "modify";
+    public static final String ACTION_DELETE = "delete";
+    public static final String ACTION_UPDATE = "update";
+    public static final String ACTION_UPLOAD = "upload";
+
+    public static final String ACTION_SUBJECT_CATEGORIES = "categories";
+    public static final String ACTION_SUBJECT_CART = "cart";
+    public static final String ACTION_SUBJECT_PRODUCER = "producer";
+    public static final String ACTION_SUBJECT_GUIDE = "guide";
+    public static final String ACTION_SUBJECT_SUBMIT_GUIDE = "submit_guide";
+    public static final String ACTION_SUBJECT_CHECKOUT_GUIDE = "checkout_guide";
+    public static final String ACTION_SUBJECT_PERFORMANCE_ANALYTICS = "performance_analytics";
+    public static final String ACTION_SUBJECT_USER_ROLE_INHERITANCE = "user_role_inheritance";
+    public static final String ACTION_SUBJECT_IDENTIFY_RECONCILE = "identify_reconcile";
+    public static final String ACTION_SUBJECT_DELIVERY_ADDRESS = "delivery_address";
+    public static final String ACTION_SUBJECT_CHECKOUT = "checkout";
+
+    public static final String LINK_NEXT = "next";
+    public static final String LINK_PREV = "prev";
+    public static final String LINK_FIRST = "first";
+    public static final String LINK_LAST = "last";
+
+    private ServiceNowConstants() {
+    }
 }
