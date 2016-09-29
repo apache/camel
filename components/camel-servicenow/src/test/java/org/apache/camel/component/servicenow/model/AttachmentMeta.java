@@ -23,29 +23,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Incident {
+public class AttachmentMeta {
     @JsonProperty("sys_id")
     private String id;
 
-    @JsonProperty("number")
-    private String number;
+    @JsonProperty("download_link")
+    private String downloadLink;
 
-    @JsonProperty("description")
-    private String description;
+    @JsonProperty("table_name")
+    private String tableName;
 
-    @JsonProperty("short_description")
-    private String shortDescription;
+    @JsonProperty("table_sys_id")
+    private String tableSysId;
 
-    @JsonProperty("severity")
-    private int severity;
+    @JsonProperty("compressed")
+    private Boolean compressed;
 
-    @JsonProperty("impact")
-    private int impact;
-
-
-    public Incident() {
-    }
-
+    @JsonProperty("file_name")
+    private String fileName;
 
     public String getId() {
         return id;
@@ -55,43 +50,43 @@ public class Incident {
         this.id = id;
     }
 
-    public String getNumber() {
-        return number;
+    public String getDownloadLink() {
+        return downloadLink;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public void setDownloadLink(String downloadLink) {
+        this.downloadLink = downloadLink;
     }
 
-    public String getDescription() {
-        return description;
+    public String getTableName() {
+        return tableName;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 
-    public String getShortDescription() {
-        return shortDescription;
+    public String getTableSysId() {
+        return tableSysId;
     }
 
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
+    public void setTableSysId(String tableSysId) {
+        this.tableSysId = tableSysId;
     }
 
-    public int getSeverity() {
-        return severity;
+    public Boolean getCompressed() {
+        return compressed;
     }
 
-    public void setSeverity(int severity) {
-        this.severity = severity;
+    public void setCompressed(Boolean compressed) {
+        this.compressed = compressed;
     }
 
-    public int getImpact() {
-        return impact;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setImpact(int impact) {
-        this.impact = impact;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }
