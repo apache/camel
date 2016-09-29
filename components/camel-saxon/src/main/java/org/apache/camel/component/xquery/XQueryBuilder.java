@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
@@ -53,6 +54,7 @@ import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.ObjectValue;
 import net.sf.saxon.value.Whitespace;
+
 import org.apache.camel.BytesSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
