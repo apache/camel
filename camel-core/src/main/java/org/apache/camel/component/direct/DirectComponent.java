@@ -37,7 +37,7 @@ public class DirectComponent extends UriEndpointComponent {
     // on DefaultCamelContext
     private final Map<String, DirectConsumer> consumers = new HashMap<String, DirectConsumer>();
     private boolean block;
-    @Metadata(defaultValue = "30000")
+    @Metadata(defaultValue = "30000L")
     private long timeout = 30000L;
 
     public DirectComponent() {
