@@ -69,12 +69,30 @@ public interface CamelCatalog {
     void addComponent(String name, String className);
 
     /**
+     * Adds a 3rd party component to this catalog.
+     *
+     * @param name       the component name
+     * @param className  the fully qualified class name for the component class
+     * @param jsonSchema the component JSon schema
+     */
+    void addComponent(String name, String className, String jsonSchema);
+
+    /**
      * Adds a 3rd party data format to this catalog.
      *
      * @param name      the data format name
      * @param className the fully qualified class name for the data format class
      */
     void addDataFormat(String name, String className);
+
+    /**
+     * Adds a 3rd party data format to this catalog.
+     *
+     * @param name      the data format name
+     * @param className the fully qualified class name for the data format class
+     * @param jsonSchema the data format JSon schema
+     */
+    void addDataFormat(String name, String className, String jsonSchema);
 
     /**
      * The version of this Camel Catalog
