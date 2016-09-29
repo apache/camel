@@ -169,6 +169,13 @@ public class NettyComponentConfiguration {
          */
         private Boolean transferExchange;
         /**
+         * Only used for TCP when transferExchange is true. When set to true,
+         * serializable objects in headers and properties will be added to the
+         * exchange. Otherwise Camel will exclude any non-serializable objects
+         * and log it at WARN level.
+         */
+        private Boolean allowSerializedHeaders;
+        /**
          * If sync is enabled then this option dictates NettyConsumer if it
          * should disconnect where there is no reply to send back.
          */
@@ -588,6 +595,14 @@ public class NettyComponentConfiguration {
 
         public void setTransferExchange(Boolean transferExchange) {
             this.transferExchange = transferExchange;
+        }
+
+        public Boolean getAllowSerializedHeaders() {
+            return allowSerializedHeaders;
+        }
+
+        public void setAllowSerializedHeaders(Boolean allowSerializedHeaders) {
+            this.allowSerializedHeaders = allowSerializedHeaders;
         }
 
         public Boolean getDisconnectOnNoReply() {
