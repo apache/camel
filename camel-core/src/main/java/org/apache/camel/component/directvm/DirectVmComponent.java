@@ -40,7 +40,7 @@ public class DirectVmComponent extends UriEndpointComponent {
     // on DefaultCamelContext
     private static final ConcurrentMap<String, DirectVmConsumer> CONSUMERS = new ConcurrentHashMap<String, DirectVmConsumer>();
     private boolean block;
-    @Metadata(defaultValue = "30000")
+    @Metadata(defaultValue = "30000L")
     private long timeout = 30000L;
     private HeaderFilterStrategy headerFilterStrategy;
     @Metadata(defaultValue = "true")
