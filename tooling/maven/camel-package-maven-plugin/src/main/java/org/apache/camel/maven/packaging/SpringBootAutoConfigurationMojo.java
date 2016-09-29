@@ -21,10 +21,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -331,15 +331,20 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             }
 
             String type = option.getJavaType();
-            type = getSimpleJavaType(type);
 
             // generate inner class for non-primitive options
-            if (isNestedProperty(type, nestedTypes)) {
+            type = getSimpleJavaType(type);
+            JavaClassSource javaClassSource = readJavaType(type);
+            if (isNestedProperty(nestedTypes, javaClassSource)) {
                 type = option.getShortJavaType() + INNER_TYPE_SUFFIX;
             }
 
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
-            if (!(type.endsWith(INNER_TYPE_SUFFIX) || !(type.indexOf('[') == -1) || EXCLUDE_INNER_PATTERN.matcher(type).matches() || !Strings.isBlank(option.getEnumValues()))) {
+            if (!type.endsWith(INNER_TYPE_SUFFIX)
+                && type.indexOf('[') == -1
+                && !EXCLUDE_INNER_PATTERN.matcher(type).matches()
+                && Strings.isBlank(option.getEnumValues())
+                && (javaClassSource == null || (javaClassSource.isClass() && !javaClassSource.isAbstract()))) {
                 // add nested configuration annotation for complex properties
                 prop.getField().addAnnotation(NestedConfigurationProperty.class);
             }
@@ -357,11 +362,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 if ("java.lang.String".equals(option.getJavaType())) {
                     prop.getField().setStringInitializer(option.getDefaultValue());
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
-                    String value = option.getDefaultValue();
-                    if ("long".equals(option.getJavaType()) && !value.toUpperCase().endsWith("L")) {
-                        value = value + "L";
-                    }
-                    prop.getField().setLiteralInitializer(value);
+                    prop.getField().setLiteralInitializer(option.getDefaultValue());
                 } else if (!Strings.isBlank(option.getEnumValues())) {
                     String enumShortName = type.substring(type.lastIndexOf(".") + 1);
                     prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
@@ -404,7 +405,13 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 }
 
                 // add nested configuration annotation for complex properties
-                if (!EXCLUDE_INNER_PATTERN.matcher(optionType).matches() && !propType.isArray() && !anEnum) {
+                if (!EXCLUDE_INNER_PATTERN.matcher(optionType).matches()
+                    && !propType.isArray()
+                    && !anEnum
+                    && optionClass != null
+                    && !optionClass.isInterface()
+                    && !optionClass.isAnnotation()
+                    && !Modifier.isAbstract(optionClass.getModifiers())) {
                     prop.getField().addAnnotation(NestedConfigurationProperty.class);
                 }
                 if (sourceProp.hasAnnotation(Deprecated.class)) {
@@ -545,17 +552,16 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     // it's a nested property if the source exists and it's not an abstract class in this project, e.g. endpoint configuration
-    private boolean isNestedProperty(String type, Set<JavaClassSource> nestedTypes) {
-        JavaClassSource nestedType = readJavaType(type);
-        if (nestedType != null) {
+    private boolean isNestedProperty(Set<JavaClassSource> nestedTypes, JavaClassSource type) {
+        if (type != null) {
             // nested type MUST have some properties of it's own, besides those from super class
-            if (!nestedType.isAbstract() && !nestedType.getProperties().isEmpty()) {
-                nestedTypes.add(nestedType);
+            if (type.isClass() && !type.isEnum() && !type.isAbstract() && !type.getProperties().isEmpty()) {
+                nestedTypes.add(type);
             } else {
-                nestedType = null;
+                type = null;
             }
         }
-        return nestedType != null;
+        return type != null;
     }
 
     // read java type from project, returns null if not found
@@ -640,11 +646,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 if ("java.lang.String".equals(option.getType())) {
                     prop.getField().setStringInitializer(option.getDefaultValue());
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
-                    String value = option.getDefaultValue();
-                    if ("long".equals(option.getJavaType()) && !value.toUpperCase().endsWith("L")) {
-                        value = value + "L";
-                    }
-                    prop.getField().setLiteralInitializer(value);
+                    prop.getField().setLiteralInitializer(option.getDefaultValue());
                 } else if (!Strings.isBlank(option.getEnumValues())) {
                     String enumShortName = type.substring(type.lastIndexOf(".") + 1);
                     prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
@@ -732,11 +734,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 if ("java.lang.String".equals(option.getType())) {
                     prop.getField().setStringInitializer(option.getDefaultValue());
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
-                    String value = option.getDefaultValue();
-                    if ("long".equals(option.getJavaType()) && !value.toUpperCase().endsWith("L")) {
-                        value = value + "L";
-                    }
-                    prop.getField().setLiteralInitializer(value);
+                    prop.getField().setLiteralInitializer(option.getDefaultValue());
                 } else if (!Strings.isBlank(option.getEnumValues())) {
                     String enumShortName = type.substring(type.lastIndexOf(".") + 1);
                     prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
