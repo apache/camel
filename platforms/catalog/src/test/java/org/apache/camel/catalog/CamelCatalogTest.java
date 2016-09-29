@@ -16,6 +16,7 @@
  */
 package org.apache.camel.catalog;
 
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -713,8 +714,6 @@ public class CamelCatalogTest {
 
     @Test
     public void testAddComponent() throws Exception {
-        assertFalse(catalog.findComponentNames().contains("dummy"));
-
         catalog.addComponent("dummy", "org.foo.camel.DummyComponent");
 
         assertTrue(catalog.findComponentNames().contains("dummy"));
@@ -729,14 +728,46 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testAddDataFormat() throws Exception {
-        assertFalse(catalog.findDataFormatNames().contains("dummyformat"));
+    public void testAddComponentWithJson() throws Exception {
+        String json = loadText(new FileInputStream("src/test/resources/org/foo/camel/dummy.json"));
+        assertNotNull(json);
+        catalog.addComponent("dummy", "org.foo.camel.DummyComponent", json);
 
+        assertTrue(catalog.findComponentNames().contains("dummy"));
+
+        json = catalog.componentJSonSchema("dummy");
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testAddDataFormat() throws Exception {
         catalog.addDataFormat("dummyformat", "org.foo.camel.DummyDataFormat");
 
         assertTrue(catalog.findDataFormatNames().contains("dummyformat"));
 
         String json = catalog.dataFormatJSonSchema("dummyformat");
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testAddDataFormatWithJSon() throws Exception {
+        String json = loadText(new FileInputStream("src/test/resources/org/foo/camel/dummyformat.json"));
+        assertNotNull(json);
+        catalog.addDataFormat("dummyformat", "org.foo.camel.DummyDataFormat", json);
+
+        assertTrue(catalog.findDataFormatNames().contains("dummyformat"));
+
+        json = catalog.dataFormatJSonSchema("dummyformat");
         assertNotNull(json);
 
         // validate we can parse the json
