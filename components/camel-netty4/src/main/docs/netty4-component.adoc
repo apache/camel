@@ -85,7 +85,7 @@ The Netty4 component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The Netty4 component supports 73 endpoint options which are listed below:
+The Netty4 component supports 74 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -131,6 +131,7 @@ The Netty4 component supports 73 endpoint options which are listed below:
 | producerPoolMinIdle | producer (advanced) |  | int | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects.
 | udpConnectionlessSending | producer (advanced) | false | boolean | This option supports connection less udp sending which is a real fire and forget. A connected udp send receive the PortUnreachableException if no one is listen on the receiving port.
 | useByteBuf | producer (advanced) | false | boolean | If the useByteBuf is true netty producer will turn the message body into ByteBuf before sending it out.
+| allowSerializedHeaders | advanced | false | boolean | Only used for TCP when transferExchange is true. When set to true serializable objects in headers and properties will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level.
 | bootstrapConfiguration | advanced |  | NettyServerBootstrapConfiguration | To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint.
 | channelGroup | advanced |  | ChannelGroup | To use a explicit ChannelGroup.
 | nativeTransport | advanced | false | boolean | Whether to use native transport instead of NIO. Native transport takes advantage of the host operating system and is only supported on some platforms. You need to add the netty JAR for the host operating system you are using. See more details at: http://netty.io/wiki/native-transports.html
