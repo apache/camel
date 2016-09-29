@@ -16,8 +16,25 @@
  */
 package org.apache.camel.component.servicenow;
 
-import org.apache.camel.Producer;
+import org.apache.camel.impl.HeaderSelectorProducer;
 
-public interface ServiceNowProducer extends Producer {
-    ServiceNowRelease getRelease();
+public abstract class AbstractServiceNowProducer extends HeaderSelectorProducer implements ServiceNowProducer {
+    private final ServiceNowRelease release;
+    private final ServiceNowEndpoint endpoint;
+
+    public AbstractServiceNowProducer(ServiceNowEndpoint endpoint, ServiceNowRelease release) {
+        super(endpoint, ServiceNowConstants.RESOURCE, endpoint.getConfiguration().getResource());
+
+        this.release = release;
+        this.endpoint = endpoint;
+    }
+
+    @Override
+    public ServiceNowRelease getRelease() {
+        return release;
+    }
+
+    protected final ServiceNowConfiguration getConfiguration() {
+        return endpoint.getConfiguration();
+    }
 }

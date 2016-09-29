@@ -16,8 +16,26 @@
  */
 package org.apache.camel.component.servicenow;
 
-import org.apache.camel.Producer;
+import org.apache.camel.component.servicenow.releases.fuji.FujiServiceNowProducer;
+import org.apache.camel.component.servicenow.releases.helsinki.HelsinkiServiceNowProducer;
 
-public interface ServiceNowProducer extends Producer {
-    ServiceNowRelease getRelease();
+public enum ServiceNowRelease implements ServiceNowProducerSupplier {
+    FUJI {
+        @Override
+        public ServiceNowProducer get(ServiceNowEndpoint endpoint) throws Exception {
+            return new FujiServiceNowProducer(endpoint);
+        }
+    },
+    GENEVA {
+        @Override
+        public ServiceNowProducer get(ServiceNowEndpoint endpoint) throws Exception {
+            return null;
+        }
+    },
+    HELSINKY {
+        @Override
+        public ServiceNowProducer get(ServiceNowEndpoint endpoint) throws Exception {
+            return new HelsinkiServiceNowProducer(endpoint);
+        }
+    }
 }

@@ -14,35 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.servicenow.model;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.camel.component.servicenow.ServiceNowException;
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Scorecard {
+    @JsonProperty("name")
+    private String name;
+    @JsonProperty("description")
+    private String description;
 
-@Path("/import")
-@Produces("application/json")
-@Consumes("application/json")
-public interface ServiceNowImportSet {
+    public String getName() {
+        return name;
+    }
 
-    @GET
-    @Path("{tableName}/{sysId}")
-    JsonNode retrieveRecordById(
-        @PathParam("tableName") String tableName,
-        @PathParam("sysId") String id
-    ) throws ServiceNowException;
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    @POST
-    @Path("{tableName}")
-    JsonNode createRecord(
-        @PathParam("tableName") String tableName,
-        String body
-    ) throws ServiceNowException;
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

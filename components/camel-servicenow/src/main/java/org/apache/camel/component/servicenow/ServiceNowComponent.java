@@ -47,6 +47,14 @@ public class ServiceNowComponent extends UriEndpointComponent {
 
         setProperties(configuration, parameters);
 
-        return new ServiceNowEndpoint(uri, this, configuration, remaining);
+        String instanceName = getCamelContext().resolvePropertyPlaceholders(remaining);
+        if (!configuration.hasApiUrl()) {
+            configuration.setApiUrl(String.format("https://%s.service-now.com/api", instanceName));
+        }
+        if (!configuration.hasOautTokenUrl()) {
+            configuration.setOauthTokenUrl(String.format("https://%s.service-now.com/oauth_token.do", instanceName));
+        }
+
+        return new ServiceNowEndpoint(uri, this, configuration, instanceName);
     }
 }
