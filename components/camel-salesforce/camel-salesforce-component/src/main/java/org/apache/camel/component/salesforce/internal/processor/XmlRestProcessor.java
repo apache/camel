@@ -138,6 +138,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
             break;
 
         case QUERY:
+        case QUERY_ALL:
         case QUERY_MORE:
             // need to add alias for Salesforce XML that uses SObject name as root element
             exchange.setProperty(RESPONSE_ALIAS, "QueryResult");
