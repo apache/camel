@@ -429,7 +429,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     }
 
     public boolean isAllowSerializedHeaders() {
-    	return allowSerializedHeaders;
+        return allowSerializedHeaders;
     }
     
     /**
