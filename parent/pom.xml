@@ -267,6 +267,7 @@
     <ignite-version-range>[1.5.0-b1,1.6)</ignite-version-range>
     <infinispan-version>8.2.4.Final</infinispan-version>
     <influx-java-driver-version>2.3</influx-java-driver-version>
+    <influx-java-driver-bundle-version>2.3_1</influx-java-driver-bundle-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <ironmq-version>3.0.4</ironmq-version>
@@ -576,6 +577,7 @@
     <squareup-okhttp-bundle-version>2.7.5_1</squareup-okhttp-bundle-version>
     <squareup-okio-version>1.9.0</squareup-okio-version>
     <squareup-okio-bundle-version>1.9.0_1</squareup-okio-bundle-version>
+    <squareup-retrofit-bundle-version>1.9.0_1</squareup-retrofit-bundle-version>
     <sshd-version>0.14.0</sshd-version>
     <stompjms-version>1.19</stompjms-version>
     <swagger-scala-version>1.3.12</swagger-scala-version>
