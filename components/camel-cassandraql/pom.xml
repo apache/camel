@@ -53,7 +53,6 @@
     <dependency>
       <groupId>com.datastax.cassandra</groupId>
       <artifactId>cassandra-driver-core</artifactId>
-      <version>${cassandra-driver-version}</version>
     </dependency>
 
     <!-- logging -->
@@ -82,14 +81,7 @@
     <dependency>
       <groupId>org.cassandraunit</groupId>
       <artifactId>cassandra-unit</artifactId>
-      <version>${cassandra-unit-version}</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>org.apache.cassandra</artifactId>
-          <groupId>cassandra-all</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.cassandra</groupId>

@@ -3076,6 +3076,24 @@
         <version>${project.version}</version>
       </dependency>
 
+      <!-- cassandra -->
+      <dependency>
+        <groupId>com.datastax.cassandra</groupId>
+        <artifactId>cassandra-driver-core</artifactId>
+        <version>${cassandra-driver-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.cassandraunit</groupId>
+        <artifactId>cassandra-unit</artifactId>
+        <version>${cassandra-unit-version}</version>
+        <exclusions>
+          <exclusion>
+            <artifactId>org.apache.cassandra</artifactId>
+            <groupId>cassandra-all</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+            
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-annotations</artifactId>
