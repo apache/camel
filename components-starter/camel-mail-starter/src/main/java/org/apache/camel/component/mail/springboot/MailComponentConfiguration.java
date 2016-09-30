@@ -67,7 +67,6 @@ public class MailComponentConfiguration {
          * {@link org.apache.camel.component.mail.JavaMailSender} for sending
          * emails.
          */
-        @NestedConfigurationProperty
         private JavaMailSender javaMailSender;
         /**
          * The mail server host name
@@ -270,7 +269,6 @@ public class MailComponentConfiguration {
          * To use a custom AttachmentsContentTransferEncodingResolver to resolve
          * what content-type-encoding to use for attachments.
          */
-        @NestedConfigurationProperty
         private AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver;
 
         public JavaMailSender getJavaMailSender() {

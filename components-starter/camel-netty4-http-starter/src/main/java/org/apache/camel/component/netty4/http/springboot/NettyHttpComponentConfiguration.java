@@ -143,13 +143,11 @@ public class NettyHttpComponentConfiguration {
          * By default this is <tt>null</tt>, which means all resources is
          * restricted.
          */
-        @NestedConfigurationProperty
         private SecurityConstraint securityConstraint;
         /**
          * Sets the {@link SecurityAuthenticator} to use for authenticating the
          * {@link HttpPrincipal} .
          */
-        @NestedConfigurationProperty
         private SecurityAuthenticator securityAuthenticator;
         /**
          * Sets a logging level to use for logging denied login attempts (incl

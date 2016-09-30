@@ -82,7 +82,6 @@ public class Mina2ComponentConfiguration {
         /**
          * To use a custom minda codec implementation.
          */
-        @NestedConfigurationProperty
         private ProtocolCodecFactory codec;
         /**
          * You can configure the encoding (a charset name) to use for the TCP

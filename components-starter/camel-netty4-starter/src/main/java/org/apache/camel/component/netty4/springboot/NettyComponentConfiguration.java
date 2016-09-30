@@ -139,14 +139,12 @@ public class NettyComponentConfiguration {
          * A custom ChannelHandler class that can be used to perform special
          * marshalling of outbound payloads.
          */
-        @NestedConfigurationProperty
         @Deprecated
         private ChannelHandler encoder;
         /**
          * A custom ChannelHandler class that can be used to perform special
          * marshalling of inbound payloads.
          */
-        @NestedConfigurationProperty
         @Deprecated
         private ChannelHandler decoder;
         /**
@@ -208,13 +206,11 @@ public class NettyComponentConfiguration {
         /**
          * @deprecated use #setClientInitializerFactory
          */
-        @NestedConfigurationProperty
         @Deprecated
         private ClientInitializerFactory clientPipelineFactory;
         /**
          * To use a custom ClientInitializerFactory
          */
-        @NestedConfigurationProperty
         private ClientInitializerFactory clientInitializerFactory;
         /**
          * Whether to use ordered thread pool, to ensure events are processed
@@ -421,18 +417,15 @@ public class NettyComponentConfiguration {
         /**
          * @deprecated use #setServerInitializerFactory
          */
-        @NestedConfigurationProperty
         @Deprecated
         private ServerInitializerFactory serverPipelineFactory;
         /**
          * To use a custom ServerInitializerFactory
          */
-        @NestedConfigurationProperty
         private ServerInitializerFactory serverInitializerFactory;
         /**
          * To use a custom NettyServerBootstrapFactory
          */
-        @NestedConfigurationProperty
         private NettyServerBootstrapFactory nettyServerBootstrapFactory;
         /**
          * Allows to configure additional netty options using "option." as
@@ -453,19 +446,16 @@ public class NettyComponentConfiguration {
          * Set the BossGroup which could be used for handling the new connection
          * of the server side across the NettyEndpoint
          */
-        @NestedConfigurationProperty
         private EventLoopGroup bossGroup;
         /**
          * To use a explicit EventLoopGroup as the boss thread pool. For example
          * to share a thread pool with multiple consumers. By default each
          * consumer has their own boss pool with 1 core thread.
          */
-        @NestedConfigurationProperty
         private EventLoopGroup workerGroup;
         /**
          * To use a explicit ChannelGroup.
          */
-        @NestedConfigurationProperty
         private ChannelGroup channelGroup;
         /**
          * When using UDP then this option can be used to specify a network
