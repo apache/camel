@@ -361,6 +361,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             if (!Strings.isBlank(option.getDefaultValue())) {
                 if ("java.lang.String".equals(option.getJavaType())) {
                     prop.getField().setStringInitializer(option.getDefaultValue());
+                } else if ("long".equals(option.getJavaType()) || "java.lang.Long".equals(option.getJavaType())) {
+                    // the value should be a Long number
+                    String value = option.getDefaultValue() + "L";
+                    prop.getField().setLiteralInitializer(value);
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
                     prop.getField().setLiteralInitializer(option.getDefaultValue());
                 } else if (!Strings.isBlank(option.getEnumValues())) {
