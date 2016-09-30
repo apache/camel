@@ -38,7 +38,7 @@ public class VmComponentConfiguration {
     /**
      * Sets the default number of concurrent threads processing exchanges.
      */
-    private Integer concurrentConsumers;
+    private Integer concurrentConsumers = 1;
     /**
      * Sets the default queue factory.
      */
