@@ -243,10 +243,12 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private boolean shouldDelete(Exchange exchange) {
+        boolean shouldDeleteByFilter = exchange.getProperty(Exchange.FILTER_MATCHED) != null
+                && getConfiguration().isDeleteIfFiltered()
+                && passedThroughFilter(exchange);
+
         return getConfiguration().isDeleteAfterRead()
-                && (getConfiguration().isDeleteIfFiltered()
-                    || (!getConfiguration().isDeleteIfFiltered()
-                        && passedThroughFilter(exchange)));
+                || shouldDeleteByFilter;
     }
 
     private boolean passedThroughFilter(Exchange exchange) {
