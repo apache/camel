@@ -127,7 +127,6 @@ public class NettyComponentConfiguration {
          * marshalling of outbound payloads. Must override
          * org.jboss.netty.channel.ChannelDownStreamHandler.
          */
-        @NestedConfigurationProperty
         @Deprecated
         private ChannelHandler encoder;
         /**
@@ -135,7 +134,6 @@ public class NettyComponentConfiguration {
          * marshalling of inbound payloads. Must override
          * org.jboss.netty.channel.ChannelUpStreamHandler.
          */
-        @NestedConfigurationProperty
         @Deprecated
         private ChannelHandler decoder;
         /**
@@ -190,7 +188,6 @@ public class NettyComponentConfiguration {
         /**
          * To use a custom ClientPipelineFactory
          */
-        @NestedConfigurationProperty
         private ClientPipelineFactory clientPipelineFactory;
         private Integer maximumPoolSize;
         /**
@@ -391,12 +388,10 @@ public class NettyComponentConfiguration {
         /**
          * To use a custom ServerPipelineFactory
          */
-        @NestedConfigurationProperty
         private ServerPipelineFactory serverPipelineFactory;
         /**
          * To use a custom NettyServerBootstrapFactory
          */
-        @NestedConfigurationProperty
         private NettyServerBootstrapFactory nettyServerBootstrapFactory;
         /**
          * Allows to configure additional netty options using "option." as
@@ -411,7 +406,6 @@ public class NettyComponentConfiguration {
          * consumers. By default each consumer has their own boss pool with 1
          * core thread.
          */
-        @NestedConfigurationProperty
         private BossPool bossPool;
         /**
          * To use a explicit org.jboss.netty.channel.socket.nio.WorkerPool as
@@ -419,12 +413,10 @@ public class NettyComponentConfiguration {
          * multiple consumers. By default each consumer has their own worker
          * pool with 2 x cpu count core threads.
          */
-        @NestedConfigurationProperty
         private WorkerPool workerPool;
         /**
          * To use a explicit ChannelGroup.
          */
-        @NestedConfigurationProperty
         private ChannelGroup channelGroup;
         /**
          * When using UDP then this option can be used to specify a network

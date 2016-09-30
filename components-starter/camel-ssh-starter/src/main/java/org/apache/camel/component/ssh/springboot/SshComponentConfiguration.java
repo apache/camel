@@ -231,7 +231,6 @@ public class SshComponentConfiguration {
          *            username/password settings.
          * @see KeyPairProvider
          */
-        @NestedConfigurationProperty
         private KeyPairProvider keyPairProvider;
         /**
          * Sets the key type to pass to the KeyPairProvider as part of

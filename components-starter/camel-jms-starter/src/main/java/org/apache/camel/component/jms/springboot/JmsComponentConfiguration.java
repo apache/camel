@@ -1254,7 +1254,6 @@ public class JmsComponentConfiguration {
          * and errorHandlerLogStackTrace options. This makes it much easier to
          * configure, than having to code a custom errorHandler.
          */
-        @NestedConfigurationProperty
         private ErrorHandler errorHandler;
         /**
          * Allows to configure the default errorHandler logging level for
@@ -1281,7 +1280,6 @@ public class JmsComponentConfiguration {
         /**
          * Allows you to specify a custom task executor for consuming messages.
          */
-        @NestedConfigurationProperty
         private TaskExecutor taskExecutor;
         /**
          * Specifies whether to inhibit the delivery of messages published by
@@ -1338,7 +1336,6 @@ public class JmsComponentConfiguration {
         /**
          * The Spring transaction manager to use.
          */
-        @NestedConfigurationProperty
         private PlatformTransactionManager transactionManager;
         /**
          * The name of the transaction to use.
@@ -1419,7 +1416,6 @@ public class JmsComponentConfiguration {
          * org.springframework.jms.support.converter.MessageConverter so you can
          * be in control how to map to/from a javax.jms.Message.
          */
-        @NestedConfigurationProperty
         private MessageConverter messageConverter;
         /**
          * Specifies whether Camel should auto map the received JMS message to a
@@ -1502,7 +1498,6 @@ public class JmsComponentConfiguration {
          * JmsTemplate as default. Can be used for testing purpose, but not used
          * much as stated in the spring API docs.
          */
-        @NestedConfigurationProperty
         private JmsOperations jmsOperations;
         /**
          * A pluggable
@@ -1510,7 +1505,6 @@ public class JmsComponentConfiguration {
          * allows you to use your own resolver (for example, to lookup the real
          * destination in a JNDI registry).
          */
-        @NestedConfigurationProperty
         private DestinationResolver destinationResolver;
         /**
          * Allows the provider metadata to be explicitly configured. Typically
@@ -1524,7 +1518,6 @@ public class JmsComponentConfiguration {
          * {@link JmsProviderMetadata} details which if none is customized one
          * is lazily created on demand
          */
-        @NestedConfigurationProperty
         private JmsOperations metadataJmsOperations;
         /**
          * If true, Camel will always make a JMS message copy of the message
@@ -1600,7 +1593,6 @@ public class JmsComponentConfiguration {
          * org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it
          * using the # notation.
          */
-        @NestedConfigurationProperty
         private JmsKeyFormatStrategy jmsKeyFormatStrategy;
         /**
          * You can transfer the exchange over the wire instead of just the body
@@ -1734,7 +1726,6 @@ public class JmsComponentConfiguration {
          * use to consume messages. Setting this will automatically set
          * consumerType to Custom.
          */
-        @NestedConfigurationProperty
         private MessageListenerContainerFactory messageListenerContainerFactory;
         /**
          * Only applicable when sending to JMS destination using InOnly (eg fire
@@ -1768,7 +1759,6 @@ public class JmsComponentConfiguration {
          * creates new instances of <tt>javax.jms.Message</tt> objects when
          * Camel is sending a JMS message.
          */
-        @NestedConfigurationProperty
         private MessageCreatedStrategy messageCreatedStrategy;
         /**
          * Sets the JMS selector to use

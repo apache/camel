@@ -74,7 +74,6 @@ public class LuceneComponentConfiguration {
          * org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of
          * analyzers out of the box
          */
-        @NestedConfigurationProperty
         private Analyzer analyzer;
         /**
          * An integer value that limits the result set of the search operation

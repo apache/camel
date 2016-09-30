@@ -52,7 +52,6 @@ public class DigitalSignatureComponentConfiguration {
 
     public static class DigitalSignatureConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.crypto.DigitalSignatureConfiguration.class;
-        @NestedConfigurationProperty
         private CamelContext camelContext;
         /**
          * The logical name of this operation.

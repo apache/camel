@@ -21,7 +21,6 @@ import org.apache.camel.component.linkedin.api.OAuthScope;
 import org.apache.camel.component.linkedin.api.OAuthSecureStorage;
 import org.apache.camel.component.linkedin.internal.LinkedInApiName;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The linkedin component is uses for retrieving LinkedIn user profiles
@@ -71,7 +70,6 @@ public class LinkedInComponentConfiguration {
          * callback. If the callback returns null the first time, a userPassword
          * MUST be provided
          */
-        @NestedConfigurationProperty
         private OAuthSecureStorage secureStorage;
         /**
          * LinkedIn application client ID
