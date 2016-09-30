@@ -117,6 +117,11 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.java-apns/${java-apns-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-apns/${project.version}</bundle>
   </feature>
+  <feature name='camel-asterisk' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asterisk-java/${asterisk-java-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-asterisk/${project.version}</bundle>
+  </feature>
   <feature name='camel-atmosphere-websocket' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-servlet</feature>
     <bundle dependency='true'>mvn:org.atmosphere/atmosphere-runtime/${atmosphere-version}</bundle>
