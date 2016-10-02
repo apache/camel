@@ -24,10 +24,10 @@ import org.ops4j.pax.exam.junit.PaxExam;
 @RunWith(PaxExam.class)
 public class CamelLumberjackTest extends BaseKarafTest {
 
+    public static final String COMPONENT = extractName(CamelLumberjackTest.class);
+
     public CamelLumberjackTest() {
     }
-
-    public static final String COMPONENT = extractName(CamelLumberjackTest.class);
 
     @Test
     public void test() throws Exception {
