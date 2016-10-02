@@ -48,6 +48,16 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <failIfNoTests>false</failIfNoTests>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <!-- WARNING: do not edit the modules section, it is update automatically by the camel-package plugin -->
   <modules>
     <module>camel-ahc-starter</module>
