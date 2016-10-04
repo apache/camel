@@ -13,7 +13,7 @@ Components
 `ahc-ws:httpUri` | To exchange data with external Websocket servers using Async Http Client.
 
 | link:camel-amqp/src/main/docs/amqp-component.adoc[AMQP] (camel-amqp) +
-`amqp:destinationType:destinationName` | Messaging with AMQP protocol using Apache QPid Client.
+`amqp:destinationType:destinationName` | Messaging with AMQP protocol using Apache Qpid Client.
 
 | link:camel-flink/src/main/docs/flink-component.adoc[Apache Flink] (camel-flink) +
 `flink:endpointType` | The flink component can be used to send DataSet jobs to Apache Flink cluster.
