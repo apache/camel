@@ -20,8 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 
-import java.util.Date;
-
 /**
  * The Azure consumer.
  */
@@ -37,9 +35,7 @@ public class StorageQueueConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         Exchange exchange = endpoint.createExchange();
 
-        // create a message body
-        Date now = new Date();
-        exchange.getIn().setBody("Hello World! The time is " + now);
+
 
         try {
             // send message to next processor in the route

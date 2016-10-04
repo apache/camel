@@ -16,30 +16,26 @@
  */
 package org.apache.camel.component.azure.storage;
 
+import com.microsoft.azure.storage.CloudStorageAccount;
+import com.microsoft.azure.storage.queue.CloudQueueClient;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 
 /**
- * Represents a Azure endpoint.
+ * Represents an Azure Storage Queue endpoint.
  */
-@UriEndpoint(scheme = "azure", title = "Azure", syntax = "azure:name", consumerClass = StorageQueueConsumer.class, label = "Azure")
+@UriEndpoint(scheme = "azure-storage-queue", title = "Azure", syntax = "azure-storage-queue:resource", consumerClass = StorageQueueConsumer.class, label = "azure,storage,queue")
 public class StorageQueueEndpoint extends DefaultEndpoint {
-    @UriPath @Metadata(required = "true")
-    private String name;
-    @UriParam(defaultValue = "10")
-    private int option = 10;
+    @UriParam
+    private StorageConfiguration configuration;
 
-    public StorageQueueEndpoint() {
-    }
-
-    public StorageQueueEndpoint(String uri, StorageQueueComponent component) {
+    public StorageQueueEndpoint(String uri, StorageQueueComponent component, StorageConfiguration configuration) {
         super(uri, component);
+        this.configuration = configuration;
     }
 
     public Producer createProducer() throws Exception {
@@ -54,25 +50,25 @@ public class StorageQueueEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    /**
-     * Some description of this option, and what it does
-     */
-    public void setName(String name) {
-        this.name = name;
+    public StorageConfiguration getConfiguration() {
+        return configuration;
     }
 
-    public String getName() {
-        return name;
-    }
+    @Override
+    public void doStart() throws Exception {
+        CloudStorageAccount account = configuration.getStorageAccount();
+        CloudQueueClient client = configuration.getQueueClient();
 
-    /**
-     * Some description of this option, and what it does
-     */
-    public void setOption(int option) {
-        this.option = option;
-    }
+        super.doStart();
 
-    public int getOption() {
-        return option;
+        if (account == null) {
+            account = CloudStorageAccount.parse(configuration.getConnectionString());
+            configuration.setStorageAccount(account);
+        }
+
+        if (client == null) {
+            client = account.createCloudQueueClient();
+            configuration.setQueueClient(client);
+        }
     }
 }

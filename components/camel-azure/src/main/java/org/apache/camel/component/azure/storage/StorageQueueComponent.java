@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.azure.storage;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
-
-import java.util.Map;
 
 /**
  * Represents the component that manages {@link StorageQueueEndpoint}.
@@ -36,8 +36,12 @@ public class StorageQueueComponent extends UriEndpointComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new StorageQueueEndpoint(uri, this);
-        setProperties(endpoint, parameters);
+        StorageConfiguration configuration = new StorageConfiguration();
+        setProperties(configuration, parameters);
+
+        configuration.setResource(remaining);
+
+        StorageQueueEndpoint endpoint = new StorageQueueEndpoint(uri, this, configuration);
         return endpoint;
     }
 }

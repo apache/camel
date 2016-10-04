@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.azure.storage;
 
+import com.microsoft.azure.storage.queue.CloudQueue;
+import com.microsoft.azure.storage.queue.CloudQueueClient;
+import com.microsoft.azure.storage.queue.CloudQueueMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
@@ -34,7 +37,12 @@ public class StorageQueueProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        System.out.println(exchange.getIn().getBody());    
-    }
+        String message = exchange.getIn().getBody(String.class);
 
+        CloudQueueClient client = this.endpoint.getConfiguration().getQueueClient();
+        CloudQueue queue = client.getQueueReference(this.endpoint.getConfiguration().getResource());
+
+        queue.createIfNotExists();
+        queue.addMessage(new CloudQueueMessage(message));
+    }
 }
