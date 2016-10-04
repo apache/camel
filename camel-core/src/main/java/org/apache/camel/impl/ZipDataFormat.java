@@ -62,7 +62,7 @@ public class ZipDataFormat extends org.apache.camel.support.ServiceSupport imple
         final InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
 
         final Deflater deflater = new Deflater(compressionLevel);
-        final DeflaterOutputStream zipOutput = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
+        final DeflaterOutputStream zipOutput = new DeflaterOutputStream(stream, deflater);
         try {
             IOHelper.copy(is, zipOutput);
         } finally {
