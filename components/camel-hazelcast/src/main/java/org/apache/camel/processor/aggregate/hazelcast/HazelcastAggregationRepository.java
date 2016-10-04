@@ -288,6 +288,15 @@ public class HazelcastAggregationRepository extends ServiceSupport
     public Exchange get(CamelContext camelContext, String key) {
         return unmarshallExchange(camelContext, cache.get(key));
     }
+    
+    /**
+     * Checks if the key in question is in the repository.
+     * 
+     * @param key Object - key in question
+     */
+    public boolean containsKey(Object key){
+        return cache.containsKey(key);
+    }
 
     /**
      * This method performs transactional operation on removing the {@code exchange}
