@@ -114,6 +114,27 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testByteArrayToCxfPayload() {
+        // convert to byte array
+        exchange.getIn().setBody(inputStream);
+        byte[] bytes = exchange.getIn().getBody(byte[].class);
+        assertNotNull(bytes);
+        exchange.getIn().setBody(bytes);
+        // use default type converter
+        CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
+        assertTrue(payload instanceof CxfPayload);
+        assertEquals("Get a wrong size of body", 1, payload.getBodySources().size());
+        assertEquals("Get a wrong size of body", 1, payload.getBody().size());
+    }
+
+    @Test
+    public void testInvalidByteArrayToCxfPayload() {
+        exchange.getIn().setBody("NON-XML-Payload".getBytes());
+        CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
+        assertNull(payload);
+    }
+
+    @Test
     public void testFromCxfPayload() {
         exchange.getIn().setBody(payload);
         InputStream inputStream = exchange.getIn().getBody(InputStream.class);
