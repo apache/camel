@@ -27,7 +27,7 @@
   <artifactId>camel-amqp</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: AMQP</name>
-  <description>Camel AMQP component which is based on the Apache Qid project</description>
+  <description>Camel AMQP component which is based on the Apache Qpid project</description>
 
   <properties>
     <!-- Wrapped qpid-jms-client requires invalid version of the package.
@@ -56,11 +56,6 @@
       <groupId>org.apache.qpid</groupId>
       <artifactId>qpid-jms-client</artifactId>
       <version>${qpid-jms-client-version}</version>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.qpid</groupId>
-        <artifactId>qpid-client</artifactId>
-        <version>${qpid-version}</version>
     </dependency>
 
     <!-- testing -->
