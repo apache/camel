@@ -52,7 +52,6 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient-osgi</artifactId>
-      <version>${httpclient4-version}</version>
     </dependency>
     <dependency>
       <groupId>org.jsoup</groupId>

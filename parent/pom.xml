@@ -3747,7 +3747,7 @@
         <version>${slf4j-version}</version>
       </dependency>
 
-      <!-- optional jakarta http core support -->
+      <!-- httpcomponents httpcore dependencies -->
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore</artifactId>
@@ -3758,6 +3758,36 @@
         <artifactId>httpcore-nio</artifactId>
         <version>${httpcore4-version}</version>
       </dependency>
+
+      <!-- httpcomponents httpclient dependencies -->
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${httpclient4-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient-cache</artifactId>
+        <version>${httpclient4-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient-osgi</artifactId>
+        <version>${httpclient4-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpmime</artifactId>
+        <version>${httpclient4-version}</version>
+      </dependency>
+
+      <!-- httpcomponents httpasyncclient dependencies -->
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpasyncclient</artifactId>
+        <version>${httpasyncclient-version}</version>
+      </dependency>
+
 
       <!-- optional scripting support -->
       <dependency>
