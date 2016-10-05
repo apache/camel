@@ -17,85 +17,26 @@
 package org.apache.camel.component.chronicle.engine;
 
 import net.openhft.chronicle.wire.WireType;
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
-public class ChronicleEngineConfiguration implements CamelContextAware {
+public class ChronicleEngineConfiguration {
 
     @UriParam(defaultValue = "BINARY", javaType = "java.lang.String")
     private WireType wireType = WireType.BINARY;
-
     @UriParam(defaultValue = "true")
     private boolean subscribeMapEvents = true;
-
     @UriParam(javaType = "java.lang.String")
     private String[] filteredMapEvents;
-
     @UriParam
     private boolean subscribeTopologicalEvents;
-
     @UriParam
     private boolean subscribeTopicEvents;
-
-    @UriParam
+    @UriParam(enums = "PUBLISH,PUBLISH_AND_INDEX,PPUT,PGET_AND_PUT,PPUT_ALL,PPUT_IF_ABSENT,PGET,PGET_AND_REMOVE,PREMOVE,PIS_EMPTY,PSIZE")
     private String action;
-
     @UriParam(defaultValue = "true")
     private boolean persistent = true;
-
-    private CamelContext camelContext;
-    private String[] addresses;
-    private String path;
-
-    // ****************************
-    //
-    // ****************************
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
-    public String[] getAddresses() {
-        return addresses;
-    }
-
-    /**
-     * Description
-     */
-    public void setAddresses(String addresses) {
-        setAddresses(addresses.split(","));
-    }
-
-    /**
-     * Description
-     */
-    public void setAddresses(String[] addresses) {
-        this.addresses = addresses;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    /**
-     * Description
-     */
-    public void setPath(String path) {
-        this.path = path;
-
-        if (!this.path.startsWith("/")) {
-            this.path = "/" + this.path;
-        }
-    }
 
     // ****************************
     // CLIENT OPTIONS
