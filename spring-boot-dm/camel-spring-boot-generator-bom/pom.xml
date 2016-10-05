@@ -209,9 +209,15 @@
                             <exclude>de.flapdoodle*:*</exclude>
                             <exclude>org.apache.activemq:*</exclude>
                             <exclude>org.apache.commons:commons-pool2</exclude>
+                            <exclude>org.apache.httpcomponents:httpasyncclient</exclude>
+                            <exclude>org.apache.httpcomponents:httpclient</exclude>
+                            <exclude>org.apache.httpcomponents:httpclient-cache</exclude>
+                            <exclude>org.apache.httpcomponents:httpclient-osgi</exclude>
                             <exclude>org.apache.httpcomponents:httpcore</exclude>
+                            <exclude>org.apache.httpcomponents:httpmime</exclude>
                             <exclude>org.apache.derby:derby</exclude>
                             <exclude>org.apache.logging.log4j:*</exclude>
+                            <exclude>org.cassandraunit:*</exclude>
                             <exclude>org.codehaus.groovy:*</exclude>
                             <exclude>org.hibernate:hibernate-entitymanager</exclude>
                             <exclude>org.hsqldb:*</exclude>
