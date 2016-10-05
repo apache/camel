@@ -44,6 +44,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -57,6 +58,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
@@ -93,6 +95,8 @@ public abstract class CamelTestSupport extends TestSupport {
     private final StopWatch watch = new StopWatch();
     private final Map<String, String> fromEndpoints = new HashMap<String, String>();
     private CamelTestWatcher camelTestWatcher = new CamelTestWatcher();
+
+    private static final String ROUTE_COVERAGE_LOG_ENTRY = "Route coverage ({} out of {} routes used)";
 
     /**
      * Use the RouteBuilder or not
@@ -384,6 +388,15 @@ public abstract class CamelTestSupport extends TestSupport {
             if (managedCamelContext == null) {
                 log.warn("Cannot dump route coverage to file as JMX is not enabled. Override useJmx() method to enable JMX in the unit test classes.");
             } else {
+                int routes = managedCamelContext.getTotalRoutes();
+                int covered = countCoveredRoutes(context);
+
+                if (routes != covered) {
+                    log.warn(ROUTE_COVERAGE_LOG_ENTRY, covered, routes);
+                } else {
+                    log.info(ROUTE_COVERAGE_LOG_ENTRY, covered, routes);
+                }
+
                 String xml = managedCamelContext.dumpRoutesCoverageAsXml();
                 String combined = "<camelRouteCoverage>\n" + gatherTestDetailsAsXml() + xml + "\n</camelRouteCoverage>";
 
@@ -409,6 +422,19 @@ public abstract class CamelTestSupport extends TestSupport {
         LOG.debug("tearDown test");
         doStopTemplates(consumer, template, fluentTemplate);
         doStopCamelContext(context, camelContextService);
+    }
+
+    private int countCoveredRoutes(ModelCamelContext context) throws Exception {
+        int covered = 0;
+
+        for (RouteDefinition routeDefinition : context.getRouteDefinitions()) {
+            ManagedRouteMBean route = context.getManagedRoute(routeDefinition.getId(), ManagedRouteMBean.class);
+            if (route.getExchangesTotal() > 0) {
+                covered++;
+            }
+        }
+
+        return covered;
     }
 
     @AfterClass
