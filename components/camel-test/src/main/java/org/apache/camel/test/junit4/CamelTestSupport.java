@@ -79,6 +79,7 @@ import org.slf4j.LoggerFactory;
 public abstract class CamelTestSupport extends TestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
     private static final ThreadLocal<Boolean> INIT = new ThreadLocal<Boolean>();
+    private static final String ROUTE_COVERAGE_LOG_ENTRY = "Route coverage ({} out of {} routes used)";
     private static ThreadLocal<ModelCamelContext> threadCamelContext = new ThreadLocal<ModelCamelContext>();
     private static ThreadLocal<ProducerTemplate> threadTemplate = new ThreadLocal<ProducerTemplate>();
     private static ThreadLocal<FluentProducerTemplate> threadFluentTemplate = new ThreadLocal<FluentProducerTemplate>();
@@ -95,8 +96,6 @@ public abstract class CamelTestSupport extends TestSupport {
     private final StopWatch watch = new StopWatch();
     private final Map<String, String> fromEndpoints = new HashMap<String, String>();
     private CamelTestWatcher camelTestWatcher = new CamelTestWatcher();
-
-    private static final String ROUTE_COVERAGE_LOG_ENTRY = "Route coverage ({} out of {} routes used)";
 
     /**
      * Use the RouteBuilder or not
