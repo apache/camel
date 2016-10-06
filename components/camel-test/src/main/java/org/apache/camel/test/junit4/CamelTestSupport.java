@@ -97,6 +97,8 @@ public abstract class CamelTestSupport extends TestSupport {
     private final Map<String, String> fromEndpoints = new HashMap<String, String>();
     private CamelTestWatcher camelTestWatcher = new CamelTestWatcher();
 
+    private static final String ROUTE_COVERAGE_LOG_ENTRY = "Route coverage ({} out of {} routes used)";
+
     /**
      * Use the RouteBuilder or not
      * @return <tt>true</tt> then {@link CamelContext} will be auto started,
