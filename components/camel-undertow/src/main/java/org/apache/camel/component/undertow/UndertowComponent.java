@@ -274,12 +274,6 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         }
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        serversRegistry.clear();
-    }
-
     public void registerConsumer(UndertowConsumer consumer) {
         int port = consumer.getEndpoint().getHttpURI().getPort();
         if (serversRegistry.containsKey(port)) {
