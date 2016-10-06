@@ -144,7 +144,7 @@ class MyBean extends RouteBuilder {
 ----
 
 CAUTION: `MetricRegistry` uses internal thread(s) for reporting. There is no
-public API in version `3.0.1` for users to clean up on exit. Thus using
+public API in version DropWizard `3.0.1` for users to clean up on exit. Thus using
 Camel Metrics Component leads to Java classloader leak and my cause
 `OutOfMemoryErrors` in some cases.
 
