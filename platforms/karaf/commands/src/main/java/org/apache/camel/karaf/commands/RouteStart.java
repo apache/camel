@@ -17,14 +17,16 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.RouteStartCommand;
-import org.apache.felix.gogo.commands.Command;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "camel", name = "route-start", description = "Start a Camel route")
+@Service
 public class RouteStart extends AbstractRouteCommand {
 
     @Override
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         RouteStartCommand command = new RouteStartCommand(route, context);
-        return command.execute(camelController, System.out, System.err);
+        return command.execute(this, System.out, System.err);
     }
 }
