@@ -13,7 +13,7 @@ Components
 `ahc-ws:httpUri` | To exchange data with external Websocket servers using Async Http Client.
 
 | link:camel-amqp/src/main/docs/amqp-component.adoc[AMQP] (camel-amqp) +
-`amqp:destinationType:destinationName` | Messaging with AMQP protocol using Apache Qpid Client.
+`amqp:destinationType:destinationName` | Messaging with AMQP protocol using Apache QPid Client.
 
 | link:camel-flink/src/main/docs/flink-component.adoc[Apache Flink] (camel-flink) +
 `flink:endpointType` | The flink component can be used to send DataSet jobs to Apache Flink cluster.
@@ -109,7 +109,7 @@ Components
 `cometd:host:port/channelName` | The cometd component is a transport for working with the Jetty implementation of the cometd/bayeux protocol.
 
 | link:camel-consul/src/main/docs/consul-component.adoc[Consul] (camel-consul) +
-`consul://apiEndpoint` | Camel Consul support
+`consul:apiEndpoint` | Camel Consul support
 
 | link:camel-couchdb/src/main/docs/couchdb-component.adoc[CouchDB] (camel-couchdb) +
 `couchdb:protocol:hostname:port/database` | The couchdb component is used for integrate with CouchDB databases.
@@ -499,7 +499,7 @@ Components
 `stomp:destination` | The stomp component is used for communicating with Stomp compliant message brokers.
 
 | link:camel-stream/src/main/docs/stream-component.adoc[Stream] (camel-stream) +
-`stream:url` | The stream: component provides access to the system-in system-out and system-err streams as well as allowing streaming of file and URL.
+`stream:kind` | The stream: component provides access to the system-in system-out and system-err streams as well as allowing streaming of file and URL.
 
 | link:camel-stringtemplate/src/main/docs/string-template-component.adoc[String Template] (camel-stringtemplate) +
 `string-template:resourceUri` | Transforms the message using a String template.
