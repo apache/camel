@@ -49,7 +49,7 @@
     <!-- karaf -->
     <dependency>
       <groupId>org.apache.karaf.shell</groupId>
-      <artifactId>org.apache.karaf.shell.console</artifactId>
+      <artifactId>org.apache.karaf.shell.core</artifactId>
       <version>${karaf4-version}</version>
     </dependency>
     <dependency>
@@ -78,16 +78,15 @@
           <instructions>
             <Import-Package>
               !org.apache.felix.utils.properties,
-              org.apache.felix.service.command;version="[0.16,1)",
-              org.apache.felix.gogo.commands;version="[0.16,1)",
-              org.apache.karaf.shell.console;version="[3,5)",
+              org.apache.karaf.shell.api.action;version="[4,5)",
+              org.apache.karaf.shell.support.completers;version="[4,5)",
               org.slf4j.*;version="[1.6,2)",
-              jline.*;version="[2.1,4)",
               *
             </Import-Package>
             <Private-Package>
               org.apache.camel.karaf.commands.internal
             </Private-Package>
+            <Karaf-Commands>*</Karaf-Commands>
           </instructions>
         </configuration>
       </plugin>

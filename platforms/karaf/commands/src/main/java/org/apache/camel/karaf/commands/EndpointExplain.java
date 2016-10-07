@@ -17,14 +17,21 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.EndpointExplainCommand;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
-import org.apache.felix.gogo.commands.Option;
+import org.apache.camel.karaf.commands.completers.CamelContextCompleter;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "camel", name = "endpoint-explain", description = "Explain all Camel endpoints available in the CamelContext")
-public class EndpointExplain extends CamelCommandSupport {
+@Service
+public class EndpointExplain extends CamelControllerImpl implements Action {
 
     @Argument(index = 0, name = "name", description = "The name of the Camel context", required = true, multiValued = false)
+    @Completion(CamelContextCompleter.class)
     String name;
 
     @Option(name = "--verbose", aliases = "-v", description = "Verbose output to explain all options",
@@ -35,9 +42,9 @@ public class EndpointExplain extends CamelCommandSupport {
             required = false, multiValued = false)
     String filter;
 
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         EndpointExplainCommand command = new EndpointExplainCommand(name, verbose, filter);
-        return command.execute(camelController, System.out, System.err);
+        return command.execute(this, System.out, System.err);
     }
 
 }
