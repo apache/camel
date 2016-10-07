@@ -17,18 +17,25 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.RestApiDocCommand;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
+import org.apache.camel.karaf.commands.completers.CamelContextCompleter;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "camel", name = "rest-api-doc", description = "List the Camel REST services API documentation (requires camel-swagger-java on classpath)")
-public class RestApiDoc extends CamelCommandSupport {
+@Service
+public class RestApiDoc extends CamelControllerImpl implements Action {
 
     @Argument(index = 0, name = "name", description = "The Camel context name where to look for the REST services", required = true, multiValued = false)
+    @Completion(CamelContextCompleter.class)
     String name;
 
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         RestApiDocCommand command = new RestApiDocCommand(name);
-        return command.execute(camelController, System.out, System.err);
+        return command.execute(this, System.out, System.err);
     }
 
 }

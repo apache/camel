@@ -16,7 +16,16 @@
  */
 package org.apache.camel.karaf.commands.internal;
 
-public class StringEscape implements org.apache.camel.commands.StringEscape {
+public final class StringEscape implements org.apache.camel.commands.StringEscape {
+
+    private static StringEscape instance = new StringEscape();
+
+    private StringEscape() {
+    }
+
+    public static StringEscape getInstance() {
+        return instance;
+    }
 
     @Override
     public String unescapeJava(String str) {

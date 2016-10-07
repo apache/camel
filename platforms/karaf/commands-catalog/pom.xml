@@ -45,13 +45,13 @@
     <!-- karaf -->
     <dependency>
       <groupId>org.apache.karaf.shell</groupId>
-      <artifactId>org.apache.karaf.shell.console</artifactId>
-      <version>${karaf-version}</version>
+      <artifactId>org.apache.karaf.shell.core</artifactId>
+      <version>${karaf4-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.karaf</groupId>
       <artifactId>org.apache.karaf.util</artifactId>
-      <version>${karaf-version}</version>
+      <version>${karaf4-version}</version>
     </dependency>
     
     <!-- Test -->
@@ -72,13 +72,12 @@
         <configuration>
           <instructions>
             <Import-Package>
-              org.apache.felix.service.command;mandatory:=status;status=provisional;version="[0.6,1)",
-              org.apache.felix.gogo.commands;version="[0.6,1)",
-              org.apache.karaf.shell.console;version="[2.2,4)",
+              org.apache.karaf.shell.api.action;version="[4,5)",
+              org.apache.karaf.shell.support.completers;version="[4,5)",
               org.slf4j.*;version="[1.6,2)",
-              jline.*;version="[2.1,4)",
               *
             </Import-Package>
+            <Karaf-Commands>*</Karaf-Commands>
           </instructions>
         </configuration>
       </plugin>
