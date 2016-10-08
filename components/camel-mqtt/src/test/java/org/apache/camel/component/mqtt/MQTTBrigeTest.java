@@ -40,8 +40,6 @@ public class MQTTBrigeTest extends MQTTBaseTest {
     @Produce(uri = "direct:startWorkaround")
     protected ProducerTemplate workaroundTemplate;
 
-    
-
     @Test
     public void testMqttBridge() throws Exception {
         String expectedBody = "Dummy!";
@@ -69,10 +67,10 @@ public class MQTTBrigeTest extends MQTTBaseTest {
         return new RouteBuilder() {
             public void configure() {
                 // Bridge message over two MQTT topics
-                from("direct:start").to("mqtt:foo?publishTopicName=test/topic1&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
+                from("direct:start").to("mqtt:foo?publishTopicName=test/topic1&lazySessionCreation=false&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
 
                 from("mqtt:foo?subscribeTopicName=test/topic1&host=" + MQTTTestSupport.getHostForMQTTEndpoint()).to("log:testlogger?showAll=true")
-                    .to("mqtt:foo?publishTopicName=test/resulttopic&host=" + MQTTTestSupport.getHostForMQTTEndpoint())
+                    .to("mqtt:foo?publishTopicName=test/resulttopic&lazySessionCreation=false&host=" + MQTTTestSupport.getHostForMQTTEndpoint())
                     .log(LoggingLevel.ERROR, "Message processed");
 
                 // Bridge message over two MQTT topics with a seda in between
