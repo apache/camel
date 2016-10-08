@@ -333,13 +333,6 @@
           <version>${project.version}</version>
           <scope>provided</scope>
         </dependency>
-        <!-- enable Spring Boot configuration APT processor -->
-        <dependency>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-configuration-processor</artifactId>
-          <version>${spring-boot-version}</version>
-          <scope>provided</scope>
-        </dependency>
       </dependencies>
     </profile>
   </profiles>
