@@ -78,6 +78,9 @@ trait DSL {
   def process(processor: Processor) : DSL
 
   def recipients(expression: Exchange => Any) : DSL
+  def removeHeader(name: String): DSL
+  def removeHeaders(pattern: String): DSL
+  def removeHeaders(pattern: String, excludePatterns: String*): DSL
   def resequence(expression: Exchange => Any) : SResequenceDefinition
   def rollback : DSL
   def routeId(id: String) : DSL
