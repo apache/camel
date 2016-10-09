@@ -45,6 +45,8 @@ case class SAggregateDefinition(override val target: AggregateDefinition)(implic
 
   def completionSize(count: Int) = wrap(target.completionSize(count))
   def completionTimeout(period: Period) = wrap(target.setCompletionTimeout(period.milliseconds))
+  def completionInterval(period: Period) =
+    wrap(target.setCompletionInterval(period.milliseconds))
 
   def closeCorrelationKeyOnCompletion(count: Int) = wrap(target.setCloseCorrelationKeyOnCompletion(count))
   def parallelProcessing = wrap(target.parallelProcessing)
