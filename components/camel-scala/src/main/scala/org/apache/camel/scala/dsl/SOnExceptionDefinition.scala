@@ -81,7 +81,4 @@ case class SOnExceptionDefinition[E <: Throwable](override val target: OnExcepti
   def retryWhile(retryWhile: Exchange => Any) = wrap(target.retryWhile(predicateBuilder(retryWhile)))
 
   def useOriginalMessage = wrap(target.useOriginalMessage)
-
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SOnExceptionDefinition[E]]
-  
 }

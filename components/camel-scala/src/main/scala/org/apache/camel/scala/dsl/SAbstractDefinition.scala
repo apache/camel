@@ -44,7 +44,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   /**
    * Helper method to return this Scala type instead of creating another wrapper type for the processor
    */
-  def wrap(block: => Unit): SAbstractDefinition[_] = {
+  def wrap(block: => Unit): this.type = {
     block
     this
   }
