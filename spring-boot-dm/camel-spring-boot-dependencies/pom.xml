@@ -81,7 +81,7 @@
       <dependency>
         <groupId>com.lmax</groupId>
         <artifactId>disruptor</artifactId>
-        <version>3.3.5</version>
+        <version>3.3.6</version>
       </dependency>
       <dependency>
         <groupId>com.sna-projects.krati</groupId>
@@ -2736,17 +2736,6 @@
         <groupId>org.apache.zookeeper</groupId>
         <artifactId>zookeeper</artifactId>
         <version>3.4.9</version>
-      </dependency>
-      <dependency>
-        <groupId>org.cassandraunit</groupId>
-        <artifactId>cassandra-unit</artifactId>
-        <version>3.0.0.1</version>
-        <exclusions>
-          <exclusion>
-            <groupId>cassandra-all</groupId>
-            <artifactId>org.apache.cassandra</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.ccil.cowan.tagsoup</groupId>
