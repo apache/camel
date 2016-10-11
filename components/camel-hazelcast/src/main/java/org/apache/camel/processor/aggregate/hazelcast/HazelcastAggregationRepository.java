@@ -290,6 +290,18 @@ public class HazelcastAggregationRepository extends ServiceSupport
         return unmarshallExchange(camelContext, cache.get(key));
     }
     
+    /**
+     * Checks if the key in question is in the repository.
+     * 
+     * @param key Object - key in question
+     */
+    public boolean containsKey(Object key){
+      if(cache != null)
+        return cache.containsKey(key);
+      else
+        return false;
+    }
+    
     public boolean isAllowSerializedHeaders() {
         return allowSerializedHeaders;
     }
