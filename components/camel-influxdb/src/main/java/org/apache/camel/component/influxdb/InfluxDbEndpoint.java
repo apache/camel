@@ -28,6 +28,9 @@ import org.influxdb.InfluxDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The influxdb component allows you to interact with <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a>, a time series database.
+ */
 @UriEndpoint(scheme = "influxdb", title = "InfluxDB", syntax = "influxdb:connectionBean", label = "database,ticks", producerOnly = true)
 public class InfluxDbEndpoint extends DefaultEndpoint {
 
