@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a ServiceNow endpoint.
+ * The servicenow component is used to integrate Camel with <a href="http://www.servicenow.com/">ServiceNow</a> cloud services.
  */
 @UriEndpoint(scheme = "servicenow", title = "ServiceNow", syntax = "servicenow:instanceName", producerOnly = true, label = "api,cloud,management")
 public class ServiceNowEndpoint extends DefaultEndpoint {
