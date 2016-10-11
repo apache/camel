@@ -102,6 +102,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     protected ChannelGroup channelGroup;
     @UriParam(label = "consumer,advanced")
+    protected ChannelGroup channelGroup;
+    @UriParam(label = "consumer,advanced")
     protected String networkInterface;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean reconnect = true;

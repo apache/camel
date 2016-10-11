@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty4;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,7 +28,7 @@ import org.junit.Test;
 
 public class NettyProducerHangTest extends CamelTestSupport {
 
-    private static final int PORT = 4093;
+    private static int port = 4093;
 
     @Test
     public void nettyProducerHangsOnTheSecondRequestToTheSocketWhichIsClosed() throws Exception {
@@ -43,22 +44,22 @@ public class NettyProducerHangTest extends CamelTestSupport {
             }
         }).start();
 
-        String response1 = template.requestBody("netty4:tcp://localhost:" + PORT + "?textline=true&sync=true", "request1", String.class);
+        String response1 = template.requestBody("netty4:tcp://localhost:" + port + "?textline=true&sync=true", "request1", String.class);
         log.info("Received first response <" + response1 + ">");
 
         try {
             // our test server will close the socket now so we should get an error
-            template.requestBody("netty4:tcp://localhost:" + PORT + "?textline=true&sync=true", "request2", String.class);
+            template.requestBody("netty4:tcp://localhost:" + port + "?textline=true&sync=true", "request2", String.class);
         } catch (Exception e) {
             assertStringContains(e.getCause().getMessage(), "No response received from remote server");
         }
         
-        String response2 = template.requestBody("netty4:tcp://localhost:" + PORT + "?textline=true&sync=true", "request3", String.class);
+        String response2 = template.requestBody("netty4:tcp://localhost:" + port + "?textline=true&sync=true", "request3", String.class);
         log.info("Received 2nd response <" + response2 + ">");
 
         try {
             // our test server will close the socket now so we should get an error
-            template.requestBody("netty4:tcp://localhost:" + PORT + "?textline=true&sync=true", "request4", String.class);
+            template.requestBody("netty4:tcp://localhost:" + port + "?textline=true&sync=true", "request4", String.class);
         } catch (Exception e) {
             assertStringContains(e.getCause().getMessage(), "No response received from remote server");
         }
@@ -67,7 +68,7 @@ public class NettyProducerHangTest extends CamelTestSupport {
     private void acceptReplyAcceptClose() throws IOException {
         byte buf[] = new byte[128];
 
-        ServerSocket serverSocket = new ServerSocket(PORT);
+        ServerSocket serverSocket = new ServerSocket(port);
         Socket soc = serverSocket.accept();
 
         log.info("Open socket and accept data");
@@ -78,7 +79,7 @@ public class NettyProducerHangTest extends CamelTestSupport {
 
             // reply to the first message
             os.write("response\n".getBytes());
-            
+
             // read second message
             is.read(buf);
 
