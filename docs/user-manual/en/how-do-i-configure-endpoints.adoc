@@ -249,10 +249,10 @@ routes refer to the endpoints using their shorthand ids. 
 <camelContext ...>
  
   <endpoint id="foo" uri="ftp://foo@myserver">
-    <property name="password" value="secret"/>
-    <property name="recursive" value="true"/>
-    <property name="ftpClient.dataTimeout" value="30000"/>
-    <property name="ftpClient.serverLanguageCode" value="fr"/> 
+    <property key="password" value="secret"/>
+    <property key="recursive" value="true"/>
+    <property key="ftpClient.dataTimeout" value="30000"/>
+    <property key="ftpClient.serverLanguageCode" value="fr"/> 
   </endpoint>
  
   <route>
@@ -274,9 +274,9 @@ as:
 [source]
 ----
 <endpoint id="foo" uri="ftp://foo@myserver?recursive=true">
-  <property name="password" value="secret"/>
-  <property name="ftpClient.dataTimeout" value="30000"/>
-  <property name="ftpClient.serverLanguageCode" value="fr"/>
+  <property key="password" value="secret"/>
+  <property key="ftpClient.dataTimeout" value="30000"/>
+  <property key="ftpClient.serverLanguageCode" value="fr"/>
 </endpoint>
 ----
 
