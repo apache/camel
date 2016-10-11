@@ -294,11 +294,12 @@ public class HazelcastAggregationRepository extends ServiceSupport
      * 
      * @param key Object - key in question
      */
-    public boolean containsKey(Object key){
-      if(cache != null)
-        return cache.containsKey(key);
-      else
-        return false;
+    public boolean containsKey(Object key) {
+        if (cache != null) {
+            return cache.containsKey(key);
+        } else {
+            return false;
+        }
     }
 
     /**
