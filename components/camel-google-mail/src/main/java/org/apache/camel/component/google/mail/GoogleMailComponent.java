@@ -45,10 +45,11 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
         return GoogleMailApiName.fromValue(apiNameStr);
     }
 
-    public Gmail getClient() {
+    public Gmail getClient(GoogleMailConfiguration googleMailConfiguration) {
         if (client == null) {
-            client = getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), configuration.getScopes(), configuration.getApplicationName(),
-                    configuration.getRefreshToken(), configuration.getAccessToken());
+            client = getClientFactory().makeClient(googleMailConfiguration.getClientId(), googleMailConfiguration.getClientSecret(), 
+                    googleMailConfiguration.getScopes(), googleMailConfiguration.getApplicationName(),
+                    googleMailConfiguration.getRefreshToken(), googleMailConfiguration.getAccessToken());
         }
         return client;
     }
@@ -70,6 +71,9 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
 
     @Override
     public GoogleMailConfiguration getConfiguration() {
+        if (configuration == null) {
+            configuration = new GoogleMailConfiguration();
+        }
         return super.getConfiguration();
     }
 
