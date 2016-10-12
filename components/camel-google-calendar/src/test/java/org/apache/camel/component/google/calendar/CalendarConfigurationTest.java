@@ -18,6 +18,8 @@ package org.apache.camel.component.google.calendar;
 
 import java.util.Random;
 
+import com.google.api.services.calendar.model.Calendar;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarCalendarsApiMethod;
@@ -28,8 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.api.services.calendar.model.Calendar;
 
 public class CalendarConfigurationTest extends AbstractGoogleCalendarTestSupport {
 
