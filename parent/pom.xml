@@ -413,6 +413,7 @@
         https://github.com/checkstyle/checkstyle/issues/1903
      -->
     <maven-checkstyle-version>6.17</maven-checkstyle-version>
+    <maven-owasp-plugin-version>1.4.3</maven-owasp-plugin-version>
     <maven-eclipse-plugin-version>2.10</maven-eclipse-plugin-version>
     <maven-jar-plugin-version>2.6</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
@@ -4551,6 +4552,26 @@
           <artifactId>jetty-maven-plugin</artifactId>
           <version>${jetty-plugin-version}</version>
         </plugin>
+        <plugin>
+          <groupId>org.owasp</groupId>
+          <artifactId>dependency-check-maven</artifactId>
+          <version>${maven-owasp-plugin-version}</version>
+          <configuration>
+            <failBuildOnCVSS>16</failBuildOnCVSS>
+            <skipProvidedScope>false</skipProvidedScope>
+            <skipRuntimeScope>false</skipRuntimeScope>
+            <skipTestScope>true</skipTestScope>
+            <format>ALL</format>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>validate</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
         <!-- Eclipse m2e Lifecycle Management -->
         <plugin>
          <artifactId>lifecycle-mapping</artifactId>
@@ -4739,6 +4760,11 @@
         <artifactId>findbugs-maven-plugin</artifactId>
         <version>${findbugs-maven-plugin-version}</version>
       </plugin>
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>${maven-owasp-plugin-version}</version>
+      </plugin>
     </plugins>
   </reporting>
 
@@ -4772,6 +4798,18 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>dependencycheck</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
           </plugin>
         </plugins>
       </build>
