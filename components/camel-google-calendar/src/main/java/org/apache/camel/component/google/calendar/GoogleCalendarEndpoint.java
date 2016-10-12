@@ -111,7 +111,7 @@ public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarAp
     }
 
     public Calendar getClient() {
-        return ((GoogleCalendarComponent)getComponent()).getClient();
+        return ((GoogleCalendarComponent)getComponent()).getClient(configuration);
     }
     
     @Override
