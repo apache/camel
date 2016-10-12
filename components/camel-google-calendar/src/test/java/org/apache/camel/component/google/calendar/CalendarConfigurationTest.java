@@ -16,14 +16,20 @@
  */
 package org.apache.camel.component.google.calendar;
 
+import java.util.Random;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarCalendarsApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.api.services.calendar.model.Calendar;
 
 public class CalendarConfigurationTest extends AbstractGoogleCalendarTestSupport {
 
@@ -31,13 +37,23 @@ public class CalendarConfigurationTest extends AbstractGoogleCalendarTestSupport
     private static final String PATH_PREFIX = GoogleCalendarApiCollection.getCollection().getApiName(CalendarCalendarsApiMethod.class).getName();
     private static final String TEST_URI = "google-calendar://" + PATH_PREFIX + "/get?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
 
+    @Before
+    @Override    
+    public void createTestCalendar() {
+    }
+
+    @After
+    @Override
+    public void deleteTestCalendar() {
+    }
+    
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = new DefaultCamelContext(createRegistry());
 
         // add GoogleCalendarComponent to Camel context but don't set up configuration
         final GoogleCalendarComponent component = new GoogleCalendarComponent(context);
-        context.addComponent("google-drive", component);
+        context.addComponent("google-calendar", component);
 
         return context;
     }
