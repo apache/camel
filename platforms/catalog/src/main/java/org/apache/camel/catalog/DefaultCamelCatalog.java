@@ -90,7 +90,9 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     // 3rd party components/data-formats
     private final Map<String, String> extraComponents = new HashMap<String, String>();
+    private final Map<String, String> extraComponentsJSonSchema = new HashMap<String, String>();
     private final Map<String, String> extraDataFormats = new HashMap<String, String>();
+    private final Map<String, String> extraDataFormatsJSonSchema = new HashMap<String, String>();
 
     // cache of operation -> result
     private final Map<String, Object> cache = new HashMap<String, Object>();
@@ -119,14 +121,28 @@ public class DefaultCamelCatalog implements CamelCatalog {
         caching = true;
     }
 
+    public boolean isCaching() {
+        return caching;
+    }
+
     @Override
     public void setSuggestionStrategy(SuggestionStrategy suggestionStrategy) {
         this.suggestionStrategy = suggestionStrategy;
     }
 
     @Override
+    public SuggestionStrategy getSuggestionStrategy() {
+        return suggestionStrategy;
+    }
+
+    @Override
     public void setVersionManager(VersionManager versionManager) {
         this.versionManager = versionManager;
+    }
+
+    @Override
+    public VersionManager getVersionManager() {
+        return versionManager;
     }
 
     @Override
@@ -139,12 +155,28 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
+    public void addComponent(String name, String className, String jsonSchema) {
+        addComponent(name, className);
+        if (jsonSchema != null) {
+            extraComponentsJSonSchema.put(name, jsonSchema);
+        }
+    }
+
+    @Override
     public void addDataFormat(String name, String className) {
         extraDataFormats.put(name, className);
         // invalidate the cache
         cache.remove("findDataFormatNames");
         cache.remove("findDataFormatLabels");
         cache.remove("listDataFormatsAsJson");
+    }
+
+    @Override
+    public void addDataFormat(String name, String className, String jsonSchema) {
+        addDataFormat(name, className);
+        if (jsonSchema != null) {
+            extraDataFormatsJSonSchema.put(name, jsonSchema);
+        }
     }
 
     @Override
@@ -453,18 +485,22 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     // ignore
                 }
             } else {
-                // its maybe a third party so try load it
-                String className = extraComponents.get(name);
-                if (className != null) {
-                    String packageName = className.substring(0, className.lastIndexOf('.'));
-                    packageName = packageName.replace('.', '/');
-                    String path = packageName + "/" + name + ".json";
-                    is = versionManager.getResourceAsStream(path);
-                    if (is != null) {
-                        try {
-                            answer = CatalogHelper.loadText(is);
-                        } catch (IOException e) {
-                            // ignore
+                // its maybe a third party so try to see if we have the json schema already
+                answer = extraComponentsJSonSchema.get(name);
+                if (answer == null) {
+                    // or if we can load it from the classpath
+                    String className = extraComponents.get(name);
+                    if (className != null) {
+                        String packageName = className.substring(0, className.lastIndexOf('.'));
+                        packageName = packageName.replace('.', '/');
+                        String path = packageName + "/" + name + ".json";
+                        is = versionManager.getResourceAsStream(path);
+                        if (is != null) {
+                            try {
+                                answer = CatalogHelper.loadText(is);
+                            } catch (IOException e) {
+                                // ignore
+                            }
                         }
                     }
                 }
@@ -495,18 +531,22 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     // ignore
                 }
             } else {
-                // its maybe a third party so try load it
-                String className = extraDataFormats.get(name);
-                if (className != null) {
-                    String packageName = className.substring(0, className.lastIndexOf('.'));
-                    packageName = packageName.replace('.', '/');
-                    String path = packageName + "/" + name + ".json";
-                    is = versionManager.getResourceAsStream(path);
-                    if (is != null) {
-                        try {
-                            answer = CatalogHelper.loadText(is);
-                        } catch (IOException e) {
-                            // ignore
+                // its maybe a third party so try to see if we have the json schema already
+                answer = extraDataFormatsJSonSchema.get(name);
+                if (answer == null) {
+                    // or if we can load it from the classpath
+                    String className = extraDataFormats.get(name);
+                    if (className != null) {
+                        String packageName = className.substring(0, className.lastIndexOf('.'));
+                        packageName = packageName.replace('.', '/');
+                        String path = packageName + "/" + name + ".json";
+                        is = versionManager.getResourceAsStream(path);
+                        if (is != null) {
+                            try {
+                                answer = CatalogHelper.loadText(is);
+                            } catch (IOException e) {
+                                // ignore
+                            }
                         }
                     }
                 }

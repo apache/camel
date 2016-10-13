@@ -17,14 +17,16 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.RouteShowCommand;
-import org.apache.felix.gogo.commands.Command;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "camel", name = "route-show", description = "Display the Camel route definition in XML")
+@Service
 public class RouteShow extends AbstractRouteCommand {
 
-    public Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         RouteShowCommand command = new RouteShowCommand(route, context);
-        return command.execute(camelController, System.out, System.err);
+        return command.execute(this, System.out, System.err);
     }
 
 }

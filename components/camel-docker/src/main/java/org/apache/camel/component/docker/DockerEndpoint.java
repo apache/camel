@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.docker;
 
-import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.docker.consumer.DockerEventsConsumer;
+import org.apache.camel.component.docker.consumer.DockerStatsConsumer;
 import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.component.docker.producer.AsyncDockerProducer;
 import org.apache.camel.component.docker.producer.DockerProducer;
@@ -66,7 +67,16 @@ public class DockerEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("DockerConsumer is not implemented");
+        DockerOperation operation = configuration.getOperation();
+
+        switch (operation) {
+        case EVENTS:
+            return new DockerEventsConsumer(this, processor);
+        case STATS:
+            return new DockerStatsConsumer(this, processor);
+        default:
+            throw new DockerException(operation + " is not a valid consumer operation");
+        }
     }
     
     @Override

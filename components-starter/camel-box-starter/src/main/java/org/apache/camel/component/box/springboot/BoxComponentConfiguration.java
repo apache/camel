@@ -75,7 +75,6 @@ public class BoxComponentConfiguration {
          * component to be able to create a token automatically a user password
          * must be provided.
          */
-        @NestedConfigurationProperty
         private IAuthSecureStorage authSecureStorage;
         /**
          * Box user name, MUST be provided
@@ -90,7 +89,6 @@ public class BoxComponentConfiguration {
          * OAuth listener for token updates, if the Camel application needs to
          * use the access token outside the route
          */
-        @NestedConfigurationProperty
         private OAuthRefreshListener refreshListener;
         /**
          * Flag to revoke OAuth refresh token on route shutdown, default false.
@@ -112,7 +110,6 @@ public class BoxComponentConfiguration {
         /**
          * Custom Box SDK configuration, not required normally
          */
-        @NestedConfigurationProperty
         private IBoxConfig boxConfig;
         /**
          * Custom Box connection manager builder, used to override default

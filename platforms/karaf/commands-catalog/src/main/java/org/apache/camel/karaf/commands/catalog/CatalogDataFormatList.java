@@ -17,12 +17,15 @@
 package org.apache.camel.karaf.commands.catalog;
 
 import org.apache.camel.commands.CatalogDataFormatListCommand;
-import org.apache.camel.karaf.commands.CamelCommandSupport;
-import org.apache.felix.gogo.commands.Command;
-import org.apache.felix.gogo.commands.Option;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "camel", name = "catalog-dataformat-list", description = "Lists all Camel dataformats from the Camel catalog")
-public class CatalogDataFormatList extends CamelCommandSupport {
+@Service
+public class CatalogDataFormatList extends CamelControllerImpl implements Action {
 
     @Option(name = "--verbose", aliases = "-v", description = "Verbose output which shows more information",
             required = false, multiValued = false, valueToShowInHelp = "false")
@@ -32,9 +35,9 @@ public class CatalogDataFormatList extends CamelCommandSupport {
             required = false, multiValued = false)
     String label;
 
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         CatalogDataFormatListCommand command = new CatalogDataFormatListCommand(verbose, label);
-        return command.execute(camelController, System.out, System.err);
+        return command.execute(this, System.out, System.err);
     }
 
 }

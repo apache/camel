@@ -25,7 +25,7 @@ Components
 `apns:name` | For sending notifications to Apple iOS devices.
 
 | link:camel-asterisk/src/main/docs/asterisk-component.adoc[Asterisk] (camel-asterisk) +
-`asterisk:name` | Represents a Asterisk endpoint.
+`asterisk:name` | The asterisk component is used to interact with Asterisk PBX Server Asterisk PBX Server.
 
 | link:camel-atmos/src/main/docs/atmos-component.adoc[Atmos] (camel-atmos) +
 `atmos:name/operation` | The atmos component is used for integrating with EMC's Atomos Storage.
@@ -91,13 +91,13 @@ Components
 `cql:beanRef:hosts:port/keyspace` | The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API).
 
 | link:camel-chronicle/src/main/docs/chronicle-engine-component.adoc[Chronicle Engine] (camel-chronicle) +
-`chronicle-engine:addresses/path` | Camel Chronicle support
+`chronicle-engine:addresses/path` | The camel chronicle-engine component let you leverage the power of OpenHFT's Chronicle-Engine.
 
 | link:camel-chunk/src/main/docs/chunk-component.adoc[Chunk] (camel-chunk) +
 `chunk:resourceUri` | Transforms the message using a Chunk template.
 
 | link:camel-cm-sms/src/main/docs/cm-sms-component.adoc[CM SMS Gateway] (camel-cm-sms) +
-`cm-sms:host` | Camel CM SMS Gateway Component
+`cm-sms:host` | The influxdb component allows to integrate with CM SMS Gateway.
 
 | link:camel-cmis/src/main/docs/cmis-component.adoc[CMIS] (camel-cmis) +
 `cmis:url` | The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
@@ -109,7 +109,7 @@ Components
 `cometd:host:port/channelName` | The cometd component is a transport for working with the Jetty implementation of the cometd/bayeux protocol.
 
 | link:camel-consul/src/main/docs/consul-component.adoc[Consul] (camel-consul) +
-`consul://apiEndpoint` | Camel Consul support
+`consul:apiEndpoint` | The camel consul component allows you to work with Consul a distributed highly available datacenter-aware service discovery and configuration system.
 
 | link:camel-couchdb/src/main/docs/couchdb-component.adoc[CouchDB] (camel-couchdb) +
 `couchdb:protocol:hostname:port/database` | The couchdb component is used for integrate with CouchDB databases.
@@ -142,7 +142,7 @@ Components
 `cache:cacheName` | *deprecated* The cache component enables you to perform caching operations using EHCache as the Cache Implementation.
 
 | link:camel-ehcache/src/main/docs/ehcache-component.adoc[Ehcache] (camel-ehcache) +
-`ehcache:cacheName` | Camel Ehcache support
+`ehcache:cacheName` | The ehcache component enables you to perform caching operations using Ehcache as cache implementation.
 
 | link:camel-ejb/src/main/docs/ejb-component.adoc[EJB] (camel-ejb) +
 `ejb:beanName` | The ejb component is for invoking EJB Java beans from Camel.
@@ -154,7 +154,7 @@ Components
 `elsql:elsqlName:resourceUri` | The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
 
 | link:camel-etcd/src/main/docs/etcd-component.adoc[etcd] (camel-etcd) +
-`etcd:namespace/path` | Represents a etcd endpoint.
+`etcd:namespace/path` | The camel etcd component allows you to work with Etcd a distributed A distributed reliable key-value store.
 
 | link:camel-exec/src/main/docs/exec-component.adoc[Exec] (camel-exec) +
 `exec:executable` | The exec component can be used to execute OS system commands.
@@ -238,13 +238,13 @@ Components
 `infinispan:host` | For reading/writing from/to Infinispan distributed key/value store and data grid.
 
 | link:camel-influxdb/src/main/docs/influxdb-component.adoc[InfluxDB] (camel-influxdb) +
-`influxdb:connectionBean` | Camel InfluxDB component
+`influxdb:connectionBean` | The influxdb component allows you to interact with InfluxDB a time series database.
 
 | link:camel-irc/src/main/docs/irc-component.adoc[IRC] (camel-irc) +
-`irc:hostname:port` | For IRC chat communication.
+`irc:hostname:port` | The irc component implements an IRC (Internet Relay Chat) transport.
 
 | link:camel-ironmq/src/main/docs/ironmq-component.adoc[ironmq] (camel-ironmq) +
-`ironmq:queueName` | Represents a IronMQ endpoint.
+`ironmq:queueName` | The ironmq provides integration with IronMQ an elastic and durable hosted message queue as a service.
 
 | link:camel-javaspace/src/main/docs/javaspace-component.adoc[JavaSpace] (camel-javaspace) +
 `javaspace:url` | *deprecated* Sending and receiving messages through JavaSpace.
@@ -253,7 +253,7 @@ Components
 `jbpm:connectionURL` | The jbpm component provides integration with jBPM (Business Process Management).
 
 | link:camel-jcache/src/main/docs/jcache-component.adoc[JCache] (camel-jcache) +
-`jcache:cacheName` | Represents a JCache endpoint.
+`jcache:cacheName` | The jcache component enables you to perform caching operations using JSR107/JCache as cache implementation.
 
 | link:camel-jclouds/src/main/docs/jclouds-component.adoc[JClouds] (camel-jclouds) +
 `jclouds:command:providerId` | For interacting with cloud compute & blobstore service via jclouds.
@@ -316,7 +316,7 @@ Components
 `lucene:host:operation` | To insert or query from Apache Lucene databases.
 
 | link:camel-lumberjack/src/main/docs/lumberjack-component.adoc[Lumberjack] (camel-lumberjack) +
-`lumberjack:host:port` | Camel Lumberjack log streaming component
+`lumberjack:host:port` | The lumberjack retrieves logs sent over the network using the Lumberjack protocol.
 
 | link:camel-metrics/src/main/docs/metrics-component.adoc[Metrics] (camel-metrics) +
 `metrics:metricsType:metricsName` | To collect various metrics directly from Camel routes using the DropWizard metrics library.
@@ -328,13 +328,13 @@ Components
 `mina2:protocol:host:port` | Socket level networking using TCP or UDP with the Apache Mina 2.x library.
 
 | link:camel-mllp/src/main/docs/mllp-component.adoc[MLLP] (camel-mllp) +
-`mllp:hostname:port` | Represents a MLLP endpoint.
+`mllp:hostname:port` | The MLLP component is designed to handle the MLLP protocol and provide the functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
 
 | link:camel-mongodb/src/main/docs/mongodb-component.adoc[MongoDB] (camel-mongodb) +
 `mongodb:connectionBean` | Component for working with documents stored in MongoDB database.
 
 | link:camel-mongodb-gridfs/src/main/docs/gridfs-component.adoc[MongoDBGridFS] (camel-mongodb-gridfs) +
-`gridfs:connectionBean` | Camel MongoDB GridFS component
+`gridfs:connectionBean` | Component for working with MongoDB GridFS.
 
 | link:camel-mqtt/src/main/docs/mqtt-component.adoc[MQTT] (camel-mqtt) +
 `mqtt:name` | Component for communicating with MQTT M2M message brokers using FuseSource MQTT Client.
@@ -355,7 +355,7 @@ Components
 `nagios:host:port` | To send passive checks to Nagios using JSendNSCA.
 
 | link:camel-nats/src/main/docs/nats-component.adoc[Nats] (camel-nats) +
-`nats:servers` | Camel Components
+`nats:servers` | The nats component allows you produce and consume messages from NATS.
 
 | link:camel-netty/src/main/docs/netty-component.adoc[Netty] (camel-netty) +
 `netty:protocol:host:port` | *deprecated* Socket level networking using TCP or UDP with the Netty 3.x library.
@@ -403,7 +403,7 @@ Components
 `quickfix:configurationName` | The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.
 
 | link:camel-rabbitmq/src/main/docs/rabbitmq-component.adoc[RabbitMQ] (camel-rabbitmq) +
-`rabbitmq:hostname:portNumber/exchangeName` | Camel RabbitMQ Component
+`rabbitmq:hostname:portNumber/exchangeName` | The rabbitmq component allows you produce and consume messages from RabbitMQ instances.
 
 | link:camel-restlet/src/main/docs/restlet-component.adoc[Restlet] (camel-restlet) +
 `restlet:protocol:host:port/uriPattern` | Component for consuming and producing Restful resources using Restlet.
@@ -430,7 +430,7 @@ Components
 `scp:host:port/directoryName` | To copy files using the secure copy protocol (SCP).
 
 | link:camel-servicenow/src/main/docs/servicenow-component.adoc[ServiceNow] (camel-servicenow) +
-`servicenow:instanceName` | Represents a ServiceNow endpoint.
+`servicenow:instanceName` | The servicenow component is used to integrate Camel with ServiceNow cloud services.
 
 | link:camel-servlet/src/main/docs/servlet-component.adoc[Servlet] (camel-servlet) +
 `servlet:contextPath` | To use a HTTP Servlet as entry for Camel routes when running in a servlet container.
@@ -484,7 +484,7 @@ Components
 `spring-ws:type:lookupKey:webServiceEndpointUri` | The spring-ws component is used for SOAP WebServices using Spring WebServices.
 
 | link:camel-sql/src/main/docs/sql-component.adoc[SQL] (camel-sql) +
-`sql:query` | The sql component can be used to perform SQL query to a database.
+`sql:query` | The sql component allows you to work with databases using JDBC Stored Procedure queries.
 
 | link:camel-sql/src/main/docs/sql-stored-component.adoc[SQL StoredProcedure] (camel-sql) +
 `sql-stored:template` | Camel SQL support
@@ -499,13 +499,13 @@ Components
 `stomp:destination` | The stomp component is used for communicating with Stomp compliant message brokers.
 
 | link:camel-stream/src/main/docs/stream-component.adoc[Stream] (camel-stream) +
-`stream:url` | The stream: component provides access to the system-in system-out and system-err streams as well as allowing streaming of file and URL.
+`stream:kind` | The stream: component provides access to the system-in system-out and system-err streams as well as allowing streaming of file and URL.
 
 | link:camel-stringtemplate/src/main/docs/string-template-component.adoc[String Template] (camel-stringtemplate) +
 `string-template:resourceUri` | Transforms the message using a String template.
 
 | link:camel-telegram/src/main/docs/telegram-component.adoc[Telegram] (camel-telegram) +
-`telegram:type/authorizationToken` | The Camel endpoint for a telegram bot.
+`telegram:type/authorizationToken` | The telegram component provides access to the Telegram Bot API.
 
 | link:camel-twitter/src/main/docs/twitter-component.adoc[Twitter] (camel-twitter) +
 `twitter:kind` | This component integrates with Twitter to send tweets or search for tweets and more.

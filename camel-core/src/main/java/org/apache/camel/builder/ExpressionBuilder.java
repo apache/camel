@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,9 +30,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
@@ -43,6 +46,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchLanguageException;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -76,6 +80,8 @@ import org.apache.camel.util.StringHelper;
  * @version 
  */
 public final class ExpressionBuilder {
+
+    private static final Pattern OFFSET_PATTERN = Pattern.compile("([+-])([^+-]+)");
 
     /**
      * Utility classes should not have a public constructor.
@@ -1863,9 +1869,30 @@ public final class ExpressionBuilder {
         };
     }
 
+    public static Expression dateExpression(final String command) {
+        return dateExpression(command, null, null);
+    }
+
     public static Expression dateExpression(final String command, final String pattern) {
+        return dateExpression(command, null, pattern);
+    }
+
+    public static Expression dateExpression(final String commandWithOffsets, final String timezone, final String pattern) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
+                // Capture optional time offsets
+                String command = commandWithOffsets.split("[+-]", 2)[0].trim();
+                List<Long> offsets = new ArrayList<>();
+                Matcher offsetMatcher = OFFSET_PATTERN.matcher(commandWithOffsets);
+                while (offsetMatcher.find()) {
+                    try {
+                        long value = exchange.getContext().getTypeConverter().mandatoryConvertTo(long.class, exchange, offsetMatcher.group(2).trim());
+                        offsets.add(offsetMatcher.group(1).equals("+") ? value : -value);
+                    } catch (NoTypeConversionAvailableException e) {
+                        throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    }
+                }
+
                 Date date;
                 if ("now".equals(command)) {
                     date = new Date();
@@ -1895,13 +1922,27 @@ public final class ExpressionBuilder {
                     throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
                 }
 
-                SimpleDateFormat df = new SimpleDateFormat(pattern);
-                return df.format(date);
+                // Apply offsets
+                long dateAsLong = date.getTime();
+                for (long offset : offsets) {
+                    dateAsLong += offset;
+                }
+                date = new Date(dateAsLong);
+
+                if (pattern != null && !pattern.isEmpty()) {
+                    SimpleDateFormat df = new SimpleDateFormat(pattern);
+                    if (timezone != null && !timezone.isEmpty()) {
+                        df.setTimeZone(TimeZone.getTimeZone(timezone));
+                    }
+                    return df.format(date);
+                } else {
+                    return date;
+                }
             }
 
             @Override
             public String toString() {
-                return "date(" + command + ":" + pattern + ")";
+                return "date(" + commandWithOffsets + ":" + pattern + ":" + timezone + ")";
             }
         };
     }

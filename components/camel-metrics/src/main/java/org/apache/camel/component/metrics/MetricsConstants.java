@@ -18,13 +18,14 @@ package org.apache.camel.component.metrics;
 
 public final class MetricsConstants {
 
-    public static final String HEADER_PERFIX = "CamelMetrics";
-    public static final String HEADER_TIMER_ACTION = HEADER_PERFIX + "TimerAction";
-    public static final String HEADER_METER_MARK = HEADER_PERFIX + "MeterMark";
-    public static final String HEADER_HISTOGRAM_VALUE = HEADER_PERFIX + "HistogramValue";
-    public static final String HEADER_COUNTER_DECREMENT = HEADER_PERFIX + "CounterDecrement";
-    public static final String HEADER_COUNTER_INCREMENT = HEADER_PERFIX + "CounterIncrement";
-    public static final String HEADER_METRIC_NAME = HEADER_PERFIX + "Name";
+    public static final String HEADER_PREFIX = "CamelMetrics";
+    public static final String HEADER_TIMER_ACTION = HEADER_PREFIX + "TimerAction";
+    public static final String HEADER_METER_MARK = HEADER_PREFIX + "MeterMark";
+    public static final String HEADER_HISTOGRAM_VALUE = HEADER_PREFIX + "HistogramValue";
+    public static final String HEADER_COUNTER_DECREMENT = HEADER_PREFIX + "CounterDecrement";
+    public static final String HEADER_COUNTER_INCREMENT = HEADER_PREFIX + "CounterIncrement";
+    public static final String HEADER_GAUGE_SUBJECT = HEADER_PREFIX + "GaugeSubject";
+    public static final String HEADER_METRIC_NAME = HEADER_PREFIX + "Name";
 
     private MetricsConstants() {
     }

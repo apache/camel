@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.CamelExecutionException;
@@ -38,7 +39,6 @@ import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
-import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.Language;
 
 /**
@@ -463,13 +463,15 @@ public class SimpleTest extends LanguageTestSupport {
         cal.set(1974, Calendar.APRIL, 20);
         exchange.getIn().setHeader("birthday", cal.getTime());
 
+        assertExpression("date:header.birthday", cal.getTime());
         assertExpression("date:header.birthday:yyyyMMdd", "19740420");
+        assertExpression("date:header.birthday+24h:yyyyMMdd", "19740421");
 
         try {
             assertExpression("date:yyyyMMdd", "19740420");
             fail("Should thrown an exception");
-        } catch (SimpleParserException e) {
-            assertEquals("Valid syntax: ${date:command:pattern} was: date:yyyyMMdd", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            assertEquals("Command not supported for dateExpression: yyyyMMdd", e.getMessage());
         }
     }
 
@@ -479,7 +481,24 @@ public class SimpleTest extends LanguageTestSupport {
         cal.set(Calendar.MILLISECOND, 123);
         exchange.getIn().setHeader("birthday", cal.getTime());
 
+        assertExpression("date:header.birthday - 10s:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T08:55:37:123");
         assertExpression("date:header.birthday:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T08:55:47:123");
+    }
+
+    public void testDateWithTimezone() throws Exception {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        cal.set(1974, Calendar.APRIL, 20, 8, 55, 47);
+        cal.set(Calendar.MILLISECOND, 123);
+        exchange.getIn().setHeader("birthday", cal.getTime());
+
+        assertExpression("date-with-timezone:header.birthday:GMT+8:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T08:55:47:123");
+        assertExpression("date-with-timezone:header.birthday:GMT:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T00:55:47:123");
+    }
+
+    public void testDatePredicates() throws Exception {
+        assertPredicate("${date:now} < ${date:now+60s}");
+        assertPredicate("${date:now-2s+2s} == ${date:now}");
     }
 
     public void testLanguagesInContext() throws Exception {

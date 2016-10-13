@@ -13,15 +13,15 @@ Each starter has its own integration test (in path `tests/camel-itest-spring-boo
 
 The following components do not have a starter because of compatibility issues:
 
-* **camel-blueprint**
-* **camel-cdi**
-* **camel-core-osgi**
-* **camel-ejb**
-* **camel-eventadmin**
+* **camel-blueprint** (intended for OSGi only)
+* **camel-cdi** (intended for CDI only)
+* **camel-core-osgi** (intended for OSGi only)
+* **camel-ejb**  (intended for JEE only)
+* **camel-eventadmin** (intended for OSGi only)
 * **camel-ibatis** (`camel-mybatis-starter` is included)
 * **camel-jclouds**
 * **camel-mina** (`camel-mina2-starter` is included)
-* **camel-paxlogging**
+* **camel-paxlogging** (intended for OSGi only)
 * **camel-quartz** (`camel-quartz2-starter` is included)
 * **camel-spark-rest**
 * **camel-swagger** (`camel-swagger-java-starter` is included)

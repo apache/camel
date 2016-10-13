@@ -37,7 +37,6 @@ public class CacheComponentConfiguration {
      * To use the given CacheManagerFactory for creating the CacheManager. By
      * default the DefaultCacheManagerFactory is used.
      */
-    @NestedConfigurationProperty
     private CacheManagerFactory cacheManagerFactory;
     /**
      * Sets the Cache configuration

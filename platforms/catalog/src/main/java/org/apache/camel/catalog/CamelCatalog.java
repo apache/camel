@@ -36,14 +36,29 @@ public interface CamelCatalog {
     void enableCache();
 
     /**
+     * Whether caching has been enabled.
+     */
+    boolean isCaching();
+
+    /**
      * To plugin a custom {@link SuggestionStrategy} to provide suggestion for unknown options
      */
     void setSuggestionStrategy(SuggestionStrategy suggestionStrategy);
 
     /**
+     * Gets the {@link SuggestionStrategy} in use
+     */
+    SuggestionStrategy getSuggestionStrategy();
+
+    /**
      * To plugin a custom {@link VersionManager} to load other versions of Camel the catalog should use.
      */
     void setVersionManager(VersionManager versionManager);
+
+    /**
+     * Gets the {@link VersionManager} in use
+     */
+    VersionManager getVersionManager();
 
     /**
      * Adds a 3rd party component to this catalog.
@@ -54,12 +69,30 @@ public interface CamelCatalog {
     void addComponent(String name, String className);
 
     /**
+     * Adds a 3rd party component to this catalog.
+     *
+     * @param name       the component name
+     * @param className  the fully qualified class name for the component class
+     * @param jsonSchema the component JSon schema
+     */
+    void addComponent(String name, String className, String jsonSchema);
+
+    /**
      * Adds a 3rd party data format to this catalog.
      *
      * @param name      the data format name
      * @param className the fully qualified class name for the data format class
      */
     void addDataFormat(String name, String className);
+
+    /**
+     * Adds a 3rd party data format to this catalog.
+     *
+     * @param name      the data format name
+     * @param className the fully qualified class name for the data format class
+     * @param jsonSchema the data format JSon schema
+     */
+    void addDataFormat(String name, String className, String jsonSchema);
 
     /**
      * The version of this Camel Catalog

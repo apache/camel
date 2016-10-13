@@ -73,9 +73,12 @@
 -->
 
 * [Enterprise Integration Patterns](enterprise-integration-patterns.adoc)
+    * [Correlation Identifier](correlation-identifier.adoc)
     * [Event Message](event-message.adoc)
     * [Message](message.adoc)
+    * [Message Channel](message-channel.adoc)
     * [Request Reply](request-reply.adoc)
+    * [Return Address](return-address.adoc)
 
 * Community
     * FAQ

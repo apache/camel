@@ -40,7 +40,7 @@ public class EchoTestComponent extends DefaultComponent {
     }
 
     private final class EchoEndpoint extends DefaultEndpoint {
-        public EchoEndpoint(String uri, Component component) {
+        protected EchoEndpoint(String uri, Component component) {
             super(uri, component);
         }
         
@@ -62,7 +62,7 @@ public class EchoTestComponent extends DefaultComponent {
     }
 
     private final class EchoProducer extends DefaultProducer implements AsyncProcessor {
-        public EchoProducer(Endpoint endpoint) {
+        protected EchoProducer(Endpoint endpoint) {
             super(endpoint);
         }
 

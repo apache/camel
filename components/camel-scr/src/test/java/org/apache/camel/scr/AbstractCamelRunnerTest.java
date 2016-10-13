@@ -127,4 +127,12 @@ public class AbstractCamelRunnerTest {
             fail();
         }
     }
+
+    @Test
+    public void testConversions() throws Exception {
+        assertEquals("test", AbstractCamelRunner.convertValue("test", String.class));
+        assertEquals(true, AbstractCamelRunner.convertValue("true", boolean.class));
+        assertEquals(100, AbstractCamelRunner.convertValue("100", int.class));
+        assertEquals(1.1, AbstractCamelRunner.convertValue("1.1", double.class));
+    }
 }

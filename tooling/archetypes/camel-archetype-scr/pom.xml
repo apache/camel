@@ -23,7 +23,7 @@
   <parent>
     <artifactId>archetypes</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>2.18.0-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.camel.archetypes</groupId>
@@ -70,6 +70,13 @@
           <configuration>
             <skip>${maven.test.skip.exec}</skip>
           </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.shared</groupId>
+              <artifactId>maven-invoker</artifactId>
+              <version>2.2</version>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>

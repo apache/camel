@@ -29,7 +29,6 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignature2Message;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Used to sign and verify exchanges using the XML signature specification.
@@ -70,7 +69,6 @@ public class XmlSignatureComponentConfiguration {
 
     public static class XmlSignerConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration.class;
-        @NestedConfigurationProperty
         private CamelContext camelContext;
         /**
          * For the signing process, a private key is necessary. You specify a
@@ -80,7 +78,6 @@ public class XmlSignatureComponentConfiguration {
          * implementation class DefaultKeyAccessor which reads the private key
          * from a Java keystore.
          */
-        @NestedConfigurationProperty
         private KeyAccessor keyAccessor;
         /**
          * Canonicalization method used to canonicalize the SignedInfo element
@@ -206,7 +203,6 @@ public class XmlSignatureComponentConfiguration {
          * which contain additional properties, you can provide a bean which
          * implements the XmlSignatureProperties interface.
          */
-        @NestedConfigurationProperty
         private XmlSignatureProperties properties;
         private String keyAccessorName;
         private String canonicalizationMethodName;
@@ -573,7 +569,6 @@ public class XmlSignatureComponentConfiguration {
 
     public static class XmlVerifierConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration.class;
-        @NestedConfigurationProperty
         private CamelContext camelContext;
         /**
          * Provides the key for validating the XML signature.
@@ -584,7 +579,6 @@ public class XmlSignatureComponentConfiguration {
          * before the validation is executed. This step is recommended in
          * http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed
          */
-        @NestedConfigurationProperty
         private XmlSignatureChecker xmlSignatureChecker;
         /**
          * Bean which maps the XML signature to the output-message after the
@@ -610,7 +604,6 @@ public class XmlSignatureComponentConfiguration {
          * explained in more detail in chapter
          * "Output Node Determination in Enveloping XML Signature Case".
          */
-        @NestedConfigurationProperty
         private XmlSignature2Message xmlSignature2Message;
         /**
          * Handles the different validation failed situations. The default
@@ -622,7 +615,6 @@ public class XmlSignatureComponentConfiguration {
          * validation fails, a XmlSignatureInvalidContentHashException is
          * thrown. For more detailed information, see the JavaDoc.
          */
-        @NestedConfigurationProperty
         private ValidationFailedHandler validationFailedHandler;
         /**
          * Sets the output node search value for determining the node from the

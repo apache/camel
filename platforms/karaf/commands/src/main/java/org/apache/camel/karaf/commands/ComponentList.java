@@ -17,23 +17,30 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.ComponentListCommand;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
-import org.apache.felix.gogo.commands.Option;
+import org.apache.camel.karaf.commands.completers.CamelContextCompleter;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "camel", name = "component-list", description = "Lists all Camel components that are in use in Karaf.")
-public class ComponentList extends CamelCommandSupport {
+@Service
+public class ComponentList extends CamelControllerImpl implements Action {
 
     @Argument(index = 0, name = "name", description = "The Camel context name where to look for the components", required = true, multiValued = false)
+    @Completion(CamelContextCompleter.class)
     String name;
 
     @Option(name = "--verbose", aliases = "-v", description = "Verbose output which shows more information",
             required = false, multiValued = false, valueToShowInHelp = "false")
     boolean verbose;
 
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         ComponentListCommand command = new ComponentListCommand(name, verbose);
-        return command.execute(camelController, System.out, System.err);
+        return command.execute(this, System.out, System.err);
     }
 
 }

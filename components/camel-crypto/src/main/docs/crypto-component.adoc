@@ -42,23 +42,23 @@ The Crypto (JCE) component supports 21 endpoint options which are listed below:
 | name | producer |  | String | *Required* The logical name of this operation.
 | algorithm | producer | SHA1WithDSA | String | Sets the JCE name of the Algorithm that should be used for the signer.
 | alias | producer |  | String | Sets the alias used to query the KeyStore for keys and link java.security.cert.Certificate Certificates to be used in signing and verifying exchanges. This value can be provided at runtime via the message header link org.apache.camel.component.crypto.DigitalSignatureConstantsKEYSTORE_ALIAS
-| bufferSize | producer | 2048 | Integer | Set the size of the buffer used to read in the Exchange payload data.
-| certificate | producer |  | Certificate | Set the Certificate that should be used to verify the signature in the exchange based on its payload.
 | certificateName | producer |  | String | Sets the reference name for a PrivateKey that can be fond in the registry.
-| clearHeaders | producer | true | boolean | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset.
 | keystore | producer |  | KeyStore | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A KeyStore is typically used with an alias either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore then this single entry will be used.
 | keystoreName | producer |  | String | Sets the reference name for a Keystore that can be fond in the registry.
-| keyStoreParameters | producer |  | KeyStoreParameters | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges based on the given KeyStoreParameters. A KeyStore is typically used with an alias either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore then this single entry will be used.
-| password | producer |  | String | Sets the password used to access an aliased PrivateKey in the KeyStore.
 | privateKey | producer |  | PrivateKey | Set the PrivateKey that should be used to sign the exchange
 | privateKeyName | producer |  | String | Sets the reference name for a PrivateKey that can be fond in the registry.
 | provider | producer |  | String | Set the id of the security provider that provides the configured Signature algorithm.
-| publicKey | producer |  | PublicKey | Set the PublicKey that should be used to verify the signature in the exchange.
 | publicKeyName | producer |  | String | references that should be resolved when the context changes
-| secureRandom | producer |  | SecureRandom | Set the SecureRandom used to initialize the Signature service
 | secureRandomName | producer |  | String | Sets the reference name for a SecureRandom that can be fond in the registry.
 | signatureHeaderName | producer |  | String | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature'
+| bufferSize | advanced | 2048 | Integer | Set the size of the buffer used to read in the Exchange payload data.
+| certificate | advanced |  | Certificate | Set the Certificate that should be used to verify the signature in the exchange based on its payload.
+| clearHeaders | advanced | true | boolean | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset.
+| keyStoreParameters | advanced |  | KeyStoreParameters | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges based on the given KeyStoreParameters. A KeyStore is typically used with an alias either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore then this single entry will be used.
+| publicKey | advanced |  | PublicKey | Set the PublicKey that should be used to verify the signature in the exchange.
+| secureRandom | advanced |  | SecureRandom | Set the SecureRandom used to initialize the Signature service
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| password | security |  | String | Sets the password used to access an aliased PrivateKey in the KeyStore.
 |=======================================================================
 {% endraw %}
 // endpoint options: END

@@ -57,15 +57,16 @@ The Stream component has no options.
 
 
 // endpoint options: START
-The Stream component supports 18 endpoint options which are listed below:
+The Stream component supports 19 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| url | common |  | String | *Required* When using the stream:url URI format this option specifies the URL to stream to/from. The input/output stream will be opened using the JDK URLConnection facility.
+| kind | common |  | String | *Required* Kind of stream to use such as System.in or System.out.
 | encoding | common |  | String | You can configure the encoding (is a charset name) to use text-based streams (for example message body is a String object). If not provided Camel uses the JVM default Charset.
 | fileName | common |  | String | When using the stream:file URI format this option specifies the filename to stream to/from.
+| url | common |  | String | When using the stream:url URI format this option specifies the URL to stream to/from. The input/output stream will be opened using the JDK URLConnection facility.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | groupLines | consumer |  | int | To group X number of lines in the consumer. For example to group 10 lines and therefore only spit out an Exchange with 10 lines instead of 1 Exchange per line.
 | groupStrategy | consumer |  | GroupStrategy | Allows to use a custom GroupStrategy to control how to group lines.

@@ -109,7 +109,7 @@ The Netty4 HTTP component supports 6 options which are listed below.
 
 
 // endpoint options: START
-The Netty4 HTTP component supports 81 endpoint options which are listed below:
+The Netty4 HTTP component supports 82 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -163,6 +163,7 @@ The Netty4 HTTP component supports 81 endpoint options which are listed below:
 | producerPoolMinEvictableIdle | producer (advanced) | 300000 | long | Sets the minimum amount of time (value in millis) an object may sit idle in the pool before it is eligible for eviction by the idle object evictor.
 | producerPoolMinIdle | producer (advanced) |  | int | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects.
 | useRelativePath | producer (advanced) | false | boolean | Sets whether to use a relative path in HTTP requests.
+| allowSerializedHeaders | advanced | false | boolean | Only used for TCP when transferExchange is true. When set to true serializable objects in headers and properties will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level.
 | bootstrapConfiguration | advanced |  | NettyServerBootstrapConfiguration | To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint.
 | channelGroup | advanced |  | ChannelGroup | To use a explicit ChannelGroup.
 | configuration | advanced |  | NettyHttpConfiguration | To use a custom configured NettyHttpConfiguration for configuring this endpoint.

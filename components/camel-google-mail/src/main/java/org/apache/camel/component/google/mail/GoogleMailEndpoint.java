@@ -107,7 +107,7 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
     }
 
     public Gmail getClient() {
-        return ((GoogleMailComponent) getComponent()).getClient();
+        return ((GoogleMailComponent) getComponent()).getClient(configuration);
     }
 
     @Override

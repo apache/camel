@@ -16,26 +16,23 @@
  */
 package org.apache.camel.component.servicenow;
 
-import java.util.Arrays;
-
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.servicenow.auth.AuthenticationRequestFilter;
-import org.apache.camel.component.servicenow.auth.OAuthToken;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Represents a ServiceNow endpoint.
+ * The servicenow component is used to integrate Camel with <a href="http://www.servicenow.com/">ServiceNow</a> cloud services.
  */
 @UriEndpoint(scheme = "servicenow", title = "ServiceNow", syntax = "servicenow:instanceName", producerOnly = true, label = "api,cloud,management")
 public class ServiceNowEndpoint extends DefaultEndpoint {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowEndpoint.class);
 
     @UriPath(description = "The ServiceNow instance name ")
     @Metadata(required = "true")
@@ -43,31 +40,24 @@ public class ServiceNowEndpoint extends DefaultEndpoint {
 
     @UriParam
     private final ServiceNowConfiguration configuration;
-    private final String apiUrl;
-    private final String oauthUrl;
-    private final OAuthToken token;
 
     public ServiceNowEndpoint(String uri, ServiceNowComponent component, ServiceNowConfiguration configuration, String instanceName) throws Exception {
         super(uri, component);
 
         this.configuration = configuration;
-        this.instanceName = component.getCamelContext().resolvePropertyPlaceholders(instanceName);
-
-        this.apiUrl = configuration.hasApiUrl()
-            ? configuration.getApiUrl()
-            : String.format("https://%s.service-now.com/api/now", instanceName);
-        this.oauthUrl = configuration.hasOautTokenUrl()
-            ? configuration.getOauthTokenUrl()
-            : String.format("https://%s.service-now.com/oauth_token.do", instanceName);
-
-        this.token = configuration.hasOAuthAuthentication()
-            ? new OAuthToken(this.oauthUrl, this.configuration)
-            : null;
+        this.instanceName = instanceName;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new ServiceNowProducer(this);
+        ServiceNowProducer producer = configuration.getRelease().get(this);
+        LOGGER.info("Producer for ServiceNow Rel. {} = {}/{}",
+            configuration.getRelease().name(),
+            producer.getRelease().name(),
+            producer.getClass().getName()
+        );
+
+        return producer;
     }
 
     @Override
@@ -86,17 +76,5 @@ public class ServiceNowEndpoint extends DefaultEndpoint {
 
     public String getInstanceName() {
         return instanceName;
-    }
-
-    public <T> T createClient(Class<T> type) throws Exception {
-        return JAXRSClientFactory.create(
-            apiUrl,
-            type,
-            Arrays.asList(
-                new AuthenticationRequestFilter(configuration, token),
-                new JacksonJsonProvider(configuration.getMapper()),
-                new ServiceNowExceptionMapper(configuration.getMapper())
-            )
-        );
     }
 }

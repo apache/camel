@@ -19,7 +19,7 @@
   <parent>
     <artifactId>camel-spring-boot-dm</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>2.18.0-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>camel-spring-boot-dependencies</artifactId>
@@ -81,7 +81,7 @@
       <dependency>
         <groupId>com.lmax</groupId>
         <artifactId>disruptor</artifactId>
-        <version>3.3.5</version>
+        <version>3.3.6</version>
       </dependency>
       <dependency>
         <groupId>com.sna-projects.krati</groupId>
@@ -162,7 +162,7 @@
       <dependency>
         <groupId>net.sf.saxon</groupId>
         <artifactId>Saxon-HE</artifactId>
-        <version>9.7.0-6</version>
+        <version>9.7.0-8</version>
       </dependency>
       <dependency>
         <groupId>ognl</groupId>
@@ -2710,7 +2710,7 @@
       <dependency>
         <groupId>org.apache.mina</groupId>
         <artifactId>mina-core</artifactId>
-        <version>2.0.14</version>
+        <version>2.0.15</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openjpa</groupId>
@@ -3117,4 +3117,14 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+  <!-- Force the reactor build order -->
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring-boot-generator-bom</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>

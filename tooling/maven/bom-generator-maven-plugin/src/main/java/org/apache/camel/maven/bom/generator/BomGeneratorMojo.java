@@ -204,6 +204,15 @@ public class BomGeneratorMojo extends AbstractMojo {
     private Document loadBasePom() throws Exception {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document pom = builder.parse(sourcePom);
+
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        XPathExpression expr = xpath.compile("/project/parent/version");
+
+        Node node = (Node) expr.evaluate(pom, XPathConstants.NODE);
+        if (node != null && node.getTextContent() != null && node.getTextContent().trim().equals("${project.version}")) {
+            node.setTextContent(project.getVersion());
+        }
+
         return pom;
     }
 

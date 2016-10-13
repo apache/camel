@@ -37,31 +37,31 @@ public class DockerConfiguration implements Cloneable {
     private String host = "localhost";
     @UriParam(defaultValue = "2375") @Metadata(required = "true")
     private Integer port = 2375;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String username;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam
     private String email;
-    @UriParam(defaultValue = "https://index.docker.io/v1/")
+    @UriParam(label = "advanced", defaultValue = "https://index.docker.io/v1/")
     private String serverAddress = "https://index.docker.io/v1/";
     @UriParam
     private Integer requestTimeout;
-    @UriParam
+    @UriParam(label = "security")
     private boolean secure;
-    @UriParam
+    @UriParam(label = "security")
     private String certPath;
-    @UriParam(defaultValue = "100")
+    @UriParam(label = "advanced", defaultValue = "100")
     private Integer maxTotalConnections = 100;
-    @UriParam(defaultValue = "100")
+    @UriParam(label = "advanced", defaultValue = "100")
     private Integer maxPerRouteConnections = 100;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean loggingFilter;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean followRedirectFilter;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security", defaultValue = "false")
     private boolean tlsVerify;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "advanced", defaultValue = "true")
     private boolean socket;
     
     private Map<String, Object> parameters = new HashMap<String, Object>();

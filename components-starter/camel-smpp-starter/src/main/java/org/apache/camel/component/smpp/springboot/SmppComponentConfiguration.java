@@ -21,7 +21,6 @@ import org.apache.camel.component.smpp.SmppComponent;
 import org.apache.camel.component.smpp.SmppSplittingPolicy;
 import org.jsmpp.session.SessionStateListener;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * To send and receive SMS using a SMSC (Short Message Service Center).
@@ -313,7 +312,6 @@ public class SmppComponentConfiguration {
          * You can refer to a org.jsmpp.session.SessionStateListener in the
          * Registry to receive callbacks when the session state changed.
          */
-        @NestedConfigurationProperty
         private SessionStateListener sessionStateListener;
         /**
          * You can specify the address range for the SmppConsumer as defined in

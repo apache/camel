@@ -4,8 +4,6 @@ Camel Docker component
 
 *Available as of Camel 2.15*
 
-*Since Camel 2.18 docker consumer is deprecated!*
-
 Camel component for communicating with Docker.
 
 The Docker Camel component leverages the
@@ -52,25 +50,25 @@ The Docker component supports 20 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | operation | common |  | DockerOperation | *Required* Which operation to use
-| certPath | common |  | String | Location containing the SSL certificate chain
 | email | common |  | String | Email address associated with the user
-| followRedirectFilter | common | false | boolean | Whether to follow redirect filter
 | host | common | localhost | String | *Required* Docker host
-| loggingFilter | common | false | boolean | Whether to use logging filter
-| maxPerRouteConnections | common | 100 | Integer | Maximum route connections
-| maxTotalConnections | common | 100 | Integer | Maximum total connections
-| password | common |  | String | Password to authenticate with
 | port | common | 2375 | Integer | *Required* Docker port
 | requestTimeout | common |  | Integer | Request timeout for response (in seconds)
-| secure | common | false | boolean | Use HTTPS communication
-| serverAddress | common | https://index.docker.io/v1/ | String | Server address for docker registry.
-| socket | common | true | boolean | Socket connection mode
-| tlsVerify | common | false | boolean | Check TLS
-| username | common |  | String | User name to authenticate with
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| followRedirectFilter | advanced | false | boolean | Whether to follow redirect filter
+| loggingFilter | advanced | false | boolean | Whether to use logging filter
+| maxPerRouteConnections | advanced | 100 | Integer | Maximum route connections
+| maxTotalConnections | advanced | 100 | Integer | Maximum total connections
+| serverAddress | advanced | https://index.docker.io/v1/ | String | Server address for docker registry.
+| socket | advanced | true | boolean | Socket connection mode
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| certPath | security |  | String | Location containing the SSL certificate chain
+| password | security |  | String | Password to authenticate with
+| secure | security | false | boolean | Use HTTPS communication
+| tlsVerify | security | false | boolean | Check TLS
+| username | security |  | String | User name to authenticate with
 |=======================================================================
 {% endraw %}
 // endpoint options: END

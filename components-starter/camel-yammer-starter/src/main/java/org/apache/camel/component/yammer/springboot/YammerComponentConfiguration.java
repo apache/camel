@@ -19,7 +19,6 @@ package org.apache.camel.component.yammer.springboot;
 import org.apache.camel.component.yammer.ApiRequestor;
 import org.apache.camel.component.yammer.YammerFunctionType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The yammer component allows you to interact with the Yammer enterprise social
@@ -110,7 +109,6 @@ public class YammerComponentConfiguration {
          * POJOs.
          */
         private Boolean useJson;
-        @NestedConfigurationProperty
         private ApiRequestor requestor;
         /**
          * Return only the specified number of messages. Works for threaded=true
