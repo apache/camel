@@ -16,6 +16,9 @@
  */
 package org.apache.camel.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.DataFormat;
@@ -24,40 +27,55 @@ import org.apache.camel.spi.FactoryFinder;
 
 /**
  * Default data format resolver
- *
- * @version 
  */
 public class DefaultDataFormatResolver implements DataFormatResolver {
 
     public static final String DATAFORMAT_RESOURCE_PATH = "META-INF/services/org/apache/camel/dataformat/";
 
+    private final Map<String, DataFormat> dataformatCache = new HashMap<>();
     protected FactoryFinder dataformatFactory;
 
     public DataFormat resolveDataFormat(String name, CamelContext context) {
         DataFormat dataFormat = lookup(context, name, DataFormat.class);
         if (dataFormat == null) {
-            Class<?> type = null;
-            try {
-                if (dataformatFactory == null) {
-                    dataformatFactory = context.getFactoryFinder(DATAFORMAT_RESOURCE_PATH);
+            String cachkey = context.getName() + ":" + name;
+            synchronized (dataformatCache) {
+                dataFormat = dataformatCache.get(cachkey);
+                if (dataFormat == null) {
+                    dataFormat = createDataFormat(name, context);
+                    if (dataFormat != null) {
+                        dataformatCache.put(cachkey, dataFormat);
+                    }
                 }
-                type = dataformatFactory.findClass(name);
-            } catch (NoFactoryAvailableException e) {
-                // ignore
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Invalid URI, no DataFormat registered for scheme: " + name, e);
             }
+        }
+        return dataFormat;
+    }
 
-            if (type == null) {
-                type = context.getClassResolver().resolveClass(name);
+    private DataFormat createDataFormat(String name, CamelContext context) {
+        Class<?> type = null;
+        try {
+            if (dataformatFactory == null) {
+                dataformatFactory = context.getFactoryFinder(DATAFORMAT_RESOURCE_PATH);
             }
+            type = dataformatFactory.findClass(name);
+        } catch (NoFactoryAvailableException e) {
+            // ignore
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid URI, no DataFormat registered for scheme: " + name, e);
+        }
 
-            if (type != null) {
-                if (DataFormat.class.isAssignableFrom(type)) {
-                    dataFormat = (DataFormat) context.getInjector().newInstance(type);
-                } else {
-                    throw new IllegalArgumentException("Resolving dataformat: " + name + " detected type conflict: Not a DataFormat implementation. Found: " + type.getName());
-                }
+        if (type == null) {
+            type = context.getClassResolver().resolveClass(name);
+        }
+
+        DataFormat dataFormat = null;
+
+        if (type != null) {
+            if (DataFormat.class.isAssignableFrom(type)) {
+                dataFormat = (DataFormat) context.getInjector().newInstance(type);
+            } else {
+                throw new IllegalArgumentException("Resolving dataformat: " + name + " detected type conflict: Not a DataFormat implementation. Found: " + type.getName());
             }
         }
 
