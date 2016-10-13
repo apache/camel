@@ -96,7 +96,7 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
 
             if (method == null) {
                 try {
-                    method = AbstractPropertyPlaceholder.class.getDeclaredMethod("getProperty", String.class);
+                    method = AbstractPropertyPlaceholder.class.getDeclaredMethod("retrieveValue", String.class);
                     method.setAccessible(true);
                 } catch (NoSuchMethodException e) {
                     throw new IllegalStateException("Cannot add blueprint property placeholder: " + id
@@ -133,10 +133,10 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
                     }
                     log.trace("Blueprint property key: {} is part of default properties: {}", key, isDefault);
                 }
-                
+
                 try {
                     String candidate = (String) ObjectHelper.invokeMethod(method, placeholder, key);
-    
+
                     if (candidate != null) {
                         if (answer == null || !isDefault) {
                             log.trace("Blueprint parsed candidate property key: {} as value: {}", key, answer);
@@ -145,11 +145,11 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
                     }
                 } catch (Exception ex) {
                     // Here we just catch the exception and try to use other candidate
-                }  
+                }
             }
             log.debug("Blueprint parsed property key: {} as value: {}", key, answer);
         }
-        
+
         // if there is a delegate then let it parse the current answer as it may be jasypt which
         // need to decrypt values
         if (delegate != null) {
@@ -163,5 +163,4 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
         log.trace("Returning parsed property key: {} as value: {}", key, answer);
         return answer;
     }
-
 }
