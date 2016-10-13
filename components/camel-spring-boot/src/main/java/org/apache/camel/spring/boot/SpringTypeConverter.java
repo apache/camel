@@ -44,7 +44,7 @@ public class SpringTypeConverter extends TypeConverterSupport {
         
         // do not attempt to convert List -> Map. Ognl expression may use this converter  as a fallback expecting null
         if (type.isAssignableFrom(Map.class) && (value.getClass().isArray() || value instanceof List)) {
-        	return null;
+            return null;
         }
 
         for (ConversionService conversionService : conversionServices) {
