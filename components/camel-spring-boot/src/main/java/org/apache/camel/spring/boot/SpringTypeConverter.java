@@ -17,6 +17,7 @@
 package org.apache.camel.spring.boot;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
@@ -39,6 +40,11 @@ public class SpringTypeConverter extends TypeConverterSupport {
         // do not attempt to convert Camel types
         if (type.getCanonicalName().startsWith("org.apache")) {
             return null;
+        }
+        
+        // do not attempt to convert List -> Map. Ognl expression may use this converter  as a fallback expecting null
+        if (type.isAssignableFrom(Map.class) && (value.getClass().isArray() || value instanceof List)) {
+        	return null;
         }
 
         for (ConversionService conversionService : conversionServices) {
