@@ -36,34 +36,34 @@ import org.springframework.test.context.junit4.SpringRunner;
 @EnableAutoConfiguration
 @SpringBootTest(classes = { SimpleOgnlTest.class })
 public class SimpleOgnlTest {
-	@EndpointInject(uri = "mock:result")
-	protected MockEndpoint resultEndpoint;
+    @EndpointInject(uri = "mock:result")
+    protected MockEndpoint resultEndpoint;
 
-	@Produce(uri = "direct:start")
-	protected ProducerTemplate template;
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
 
-	@Test
-	public void testSimpleOgnlListExpression() throws Exception {
-		List<String> list = new ArrayList<String>();
-		list.add("one");
-		list.add("two");
+    @Test
+    public void testSimpleOgnlListExpression() throws Exception {
+        List<String> list = new ArrayList<String>();
+        list.add("one");
+        list.add("two");
 
-		resultEndpoint.expectedBodiesReceived(list.get(0));
+        resultEndpoint.expectedBodiesReceived(list.get(0));
 
-		template.sendBody(list);
+        template.sendBody(list);
 
-		resultEndpoint.assertIsSatisfied();
-	}
+        resultEndpoint.assertIsSatisfied();
+    }
 
-	@Configuration
-	public static class ContextConfig {
-		@Bean
-		public RouteBuilder route() {
-			return new RouteBuilder() {
-				public void configure() {
-					from("direct:start").setBody(simple("${body[0]}")).to("mock:result");
-				}
-			};
-		}
-	}
+    @Configuration
+    public static class ContextConfig {
+        @Bean
+        public RouteBuilder route() {
+            return new RouteBuilder() {
+                public void configure() {
+                    from("direct:start").setBody(simple("${body[0]}")).to("mock:result");
+                }
+            };
+        }
+    }
 }
