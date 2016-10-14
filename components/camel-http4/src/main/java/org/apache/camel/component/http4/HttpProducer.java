@@ -26,11 +26,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -155,6 +157,19 @@ public class HttpProducer extends DefaultProducer {
             }
         }
 
+        if (getEndpoint().getCookieHandler() != null) {
+            Map<String, List<String>> cookieHeaders = getEndpoint().getCookieHandler().loadCookies(exchange, httpRequest.getURI());
+            for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
+                String key = entry.getKey();
+                if (entry.getValue().size() > 0) {
+                    // use the default toString of a ArrayList to create in the form [xxx, yyy]
+                    // if multi valued, for a single value, then just output the value as is
+                    String s = entry.getValue().size() > 1 ? entry.getValue().toString() : entry.getValue().get(0);
+                    httpRequest.addHeader(key, s);
+                }
+            }
+        }
+
         //In reverse proxy applications it can be desirable for the downstream service to see the original Host header
         //if this option is set, and the exchange Host header is not null, we will set it's current value on the httpRequest
         if (getEndpoint().isPreserveHostHeader()) {
@@ -236,9 +251,11 @@ public class HttpProducer extends DefaultProducer {
 
         // propagate HTTP response headers
         Header[] headers = httpResponse.getAllHeaders();
+        Map<String, List<String>> m = new HashMap<String, List<String>>();
         for (Header header : headers) {
             String name = header.getName();
             String value = header.getValue();
+            m.put(name, Collections.singletonList(value));
             if (name.toLowerCase().equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
                 exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
@@ -249,7 +266,10 @@ public class HttpProducer extends DefaultProducer {
                 HttpHelper.appendHeader(answer.getHeaders(), name, extracted);
             }
         }
-
+        // handle cookies
+        if (getEndpoint().getCookieHandler() != null) {
+            getEndpoint().getCookieHandler().storeCookies(exchange, httpRequest.getURI(), m);
+        }
         // endpoint might be configured to copy headers from in to out
         // to avoid overriding existing headers with old values just
         // filter the http protocol headers
@@ -264,6 +284,14 @@ public class HttpProducer extends DefaultProducer {
         String uri = httpRequest.getURI().toString();
         String statusText = httpResponse.getStatusLine() != null ? httpResponse.getStatusLine().getReasonPhrase() : null;
         Map<String, String> headers = extractResponseHeaders(httpResponse.getAllHeaders());
+        // handle cookies
+        if (getEndpoint().getCookieHandler() != null) {
+            Map<String, List<String>> m = new HashMap<String, List<String>>();
+            for (Entry<String, String> e : headers.entrySet()) {
+                m.put(e.getKey(), Collections.singletonList(e.getValue()));
+            }
+            getEndpoint().getCookieHandler().storeCookies(exchange, httpRequest.getURI(), m);
+        }
 
         Object responseBody = extractResponseBody(httpRequest, httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
         if (transferException && responseBody != null && responseBody instanceof Exception) {

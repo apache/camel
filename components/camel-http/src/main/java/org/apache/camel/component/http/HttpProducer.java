@@ -23,11 +23,14 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -51,6 +54,7 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.FileRequestEntity;
@@ -140,6 +144,21 @@ public class HttpProducer extends DefaultProducer {
             }
         }
         
+        if (getEndpoint().getCookieHandler() != null) {
+            // disable the per endpoint cookie handling
+            method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
+            Map<String, List<String>> cookieHeaders = getEndpoint().getCookieHandler().loadCookies(exchange, new URI(method.getURI().getEscapedURI()));
+            for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
+                String key = entry.getKey();
+                if (entry.getValue().size() > 0) {
+                    // use the default toString of a ArrayList to create in the form [xxx, yyy]
+                    // if multi valued, for a single value, then just output the value as is
+                    String s = entry.getValue().size() > 1 ? entry.getValue().toString() : entry.getValue().get(0);
+                    method.addRequestHeader(key, s);
+                }
+            }
+        }
+
         if (getEndpoint().isConnectionClose()) {
             method.addRequestHeader("Connection", "close");
         }
@@ -175,7 +194,7 @@ public class HttpProducer extends DefaultProducer {
         return (HttpEndpoint) super.getEndpoint();
     }
 
-    protected void populateResponse(Exchange exchange, HttpMethod method, Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException, ClassNotFoundException {
+    protected void populateResponse(Exchange exchange, HttpMethod method, Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException, ClassNotFoundException, URISyntaxException {
         //We just make the out message is not create when extractResponseBody throws exception,
         Object response = extractResponseBody(method, exchange, getEndpoint().isIgnoreResponseBody());
         Message answer = exchange.getOut();
@@ -186,9 +205,11 @@ public class HttpProducer extends DefaultProducer {
 
         // propagate HTTP response headers
         Header[] headers = method.getResponseHeaders();
+        Map<String, List<String>> m = new HashMap<String, List<String>>();
         for (Header header : headers) {
             String name = header.getName();
             String value = header.getValue();
+            m.put(name, Collections.singletonList(value));
             if (name.toLowerCase().equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
                 exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
@@ -200,7 +221,10 @@ public class HttpProducer extends DefaultProducer {
                 HttpHelper.appendHeader(answer.getHeaders(), name, extracted);
             }
         }
-
+        // handle cookies
+        if (getEndpoint().getCookieHandler() != null) {
+            getEndpoint().getCookieHandler().storeCookies(exchange, new URI(method.getURI().getEscapedURI()), m);
+        }
         // endpoint might be configured to copy headers from in to out
         // to avoid overriding existing headers with old values just
         // filter the http protocol headers
@@ -209,12 +233,20 @@ public class HttpProducer extends DefaultProducer {
         }
     }
 
-    protected Exception populateHttpOperationFailedException(Exchange exchange, HttpMethod method, int responseCode) throws IOException, ClassNotFoundException {
+    protected Exception populateHttpOperationFailedException(Exchange exchange, HttpMethod method, int responseCode) throws IOException, ClassNotFoundException, URISyntaxException {
         Exception answer;
 
         String uri = method.getURI().toString();
         String statusText = method.getStatusLine() != null ? method.getStatusLine().getReasonPhrase() : null;
         Map<String, String> headers = extractResponseHeaders(method.getResponseHeaders());
+        // handle cookies
+        if (getEndpoint().getCookieHandler() != null) {
+            Map<String, List<String>> m = new HashMap<String, List<String>>();
+            for (Entry<String, String> e : headers.entrySet()) {
+                m.put(e.getKey(), Collections.singletonList(e.getValue()));
+            }
+            getEndpoint().getCookieHandler().storeCookies(exchange, new URI(method.getURI().getEscapedURI()), m);
+        }
 
         Object responseBody = extractResponseBody(method, exchange, getEndpoint().isIgnoreResponseBody());
         if (transferException && responseBody != null && responseBody instanceof Exception) {

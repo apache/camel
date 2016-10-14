@@ -18,7 +18,12 @@ package org.apache.camel.component.undertow;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import io.undertow.client.ClientCallback;
 import io.undertow.client.ClientConnection;
@@ -26,6 +31,7 @@ import io.undertow.client.ClientExchange;
 import io.undertow.client.ClientRequest;
 import io.undertow.client.UndertowClient;
 import io.undertow.server.DefaultByteBufferPool;
+import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Protocols;
@@ -100,6 +106,13 @@ public class UndertowProducer extends DefaultAsyncProducer {
                 request.getRequestHeaders().put(Headers.CONTENT_LENGTH, bodyAsByte.array().length);
             }
 
+            if (getEndpoint().getCookieHandler() != null) {
+                Map<String, List<String>> cookieHeaders = getEndpoint().getCookieHandler().loadCookies(exchange, uri);
+                for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
+                    request.getRequestHeaders().putAll(new HttpString(entry.getKey()), entry.getValue());
+                }
+            }
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Executing http {} method: {}", method, url);
             }
@@ -166,6 +179,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
                 public void completed(ClientExchange clientExchange) {
                     LOG.trace("completed: {}", clientExchange);
                     try {
+                        storeCookies(clientExchange);
                         Message message = endpoint.getUndertowHttpBinding().toCamelMessage(clientExchange, camelExchange);
                         if (ExchangeHelper.isOutCapable(camelExchange)) {
                             camelExchange.setOut(message);
@@ -216,6 +230,24 @@ public class UndertowProducer extends DefaultAsyncProducer {
             IOHelper.close(connection);
             // make sure to call callback
             callback.done(false);
+        }
+
+        private void storeCookies(ClientExchange clientExchange) throws URISyntaxException, IOException {
+            if (endpoint.getCookieHandler() != null) {
+                // creating the url to use takes 2-steps
+                String url = UndertowHelper.createURL(camelExchange, getEndpoint());
+                URI uri = UndertowHelper.createURI(camelExchange, url, getEndpoint());
+                HeaderMap headerMap = clientExchange.getResponse().getResponseHeaders();
+                Map<String, List<String>> m = new HashMap<String, List<String>>();
+                for (HttpString headerName : headerMap.getHeaderNames()) {
+                    List<String> headerValue = new LinkedList<String>();
+                    for (int i = 0; i < headerMap.count(headerName); i++) {
+                        headerValue.add(headerMap.get(headerName, i));
+                    }
+                    m.put(headerName.toString(), headerValue);
+                }
+                endpoint.getCookieHandler().storeCookies(camelExchange, uri, m);
+            }
         }
     }
 

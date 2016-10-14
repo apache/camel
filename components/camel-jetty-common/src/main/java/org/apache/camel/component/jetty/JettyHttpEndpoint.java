@@ -29,6 +29,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpConsumer;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IntrospectionSupport;
@@ -129,6 +130,8 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
             description = "To configure security using SSLContextParameters")
     @Deprecated
     private String sslContextParametersRef;
+    @UriParam(label = "producer", description = "Configure a cookie handler to maintain a HTTP session")
+    private CookieHandler cookieHandler;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -435,6 +438,17 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
      */
     public void setEnableCORS(boolean enableCORS) {
         this.enableCORS = enableCORS;
+    }
+
+    public CookieHandler getCookieHandler() {
+        return cookieHandler;
+    }
+
+    /**
+     * Configure a cookie handler to maintain a HTTP session
+     */
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        this.cookieHandler = cookieHandler;
     }
 
     public abstract JettyContentExchange createContentExchange();

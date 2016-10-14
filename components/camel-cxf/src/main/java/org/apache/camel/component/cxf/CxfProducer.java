@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
@@ -38,6 +40,7 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.model.SoapHeaderInfo;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
@@ -125,8 +128,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
             invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
             
-            CxfClientCallback cxfClientCallback = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, 
-                                                                        endpoint.getCxfBinding());
+            CxfClientCallback cxfClientCallback = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
             // send the CXF async request
             client.invoke(cxfClientCallback, boi, getParams(endpoint, camelExchange), 
                           invocationContext, cxfExchange);
@@ -171,6 +173,15 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         } catch (Exception exception) {
             camelExchange.setException(exception);
         } finally {
+            // add cookies to the cookie store
+            if (endpoint.getCookieHandler() != null) {
+                try {
+                    Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>)cxfExchange.getInMessage().get(Message.PROTOCOL_HEADERS));
+                    endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
+                } catch (IOException e) {
+                    LOG.error("Cannot store cookies", e);
+                }
+            }
             // bind the CXF response to Camel exchange
             if (!boi.getOperationInfo().isOneWay()) {
                 endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
@@ -208,7 +219,27 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         // bind the request CXF exchange
         endpoint.getCxfBinding().populateCxfRequestFromExchange(cxfExchange, camelExchange, 
                 requestContext);
-        
+
+        // add appropriate cookies from the cookie store to the protocol headers
+        if (endpoint.getCookieHandler() != null) {
+            try {
+                Map<String, List<String>> transportHeaders = CastUtils.cast((Map<?, ?>)requestContext.get(Message.PROTOCOL_HEADERS));
+                boolean added;
+                if (transportHeaders == null) {
+                    transportHeaders = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+                    added = true;
+                } else {
+                    added = false;
+                }
+                transportHeaders.putAll(endpoint.getCookieHandler().loadCookies(camelExchange, endpoint.getRequestUri(camelExchange)));
+                if (added && transportHeaders.size() > 0) {
+                    requestContext.put(Message.PROTOCOL_HEADERS, transportHeaders);
+                }
+            } catch (IOException e) {
+                LOG.warn("Cannot load cookies", e);
+            }
+        }
+
         // Remove protocol headers from scopes.  Otherwise, response headers can be
         // overwritten by request headers when SOAPHandlerInterceptor tries to create
         // a wrapped message context by the copyScoped() method.
@@ -216,7 +247,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         
         return requestContext.getWrappedMap();
     }
-    
+
     private BindingOperationInfo prepareBindingOperation(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) {
         // get binding operation info
         BindingOperationInfo boi = getBindingOperationInfo(camelExchange);

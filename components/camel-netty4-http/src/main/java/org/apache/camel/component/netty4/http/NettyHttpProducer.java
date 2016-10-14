@@ -17,9 +17,10 @@
 package org.apache.camel.component.netty4.http;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.util.ReferenceCountUtil;
@@ -73,6 +74,16 @@ public class NettyHttpProducer extends NettyProducer {
         if (getConfiguration().isBridgeEndpoint()) {
             // Need to remove the Host key as it should be not used when bridging/proxying
             exchange.getIn().removeHeader("host");
+        }
+
+        if (getEndpoint().getCookieHandler() != null) {
+            Map<String, List<String>> cookieHeaders = getEndpoint().getCookieHandler().loadCookies(exchange, new URI(actualUri));
+            for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
+                String key = entry.getKey();
+                if (entry.getValue().size() > 0) {
+                    request.headers().add(key, entry.getValue());
+                }
+            }
         }
 
         // need to release the request when we are done

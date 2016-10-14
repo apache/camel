@@ -32,6 +32,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.component.cxf.NullFaultListener;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -126,6 +127,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private boolean propagateContexts;
     @UriParam(label = "advanced")
     private CxfRsEndpointConfigurer cxfRsEndpointConfigurer;
+    @UriParam(label = "producer")
+    private CookieHandler cookieHandler;
 
     public CxfRsEndpoint() {
     }
@@ -799,5 +802,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         this.cxfRsEndpointConfigurer = configurer;
     }
 
+    public CookieHandler getCookieHandler() {
+        return cookieHandler;
+    }
 
+    /**
+     * Configure a cookie handler to maintain a HTTP session
+     */
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        this.cookieHandler = cookieHandler;
+    }
 }
