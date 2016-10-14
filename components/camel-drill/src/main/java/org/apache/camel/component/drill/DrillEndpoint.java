@@ -26,7 +26,6 @@ import oadd.org.apache.commons.lang.StringUtils;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.drill.DrillComponent.DrillConnectionMode;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -53,8 +52,8 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
     private String directory = "";
     @UriParam(defaultValue = "")
     private String clusterId = "";
-    @UriParam(defaultValue = "zk")
-    private String mode = "zk";
+    @UriParam(defaultValue = "ZK")
+    private DrillConnectionMode mode = DrillConnectionMode.ZK;
 
     /**
      * creates a drill endpoint
@@ -81,11 +80,11 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
 
     public String toJDBCUri() {
         String url = "jdbc:drill:";
-        if (mode.toUpperCase().equals(DrillConnectionMode.DRILLBIT.name())) {
+        if (mode.equals(DrillConnectionMode.DRILLBIT)) {
             // TODO JIRA BUG connection mode
-            url += mode + "=" + host;
+            url += mode.name().toLowerCase() + "=" + host;
         } else {
-            url += mode + "=" + host + ":" + port;
+            url += mode.name().toLowerCase() + "=" + host + ":" + port;
         }
 
         if (StringUtils.isNotBlank(directory)) {
@@ -166,11 +165,11 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
      * 
      * @return
      */
-    public String getMode() {
+    public DrillConnectionMode getMode() {
         return mode;
     }
 
-    public void setMode(String mode) {
+    public void setMode(DrillConnectionMode mode) {
         this.mode = mode;
     }
 

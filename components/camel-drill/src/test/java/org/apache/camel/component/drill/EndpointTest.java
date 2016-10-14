@@ -26,7 +26,7 @@ public class EndpointTest extends CamelTestSupport {
     private static final Integer PORT = 4000;
     private static final String DIRECTORY = "directory";
     private static final String CLUSTERID = "clusterId";
-    private static final String MODE = "zk";
+    private static final DrillConnectionMode MODE = DrillConnectionMode.ZK;
 
     @Test
     public void testZKJdbcURL() throws Exception {

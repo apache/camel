@@ -19,7 +19,6 @@ package org.apache.camel.component.drill;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.drill.DrillComponent.DrillConnectionMode;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
@@ -29,8 +28,8 @@ import org.junit.Test;
 public class ProducerTest extends CamelTestSupport {
 
     private final String host = "localhost";
-    private final String mode = DrillConnectionMode.DRILLBIT.name().toLowerCase();
-    private final String query = "select * from schema.db";
+    private final DrillConnectionMode mode = DrillConnectionMode.DRILLBIT;
+    private final String query = "select * from query";
 
     @Test
     public void testProducer() throws Exception {
@@ -46,7 +45,7 @@ public class ProducerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").setHeader(DrillConstants.DRILL_QUERY, constant(query)).to("drill://" + host + "?mode=" + mode).log("${body}").to("mock:result");
+                from("direct:in").setHeader(DrillConstants.DRILL_QUERY, constant(query)).to("drill://" + host + "?mode=" + mode.name()).log("${body}").to("mock:result");
             }
         };
     }
