@@ -18,7 +18,7 @@ package org.apache.camel.component.drill;
 
 public final class DrillConstants {
     public static final String DRILL_QUERY = "CamelDrillQuery";
-    
+
     public static final String DRILL_DRIVER = "org.apache.drill.jdbc.Driver";
 
     private DrillConstants() {

@@ -21,9 +21,12 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import oadd.org.apache.commons.lang.StringUtils;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.drill.DrillComponent.DrillConnectionMode;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -33,28 +36,30 @@ import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
 
-
 /**
- * The drill component gives you the ability to quering into apache drill cluster.
+ * The drill component gives you the ability to quering into apache drill
+ * cluster.
  */
-@UriEndpoint(scheme = "drill", title = "DRILL", syntax = "drill:host:port", producerOnly = true, label = "database,sql")
+@UriEndpoint(scheme = "drill", title = "DRILL", syntax = "drill:host", producerOnly = true, label = "database,sql")
 public class DrillEndpoint extends DefaultPollingEndpoint {
 
-    @UriPath(description = "ZooKeeper host name or IP address") @Metadata(required = "true")
+    @UriPath(description = "Host name or IP address")
+    @Metadata(required = "true")
     private String host;
-    @UriPath(description = "ZooKeeper port number") @Metadata(required = "false", defaultValue = "2181")
+    @UriParam(description = "Port number")
+    @Metadata(required = "false", defaultValue = "2181")
     private Integer port = 2181;
-    @UriParam(description = "Storage plugin", defaultValue = "")
-    private String schema = "";
-    @UriParam(description = "Drill directory in ZooKeeper", defaultValue = "/Drill")
-    private String directory = "/Drill";
-    @UriParam(defaultValue = "drillbits1")
-    private String clusterId = "drillbits1";
+    @UriParam(description = "Drill directory", defaultValue = "")
+    private String directory = "";
+    @UriParam(defaultValue = "")
+    private String clusterId = "";
+    @UriParam(defaultValue = "zk")
+    private String mode = "zk";
 
     /**
      * creates a drill endpoint
      *
-     * @param uri       the endpoint uri
+     * @param uri the endpoint uri
      * @param component the component
      */
     public DrillEndpoint(String uri, DrillComponent component) {
@@ -75,10 +80,24 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
     }
 
     public String toJDBCUri() {
-        //jdbc:drill:zk=<zk name>[:<port>][,<zk name2>[:<port>]...<directory>/<cluster ID>;[schema=<storage plugin>]
-        return "jdbc:drill:zk=" + host + ":" + port + directory + "/" + clusterId;
+        String url = "jdbc:drill:";
+        if (mode.toUpperCase().equals(DrillConnectionMode.DRILLBIT.name())) {
+            // TODO JIRA BUG connection mode
+            url += mode + "=" + host;
+        } else {
+            url += mode + "=" + host + ":" + port;
+        }
+
+        if (StringUtils.isNotBlank(directory)) {
+            url += "/" + directory;
+        }
+        if (StringUtils.isNotBlank(clusterId)) {
+            url += "/" + clusterId;
+        }
+
+        return url;
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<?> queryForList(ResultSet rs) throws SQLException {
         ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
@@ -86,13 +105,14 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
         List<Map<String, Object>> data = mapper.extractData(rs);
         return data;
     }
-    
+
     public String getHost() {
         return host;
     }
-    
+
     /**
-     * ZooKeeper host name or IP address. Use local instead of a host name or IP address to connect to the local Drillbit
+     * ZooKeeper host name or IP address. Use local instead of a host name or IP
+     * address to connect to the local Drillbit
      * 
      * @param host
      */
@@ -132,7 +152,6 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
 
     /**
      * Cluster ID
-     * 
      * https://drill.apache.org/docs/using-the-jdbc-driver/#determining-the-cluster-id
      * 
      * @param clusterId
@@ -142,18 +161,17 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
     }
 
     /**
-     * Storage plugin
-     * 
-     * https://drill.apache.org/docs/storage-plugin-registration
+     * Connection mode: zk: Zookeeper drillbit: Drillbit direct connection
+     * https://drill.apache.org/docs/using-the-jdbc-driver/
      * 
      * @return
      */
-    public String getSchema() {
-        return schema;
+    public String getMode() {
+        return mode;
     }
 
-    public void setSchema(String schema) {
-        this.schema = schema;
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
 }

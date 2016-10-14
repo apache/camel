@@ -27,7 +27,7 @@ URI format
 
 [source,java]
 --------------------------------
-drill://host[:port][?options]
+drill://host[?options]
 --------------------------------
 
 You can append query options to the URI in the following format,
@@ -37,7 +37,7 @@ You can append query options to the URI in the following format,
 Drill Producer 
 ^^^^^^^^^^^^^
 
-The producer execute *CamelDrillQuery* header and put results into body.
+The producer execute query using *CamelDrillQuery* header and put results into body.
 
 [[Drill-Options]]
 Options
@@ -50,17 +50,22 @@ The DRILL component has no options.
 
 
 // endpoint options: START
-The DRILL component supports 6 endpoint options which are listed below:
+The DRILL component supports 5 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | producer |  | String | *Required* ZooKeeper host name or IP address. Use local instead of a host name or IP address to connect to the local Drillbit
-| port | producer |  | Integer | ZooKeeper port number
-| clusterId | producer | drillbits1 | String | Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/determining-the-cluster-id
-| directory | producer | /Drill | String | Drill directory in ZooKeeper
-| schema | producer |  | String | Storage plugin https://drill.apache.org/docs/storage-plugin-registration
+| port | producer | 2181 | Integer | Connection port
+| clusterId | producer |  | String | Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/determining-the-cluster-id
+| directory | producer |  | String | Drill directory in ZooKeeper
+| mode | producer | zk | String | Connection mode: 
+
+ - zk: Zookeeper 
+ 
+ - drillbit: Drillbit direct connection
+ 
+ https://drill.apache.org/docs/using-the-jdbc-driver/
 |=======================================================================
 {% endraw %}
 // endpoint options: END

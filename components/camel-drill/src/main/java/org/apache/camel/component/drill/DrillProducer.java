@@ -24,8 +24,6 @@ import java.sql.Statement;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A drill producer
@@ -61,14 +59,14 @@ public class DrillProducer extends DefaultProducer {
     @Override
     public void process(final Exchange exchange) throws Exception {
         final String query = exchange.getIn().getHeader(DrillConstants.DRILL_QUERY, String.class);
-        
+
         // check query
         Statement st = null;
         ResultSet rs = null;
         try {
             st = connection.createStatement();
             rs = st.executeQuery(query);
-            
+
             exchange.getIn().setBody(endpoint.queryForList(rs));
         } finally {
             try {
@@ -84,6 +82,11 @@ public class DrillProducer extends DefaultProducer {
 
     private void createJDBCConnection() throws ClassNotFoundException, SQLException {
         Class.forName(DrillConstants.DRILL_DRIVER);
+
+        // if(log.isDebugEnabled()) {
+        log.info("connection url: {}", endpoint.toJDBCUri());
+        // }
+
         this.connection = DriverManager.getConnection(endpoint.toJDBCUri());
     }
 }
