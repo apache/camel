@@ -28,9 +28,9 @@ import org.junit.Test;
 @Ignore("CAMEL-10327: Set host, mode and query to test drill producer (direct connection mode).")
 public class ProducerTest extends CamelTestSupport {
 
-    private final String host = "bizzy";
+    private final String host = "localhost";
     private final String mode = DrillConnectionMode.DRILLBIT.name().toLowerCase();
-    private final String query = "select * from mongo.view.events limit 100";
+    private final String query = "select * from schema.db";
 
     @Test
     public void testProducer() throws Exception {
