@@ -415,10 +415,12 @@ public final class JmsMessageHelper {
         try {
             byte[] bytes = message.getJMSCorrelationIDAsBytes();
             boolean isNull = true;
-            for(byte b : bytes)
-             if(b != 0)
-                 isNull = false;
-            return isNull ? null : new String(message.getJMSCorrelationIDAsBytes());
+            for (byte b : bytes) {
+                if (b != 0) {
+                    isNull = false;
+                }
+            }
+            return isNull ? null : new String(bytes);
         } catch (Exception e) {
             // ignore if JMS broker do not support this
         }
