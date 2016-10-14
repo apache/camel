@@ -27,6 +27,7 @@ import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -70,6 +71,8 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private Map<String, Object> clientConfigOptions;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean connectionClose;
+    @UriParam(label = "producer")
+    private CookieHandler cookieHandler;
 
     public AhcEndpoint(String endpointUri, AhcComponent component, URI httpUri) {
         super(endpointUri, component);
@@ -246,6 +249,17 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
      */
     public void setConnectionClose(boolean connectionClose) {
         this.connectionClose = connectionClose;
+    }
+
+    public CookieHandler getCookieHandler() {
+        return cookieHandler;
+    }
+
+    /**
+     * Configure a cookie handler to maintain a HTTP session
+     */
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        this.cookieHandler = cookieHandler;
     }
 
     @Override

@@ -81,7 +81,7 @@ The CXF-RS component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The CXF-RS component supports 30 endpoint options which are listed below:
+The CXF-RS component supports 31 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -102,6 +102,7 @@ The CXF-RS component supports 30 endpoint options which are listed below:
 | publishedEndpointUrl | consumer |  | String | This option can override the endpointUrl that published from the WADL which can be accessed with resource address url plus _wadl
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| cookieHandler | producer |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
 | hostnameVerifier | producer |  | HostnameVerifier | The hostname verifier to be used. Use the notation to reference a HostnameVerifier from the registry.
 | sslContextParameters | producer |  | SSLContextParameters | The Camel SSL setting reference. Use the notation to reference the SSL Context.
 | throwExceptionOnFailure | producer | true | boolean | This option tells the CxfRsProducer to inspect return codes and will generate an Exception if the return code is larger than 207.

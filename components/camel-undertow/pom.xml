@@ -40,6 +40,10 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-http-common</artifactId>
+    </dependency>
+    <dependency>
       <groupId>io.undertow</groupId>
       <artifactId>undertow-core</artifactId>
       <version>${undertow-version}</version>
