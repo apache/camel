@@ -59,11 +59,11 @@ The DRILL component supports 5 endpoint options which are listed below:
 | port | producer | 2181 | Integer | Connection port
 | clusterId | producer |  | String | Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/determining-the-cluster-id
 | directory | producer |  | String | Drill directory in ZooKeeper
-| mode | producer | zk | String | Connection mode: 
+| mode | producer | zk | DrillConnectionMode | Connection mode: 
 
- - zk: Zookeeper 
+ - DrillConnectionMode.ZK: Zookeeper 
  
- - drillbit: Drillbit direct connection
+ - DrillConnectionMode.DRILLBIT: Drillbit direct connection
  
  https://drill.apache.org/docs/using-the-jdbc-driver/
 |=======================================================================

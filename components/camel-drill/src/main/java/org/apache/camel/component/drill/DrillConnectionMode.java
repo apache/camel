@@ -16,32 +16,6 @@
  */
 package org.apache.camel.component.drill;
 
-import java.util.Map;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-
-/**
- * Represents the component that manages {@link DrillEndpoint}. It holds the
- * list of named direct endpoints.
- */
-public class DrillComponent extends UriEndpointComponent {
-
-    public DrillComponent() {
-        super(DrillEndpoint.class);
-    }
-
-    public DrillComponent(final CamelContext context) {
-        super(context, DrillEndpoint.class);
-    }
-
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        DrillEndpoint endpoint = new DrillEndpoint(uri, this);
-        setProperties(endpoint, parameters);
-        endpoint.setHost(remaining);
-
-        return endpoint;
-    }
+public enum DrillConnectionMode {
+    ZK, DRILLBIT
 }
