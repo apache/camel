@@ -19,21 +19,23 @@ package org.apache.camel.component.drill;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.drill.DrillComponent.DrillConnectionMode;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-//@Ignore("CAMEL-10327: Set host and schema to test drill producer.")
+@Ignore("CAMEL-10327: Set host, mode and query to test drill producer (direct connection mode).")
 public class ProducerTest extends CamelTestSupport {
 
-    private final String host = "localhost";
-    private final String schema = "mysql";
-    
+    private final String host = "bizzy";
+    private final String mode = DrillConnectionMode.DRILLBIT.name().toLowerCase();
+    private final String query = "select * from mongo.view.events limit 100";
+
     @Test
     public void testProducer() throws Exception {
         template.sendBody("direct:in", "");
-        
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
@@ -44,12 +46,8 @@ public class ProducerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in")
-                        .to("drill://" + host + "?schema=" + schema)
-                        .log("${body}")
-                        .to("mock:result");
+                from("direct:in").setHeader(DrillConstants.DRILL_QUERY, constant(query)).to("drill://" + host + "?mode=" + mode).log("${body}").to("mock:result");
             }
         };
     }
 }
-
