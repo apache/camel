@@ -29,6 +29,7 @@ public class ProducerTest extends CamelTestSupport {
 
     private final String host = "localhost";
     private final DrillConnectionMode mode = DrillConnectionMode.DRILLBIT;
+    private final Integer port = 31010; // default drillbit port
     private final String query = "select * from query";
 
     @Test
@@ -45,7 +46,8 @@ public class ProducerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").setHeader(DrillConstants.DRILL_QUERY, constant(query)).to("drill://" + host + "?mode=" + mode.name()).log("${body}").to("mock:result");
+                from("direct:in").setHeader(DrillConstants.DRILL_QUERY, constant(query)).to("drill://" + host + "?mode=" + mode.name() + "&port=" + port).log("${body}")
+                    .to("mock:result");
             }
         };
     }
