@@ -79,20 +79,15 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
     }
 
     public String toJDBCUri() {
-        String url = "jdbc:drill:";
-        if (mode.equals(DrillConnectionMode.DRILLBIT)) {
-            // TODO JIRA BUG connection mode
-            url += mode.name().toLowerCase() + "=" + host;
-        } else {
-            url += mode.name().toLowerCase() + "=" + host + ":" + port;
-        }
-
-        if (StringUtils.isNotBlank(directory)) {
-            url += "/" + directory;
-        }
-        if (StringUtils.isNotBlank(clusterId)) {
-            url += "/" + clusterId;
-        }
+        String url = "jdbc:drill:" + mode.name().toLowerCase() + "=" + host + ":" + port;
+        if (mode.equals(DrillConnectionMode.ZK)) {
+            if (StringUtils.isNotBlank(directory)) {
+                url += "/" + directory;
+            }
+            if (StringUtils.isNotBlank(clusterId)) {
+                url += "/" + clusterId;
+            }
+        } 
 
         return url;
     }
