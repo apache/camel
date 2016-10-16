@@ -42,7 +42,7 @@ public final class URISupport {
     }
 
     /**
-     * Normalizes the URI so unsafe charachters is encoded
+     * Normalizes the URI so unsafe characters is encoded
      *
      * @param uri the input uri
      * @return as URI instance
