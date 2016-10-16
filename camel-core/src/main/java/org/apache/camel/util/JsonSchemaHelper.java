@@ -243,4 +243,52 @@ public final class JsonSchemaHelper {
         return null;
     }
 
+    /**
+     * Is the property multi valued
+     *
+     * @param rows the rows of properties
+     * @param name name of the property
+     * @return <tt>true</tt> if multi valued, or <tt>false</tt> if not
+     */
+    public static boolean isPropertyMultiValue(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            boolean multiValue = false;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("multiValue")) {
+                multiValue = "true".equals(row.get("multiValue"));
+            }
+            if (found) {
+                return multiValue;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets the prefix value of the property
+     *
+     * @param rows the rows of properties
+     * @param name name of the property
+     * @return the prefix value or <tt>null</tt> if no prefix value exists
+     */
+    public static String getPropertyPrefix(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String prefix = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("prefix")) {
+                prefix = row.get("prefix");
+            }
+            if (found) {
+                return prefix;
+            }
+        }
+        return null;
+    }
+
 }
