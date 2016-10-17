@@ -50,22 +50,18 @@ The DRILL component has no options.
 
 
 // endpoint options: START
-The DRILL component supports 5 endpoint options which are listed below:
+The DRILL component supports 6 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| port | producer | 2181 | Integer | Connection port
+| host | producer |  | String | *Required* ZooKeeper host name or IP address. Use local instead of a host name or IP address to connect to the local Drillbit
 | clusterId | producer |  | String | Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/determining-the-cluster-id
 | directory | producer |  | String | Drill directory in ZooKeeper
-| mode | producer | zk | DrillConnectionMode | Connection mode: 
-
- - DrillConnectionMode.ZK: Zookeeper 
- 
- - DrillConnectionMode.DRILLBIT: Drillbit direct connection
- 
- https://drill.apache.org/docs/using-the-jdbc-driver/
+| mode | producer | ZK | DrillConnectionMode | Connection mode: zk: Zookeeper drillbit: Drillbit direct connection https://drill.apache.org/docs/using-the-jdbc-driver/
+| port | producer |  | Integer | ZooKeeper port number
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
 // endpoint options: END
