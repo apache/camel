@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import static java.lang.String.format;
+
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,7 +139,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
             // If not found, ensure that there is no valid prefix token in the string
             if (suffix == -1) {
                 if (getMatchingPrefixIndex(input, input.length()) != -1) {
-                    throw new IllegalArgumentException(String.format("Missing %s from the text: %s", suffixToken, input));
+                    throw new IllegalArgumentException(format("Missing %s from the text: %s", suffixToken, input));
                 }
                 return null;
             }
@@ -145,7 +147,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
             // Find the index of the prefix token that matches the suffix token
             int prefix = getMatchingPrefixIndex(input, suffix);
             if (prefix == -1) {
-                throw new IllegalArgumentException(String.format("Missing %s from the text: %s", prefixToken, input));
+                throw new IllegalArgumentException(format("Missing %s from the text: %s", prefixToken, input));
             }
 
             String key = input.substring(prefix + prefixToken.length(), suffix);
@@ -231,12 +233,6 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                 }
             }
 
-            // first try to resolve the key as it is
-            String value = parseProperty(key, null, properties);
-            if (value != null) {
-                return value;
-            }
-
             // they key may have a get or else expression
             String defaultValue = null;
             if (key.contains(GET_OR_ELSE_TOKEN)) {
@@ -247,7 +243,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
             String augmentedKey = getAugmentedKey(key);
             boolean shouldFallback = fallbackToUnaugmentedProperty && !key.equals(augmentedKey);
 
-            value = doGetPropertyValue(augmentedKey);
+            String value = doGetPropertyValue(augmentedKey);
             if (value == null && shouldFallback) {
                 log.debug("Property with key [{}] not found, attempting with unaugmented key: {}", augmentedKey, key);
                 value = doGetPropertyValue(key);
