@@ -39,7 +39,7 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
  * The drill component gives you the ability to quering into apache drill
  * cluster.
  */
-@UriEndpoint(scheme = "drill", title = "DRILL", syntax = "drill:host", producerOnly = true, label = "database,sql")
+@UriEndpoint(scheme = "drill", title = "Drill", syntax = "drill:host", producerOnly = true, label = "database,sql")
 public class DrillEndpoint extends DefaultPollingEndpoint {
 
     @UriPath(description = "Host name or IP address")

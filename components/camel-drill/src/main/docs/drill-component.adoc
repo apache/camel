@@ -44,13 +44,13 @@ Options
 ^^^^^^^
 
 // component options: START
-The DRILL component has no options.
+The Drill component has no options.
 // component options: END
 
 
 
 // endpoint options: START
-The DRILL component supports 6 endpoint options which are listed below:
+The Drill component supports 6 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
