@@ -135,6 +135,9 @@ Components
 | link:camel-dozer/src/main/docs/dozer-component.adoc[Dozer] (camel-dozer) +
 `dozer:name` | The dozer component provides the ability to map between Java beans using the Dozer mapping library.
 
+| link:camel-drill/src/main/docs/drill-component.adoc[DRILL] (camel-drill) +
+`drill:host` | The drill component gives you the ability to quering into apache drill cluster.
+
 | link:camel-dropbox/src/main/docs/dropbox-component.adoc[Dropbox] (camel-dropbox) +
 `dropbox:operation` | For uploading downloading and managing files folders groups collaborations etc on dropbox DOT com.
 

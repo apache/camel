@@ -26,7 +26,7 @@
 
     <artifactId>camel-drill</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Apache Drill</name>
+    <name>Camel :: Drill</name>
     <description>Camel Apache Drill support</description>
 
     <properties>

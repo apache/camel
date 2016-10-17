@@ -24,7 +24,7 @@
   </parent>
   <artifactId>camel-drill-starter</artifactId>
   <packaging>jar</packaging>
-  <name>Spring-Boot Starter :: Camel :: Apache Drill</name>
+  <name>Spring-Boot Starter :: Camel :: Drill</name>
   <description>Spring-Boot Starter for Camel Apache Drill support</description>
   <dependencies>
     <dependency>
