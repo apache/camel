@@ -52,7 +52,7 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
     private String directory = "";
     @UriParam(defaultValue = "")
     private String clusterId = "";
-    @UriParam(defaultValue = "ZK", enums="ZK,DRILLBIT")
+    @UriParam(defaultValue = "ZK", enums = "ZK,DRILLBIT")
     private DrillConnectionMode mode = DrillConnectionMode.ZK;
 
     /**
