@@ -44,7 +44,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-      <version>${camelVersion}</version>
     </dependency>
     <dependency>
       <groupId>${groupId}</groupId>
@@ -56,14 +55,12 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>apt</artifactId>
-      <version>${camelVersion}</version>
     </dependency>
 
     <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
-      <version>${camelVersion}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -97,7 +94,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
-      <version>${camelVersion}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
