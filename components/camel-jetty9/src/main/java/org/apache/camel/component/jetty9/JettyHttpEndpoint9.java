@@ -48,6 +48,8 @@ public class JettyHttpEndpoint9 extends JettyHttpEndpoint {
                 this.binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
             }
             this.binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            this.binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
+
         }
         return this.binding;
     }
