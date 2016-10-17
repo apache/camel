@@ -170,6 +170,7 @@
 	* [DNS](dns-component.adoc)
 	* [Docker](docker-component.adoc)
 	* [Dozer](dozer-component.adoc)
+	* [DRILL](drill-component.adoc)
 	* [Dropbox](dropbox-component.adoc)
 	* [EHCache](cache-component.adoc)
 	* [Ehcache](ehcache-component.adoc)
