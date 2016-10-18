@@ -133,7 +133,7 @@ The Simple JMS component supports 9 options which are listed below.
 
 
 // endpoint options: START
-The Simple JMS component supports 32 endpoint options which are listed below:
+The Simple JMS component supports 33 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -171,6 +171,7 @@ The Simple JMS component supports 32 endpoint options which are listed below:
 | transactionBatchCount | transaction | -1 | int | If transacted sets the number of messages to process before committing a transaction.
 | transactionBatchTimeout | transaction | 5000 | long | Sets timeout (in millis) for batch transactions the value should be 1000 or higher.
 | transactionCommitStrategy | transaction |  | TransactionCommitStrategy | Sets the commit strategy.
+| sharedJMSSession | transaction (advanced) | true | boolean | Specifies whether to share JMS session with other SJMS endpoints. Turn this off if your route is accessing to multiple JMS providers. If you need transaction against multiple JMS providers use jms component to leverage XA transaction.
 |=======================================================================
 {% endraw %}
 // endpoint options: END

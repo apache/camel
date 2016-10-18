@@ -76,6 +76,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     private boolean includeAllJMSXProperties;
     @UriParam(label = "consumer,transaction")
     private boolean transacted;
+    @UriParam(label = "transaction,advanced", defaultValue = "true")
+    private boolean sharedJMSSession = true;
     @UriParam(label = "producer")
     private String namedReplyTo;
     @UriParam(defaultValue = "AUTO_ACKNOWLEDGE", enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE")
@@ -453,6 +455,20 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
             setAcknowledgementMode(SessionAcknowledgementType.SESSION_TRANSACTED);
         }
         this.transacted = transacted;
+    }
+
+    public boolean isSharedJMSSession() {
+        return sharedJMSSession;
+    }
+
+    /**
+     * Specifies whether to share JMS session with other SJMS endpoints.
+     * Turn this off if your route is accessing to multiple JMS providers.
+     * If you need transaction against multiple JMS providers, use jms
+     * component to leverage XA transaction.
+     */
+    public void setSharedJMSSession(boolean share) {
+        this.sharedJMSSession = share;
     }
 
     public String getNamedReplyTo() {

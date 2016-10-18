@@ -24,6 +24,7 @@ import javax.jms.Session;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.sjms.SjmsConstants;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.spi.Synchronization;
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ public abstract class AbstractMessageHandler implements MessageListener {
     private AsyncProcessor processor;
     private Session session;
     private boolean transacted;
+    private boolean sharedJMSSession;
     private boolean synchronous = true;
     private Synchronization synchronization;
     private boolean topic;
@@ -72,8 +74,14 @@ public abstract class AbstractMessageHandler implements MessageListener {
 
             log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
 
-            if (isTransacted() && synchronization != null) {
-                exchange.addOnCompletion(synchronization);
+            if (isTransacted()) {
+                if (synchronization != null) {
+                    exchange.addOnCompletion(synchronization);
+                }
+                if (isSharedJMSSession()) {
+                    // Propagate a JMS Session as an initiator if sharedJMSSession is enabled
+                    exchange.getIn().setHeader(SjmsConstants.JMS_SESSION, getSession());
+                }
             }
             try {
                 if (isTransacted() || isSynchronous()) {
@@ -123,6 +131,14 @@ public abstract class AbstractMessageHandler implements MessageListener {
         return transacted;
     }
 
+    public void setSharedJMSSession(boolean share) {
+        this.sharedJMSSession = share;
+    }
+
+    public boolean isSharedJMSSession() {
+        return sharedJMSSession;
+    }
+
     public SjmsEndpoint getEndpoint() {
         return endpoint;
     }
@@ -158,4 +174,5 @@ public abstract class AbstractMessageHandler implements MessageListener {
     public boolean isTopic() {
         return topic;
     }
+
 }

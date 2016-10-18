@@ -241,6 +241,7 @@ public class SjmsConsumer extends DefaultConsumer {
         messageHandler.setProcessor(getAsyncProcessor());
         messageHandler.setSynchronous(isSynchronous());
         messageHandler.setTransacted(isTransacted());
+        messageHandler.setSharedJMSSession(isSharedJMSSession());
         messageHandler.setTopic(isTopic());
         return messageHandler;
     }
@@ -262,6 +263,14 @@ public class SjmsConsumer extends DefaultConsumer {
         return getEndpoint().isTransacted();
     }
 
+    /**
+     * Use to determine if JMS session should be propagated to share with other SJMS endpoints.
+     *
+     * @return true if shared, otherwise false
+     */
+    public boolean isSharedJMSSession() {
+        return getEndpoint().isSharedJMSSession();
+    }
     /**
      * Use to determine whether or not to process exchanges synchronously.
      *
@@ -342,4 +351,5 @@ public class SjmsConsumer extends DefaultConsumer {
     public long getTransactionBatchTimeout() {
         return getEndpoint().getTransactionBatchTimeout();
     }
+
 }
