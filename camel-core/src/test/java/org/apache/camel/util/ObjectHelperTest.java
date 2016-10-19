@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.function.Function;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -681,18 +682,27 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("Hello ", ObjectHelper.before("Hello World", "World"));
         assertEquals("Hello ", ObjectHelper.before("Hello World Again", "World"));
         assertEquals(null, ObjectHelper.before("Hello Again", "Foo"));
+
+        assertTrue(ObjectHelper.before("mykey:ignore", ":", "mykey"::equals).orElse(false));
+        assertFalse(ObjectHelper.before("ignore:ignore", ":", "mykey"::equals).orElse(false));
     }
 
     public void testAfter() {
         assertEquals(" World", ObjectHelper.after("Hello World", "Hello"));
         assertEquals(" World Again", ObjectHelper.after("Hello World Again", "Hello"));
         assertEquals(null, ObjectHelper.after("Hello Again", "Foo"));
+
+        assertTrue(ObjectHelper.after("ignore:mykey", ":", "mykey"::equals).orElse(false));
+        assertFalse(ObjectHelper.after("ignore:ignore", ":", "mykey"::equals).orElse(false));
     }
 
     public void testBetween() {
         assertEquals("foo bar", ObjectHelper.between("Hello 'foo bar' how are you", "'", "'"));
         assertEquals("foo bar", ObjectHelper.between("Hello ${foo bar} how are you", "${", "}"));
         assertEquals(null, ObjectHelper.between("Hello ${foo bar} how are you", "'", "'"));
+
+        assertTrue(ObjectHelper.between("begin:mykey:end", "begin:", ":end", "mykey"::equals).orElse(false));
+        assertFalse(ObjectHelper.between("begin:ignore:end", "begin:", ":end", "mykey"::equals).orElse(false));
     }
 
     public void testBetweenOuterPair() {
@@ -702,6 +712,9 @@ public class ObjectHelperTest extends TestCase {
         assertEquals(null, ObjectHelper.betweenOuterPair("foo)bar)baz123", '(', ')'));
         assertEquals("bar", ObjectHelper.betweenOuterPair("foo(bar)baz123", '(', ')'));
         assertEquals("'bar', 'baz()123', 123", ObjectHelper.betweenOuterPair("foo('bar', 'baz()123', 123)", '(', ')'));
+
+        assertTrue(ObjectHelper.betweenOuterPair("foo(bar)baz123", '(', ')', "bar"::equals).orElse(false));
+        assertFalse(ObjectHelper.betweenOuterPair("foo[bar)baz123", '(', ')', "bar"::equals).orElse(false));
     }
 
     public void testIsJavaIdentifier() {
