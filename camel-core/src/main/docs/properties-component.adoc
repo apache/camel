@@ -20,7 +20,7 @@ Options
 ^^^^^^^
 
 // component options: START
-The Properties component supports 15 options which are listed below.
+The Properties component supports 16 options which are listed below.
 
 
 
@@ -37,6 +37,7 @@ The Properties component supports 15 options which are listed below.
 | propertyPrefix | String | Optional prefix prepended to property names before resolution.
 | propertySuffix | String | Optional suffix appended to property names before resolution.
 | fallbackToUnaugmentedProperty | boolean | If true first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false only the augmented property name is searched.
+| disableDefaultValueResolution | boolean | If true the component does not attempt to find a default for the key by looking after the colon separator.
 | ignoreMissingLocation | boolean | Whether to silently ignore if a location cannot be located such as a properties file not found.
 | prefixToken | String | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_PREFIX_TOKEN).
 | suffixToken | String | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_SUFFIX_TOKEN).
