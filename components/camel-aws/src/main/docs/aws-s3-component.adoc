@@ -26,6 +26,15 @@ The bucket will be created if it don't already exists. +
  You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
+For example in order to read file `hello.txt` from bucket `helloBucket`, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("aws-s3:helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=hello.txt")
+  .to("file:/var/downloaded");
+--------------------------------------------------------------------------------
+
+
 [[AWS-S3-URIOptions]]
 URI Options
 ^^^^^^^^^^^
