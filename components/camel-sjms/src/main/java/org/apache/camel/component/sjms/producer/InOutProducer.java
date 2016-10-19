@@ -139,8 +139,13 @@ public class InOutProducer extends SjmsProducer {
 
     @Override
     protected void doStart() throws Exception {
+
         if (isEndpointTransacted()) {
             throw new IllegalArgumentException("InOut exchange pattern is incompatible with transacted=true as it cuases a deadlock. Please use transacted=false or InOnly exchange pattern.");
+        }
+
+        if (getConnectionResource() == null) {
+            throw new IllegalArgumentException(String.format("ConnectionResource or ConnectionFactory must be configured for %s", this));
         }
 
         if (ObjectHelper.isEmpty(getNamedReplyTo())) {
