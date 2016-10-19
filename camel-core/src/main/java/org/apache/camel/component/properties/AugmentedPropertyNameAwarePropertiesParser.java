@@ -40,9 +40,9 @@ public interface AugmentedPropertyNameAwarePropertiesParser extends PropertiesPa
      * @param fallbackToUnaugmentedProperty flag indicating if the originally
      *            parsed property name should by used for resolution if there is
      *            no match to the augmented property name
-     * @param disableDefaultValueResolution flag indicating if the value after colon
-     *                                      should be the default value to use it
-     *                                      the property has not been resolved
+     * @param defaultFallbackEnabled flag indicating if the value after colon
+     *                               should be the default value to use it
+     *                               the property has not been resolved
      *            
      * @return the parsed text with replaced placeholders
      *
@@ -50,5 +50,5 @@ public interface AugmentedPropertyNameAwarePropertiesParser extends PropertiesPa
      *             is not found
      */
     String parseUri(String text, Properties properties, String prefixToken, String suffixToken,
-                    String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty, boolean disableDefaultValueResolution) throws IllegalArgumentException;
+                    String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty, boolean defaultFallbackEnabled) throws IllegalArgumentException;
 }

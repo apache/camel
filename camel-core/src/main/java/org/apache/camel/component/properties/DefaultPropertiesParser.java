@@ -57,8 +57,8 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
     @Override
     public String parseUri(String text, Properties properties,
                            String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
-            boolean fallbackToUnaugmentedProperty, boolean disableDefaultValueResolution) throws IllegalArgumentException {
-        ParsingContext context = new ParsingContext(properties, prefixToken, suffixToken, propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty, disableDefaultValueResolution);
+            boolean fallbackToUnaugmentedProperty, boolean defaultFallbackEnabled) throws IllegalArgumentException {
+        ParsingContext context = new ParsingContext(properties, prefixToken, suffixToken, propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty, defaultFallbackEnabled);
         return context.parse(text);
     }
 
@@ -76,17 +76,17 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
         private final String propertyPrefix;
         private final String propertySuffix;
         private final boolean fallbackToUnaugmentedProperty;
-        private final boolean disableDefaultValueResolution;
+        private final boolean defaultFallbackEnabled;
 
         ParsingContext(Properties properties, String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
-                              boolean fallbackToUnaugmentedProperty, boolean disableDefaultValueResolution) {
+                              boolean fallbackToUnaugmentedProperty, boolean defaultFallbackEnabled) {
             this.properties = properties;
             this.prefixToken = prefixToken;
             this.suffixToken = suffixToken;
             this.propertyPrefix = propertyPrefix;
             this.propertySuffix = propertySuffix;
             this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
-            this.disableDefaultValueResolution = disableDefaultValueResolution;
+            this.defaultFallbackEnabled = defaultFallbackEnabled;
         }
 
         /**
@@ -237,7 +237,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
 
             // they key may have a get or else expression
             String defaultValue = null;
-            if (!disableDefaultValueResolution && key.contains(GET_OR_ELSE_TOKEN)) {
+            if (defaultFallbackEnabled && key.contains(GET_OR_ELSE_TOKEN)) {
                 defaultValue = ObjectHelper.after(key, GET_OR_ELSE_TOKEN);
                 key = ObjectHelper.before(key, GET_OR_ELSE_TOKEN);
             }
