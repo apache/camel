@@ -290,7 +290,13 @@
 
     <dependency>
       <groupId>org.easymock</groupId>
-      <artifactId>easymockclassextension</artifactId>
+      <artifactId>easymock</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib-nodep</artifactId>
+      <version>${cglib-version}</version>
       <scope>test</scope>
     </dependency>
 
