@@ -100,7 +100,7 @@ public class PropertiesComponent extends UriEndpointComponent {
     private String propertySuffix;
     private String propertySuffixResolved;
     private boolean fallbackToUnaugmentedProperty = true;
-    private boolean disableDefaultValueResolution;
+    private boolean defaultFallbackEnabled = true;
     private String prefixToken = DEFAULT_PREFIX_TOKEN;
     private String suffixToken = DEFAULT_SUFFIX_TOKEN;
     private Properties initialProperties;
@@ -211,7 +211,7 @@ public class PropertiesComponent extends UriEndpointComponent {
                 uri, prop,
                 prefixToken, suffixToken,
                 propertyPrefixResolved, propertySuffixResolved,
-                fallbackToUnaugmentedProperty, disableDefaultValueResolution);
+                fallbackToUnaugmentedProperty, defaultFallbackEnabled);
         } else {
             return propertiesParser.parseUri(uri, prop, prefixToken, suffixToken);
         }
@@ -344,15 +344,15 @@ public class PropertiesComponent extends UriEndpointComponent {
         this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
     }
 
-    public boolean isDisableDefaultValueResolution() {
-        return disableDefaultValueResolution;
+    public boolean isDefaultFallbackEnabled() {
+        return defaultFallbackEnabled;
     }
 
     /**
      * If true, the component does not attempt to find a default for the key by looking after the colon separator.
      */
-    public void setDisableDefaultValueResolution(boolean disableDefaultValueResolution) {
-        this.disableDefaultValueResolution = disableDefaultValueResolution;
+    public void setDefaultFallbackEnabled(boolean defaultFallbackEnabled) {
+        this.defaultFallbackEnabled = defaultFallbackEnabled;
     }
 
     public boolean isIgnoreMissingLocation() {

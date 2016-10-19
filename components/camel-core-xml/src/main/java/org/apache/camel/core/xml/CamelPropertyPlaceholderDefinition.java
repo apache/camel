@@ -54,8 +54,8 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     private String propertySuffix;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean fallbackToUnaugmentedProperty;
-    @XmlAttribute @Metadata(defaultValue = "false")
-    private Boolean disableDefaultValueResolution;
+    @XmlAttribute @Metadata(defaultValue = "true")
+    private Boolean defaultFallbackEnabled;
     @XmlAttribute @Metadata(defaultValue = "{{")
     private String prefixToken;
     @XmlAttribute @Metadata(defaultValue = "}}")
@@ -156,15 +156,15 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
         this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
     }
 
-    public Boolean getDisableDefaultValueResolution() {
-        return disableDefaultValueResolution;
+    public Boolean getDefaultFallbackEnabled() {
+        return defaultFallbackEnabled;
     }
 
     /**
-     * If true, the component does not attempt to find a default for the key by looking after the colon separator.
+     * If false, the component does not attempt to find a default for the key by looking after the colon separator.
      */
-    public void setDisableDefaultValueResolution(Boolean disableDefaultValueResolution) {
-        this.disableDefaultValueResolution = disableDefaultValueResolution;
+    public void setDefaultFallbackEnabled(Boolean defaultFallbackEnabled) {
+        this.defaultFallbackEnabled = defaultFallbackEnabled;
     }
 
     public Boolean isIgnoreMissingLocation() {
