@@ -79,7 +79,7 @@ public class PropertiesComponentConfiguration {
      */
     private Boolean fallbackToUnaugmentedProperty;
     /**
-     * If true the component does not attempt to find a default for the key by
+     * If false the component does not attempt to find a default for the key by
      * looking after the colon separator.
      */
     private Boolean defaultFallbackEnabled;

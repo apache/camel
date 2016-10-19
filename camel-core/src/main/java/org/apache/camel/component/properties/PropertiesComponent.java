@@ -349,7 +349,7 @@ public class PropertiesComponent extends UriEndpointComponent {
     }
 
     /**
-     * If true, the component does not attempt to find a default for the key by looking after the colon separator.
+     * If false, the component does not attempt to find a default for the key by looking after the colon separator.
      */
     public void setDefaultFallbackEnabled(boolean defaultFallbackEnabled) {
         this.defaultFallbackEnabled = defaultFallbackEnabled;
