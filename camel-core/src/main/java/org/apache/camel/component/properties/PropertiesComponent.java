@@ -100,6 +100,7 @@ public class PropertiesComponent extends UriEndpointComponent {
     private String propertySuffix;
     private String propertySuffixResolved;
     private boolean fallbackToUnaugmentedProperty = true;
+    private boolean disableDefaultValueResolution;
     private String prefixToken = DEFAULT_PREFIX_TOKEN;
     private String suffixToken = DEFAULT_SUFFIX_TOKEN;
     private Properties initialProperties;
@@ -206,8 +207,11 @@ public class PropertiesComponent extends UriEndpointComponent {
         LOG.trace("Parsing uri {} with properties: {}", uri, prop);
         
         if (propertiesParser instanceof AugmentedPropertyNameAwarePropertiesParser) {
-            return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(uri, prop, prefixToken, suffixToken,
-                                                                                            propertyPrefixResolved, propertySuffixResolved, fallbackToUnaugmentedProperty);
+            return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(
+                uri, prop,
+                prefixToken, suffixToken,
+                propertyPrefixResolved, propertySuffixResolved,
+                fallbackToUnaugmentedProperty, disableDefaultValueResolution);
         } else {
             return propertiesParser.parseUri(uri, prop, prefixToken, suffixToken);
         }
@@ -338,6 +342,17 @@ public class PropertiesComponent extends UriEndpointComponent {
      */
     public void setFallbackToUnaugmentedProperty(boolean fallbackToUnaugmentedProperty) {
         this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
+    }
+
+    public boolean isDisableDefaultValueResolution() {
+        return disableDefaultValueResolution;
+    }
+
+    /**
+     * If true, the component does not attempt to find a default for the key by looking after the colon separator.
+     */
+    public void setDisableDefaultValueResolution(boolean disableDefaultValueResolution) {
+        this.disableDefaultValueResolution = disableDefaultValueResolution;
     }
 
     public boolean isIgnoreMissingLocation() {

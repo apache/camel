@@ -79,6 +79,11 @@ public class PropertiesComponentConfiguration {
      */
     private Boolean fallbackToUnaugmentedProperty;
     /**
+     * If true the component does not attempt to find a default for the key by
+     * looking after the colon separator.
+     */
+    private Boolean disableDefaultValueResolution;
+    /**
      * Whether to silently ignore if a location cannot be located such as a
      * properties file not found.
      */
@@ -181,6 +186,15 @@ public class PropertiesComponentConfiguration {
     public void setFallbackToUnaugmentedProperty(
             Boolean fallbackToUnaugmentedProperty) {
         this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
+    }
+
+    public Boolean getDisableDefaultValueResolution() {
+        return disableDefaultValueResolution;
+    }
+
+    public void setDisableDefaultValueResolution(
+            Boolean disableDefaultValueResolution) {
+        this.disableDefaultValueResolution = disableDefaultValueResolution;
     }
 
     public Boolean getIgnoreMissingLocation() {
