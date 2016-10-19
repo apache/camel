@@ -139,6 +139,10 @@ public class InOutProducer extends SjmsProducer {
 
     @Override
     protected void doStart() throws Exception {
+        if (isEndpointTransacted()) {
+            throw new IllegalArgumentException("InOut exchange pattern is incompatible with transacted=true as it cuases a deadlock. Please use transacted=false or InOnly exchange pattern.");
+        }
+
         if (ObjectHelper.isEmpty(getNamedReplyTo())) {
             log.debug("No reply to destination is defined.  Using temporary destinations.");
         } else {
