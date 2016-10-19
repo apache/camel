@@ -35,9 +35,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.aryEq;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isNull;
-import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
