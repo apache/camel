@@ -33,6 +33,8 @@ public class FtpConfiguration extends RemoteFileConfiguration {
     private String account;
     @UriParam(label = "advanced")
     private String activePortRange;
+    @UriParam(label = "producer,advanced")
+    private String chmod;
 
     public FtpConfiguration() {
         setProtocol("ftp");
@@ -69,5 +71,16 @@ public class FtpConfiguration extends RemoteFileConfiguration {
      */
     public void setActivePortRange(String activePortRange) {
         this.activePortRange = activePortRange;
+    }
+    
+    /**
+     * Allows you to set chmod on the stored file. For example chmod=640.
+     */
+    public void setChmod(String chmod) {
+        this.chmod = chmod;
+    }
+
+    public String getChmod() {
+        return chmod;
     }
 }

@@ -119,7 +119,7 @@ The FTP component has no options.
 
 
 // endpoint options: START
-The FTP component supports 104 endpoint options which are listed below:
+The FTP component supports 105 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -163,6 +163,7 @@ The FTP component supports 104 endpoint options which are listed below:
 | tempFileName | producer |  | String | The same as tempPrefix option but offering a more fine grained control on the naming of the temporary filename as it uses the File Language.
 | tempPrefix | producer |  | String | This option is used to write the file using a temporary name and then after the write is complete rename it to the real name. Can be used to identify files being written and also avoid consumers (not using exclusive read locks) reading in progress files. Is often used by FTP when uploading big files.
 | allowNullBody | producer (advanced) | false | boolean | Used to specify if a null body is allowed during file writing. If set to true then an empty file will be created when set to false and attempting to send a null body to the file component a GenericFileWriteException of 'Cannot write null body to file.' will be thrown. If the fileExist option is set to 'Override' then the file will be truncated and if set to append the file will remain unchanged.
+| chmod | producer (advanced) |  | String | Allows you to set chmod on the stored file. For example chmod=640.
 | disconnectOnBatchComplete | producer (advanced) | false | boolean | Whether or not to disconnect from remote FTP server right after a Batch upload is complete. disconnectOnBatchComplete will only disconnect the current connection to the FTP server.
 | eagerDeleteTargetFile | producer (advanced) | true | boolean | Whether or not to eagerly delete any existing target file. This option only applies when you use fileExists=Override and the tempFileName option as well. You can use this to disable (set it to false) deleting the target file before the temp file is written. For example you may write big files and want the target file to exists during the temp file is being written. This ensure the target file is only deleted until the very last moment just before the temp file is being renamed to the target filename. This option is also used to control whether to delete any existing files when fileExist=Move is enabled and an existing file exists. If this option copyAndDeleteOnRenameFails false then an exception will be thrown if an existing file existed if its true then the existing file is deleted before the move operation.
 | keepLastModified | producer (advanced) | false | boolean | Will keep the last modified timestamp from the source file (if any). Will use the Exchange.FILE_LAST_MODIFIED header to located the timestamp. This header can contain either a java.util.Date or long with the timestamp. If the timestamp exists and the option is enabled it will set this timestamp on the written file. Note: This option only applies to the file producer. You cannot use this option with any of the ftp producers.
