@@ -105,6 +105,10 @@ public class SjmsConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
+        if (getConnectionResource() == null) {
+            throw new IllegalArgumentException(String.format("ConnectionResource or ConnectionFactory must be configured for %s", this));
+        }
+
         super.doStart();
         this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsConsumer");
         if (consumers == null) {
