@@ -2791,12 +2791,7 @@
       <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
-        <version>3.2</version>
-      </dependency>
-      <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymockclassextension</artifactId>
-        <version>3.2</version>
+        <version>3.4</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty.websocket</groupId>
