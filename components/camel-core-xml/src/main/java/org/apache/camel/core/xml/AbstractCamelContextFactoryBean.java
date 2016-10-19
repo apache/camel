@@ -599,8 +599,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             if (def.isFallbackToUnaugmentedProperty() != null) {
                 pc.setFallbackToUnaugmentedProperty(def.isFallbackToUnaugmentedProperty());
             }
-            if (def.getDisableDefaultValueResolution() != null) {
-                pc.setDisableDefaultValueResolution(def.getDisableDefaultValueResolution());
+            if (def.getDefaultFallbackEnabled() != null) {
+                pc.setDefaultFallbackEnabled(def.getDefaultFallbackEnabled());
             }
             
             pc.setPrefixToken(def.getPrefixToken());

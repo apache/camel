@@ -59,7 +59,7 @@ public class PropertiesComponentDisableDefaultsTest extends ContextTestSupport {
         props.put("p:message", "my message");
 
         PropertiesComponent component = new PropertiesComponent();
-        component.setDisableDefaultValueResolution(true);
+        component.setDefaultFallbackEnabled(false);
         component.setInitialProperties(props);
         context.addComponent("properties", component);
 

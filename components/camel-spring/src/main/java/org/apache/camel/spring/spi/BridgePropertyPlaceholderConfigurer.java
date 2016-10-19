@@ -154,13 +154,13 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
 
     @Override
     public String parseUri(String text, Properties properties, String prefixToken, String suffixToken,
-                           String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty, boolean disableDefaultValueResolution) throws IllegalArgumentException {
+                           String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty, boolean defaultFallbackEnabled) throws IllegalArgumentException {
 
         // first let Camel parse the text as it may contain Camel placeholders
         String answer;
         if (parser instanceof AugmentedPropertyNameAwarePropertiesParser) {
             answer = ((AugmentedPropertyNameAwarePropertiesParser) parser).parseUri(text, properties, prefixToken, suffixToken,
-                    propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty, disableDefaultValueResolution);
+                    propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty, defaultFallbackEnabled);
         } else {
             answer = parser.parseUri(text, properties, prefixToken, suffixToken);
         }

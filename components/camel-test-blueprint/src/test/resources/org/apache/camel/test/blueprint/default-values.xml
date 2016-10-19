@@ -31,7 +31,7 @@
   </cm:property-placeholder>
 
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-    <propertyPlaceholder id="default-values-camel" location="blueprint:default-values" disableDefaultValueResolution="true"/>
+    <propertyPlaceholder id="default-values-camel" location="blueprint:default-values" defaultFallbackEnabled="false"/>
 
     <route>
       <from uri="direct:start"/>
